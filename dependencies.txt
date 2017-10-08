@@ -1,2 +1,3 @@
 tqdm
 pymystem3
+pandas=0.20.3
