@@ -6,32 +6,32 @@ class EntityCollection:
     """ Collection of annotated entities
     """
 
-    def __init__(self, annots):
-        self.annots = annots
+    def __init__(self, entities):
+        self.entities = entities
 
     @staticmethod
     def from_file(filepath):
         """ Read annotation collection from file
         """
 
-        annots = []
+        entities = []
         with io.open(filepath, "r", encoding='utf-8') as f:
             for line in f.readlines():
                 args = line.split()
                 a = Entity(args[0], args[1], int(args[2]), int(args[3]),
                            args[4])
-                annots.append(a)
+                entities.append(a)
 
-        return EntityCollection(annots)
+        return EntityCollection(entities)
 
     def get(self, index):
-        return self.annots[index]
+        return self.entities[index]
 
     def count(self):
-        return len(self.annots)
+        return len(self.entities)
 
     def __iter__(self):
-        for a in self.annots:
+        for a in self.entities:
             yield a
 
 

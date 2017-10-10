@@ -81,6 +81,13 @@ class Sentence:
         """
         self.entity_ids.append((ID, begin, end))
 
+    def has_entity(self, entity_ID):
+        for e in self.entity_ids:
+            if e[0] == entity_ID:
+                return True
+        return False
+
+
     @property
     def entities(self):
         for e in self.entity_ids:
