@@ -22,6 +22,9 @@ class EntityCollection:
                            args[4])
                 entities.append(a)
 
+        # sort by beginning
+        entities.sort(key=lambda e: e.begin)
+
         return EntityCollection(entities)
 
     def get(self, index):
@@ -50,6 +53,9 @@ class Entity:
         self.begin = begin
         self.end = end
         self.value = value
+
+    def get_int_ID(self):
+        return int(self.ID[1:len(self.ID)])
 
     def show(self):
         """ Displays annotation information

@@ -57,10 +57,10 @@ class Opinion:
     # TODO: add a relation class
     def is_equal(self, entity_left, entity_right, lemmatize=False):
 
-        i_el = MYSTEM.lemmatize(entity_left) if lemmatize else entity_left
-        i_er = MYSTEM.lemmatize(entity_right) if lemmatize else entity_right
-        o_el = MYSTEM.lemmatize(self.entity_left) if lemmatize else self.entity_left
-        o_er = MYSTEM.lemmatize(self.entity_right) if lemmatize else self.entity_right
+        i_el = ' '.join(MYSTEM.lemmatize(entity_left)) if lemmatize else entity_left
+        i_er = ' '.join(MYSTEM.lemmatize(entity_right)) if lemmatize else entity_right
+        o_el = ' '.join(MYSTEM.lemmatize(self.entity_left)) if lemmatize else self.entity_left
+        o_er = ' '.join(MYSTEM.lemmatize(self.entity_right)) if lemmatize else self.entity_right
 
         return i_el == o_el and i_er == o_er
 
