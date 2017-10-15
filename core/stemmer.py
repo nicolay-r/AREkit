@@ -1,12 +1,16 @@
 from pymystem3 import Mystem
 
 
+# TODO: move into the processing section
 class Stemmer:
     """ MyStem wrapper
     """
 
     def __init__(self):
         self.mystem = Mystem(entire_input=False)
+
+    def lemmatize_to_list(self, text):
+        return self.mystem.lemmatize(text)
 
     def lemmatize_to_str(self, text):
         lemmas = self.mystem.lemmatize(text)
