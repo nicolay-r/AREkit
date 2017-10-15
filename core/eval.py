@@ -3,12 +3,14 @@
 import pandas as pd
 import os
 import re
-from tqdm import tqdm
 from pymystem3 import Mystem
 
 m = Mystem()
 # цвет участника
 color = 'black'
+root = "../data/"
+USER_ANSWERS = root + "test_{}".format(color)
+ETALON_ANSWERS = root + "test_orig/artest_orig"
 
 syn_dict = [
     ['сша', 'соединенные штаты', 'америка', 'соединенные штаты америки',\
@@ -73,11 +75,12 @@ def calcPrecisionAndRecall(results):
 
     # Расчет точности.
     if len(pos_answers) != 0:
-        pos_prec = len(pos_answers[(pos_answers['comparison']==True)])/ len(pos_answers)
+        pos_prec = len(pos_answers[(pos_answers['comparison']==True)]) / len(pos_answers)
+        print pos_prec
     else:
         pos_prec = 0
     if len(neg_answers) != 0:
-        neg_prec = len(neg_answers[(neg_answers['comparison']==True)])/ len(neg_answers)
+        neg_prec = len(neg_answers[(neg_answers['comparison']==True)]) / len(neg_answers)
     else:
         neg_prec = 0
 
@@ -96,7 +99,7 @@ def calcPrecisionAndRecall(results):
 """
 def calc_a_file(num):
     # Если файл существует.
-    filename = "test_{}/art{}.opin.txt".format(color, str(num))
+    filename = USER_ANSWERS + "/art{}.opin.txt".format(str(num))
     if not os.path.exists(filename):
         print "-  art" + str(num) + ".opin.txt" # , end=" ")
         return 0, 0, 0, 0
@@ -115,7 +118,7 @@ def calc_a_file(num):
     orig_file['how_orig']=orig_file['how_orig'].str.strip()
 
     # Считываем файл ответов экспертов.
-    file_experts = "test_orig/artest_orig/art{}.opin.txt".format(str(num))
+    file_experts = ETALON_ANSWERS + "/art{}.opin.txt".format(str(num))
     print "reading: {}".format(file_experts)
     file2 = pd.read_csv(file_experts, sep=',', header=None)
     test_file = file2[[0, 1, 2]].copy()
@@ -152,24 +155,31 @@ def calc_a_file(num):
                 results.loc[results.index[j], ('comparison')] = '---'
                 has_changes = True
 
+    if len(faulty) > 0:
+        print "YES"
 
     # Выкидываем все строки, которые были слиты вместе с другими.
     if has_changes:
         results = results[results['comparison'] != '---']
-    # print(">test_"+color+"/art"+str(num)+".comp.txt")
+
     # Сохраняем файл со сравнениями.
-    comparison_file = "test_{}/art{}.comp.txt".format(color, str(num))
+    comparison_file = USER_ANSWERS + "/art{}.comp.txt".format(str(num))
     results.to_csv(comparison_file)
 
     return calcPrecisionAndRecall(results)
 
+# TODO: make it a part of a project. Wrap this eval script into class and
+# provide an API for evaluation.
 if __name__ == "__main__":
 
     """ Основная подпрограмма.
     """
-    pos_prec, neg_prec, pos_recall, neg_recall=(0,0,0,0)
+    pos_prec, neg_prec, pos_recall, neg_recall = (0, 0, 0, 0)
 
-    for n in range(46, 76):
+    test_indices = range(46, 76)
+    # test_indices.remove(70)
+
+    for n in test_indices:
         [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = calc_a_file(n)
 
         pos_prec += pos_prec1
@@ -177,18 +187,17 @@ if __name__ == "__main__":
         pos_recall += pos_recall1
         neg_recall += neg_recall1
 
-    pos_prec /= 30
-    neg_prec /= 30
-    pos_recall /= 30
-    neg_recall /= 30
-
+    pos_prec /= len(test_indices)
+    neg_prec /= len(test_indices)
+    pos_recall /= len(test_indices)
+    neg_recall /= len(test_indices)
 
     if pos_prec * pos_recall != 0:
-        f1_pos = 2 * pos_prec*pos_recall / (pos_prec+pos_recall)
+        f1_pos = 2 * pos_prec * pos_recall / (pos_prec + pos_recall)
     else:
         f1_pos = 0
     if neg_prec * neg_recall != 0:
-        f1_neg = 2 * neg_prec * neg_recall / (neg_prec+neg_recall)
+        f1_neg = 2 * neg_prec * neg_recall / (neg_prec + neg_recall)
     else:
         f1_neg = 0
 

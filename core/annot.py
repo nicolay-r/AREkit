@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
+from stemmer import Stemmer
 
 
 class EntityCollection:
@@ -8,6 +9,7 @@ class EntityCollection:
 
     def __init__(self, entities):
         self.entities = entities
+        self.stemmer = Stemmer()
 
     @staticmethod
     def from_file(filepath):
@@ -30,6 +32,26 @@ class EntityCollection:
     def get(self, index):
         return self.entities[index]
 
+    def find_by_ID(self, ID):
+        assert(type(ID) == unicode)
+
+        for e in self.entities:
+            if e.ID == ID:
+                return e
+        raise Exception("entity with ID={} was not found".format(ID))
+
+
+    def find_by_value(self, entity_value):
+        assert(type(entity_value) == unicode)
+
+        value = self.stemmer.lemmatize_to_str(entity_value)
+        founded = []
+        for e in self.entities:
+            if value == self.stemmer.lemmatize_to_str(e.value):
+                founded.append(e)
+
+        return founded
+
     def count(self):
         return len(self.entities)
 
@@ -39,7 +61,7 @@ class EntityCollection:
 
 
 class Entity:
-    """ Entity description
+    """ Entity description.
     """
 
     def __init__(self, ID, str_type, begin, end, value):

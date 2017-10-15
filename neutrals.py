@@ -1,21 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 import logging
 import numpy as np
+from gensim.models.word2vec import Word2Vec
 
+import core.utils
 from core.annot import EntityCollection
 from core.news import News
 from core.opinion import OpinionCollection
-from core.stemmer import Stemmer
-
-from gensim.models.word2vec import Word2Vec
 
 IGNORED_ENTITIES = ["Author", "Unknown"]
 
 
-# distance between two entities counted in sentences.
 def sentences_between(e1, e2, news):
+    """ Distance between two features in sentences
+    """
 
     if e1.value in IGNORED_ENTITIES or e2.value in IGNORED_ENTITIES:
         return -2
@@ -38,9 +37,11 @@ def sentences_between(e1, e2, news):
     return abs(s1_ind - s2_ind)
 
 
-def relations_equal_diff(E, diff, news, opinions, w2v_model):
+def relations_equal_diff(E, diff, news, opinions, w2v_model, callback):
+    """ Relations that had the same difference
+    """
 
-    def makeerelation(e1, e2, mystem):
+    def make_relation(e1, e2, mystem):
         return "{}_{}".format(mystem.lemmatize(e1), mystem.lemmatize(e2))
 
     def rus_vectores_lemmatize(e, mystem):
@@ -78,7 +79,7 @@ def relations_equal_diff(E, diff, news, opinions, w2v_model):
         return sum(map(lambda x, y: x * y, v1, v2))
 
     count = 0
-    mystem = Stemmer().mystem
+    mystem = core.utils.stemmer.mystem
     unique_relations = []
     entities = news.entities
 
@@ -105,6 +106,7 @@ def relations_equal_diff(E, diff, news, opinions, w2v_model):
 
                 cos = rus_vectores_similarity(e1.value, e2.value, mystem, w2v_model)
 
+                # TODO: pass into callback
                 logging.info("{} -> {}, d: {}, s: {}, cos: {}".format(
                     e1.value.encode('utf-8'), e2.value.encode('utf-8'),
                     d, s, cos))
@@ -115,31 +117,38 @@ def relations_equal_diff(E, diff, news, opinions, w2v_model):
     return count
 
 
-i = 1
+def make_for_file(n, w2v_model):
+
+    def save_callback(e1, e2):
+        # TODO: Implement save
+        with open(neutral_file, "a+") as neutral_output:
+            pass
+
+    root = "data/Texts/"
+
+    annot_filepath = root + "art{}.ann".format(n)
+    news_filepath = root + "art{}.txt".format(n)
+    opin_filepath = root + "art{}.opin.txt".format(n)
+    neutral_file = root + "art{}.neut.txt".format(n)
+
+    # parse
+    entities = EntityCollection.from_file(annot_filepath)
+    news = News.from_file(news_filepath, entities)
+    opinions = OpinionCollection.from_file(opin_filepath)
+
+    E = np.zeros((entities.count(), entities.count()), dtype='int32')
+    for e1 in entities:
+        for e2 in entities:
+            i = e1.get_int_ID()
+            j = e2.get_int_ID()
+            E[i-1][j-1] = sentences_between(e1, e2, news)
+
+    relations_equal_diff(E, 0, news, opinions, w2v_model, save_callback)
+
+
+# TODO: MAIN
 w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
-annot_filepath = "data/Texts/art{}.ann".format(i)
-news_filepath = 'data/Texts/art{}.txt'.format(i)
-opin_filepath = 'data/Texts/art{}.opin.txt'.format(i)
-
-logging.basicConfig(filemode='w',
-                    format="",
-                    level=logging.DEBUG,
-                    filename="out.txt")
-
-entities = EntityCollection.from_file(annot_filepath)
-news = News.from_file(news_filepath, entities)
-opinions = OpinionCollection.from_file(opin_filepath)
-
-E = np.zeros((entities.count(), entities.count()), dtype='int32')
-
-for e1 in entities:
-    for e2 in entities:
-        i = e1.get_int_ID()
-        j = e2.get_int_ID()
-        E[i-1][j-1] = sentences_between(e1, e2, news)
-
 w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
 
-for diff in range(1):
-    logging.info("d: {}, r: {}".format(
-        diff, relations_equal_diff(E, diff, news, opinions, w2v_model)))
+for n in range(1,  42):
+    make_for_file(n, w2v_model)

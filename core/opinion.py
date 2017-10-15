@@ -1,9 +1,6 @@
 # -*- coding: cp1251 -*-
 import io
-from pymystem3 import Mystem
-
-# TODO: remove this later
-MYSTEM = Mystem()
+import utils
 
 
 class OpinionCollection:
@@ -12,7 +9,6 @@ class OpinionCollection:
 
     def __init__(self, opinions):
         self.opinions = opinions
-        self.mystem = Mystem()
 
     @staticmethod
     def from_file(filepath):
@@ -57,10 +53,10 @@ class Opinion:
     # TODO: add a relation class
     def is_equal(self, entity_left, entity_right, lemmatize=False):
 
-        i_el = ' '.join(MYSTEM.lemmatize(entity_left)) if lemmatize else entity_left
-        i_er = ' '.join(MYSTEM.lemmatize(entity_right)) if lemmatize else entity_right
-        o_el = ' '.join(MYSTEM.lemmatize(self.entity_left)) if lemmatize else self.entity_left
-        o_er = ' '.join(MYSTEM.lemmatize(self.entity_right)) if lemmatize else self.entity_right
+        i_el = ' '.join(utils.stemmer.mystem.lemmatize(entity_left)) if lemmatize else entity_left
+        i_er = ' '.join(utils.stemmer.mystem.lemmatize(entity_right)) if lemmatize else entity_right
+        o_el = ' '.join(utils.stemmer.mystem.lemmatize(self.entity_left)) if lemmatize else self.entity_left
+        o_er = ' '.join(utils.stemmer.mystem.lemmatize(self.entity_right)) if lemmatize else self.entity_right
 
         return i_el == o_el and i_er == o_er
 
@@ -70,3 +66,4 @@ class Opinion:
                 self.entity_right.encode('utf-8'),
                 self.sentiment.encode('utf-8'),
                 self.time.encode('utf-8'))
+
