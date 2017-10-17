@@ -45,9 +45,13 @@ class LexiconFeature(Feature):
 
         return [sum(scores), min(scores), max(scores)]
 
-    def __scores(self, s_from, s_to, e1, e2, news):
-        scores = []
+    def __scores(self, s_from, s_to, e1, e2, news, sentence_range=4):
+        scores = [0]
         sentences = news.sentences
+
+        # omitting relations between entities that placed so far
+        if (s_to - s_from > sentence_range):
+            return scores
 
         i = s_from + 1
         while i < s_to:
@@ -88,6 +92,7 @@ class LexiconFeature(Feature):
                 continue
 
             score = self.__get_weight(lemma)
+
             if (sign == '-'):
                 score *= -1
                 sign = None
@@ -100,5 +105,5 @@ class LexiconFeature(Feature):
     def __get_weight(self, lemma):
         assert(type(lemma) == unicode)
 
-        s = self.lexicon[lemma == self.lexicon['term']]
+        s = self.lexicon[lemma.encode('utf-8') == self.lexicon['term']]
         return s['tone'].values[0] if len(s) > 0 else 0
