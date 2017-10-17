@@ -13,6 +13,8 @@ from core.news import News
 
 from core.features.distance import DistanceFeature
 from core.features.similarity import SimilarityFeature
+from core.features.lexicon import LexiconFeature
+from core.processing.prefix import SentimentPrefixProcessor
 
 root = "data/Texts/"
 
@@ -22,18 +24,20 @@ opin_filepath = root + "art{}.opin.txt".format(n)
 neutral_filepath = root + "art{}.neut.txt".format(n)
 news_filepath = root + "art{}.txt".format(n)
 vector_output = root + "art{}.vectors.txt".format(n)
-w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
+# w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
 
 
-w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
+# w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
 entities = EntityCollection.from_file(annot_filepath)
 news = News.from_file(news_filepath, entities)
 sentiment_opinions = OpinionCollection.from_file(opin_filepath)
 # neutral_opinions = OpinionCollection.from_file(neutral_filepath)
+prefix_processor = SentimentPrefixProcessor.from_file("data/prefixes.csv")
 
 features = [
     DistanceFeature(),
-    SimilarityFeature(w2v_model)
+    # SimilarityFeature(w2v_model),
+    LexiconFeature("data/rusentilex.csv", prefix_processor)
     ]
 
 sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}

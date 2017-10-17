@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import io
 
@@ -79,6 +78,9 @@ class Sentence:
     def add_entity(self, ID, begin, end):
         """ Local entity indices
         """
+        assert(type(ID) == unicode)
+        assert(type(begin) == int)
+        assert(type(end) == int)
         self.entity_ids.append((ID, begin, end))
 
     def has_entity(self, entity_ID):
@@ -86,7 +88,6 @@ class Sentence:
             if e[0] == entity_ID:
                 return True
         return False
-
 
     @property
     def entities(self):
