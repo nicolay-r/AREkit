@@ -14,6 +14,9 @@ from core.news import News
 from core.features.distance import DistanceFeature
 from core.features.similarity import SimilarityFeature
 from core.features.lexicon import LexiconFeature
+from core.features.pattern import PatternFeature
+from core.features.entities import EntitiesBetweenFeature
+from core.features.prepositions import PrepositionsCountFeature
 from core.processing.prefix import SentimentPrefixProcessor
 
 root = "data/Texts/"
@@ -37,7 +40,10 @@ prefix_processor = SentimentPrefixProcessor.from_file("data/prefixes.csv")
 features = [
     DistanceFeature(),
     # SimilarityFeature(w2v_model),
-    LexiconFeature("data/rusentilex.csv", prefix_processor)
+    LexiconFeature("data/rusentilex.csv", prefix_processor),
+    PatternFeature([',']),
+    EntitiesBetweenFeature(),
+    PrepositionsCountFeature([])
     ]
 
 sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}

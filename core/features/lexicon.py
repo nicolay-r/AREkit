@@ -12,16 +12,16 @@ from core.processing.prefix import SentimentPrefixProcessor
 
 class LexiconFeature(Feature):
 
-    def __init__(self, csv_filepath, prefix_processor):
+    def __init__(self, csv_filepath, prefix_processor, max_sentence_range=4):
         assert(isinstance(prefix_processor, SentimentPrefixProcessor))
         self.stemmer = Stemmer()
         self.lexicon = pd.read_csv(csv_filepath, sep=',')
         self.prefix_processor = prefix_processor
+        self.max_sentence_range = max_sentence_range
 
     def __find_sentence_with_entity(self, entity, news):
         assert(isinstance(entity, Entity))
         assert(isinstance(news, News))
-        entity.show()
         for i, sentence in enumerate(news.sentences):
             if sentence.has_entity(entity.ID):
                 return i
@@ -45,12 +45,12 @@ class LexiconFeature(Feature):
 
         return [sum(scores), min(scores), max(scores)]
 
-    def __scores(self, s_from, s_to, e1, e2, news, sentence_range=4):
+    def __scores(self, s_from, s_to, e1, e2, news):
         scores = [0]
         sentences = news.sentences
 
         # omitting relations between entities that placed so far
-        if (s_to - s_from > sentence_range):
+        if (s_to - s_from > self.max_sentence_range):
             return scores
 
         i = s_from + 1
@@ -71,7 +71,8 @@ class LexiconFeature(Feature):
             # single sentence
             char_to = max(e1.begin - s_begin, e2.begin - s_begin)
             char_from = min(e1.end - s_begin, e2.end - s_begin)
-            scores += self.__get_scores(sentences[i].text[char_from:char_to])
+            scores += self.__get_scores(
+                sentences[s_from].text[char_from:char_to])
 
         return scores
 
@@ -79,6 +80,7 @@ class LexiconFeature(Feature):
         lemmas = self.stemmer.lemmatize_to_list(text)
         processed_lemmas = self.prefix_processor.process(lemmas)
         scores = self.__get_scores_of_processed(processed_lemmas)
+        self.__show_lemmas(processed_lemmas)
         return scores
 
     def __get_scores_of_processed(self, processed_lemmas):
@@ -107,3 +109,10 @@ class LexiconFeature(Feature):
 
         s = self.lexicon[lemma.encode('utf-8') == self.lexicon['term']]
         return s['tone'].values[0] if len(s) > 0 else 0
+
+    @staticmethod
+    def __show_lemmas(processed_lemmas):
+        for l in processed_lemmas:
+            print l.encode('utf-8'),
+        if len(processed_lemmas) > 0:
+            print '\n'
