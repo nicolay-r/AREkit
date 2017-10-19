@@ -60,6 +60,13 @@ class News:
                     ID, begin, end,
                     s.text[begin:end].encode('utf-8'))
 
+    def find_sentence_by_entity(self, entity):
+        for i, sentence in enumerate(self.sentences):
+            if sentence.has_entity(entity.ID):
+                return i
+
+        raise Exception("Can't find entity!")
+
 
 class Sentence:
 
