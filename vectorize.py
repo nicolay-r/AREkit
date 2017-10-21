@@ -6,10 +6,10 @@ import logging
 import numpy as np
 from gensim.models.word2vec import Word2Vec
 
-from core.opinion import OpinionCollection
-from core.annot import EntityCollection
-from core.relations import Relation
-from core.news import News
+from core.source.opinion import OpinionCollection
+from core.source.entity import EntityCollection
+from core.source.news import News
+from core.source.relations import Relation
 
 from core.features.distance import DistanceFeature
 from core.features.similarity import SimilarityFeature
@@ -22,7 +22,7 @@ from core.processing.prefix import SentimentPrefixProcessor
 root = "data/Texts/"
 
 n = 1
-annot_filepath = root + "art{}.ann".format(n)
+entity_filepath = root + "art{}.ann".format(n)
 opin_filepath = root + "art{}.opin.txt".format(n)
 neutral_filepath = root + "art{}.neut.txt".format(n)
 news_filepath = root + "art{}.txt".format(n)
@@ -31,7 +31,7 @@ vector_output = root + "art{}.vectors.txt".format(n)
 
 
 # w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
-entities = EntityCollection.from_file(annot_filepath)
+entities = EntityCollection.from_file(entity_filepath)
 news = News.from_file(news_filepath, entities)
 sentiment_opinions = OpinionCollection.from_file(opin_filepath)
 # neutral_opinions = OpinionCollection.from_file(neutral_filepath)

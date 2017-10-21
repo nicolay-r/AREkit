@@ -1,7 +1,7 @@
 import pandas as pd
 
 from feature import Feature
-from core.relations import Relation
+from core.source.relations import Relation
 from core.stemmer import Stemmer
 
 # TODO: move to the environment

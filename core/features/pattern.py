@@ -1,4 +1,4 @@
-from core.relations import Relation
+from core.source.relations import Relation
 from feature import Feature
 
 

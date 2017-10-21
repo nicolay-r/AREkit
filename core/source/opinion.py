@@ -1,7 +1,6 @@
 # -*- coding: cp1251 -*-
 import io
-import utils
-
+import core.environment as env
 
 class OpinionCollection:
     """ Collection of sentiment opinions between entities
@@ -53,10 +52,10 @@ class Opinion:
     # TODO: add a relation class
     def is_equal(self, entity_left, entity_right, lemmatize=False):
 
-        i_el = ' '.join(utils.stemmer.mystem.lemmatize(entity_left)) if lemmatize else entity_left
-        i_er = ' '.join(utils.stemmer.mystem.lemmatize(entity_right)) if lemmatize else entity_right
-        o_el = ' '.join(utils.stemmer.mystem.lemmatize(self.entity_left)) if lemmatize else self.entity_left
-        o_er = ' '.join(utils.stemmer.mystem.lemmatize(self.entity_right)) if lemmatize else self.entity_right
+        i_el = ' '.join(env.stemmer.lemmatize_to_list(entity_left)) if lemmatize else entity_left
+        i_er = ' '.join(env.stemmer.lemmatize_to_list(entity_right)) if lemmatize else entity_right
+        o_el = ' '.join(env.stemmer.lemmatize_to_list(self.entity_left)) if lemmatize else self.entity_left
+        o_er = ' '.join(env.stemmer.lemmatize_to_list(self.entity_right)) if lemmatize else self.entity_right
 
         return i_el == o_el and i_er == o_er
 

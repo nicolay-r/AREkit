@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
-from stemmer import Stemmer
+from core.stemmer import Stemmer
 
 
 class EntityCollection:

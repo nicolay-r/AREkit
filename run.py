@@ -4,10 +4,11 @@
 import logging
 import numpy as np
 
-from core.annot import EntityCollection
-from core.news import News
-from core.opinion import OpinionCollection
 from core.stemmer import Stemmer
+
+from core.source.entity import EntityCollection
+from core.source.news import News
+from core.source.opinion import OpinionCollection
 
 from gensim.models.word2vec import Word2Vec
 
@@ -40,7 +41,7 @@ def sentences_between(e1, e2, news):
 
 def relations_equal_diff(E, diff, news, opinions, w2v_model):
 
-    def makeerelation(e1, e2, mystem):
+    def make_relation(e1, e2, mystem):
         return "{}_{}".format(mystem.lemmatize(e1), mystem.lemmatize(e2))
 
     def rus_vectores_lemmatize(e, mystem):
@@ -117,7 +118,7 @@ def relations_equal_diff(E, diff, news, opinions, w2v_model):
 
 i = 1
 w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
-annot_filepath = "data/Texts/art{}.ann".format(i)
+entity_filepath = "data/Texts/art{}.ann".format(i)
 news_filepath = 'data/Texts/art{}.txt'.format(i)
 opin_filepath = 'data/Texts/art{}.opin.txt'.format(i)
 
@@ -126,7 +127,7 @@ logging.basicConfig(filemode='w',
                     level=logging.DEBUG,
                     filename="out.txt")
 
-entities = EntityCollection.from_file(annot_filepath)
+entities = EntityCollection.from_file(entity_filepath)
 news = News.from_file(news_filepath, entities)
 opinions = OpinionCollection.from_file(opin_filepath)
 
