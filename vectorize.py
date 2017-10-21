@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# TODO: saves file with vectors for appropriate article.
 
 import logging
 import numpy as np
@@ -17,18 +16,23 @@ from core.features.lexicon import LexiconFeature
 from core.features.pattern import PatternFeature
 from core.features.entities import EntitiesBetweenFeature
 from core.features.prepositions import PrepositionsCountFeature
+
 from core.processing.prefix import SentimentPrefixProcessor
+
+import io_utils
 
 root = "data/Texts/"
 
 n = 1
 entity_filepath = root + "art{}.ann".format(n)
 opin_filepath = root + "art{}.opin.txt".format(n)
-neutral_filepath = root + "art{}.neut.txt".format(n)
+# neutral_filepath = root + "art{}.neut.txt".format(n)
 news_filepath = root + "art{}.txt".format(n)
 vector_output = root + "art{}.vectors.txt".format(n)
-# w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
 
+w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
+preps_filepath = "data/prepositions.txt"
+rusentilex_filepath = "data/rusentilex.csv"
 
 # w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
 entities = EntityCollection.from_file(entity_filepath)
@@ -36,15 +40,16 @@ news = News.from_file(news_filepath, entities)
 sentiment_opinions = OpinionCollection.from_file(opin_filepath)
 # neutral_opinions = OpinionCollection.from_file(neutral_filepath)
 prefix_processor = SentimentPrefixProcessor.from_file("data/prefixes.csv")
+prepositions_list = io_utils.read_prepositions(preps_filepath)
 
 features = [
     DistanceFeature(),
     # SimilarityFeature(w2v_model),
-    LexiconFeature("data/rusentilex.csv", prefix_processor),
+    LexiconFeature(rusentilex_filepath, prefix_processor),
     PatternFeature([',']),
     EntitiesBetweenFeature(),
-    PrepositionsCountFeature([])
-    ]
+    PrepositionsCountFeature(prepositions_list)
+]
 
 sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
 

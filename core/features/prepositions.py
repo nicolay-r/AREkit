@@ -1,5 +1,6 @@
 from feature import Feature
 from core.source.relations import Relation
+from core.source.news import News
 
 
 class PrepositionsCountFeature(Feature):
@@ -18,6 +19,39 @@ class PrepositionsCountFeature(Feature):
         s1 = relation.news.find_sentence_by_entity(e1)
         s2 = relation.news.find_sentence_by_entity(e2)
 
-        # TODO
+        preps = self.__get_prepositions_count(s1, s2, e1, e2, relation.news)
 
-        return []
+        return [preps]
+
+    def __get_prepositions_count(self, s1, s2, e1, e2, news):
+        r = 0
+
+        range_from = min(e1.end, e2.end)
+        range_to = max(e1.begin, e2.begin)
+
+        for s_id in range(s1, s2+1):
+            s = news.sentences[s_id]
+            for p in self.prepositions:
+                has_prep = self.__has_sentence_preposition(
+                    s.text.lower(), s.begin, s.end, p, range_from, range_to)
+                r += 1 if has_prep else 0
+
+        return r
+
+    @staticmethod
+    def __has_sentence_preposition(s_text, s_begin, s_end, prep, range_from, range_to):
+        assert(type(s_text) == unicode)
+        assert(type(prep) == unicode)
+
+        index = s_text.find(prep)
+
+        if (index == -1):
+            return False
+
+        p_from = s_begin + index
+        p_to = p_from + len(prep)
+
+        if (p_from > range_from and p_to < range_to):
+            return True
+
+        return False
