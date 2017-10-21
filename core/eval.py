@@ -75,25 +75,33 @@ def calcPrecisionAndRecall(results):
 
     # Расчет точности.
     if len(pos_answers) != 0:
-        pos_prec = len(pos_answers[(pos_answers['comparison']==True)]) / len(pos_answers)
-        print pos_prec
+        # print "-- {}".format(len(pos_answers[(pos_answers['comparison']==True)]))
+        # print "-- {}".format(len(pos_answers))
+        pos_prec = 1.0 * len(pos_answers[(pos_answers['comparison']==True)]) / len(pos_answers)
+        # print "== {}".format(pos_prec)
     else:
-        pos_prec = 0
+        pos_prec = 0.0
     if len(neg_answers) != 0:
-        neg_prec = len(neg_answers[(neg_answers['comparison']==True)]) / len(neg_answers)
+        neg_prec = 1.0 * len(neg_answers[(neg_answers['comparison']==True)]) / len(neg_answers)
     else:
-        neg_prec = 0
+        neg_prec = 0.0
 
     # Расчет полноты.
     if len(results[results['how_orig'] == 'pos']) != 0:
-        pos_recall = len(pos_answers[(pos_answers['comparison'] == True)]) / len(results[results['how_orig'] == 'pos'])
+        pos_recall = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(results[results['how_orig'] == 'pos'])
     else:
-        pos_recall = 0
+        pos_recall = 0.0
     if len(results[results['how_orig'] == 'neg']) != 0:
-        neg_recall = len(neg_answers[(neg_answers['comparison'] == True)]) / len(results[results['how_orig'] == 'neg'])
+        neg_recall = 1.0 * len(neg_answers[(neg_answers['comparison'] == True)]) / len(results[results['how_orig'] == 'neg'])
     else:
-        neg_recall = 0
-    return float(pos_prec), float(neg_prec), float(pos_recall), float(neg_recall)
+        neg_recall = 0.0
+
+    assert(type(pos_prec) == float)
+    assert(type(neg_prec) == float)
+    assert(type(pos_recall) == float)
+    assert(type(neg_recall) == float)
+
+    return pos_prec, neg_prec, pos_recall, neg_recall
 
 """ Расчет данных для файла.
 """
