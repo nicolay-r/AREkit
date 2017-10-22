@@ -4,10 +4,9 @@ import logging
 import numpy as np
 from gensim.models.word2vec import Word2Vec
 
-import core.utils
-from core.annot import EntityCollection
-from core.news import News
-from core.opinion import OpinionCollection
+from core.source.entity import EntityCollection
+from core.source.news import News
+from core.source.opinion import OpinionCollection
 
 IGNORED_ENTITIES = ["Author", "Unknown"]
 
@@ -150,5 +149,5 @@ def make_for_file(n, w2v_model):
 w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
 w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
 
-for n in range(1,  42):
+for n in range(1,  2):
     make_for_file(n, w2v_model)
