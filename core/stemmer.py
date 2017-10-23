@@ -36,3 +36,8 @@ class Stemmer:
             result.append("%s_%s" % (lex, pos))
 
         return result
+
+    def analyze(self, text):
+        """ mystem analyzer
+        """
+        return self.mystem.analyze(text)
