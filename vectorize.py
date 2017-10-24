@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import math
 import logging
 import numpy as np
 from gensim.models.word2vec import Word2Vec
@@ -11,6 +12,8 @@ from core.source.opinion import OpinionCollection
 from core.source.entity import EntityCollection
 from core.source.news import News
 from core.source.relations import Relation
+
+from core.output.vectors import CommonRelationVectorCollection, CommonRelationVector
 
 from core.features.distance import DistanceFeature
 from core.features.similarity import SimilarityFeature
@@ -24,12 +27,22 @@ from core.processing.prefix import SentimentPrefixProcessor
 import io_utils
 
 
+def normalize(vector):
+    def sgn(x):
+        if x > 0:
+            return 1
+        elif x < 0:
+            return -1
+        return 0
+
+    assert(isinstance(vector, np.ndarray))
+    return [(1 - math.exp(-abs(v))) * sgn(v) for v in vector]
+
+
 def vectorize_train(news, entities, opinion_collections, features):
     """ Vectorize news of train collection that has opinion labeling
     """
-    vectors = []
-    scores = []
-
+    collection = CommonRelationVectorCollection()
     sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
     for opinions in opinion_collections:
         for opinion in opinions:
@@ -37,39 +50,48 @@ def vectorize_train(news, entities, opinion_collections, features):
             entities_left = entities.find_by_value(opinion.entity_left)
             entities_right = entities.find_by_value(opinion.entity_right)
 
-            feature_vector = None
-            relations_count = len(entities_left) * len(entities_right)
+            r_features = None
+            r_count = len(entities_left) * len(entities_right)
             for e1 in entities_left:
                 for e2 in entities_right:
+
                     r = Relation(e1.ID, e2.ID, news)
-                    r_features = np.concatenate(
-                        [f.normalize(f.create(r)) for f in features])
+                    features = np.concatenate([f.create(r) for f in FEATURES])
 
-                    if feature_vector is None:
-                        feature_vector = r_features
+                    if r_features is None:
+                        r_features = features
                     else:
-                        feature_vector += r_features
+                        r_features += features
 
-            if relations_count == 0:
-                logging.info("- {} -> {}".format(
-                    opinion.entity_left.encode('utf-8'),
-                    opinion.entity_right.encode('utf-8')))
+            if r_count == 0:
                 continue
 
-            feature_vector /= relations_count
+            r_features = normalize(r_features/r_count)
 
-            vectors.append(feature_vector)
-            scores.append(sentiment_to_int[opinion.sentiment])
+            vector = CommonRelationVector(
+                opinion.entity_left, opinion.entity_right,
+                r_features, sentiment_to_int[opinion.sentiment])
 
-    return (vectors, scores)
+            collection.add_vector(vector)
+
+    return collection
 
 
 def vectorize_test(news, entities, features):
     """ Vectorize news of test collection
     """
-    features_by_relation = {}
-    relations_count = {}
-    vectors = []
+    def create_key(e1, e2):
+        key = "{}_{}".format(
+            env.stemmer.lemmatize_to_str(e1.value).encode('utf-8'),
+            env.stemmer.lemmatize_to_str(e2.value).encode('utf-8')).decode('utf-8')
+        assert(type(key) == unicode)
+        return key
+
+    collection = CommonRelationVectorCollection()
+
+    r_entities = {}
+    r_features = {}
+    r_count = {}
 
     for e1 in entities:
         for e2 in entities:
@@ -85,44 +107,38 @@ def vectorize_test(news, entities, features):
                 continue
 
             r = Relation(e1.ID, e2.ID, news)
+            r_key = create_key(e1, e2)
+            features = np.concatenate([f.create(r) for f in FEATURES])
 
-            # TODO: refactor env -> Environment
-            relation_name = "{}->{}".format(
-                env.stemmer.lemmatize_to_str(e1.value).encode('utf-8'),
-                env.stemmer.lemmatize_to_str(e2.value).encode('utf-8'))
-
-            r_features = np.concatenate(
-                [f.normalize(f.create(r)) for f in features])
-
-            features_by_relation[relation_name] = r_features
-
-            # Increase relations count
-            if relation_name not in relations_count:
-                relations_count[relation_name] = 1
+            # update features vector
+            if r_key in r_features:
+                r_features[r_key] += features
             else:
-                relations_count[relation_name] += 1
+                r_features[r_key] = features
 
-            # add features
-            if relation_name not in features_by_relation:
-                features_by_relation[relation_name] = r_features
+            # update count of such relations
+            if r_key not in r_count:
+                r_count[r_key] = 1
             else:
-                features_by_relation[relation_name] += r_features
+                r_count[r_key] += 1
 
-    for key, features in features_by_relation.iteritems():
-        vectors.append(features/relations_count[key])
+            # set entity values
+            if r_key not in r_entities:
+                r_entities[r_key] = (e1.value, e2.value)
 
-    return vectors
+    for key, features in r_features.iteritems():
+        left, right = r_entities[key]
+        vector = CommonRelationVector(left, right, normalize(features/r_count[key]))
+
+        collection.add_vector(vector)
+
+    return collection
 
 
-def save(vector_output, vectors, scores=None):
-    with open(vector_output, 'w') as output:
-        for i, v in enumerate(vectors):
-            for item in v:
-                output.write("%.6f " % (item))
-            if scores is not None:
-                output.write("{}\n".format(scores[i]))
-            else:
-                output.write("\n")
+def save(filepath, collection):
+    with open(filepath, 'w') as output:
+        for vector in collection:
+            output.write("{}\n".format(vector.to_str()))
 
 
 #
@@ -138,7 +154,7 @@ w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
 prefix_processor = SentimentPrefixProcessor.from_file("data/prefixes.csv")
 prepositions_list = io_utils.read_prepositions(preps_filepath)
 
-features = [
+FEATURES = [
     DistanceFeature(),
     # SimilarityFeature(w2v_model),
     # LexiconFeature(rusentilex_filepath, prefix_processor),
@@ -165,13 +181,14 @@ for n in io_utils.train_indices():
     sentiment_opins = OpinionCollection.from_file(opin_filepath)
     neutral_opins = OpinionCollection.from_file(neutral_filepath)
 
-    vectors, labels = vectorize_train(
-        news, entities, [sentiment_opins, neutral_opins], features)
-    save(vector_output, vectors, scores=labels)
+    vectors = vectorize_train(
+        news, entities, [sentiment_opins, neutral_opins], FEATURES)
+    save(vector_output, vectors)
 
 #
 # Test collection
 #
+print 'test'
 root = io_utils.test_root()
 for n in io_utils.test_indices():
     entity_filepath = root + "art{}.ann".format(n)
@@ -183,5 +200,5 @@ for n in io_utils.test_indices():
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
 
-    vectors = vectorize_test(news, entities, features)
+    vectors = vectorize_test(news, entities, FEATURES)
     save(vector_output, vectors)

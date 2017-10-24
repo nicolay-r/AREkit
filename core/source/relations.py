@@ -2,7 +2,7 @@ from news import News
 
 
 class Relation:
-    """ Relations between two entities
+    """ Strict Relation between two Entities
     """
 
     def __init__(self, entity_left_ID, entity_right_ID, news):
