@@ -46,8 +46,11 @@ class News:
                 e_ind += 1
                 continue
 
-            raise Exception("e_i:{} e:({},{}), s_i:{}  s({},{})".format(
-                e_ind, e.begin, e.end, s_ind, s.begin, s.end))
+            raise Exception("e_i:{} e:('{}',{},{}), s_i:{}  s({},{})".format(
+                e_ind,
+                e.value.encode('utf-8'), e.begin, e.end,
+                s_ind,
+                s.begin, s.end))
 
         return News(sentences, entities)
 

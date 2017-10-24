@@ -8,6 +8,8 @@ from core.source.entity import EntityCollection
 from core.source.news import News
 from core.source.opinion import OpinionCollection
 
+import io_utils
+
 IGNORED_ENTITIES = ["Author", "Unknown"]
 
 
@@ -91,7 +93,7 @@ def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
     return pairs
 
 
-def make_neutrals(news, entities, opinions, w2v_model):
+def make_neutrals(news, entities, w2v_model, opinions=None):
 
     E = np.zeros((entities.count(), entities.count()), dtype='int32')
     for e1 in entities:
@@ -109,7 +111,7 @@ def make_neutrals(news, entities, opinions, w2v_model):
 def save(filepath, relation_pairs):
     """ Saving relation
     """
-    print neutral_file
+    print filepath
     with open(filepath, "w") as f:
         for r_left, r_right in relation_pairs:
             f.write("{}, {}, {}, {}\n".format(
@@ -123,17 +125,36 @@ def save(filepath, relation_pairs):
 w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
 w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
 
-root = "data/Texts/"
-
-for n in range(1,  2):
-    annot_filepath = root + "art{}.ann".format(n)
+#
+# Train
+#
+root = io_utils.train_root()
+for n in io_utils.train_indices():
+    entity_filepath = root + "art{}.ann".format(n)
     news_filepath = root + "art{}.txt".format(n)
     opin_filepath = root + "art{}.opin.txt".format(n)
-    neutral_file = root + "art{}.neut.txt".format(n)
+    neutral_filepath = root + "art{}.neut.txt".format(n)
 
-    entities = EntityCollection.from_file(annot_filepath)
+    print entity_filepath
+
+    entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
     opinions = OpinionCollection.from_file(opin_filepath)
 
-    pairs = make_neutrals(news, entities, opinions, w2v_model)
-    save(neutral_file, pairs)
+    pairs = make_neutrals(news, entities, w2v_model, opinions)
+    save(neutral_filepath, pairs)
+
+#
+# Test
+#
+root = io_utils.test_root()
+for n in io_utils.test_indices():
+    entity_filepath = root + "art{}.ann".format(n)
+    news_filepath = root + "art{}.txt".format(n)
+    neutral_filepath = root + "art{}.neut.txt".format(n)
+
+    entities = EntityCollection.from_file(entity_filepath)
+    news = News.from_file(news_filepath, entities)
+
+    pairs = make_neutrals(news, entities, w2v_model)
+    save(neutral_filepath, pairs)

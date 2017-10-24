@@ -7,12 +7,12 @@ class NewsVectorizedRelations:
         self.labels = labels
 
     @staticmethod
-    def from_file(vectors_filepath, labeled=False):
+    def from_file(filepath, labeled=False):
         """ Read the vectors from *.vectors.txt file
         """
         X = []
         labels = []
-        with io.open(vector_filepath, 'r') as f:
+        with io.open(filepath, 'r') as f:
             for line in f.readlines():
                 args = line.split()
 
@@ -22,6 +22,8 @@ class NewsVectorizedRelations:
                     y = x[len(x)-1]
                     x = x[:len(x)-1]
                     labels.append(y)
+
+                assert(type(x) == list)
 
                 X.append(x)
 

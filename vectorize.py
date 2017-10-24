@@ -24,41 +24,42 @@ from core.processing.prefix import SentimentPrefixProcessor
 import io_utils
 
 
-def vectorize_train(news, entities, opinions, features):
+def vectorize_train(news, entities, opinion_collections, features):
     """ Vectorize news of train collection that has opinion labeling
     """
     vectors = []
     scores = []
 
     sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
-    for opinion in opinions:
-        # print opinion.entity_left.encode('utf-8'), opinion.entity_right.encode('utf-8')
-        entities_left = entities.find_by_value(opinion.entity_left)
-        entities_right = entities.find_by_value(opinion.entity_right)
+    for opinions in opinion_collections:
+        for opinion in opinions:
+            # print opinion.entity_left.encode('utf-8'), opinion.entity_right.encode('utf-8')
+            entities_left = entities.find_by_value(opinion.entity_left)
+            entities_right = entities.find_by_value(opinion.entity_right)
 
-        feature_vector = None
-        relations_count = len(entities_left) * len(entities_right)
-        for e1 in entities_left:
-            for e2 in entities_right:
-                r = Relation(e1.ID, e2.ID, news)
-                r_features = np.concatenate(
-                    [f.normalize(f.create(r)) for f in features])
+            feature_vector = None
+            relations_count = len(entities_left) * len(entities_right)
+            for e1 in entities_left:
+                for e2 in entities_right:
+                    r = Relation(e1.ID, e2.ID, news)
+                    r_features = np.concatenate(
+                        [f.normalize(f.create(r)) for f in features])
 
-                if feature_vector is None:
-                    feature_vector = r_features
-                else:
-                    feature_vector += r_features
+                    if feature_vector is None:
+                        feature_vector = r_features
+                    else:
+                        feature_vector += r_features
 
-        if relations_count == 0:
-            logging.info("- {} -> {}".format(
-                opinion.entity_left.encode('utf-8'),
-                opinion.entity_right.encode('utf-8')))
-            continue
+            if relations_count == 0:
+                logging.info("- {} -> {}".format(
+                    opinion.entity_left.encode('utf-8'),
+                    opinion.entity_right.encode('utf-8')))
+                continue
 
-        feature_vector /= relations_count
+            feature_vector /= relations_count
 
-        vectors.append(feature_vector)
-        scores.append(sentiment_to_int[opinion.sentiment])
+            vectors.append(feature_vector)
+            scores.append(sentiment_to_int[opinion.sentiment])
 
     return (vectors, scores)
 
@@ -77,18 +78,18 @@ def vectorize_test(news, entities, features):
                 continue
 
             s1 = news.find_sentence_by_entity(e1)
-            s2 = news.find_sentence_ty_entity(e2)
+            s2 = news.find_sentence_by_entity(e2)
 
             # If entites from different sentences
-            if not s1.begin == s2.begin:
+            if not s1 == s2:
                 continue
 
             r = Relation(e1.ID, e2.ID, news)
 
             # TODO: refactor env -> Environment
             relation_name = "{}->{}".format(
-                env.stemmer.lemmatize_to_str(e1.value),
-                env.stemmer.lemmatize_to_str(e2.value))
+                env.stemmer.lemmatize_to_str(e1.value).encode('utf-8'),
+                env.stemmer.lemmatize_to_str(e2.value).encode('utf-8'))
 
             r_features = np.concatenate(
                 [f.normalize(f.create(r)) for f in features])
@@ -120,6 +121,8 @@ def save(vector_output, vectors, scores=None):
                 output.write("%.6f " % (item))
             if scores is not None:
                 output.write("{}\n".format(scores[i]))
+            else:
+                output.write("\n")
 
 
 #
@@ -138,21 +141,24 @@ prepositions_list = io_utils.read_prepositions(preps_filepath)
 features = [
     DistanceFeature(),
     # SimilarityFeature(w2v_model),
-    LexiconFeature(rusentilex_filepath, prefix_processor),
-    PatternFeature([',']),
-    EntitiesBetweenFeature(),
-    PrepositionsCountFeature(prepositions_list)
+    # LexiconFeature(rusentilex_filepath, prefix_processor),
+    # PatternFeature([',']),
+    # EntitiesBetweenFeature(),
+    # PrepositionsCountFeature(prepositions_list)
 ]
 
 #
 # Train collection
 #
-for n in range(1, 2):
+root = io_utils.train_root()
+for n in io_utils.train_indices():
     entity_filepath = root + "art{}.ann".format(n)
     opin_filepath = root + "art{}.opin.txt".format(n)
     neutral_filepath = root + "art{}.neut.txt".format(n)
     news_filepath = root + "art{}.txt".format(n)
     vector_output = root + "art{}.vectors.txt".format(n)
+
+    print vector_output
 
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
@@ -160,23 +166,22 @@ for n in range(1, 2):
     neutral_opins = OpinionCollection.from_file(neutral_filepath)
 
     vectors, labels = vectorize_train(
-        news, entities, sentiment_opins+neutral_opins, features)
+        news, entities, [sentiment_opins, neutral_opins], features)
     save(vector_output, vectors, scores=labels)
 
 #
 # Test collection
 #
-root = "data/test/"
-for n in range(1, 2):
+root = io_utils.test_root()
+for n in io_utils.test_indices():
     entity_filepath = root + "art{}.ann".format(n)
     news_filepath = root + "art{}.txt".format(n)
     vector_output = root + "art{}.vectors.txt".format(n)
+
+    print vector_output
 
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
 
     vectors = vectorize_test(news, entities, features)
     save(vector_output, vectors)
-
-# TODO:
-# Implement normalizer

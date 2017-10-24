@@ -2,6 +2,7 @@
 import io
 import core.environment as env
 
+
 class OpinionCollection:
     """ Collection of sentiment opinions between entities
     """
@@ -16,7 +17,11 @@ class OpinionCollection:
         opinions = []
         with io.open(filepath, "r", encoding='utf-8') as f:
             for line in f.readlines():
-                args = line.split(',')
+                args = line.strip().split(',')
+
+                if len(args) < 4:
+                    continue
+
                 o = Opinion(args[0].strip(), args[1].strip(),
                             args[2].strip(), args[3].strip())
                 opinions.append(o)
@@ -36,7 +41,7 @@ class OpinionCollection:
 
 
 class Opinion:
-    """ Opinion description
+    """ Source opinion description
     """
 
     def __init__(self, entity_left, entity_right, sentiment, time):
@@ -65,4 +70,3 @@ class Opinion:
                 self.entity_right.encode('utf-8'),
                 self.sentiment.encode('utf-8'),
                 self.time.encode('utf-8'))
-

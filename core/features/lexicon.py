@@ -69,7 +69,6 @@ class LexiconFeature(Feature):
         lemmas = self.stemmer.lemmatize_to_list(text)
         processed_lemmas = self.prefix_processor.process(lemmas)
         scores = self.__get_scores_of_processed(processed_lemmas)
-        self.__show_lemmas(processed_lemmas)
         return scores
 
     def __get_scores_of_processed(self, processed_lemmas):

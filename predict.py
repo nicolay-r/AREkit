@@ -5,25 +5,26 @@ from sklearn import svm
 
 from core.source.vectors import NewsVectorizedRelations
 
+import io_utils
 
-root = "data/Texts/"
-
-# read train dataset
 
 X_train = []
 y_train = []
-for i in range(1, 46):
+root = io_utils.train_root()
+for i in io_utils.train_indices():
     vector_filepath = root + "art{}.vectors.txt".format(i)
     vectors = NewsVectorizedRelations.from_file(vector_filepath, labeled=True)
-    X_train += vectors.X # refactor as concat
+    X_train += vectors.X  # refactor as concat
     y_train += vectors.labels
 
-X_test = []
-for i in range(46, 76):
-    vector_filepath = root + "art{}.vectors.txt".format(i)
-    vectors = NewsVectorizedRelations.from_file(vector_filepat)
-    X_test += vectors.X # refactor as concat
+print len(X_train)
 
+X_test = []
+root = io_utils.test_root()
+for i in io_utils.test_indices():
+    vector_filepath = root + "art{}.vectors.txt".format(i)
+    vectors = NewsVectorizedRelations.from_file(vector_filepath)
+    X_test += vectors.X  # refactor as concat
 
 # fitting model
 c = svm.SVC()
