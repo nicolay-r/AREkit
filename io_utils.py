@@ -13,13 +13,13 @@ def read_prepositions(filepath):
 
 
 def train_indices():
-    indices = range(1, 46)[:10]
-    indices.remove(9)
+    indices = range(1, 46)[:1]
+    # indices.remove(9)
     return indices
 
 
 def test_indices():
-    indices = range(46, 76)[:10]
+    indices = range(46, 76)[:1]
     # indices.remove(70)
     return indices
 

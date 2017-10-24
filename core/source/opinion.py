@@ -35,6 +35,10 @@ class OpinionCollection:
 
         return False
 
+    def save(self, filepath):
+        # TODO
+        pass
+
     def __iter__(self):
         for a in self.opinions:
             yield a
@@ -63,6 +67,10 @@ class Opinion:
         o_er = ' '.join(env.stemmer.lemmatize_to_list(self.entity_right)) if lemmatize else self.entity_right
 
         return i_el == o_el and i_er == o_er
+
+    def to_str(self):
+        # TODO
+        pass
 
     def show(self):
         print "{}, {}, {}, {}".format(

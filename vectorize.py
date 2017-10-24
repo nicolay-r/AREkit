@@ -135,12 +135,6 @@ def vectorize_test(news, entities, features):
     return collection
 
 
-def save(filepath, collection):
-    with open(filepath, 'w') as output:
-        for vector in collection:
-            output.write("{}\n".format(vector.to_str()))
-
-
 #
 # Main
 #
@@ -183,7 +177,7 @@ for n in io_utils.train_indices():
 
     vectors = vectorize_train(
         news, entities, [sentiment_opins, neutral_opins], FEATURES)
-    save(vector_output, vectors)
+    vectors.save(vector_output)
 
 #
 # Test collection
@@ -201,4 +195,4 @@ for n in io_utils.test_indices():
     news = News.from_file(news_filepath, entities)
 
     vectors = vectorize_test(news, entities, FEATURES)
-    save(vector_output, vectors)
+    vectors.save(vector_output)

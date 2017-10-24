@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 
+import io
 import core.environment as env
 
 
 class CommonRelationVectorCollection:
 
-    def __init__(self):
+    def __init__(self, vectors=None):
         self.stemmer = env.stemmer
-        self.vectors = {}
+        self.vectors = {} if vectors is None else vectors
 
     def add_vector(self, vector):
         assert(isinstance(vector, CommonRelationVector))
         key = self.__create_key(vector)
 
         if key in self.vectors:
-           print "Collection already has a key {}. Ignored".format(key.encode('utf-8'))
-           return
+            print "Collection already has a key {}. Ignored".format(key.encode('utf-8'))
+            return
 
         self.vectors[key] = vector
 
@@ -30,8 +31,34 @@ class CommonRelationVectorCollection:
             vector.value_right.encode('utf-8')).decode('utf-8')
         return key
 
+    @staticmethod
+    def from_file(filepath):
+        """ Read the vectors from *.vectors.txt file
+        """
+        vectors = []
+        with io.open(filepath, 'r', encoding='utf-8') as f:
+            for line in f.readlines():
+                args = line.split(',')
+
+                entity_value_left = args[0].strip()
+                entity_value_right = args[1].strip()
+                label = args[len(args) - 1]
+                vector = [float(args[i]) for i in range(2, len(args))]
+
+                vectors.append(CommonRelationVector(
+                    entity_value_left, entity_value_right, vector, label))
+
+        return CommonRelationVectorCollection(vectors)
+
+    def save(self, filepath):
+        """ Save the vectors from *.vectors.txt file
+        """
+        with open(filepath, 'w') as output:
+            for vector in self.vectors.itervalues():
+                output.write("{}\n".format(vector.to_str()))
+
     def __iter__(self):
-        for v in self.vectors.itervalues():
+        for v in self.vectors:
             yield v
 
 

@@ -1,5 +1,6 @@
 import io
 
+
 class NewsVectorizedRelations:
 
     def __init__(self, X, labels):
@@ -12,12 +13,15 @@ class NewsVectorizedRelations:
         """
         X = []
         labels = []
+        entities = []
         with io.open(filepath, 'r') as f:
             for line in f.readlines():
-                args = line.split()
+                args = line.split(',')
+
+                entities.append((x[0], x[1]))
 
                 x = [float(a) for a in args]
-
+                x = x[2:]
                 if (labeled):
                     y = x[len(x)-1]
                     x = x[:len(x)-1]
