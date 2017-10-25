@@ -63,6 +63,9 @@ def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
     for i in range(E.shape[0]):
         for j in range(E.shape[1]):
 
+            if E[i][j] != diff:
+                continue
+
             e1 = entities.get(i)
             e2 = entities.get(j)
             r_left = env.stemmer.lemmatize_to_str(e1.value)
@@ -73,9 +76,6 @@ def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
                 continue
 
             if r in unique_relations:
-                continue
-
-            if E[i][j] != diff:
                 continue
 
             s = False

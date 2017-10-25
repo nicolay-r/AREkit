@@ -9,6 +9,10 @@ class OpinionCollection:
 
     def __init__(self, opinions=None):
         self.opinions = [] if opinions is None else opinions
+        self.unique = set()
+
+        for o in self.opinions:
+            self.unique.add(self._get_opinion_key(o.entity_left, o.entity_right))
 
     @staticmethod
     def from_file(filepath):
@@ -29,15 +33,18 @@ class OpinionCollection:
         return OpinionCollection(opinions)
 
     def has_opinion(self, entity_left, entity_right, lemmatize=False):
-        for o in self.opinions:
-            if o.is_equal(entity_left, entity_right, lemmatize):
-                return True
-
-        return False
+        return self._get_opinion_key(entity_left, entity_right) in self.unique
 
     def add_opinion(self, opinion):
         self.opinions.append(opinion)
-        pass
+        self.unique.add(self._get_opinion_key(
+            opinion.entity_left, opinion.entity_right))
+
+    @staticmethod
+    def _get_opinion_key(l_value, r_value):
+        return "{}_{}".format(
+            env.stemmer.lemmatize_to_str(l_value).encode('utf-8'),
+            env.stemmer.lemmatize_to_str(r_value).encode('utf-8'))
 
     def save(self, filepath):
         with io.open(filepath, 'w') as f:
