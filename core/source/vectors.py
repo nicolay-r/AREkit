@@ -1,34 +1,90 @@
+# -*- coding: utf-8 -*-
+
 import io
+import core.environment as env
 
 
-class NewsVectorizedRelations:
+class CommonRelationVectorCollection:
 
-    def __init__(self, X, labels):
-        self.X = X
-        self.labels = labels
+    def __init__(self, vectors=None):
+        self.stemmer = env.stemmer
+        self.vectors = {} if vectors is None else vectors
+
+    def add_vector(self, vector):
+        assert(isinstance(vector, CommonRelationVector))
+        key = self.__create_key(vector)
+
+        if key in self.vectors:
+            print "Collection already has a key {}. Ignored".format(key.encode('utf-8'))
+            return
+
+        self.vectors[key] = vector
+
+    def has_vector(self, vector):
+        assert(isinstance(vector, CommonRelationVector))
+        key = self.__create_key(vector)
+        return key in self.vectors
+
+    def __create_key(self, vector):
+        key = "{}_{}".format(
+            vector.value_left.encode('utf-8'),
+            vector.value_right.encode('utf-8')).decode('utf-8')
+        return key
 
     @staticmethod
-    def from_file(filepath, labeled=False):
+    def from_file(filepath):
         """ Read the vectors from *.vectors.txt file
         """
-        X = []
-        labels = []
-        entities = []
-        with io.open(filepath, 'r') as f:
+        vectors = []
+        with io.open(filepath, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 args = line.split(',')
 
-                entities.append((x[0], x[1]))
+                entity_value_left = args[0].strip()
+                entity_value_right = args[1].strip()
+                label = int(args[len(args) - 1])
+                vector = [float(args[i]) for i in range(2, len(args)-1)]
 
-                x = [float(a) for a in args]
-                x = x[2:]
-                if (labeled):
-                    y = x[len(x)-1]
-                    x = x[:len(x)-1]
-                    labels.append(y)
+                vectors.append(CommonRelationVector(
+                    entity_value_left, entity_value_right, vector, label))
 
-                assert(type(x) == list)
+        return CommonRelationVectorCollection(vectors)
 
-                X.append(x)
+    def save(self, filepath):
+        """ Save the vectors from *.vectors.txt file
+        """
+        with open(filepath, 'w') as output:
+            for vector in self.vectors.itervalues():
+                output.write("{}\n".format(vector.to_str()))
 
-        return NewsVectorizedRelations(X, labels)
+    def __iter__(self):
+        for v in self.vectors:
+            yield v
+
+
+# TODO: maybe in core, file 'relation.py'
+class CommonRelationVector:
+    """ Vector of Relation between two lemmatized values of entities.
+    """
+
+    def __init__(self, entity_value_left, entity_value_right, vector, label=0):
+        assert(type(entity_value_left) == unicode)
+        assert(type(entity_value_right) == unicode)
+        assert(type(vector) == list)
+        assert(type(label) == int)
+
+        self.value_left = env.stemmer.lemmatize_to_str(entity_value_left)
+        self.value_right = env.stemmer.lemmatize_to_str(entity_value_right)
+        self.vector = vector
+        self.label = label
+
+    def set_label(self, label):
+        assert(type(label) == int)
+        self.label = label
+
+    def to_str(self):
+        vector_str = ",".join(["%.6f" % v for v in self.vector])
+        return "{}, {}, {}, {}".format(
+            self.value_left.encode('utf-8'),
+            self.value_right.encode('utf-8'),
+            vector_str, self.label)

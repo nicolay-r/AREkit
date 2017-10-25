@@ -3,33 +3,53 @@
 
 from sklearn import svm
 
-from core.output.vectors import CommonRelationVectorCollection
+from core.source.vectors import CommonRelationVectorCollection
+from core.source.opinion import OpinionCollection, Opinion
 
 import io_utils
 
-
 X_train = []
 y_train = []
-root = io_utils.train_root()
 for i in io_utils.train_indices():
-    vector_filepath = root + "art{}.vectors.txt".format(i)
+    vector_filepath = io_utils.train_root() + "art{}.vectors.txt".format(i)
     print vector_filepath
     collection = CommonRelationVectorCollection.from_file(vector_filepath)
     X_train += [item.vector for item in collection]
     y_train += [item.label for item in collection]
 
-print len(X_train)
-
 X_test = []
-root = io_utils.test_root()
+test_collections = []
 for i in io_utils.test_indices():
-    vector_filepath = root + "art{}.vectors.txt".format(i)
+    vector_filepath = io_utils.test_root() + "art{}.vectors.txt".format(i)
     print vector_filepath
     collection = CommonRelationVectorCollection.from_file(vector_filepath)
-    X_train += [item.vector for item in collection]
+    test_collections.append(collection)
+    X_test += [item.vector for item in collection]
 
 # fitting model
 c = svm.SVC()
 c.fit(X_train, y_train)
 
+# predict
 labels = c.predict(X_test)
+
+# fill
+label_index = 0
+test_opinions = []
+for c in test_collections:
+    opinions = OpinionCollection()
+    for item in c:
+        l = int(labels[label_index])
+        item.set_label(l)
+        opinions.add_opinion(
+            Opinion(item.value_left,
+                    item.value_right,
+                    io_utils.int_to_sentiment(l),
+                    unicode("current")))
+        label_index += 1
+    test_opinions.append(opinions)
+
+# save
+for i, n in enumerate(io_utils.test_indices()):
+    opin_filepath = io_utils.test_root() + "art{}.opin.txt".format(n)
+    test_opinions[i].save(opin_filepath)

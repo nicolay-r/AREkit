@@ -1,6 +1,8 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
 import io
+
+sent_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
+int_to_sent = {1: 'pos', -1: 'neg', 0: 'neu'}
 
 
 def read_prepositions(filepath):
@@ -13,15 +15,23 @@ def read_prepositions(filepath):
 
 
 def train_indices():
-    indices = range(1, 46)[:1]
-    # indices.remove(9)
+    indices = range(1, 46)[:10]
+    indices.remove(9)
     return indices
 
 
 def test_indices():
-    indices = range(46, 76)[:1]
+    indices = range(46, 76)[:10]
     # indices.remove(70)
     return indices
+
+
+def int_to_sentiment(label):
+    return unicode(int_to_sent[label])
+
+
+def sentiment_to_int(label):
+    return sent_to_int[label]
 
 
 def test_root():

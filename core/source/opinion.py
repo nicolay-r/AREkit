@@ -1,4 +1,4 @@
-# -*- coding: cp1251 -*-
+# -*- coding: utf-8 -*-
 import io
 import core.environment as env
 
@@ -7,8 +7,8 @@ class OpinionCollection:
     """ Collection of sentiment opinions between entities
     """
 
-    def __init__(self, opinions):
-        self.opinions = opinions
+    def __init__(self, opinions=None):
+        self.opinions = [] if opinions is None else opinions
 
     @staticmethod
     def from_file(filepath):
@@ -35,9 +35,15 @@ class OpinionCollection:
 
         return False
 
-    def save(self, filepath):
-        # TODO
+    def add_opinion(self, opinion):
+        self.opinions.append(opinion)
         pass
+
+    def save(self, filepath):
+        with io.open(filepath, 'w') as f:
+            for o in self.opinions:
+                f.write(o.to_unicode())
+                f.write(unicode("\n"))
 
     def __iter__(self):
         for a in self.opinions:
@@ -68,13 +74,9 @@ class Opinion:
 
         return i_el == o_el and i_er == o_er
 
-    def to_str(self):
-        # TODO
-        pass
-
-    def show(self):
-        print "{}, {}, {}, {}".format(
+    def to_unicode(self):
+        return "{}, {}, {}, {}".format(
                 self.entity_left.encode('utf-8'),
                 self.entity_right.encode('utf-8'),
                 self.sentiment.encode('utf-8'),
-                self.time.encode('utf-8'))
+                self.time.encode('utf-8')).decode('utf-8')
