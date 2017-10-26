@@ -41,19 +41,33 @@ def normalize(vector):
 def vectorize_train(news, entities, opinion_collections, features):
     """ Vectorize news of train collection that has opinion labeling
     """
+    def has_entity(entity_value):
+        if not entities.has_enity_by_value(entity_value):
+            print "'{}' not found!".format(entity_value.encode('utf-8'))
+            return False
+        return True
+
+
     collection = CommonRelationVectorCollection()
     sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
     for opinions in opinion_collections:
         for opinion in opinions:
-            # print opinion.entity_left.encode('utf-8'), opinion.entity_right.encode('utf-8')
-            entities_left = entities.find_by_value(opinion.entity_left)
-            entities_right = entities.find_by_value(opinion.entity_right)
+
+            if not has_entity(opinion.entity_left):
+                continue
+
+            if not has_entity(opinion.entity_right):
+                continue
+
+            entities_left_IDs = entities.get_by_value(opinion.entity_left)
+            entities_right_IDs = entities.get_by_value(opinion.entity_right)
 
             r_features = None
-            r_count = len(entities_left) * len(entities_right)
-            for e1 in entities_left:
-                for e2 in entities_right:
-
+            r_count = len(entities_left_IDs) * len(entities_right_IDs)
+            for e1_ID in entities_left_IDs:
+                for e2_ID in entities_right_IDs:
+                    e1 = entities.get_by_ID(e1_ID)
+                    e2 = entities.get_by_ID(e2_ID)
                     r = Relation(e1.ID, e2.ID, news)
                     features = np.concatenate([f.create(r) for f in FEATURES])
 

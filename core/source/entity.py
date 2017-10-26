@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
-from core.stemmer import Stemmer
+import core.environment as env
 
 
 class EntityCollection:
@@ -9,19 +9,19 @@ class EntityCollection:
 
     def __init__(self, entities):
         self.entities = entities
-        self.stemmer = Stemmer()
+        self.by_id = self._index_by_id()
+        self.by_values = self._index_by_lemmatized_value()
 
     @staticmethod
     def from_file(filepath):
         """ Read annotation collection from file
         """
-
         entities = []
         with io.open(filepath, "r", encoding='utf-8') as f:
             for line in f.readlines():
                 args = line.split()
                 a = Entity(args[0], args[1], int(args[2]), int(args[3]),
-                           args[4])
+                           args[4].strip())
                 entities.append(a)
 
         # sort by beginning
@@ -32,28 +32,37 @@ class EntityCollection:
     def get(self, index):
         return self.entities[index]
 
-    def find_by_ID(self, ID):
+    def get_by_ID(self, ID):
         assert(type(ID) == unicode)
+        return self.by_id[ID]
 
-        for e in self.entities:
-            if e.ID == ID:
-                return e
-        raise Exception("entity with ID={} was not found".format(ID))
-
-
-    def find_by_value(self, entity_value):
+    def has_enity_by_value(self, entity_value):
         assert(type(entity_value) == unicode)
+        return env.stemmer.lemmatize_to_str(entity_value) in self.by_values
 
-        value = self.stemmer.lemmatize_to_str(entity_value)
-        founded = []
-        for e in self.entities:
-            if value == self.stemmer.lemmatize_to_str(e.value):
-                founded.append(e)
-
-        return founded
+    def get_by_value(self, entity_value):
+        assert(type(entity_value) == unicode)
+        return self.by_values[env.stemmer.lemmatize_to_str(entity_value)]
 
     def count(self):
         return len(self.entities)
+
+    def _index_by_id(self):
+        index = {}
+        for e in self.entities:
+            index[e.ID] = e
+        return index
+
+    def _index_by_lemmatized_value(self):
+        index = {}
+        for e in self.entities:
+            key = env.stemmer.lemmatize_to_str(e.value)
+            assert(type(key) == unicode)
+            if key in index:
+                index[key].append(e.ID)
+            else:
+                index[key] = [e.ID]
+        return index
 
     def __iter__(self):
         for a in self.entities:
