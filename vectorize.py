@@ -112,8 +112,8 @@ def vectorize_test(news, entities, features):
             if e1.ID == e2.ID:
                 continue
 
-            s1 = news.find_sentence_by_entity(e1)
-            s2 = news.find_sentence_by_entity(e2)
+            s1 = news.get_sentence_by_entity(e1)
+            s2 = news.get_sentence_by_entity(e2)
 
             # If entites from different sentences
             if not s1 == s2:
@@ -164,10 +164,10 @@ prepositions_list = io_utils.read_prepositions(preps_filepath)
 FEATURES = [
     DistanceFeature(),
     # SimilarityFeature(w2v_model),
-    # LexiconFeature(rusentilex_filepath, prefix_processor),
-    # PatternFeature([',']),
-    # EntitiesBetweenFeature(),
-    # PrepositionsCountFeature(prepositions_list)
+    LexiconFeature(rusentilex_filepath, prefix_processor),
+    PatternFeature([',']),
+    EntitiesBetweenFeature(),
+    PrepositionsCountFeature(prepositions_list)
 ]
 
 #
@@ -187,6 +187,7 @@ for n in io_utils.train_indices():
     news = News.from_file(news_filepath, entities)
     sentiment_opins = OpinionCollection.from_file(opin_filepath)
     neutral_opins = OpinionCollection.from_file(neutral_filepath)
+    neutral_opins.limit(10)
 
     vectors = vectorize_train(
         news, entities, [sentiment_opins, neutral_opins], FEATURES)

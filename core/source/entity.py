@@ -20,8 +20,14 @@ class EntityCollection:
         with io.open(filepath, "r", encoding='utf-8') as f:
             for line in f.readlines():
                 args = line.split()
-                a = Entity(args[0], args[1], int(args[2]), int(args[3]),
-                           args[4].strip())
+
+                e_ID = args[0]
+                e_str_type = args[1]
+                e_begin = int(args[2])
+                e_end = int(args[3])
+                e_value = " ".join([a.strip() for a in args[4:]])
+                a = Entity(e_ID, e_str_type, e_begin, e_end, e_value)
+
                 entities.append(a)
 
         # sort by beginning
@@ -78,7 +84,7 @@ class Entity:
         assert(type(str_type) == unicode)
         assert(type(begin) == int)
         assert(type(end) == int)
-        assert(type(value) == unicode)
+        assert(type(value) == unicode and len(value) > 0)
         self.ID = ID
         self.str_type = str_type
         self.begin = begin

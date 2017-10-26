@@ -61,6 +61,10 @@ class News:
 
         return News(sentences, entities)
 
+    def get_sentence_by_entity(self, entity):
+        assert(isinstance(entity, Entity))
+        return self.sentences[self.sentence_by_entity[entity.ID]]
+
     def _index_sentence_by_entity(self):
         index = {}
         for s in self.sentences:
@@ -75,10 +79,6 @@ class News:
                 ID, begin, end = e
                 print "\t - {}, ({},{}) = {}".format(
                     ID, begin, end, s.text[begin:end].encode('utf-8'))
-
-    def find_sentence_by_entity(self, entity):
-        assert(isinstance(entity, Entity))
-        return self.sentences[self.sentence_by_entity[entity.ID]]
 
 
 class Sentence:

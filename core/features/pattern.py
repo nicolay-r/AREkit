@@ -13,11 +13,11 @@ class PatternFeature(Feature):
         """ Get an amount of patterns between entities of relation
         """
         assert(isinstance(relation, Relation))
-        e1 = relation.news.entities.find_by_ID(relation.entity_left_ID)
-        e2 = relation.news.entities.find_by_ID(relation.entity_right_ID)
+        e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
+        e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
 
-        s1 = relation.news.find_sentence_by_entity(e1)
-        s2 = relation.news.find_sentence_by_entity(e2)
+        s1 = relation.news.get_sentence_by_entity(e1).index
+        s2 = relation.news.get_sentence_by_entity(e2).index
 
         return [self.__get_count(p, s1, s2, e1, e2, relation.news) for p in self.patterns]
 

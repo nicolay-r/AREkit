@@ -72,7 +72,6 @@ class CommonRelationVector:
         assert(type(entity_value_right) == unicode)
         assert(type(vector) == list)
         assert(type(label) == int)
-
         self.value_left = env.stemmer.lemmatize_to_str(entity_value_left)
         self.value_right = env.stemmer.lemmatize_to_str(entity_value_right)
         self.vector = vector

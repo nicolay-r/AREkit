@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pymystem3 import Mystem
 
 
@@ -13,8 +14,18 @@ class Stemmer:
         return self.mystem.lemmatize(text)
 
     def lemmatize_to_str(self, text):
+        assert(type(text) == unicode)
         lemmas = self.mystem.lemmatize(text)
+
         result = " ".join(lemmas)
+
+        # print '"%s"->"%s"' % (text, result), ' ', len(lemmas)
+
+        # The problem when 'G8' word, it will not be lemmatized, so next line
+        # is a fix
+        if len(result) == 0:
+            result = text
+
         assert(type(result) == unicode)
         return result
 

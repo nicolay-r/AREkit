@@ -15,14 +15,18 @@ def read_prepositions(filepath):
 
 
 def train_indices():
-    indices = range(1, 46)[:10]
-    indices.remove(9)
+    indices = range(1, 46)
+    for i in [9, 22, 26]:
+        if i in indices:
+            indices.remove(i)
     return indices
 
 
 def test_indices():
-    indices = range(46, 76)[:10]
-    # indices.remove(70)
+    indices = range(46, 76)
+    for i in [70]:
+        if i in indices:
+            indices.remove(i)
     return indices
 
 

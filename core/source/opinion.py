@@ -46,6 +46,10 @@ class OpinionCollection:
             env.stemmer.lemmatize_to_str(l_value).encode('utf-8'),
             env.stemmer.lemmatize_to_str(r_value).encode('utf-8'))
 
+    def limit(self, count):
+        # this is incorrect. temprorary
+        self.opinions = self.opinions[:count]
+
     def save(self, filepath):
         with io.open(filepath, 'w') as f:
             for o in self.opinions:

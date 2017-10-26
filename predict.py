@@ -32,6 +32,7 @@ c.fit(X_train, y_train)
 
 # predict
 labels = c.predict(X_test)
+print labels
 
 # fill
 label_index = 0
