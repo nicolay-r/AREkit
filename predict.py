@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import numpy as np
 from sklearn import svm
 
 from core.source.vectors import CommonRelationVectorCollection
@@ -27,7 +28,7 @@ for i in io_utils.test_indices():
     X_test += [item.vector for item in collection]
 
 # fitting model
-c = svm.SVC()
+c = svm.SVC(C=10, kernel='linear')
 c.fit(X_train, y_train)
 
 # predict
@@ -49,6 +50,10 @@ for c in test_collections:
                     unicode("current")))
         label_index += 1
     test_opinions.append(opinions)
+
+print "-1 : {}".format(np.count_nonzero(labels == -1))
+print "0 : {}".format(np.count_nonzero(labels == 0))
+print "1 : {}".format(np.count_nonzero(labels == 1))
 
 # save
 for i, n in enumerate(io_utils.test_indices()):

@@ -53,8 +53,9 @@ class OpinionCollection:
     def save(self, filepath):
         with io.open(filepath, 'w') as f:
             for o in self.opinions:
-                f.write(o.to_unicode())
-                f.write(unicode("\n"))
+                if o.sentiment != unicode('neu', encoding='utf-8'):
+                    f.write(o.to_unicode())
+                    f.write(unicode("\n"))
 
     def __iter__(self):
         for a in self.opinions:
