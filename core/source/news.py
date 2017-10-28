@@ -11,6 +11,9 @@ class News:
         self.entities = entities
         self.sentence_by_entity = self._index_sentence_by_entity()
 
+    def get_entities(self):
+        return self.entities
+
     @staticmethod
     def from_file(filepath, entities):
         """ Read news from file
@@ -59,10 +62,14 @@ class News:
                 s_ind,
                 s.begin, s.end))
 
+        assert(e_ind == entities.count())
+
         return News(sentences, entities)
 
     def get_sentence_by_entity(self, entity):
         assert(isinstance(entity, Entity))
+        if (entity.ID not in self.sentence_by_entity):
+            print "FAILED: {} key wasn't found".format(entity.value.encode('utf-8'))
         return self.sentences[self.sentence_by_entity[entity.ID]]
 
     def _index_sentence_by_entity(self):
@@ -108,7 +115,7 @@ class Sentence:
         self.entity_set_ids.add(ID)
 
     def has_entity(self, entity_ID):
-        assert(type(entity_ID == unicode))
+        assert(type(entity_ID) == unicode)
         return entity_ID in self.entity_set_ids
 
     @property

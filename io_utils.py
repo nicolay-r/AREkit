@@ -3,6 +3,7 @@ import io
 
 sent_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
 int_to_sent = {1: 'pos', -1: 'neg', 0: 'neu'}
+ignored_entity_values = [u"author", u"unknown"]
 
 
 def read_prepositions(filepath):
@@ -30,6 +31,10 @@ def test_indices():
     return indices
 
 
+def get_ignored_entity_values():
+    return ignored_entity_values
+
+
 def int_to_sentiment(label):
     return unicode(int_to_sent[label])
 
@@ -44,3 +49,9 @@ def test_root():
 
 def train_root():
     return "data/Texts/"
+
+
+def get_etalon_root():
+    """ Folder that contains etalon opinions
+    """
+    return "data/test_orig/artest_orig"

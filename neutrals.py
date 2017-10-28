@@ -10,32 +10,17 @@ from core.source.opinion import OpinionCollection
 
 import io_utils
 
-IGNORED_ENTITIES = ["Author", "Unknown"]
+IGNORED_ENTITIES = io_utils.get_ignored_entity_values()
 
 
 def sentences_between(e1, e2, news):
     """ Distance between two features in sentences
     """
-
-    if e1.value in IGNORED_ENTITIES or e2.value in IGNORED_ENTITIES:
-        return -2
-
     if e1.ID == e2.ID:
         return -1
 
-    s1_ind = None
-    s2_ind = None
-    for i, s in enumerate(news.sentences):
-        if s.has_entity(e1.ID):
-            s1_ind = i
-            break
-
-    for i, s in enumerate(news.sentences):
-        if s.has_entity(e2.ID):
-            s2_ind = i
-            break
-
-    return abs(s1_ind - s2_ind)
+    return abs(news.get_sentence_by_entity(e1).index -
+               news.get_sentence_by_entity(e2).index)
 
 
 def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
@@ -72,7 +57,7 @@ def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
             r_right = env.stemmer.lemmatize_to_str(e2.value)
             r = "%s_%s" % (r_left.encode('utf-8'), r_right.encode('utf-8'))
 
-            if (e1.value in IGNORED_ENTITIES or e2.value in IGNORED_ENTITIES):
+            if (r_left in IGNORED_ENTITIES or r_right in IGNORED_ENTITIES):
                 continue
 
             if r in unique_relations:
@@ -93,8 +78,8 @@ def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
     return pairs
 
 
-def make_neutrals(news, entities, w2v_model, opinions=None):
-
+def make_neutrals(news, w2v_model, opinions=None):
+    entities = news.entities
     E = np.zeros((entities.count(), entities.count()), dtype='int32')
     for e1 in entities:
         for e2 in entities:
@@ -111,7 +96,7 @@ def make_neutrals(news, entities, w2v_model, opinions=None):
 def save(filepath, relation_pairs):
     """ Saving relation
     """
-    print filepath
+    print "save: {}".format(filepath)
     with open(filepath, "w") as f:
         for r_left, r_right in relation_pairs:
             f.write("{}, {}, {}, {}\n".format(
@@ -130,18 +115,17 @@ w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
 #
 root = io_utils.train_root()
 for n in io_utils.train_indices():
+    print "read: {}".format(n)
     entity_filepath = root + "art{}.ann".format(n)
     news_filepath = root + "art{}.txt".format(n)
     opin_filepath = root + "art{}.opin.txt".format(n)
     neutral_filepath = root + "art{}.neut.txt".format(n)
 
-    print entity_filepath
-
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
     opinions = OpinionCollection.from_file(opin_filepath)
 
-    pairs = make_neutrals(news, entities, w2v_model, opinions)
+    pairs = make_neutrals(news, w2v_model, opinions)
     save(neutral_filepath, pairs)
 
 #
@@ -149,6 +133,7 @@ for n in io_utils.train_indices():
 #
 root = io_utils.test_root()
 for n in io_utils.test_indices():
+    print "read: {}".format(n)
     entity_filepath = root + "art{}.ann".format(n)
     news_filepath = root + "art{}.txt".format(n)
     neutral_filepath = root + "art{}.neut.txt".format(n)
@@ -156,5 +141,5 @@ for n in io_utils.test_indices():
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
 
-    pairs = make_neutrals(news, entities, w2v_model)
+    pairs = make_neutrals(news, w2v_model)
     save(neutral_filepath, pairs)

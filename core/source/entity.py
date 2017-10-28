@@ -25,7 +25,7 @@ class EntityCollection:
                 e_str_type = args[1]
                 e_begin = int(args[2])
                 e_end = int(args[3])
-                e_value = " ".join([a.strip() for a in args[4:]])
+                e_value = " ".join([a.strip().lower() for a in args[4:]])
                 a = Entity(e_ID, e_str_type, e_begin, e_end, e_value)
 
                 entities.append(a)
@@ -89,7 +89,7 @@ class Entity:
         self.str_type = str_type
         self.begin = begin
         self.end = end
-        self.value = value
+        self.value = value.lower()
 
     def get_int_ID(self):
         return int(self.ID[1:len(self.ID)])

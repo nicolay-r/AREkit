@@ -38,6 +38,15 @@ def normalize(vector):
     return [(1 - math.exp(-abs(v))) * sgn(v) for v in vector]
 
 
+def is_ignored(entity_value):
+    ignored = io_utils.get_ignored_entity_values()
+    entity_value = env.stemmer.lemmatize_to_str(entity_value)
+    if entity_value in ignored:
+        print "ignored: '{}'".format(entity_value.encode('utf-8'))
+        return True
+    return False
+
+
 def vectorize_train(news, entities, opinion_collections, features):
     """ Vectorize news of train collection that has opinion labeling
     """
@@ -46,7 +55,6 @@ def vectorize_train(news, entities, opinion_collections, features):
             print "'{}' not found!".format(entity_value.encode('utf-8'))
             return False
         return True
-
 
     collection = CommonRelationVectorCollection()
     sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
@@ -57,6 +65,12 @@ def vectorize_train(news, entities, opinion_collections, features):
                 continue
 
             if not has_entity(opinion.entity_right):
+                continue
+
+            if is_ignored(opinion.entity_left):
+                continue
+
+            if is_ignored(opinion.entity_right):
                 continue
 
             entities_left_IDs = entities.get_by_value(opinion.entity_left)
@@ -110,6 +124,12 @@ def vectorize_test(news, entities, features):
         for e2 in entities:
 
             if e1.ID == e2.ID:
+                continue
+
+            if is_ignored(e1.value):
+                continue
+
+            if is_ignored(e2.value):
                 continue
 
             s1 = news.get_sentence_by_entity(e1)

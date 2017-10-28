@@ -9,22 +9,22 @@ from core.stemmer import Stemmer
 class Evaluator:
 
     syn_dict = [
-        ['сша', 'соединенные штаты', 'америка', 'соединенные штаты америки', 'соединенный штат америка', 'штат'],
-        ['вашингтон', 'белый дом'],
-        ['обама', 'барак обама'],
-        ['ес', 'евросоюз', 'европейский союз', 'европа', 'брюссель'],
-        ['росcия', 'рф', 'российская федерация', 'российский федерация'],
-        ['путин', 'владимир путин', 'владимир владимирович путин'],
-        ['лёвен', 'лёвено'],
-        ['асеан', 'асеана'],
-        ['лиухто', 'лиухтый', 'кари лиухто'],
-        ['ИГ', 'ИГО', 'исламский государство'],
-        ['Башар Асад', 'Асад'],
+        [u'сша', u'соединенные штаты', u'америка', u'соединенные штаты америки', u'соединенный штат америка', u'штат'],
+        [u'вашингтон', u'белый дом'],
+        [u'обама', u'барак обама'],
+        [u'ес', u'евросоюз', u'европейский союз', u'европа', u'брюссель'],
+        [u'росcия', u'рф', u'российская федерация', u'российский федерация'],
+        [u'путин', u'владимир путин', u'владимир владимирович путин'],
+        [u'лёвен', u'лёвено'],
+        [u'асеан', u'асеана'],
+        [u'лиухто', u'лиухтый', u'кари лиухто'],
+        [u'ИГ', u'ИГО', u'исламский государство'],
+        [u'Башар Асад', u'Асад'],
     ]
 
-    def __init__(self, root):
-        self.user_answers = root + "test_black"
-        self.etalon_answers = root + "test_orig/artest_orig"
+    def __init__(self, test_filepath, etalon_filepath):
+        self.user_answers = test_filepath
+        self.etalon_answers = etalon_filepath
         self.stemmer = Stemmer()
 
     """ Проверка имен на заменяемость. Имена могут быть:
@@ -32,7 +32,11 @@ class Evaluator:
         - формой слова: соединенные vs соединенный vs соединить.
         "Словарь синонимов" хранится в переменной syn_dict.
     """
-    def __checkWords(self, word1, word2):
+    def _checkWords(self, word1, word2):
+        word1 = word1.decode('cp1251')
+        word2 = word2.decode('utf-8')
+        assert(type(word1) == unicode)
+        assert(type(word2) == unicode)
         if word1 == word2:
             return True
 
@@ -66,7 +70,7 @@ class Evaluator:
 
         return False
 
-    def calcPrecisionAndRecall(results):
+    def _calcPrecisionAndRecall(self, results):
         """ Расчет полноты и точности.
         """
         # Берем все позитивные и негативные ответы команд
@@ -77,22 +81,22 @@ class Evaluator:
         if len(pos_answers) != 0:
             # print "-- {}".format(len(pos_answers[(pos_answers['comparison']==True)]))
             # print "-- {}".format(len(pos_answers))
-            pos_prec = 1.0 * len(pos_answers[(pos_answers['comparison'] is True)]) / len(pos_answers)
+            pos_prec = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(pos_answers)
             # print "== {}".format(pos_prec)
         else:
             pos_prec = 0.0
         if len(neg_answers) != 0:
-            neg_prec = 1.0 * len(neg_answers[(neg_answers['comparison'] is True)]) / len(neg_answers)
+            neg_prec = 1.0 * len(neg_answers[(neg_answers['comparison'] == True)]) / len(neg_answers)
         else:
             neg_prec = 0.0
 
         # Расчет полноты.
         if len(results[results['how_orig'] == 'pos']) != 0:
-            pos_recall = 1.0 * len(pos_answers[(pos_answers['comparison'] is True)]) / len(results[results['how_orig'] == 'pos'])
+            pos_recall = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(results[results['how_orig'] == 'pos'])
         else:
             pos_recall = 0.0
         if len(results[results['how_orig'] == 'neg']) != 0:
-            neg_recall = 1.0 * len(neg_answers[(neg_answers['comparison'] is True)]) / len(results[results['how_orig'] == 'neg'])
+            neg_recall = 1.0 * len(neg_answers[(neg_answers['comparison'] == True)]) / len(results[results['how_orig'] == 'neg'])
         else:
             neg_recall = 0.0
 
@@ -103,13 +107,13 @@ class Evaluator:
 
         return pos_prec, neg_prec, pos_recall, neg_recall
 
-    def __calc_a_file(self, num):
+    def _calc_a_file(self, num):
         """ Data calculation for a file of 'num' index
         """
         # Если файл существует.
-        filename = self.user_answers + "/art{}.opin.txt".format(str(num))
+        filename = "{}/art{}.opin.txt".format(self.user_answers, str(num))
         if not os.path.exists(filename):
-            print "-  art{}.opin.txt".format(num)
+            print "missed: art{}.opin.txt".format(num)
             return 0, 0, 0, 0
 
         # Считываем файл ответов команды и отбрасываем лишнюю информацию.
@@ -146,7 +150,7 @@ class Evaluator:
         results['comparison'] = results['how_results'] == results['how_orig']
         results = results.sort_values(['comparison', 'how_orig', 'how_results'])
         # Берем те части ответов, в которых имена не совпадают.
-        faulty = results[results.comparison is False]
+        faulty = results[results.comparison == False]
         count_res = len(faulty) - len(faulty[faulty.how_orig.isnull()])
 
         # Идем по всем ответам, сравниваем всех со всеми, может быть имя было
@@ -154,8 +158,8 @@ class Evaluator:
         has_changes = False
         for i in range(count_res, len(faulty)):
             for j in range(count_res):
-                if(self.__checkWords(results['who'][results.index[i]], results['who'][results.index[j]]) and
-                   self.__checkWords(results['to'][results.index[i]], results['to'][results.index[j]])):
+                if(self._checkWords(results['who'][results.index[i]], results['who'][results.index[j]]) and
+                   self._checkWords(results['to'][results.index[i]], results['to'][results.index[j]])):
                     # Если надо длеать замену, дописываем ответ в одну строчку и помечаем на удаление другую.
                     # print('<', results['who'][results.index[i]], '>,<', results['who'][results.index[j]], '>')
                     # print('<', results['to'][results.index[i]], '>,<', results['to'][results.index[j]], '>')
@@ -163,9 +167,6 @@ class Evaluator:
                     results.loc[results.index[i], ('comparison')] = (results.loc[results.index[i], ('how_orig')] == results.loc[results.index[i], ('how_results')])
                     results.loc[results.index[j], ('comparison')] = '---'
                     has_changes = True
-
-        if len(faulty) > 0:
-            print "YES"
 
         # Выкидываем все строки, которые были слиты вместе с другими.
         if has_changes:
@@ -175,15 +176,15 @@ class Evaluator:
         comparison_file = self.user_answers + "/art{}.comp.txt".format(str(num))
         results.to_csv(comparison_file)
 
-        return self.calcPrecisionAndRecall(results)
+        return self._calcPrecisionAndRecall(results)
 
-    def eval(self, test_indices):
+    def evaluate(self, test_indices):
         """ Main evaluation subprogram
         """
         pos_prec, neg_prec, pos_recall, neg_recall = (0, 0, 0, 0)
 
         for n in test_indices:
-            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self.calc_a_file(n)
+            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self._calc_a_file(n)
 
             pos_prec += pos_prec1
             neg_prec += neg_prec1
@@ -211,10 +212,3 @@ class Evaluator:
                 "neg_recall": neg_recall,
                 "f1_pos": f1_pos,
                 "f1_neg": f1_neg}
-
-    @staticmethod
-    def show(pos_prec, neg_prec, pos_recall, neg_recall, f1_pos, f1_neg):
-        print "pos_prec: %.4f, neg_prec: %.4f" % (pos_prec, neg_prec)
-        print "pos_recall: %.4f, neg_recall: %.4f" % (pos_recall, neg_recall)
-        print "f1_pos: %.4f, f1_neg: %.4f" % (f1_pos, f1_neg)
-        print "f1: %.4f" % ((f1_pos + f1_neg) / 2)
