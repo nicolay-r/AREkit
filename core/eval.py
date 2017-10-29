@@ -116,12 +116,17 @@ class Evaluator:
             print "missed: art{}.opin.txt".format(num)
             return 0, 0, 0, 0
 
+        if os.stat(filename).st_size == 0:
+            print "empty file: art{}.opin.txt".format(num)
+            return 0, 0, 0, 0
+
         # Считываем файл ответов команды и отбрасываем лишнюю информацию.
         # print("test_"+color+"/art"+str(num)+".opin.txt", end=" ")
 
-        file = pd.read_csv(filename, sep=',', header=None)
+
+        f = pd.read_csv(filename, sep=',', header=None)
         # print(" read")
-        orig_file = file[[0, 1, 2]].copy()
+        orig_file = f[[0, 1, 2]].copy()
         orig_file.columns = ['who', 'to', 'how_orig']
         orig_file['who'] = orig_file['who'].str.strip()
         orig_file['who'] = orig_file['who'].str.lower()
