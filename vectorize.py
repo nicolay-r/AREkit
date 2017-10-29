@@ -207,7 +207,7 @@ for n in io_utils.train_indices():
     news = News.from_file(news_filepath, entities)
     sentiment_opins = OpinionCollection.from_file(opin_filepath)
     neutral_opins = OpinionCollection.from_file(neutral_filepath)
-    neutral_opins.limit(10)
+    neutral_opins.limit(5)
 
     vectors = vectorize_train(
         news, entities, [sentiment_opins, neutral_opins], FEATURES)

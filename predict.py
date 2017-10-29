@@ -2,12 +2,21 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
-from sklearn import svm
+from sklearn import svm, neighbors, ensemble, model_selection, naive_bayes
 
 from core.source.vectors import CommonRelationVectorCollection
 from core.source.opinion import OpinionCollection, Opinion
 
 import io_utils
+
+
+def svc_param_selection(X_train, y_train):
+    C = np.arange(0.2, 10, 0.2)
+    param_grid = {'C': C}
+    model = svm.SVC(C=1, kernel='linear', cache_size=1000)
+    grid_search = model_selection.GridSearchCV(model, param_grid, cv=10)
+    return grid_search
+
 
 X_train = []
 y_train = []
@@ -27,13 +36,18 @@ for i in io_utils.test_indices():
     test_collections.append(collection)
     X_test += [item.vector for item in collection]
 
-# fitting model
-c = svm.SVC(C=10, kernel='linear')
-c.fit(X_train, y_train)
+CLASSIFIERS = {
+    "svm": svm.SVC(C=1, kernel='linear', cache_size=1000),
+    "knn": neighbors.KNeighborsClassifier(),
+    "rf": ensemble.RandomForestClassifier(),
+    "nb": naive_bayes.GaussianNB(),
+    "svm-search": svc_param_selection
+}
 
-# predict
+c = CLASSIFIERS['nb']
+print c
+c.fit(X_train, y_train)
 labels = c.predict(X_test)
-print labels
 
 # fill
 label_index = 0
@@ -51,6 +65,12 @@ for c in test_collections:
         label_index += 1
     test_opinions.append(opinions)
 
+print "train:"
+print "-1 : {}".format(y_train.count(-1))
+print "0 : {}".format(y_train.count(0))
+print "1 : {}".format(y_train.count(1))
+
+print "test:"
 print "-1 : {}".format(np.count_nonzero(labels == -1))
 print "0 : {}".format(np.count_nonzero(labels == 0))
 print "1 : {}".format(np.count_nonzero(labels == 1))
