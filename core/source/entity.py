@@ -11,6 +11,10 @@ class EntityCollection:
         self.entities = entities
         self.by_id = self._index_by_id()
         self.by_values = self._index_by_lemmatized_value()
+        # print "==========================================="
+        # for key, value in self.by_values.iteritems():
+        #     print "'{}', {}".format(key.encode('utf-8'), value)
+        # print "==========================================="
 
     @staticmethod
     def from_file(filepath):
@@ -44,7 +48,11 @@ class EntityCollection:
 
     def has_enity_by_value(self, entity_value):
         assert(type(entity_value) == unicode)
-        return env.stemmer.lemmatize_to_str(entity_value) in self.by_values
+        value = env.stemmer.lemmatize_to_str(entity_value)
+        if value not in self.by_values:
+            print "'{}'->'{}', not found!".format(
+                entity_value.encode('utf-8'), value.encode('utf-8'))
+        return value in self.by_values
 
     def get_by_value(self, entity_value):
         assert(type(entity_value) == unicode)

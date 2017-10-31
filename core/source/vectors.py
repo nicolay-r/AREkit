@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import io
+import numpy as np
 import core.environment as env
 
 
@@ -70,7 +71,7 @@ class CommonRelationVector:
     def __init__(self, entity_value_left, entity_value_right, vector, label=0):
         assert(type(entity_value_left) == unicode)
         assert(type(entity_value_right) == unicode)
-        assert(type(vector) == list)
+        assert(isinstance(vector, np.ndarray))
         assert(type(label) == int)
         self.value_left = env.stemmer.lemmatize_to_str(entity_value_left)
         self.value_right = env.stemmer.lemmatize_to_str(entity_value_right)

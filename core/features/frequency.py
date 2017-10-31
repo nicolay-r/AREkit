@@ -1,8 +1,9 @@
+import numpy as np
 from feature import Feature
 from core.source.relations import Relation
 
 
-class DistanceFeature(Feature):
+class EntitiesFrequency(Feature):
 
     def __init__(self):
         pass
@@ -13,4 +14,9 @@ class DistanceFeature(Feature):
         assert(isinstance(relation, Relation))
         e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
         e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
-        return self._normalize([min(e1.end, e2.end) - max(e1.begin, e2.begin)])
+
+        entities = relation.news.get_entities()
+        e1_freq = (1.0*len(entities.get_by_value(e1.value)))/entities.count()
+        e2_freq = (1.0*len(entities.get_by_value(e2.value)))/entities.count()
+
+        return [e1_freq, e2_freq]

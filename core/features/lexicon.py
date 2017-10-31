@@ -32,7 +32,7 @@ class LexiconFeature(Feature):
         if len(scores) == 0:
             scores.append(0)
 
-        return [sum(scores), min(scores), max(scores)]
+        return self._normalize([sum(scores), min(scores), max(scores)])
 
     def __scores(self, s_from, s_to, e1, e2, news):
         scores = [0]

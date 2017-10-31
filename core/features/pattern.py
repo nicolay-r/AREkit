@@ -19,7 +19,8 @@ class PatternFeature(Feature):
         s1 = relation.news.get_sentence_by_entity(e1).index
         s2 = relation.news.get_sentence_by_entity(e2).index
 
-        return [self.__get_count(p, s1, s2, e1, e2, relation.news) for p in self.patterns]
+        v = [self.__get_count(p, s1, s2, e1, e2, relation.news) for p in self.patterns]
+        return self._normalize(v)
 
     def __get_count(self, pattern, s_from, s_to, e1, e2, news):
         c = 0

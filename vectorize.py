@@ -20,22 +20,11 @@ from core.features.lexicon import LexiconFeature
 from core.features.pattern import PatternFeature
 from core.features.entities import EntitiesBetweenFeature
 from core.features.prepositions import PrepositionsCountFeature
+from core.features.frequency import EntitiesFrequency
 
 from core.processing.prefix import SentimentPrefixProcessor
 
 import io_utils
-
-
-def normalize(vector):
-    def sgn(x):
-        if x > 0:
-            return 1
-        elif x < 0:
-            return -1
-        return 0
-
-    assert(isinstance(vector, np.ndarray))
-    return [(1 - math.exp(-abs(v))) * sgn(v) for v in vector]
 
 
 def is_ignored(entity_value):
@@ -50,21 +39,15 @@ def is_ignored(entity_value):
 def vectorize_train(news, entities, opinion_collections, features):
     """ Vectorize news of train collection that has opinion labeling
     """
-    def has_entity(entity_value):
-        if not entities.has_enity_by_value(entity_value):
-            print "'{}' not found!".format(entity_value.encode('utf-8'))
-            return False
-        return True
-
     collection = CommonRelationVectorCollection()
     sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
     for opinions in opinion_collections:
         for opinion in opinions:
 
-            if not has_entity(opinion.entity_left):
+            if not entities.has_enity_by_value(opinion.entity_left):
                 continue
 
-            if not has_entity(opinion.entity_right):
+            if not entities.has_enity_by_value(opinion.entity_right):
                 continue
 
             if is_ignored(opinion.entity_left):
@@ -93,7 +76,7 @@ def vectorize_train(news, entities, opinion_collections, features):
             if r_count == 0:
                 continue
 
-            r_features = normalize(r_features/r_count)
+            r_features = r_features/r_count
 
             vector = CommonRelationVector(
                 opinion.entity_left, opinion.entity_right,
@@ -161,7 +144,7 @@ def vectorize_test(news, entities, features):
 
     for key, features in r_features.iteritems():
         left, right = r_entities[key]
-        vector = CommonRelationVector(left, right, normalize(features/r_count[key]))
+        vector = CommonRelationVector(left, right, features/r_count[key])
 
         collection.add_vector(vector)
 
@@ -187,7 +170,8 @@ FEATURES = [
     LexiconFeature(rusentilex_filepath, prefix_processor),
     PatternFeature([',']),
     EntitiesBetweenFeature(),
-    PrepositionsCountFeature(prepositions_list)
+    PrepositionsCountFeature(prepositions_list),
+    EntitiesFrequency()
 ]
 
 #
