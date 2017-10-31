@@ -44,7 +44,7 @@ class CommonRelationVectorCollection:
                 entity_value_left = args[0].strip()
                 entity_value_right = args[1].strip()
                 label = int(args[len(args) - 1])
-                vector = [float(args[i]) for i in range(2, len(args)-1)]
+                vector = np.array([float(args[i]) for i in range(2, len(args)-1)])
 
                 vectors.append(CommonRelationVector(
                     entity_value_left, entity_value_right, vector, label))
