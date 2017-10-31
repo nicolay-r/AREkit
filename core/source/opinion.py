@@ -20,14 +20,20 @@ class OpinionCollection:
         """
         opinions = []
         with io.open(filepath, "r", encoding='utf-8') as f:
-            for line in f.readlines():
+            for i, line in enumerate(f.readlines()):
                 args = line.strip().split(',')
 
                 if len(args) < 4:
+                    print "not enough arguments at line: {}".format(i)
                     continue
 
-                o = Opinion(args[0].strip(), args[1].strip(),
-                            args[2].strip(), args[3].strip())
+                entity_left = args[0].strip().lower()
+                entity_right = args[1].strip().lower()
+
+                o = Opinion(entity_left,
+                            entity_right,
+                            args[2].strip(),
+                            args[3].strip())
                 opinions.append(o)
 
         return OpinionCollection(opinions)
