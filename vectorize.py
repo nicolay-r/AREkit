@@ -21,6 +21,7 @@ from core.features.pattern import PatternFeature
 from core.features.entities import EntitiesBetweenFeature
 from core.features.prepositions import PrepositionsCountFeature
 from core.features.frequency import EntitiesFrequency
+from core.features.appearance import EntityAppearanceFeature
 
 from core.processing.prefix import SentimentPrefixProcessor
 
@@ -171,7 +172,8 @@ FEATURES = [
     PatternFeature([',']),
     EntitiesBetweenFeature(),
     PrepositionsCountFeature(prepositions_list),
-    EntitiesFrequency()
+    EntitiesFrequency(),
+    EntityAppearanceFeature()
 ]
 
 #
