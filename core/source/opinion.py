@@ -24,7 +24,7 @@ class OpinionCollection:
                 args = line.strip().split(',')
 
                 if len(args) < 4:
-                    print "not enough arguments at line: {}".format(i)
+                    print "not enough arguments at line: {}, '{}'".format(i, line.encode('utf-8'))
                     continue
 
                 entity_left = args[0].strip().lower()
@@ -81,16 +81,6 @@ class Opinion:
         self.entity_right = entity_right
         self.sentiment = sentiment
         self.time = time
-
-    # TODO: add a relation class
-    def is_equal(self, entity_left, entity_right, lemmatize=False):
-
-        i_el = ' '.join(env.stemmer.lemmatize_to_list(entity_left)) if lemmatize else entity_left
-        i_er = ' '.join(env.stemmer.lemmatize_to_list(entity_right)) if lemmatize else entity_right
-        o_el = ' '.join(env.stemmer.lemmatize_to_list(self.entity_left)) if lemmatize else self.entity_left
-        o_er = ' '.join(env.stemmer.lemmatize_to_list(self.entity_right)) if lemmatize else self.entity_right
-
-        return i_el == o_el and i_er == o_er
 
     def to_unicode(self):
         return "{}, {}, {}, {}".format(
