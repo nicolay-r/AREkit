@@ -63,6 +63,9 @@ class OpinionCollection:
                     f.write(o.to_unicode())
                     f.write(unicode("\n"))
 
+    def count(self):
+        return len(self.opinions)
+
     def __iter__(self):
         for a in self.opinions:
             yield a

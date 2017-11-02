@@ -1,18 +1,26 @@
 # -*- coding: utf-8 -*-
 
 import io
-from core.source.entity import Entity
+from core.processing.news import NewsProcessor
 
 
 class News:
 
     def __init__(self, sentences, entities):
-        self.sentences = sentences
         self.entities = entities
-        self.sentence_by_entity = self._index_sentence_by_entity()
+        self.sentences = sentences
+        self.processed = NewsProcessor(self)
+
+    def get_sentences(self):
+        for s in self.sentences:
+            yield s
 
     def get_entities(self):
         return self.entities
+
+    @property
+    def Processed(self):
+        return self.processed
 
     @staticmethod
     def from_file(filepath, entities):
@@ -67,17 +75,7 @@ class News:
         return News(sentences, entities)
 
     def get_sentence_by_entity(self, entity):
-        assert(isinstance(entity, Entity))
-        if (entity.ID not in self.sentence_by_entity):
-            print "FAILED: {} key wasn't found".format(entity.value.encode('utf-8'))
-        return self.sentences[self.sentence_by_entity[entity.ID]]
-
-    def _index_sentence_by_entity(self):
-        index = {}
-        for s in self.sentences:
-            for e_ID in s.entities_ids:
-                index[e_ID] = s.index
-        return index
+        return self.processed.get_sentence_by_entity(entity)
 
     def show(self):
         for s in self.sentences:

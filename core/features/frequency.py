@@ -1,4 +1,3 @@
-import numpy as np
 from feature import Feature
 from core.source.relations import Relation
 

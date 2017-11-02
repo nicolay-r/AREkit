@@ -43,7 +43,12 @@ def vectorize_train(news, entities, opinion_collections, features):
     collection = CommonRelationVectorCollection()
     sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
     for opinions in opinion_collections:
+        print opinions.count()
         for opinion in opinions:
+
+            print "{}->{}".format(
+                  opinion.entity_left.encode('utf-8'),
+                  opinion.entity_right.encode('utf-8'))
 
             if not entities.has_enity_by_value(opinion.entity_left):
                 continue

@@ -25,10 +25,13 @@ class LexiconFeature(Feature):
         e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
         e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
 
-        s1 = relation.news.get_sentence_by_entity(e1).index
-        s2 = relation.news.get_sentence_by_entity(e2).index
+        s_ind1 = relation.news.get_sentence_by_entity(e1).index
+        s_ind2 = relation.news.get_sentence_by_entity(e2).index
 
-        scores = self._scores(min(s1, s2), max(s1, s2), e1, e2, relation.news)
+        scores = []
+        if abs(s_ind1 - s_ind2) < 3:
+            lemmas = relation.news.Processed.get_text_between_entities_to_lemmatized_list(e1, e2)
+            scores = self._get_scores_of_processed(lemmas)
 
         if len(scores) == 0:
             scores.append(0)
@@ -38,43 +41,6 @@ class LexiconFeature(Feature):
         p_s_min = float(sum(s < 0 for s in scores))/len(scores)
 
         return self._normalize([p_s_all, p_s_max, p_s_min])
-
-    def _scores(self, s_from, s_to, e1, e2, news):
-        scores = [0]
-        sentences = news.sentences
-
-        # omitting relations between entities that placed so far
-        if (s_to - s_from > self.max_sentence_range):
-            return scores
-
-        i = s_from + 1
-        while i < s_to:
-            scores += self._get_scores(sentences[i].text)
-            i += 1
-
-        s_begin = sentences[s_from].begin
-
-        if (s_from < s_to):
-            # sentences are different
-            char_from_end = sentences[s_from].end - s_begin  # [   |->......]
-            char_to_begin = sentences[s_to].begin - s_begin  # [......<-|   ]
-            scores += self._get_scores(sentences[s_from].text[char_from_end:])
-            scores += self._get_scores(sentences[s_to].text[:char_to_begin])
-            pass
-        else:
-            # single sentence
-            char_to = max(e1.begin - s_begin, e2.begin - s_begin)
-            char_from = min(e1.end - s_begin, e2.end - s_begin)
-            scores += self._get_scores(
-                sentences[s_from].text[char_from:char_to])
-
-        return scores
-
-    def _get_scores(self, text):
-        lemmas = self.stemmer.lemmatize_to_list(text)
-        processed_lemmas = self.prefix_processor.process(lemmas)
-        scores = self._get_scores_of_processed(processed_lemmas)
-        return scores
 
     def _get_scores_of_processed(self, processed_lemmas):
         scores = []

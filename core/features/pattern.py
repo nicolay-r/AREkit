@@ -16,38 +16,6 @@ class PatternFeature(Feature):
         e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
         e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
 
-        s1 = relation.news.get_sentence_by_entity(e1).index
-        s2 = relation.news.get_sentence_by_entity(e2).index
-
-        v = [self.__get_count(p, s1, s2, e1, e2, relation.news) for p in self.patterns]
+        text = relation.news.processed.get_text_between_entities_to_str(e1, e2)
+        v = [text.count(p) for p in self.patterns]
         return self._normalize(v)
-
-    def __get_count(self, pattern, s_from, s_to, e1, e2, news):
-        c = 0
-        sentences = news.sentences
-
-        # omitting relations between entities that placed so far
-        if (s_to - s_from > self.max_sentence_range):
-            return c
-
-        i = s_from + 1
-        while i < s_to:
-            c += sentences[i].text.count(pattern)
-            i += 1
-
-        s_begin = sentences[s_from].begin
-
-        if (s_from < s_to):
-            # sentences are different
-            char_from_end = sentences[s_from].end - s_begin  # [   |->......]
-            char_to_begin = sentences[s_to].begin - s_begin  # [......<-|   ]
-            c += sentences[s_from].text[char_from_end:].count(pattern)
-            c += sentences[s_to].text[:char_to_begin].count(pattern)
-            pass
-        else:
-            # single sentence
-            char_to = max(e1.begin - s_begin, e2.begin - s_begin)
-            char_from = min(e1.end - s_begin, e2.end - s_begin)
-            c += sentences[s_from].text[char_from:char_to].count(pattern)
-
-        return c
