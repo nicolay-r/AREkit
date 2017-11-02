@@ -22,6 +22,7 @@ from core.features.entities import EntitiesBetweenFeature
 from core.features.prepositions import PrepositionsCountFeature
 from core.features.frequency import EntitiesFrequency
 from core.features.appearance import EntityAppearanceFeature
+from core.features.context import ContextPosBeforeFeature, ContextSentimentAfterFeature
 
 from core.processing.prefix import SentimentPrefixProcessor
 
@@ -178,7 +179,9 @@ FEATURES = [
     EntitiesBetweenFeature(),
     PrepositionsCountFeature(prepositions_list),
     EntitiesFrequency(),
-    EntityAppearanceFeature()
+    EntityAppearanceFeature(),
+    ContextPosBeforeFeature(),
+    ContextSentimentAfterFeature(rusentilex_filepath)
 ]
 
 #

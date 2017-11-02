@@ -2,7 +2,6 @@ import pandas as pd
 
 from feature import Feature
 from core.source.relations import Relation
-from core.stemmer import Stemmer
 
 # TODO: move to the environment
 from core.processing.prefix import SentimentPrefixProcessor
@@ -12,7 +11,6 @@ class LexiconFeature(Feature):
 
     def __init__(self, csv_filepath, prefix_processor, max_sentence_range=4):
         assert(isinstance(prefix_processor, SentimentPrefixProcessor))
-        self.stemmer = Stemmer()
         self.lexicon = pd.read_csv(csv_filepath, sep=',')
         self.prefix_processor = prefix_processor
         self.max_sentence_range = max_sentence_range

@@ -52,3 +52,26 @@ class Stemmer:
         """ mystem analyzer
         """
         return self.mystem.analyze(text)
+
+    def analyze_pos_list(self, terms):
+        """ list of part of speach according to the certain word in text
+            part of speech description:
+                https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
+        """
+        assert(type(terms) == list)
+        pos = []
+        for t in terms:
+            a = self.mystem.analyze(t)[0]
+            if 'analysis' not in a:
+                pos.append(None)
+                continue
+
+            info = a['analysis']
+
+            if len(info) == 0:
+                pos.append(None)
+                continue
+
+            pos = info[0]['gr'].lower()
+
+        return pos

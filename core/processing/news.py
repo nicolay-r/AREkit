@@ -53,13 +53,17 @@ class NewsProcessor:
 
         return u" ".join(texts)
 
-    def get_lemmas_after_entity(self, e):
+    def get_lemmas_after_entity_to_list(self, e):
         assert(isinstance(e, Entity))
-        pass
+        s = self.get_sentence_by_entity(e)
+        text = s.text[e.end-s.begin:]
+        return self._lemmatize_to_list(text)
 
-    def get_lemmas_before_entity(self, e):
+    def get_lemmas_before_entity_to_list(self, e):
         assert(isinstance(e, Entity))
-        pass
+        s = self.get_sentence_by_entity(e)
+        text = s.text[:e.begin-s.begin]
+        return self._lemmatize_to_list(text)
 
     def get_sentence_by_entity(self, e):
         assert(isinstance(e, Entity))
