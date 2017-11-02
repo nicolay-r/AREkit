@@ -57,6 +57,9 @@ def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
             r_right = env.stemmer.lemmatize_to_str(e2.value)
             r = "%s_%s" % (r_left.encode('utf-8'), r_right.encode('utf-8'))
 
+            if (r_left == r_right):
+                continue
+
             if (r_left in IGNORED_ENTITIES or r_right in IGNORED_ENTITIES):
                 continue
 
