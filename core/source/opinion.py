@@ -42,8 +42,15 @@ class OpinionCollection:
         return self._get_opinion_key(entity_left, entity_right) in self.unique
 
     def add_opinion(self, opinion):
+        assert(isinstance(opinion, Opinion))
         self.opinions.append(opinion)
         self.unique.add(self._get_opinion_key(
+            opinion.entity_left, opinion.entity_right))
+
+    def remove_opinion(self, opinion):
+        assert(isinstance(opinion, Opinion))
+        self.opinions.remove(opinion)
+        self.unique.remove(self._get_opinion_key(
             opinion.entity_left, opinion.entity_right))
 
     @staticmethod

@@ -3,6 +3,7 @@
 import io
 import numpy as np
 import core.environment as env
+import operator
 
 
 class CommonRelationVectorCollection:
@@ -51,6 +52,11 @@ class CommonRelationVectorCollection:
 
         return CommonRelationVectorCollection(vectors)
 
+    def get_by_popularity(self, limit=10):
+        most_popular = sorted(self.vectors.items(), key=operator.itemgetter(1).popularity)
+        return most_popular[:limit]
+
+
     def save(self, filepath):
         """ Save the vectors from *.vectors.txt file
         """
@@ -68,15 +74,17 @@ class CommonRelationVector:
     """ Vector of Relation between two lemmatized values of entities.
     """
 
-    def __init__(self, entity_value_left, entity_value_right, vector, label=0):
+    def __init__(self, entity_value_left, entity_value_right, vector, label=0, popularity=0):
         assert(type(entity_value_left) == unicode)
         assert(type(entity_value_right) == unicode)
         assert(isinstance(vector, np.ndarray))
         assert(type(label) == int)
+        assert(type(popularity) == int)
         self.value_left = env.stemmer.lemmatize_to_str(entity_value_left)
         self.value_right = env.stemmer.lemmatize_to_str(entity_value_right)
         self.vector = vector
-        self.label = label
+        self.label = label              # sentiment label or 0 in case of neutral
+        self.popularity = popularity    # might be used to show an amount of Relations originally
 
     def set_label(self, label):
         assert(type(label) == int)

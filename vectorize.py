@@ -150,6 +150,31 @@ def vectorize_test(news, entities, features):
     return collection
 
 
+def filter_neutral(neutral_opins, news, limit=10):
+    scored_opinions = []
+    for o in neutral_opins:
+
+        if not entities.has_enity_by_value(o.entity_left):
+            scored_opinions.append((o, 0))
+            continue
+
+        if not entities.has_enity_by_value(o.entity_right):
+            scored_opinions.append((o, 0))
+            continue
+
+        entities_left_IDs = len(entities.get_by_value(o.entity_left))
+        entities_right_IDs = len(entities.get_by_value(o.entity_right))
+        popularity = entities_left_IDs * entities_right_IDs
+
+        scored_opinions.append((o, popularity))
+
+    scored_opinions.sort(key= lambda x: x[1], reverse=True)
+
+    for o, score in scored_opinions[limit:]:
+        neutral_opins.remove_opinion(o)
+
+    print neutral_opins.count()
+
 #
 # Main
 #
@@ -193,7 +218,7 @@ for n in io_utils.train_indices():
     news = News.from_file(news_filepath, entities)
     sentiment_opins = OpinionCollection.from_file(opin_filepath)
     neutral_opins = OpinionCollection.from_file(neutral_filepath)
-    neutral_opins.limit(5)
+    filter_neutral(neutral_opins, news)
 
     vectors = vectorize_train(
         news, entities, [sentiment_opins, neutral_opins], FEATURES)
