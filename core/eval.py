@@ -2,30 +2,28 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
 import os
+import io
 import re
 from core.stemmer import Stemmer
 
 
 class Evaluator:
 
-    syn_dict = [
-        [u'сша', u'соединенные штаты', u'америка', u'соединенные штаты америки', u'соединенный штат америка', u'штат'],
-        [u'вашингтон', u'белый дом'],
-        [u'обама', u'барак обама'],
-        [u'ес', u'евросоюз', u'европейский союз', u'европа', u'брюссель'],
-        [u'росcия', u'рф', u'российская федерация', u'российский федерация'],
-        [u'путин', u'владимир путин', u'владимир владимирович путин'],
-        [u'лёвен', u'лёвено'],
-        [u'асеан', u'асеана'],
-        [u'лиухто', u'лиухтый', u'кари лиухто'],
-        [u'ИГ', u'ИГО', u'исламский государство'],
-        [u'Башар Асад', u'Асад'],
-    ]
-
-    def __init__(self, test_filepath, etalon_filepath):
+    def __init__(self, syn_dict_filepath, test_filepath, etalon_filepath):
+        self.syn_dict = self._syn_dict_from_file(syn_dict_filepath)
         self.user_answers = test_filepath
         self.etalon_answers = etalon_filepath
         self.stemmer = Stemmer()
+
+
+    @staticmethod
+    def _syn_dict_from_file(filepath):
+        syn_dict = []
+        with io.open(filepath, 'r', encoding='utf-8') as f:
+            for line in f.readlines():
+                args = line.split(',')
+                syn_dict = [a.strip() for a in args]
+        return syn_dict
 
     """ Проверка имен на заменяемость. Имена могут быть:
         - подстрокой другого: Путин vs Владимир Путин, Валентин vs Валентино
