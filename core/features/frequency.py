@@ -1,3 +1,4 @@
+import numpy as np
 from feature import Feature
 from core.source.relations import Relation
 
@@ -18,4 +19,4 @@ class EntitiesFrequency(Feature):
         e1_freq = (1.0*len(entities.get_by_value(e1.value)))/entities.count()
         e2_freq = (1.0*len(entities.get_by_value(e2.value)))/entities.count()
 
-        return [e1_freq, e2_freq]
+        return np.array([e1_freq, e2_freq])

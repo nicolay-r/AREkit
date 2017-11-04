@@ -1,4 +1,6 @@
+import numpy as np
 import pandas as pd
+
 from feature import Feature
 from core.source.relations import Relation
 import core.environment as env
@@ -34,7 +36,7 @@ class ContextSentimentAfterFeature(Feature):
         # print scores
 
         average = float(sum(scores))/len(scores)
-        return self._normalize([average, max(scores), min(scores)])
+        return np.array([average, max(scores), min(scores)])
 
     # TODO: move into lexicon class
     def _get_scores(self, lemmas):
@@ -75,7 +77,7 @@ class ContextPosBeforeFeature(Feature):
 
         pos_vector = self._create_vector(relation.news, e1)
         # print pos_vector
-        return pos_vector
+        return np.array(pos_vector)
 
     def _create_vector(self, news, e, limit=2):
         l_before = news.Processed.get_lemmas_before_entity_to_list(e)[-limit:]

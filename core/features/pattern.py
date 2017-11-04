@@ -1,3 +1,4 @@
+import numpy as np
 from core.source.relations import Relation
 from feature import Feature
 
@@ -18,4 +19,4 @@ class PatternFeature(Feature):
 
         text = relation.news.processed.get_text_between_entities_to_str(e1, e2)
         v = [text.count(p) for p in self.patterns]
-        return self._normalize(v)
+        return np.array(v)

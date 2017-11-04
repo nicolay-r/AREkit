@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import math
 import logging
 import numpy as np
 from gensim.models.word2vec import Word2Vec
@@ -33,7 +32,7 @@ def is_ignored(entity_value):
     ignored = io_utils.get_ignored_entity_values()
     entity_value = env.stemmer.lemmatize_to_str(entity_value)
     if entity_value in ignored:
-        print "ignored: '{}'".format(entity_value.encode('utf-8'))
+        # print "ignored: '{}'".format(entity_value.encode('utf-8'))
         return True
     return False
 
@@ -46,10 +45,6 @@ def vectorize_train(news, entities, opinion_collections, features):
     for opinions in opinion_collections:
         print opinions.count()
         for opinion in opinions:
-
-            print "{}->{}".format(
-                  opinion.entity_left.encode('utf-8'),
-                  opinion.entity_right.encode('utf-8'))
 
             if not entities.has_enity_by_value(opinion.entity_left):
                 continue
@@ -67,23 +62,26 @@ def vectorize_train(news, entities, opinion_collections, features):
             entities_right_IDs = entities.get_by_value(opinion.entity_right)
 
             r_features = None
+            relations = []
             r_count = len(entities_left_IDs) * len(entities_right_IDs)
+
+            # print "{}->{} {}".format(
+            #       opinion.entity_left.encode('utf-8'),
+            #       opinion.entity_right.encode('utf-8'),
+            #       r_count)
+
             for e1_ID in entities_left_IDs:
                 for e2_ID in entities_right_IDs:
                     e1 = entities.get_by_ID(e1_ID)
                     e2 = entities.get_by_ID(e2_ID)
                     r = Relation(e1.ID, e2.ID, news)
-                    features = np.concatenate([f.create(r) for f in FEATURES])
-
-                    if r_features is None:
-                        r_features = features
-                    else:
-                        r_features += features
+                    relations.append(r)
 
             if r_count == 0:
                 continue
 
-            r_features = r_features/r_count
+            r_features = np.concatenate(
+                [f.calculate(relations) for f in FEATURES], axis=0)
 
             vector = CommonRelationVector(
                 opinion.entity_left, opinion.entity_right,
@@ -105,10 +103,7 @@ def vectorize_test(news, entities, features):
         return key
 
     collection = CommonRelationVectorCollection()
-
-    r_entities = {}
-    r_features = {}
-    r_count = {}
+    relations = {}
 
     for e1 in entities:
         for e2 in entities:
@@ -125,34 +120,31 @@ def vectorize_test(news, entities, features):
             s1 = news.get_sentence_by_entity(e1)
             s2 = news.get_sentence_by_entity(e2)
 
-            # If entites from different sentences
             if not s1 == s2:
                 continue
 
-            r = Relation(e1.ID, e2.ID, news)
             r_key = create_key(e1, e2)
-            features = np.concatenate([f.create(r) for f in FEATURES])
 
-            # update features vector
-            if r_key in r_features:
-                r_features[r_key] += features
-            else:
-                r_features[r_key] = features
+            r = Relation(e1.ID, e2.ID, news)
+            if r_key not in relations:
+                relations[r_key] = []
 
-            # update count of such relations
-            if r_key not in r_count:
-                r_count[r_key] = 1
-            else:
-                r_count[r_key] += 1
+            relations[r_key].append(r)
 
-            # set entity values
-            if r_key not in r_entities:
-                r_entities[r_key] = (e1.value, e2.value)
+    for key, value in relations.iteritems():
+        assert(len(value) > 0)
+        e1 = entities.get_by_ID(value[0].entity_left_ID)
+        e2 = entities.get_by_ID(value[0].entity_right_ID)
+        e1_value = env.stemmer.lemmatize_to_str(e1.value)
+        e2_value = env.stemmer.lemmatize_to_str(e2.value)
 
-    for key, features in r_features.iteritems():
-        left, right = r_entities[key]
-        vector = CommonRelationVector(left, right, features/r_count[key])
+        # print "{}->{}, {}".format(
+        #     e1_value.encode('utf-8'),
+        #     e2_value.encode('utf-8'),
+        #     len(value))
 
+        features = np.concatenate([f.calculate(value) for f in FEATURES], axis=0)
+        vector = CommonRelationVector(e1_value, e2_value, features)
         collection.add_vector(vector)
 
     return collection

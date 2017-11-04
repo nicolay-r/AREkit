@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 
 from feature import Feature
@@ -38,7 +39,7 @@ class LexiconFeature(Feature):
         p_s_max = float(sum(s > 0 for s in scores))/len(scores)
         p_s_min = float(sum(s < 0 for s in scores))/len(scores)
 
-        return self._normalize([p_s_all, p_s_max, p_s_min])
+        return np.array([p_s_all, p_s_max, p_s_min])
 
     def _get_scores_of_processed(self, processed_lemmas):
         scores = []

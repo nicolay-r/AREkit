@@ -1,3 +1,4 @@
+import numpy as np
 from feature import Feature
 from core.source.relations import Relation
 
@@ -14,4 +15,4 @@ class DistanceFeature(Feature):
         e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
         e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
         lemmas = relation.news.Processed.get_text_between_entities_to_lemmatized_list(e1, e2)
-        return self._normalize([len(lemmas)])
+        return np.array([len(lemmas)])

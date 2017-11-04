@@ -1,3 +1,4 @@
+import numpy as np
 from feature import Feature
 from core.source.relations import Relation
 
@@ -20,7 +21,7 @@ class PrepositionsCountFeature(Feature):
 
         preps = self._get_prepositions_count(s1, s2, e1, e2, relation.news)
 
-        return self._normalize([preps])
+        return np.array([preps])
 
     def _get_prepositions_count(self, s1, s2, e1, e2, news):
         r = 0

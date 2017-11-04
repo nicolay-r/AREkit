@@ -31,4 +31,4 @@ class SimilarityFeature(Feature):
         e2_value_lemmas = self.stemmer.lemmatize_to_rusvectores_str(e2.value)
         v1 = self.__get_mean_word2vec_vector(e1_value_lemmas)
         v2 = self.__get_mean_word2vec_vector(e2_value_lemmas)
-        return [sum(map(lambda x, y: x * y, v1, v2))]
+        return np.array([sum(map(lambda x, y: x * y, v1, v2))])
