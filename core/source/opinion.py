@@ -12,7 +12,13 @@ class OpinionCollection:
         self.unique = set()
 
         for o in self.opinions:
-            self.unique.add(self._get_opinion_key(o.entity_left, o.entity_right))
+            key = self._get_opinion_key(o.entity_left, o.entity_right)
+            if self.has_opinion(o.entity_left, o.entity_right):
+                print "Collection already has opinion with the same values '{}'->'{}'".format(
+                    o.entity_left.encode('utf-8'),
+                    o.entity_right.encode('utf-8'))
+            self._add_opinion_key(key)
+
 
     @staticmethod
     def from_file(filepath):
@@ -43,21 +49,26 @@ class OpinionCollection:
 
     def add_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
+        key = self._get_opinion_key( opinion.entity_left, opinion.entity_right)
         self.opinions.append(opinion)
-        self.unique.add(self._get_opinion_key(
-            opinion.entity_left, opinion.entity_right))
+        self._add_opinion_key(key)
 
     def remove_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
         self.opinions.remove(opinion)
-        self.unique.remove(self._get_opinion_key(
-            opinion.entity_left, opinion.entity_right))
+        key = self._get_opinion_key(opinion.entity_left, opinion.entity_right)
+        self.unique.remove(key)
 
     @staticmethod
     def _get_opinion_key(l_value, r_value):
         return "{}_{}".format(
             env.stemmer.lemmatize_to_str(l_value).encode('utf-8'),
-            env.stemmer.lemmatize_to_str(r_value).encode('utf-8'))
+            env.stemmer.lemmatize_to_str(r_value).encode('utf-8')).decode('utf-8')
+
+    def _add_opinion_key(self, key):
+        assert(type(key) == unicode)
+        assert(key not in self.unique)
+        self.unique.add(key)
 
     def limit(self, count):
         # this is incorrect. temprorary

@@ -17,7 +17,8 @@ class CommonRelationVectorCollection:
         key = self.__create_key(vector)
 
         if key in self.vectors:
-            print "Collection already has a key {}. Ignored".format(key.encode('utf-8'))
+            print "Vector collection already has a key {}. Ignored".format(
+                key.encode('utf-8'))
             return
 
         self.vectors[key] = vector
