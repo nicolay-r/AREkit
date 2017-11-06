@@ -1,11 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from feature import Feature
-from core.source.relations import Relation
-
 # TODO: move to the environment
 from core.processing.prefix import SentimentPrefixProcessor
+from core.relations import Relation
+from feature import Feature
 
 
 class LexiconFeature(Feature):

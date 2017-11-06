@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-from feature import Feature
-from core.source.relations import Relation
 import core.environment as env
+from core.relations import Relation
+from feature import Feature
 
 
 class ContextSentimentAfterFeature(Feature):

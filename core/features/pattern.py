@@ -1,5 +1,6 @@
 import numpy as np
-from core.source.relations import Relation
+
+from core.relations import Relation
 from feature import Feature
 
 

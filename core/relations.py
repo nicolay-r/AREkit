@@ -1,4 +1,4 @@
-from news import News
+from core.source.news import News
 
 
 class Relation:

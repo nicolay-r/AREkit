@@ -1,6 +1,7 @@
 import numpy as np
+
+from core.relations import Relation
 from feature import Feature
-from core.source.relations import Relation
 
 
 class EntitiesFrequency(Feature):

@@ -1,7 +1,8 @@
-import numpy as np
 from math import exp
 
-from core.source.relations import Relation
+import numpy as np
+
+from core.relations import Relation
 
 
 class Feature:

@@ -10,7 +10,7 @@ import core.environment as env
 from core.source.opinion import OpinionCollection
 from core.source.entity import EntityCollection
 from core.source.news import News
-from core.source.relations import Relation
+from core.relations import Relation
 from core.source.vectors import CommonRelationVectorCollection, CommonRelationVector
 
 from core.features.distance import DistanceFeature
