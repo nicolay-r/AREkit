@@ -11,10 +11,10 @@ class EntityCollection:
         self.entities = entities
         self.by_id = self._index_by_id()
         self.by_values = self._index_by_lemmatized_value()
-        print "==========================================="
-        for key, value in self.by_values.iteritems():
-            print "'{}', {}".format(key.encode('utf-8'), value)
-        print "==========================================="
+        # print "==========================================="
+        # for key, value in self.by_values.iteritems():
+        #     print "'{}', {}".format(key.encode('utf-8'), value)
+        # print "==========================================="
 
     @staticmethod
     def from_file(filepath):
@@ -56,7 +56,8 @@ class EntityCollection:
 
     def get_by_value(self, entity_value):
         assert(type(entity_value) == unicode)
-        return self.by_values[env.stemmer.lemmatize_to_str(entity_value)]
+        value = env.stemmer.lemmatize_to_str(entity_value)
+        return self.by_values[value]
 
     def count(self):
         return len(self.entities)

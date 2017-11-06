@@ -42,8 +42,6 @@ def vectorize_train(news, entities, opinion_collections, synonym_collection):
     """ Vectorize news of train collection that has opinion labeling
     """
     def get_appropriate_entities(opinion_value):
-        if not synonyms_collection.has_synonym(opinion_value):
-            print "! {}".format(opinion_value.encode('utf-8'))
         if synonyms_collection.has_synonym(opinion_value):
             return filter(
                 lambda s: entities.has_enity_by_value(s),
@@ -58,9 +56,16 @@ def vectorize_train(news, entities, opinion_collections, synonym_collection):
     for opinions in opinion_collections:
         for opinion in opinions:
 
+            # TODO. Later ignore relations between the same entities
+            print "{}->{}".format(opinion.entity_left.encode('utf-8'),
+                                  opinion.entity_right.encode('utf-8'))
+            if opinion.entity_left == opinion.entity_right:
+                continue
+
             left_values = get_appropriate_entities(opinion.entity_left)
             right_values = get_appropriate_entities(opinion.entity_right)
 
+            # TODO. We guarantee that these left and right values are not lemmatized
             if len(left_values) == 0:
                 print "Appropriate entity for '{}'->'{}' has not been found".format(
                     opinion.entity_left.encode('utf-8'),
