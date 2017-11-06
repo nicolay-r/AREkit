@@ -11,10 +11,10 @@ class EntityCollection:
         self.entities = entities
         self.by_id = self._index_by_id()
         self.by_values = self._index_by_lemmatized_value()
-        # print "==========================================="
-        # for key, value in self.by_values.iteritems():
-        #     print "'{}', {}".format(key.encode('utf-8'), value)
-        # print "==========================================="
+        print "==========================================="
+        for key, value in self.by_values.iteritems():
+            print "'{}', {}".format(key.encode('utf-8'), value)
+        print "==========================================="
 
     @staticmethod
     def from_file(filepath):
@@ -29,7 +29,7 @@ class EntityCollection:
                 e_str_type = args[1]
                 e_begin = int(args[2])
                 e_end = int(args[3])
-                e_value = " ".join([a.strip().lower() for a in args[4:]])
+                e_value = " ".join([a.strip() for a in args[4:]])
                 a = Entity(e_ID, e_str_type, e_begin, e_end, e_value)
 
                 entities.append(a)
@@ -49,9 +49,9 @@ class EntityCollection:
     def has_enity_by_value(self, entity_value):
         assert(type(entity_value) == unicode)
         value = env.stemmer.lemmatize_to_str(entity_value)
-        if value not in self.by_values:
-            print "'{}'->'{}', not found!".format(
-                entity_value.encode('utf-8'), value.encode('utf-8'))
+        # if value not in self.by_values:
+        #     print "'{}'->'{}', not found!".format(
+        #         entity_value.encode('utf-8'), value.encode('utf-8'))
         return value in self.by_values
 
     def get_by_value(self, entity_value):

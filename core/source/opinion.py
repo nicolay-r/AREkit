@@ -33,8 +33,8 @@ class OpinionCollection:
                     print "not enough arguments at line: {}, '{}'".format(i, line.encode('utf-8'))
                     continue
 
-                entity_left = args[0].strip().lower()
-                entity_right = args[1].strip().lower()
+                entity_left = args[0].strip()
+                entity_right = args[1].strip()
 
                 o = Opinion(entity_left,
                             entity_right,
@@ -98,8 +98,8 @@ class Opinion:
         assert(type(entity_right) == unicode)
         assert(type(sentiment) == unicode)
         assert(type(time) == unicode)
-        self.entity_left = entity_left
-        self.entity_right = entity_right
+        self.entity_left = entity_left.lower()
+        self.entity_right = entity_right.lower()
         self.sentiment = sentiment
         self.time = time
 

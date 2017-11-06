@@ -11,11 +11,11 @@ class Stemmer:
         self.mystem = Mystem(entire_input=False)
 
     def lemmatize_to_list(self, text):
-        return self.mystem.lemmatize(text)
+        return self.mystem.lemmatize(text.lower())
 
     def lemmatize_to_str(self, text):
         assert(type(text) == unicode)
-        lemmas = self.mystem.lemmatize(text)
+        lemmas = self.mystem.lemmatize(text.lower())
 
         result = " ".join(lemmas)
 
@@ -33,7 +33,7 @@ class Stemmer:
         """ <lemma>_<POS tag>
         """
         result = []
-        analysis = self.mystem.analyze(text)
+        analysis = self.mystem.analyze(text.lower())
 
         for item in analysis:
 
@@ -51,7 +51,7 @@ class Stemmer:
     def analyze(self, text):
         """ mystem analyzer
         """
-        return self.mystem.analyze(text)
+        return self.mystem.analyze(text.lower())
 
     def analyze_pos_list(self, terms):
         """ list of part of speach according to the certain word in text

@@ -12,6 +12,7 @@ from core.source.entity import EntityCollection
 from core.source.news import News
 from core.relations import Relation
 from core.source.vectors import CommonRelationVectorCollection, CommonRelationVector
+from core.source.synonyms import SynonymsCollection
 
 from core.features.distance import DistanceFeature
 from core.features.similarity import SimilarityFeature
@@ -37,45 +38,69 @@ def is_ignored(entity_value):
     return False
 
 
-def vectorize_train(news, entities, opinion_collections, features):
+def vectorize_train(news, entities, opinion_collections, synonym_collection):
     """ Vectorize news of train collection that has opinion labeling
     """
+    def get_appropriate_entities(opinion_value):
+        if not synonyms_collection.has_synonym(opinion_value):
+            print "! {}".format(opinion_value.encode('utf-8'))
+        if synonyms_collection.has_synonym(opinion_value):
+            return filter(
+                lambda s: entities.has_enity_by_value(s),
+                synonyms_collection.get_synonyms(opinion_value))
+        elif entities.has_enity_by_value(opinion_value):
+            return [opinion_value]
+        else:
+            return []
+
     collection = CommonRelationVectorCollection()
     sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
     for opinions in opinion_collections:
-        print opinions.count()
         for opinion in opinions:
 
-            if not entities.has_enity_by_value(opinion.entity_left):
+            left_values = get_appropriate_entities(opinion.entity_left)
+            right_values = get_appropriate_entities(opinion.entity_right)
+
+            if len(left_values) == 0:
+                print "Appropriate entity for '{}'->'{}' has not been found".format(
+                    opinion.entity_left.encode('utf-8'),
+                    env.stemmer.lemmatize_to_str(opinion.entity_left).encode('utf-8')
+                )
                 continue
 
-            if not entities.has_enity_by_value(opinion.entity_right):
+            if len(right_values) == 0:
+                print "Appropriate entity for '{}' has not been found".format(
+                   opinion.entity_right.encode('utf-8'))
                 continue
 
-            if is_ignored(opinion.entity_left):
-                continue
-
-            if is_ignored(opinion.entity_right):
-                continue
-
-            entities_left_IDs = entities.get_by_value(opinion.entity_left)
-            entities_right_IDs = entities.get_by_value(opinion.entity_right)
-
-            r_features = None
+            r_count = 0
             relations = []
-            r_count = len(entities_left_IDs) * len(entities_right_IDs)
 
-            # print "{}->{} {}".format(
-            #       opinion.entity_left.encode('utf-8'),
-            #       opinion.entity_right.encode('utf-8'),
-            #       r_count)
+            for entity_left in left_values:
+                for entity_right in right_values:
 
-            for e1_ID in entities_left_IDs:
-                for e2_ID in entities_right_IDs:
-                    e1 = entities.get_by_ID(e1_ID)
-                    e2 = entities.get_by_ID(e2_ID)
-                    r = Relation(e1.ID, e2.ID, news)
-                    relations.append(r)
+                    if is_ignored(entity_left):
+                        continue
+
+                    if is_ignored(entity_right):
+                        continue
+
+                    entities_left_ids = entities.get_by_value(entity_left)
+                    entities_right_ids = entities.get_by_value(entity_right)
+
+                    r_count = len(entities_left_ids) * len(entities_right_ids)
+
+                    # print "{}->{} {}".format(
+                    #       opinion.entity_left.encode('utf-8'),
+                    #       opinion.entity_right.encode('utf-8'),
+                    #       r_count)
+
+                    for e1_ID in entities_left_ids:
+                        for e2_ID in entities_right_ids:
+                            e1 = entities.get_by_ID(e1_ID)
+                            e2 = entities.get_by_ID(e2_ID)
+                            r = Relation(e1.ID, e2.ID, news)
+                            relations.append(r)
 
             if r_count == 0:
                 continue
@@ -92,7 +117,7 @@ def vectorize_train(news, entities, opinion_collections, features):
     return collection
 
 
-def vectorize_test(news, entities, features):
+def vectorize_test(news, entities):
     """ Vectorize news of test collection
     """
     def create_key(e1, e2):
@@ -173,7 +198,6 @@ def filter_neutral(neutral_opins, news, limit=10):
     for o, score in scored_opinions[limit:]:
         neutral_opins.remove_opinion(o)
 
-    print neutral_opins.count()
 
 #
 # Main
@@ -183,22 +207,24 @@ root = "data/Texts/"
 preps_filepath = "data/prepositions.txt"
 rusentilex_filepath = "data/rusentilex.csv"
 w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
+synonyms_filepath = "data/synonyms.txt"
 
 # w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
 prefix_processor = SentimentPrefixProcessor.from_file("data/prefixes.csv")
 prepositions_list = io_utils.read_prepositions(preps_filepath)
+synonyms_collection = SynonymsCollection.from_file(synonyms_filepath)
 
 FEATURES = [
     DistanceFeature(),
     # SimilarityFeature(w2v_model),
-    LexiconFeature(rusentilex_filepath, prefix_processor),
-    PatternFeature([',']),
-    EntitiesBetweenFeature(),
-    PrepositionsCountFeature(prepositions_list),
-    EntitiesFrequency(),
-    EntityAppearanceFeature(),
-    ContextPosBeforeFeature(),
-    ContextSentimentAfterFeature(rusentilex_filepath)
+    # LexiconFeature(rusentilex_filepath, prefix_processor),
+    # PatternFeature([',']),
+    # EntitiesBetweenFeature(),
+    # PrepositionsCountFeature(prepositions_list),
+    # EntitiesFrequency(),
+    # EntityAppearanceFeature(),
+    # ContextPosBeforeFeature(),
+    # ContextSentimentAfterFeature(rusentilex_filepath)
 ]
 
 #
@@ -221,7 +247,11 @@ for n in io_utils.train_indices():
     filter_neutral(neutral_opins, news)
 
     vectors = vectorize_train(
-        news, entities, [sentiment_opins, neutral_opins], FEATURES)
+        news,
+        entities,
+        [sentiment_opins, neutral_opins],
+        synonyms_collection)
+
     vectors.save(vector_output)
 
 #
@@ -239,5 +269,5 @@ for n in io_utils.test_indices():
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
 
-    vectors = vectorize_test(news, entities, FEATURES)
+    vectors = vectorize_test(news, entities)
     vectors.save(vector_output)
