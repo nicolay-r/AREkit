@@ -44,7 +44,7 @@ def sentiment_to_int(label):
 
 
 def test_root():
-    return "data/test/"
+    return "data/Test/"
 
 
 def train_root():
@@ -54,4 +54,4 @@ def train_root():
 def get_etalon_root():
     """ Folder that contains etalon opinions
     """
-    return "data/test_orig/artest_orig"
+    return "data/Etalon/"
