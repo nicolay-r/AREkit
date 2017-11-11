@@ -1,10 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import pandas as pd
-import os
 import io
+import os
 import re
-from core.stemmer import Stemmer
+
+import pandas as pd
+
+from core.processing.stemmer import Stemmer
 
 
 class Evaluator:

@@ -2,15 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import logging
+
 import numpy as np
+from gensim.models.word2vec import Word2Vec
 
-from core.stemmer import Stemmer
-
+from core.processing.stemmer import Stemmer
 from core.source.entity import EntityCollection
 from core.source.news import News
 from core.source.opinion import OpinionCollection
-
-from gensim.models.word2vec import Word2Vec
 
 IGNORED_ENTITIES = ["Author", "Unknown"]
 

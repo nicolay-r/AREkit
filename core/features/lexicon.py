@@ -1,17 +1,17 @@
 import numpy as np
-import pandas as pd
 
-# TODO: move to the environment
 from core.processing.prefix import SentimentPrefixProcessor
+from core.source.lexicon import Lexicon
 from core.relations import Relation
 from base import Base
 
 
 class LexiconFeature(Base):
 
-    def __init__(self, csv_filepath, prefix_processor, max_sentence_range=4):
+    def __init__(self, lexicon, prefix_processor, max_sentence_range=4):
+        assert(isinstance(lexicon, Lexicon))
         assert(isinstance(prefix_processor, SentimentPrefixProcessor))
-        self.lexicon = pd.read_csv(csv_filepath, sep=',')
+        self.lexicon = lexicon
         self.prefix_processor = prefix_processor
         self.max_sentence_range = max_sentence_range
 
@@ -50,22 +50,15 @@ class LexiconFeature(Base):
                 sign = lemma
                 continue
 
-            score = self._get_weight(lemma)
+            score = self.lexicon.get_score(lemma)
 
-            if (sign == '-'):
+            if sign == '-':
                 score *= -1
                 sign = None
 
             scores.append(score)
 
         return scores
-
-    # TODO: move everything into Lexicon class
-    def _get_weight(self, lemma):
-        assert(type(lemma) == unicode)
-
-        s = self.lexicon[lemma.encode('utf-8') == self.lexicon['term']]
-        return s['tone'].values[0] if len(s) > 0 else 0
 
     @staticmethod
     def _show_lemmas(processed_lemmas):

@@ -7,12 +7,14 @@ from gensim.models.word2vec import Word2Vec
 
 import core.environment as env
 
+from core.source.lexicon import Lexicon
 from core.source.opinion import OpinionCollection
 from core.source.entity import EntityCollection
 from core.source.news import News
-from core.relations import Relation
 from core.source.vectors import CommonRelationVectorCollection, CommonRelationVector
 from core.source.synonyms import SynonymsCollection
+
+from core.relations import Relation
 
 from core.features.distance import DistanceFeature
 from core.features.similarity import SimilarityFeature
@@ -206,29 +208,25 @@ def filter_neutral(neutral_opins, news, limit=10):
 #
 # Main
 #
-
-root = "data/Texts/"
-preps_filepath = "data/prepositions.txt"
-rusentilex_filepath = "data/rusentilex.csv"
 w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
-synonyms_filepath = "data/synonyms.txt"
 
 # w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
 prefix_processor = SentimentPrefixProcessor.from_file("data/prefixes.csv")
-prepositions_list = io_utils.read_prepositions(preps_filepath)
-synonyms_collection = SynonymsCollection.from_file(synonyms_filepath)
+prepositions_list = io_utils.read_prepositions("data/prepositions.txt")
+synonyms_collection = SynonymsCollection.from_file(io_utils.get_synonyms_filepath())
+lexicon = Lexicon.from_file("data/rusentilex.csv")
 
 FEATURES = [
     DistanceFeature(),
     # SimilarityFeature(w2v_model),
-    # LexiconFeature(rusentilex_filepath, prefix_processor),
-    # PatternFeature([',']),
-    # EntitiesBetweenFeature(),
-    # PrepositionsCountFeature(prepositions_list),
-    # EntitiesFrequency(),
-    # EntityAppearanceFeature(),
-    # ContextPosBeforeFeature(),
-    # ContextSentimentAfterFeature(rusentilex_filepath)
+    LexiconFeature(lexicon, prefix_processor),
+    PatternFeature([',']),
+    EntitiesBetweenFeature(),
+    PrepositionsCountFeature(prepositions_list),
+    EntitiesFrequency(),
+    EntityAppearanceFeature(),
+    ContextPosBeforeFeature(),
+    ContextSentimentAfterFeature(lexicon)
 ]
 
 #

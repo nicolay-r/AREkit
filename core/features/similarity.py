@@ -2,9 +2,9 @@
 
 import numpy as np
 
-from core.relations import Relation
-from core.stemmer import Stemmer
 from base import Base
+from core.processing.stemmer import Stemmer
+from core.relations import Relation
 
 
 class SimilarityFeature(Base):

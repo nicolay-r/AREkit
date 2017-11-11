@@ -1,3 +1,3 @@
-from core.stemmer import Stemmer
+from core.processing.stemmer import Stemmer
 
 stemmer = Stemmer()
