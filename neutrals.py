@@ -38,16 +38,20 @@ def relations_equal_diff(E, diff, news, synonyms_collection, sentiment_opins=Non
                 return
 
         keys.add(r_key)
-        pairs.append((left_value, right_value))
+        pairs.append((
+            env.stemmer.lemmatize_to_str(left_value),
+            env.stemmer.lemmatize_to_str(right_value)
+        ))
 
     def is_ignored(entity):
         return env.stemmer.lemmatize_to_str(entity.value) in IGNORED_ENTITIES
 
-    def get_synonyms_or_none(entity):
+    def get_synonyms(entity):
         if not synonyms_collection.has_synonym(entity.value):
             # print "Can't find synonym for '{}'".format(entity.value.encode('utf-8'))
-            return None
-        return synonyms_collection.get_synonyms(entity.value)
+            return [entity.value], None
+        return synonyms_collection.get_synonyms(entity.value), \
+               synonyms_collection.get_synonym_group_index(entity.value)
 
     r_keys = set()
     r_pairs = []
@@ -64,21 +68,18 @@ def relations_equal_diff(E, diff, news, synonyms_collection, sentiment_opins=Non
             if is_ignored(e1) or is_ignored(e2):
                 continue
 
-            s_list1 = get_synonyms_or_none(e1)
-            s_list2 = get_synonyms_or_none(e2)
-
-            if s_list1 is None or s_list2 is None:
-                continue
+            s_list1, s_group1 = get_synonyms(e1)
+            s_list2, s_group2 = get_synonyms(e2)
 
             r_left = s_list1[0]
             r_right = s_list2[0]
 
             # Filter the same groups
-            if synonyms_collection.get_synonym_group_index(r_left) == \
-                synonyms_collection.get_synonym_group_index(r_right):
-                "Entities '{}', and '{}' a part of the same synonym group".format(
-                    r_left.encode('utf-8'), r_right.encode('utf-8'))
-                continue
+            if s_group1 is not None and s_group2 is not None:
+                if s_group1 == s_group2:
+                    "Entities '{}', and '{}' a part of the same synonym group".format(
+                        r_left.encode('utf-8'), r_right.encode('utf-8'))
+                    continue
 
             try_add_relation(r_left, r_right, r_keys, r_pairs)
             try_add_relation(r_right, r_left, r_keys, r_pairs)
