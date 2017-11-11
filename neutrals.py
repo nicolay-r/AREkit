@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import numpy as np
-from gensim.models.word2vec import Word2Vec
 
 import core.environment as env
 from core.source.entity import EntityCollection
 from core.source.news import News
 from core.source.opinion import OpinionCollection
+from core.source.synonyms import SynonymsCollection
 
 import io_utils
 
@@ -23,27 +23,34 @@ def sentences_between(e1, e2, news):
                news.get_sentence_by_entity(e2).index)
 
 
-def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
+def relations_equal_diff(E, diff, news, synonyms_collection, sentiment_opins=None):
     """ Relations that had the same difference
     """
+    def try_add_relation(left_value, right_value, keys, pairs):
+        r_key = "%s_%s" % (left_value, right_value)
 
-    def get_word2vec_vector(lemmas, w2v_model):
-        v = np.zeros(w2v_model.vector_size, dtype=np.float32)
-        for l in lemmas:
-            if l in w2v_model:
-                v = v + w2v_model[l]
-        return v
+        if r_key in keys:
+            return
 
-    def rus_vectores_similarity(e1, e2, w2v_model):
-        l1 = env.stemmer.lemmatize_to_rusvectores_str(e1)
-        l2 = env.stemmer.lemmatize_to_rusvectores_str(e2)
-        v1 = get_word2vec_vector(l1, w2v_model)
-        v2 = get_word2vec_vector(l2, w2v_model)
-        return sum(map(lambda x, y: x * y, v1, v2))
+        # Filter if there is a sentiment relation
+        if sentiment_opins is not None:
+            if sentiment_opins.has_opinion(e1.value, e2.value, lemmatize=True):
+                return
 
-    unique_relations = []
-    entities = news.entities
-    pairs = []
+        keys.add(r_key)
+        pairs.append((left_value, right_value))
+
+    def is_ignored(entity):
+        return env.stemmer.lemmatize_to_str(entity.value) in IGNORED_ENTITIES
+
+    def get_synonyms_or_none(entity):
+        if not synonyms_collection.has_synonym(entity.value):
+            # print "Can't find synonym for '{}'".format(entity.value.encode('utf-8'))
+            return None
+        return synonyms_collection.get_synonyms(entity.value)
+
+    r_keys = set()
+    r_pairs = []
 
     for i in range(E.shape[0]):
         for j in range(E.shape[1]):
@@ -51,37 +58,36 @@ def relations_equal_diff(E, diff, news, w2v_model, opinions=None):
             if E[i][j] != diff:
                 continue
 
-            e1 = entities.get(i)
-            e2 = entities.get(j)
-            r_left = env.stemmer.lemmatize_to_str(e1.value)
-            r_right = env.stemmer.lemmatize_to_str(e2.value)
-            r = "%s_%s" % (r_left.encode('utf-8'), r_right.encode('utf-8'))
+            e1 = news.entities.get(i)
+            e2 = news.entities.get(j)
 
-            if (r_left == r_right):
+            if is_ignored(e1) or is_ignored(e2):
                 continue
 
-            if (r_left in IGNORED_ENTITIES or r_right in IGNORED_ENTITIES):
+            s_list1 = get_synonyms_or_none(e1)
+            s_list2 = get_synonyms_or_none(e2)
+
+            if s_list1 is None or s_list2 is None:
                 continue
 
-            if r in unique_relations:
+            r_left = s_list1[0]
+            r_right = s_list2[0]
+
+            # Filter the same groups
+            if synonyms_collection.get_synonym_group_index(r_left) == \
+                synonyms_collection.get_synonym_group_index(r_right):
+                "Entities '{}', and '{}' a part of the same synonym group".format(
+                    r_left.encode('utf-8'), r_right.encode('utf-8'))
                 continue
 
-            s = False
-            if opinions is not None:
-                s = opinions.has_opinion(e1.value, e2.value, lemmatize=True)
+            try_add_relation(r_left, r_right, r_keys, r_pairs)
+            try_add_relation(r_right, r_left, r_keys, r_pairs)
 
-            # Filter sentiment relations
-            if s:
-                continue
-
-            unique_relations.append(r)
-
-            pairs.append((r_left, r_right))
-
-    return pairs
+    print "Relations: '{}'".format(len(r_pairs))
+    return r_pairs
 
 
-def make_neutrals(news, w2v_model, opinions=None):
+def make_neutrals(news, synonyms_collection, opinions=None):
     entities = news.entities
     E = np.zeros((entities.count(), entities.count()), dtype='int32')
     for e1 in entities:
@@ -91,7 +97,7 @@ def make_neutrals(news, w2v_model, opinions=None):
             E[i-1][j-1] = sentences_between(e1, e2, news)
 
     relations = relations_equal_diff(
-        E, 0, news, w2v_model, opinions=opinions)
+        E, 0, news, synonyms_collection, sentiment_opins=opinions)
 
     return relations
 
@@ -110,8 +116,7 @@ def save(filepath, relation_pairs):
 #
 # Main
 #
-w2v_model_filepath = "../tone-classifier/data/w2v/news_rusvectores2.bin.gz"
-w2v_model = Word2Vec.load_word2vec_format(w2v_model_filepath, binary=True)
+synonyms_collection = SynonymsCollection.from_file(io_utils.get_synonyms_filepath())
 
 #
 # Train
@@ -128,7 +133,7 @@ for n in io_utils.train_indices():
     news = News.from_file(news_filepath, entities)
     opinions = OpinionCollection.from_file(opin_filepath)
 
-    pairs = make_neutrals(news, w2v_model, opinions)
+    pairs = make_neutrals(news, synonyms_collection, opinions)
     save(neutral_filepath, pairs)
 
 #
@@ -144,5 +149,5 @@ for n in io_utils.test_indices():
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
 
-    pairs = make_neutrals(news, w2v_model)
+    pairs = make_neutrals(news, synonyms_collection)
     save(neutral_filepath, pairs)

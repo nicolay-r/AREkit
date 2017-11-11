@@ -52,7 +52,6 @@ def vectorize_train(news, entities, opinion_collections, synonym_collection):
             return []
 
     collection = CommonRelationVectorCollection()
-    sentiment_to_int = {'pos': 1, 'neg': -1, 'neu': 0}
     for opinions in opinion_collections:
         for opinion in opinions:
 
@@ -115,7 +114,7 @@ def vectorize_train(news, entities, opinion_collections, synonym_collection):
 
             vector = CommonRelationVector(
                 opinion.entity_left, opinion.entity_right,
-                r_features, sentiment_to_int[opinion.sentiment])
+                r_features, io_utils.sentiment_to_int(opinion.sentiment))
 
             collection.add_vector(vector)
 

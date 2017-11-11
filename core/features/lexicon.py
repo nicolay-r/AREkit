@@ -4,10 +4,10 @@ import pandas as pd
 # TODO: move to the environment
 from core.processing.prefix import SentimentPrefixProcessor
 from core.relations import Relation
-from feature import Feature
+from base import Base
 
 
-class LexiconFeature(Feature):
+class LexiconFeature(Base):
 
     def __init__(self, csv_filepath, prefix_processor, max_sentence_range=4):
         assert(isinstance(prefix_processor, SentimentPrefixProcessor))

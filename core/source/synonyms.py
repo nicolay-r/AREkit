@@ -42,3 +42,8 @@ class SynonymsCollection:
         synonym = env.stemmer.lemmatize_to_str(synonym)
         index = self.by_synonym[synonym]
         return self.by_index[index]
+
+    def get_synonym_group_index(self, synonym):
+        assert(type(synonym) == unicode)
+        synonym = env.stemmer.lemmatize_to_str(synonym)
+        return self.by_synonym[synonym]

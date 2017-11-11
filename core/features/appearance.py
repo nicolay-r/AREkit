@@ -1,8 +1,8 @@
 import numpy as np
-from feature import Feature
+from base import Base
 
 
-class EntityAppearanceFeature(Feature):
+class EntityAppearanceFeature(Base):
 
     def __init__(self):
         pass

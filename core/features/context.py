@@ -3,10 +3,10 @@ import pandas as pd
 
 import core.environment as env
 from core.relations import Relation
-from feature import Feature
+from base import Base
 
 
-class ContextSentimentAfterFeature(Feature):
+class ContextSentimentAfterFeature(Base):
 
     LIMIT = 2
 
@@ -53,7 +53,7 @@ class ContextSentimentAfterFeature(Feature):
         return s['tone'].values[0] if len(s) > 0 else 0
 
 
-class ContextPosBeforeFeature(Feature):
+class ContextPosBeforeFeature(Base):
     """ https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
     """
     POS = ['pr', 's', 'adv', 'conj', 'v', 'num']

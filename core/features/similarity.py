@@ -4,10 +4,10 @@ import numpy as np
 
 from core.relations import Relation
 from core.stemmer import Stemmer
-from feature import Feature
+from base import Base
 
 
-class SimilarityFeature(Feature):
+class SimilarityFeature(Base):
 
     def __init__(self, w2v_model):
         self.stemmer = Stemmer()

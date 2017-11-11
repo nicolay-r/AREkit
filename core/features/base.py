@@ -5,7 +5,7 @@ import numpy as np
 from core.relations import Relation
 
 
-class Feature:
+class Base:
 
     def __init__():
         pass

@@ -1,10 +1,10 @@
 import numpy as np
 
 from core.relations import Relation
-from feature import Feature
+from base import Base
 
 
-class PatternFeature(Feature):
+class PatternFeature(Base):
 
     def __init__(self, patterns, max_sentence_range=5):
         assert(type(patterns) == list)

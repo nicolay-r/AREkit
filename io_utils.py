@@ -52,6 +52,8 @@ def train_root():
 
 
 def get_etalon_root():
-    """ Folder that contains etalon opinions
-    """
     return "data/Etalon/"
+
+
+def get_synonyms_filepath():
+    return "data/synonyms.txt"

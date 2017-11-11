@@ -1,10 +1,10 @@
 import numpy as np
 
 from core.relations import Relation
-from feature import Feature
+from base import Base
 
 
-class PrepositionsCountFeature(Feature):
+class PrepositionsCountFeature(Base):
 
     def __init__(self, prepositions):
         assert(type(prepositions) == list)
