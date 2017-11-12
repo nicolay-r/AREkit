@@ -46,9 +46,9 @@ def vectorize_train(news, entities, opinion_collections, synonym_collection):
     def get_appropriate_entities(opinion_value):
         if synonyms_collection.has_synonym(opinion_value):
             return filter(
-                lambda s: entities.has_enity_by_value(s),
-                synonyms_collection.get_synonyms(opinion_value))
-        elif entities.has_enity_by_value(opinion_value):
+                lambda s: entities.has_entity_by_value(s),
+                synonyms_collection.get_synonyms_list(opinion_value))
+        elif entities.has_entity_by_value(opinion_value):
             return [opinion_value]
         else:
             return []
@@ -91,8 +91,8 @@ def vectorize_train(news, entities, opinion_collections, synonym_collection):
                     if is_ignored(entity_right):
                         continue
 
-                    entities_left_ids = entities.get_by_value(entity_left)
-                    entities_right_ids = entities.get_by_value(entity_right)
+                    entities_left_ids = entities.get_entity_by_value(entity_left)
+                    entities_right_ids = entities.get_entity_by_value(entity_right)
 
                     r_count = len(entities_left_ids) * len(entities_right_ids)
 
@@ -103,8 +103,8 @@ def vectorize_train(news, entities, opinion_collections, synonym_collection):
 
                     for e1_ID in entities_left_ids:
                         for e2_ID in entities_right_ids:
-                            e1 = entities.get_by_ID(e1_ID)
-                            e2 = entities.get_by_ID(e2_ID)
+                            e1 = entities.get_entity_by_id(e1_ID)
+                            e2 = entities.get_entity_by_id(e2_ID)
                             r = Relation(e1.ID, e2.ID, news)
                             relations.append(r)
 
@@ -164,8 +164,8 @@ def vectorize_test(news, entities):
 
     for key, value in relations.iteritems():
         assert(len(value) > 0)
-        e1 = entities.get_by_ID(value[0].entity_left_ID)
-        e2 = entities.get_by_ID(value[0].entity_right_ID)
+        e1 = entities.get_entity_by_id(value[0].entity_left_ID)
+        e2 = entities.get_entity_by_id(value[0].entity_right_ID)
         e1_value = env.stemmer.lemmatize_to_str(e1.value)
         e2_value = env.stemmer.lemmatize_to_str(e2.value)
 
@@ -185,16 +185,16 @@ def filter_neutral(neutral_opins, news, limit=10):
     scored_opinions = []
     for o in neutral_opins:
 
-        if not entities.has_enity_by_value(o.entity_left):
+        if not entities.has_entity_by_value(o.entity_left):
             scored_opinions.append((o, 0))
             continue
 
-        if not entities.has_enity_by_value(o.entity_right):
+        if not entities.has_entity_by_value(o.entity_right):
             scored_opinions.append((o, 0))
             continue
 
-        entities_left_IDs = len(entities.get_by_value(o.entity_left))
-        entities_right_IDs = len(entities.get_by_value(o.entity_right))
+        entities_left_IDs = len(entities.get_entity_by_value(o.entity_left))
+        entities_right_IDs = len(entities.get_entity_by_value(o.entity_right))
         popularity = entities_left_IDs * entities_right_IDs
 
         scored_opinions.append((o, popularity))

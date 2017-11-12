@@ -52,7 +52,7 @@ class News:
         e_ind = 0
 
         while (s_ind < len(sentences) and e_ind < entities.count()):
-            e = entities.get(e_ind)
+            e = entities.get_entity_by_index(e_ind)
             s = sentences[s_ind]
 
             if e.begin > s.end:

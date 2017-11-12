@@ -13,10 +13,10 @@ def create_graph(entities, opinion_collections, synonym_collection):
     def get_appropriate_entities_value(o):
         if synonyms_collection.has_synonym(o):
             return filter(
-                lambda s: entities.has_enity_by_value(s),
-                synonyms_collection.get_synonyms(o))
+                lambda s: entities.has_entity_by_value(s),
+                synonyms_collection.get_synonyms_list(o))
 
-        elif entities.has_enity_by_value(o):
+        elif entities.has_entity_by_value(o):
             return [o]
         else:
             return []
@@ -44,8 +44,8 @@ def create_graph(entities, opinion_collections, synonym_collection):
                     # er = env.stemmer.lemmatize_to_str(entity_right).encode('utf-8')
                     assert(type(left_v) == unicode)
 
-                    entities_left_ids = entities.get_by_value(left_v)
-                    entities_right_ids = entities.get_by_value(right_v)
+                    entities_left_ids = entities.get_entity_by_value(left_v)
+                    entities_right_ids = entities.get_entity_by_value(right_v)
 
                     for l_id in entities_left_ids:
                         for r_id in entities_right_ids:

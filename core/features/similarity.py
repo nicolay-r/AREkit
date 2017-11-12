@@ -25,8 +25,8 @@ class SimilarityFeature(Base):
         """
         assert(isinstance(relation, Relation))
 
-        e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
-        e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
+        e1 = relation.news.entities.get_entity_by_id(relation.entity_left_ID)
+        e2 = relation.news.entities.get_entity_by_id(relation.entity_right_ID)
         e1_value_lemmas = self.stemmer.lemmatize_to_rusvectores_str(e1.value)
         e2_value_lemmas = self.stemmer.lemmatize_to_rusvectores_str(e2.value)
         v1 = self.__get_mean_word2vec_vector(e1_value_lemmas)

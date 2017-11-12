@@ -14,8 +14,8 @@ class PrepositionsCountFeature(Base):
         """ Get an amount of prepositions between relation entities
         """
         assert(isinstance(relation, Relation))
-        e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
-        e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
+        e1 = relation.news.entities.get_entity_by_id(relation.entity_left_ID)
+        e2 = relation.news.entities.get_entity_by_id(relation.entity_right_ID)
 
         s1 = relation.news.get_sentence_by_entity(e1).index
         s2 = relation.news.get_sentence_by_entity(e2).index

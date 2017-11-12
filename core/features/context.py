@@ -17,8 +17,8 @@ class ContextSentimentAfterFeature(Base):
         """ Sentiment context features
         """
         assert(isinstance(relation, Relation))
-        e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
-        e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
+        e1 = relation.news.entities.get_entity_by_id(relation.entity_left_ID)
+        e2 = relation.news.entities.get_entity_by_id(relation.entity_right_ID)
 
         s_ind1 = relation.news.get_sentence_by_entity(e1).index
         s_ind2 = relation.news.get_sentence_by_entity(e2).index
@@ -52,8 +52,8 @@ class ContextPosBeforeFeature(Base):
         """
         assert(isinstance(relation, Relation))
 
-        e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
-        e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
+        e1 = relation.news.entities.get_entity_by_id(relation.entity_left_ID)
+        e2 = relation.news.entities.get_entity_by_id(relation.entity_right_ID)
 
         s_ind1 = relation.news.get_sentence_by_entity(e1).index
         s_ind2 = relation.news.get_sentence_by_entity(e2).index

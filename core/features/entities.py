@@ -13,6 +13,6 @@ class EntitiesBetweenFeature(Base):
         """ Get entities count between relation entities
         """
         assert(isinstance(relation, Relation))
-        e1 = relation.news.entities.get_by_ID(relation.entity_left_ID)
-        e2 = relation.news.entities.get_by_ID(relation.entity_right_ID)
+        e1 = relation.news.entities.get_entity_by_id(relation.entity_left_ID)
+        e2 = relation.news.entities.get_entity_by_id(relation.entity_right_ID)
         return np.array([abs(e1.get_int_ID() - e2.get_int_ID()) - 1])

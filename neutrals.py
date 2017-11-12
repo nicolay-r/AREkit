@@ -50,7 +50,7 @@ def relations_equal_diff(E, diff, news, synonyms_collection, sentiment_opins=Non
         if not synonyms_collection.has_synonym(entity.value):
             # print "Can't find synonym for '{}'".format(entity.value.encode('utf-8'))
             return [entity.value], None
-        return synonyms_collection.get_synonyms(entity.value), \
+        return synonyms_collection.get_synonyms_list(entity.value), \
                synonyms_collection.get_synonym_group_index(entity.value)
 
     r_keys = set()
@@ -62,8 +62,8 @@ def relations_equal_diff(E, diff, news, synonyms_collection, sentiment_opins=Non
             if E[i][j] != diff:
                 continue
 
-            e1 = news.entities.get(i)
-            e2 = news.entities.get(j)
+            e1 = news.entities.get_entity_by_index(i)
+            e2 = news.entities.get_entity_by_index(j)
 
             if is_ignored(e1) or is_ignored(e2):
                 continue

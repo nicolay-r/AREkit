@@ -10,11 +10,23 @@ class EntityCollection:
     def __init__(self, entities):
         self.entities = entities
         self.by_id = self._index_by_id()
-        self.by_values = self._index_by_lemmatized_value()
-        # print "==========================================="
-        # for key, value in self.by_values.iteritems():
-        #     print "'{}', {}".format(key.encode('utf-8'), value)
-        # print "==========================================="
+        self.by_lemmas = self._index_by_lemmas()
+
+    def _index_by_id(self):
+        index = {}
+        for e in self.entities:
+            index[e.ID] = e
+        return index
+
+    def _index_by_lemmas(self):
+        index = {}
+        for e in self.entities:
+            key = self._create_lemma(e.value)
+            if key in index:
+                index[key].append(e.ID)
+            else:
+                index[key] = [e.ID]
+        return index
 
     @staticmethod
     def from_file(filepath):
@@ -39,45 +51,29 @@ class EntityCollection:
 
         return EntityCollection(entities)
 
-    def get(self, index):
+    def has_entity_by_value(self, entity_value):
+        assert(type(entity_value) == unicode)
+        lemma = self._create_lemma(entity_value)
+        return lemma in self.by_lemmas
+
+    def get_entity_by_index(self, index):
         return self.entities[index]
 
-    def get_by_ID(self, ID):
+    def get_entity_by_id(self, ID):
         assert(type(ID) == unicode)
         return self.by_id[ID]
 
-    def has_enity_by_value(self, entity_value):
+    def get_entity_by_value(self, entity_value):
         assert(type(entity_value) == unicode)
-        value = env.stemmer.lemmatize_to_str(entity_value)
-        # if value not in self.by_values:
-        #     print "'{}'->'{}', not found!".format(
-        #         entity_value.encode('utf-8'), value.encode('utf-8'))
-        return value in self.by_values
+        lemma = self._create_lemma(entity_value)
+        return self.by_lemmas[lemma]
 
-    def get_by_value(self, entity_value):
+    def _create_lemma(self, entity_value):
         assert(type(entity_value) == unicode)
-        value = env.stemmer.lemmatize_to_str(entity_value)
-        return self.by_values[value]
+        return env.stemmer.lemmatize_to_str(entity_value)
 
     def count(self):
         return len(self.entities)
-
-    def _index_by_id(self):
-        index = {}
-        for e in self.entities:
-            index[e.ID] = e
-        return index
-
-    def _index_by_lemmatized_value(self):
-        index = {}
-        for e in self.entities:
-            key = env.stemmer.lemmatize_to_str(e.value)
-            assert(type(key) == unicode)
-            if key in index:
-                index[key].append(e.ID)
-            else:
-                index[key] = [e.ID]
-        return index
 
     def __iter__(self):
         for a in self.entities:
