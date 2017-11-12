@@ -13,13 +13,22 @@ class OpinionCollection:
         assert(type(opinions) == list or type(opinions) == type(None))
         assert(isinstance(synonyms, SynonymsCollection))
         self.opinions = [] if opinions is None else opinions
+        self.synonyms = synonyms
         self.by_value_index = self._create_index_by_value()
         self.by_synonym_index = self._create_index_by_synonyms(synonyms)
 
     def _create_index_by_value(self):
         index = set()
         for o in self.opinions:
+
+            if not o.has_synonym_for_left(self.synonyms):
+                self.synonyms.add_synonym(o.value_left)
+
+            if not o.has_synonym_for_right(self.synonyms):
+                self.synonyms.add_synonym(o.value_right)
+
             self._add_key(o.create_value_id(), index)
+
         return index
 
     def _create_index_by_synonyms(self, synonyms):
@@ -29,9 +38,8 @@ class OpinionCollection:
         return index
 
     @staticmethod
-    def from_file(filepath, synonyms):
-        assert(isinstance(synonyms, SynonymsCollection))
-
+    def from_file(filepath, synonyms_filepath):
+        synonyms = SynonymsCollection.from_file(synonyms_filepath)
         opinions = []
         with io.open(filepath, "r", encoding='utf-8') as f:
             for i, line in enumerate(f.readlines()):
@@ -54,32 +62,44 @@ class OpinionCollection:
         assert(isinstance(o, Opinion))
         return o.create_value_id() in self.by_value_index
 
-    def has_opinion_by_synonyms(self, opinion, synonyms):
-        assert(isinstance(opinion, Opinion))
-        assert(isinstance(synonyms, SynonymsCollection))
-        return o.create_synonym_id() in self.by_synonym_index
+    def has_opinion_by_synonyms(self, o):
+        assert(isinstance(o, Opinion))
+
+        if not o.has_synonym_for_left(self.synonyms):
+            return False
+        if not o.has_synonym_for_right(self.synonyms):
+            return False
+
+        return o.create_synonym_id(self.synonyms) in self.by_synonym_index
 
     def add_opinion(self, o):
         assert(isinstance(o, Opinion))
+
+        if not o.has_synonym_for_left(self.synonyms):
+            self.synonyms.add_synonym(o.value_left)
+
+        if not o.has_synonym_for_right(self.synonyms):
+            self.synonyms.add_synonym(o.value_right)
+
         self._add_key(o.create_value_id(), self.by_value_index)
-        self._add_key(o.create_synonym_id(), self.by_synonym_index)
+        self._add_key(o.create_synonym_id(self.synonyms), self.by_synonym_index)
         self.opinions.append(o)
 
     def remove_opinion(self, o):
         assert(isinstance(o, Opinion))
         self.by_value_index.remove(o.create_value_id())
-        self.by_synonym_index.remove(o.create_synonym_id())
+        self.by_synonym_index.remove(o.create_synonym_id(self.synonyms))
         self.opinions.remove(o)
 
     def limit(self, count):
         self.opinions = self.opinions[:count]
 
     def save(self, filepath):
+        sorted_ops = sorted(self.opinions, key=lambda o: o.value_left + o.value_right)
         with io.open(filepath, 'w') as f:
-            for o in self.opinions:
-                if o.sentiment != unicode('neu', encoding='utf-8'):
-                    f.write(o.to_unicode())
-                    f.write(unicode("\n"))
+            for o in sorted_ops:
+                f.write(o.to_unicode())
+                f.write(u'\n')
 
     @staticmethod
     def _add_key(key, collection):
@@ -115,10 +135,8 @@ class Opinion:
         return Opinion(entity_left.value, entity_right.value, sentiment)
 
     def to_unicode(self):
-        return "{}, {}, {}".format(
-                self.value_left.encode('utf-8'),
-                self.value_right.encode('utf-8'),
-                self.sentiment.encode('utf-8'))
+        return u"{}, {}, {}, current".format(
+            self.value_left, self.value_right, self.sentiment)
 
     def create_value_id(self):
         return u"{}_{}".format(
@@ -127,6 +145,14 @@ class Opinion:
 
     def create_synonym_id(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return "{}_{}".format(
+        return u"{}_{}".format(
             synonyms.get_synonym_group_index(self.value_left),
             synonyms.get_synonym_group_index(self.value_right))
+
+    def has_synonym_for_left(self, synonyms):
+        assert(isinstance(synonyms, SynonymsCollection))
+        return synonyms.has_synonym(self.value_left)
+
+    def has_synonym_for_right(self, synonyms):
+        assert(isinstance(synonyms, SynonymsCollection))
+        return synonyms.has_synonym(self.value_right)

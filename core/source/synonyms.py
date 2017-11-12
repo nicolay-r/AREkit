@@ -66,5 +66,5 @@ class SynonymsCollection:
         return self.by_synonym[id]
 
     @staticmethod
-    def _create_synonym_id(self, s):
+    def _create_synonym_id(s):
         return env.stemmer.lemmatize_to_str(s)
