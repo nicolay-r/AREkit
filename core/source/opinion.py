@@ -27,14 +27,21 @@ class OpinionCollection:
             if not o.has_synonym_for_right(self.synonyms):
                 self.synonyms.add_synonym(o.value_right)
 
-            self._add_key(o.create_value_id(), index)
+            added = self._add_key(o.create_value_id(), index, check=False)
+            if not added:
+                print "Opinion with the values '{}'->'{}' already existed.".format(
+                    o.value_left.encode('utf-8'), o.value_right.encode('utf-8'))
 
         return index
 
     def _create_index_by_synonyms(self, synonyms):
         index = set()
+
         for o in self.opinions:
-            self._add_key(o.create_synonym_id(synonyms), index)
+            added = self._add_key(o.create_synonym_id(synonyms), index, check=False)
+            if not added:
+                print "Synonym of '{}'->'{}' already existed.".format(
+                    o.value_left.encode('utf-8'), o.value_right.encode('utf-8'))
         return index
 
     @staticmethod
@@ -43,6 +50,10 @@ class OpinionCollection:
         opinions = []
         with io.open(filepath, "r", encoding='utf-8') as f:
             for i, line in enumerate(f.readlines()):
+
+                if (line == '\n'):
+                    continue
+
                 args = line.strip().split(',')
 
                 if len(args) < 4:
@@ -102,10 +113,14 @@ class OpinionCollection:
                 f.write(u'\n')
 
     @staticmethod
-    def _add_key(key, collection):
+    def _add_key(key, collection, check=True):
         assert(type(key) == unicode)
-        assert(key not in collection)
+        if check:
+            assert(key not in collection)
+        if key in collection:
+            return False
         collection.add(key)
+        return True
 
     def __len__(self):
         return len(self.opinions)
@@ -113,6 +128,7 @@ class OpinionCollection:
     def __iter__(self):
         for o in self.opinions:
             yield o
+
 
 
 class Opinion:

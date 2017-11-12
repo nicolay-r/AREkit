@@ -85,7 +85,6 @@ def opinions_between_entities(E, diff, news, synonyms, sentiment_opins=None):
             try_add_opinion(Opinion(r_left, r_right, u"neu"), added, c)
             try_add_opinion(Opinion(r_right, r_left, u"neu"), added, c)
 
-    print "Neutral opinions: '{}'".format(len(c))
     return c
 
 
@@ -112,11 +111,12 @@ synonyms = SynonymsCollection.from_file(io_utils.get_synonyms_filepath())
 #
 root = io_utils.train_root()
 for n in io_utils.train_indices():
-    print "read: {}".format(n)
     entity_filepath = root + "art{}.ann".format(n)
     news_filepath = root + "art{}.txt".format(n)
     opin_filepath = root + "art{}.opin.txt".format(n)
     neutral_filepath = root + "art{}.neut.txt".format(n)
+
+    print neutral_filepath
 
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
@@ -130,10 +130,11 @@ for n in io_utils.train_indices():
 #
 root = io_utils.test_root()
 for n in io_utils.test_indices():
-    print "read: {}".format(n)
     entity_filepath = root + "art{}.ann".format(n)
     news_filepath = root + "art{}.txt".format(n)
     neutral_filepath = root + "art{}.neut.txt".format(n)
+
+    print neutral_filepath
 
     entities = EntityCollection.from_file(entity_filepath)
     news = News.from_file(news_filepath, entities)
