@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
-import core.environment as env
+import core.env as env
 from core.source.entity import EntityCollection
 from core.source.news import News
 from core.source.opinion import OpinionCollection
@@ -34,7 +34,7 @@ def relations_equal_diff(E, diff, news, synonyms_collection, sentiment_opins=Non
 
         # Filter if there is a sentiment relation
         if sentiment_opins is not None:
-            if sentiment_opins.has_opinion(e1.value, e2.value, lemmatize=True):
+            if sentiment_opins.has_opinion_by_values(e1.value, e2.value):
                 return
 
         keys.add(r_key)

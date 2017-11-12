@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import io
-import core.environment as env
+import core.env as env
+from core.source.entity import Entity
+from core.source.synonyms import SynonymsCollection
 
 
 class OpinionCollection:
@@ -13,7 +15,7 @@ class OpinionCollection:
 
         for o in self.opinions:
             key = self._get_opinion_key(o.entity_left, o.entity_right)
-            if self.has_opinion(o.entity_left, o.entity_right):
+            if self.has_opinion_by_values(o.entity_left, o.entity_right):
                 print "Collection already has opinion with the same values '{}'->'{}'".format(
                     o.entity_left.encode('utf-8'),
                     o.entity_right.encode('utf-8'))
@@ -44,8 +46,16 @@ class OpinionCollection:
 
         return OpinionCollection(opinions)
 
-    def has_opinion(self, entity_left, entity_right, lemmatize=False):
+    def has_opinion_by_values(self, entity_left, entity_right):
+        # TODO. Change arguments to opinion.
+        # TODO. Maybe deprecated later
         return self._get_opinion_key(entity_left, entity_right) in self.unique
+
+    def has_opinion_by_synonyms(self, opinion, synonyms):
+        assert(isinstance(opinion, Opinion))
+        assert(isinstance(synonyms, SynonymsCollection))
+        # TODO.
+        pass
 
     def add_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
@@ -102,6 +112,10 @@ class Opinion:
         self.entity_right = entity_right.lower()
         self.sentiment = sentiment
         self.time = time
+
+    @staticmethod
+    def from_entity(self, entity):
+        assert(isinstance(entity, Entity))
 
     def to_unicode(self):
         return "{}, {}, {}, {}".format(

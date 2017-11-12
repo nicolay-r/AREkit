@@ -1,5 +1,5 @@
 import numpy as np
-import core.environment as env
+import core.env as env
 from core.source.lexicon import Lexicon
 from core.relations import Relation
 from base import Base

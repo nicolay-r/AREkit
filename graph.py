@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import io_utils
-import core.environment as env
+import core.env as env
 from core.source.opinion import OpinionCollection
 from core.source.entity import EntityCollection
 from core.source.synonyms import SynonymsCollection

@@ -2,7 +2,7 @@
 
 import io
 import numpy as np
-import core.environment as env
+import core.env as env
 import operator
 
 

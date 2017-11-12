@@ -1,5 +1,5 @@
 from core.source.entity import Entity
-import core.environment as env
+import core.env as env
 
 
 class NewsProcessor:

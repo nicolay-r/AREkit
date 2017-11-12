@@ -1,5 +1,5 @@
 import io
-import core.environment as env
+import core.env as env
 
 
 class SynonymsCollection:

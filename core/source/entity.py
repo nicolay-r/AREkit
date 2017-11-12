@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
-import core.environment as env
+import core.env as env
 
 
 class EntityCollection:

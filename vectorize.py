@@ -5,7 +5,7 @@ import logging
 import numpy as np
 from gensim.models.word2vec import Word2Vec
 
-import core.environment as env
+import core.env as env
 
 from core.source.lexicon import Lexicon
 from core.source.opinion import OpinionCollection
