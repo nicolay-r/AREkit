@@ -59,19 +59,19 @@ class Stemmer:
                 https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
         """
         assert(type(terms) == list)
-        pos = []
-        for t in terms:
-            a = self.mystem.analyze(t)[0]
-            if 'analysis' not in a:
-                pos.append(None)
-                continue
 
-            info = a['analysis']
+        def get_term_pos(analysis):
+
+            if 'analysis' not in analysis:
+                return None
+
+            info = analysis['analysis']
 
             if len(info) == 0:
-                pos.append(None)
-                continue
+                return None
 
-            pos = info[0]['gr'].lower()
+            return info[0]['gr'].lower()
 
-        return pos
+        pos_list = [get_term_pos(self.mystem.analyze(t)[0]) for t in terms]
+
+        return pos_list

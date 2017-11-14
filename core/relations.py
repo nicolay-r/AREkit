@@ -6,7 +6,7 @@ class Relation:
     """ Strict Relation between two Entities
     """
 
-    def __init__(self, entity_left_ID, entity_right_ID, news, synonyms):
+    def __init__(self, entity_left_ID, entity_right_ID, news):
         assert(type(entity_left_ID) == unicode)
         assert(type(entity_right_ID) == unicode)
         assert(isinstance(news, News))

@@ -130,7 +130,6 @@ class OpinionCollection:
             yield o
 
 
-
 class Opinion:
     """ Source opinion description
     """
