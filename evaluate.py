@@ -12,7 +12,7 @@ def show(r):
     print "f1: %.4f" % ((r['f1_pos'] + r['f1_neg']) / 2)
 
 e = Evaluator(
-        "data/synonyms.txt",
+        io_utils.get_synonyms_filepath(),
         io_utils.test_root(),
         io_utils.get_etalon_root())
 

@@ -11,9 +11,9 @@ from core.processing.stemmer import Stemmer
 
 class Evaluator:
 
-    def __init__(self, syn_dict_filepath, test_filepath, etalon_filepath):
+    def __init__(self, syn_dict_filepath, user_answers_filepath, etalon_filepath):
         self.syn_dict = self._syn_dict_from_file(syn_dict_filepath)
-        self.user_answers = test_filepath
+        self.user_answers = user_answers_filepath
         self.etalon_answers = etalon_filepath
         self.stemmer = Stemmer()
 
@@ -33,7 +33,7 @@ class Evaluator:
         "Словарь синонимов" хранится в переменной syn_dict.
     """
     def _checkWords(self, word1, word2):
-        word1 = word1.decode('cp1251')
+        word1 = word1.decode('utf-8')
         word2 = word2.decode('utf-8')
         assert(type(word1) == unicode)
         assert(type(word2) == unicode)
@@ -111,12 +111,12 @@ class Evaluator:
         """ Data calculation for a file of 'num' index
         """
         # Если файл существует.
-        filename = "{}/art{}.opin.txt".format(self.user_answers, str(num))
-        if not os.path.exists(filename):
+        file_test = "{}/art{}.opin.txt".format(self.user_answers, str(num))
+        if not os.path.exists(file_test):
             print "missed: art{}.opin.txt".format(num)
             return 0, 0, 0, 0
 
-        if os.stat(filename).st_size == 0:
+        if os.stat(file_test).st_size == 0:
             print "empty file: art{}.opin.txt".format(num)
             return 0, 0, 0, 0
 
@@ -124,7 +124,8 @@ class Evaluator:
         # print("test_"+color+"/art"+str(num)+".opin.txt", end=" ")
 
 
-        f = pd.read_csv(filename, sep=',', header=None)
+        # print "reading: {}".format(file_test)
+        f = pd.read_csv(file_test, sep=',', header=None)
         # print(" read")
         orig_file = f[[0, 1, 2]].copy()
         orig_file.columns = ['who', 'to', 'how_orig']
@@ -136,7 +137,6 @@ class Evaluator:
 
         # Считываем файл ответов экспертов.
         file_experts = self.etalon_answers + "/art{}.opin.txt".format(str(num))
-        print "reading: {}".format(file_experts)
         file2 = pd.read_csv(file_experts, sep=',', header=None)
         test_file = file2[[0, 1, 2]].copy()
         test_file.columns = ['who', 'to', 'how_results']
@@ -216,4 +216,5 @@ class Evaluator:
                 "pos_recall": pos_recall,
                 "neg_recall": neg_recall,
                 "f1_pos": f1_pos,
-                "f1_neg": f1_neg}
+                "f1_neg": f1_neg,
+                "f1": (f1_pos + f1_neg) / 2}
