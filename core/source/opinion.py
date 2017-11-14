@@ -51,13 +51,13 @@ class OpinionCollection:
         with io.open(filepath, "r", encoding='utf-8') as f:
             for i, line in enumerate(f.readlines()):
 
-                if (line == '\n'):
+                if line == '\n':
                     continue
 
                 args = line.strip().split(',')
 
-                if len(args) < 4:
-                    print "not enough arguments at line: {}, '{}'".format(
+                if len(args) != 4:
+                    print "should be 4 args at line: {}, '{}'".format(
                         i, line.encode('utf-8'))
                     continue
 
@@ -138,6 +138,8 @@ class Opinion:
         assert(type(value_left) == unicode)
         assert(type(value_right) == unicode)
         assert(type(sentiment) == unicode)
+        assert(',' not in value_left)
+        assert(',' not in value_right)
         self.value_left = value_left.lower()
         self.value_right = value_right.lower()
         self.sentiment = sentiment
