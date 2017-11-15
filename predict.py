@@ -140,4 +140,4 @@ for method_name in CLASSIFIERS.iterkeys():
 
     df.loc[method_name] = [r[c] for c in get_result_columns()]
 
-df.to_csv("{}/_eval.txt".format(io_utils.test_root()))
+df.T.to_csv("{}/_eval.txt".format(io_utils.test_root()))

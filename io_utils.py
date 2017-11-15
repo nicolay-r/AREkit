@@ -42,6 +42,9 @@ def int_to_sentiment(label):
 def sentiment_to_int(label):
     return sent_to_int[label]
 
+def data_root():
+    return "data/"
+
 
 def test_root():
     return "data/Test/"
