@@ -14,10 +14,10 @@ class OpinionCollection:
         assert(isinstance(synonyms, SynonymsCollection))
         self.opinions = [] if opinions is None else opinions
         self.synonyms = synonyms
-        self.by_value_index = self._create_index_by_value()
-        self.by_synonym_index = self._create_index_by_synonyms(synonyms)
+        self.by_value_set = self._create_set_by_value()
+        self.by_synonym_dict = self._create_dict_by_synonyms(synonyms)
 
-    def _create_index_by_value(self):
+    def _create_set_by_value(self):
         index = set()
         for o in self.opinions:
 
@@ -34,11 +34,10 @@ class OpinionCollection:
 
         return index
 
-    def _create_index_by_synonyms(self, synonyms):
-        index = set()
-
+    def _create_dict_by_synonyms(self, synonyms):
+        index = {}
         for o in self.opinions:
-            added = self._add_key(o.create_synonym_id(synonyms), index, check=False)
+            added = self._add_key_value(o.create_synonym_id(synonyms), o, index, check=False)
             if not added:
                 print "Synonym of '{}'->'{}' already existed.".format(
                     o.value_left.encode('utf-8'), o.value_right.encode('utf-8'))
@@ -71,17 +70,23 @@ class OpinionCollection:
 
     def has_opinion_by_values(self, o):
         assert(isinstance(o, Opinion))
-        return o.create_value_id() in self.by_value_index
+        return o.create_value_id() in self.by_value_set
 
-    def has_opinion_by_synonyms(self, o):
+    def has_opinion_by_synonyms(self, o, sentiment=None):
         assert(isinstance(o, Opinion))
+        assert(sentiment is None or type(sentiment) == unicode)
 
         if not o.has_synonym_for_left(self.synonyms):
             return False
         if not o.has_synonym_for_right(self.synonyms):
             return False
 
-        return o.create_synonym_id(self.synonyms) in self.by_synonym_index
+        s_id = o.create_synonym_id(self.synonyms)
+        if s_id in self.by_synonym_dict:
+            f_o = self.by_synonym_dict[s_id]
+            return True if sentiment is None else f_o.sentiment == sentiment
+
+        return False
 
     def add_opinion(self, o):
         assert(isinstance(o, Opinion))
@@ -92,14 +97,14 @@ class OpinionCollection:
         if not o.has_synonym_for_right(self.synonyms):
             self.synonyms.add_synonym(o.value_right)
 
-        self._add_key(o.create_value_id(), self.by_value_index)
-        self._add_key(o.create_synonym_id(self.synonyms), self.by_synonym_index)
+        self._add_key(o.create_value_id(), self.by_value_set)
+        self._add_key_value(o.create_synonym_id(self.synonyms), o, self.by_synonym_dict)
         self.opinions.append(o)
 
     def remove_opinion(self, o):
         assert(isinstance(o, Opinion))
-        self.by_value_index.remove(o.create_value_id())
-        self.by_synonym_index.remove(o.create_synonym_id(self.synonyms))
+        self.by_value_set.remove(o.create_value_id())
+        del self.by_synonym_dict[o.create_synonym_id(self.synonyms)]
         self.opinions.remove(o)
 
     def limit(self, count):
@@ -122,6 +127,21 @@ class OpinionCollection:
         collection.add(key)
         return True
 
+    @staticmethod
+    def _add_key_value(key, value, collection, check=True):
+        assert(type(key) == unicode)
+        if check:
+            assert(key not in collection)
+        if key in collection:
+            return False
+        collection[key] = value
+        return True
+
+    def iter_sentiment(self, sentiment):
+        for o in self.opinions:
+            if o.sentiment == sentiment:
+                yield o
+
     def __len__(self):
         return len(self.opinions)
 
@@ -137,7 +157,7 @@ class Opinion:
     def __init__(self, value_left, value_right, sentiment):
         assert(type(value_left) == unicode)
         assert(type(value_right) == unicode)
-        assert(type(sentiment) == unicode)
+        assert(type(sentiment) == unicode and sentiment in ['pos', 'neg', 'neu'])
         assert(',' not in value_left)
         assert(',' not in value_right)
         self.value_left = value_left.lower()
