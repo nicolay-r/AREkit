@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from pexpect import searcher_re
 
 import pandas as pd
 
@@ -10,17 +11,53 @@ from core.source.opinion import OpinionCollection
 import io_utils
 
 
-def neutral_in_senitmen_opins(n_opins, s_opins):
-    assert(isinstance(n_opins, OpinionCollection))
-    assert(isinstance(s_opins, OpinionCollection))
+def founded_opins(test_opins, etalon_opins, sentiment=None):
+    assert(isinstance(test_opins, OpinionCollection))
+    assert(isinstance(etalon_opins, OpinionCollection))
     founded = 0
-    for e in n_opins:
-        founded += 1 if s_opins.has_opinion_by_synonyms(e) else 0
+    for e in test_opins:
+        founded += 1 if etalon_opins.has_opinion_by_synonyms(e, sentiment) else 0
     return founded
 
+
+def get_method_statistic(method_name):
+    columns = ["t_all", # "t_pos", "t_neg",
+               "e_all", # "e_pos", "e_neg"
+               ]
+    df = pd.DataFrame(columns=columns)
+    for n in io_utils.test_indices():
+        root = io_utils.test_root() + '{}/'.format(method_name)
+
+        eo_filepath = io_utils.get_etalon_root() + "art{}.opin.txt".format(n)
+        to_filepath = root + "art{}.opin.txt".format(n)
+
+        test_opins = OpinionCollection.from_file(to_filepath, io_utils.get_synonyms_filepath())
+        etalon_opins = OpinionCollection.from_file(eo_filepath, io_utils.get_synonyms_filepath())
+
+        df.loc[n] = [founded_opins(test_opins, etalon_opins),
+                     # founded_opins(test_opins, etalon_opins, u'pos'),
+                     # founded_opins(test_opins, etalon_opins, u'neg'),
+                     len(etalon_opins),
+                     # len(list(etalon_opins.iter_sentiment(u'pos'))),
+                     # len(list(etalon_opins.iter_sentiment(u'neg')))
+                     ]
+
+    df.loc['sum'] = [float(df[c].sum()) for c in columns]
+
+    df.loc['founded_all'] = None
+    # df.loc['founded_pos'] = None
+    # df.loc['founded_neg'] = None
+    df.loc['founded_all'][0] = float(df.loc['sum']['t_all']) / df.loc['sum']['e_all']
+    # df.loc['founded_pos'][1] = float(df.loc['sum']['t_pos']) / df.loc['sum']['e_pos']
+    # df.loc['founded_neg'][2] = float(df.loc['sum']['t_neg']) / df.loc['sum']['e_neg']
+    return df
+
+
 def expand(df):
-    df.loc['avg'] = [float(df[['{}'.format(c)]].mean()) for c in columns]
-    # df.loc['ans_recall'] = float(float(df.loc['avg']['neut_in_sent']) / df.loc['avg']['s_opins'])
+    founded = float(df['neut_in_sent'].sum()) / df['s_opins'].sum()
+    df.loc['avg'] = [float(df[c].mean()) for c in columns]
+    df.loc['founded'] = None
+    df.loc['founded'][0] = founded
 
 
 def calc_file_info(news_filepath, entities_filepath, opin_filepath, neut_filepath):
@@ -37,7 +74,7 @@ def calc_file_info(news_filepath, entities_filepath, opin_filepath, neut_filepat
            len(s_opins),
            len(n_opins),
            s_opins.synonyms._get_groups_count(),
-           neutral_in_senitmen_opins(n_opins, s_opins)]
+           founded_opins(n_opins, s_opins)]
 
     return row
 
@@ -73,3 +110,9 @@ expand(df_test)
 
 df_train.to_csv(io_utils.data_root() + "train_statistics.txt")
 df_test.to_csv(io_utils.data_root() + "test_statistics.txt")
+
+methods = ['svm', 'knn', 'rf', 'nb']
+
+for m in methods:
+    df = get_method_statistic(m)
+    df.to_csv(io_utils.data_root() + 'test_{}.csv'.format(m))
