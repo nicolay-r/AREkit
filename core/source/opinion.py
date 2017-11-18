@@ -88,6 +88,11 @@ class OpinionCollection:
 
         return False
 
+    def get_opinion_by_synonyms(self, o):
+        assert(isinstance(o, Opinion))
+        s_id = o.create_synonym_id(self.synonyms)
+        return self.by_synonym_dict[s_id]
+
     def add_opinion(self, o):
         assert(isinstance(o, Opinion))
 
