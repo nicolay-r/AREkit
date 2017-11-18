@@ -7,7 +7,7 @@ import numpy as np
 from sklearn import svm, neighbors, ensemble, model_selection, naive_bayes
 
 from core.source.synonyms import SynonymsCollection
-from core.source.vectors import CommonRelationVectorCollection
+from core.source.vectors import OpinionVectorCollection
 from core.source.opinion import OpinionCollection, Opinion
 from core.eval import Evaluator
 
@@ -78,7 +78,7 @@ def create_train_data():
     y_train = []
     for i in io_utils.train_indices():
         vector_filepath = io_utils.train_root() + "/art{}.vectors.txt".format(i)
-        collection = CommonRelationVectorCollection.from_file(vector_filepath)
+        collection = OpinionVectorCollection.from_file(vector_filepath)
         X_train += [item.vector for item in collection]
         y_train += [item.label for item in collection]
 
@@ -90,7 +90,7 @@ def create_test_data():
     test_collections = []
     for i in io_utils.test_indices():
         vector_filepath = io_utils.test_root() + "art{}.vectors.txt".format(i)
-        collection = CommonRelationVectorCollection.from_file(vector_filepath)
+        collection = OpinionVectorCollection.from_file(vector_filepath)
         test_collections.append(collection)
         X_test += [item.vector for item in collection]
 

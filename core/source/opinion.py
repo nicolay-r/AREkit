@@ -171,6 +171,7 @@ class Opinion:
         assert(type(sentiment) == unicode)
         return Opinion(entity_left.value, entity_right.value, sentiment)
 
+    # TODO: Should be a part of collection during save operation.
     def to_unicode(self):
         return u"{}, {}, {}, current".format(
             self.value_left, self.value_right, self.sentiment)

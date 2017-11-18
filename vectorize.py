@@ -11,7 +11,7 @@ from core.source.lexicon import Lexicon
 from core.source.opinion import OpinionCollection
 from core.source.entity import EntityCollection
 from core.source.news import News
-from core.source.vectors import CommonRelationVectorCollection, CommonRelationVector
+from core.source.vectors import OpinionVectorCollection, OpinionVector
 from core.source.synonyms import SynonymsCollection
 
 from core.relations import Relation
@@ -52,7 +52,7 @@ def vectorize_opinions(news, entities, opinion_collections):
         else:
             return []
 
-    collection = CommonRelationVectorCollection()
+    collection = OpinionVectorCollection()
     for opinions in opinion_collections:
         for o in opinions:
 
@@ -100,7 +100,7 @@ def vectorize_opinions(news, entities, opinion_collections):
             r_features = np.concatenate(
                 [f.calculate(relations) for f in FEATURES], axis=0)
 
-            vector = CommonRelationVector(
+            vector = OpinionVector(
                 o.value_left, o.value_right,
                 r_features, io_utils.sentiment_to_int(o.sentiment))
 
