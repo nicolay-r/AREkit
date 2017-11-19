@@ -7,82 +7,28 @@ import re
 import pandas as pd
 
 from core.processing.stemmer import Stemmer
+from core.source.opinion import OpinionCollection, Opinion
 
 
 class Evaluator:
 
-    def __init__(self, syn_dict_filepath, user_answers_filepath, etalon_filepath):
-        self.syn_dict = self._syn_dict_from_file(syn_dict_filepath)
+    def __init__(self, synonyms_filepath, user_answers_filepath, etalon_filepath):
+        self.synonyms_filepath = synonyms_filepath
         self.user_answers = user_answers_filepath
         self.etalon_answers = etalon_filepath
         self.stemmer = Stemmer()
-
-
-    @staticmethod
-    def _syn_dict_from_file(filepath):
-        syn_dict = []
-        with io.open(filepath, 'r', encoding='utf-8') as f:
-            for line in f.readlines():
-                args = line.split(',')
-                syn_dict = [a.strip() for a in args]
-        return syn_dict
-
-    """ Проверка имен на заменяемость. Имена могут быть:
-        - подстрокой другого: Путин vs Владимир Путин, Валентин vs Валентино
-        - формой слова: соединенные vs соединенный vs соединить.
-        "Словарь синонимов" хранится в переменной syn_dict.
-    """
-    def _checkWords(self, word1, word2):
-        word1 = word1.decode('utf-8')
-        word2 = word2.decode('utf-8')
-        assert(type(word1) == unicode)
-        assert(type(word2) == unicode)
-        if word1 == word2:
-            return True
-
-        res2 = re.split(" ", word2)
-        for r in res2:
-            if word1 in r:
-                return True
-            for s in self.syn_dict:
-                if word1 in s and r in s:
-                    return True
-            l = self.stemmer.lemmatize_to_str(r)
-            if word1 in l:
-                return True
-            for s in self.syn_dict:
-                if word1 in s and l in s:
-                    return True
-
-        res2 = re.split(" ", word1)
-        for r in res2:
-            if word2 in r:
-                return True
-            for s in self.syn_dict:
-                if word2 in s and r in s:
-                    return True
-            l = self.stemmer.lemmatize_to_str(r)
-            if word2 in l:
-                return True
-            for s in self.syn_dict:
-                if word2 in s and l in s:
-                    return True
-
-        return False
 
     def _calcPrecisionAndRecall(self, results):
         """ Расчет полноты и точности.
         """
         # Берем все позитивные и негативные ответы команд
+        # TODO. Constants in different file
         pos_answers = results[(results['how_results'] == 'pos')]
         neg_answers = results[(results['how_results'] == 'neg')]
 
         # Расчет точности.
         if len(pos_answers) != 0:
-            # print "-- {}".format(len(pos_answers[(pos_answers['comparison']==True)]))
-            # print "-- {}".format(len(pos_answers))
             pos_prec = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(pos_answers)
-            # print "== {}".format(pos_prec)
         else:
             pos_prec = 0.0
         if len(neg_answers) != 0:
@@ -107,78 +53,63 @@ class Evaluator:
 
         return pos_prec, neg_prec, pos_recall, neg_recall
 
+    def _check(self, etalon_opins, test_opins):
+        assert(isinstance(etalon_opins, OpinionCollection))
+        assert(isinstance(test_opins, OpinionCollection))
+
+        df = pd.DataFrame(
+            columns=['who', 'to', 'how_orig', 'how_results', 'comparison'])
+
+        r_ind = 0
+        # Append everithing that exist in etalon collection.
+        for o_etalon in etalon_opins:
+            comparison = False
+            has_opinion = test_opins.has_opinion_by_synonyms(o_etalon)
+
+            if has_opinion:
+                o_test = test_opins.get_opinion_by_synonyms(o_etalon)
+                comparison = o_test.sentiment == o_etalon.sentiment
+
+            df.loc[r_ind] = [o_etalon.value_left.encode('utf-8'),
+                             o_etalon.value_right.encode('utf-8'),
+                             None if not has_opinion else o_test.sentiment.encode('utf-8'),
+                             o_etalon.sentiment.encode('utf-8'),
+                             comparison]
+            r_ind += 1
+
+        # Append everithing that exist in test collection.
+        for o_test in test_opins:
+            has_opininon = etalon_opins.has_opinion_by_synonyms(o_test)
+            if has_opinion:
+                continue
+            df.loc[r_ind] = [o_test.value_left.encode('utf-8'),
+                             o_test.value_right.encode('utf-8'),
+                             o_test.sentiment.encode('utf-8'),
+                             None,
+                             False]
+            r_ind += 1
+
+        return df
+
     def _calc_a_file(self, num):
         """ Data calculation for a file of 'num' index
         """
-        # Если файл существует.
-        file_test = "{}/art{}.opin.txt".format(self.user_answers, str(num))
-        if not os.path.exists(file_test):
-            print "missed: art{}.opin.txt".format(num)
-            return 0, 0, 0, 0
+        print "Reading {}".format(num)
+        # Reading test answers.
+        test_filepath = "{}/art{}.opin.txt".format(self.user_answers, str(num))
+        test_opins = OpinionCollection.from_file(
+                test_filepath, self.synonyms_filepath)
 
-        if os.stat(file_test).st_size == 0:
-            print "empty file: art{}.opin.txt".format(num)
-            return 0, 0, 0, 0
+        # Reading etalon answers.
+        experts_filepath = "{}/art{}.opin.txt".format(self.etalon_answers, str(num))
+        etalon_opins = OpinionCollection.from_file(
+                experts_filepath, self.synonyms_filepath)
 
-        # Считываем файл ответов команды и отбрасываем лишнюю информацию.
-        # print("test_"+color+"/art"+str(num)+".opin.txt", end=" ")
+        # Comparing test and etalon results.
+        results = self._check(etalon_opins, test_opins)
 
-
-        # print "reading: {}".format(file_test)
-        f = pd.read_csv(file_test, sep=',', header=None)
-        # print(" read")
-        orig_file = f[[0, 1, 2]].copy()
-        orig_file.columns = ['who', 'to', 'how_orig']
-        orig_file['who'] = orig_file['who'].str.strip()
-        orig_file['who'] = orig_file['who'].str.lower()
-        orig_file['to'] = orig_file['to'].str.strip()
-        orig_file['to'] = orig_file['to'].str.lower()
-        orig_file['how_orig'] = orig_file['how_orig'].str.strip()
-
-        # Считываем файл ответов экспертов.
-        file_experts = self.etalon_answers + "/art{}.opin.txt".format(str(num))
-        file2 = pd.read_csv(file_experts, sep=',', header=None)
-        test_file = file2[[0, 1, 2]].copy()
-        test_file.columns = ['who', 'to', 'how_results']
-        test_file['who'] = test_file['who'].str.strip()
-        test_file['who'] = test_file['who'].str.lower()
-        test_file['to'] = test_file['to'].str.strip()
-        test_file['to'] = test_file['to'].str.lower()
-        test_file['how_results'] = test_file['how_results'].str.strip()
-
-        orig_file = orig_file.sort_values(['who', 'to'])
-        test_file = test_file.sort_values(['who', 'to'])
-        # Сливаем ответы там, где имена собвпадают.
-        results = test_file.merge(orig_file, 'outer', on=['who', 'to'], copy=False)
-        results.insert(len(results.columns), 'comparison', '')
-        # Сравниваем для них ответы
-        results['comparison'] = results['how_results'] == results['how_orig']
-        results = results.sort_values(['comparison', 'how_orig', 'how_results'])
-        # Берем те части ответов, в которых имена не совпадают.
-        faulty = results[results.comparison == False]
-        count_res = len(faulty) - len(faulty[faulty.how_orig.isnull()])
-
-        # Идем по всем ответам, сравниваем всех со всеми, может быть имя было
-        # выделено командой не так, или эксперт написал синоним.
-        has_changes = False
-        for i in range(count_res, len(faulty)):
-            for j in range(count_res):
-                if(self._checkWords(results['who'][results.index[i]], results['who'][results.index[j]]) and
-                   self._checkWords(results['to'][results.index[i]], results['to'][results.index[j]])):
-                    # Если надо длеать замену, дописываем ответ в одну строчку и помечаем на удаление другую.
-                    # print('<', results['who'][results.index[i]], '>,<', results['who'][results.index[j]], '>')
-                    # print('<', results['to'][results.index[i]], '>,<', results['to'][results.index[j]], '>')
-                    results.loc[results.index[i], ('how_orig')] = results.loc[results.index[j], ('how_orig')]
-                    results.loc[results.index[i], ('comparison')] = (results.loc[results.index[i], ('how_orig')] == results.loc[results.index[i], ('how_results')])
-                    results.loc[results.index[j], ('comparison')] = '---'
-                    has_changes = True
-
-        # Выкидываем все строки, которые были слиты вместе с другими.
-        if has_changes:
-            results = results[results['comparison'] != '---']
-
-        # Сохраняем файл со сравнениями.
-        comparison_file = self.user_answers + "/art{}.comp.txt".format(str(num))
+        # Save result comparison into file.
+        comparison_file = "{}/art{}.comp.txt".format(self.user_answers, str(num))
         results.to_csv(comparison_file)
 
         return self._calcPrecisionAndRecall(results)
