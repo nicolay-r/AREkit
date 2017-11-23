@@ -3,6 +3,7 @@
 import io
 import numpy as np
 import operator
+from core.labels import Label, NeutralLabel
 
 
 class OpinionVectorCollection:
@@ -71,11 +72,17 @@ class OpinionVector:
     """ Vector of Relation between two values of entities.
     """
 
-    def __init__(self, opinion_value_left, opinion_value_right, vector, label=0, popularity=0):
+    def __init__(self,
+                 opinion_value_left,
+                 opinion_value_right,
+                 vector,
+                 label=NeutralLabel,
+                 popularity=0):
+
         assert(type(opinion_value_left) == unicode)
         assert(type(opinion_value_right) == unicode)
         assert(isinstance(vector, np.ndarray))
-        assert(type(label) == int)
+        assert(isinstance(label, Label))
         assert(type(popularity) == int)
         self.value_left = opinion_value_left
         self.value_right = opinion_value_right
@@ -84,10 +91,10 @@ class OpinionVector:
         self.popularity = popularity    # might be used to show an amount of Relations originally
 
     def set_label(self, label):
-        assert(type(label) == int)
+        assert(isinstance(label, Label))
         self.label = label
 
     def to_unicode(self):
         vector_str = ",".join(["%.6f" % v for v in self.vector])
         return u"{}, {}, {}, {}".format(
-            self.value_left, self.value_right, vector_str, self.label)
+            self.value_left, self.value_right, vector_str, self.label.to_str())

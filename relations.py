@@ -1,5 +1,4 @@
 from core.source.news import News
-from core.source.synonyms import SynonymsCollection
 
 
 class Relation:

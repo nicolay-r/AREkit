@@ -3,6 +3,7 @@ import io
 import core.env as env
 from core.source.entity import Entity
 from core.source.synonyms import SynonymsCollection
+from core.labels import Label
 
 
 class OpinionCollection:
@@ -62,8 +63,9 @@ class OpinionCollection:
 
                 entity_left = args[0].strip()
                 entity_right = args[1].strip()
+                sentiment = Label.from_str(args[2].strip())
 
-                o = Opinion(entity_left, entity_right, args[2].strip())
+                o = Opinion(entity_left, entity_right, sentiment)
                 opinions.append(o)
 
         return OpinionCollection(opinions, synonyms)
@@ -74,7 +76,7 @@ class OpinionCollection:
 
     def has_opinion_by_synonyms(self, o, sentiment=None):
         assert(isinstance(o, Opinion))
-        assert(sentiment is None or type(sentiment) == unicode)
+        assert(sentiment is None or isinstance(sentiment, Label))
 
         if not o.has_synonym_for_left(self.synonyms):
             return False
@@ -162,7 +164,7 @@ class Opinion:
     def __init__(self, value_left, value_right, sentiment):
         assert(type(value_left) == unicode)
         assert(type(value_right) == unicode)
-        assert(type(sentiment) == unicode and sentiment in ['pos', 'neg', 'neu'])
+        assert(isinstance(sentiment, Label))
         assert(',' not in value_left)
         assert(',' not in value_right)
         self.value_left = value_left.lower()

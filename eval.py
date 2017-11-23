@@ -1,13 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import io
-import os
-import re
-
 import pandas as pd
 
 from core.processing.stemmer import Stemmer
-from core.source.opinion import OpinionCollection, Opinion
+from core.source.opinion import OpinionCollection
+from core.labels import PositiveLabel, NegativeLabel, NeutralLabel
 
 
 class Evaluator:
@@ -18,13 +15,17 @@ class Evaluator:
         self.etalon_answers = etalon_filepath
         self.stemmer = Stemmer()
 
+        self.pos = PositiveLabel()
+        self.neg = NegativeLabel()
+        self.neu = NeutralLabel()
+
     def _calcPrecisionAndRecall(self, results):
         """ Расчет полноты и точности.
         """
         # Берем все позитивные и негативные ответы команд
         # TODO. Constants in different file
-        pos_answers = results[(results['how_results'] == 'pos')]
-        neg_answers = results[(results['how_results'] == 'neg')]
+        pos_answers = results[(results['how_results'] == self.pos.to_str())]
+        neg_answers = results[(results['how_results'] == self.neg.to_str())]
 
         # Расчет точности.
         if len(pos_answers) != 0:
@@ -37,12 +38,12 @@ class Evaluator:
             neg_prec = 0.0
 
         # Расчет полноты.
-        if len(results[results['how_orig'] == 'pos']) != 0:
-            pos_recall = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(results[results['how_orig'] == 'pos'])
+        if len(results[results['how_orig'] == self.pos.to_str()]) != 0:
+            pos_recall = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(results[results['how_orig'] == self.pos.to_str()])
         else:
             pos_recall = 0.0
-        if len(results[results['how_orig'] == 'neg']) != 0:
-            neg_recall = 1.0 * len(neg_answers[(neg_answers['comparison'] == True)]) / len(results[results['how_orig'] == 'neg'])
+        if len(results[results['how_orig'] == self.neg.to_str()]) != 0:
+            neg_recall = 1.0 * len(neg_answers[(neg_answers['comparison'] == True)]) / len(results[results['how_orig'] == self.neg.to_str()])
         else:
             neg_recall = 0.0
 
@@ -72,8 +73,8 @@ class Evaluator:
 
             df.loc[r_ind] = [o_etalon.value_left.encode('utf-8'),
                              o_etalon.value_right.encode('utf-8'),
-                             None if not has_opinion else o_test.sentiment.encode('utf-8'),
-                             o_etalon.sentiment.encode('utf-8'),
+                             None if not has_opinion else o_test.sentiment.to_str(),
+                             o_etalon.sentiment.to_str(),
                              comparison]
             r_ind += 1
 
@@ -84,7 +85,7 @@ class Evaluator:
                 continue
             df.loc[r_ind] = [o_test.value_left.encode('utf-8'),
                              o_test.value_right.encode('utf-8'),
-                             o_test.sentiment.encode('utf-8'),
+                             o_test.sentiment.to_str(),
                              None,
                              False]
             r_ind += 1
