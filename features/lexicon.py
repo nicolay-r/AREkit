@@ -16,8 +16,9 @@ class LexiconFeature(Base):
         self.max_sentence_range = max_sentence_range
 
     def create(self, relation):
-        """ Get the sentiment sum of words between relation entities
+        """  Average, Maximal, Minimal values by lexicon for all terim between relation entities.
         """
+
         assert(isinstance(relation, Relation))
 
         e1 = relation.news.entities.get_entity_by_id(relation.entity_left_ID)
@@ -34,11 +35,11 @@ class LexiconFeature(Base):
         if len(scores) == 0:
             scores.append(0)
 
-        p_s_all = float(sum(scores))/len(scores)
-        p_s_max = float(sum(s > 0 for s in scores))/len(scores)
-        p_s_min = float(sum(s < 0 for s in scores))/len(scores)
+        scores_avg = float(sum(scores)) / len(scores)
+        scores_max = float(sum(s > 0 for s in scores)) / len(scores)
+        scores_min = float(sum(s < 0 for s in scores)) / len(scores)
 
-        return np.array([p_s_all, p_s_max, p_s_min])
+        return np.array([scores_avg, scores_max, scores_min])
 
     def _get_scores_of_processed(self, processed_lemmas):
         scores = []

@@ -11,13 +11,17 @@ class Base:
         pass
 
     def calculate(self, relations):
-        """ functions_list: np.min, np.max, np.sum
+        """ functions_list: np.min, np.max, np.average
         """
         assert(type(relations) == list)
         results = []
         for relation in relations:
             results.append(self.create(relation))
-        return self._normalize(np.concatenate((np.min(results, axis=0), np.max(results, axis=0), np.sum(results, axis=0))))
+        return self._normalize(
+            np.concatenate((
+                np.min(results, axis=0),
+                np.max(results, axis=0),
+                np.average(results, axis=0))))
 
     def create(self, relation):
         """ Create feature
