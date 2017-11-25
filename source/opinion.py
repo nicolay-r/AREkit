@@ -181,7 +181,9 @@ class Opinion:
     # TODO: Should be a part of collection during save operation.
     def to_unicode(self):
         return u"{}, {}, {}, current".format(
-            self.value_left, self.value_right, self.sentiment)
+            self.value_left,
+            self.value_right,
+            self.sentiment.to_str())
 
     def create_value_id(self):
         return u"{}_{}".format(

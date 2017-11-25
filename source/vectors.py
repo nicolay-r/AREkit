@@ -41,7 +41,7 @@ class OpinionVectorCollection:
 
                 opinion_value_left = args[0].strip()
                 opinion_value_right = args[1].strip()
-                label = int(args[len(args) - 1])
+                label = Label.from_str(args[len(args) - 1].strip())
                 vector = np.array([float(args[i]) for i in range(2, len(args)-1)])
 
                 vectors.append(OpinionVector(
