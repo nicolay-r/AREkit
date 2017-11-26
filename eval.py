@@ -9,6 +9,15 @@ from core.labels import PositiveLabel, NegativeLabel, NeutralLabel
 
 class Evaluator:
 
+    # Columns
+    C_POS_PREC = 'pos_prec'
+    C_NEG_PREC = 'neg_prec'
+    C_POS_RECALL = 'pos_recall'
+    C_NEG_RECALL = 'neg_recall'
+    C_F1_POS = 'f1_pos'
+    C_F1_NEG = 'f1_neg'
+    C_F1 = 'f1'
+
     def __init__(self, synonyms_filepath, user_answers_filepath, etalon_filepath):
         self.synonyms_filepath = synonyms_filepath
         self.user_answers = user_answers_filepath
@@ -18,6 +27,18 @@ class Evaluator:
         self.pos = PositiveLabel()
         self.neg = NegativeLabel()
         self.neu = NeutralLabel()
+
+    @staticmethod
+    def get_result_columns():
+        return [Evaluator.C_POS_PREC,
+                Evaluator.C_POS_PREC,
+                Evaluator.C_NEG_PREC,
+                Evaluator.C_POS_RECALL,
+                Evaluator.C_NEG_RECALL,
+                Evaluator.C_F1_POS,
+                Evaluator.C_F1_NEG,
+                Evaluator.C_F1]
+
 
     def _calcPrecisionAndRecall(self, results):
         """ Расчет полноты и точности.
@@ -80,7 +101,7 @@ class Evaluator:
 
         # Append everithing that exist in test collection.
         for o_test in test_opins:
-            has_opininon = etalon_opins.has_opinion_by_synonyms(o_test)
+            has_opinion = etalon_opins.has_opinion_by_synonyms(o_test)
             if has_opinion:
                 continue
             df.loc[r_ind] = [o_test.value_left.encode('utf-8'),
@@ -143,10 +164,10 @@ class Evaluator:
         else:
             f1_neg = 0
 
-        return {"pos_prec": pos_prec,
-                "neg_prec": neg_prec,
-                "pos_recall": pos_recall,
-                "neg_recall": neg_recall,
-                "f1_pos": f1_pos,
-                "f1_neg": f1_neg,
-                "f1": (f1_pos + f1_neg) / 2}
+        return {self.C_POS_PREC: pos_prec,
+                self.C_NEG_PREC: neg_prec,
+                self.C_POS_RECALL: pos_recall,
+                self.C_NEG_RECALL: neg_recall,
+                self.C_F1_POS: f1_pos,
+                self.C_F1_NEG: f1_neg,
+                self.C_F1: (f1_pos + f1_neg) / 2}
