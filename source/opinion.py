@@ -145,6 +145,7 @@ class OpinionCollection:
         return True
 
     def iter_sentiment(self, sentiment):
+        assert(isinstance(sentiment, Label))
         for o in self.opinions:
             if o.sentiment == sentiment:
                 yield o
