@@ -35,6 +35,10 @@ class Label:
         assert(isinstance(other, Label))
         return self.to_int() == other.to_int()
 
+    def __ne__(self, other):
+        assert(isinstance(other, Label))
+        return self.to_int() != other.to_int()
+
 
 class PositiveLabel(Label):
 
