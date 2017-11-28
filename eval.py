@@ -94,8 +94,8 @@ class Evaluator:
 
             df.loc[r_ind] = [o_etalon.value_left.encode('utf-8'),
                              o_etalon.value_right.encode('utf-8'),
-                             None if not has_opinion else o_test.sentiment.to_str(),
                              o_etalon.sentiment.to_str(),
+                             None if not has_opinion else o_test.sentiment.to_str(),
                              comparison]
             r_ind += 1
 
@@ -106,8 +106,8 @@ class Evaluator:
                 continue
             df.loc[r_ind] = [o_test.value_left.encode('utf-8'),
                              o_test.value_right.encode('utf-8'),
-                             o_test.sentiment.to_str(),
                              None,
+			                 o_test.sentiment.to_str(),
                              False]
             r_ind += 1
 
