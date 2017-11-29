@@ -116,7 +116,6 @@ class Evaluator:
     def _calc_a_file(self, num):
         """ Data calculation for a file of 'num' index
         """
-        print "Reading {}".format(num)
         # Reading test answers.
         test_filepath = "{}/art{}.opin.txt".format(self.user_answers, str(num))
         test_opins = OpinionCollection.from_file(

@@ -10,9 +10,11 @@ class OpinionCollection:
     """ Collection of sentiment opinions between entities
     """
 
-    def __init__(self, opinions, synonyms):
+    def __init__(self, opinions, synonyms, debug_mode=False):
         assert(type(opinions) == list or type(opinions) == type(None))
         assert(isinstance(synonyms, SynonymsCollection))
+        assert(type(debug_mode) == bool)
+        self.debug_mode = debug_mode
         self.opinions = [] if opinions is None else opinions
         self.synonyms = synonyms
         self.by_value_set = self._create_set_by_value()
@@ -29,7 +31,7 @@ class OpinionCollection:
                 self.synonyms.add_synonym(o.value_right)
 
             added = self._add_key(o.create_value_id(), index, check=False)
-            if not added:
+            if not added and self.debug_mode:
                 print "Opinion with the values '{}'->'{}' already existed.".format(
                     o.value_left.encode('utf-8'), o.value_right.encode('utf-8'))
 
@@ -39,7 +41,7 @@ class OpinionCollection:
         index = {}
         for o in self.opinions:
             added = self._add_key_value(o.create_synonym_id(synonyms), o, index, check=False)
-            if not added:
+            if not added and self.debug_mode:
                 print "Synonym of '{}'->'{}' already existed.".format(
                     o.value_left.encode('utf-8'), o.value_right.encode('utf-8'))
         return index
