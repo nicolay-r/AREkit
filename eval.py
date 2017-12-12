@@ -44,11 +44,12 @@ class Evaluator:
         """ Расчет полноты и точности.
         """
         # Берем все позитивные и негативные ответы команд
-        # TODO. Constants in different file
+        # TODO. Constants in different file, comparison columns.
         pos_answers = results[(results['how_results'] == self.pos.to_str())]
         neg_answers = results[(results['how_results'] == self.neg.to_str())]
 
         # Расчет точности.
+        # TODO: Refactor
         if len(pos_answers) != 0:
             pos_prec = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(pos_answers)
         else:
@@ -59,6 +60,7 @@ class Evaluator:
             neg_prec = 0.0
 
         # Расчет полноты.
+        # TODO: Refactor
         if len(results[results['how_orig'] == self.pos.to_str()]) != 0:
             pos_recall = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(results[results['how_orig'] == self.pos.to_str()])
         else:
