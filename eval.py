@@ -18,6 +18,13 @@ class Evaluator:
     C_F1_NEG = 'f1_neg'
     C_F1 = 'f1'
 
+    # Columns for differences
+    C_WHO = 'who'
+    C_TO = 'to'
+    C_ORIG = 'how_orig'
+    C_RES = 'how_results'
+    C_CMP = 'comparison'
+
     def __init__(self, synonyms_filepath, user_answers_filepath, etalon_filepath):
         self.synonyms_filepath = synonyms_filepath
         self.user_answers = user_answers_filepath
@@ -39,36 +46,32 @@ class Evaluator:
                 Evaluator.C_F1_NEG,
                 Evaluator.C_F1]
 
+    @staticmethod
+    def _calcRecall(results, answers, label):
+        assert(isinstance(label, PositiveLabel) or isinstance(label, NegativeLabel))
+        if len(results[results[Evaluator.C_ORIG] == label.to_str()]) != 0:
+            return 1.0 * len(answers[(answers[Evaluator.C_CMP] == True)]) / len(results[results[Evaluator.C_ORIG] == label.to_str()])
+        else:
+            return 0.0
+
+    @staticmethod
+    def _calcPrecision(answers):
+        if len(answers) != 0:
+            return 1.0 * len(answers[(answers[Evaluator.C_CMP] == True)]) / len(answers)
+        else:
+            return 0.0
 
     def _calcPrecisionAndRecall(self, results):
         """ Расчет полноты и точности.
         """
-        # Берем все позитивные и негативные ответы команд
-        # TODO. Constants in different file, comparison columns.
-        pos_answers = results[(results['how_results'] == self.pos.to_str())]
-        neg_answers = results[(results['how_results'] == self.neg.to_str())]
+        pos_answers = results[(results[Evaluator.C_RES] == self.pos.to_str())]
+        neg_answers = results[(results[Evaluator.C_RES] == self.neg.to_str())]
 
-        # Расчет точности.
-        # TODO: Refactor
-        if len(pos_answers) != 0:
-            pos_prec = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(pos_answers)
-        else:
-            pos_prec = 0.0
-        if len(neg_answers) != 0:
-            neg_prec = 1.0 * len(neg_answers[(neg_answers['comparison'] == True)]) / len(neg_answers)
-        else:
-            neg_prec = 0.0
+        pos_prec = self._calcPrecision(pos_answers)
+        neg_prec = self._calcPrecision(neg_answers)
 
-        # Расчет полноты.
-        # TODO: Refactor
-        if len(results[results['how_orig'] == self.pos.to_str()]) != 0:
-            pos_recall = 1.0 * len(pos_answers[(pos_answers['comparison'] == True)]) / len(results[results['how_orig'] == self.pos.to_str()])
-        else:
-            pos_recall = 0.0
-        if len(results[results['how_orig'] == self.neg.to_str()]) != 0:
-            neg_recall = 1.0 * len(neg_answers[(neg_answers['comparison'] == True)]) / len(results[results['how_orig'] == self.neg.to_str()])
-        else:
-            neg_recall = 0.0
+        pos_recall = self._calcRecall(results, pos_answers, self.pos)
+        neg_recall = self._calcRecall(results, neg_answers, self.neg)
 
         assert(type(pos_prec) == float)
         assert(type(neg_prec) == float)
@@ -82,7 +85,7 @@ class Evaluator:
         assert(isinstance(test_opins, OpinionCollection))
 
         df = pd.DataFrame(
-            columns=['who', 'to', 'how_orig', 'how_results', 'comparison'])
+                columns=[self.C_WHO, self.C_TO, self.C_ORIG, self.C_RES, self.C_CMP])
 
         r_ind = 0
         # Append everithing that exist in etalon collection.
