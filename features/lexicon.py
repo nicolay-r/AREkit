@@ -41,6 +41,13 @@ class LexiconFeature(Base):
 
         return np.array([scores_avg, scores_max, scores_min])
 
+    def feature_names(self):
+        # TODO. add lexicon name
+        class_name = self.__class__.__name__
+        return [class_name + '_avg',
+                class_name + '_max',
+                class_name + '_min']
+
     def _get_scores_of_processed(self, processed_lemmas):
         scores = []
         signs = ['+', '-']

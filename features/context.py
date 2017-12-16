@@ -37,6 +37,10 @@ class ContextSentimentAfterFeature(Base):
         average = float(sum(scores))/len(scores)
         return np.array([average, max(scores), min(scores)])
 
+    def feature_names(self):
+        name = self.__class__.__name__
+        return [name + '_avg', name + '_max', name + '_min']
+
 
 class ContextPosBeforeFeature(Base):
     """ https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
@@ -64,6 +68,10 @@ class ContextPosBeforeFeature(Base):
         pos_vector = self._create_vector(relation.news, e1)
         # print pos_vector
         return np.array(pos_vector)
+
+    def feature_names(self):
+        name = self.__class__.__name__
+        return [name + '_' + p for p in self.POS]
 
     def _create_vector(self, news, e):
         l_before = news.Processed.get_lemmas_before_entity_to_list(e)[-self.LIMIT:]

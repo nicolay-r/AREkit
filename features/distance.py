@@ -17,3 +17,6 @@ class DistanceFeature(Base):
         e2 = relation.news.entities.get_entity_by_id(relation.entity_right_ID)
         lemmas = relation.news.Processed.get_text_between_entities_to_lemmatized_list(e1, e2)
         return np.array([len(lemmas)])
+
+    def feature_names(self):
+        return [self.__class__.__name__ + '_lemmas']

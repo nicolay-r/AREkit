@@ -21,3 +21,7 @@ class PatternFeature(Base):
         text = relation.news.processed.get_text_between_entities_to_str(e1, e2)
         v = [text.count(p) for p in self.patterns]
         return np.array(v)
+
+    def feature_names(self):
+        class_name = self.__class__.__name__
+        return [class_name + "_'{}'".format(p) for p in self.patterns]

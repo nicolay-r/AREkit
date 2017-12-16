@@ -8,6 +8,7 @@ from core.relations import Relation
 class Base:
 
     def __init__():
+        # TODO. pass here functions that will be used for features.
         pass
 
     def calculate(self, relations):
@@ -23,11 +24,19 @@ class Base:
                 np.max(results, axis=0),
                 np.average(results, axis=0))))
 
+    def feature_function_names(self):
+        feature_names = self.feature_names()
+        f_min = [f + '_min' for f in feature_names]
+        f_max = [f + '_max' for f in feature_names]
+        f_avg = [f + '_avg' for f in feature_names]
+        return f_min + f_max + f_avg
+
+    def feature_names(self):
+        raise NotImplementedError("method wasn't implemented")
+
     def create(self, relation):
-        """ Create feature
-        """
         assert(isinstance(relation, Relation))
-        raise NotImplementedError("Impelement feature create method!")
+        raise NotImplementedError("method wasn't implemented")
 
     @staticmethod
     def _normalize(vector):

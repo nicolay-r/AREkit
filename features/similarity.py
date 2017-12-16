@@ -32,3 +32,6 @@ class SimilarityFeature(Base):
         v1 = self.__get_mean_word2vec_vector(e1_value_lemmas)
         v2 = self.__get_mean_word2vec_vector(e2_value_lemmas)
         return np.array([sum(map(lambda x, y: x * y, v1, v2))])
+
+    def feature_names(self):
+        return [self.__class__.__name__]

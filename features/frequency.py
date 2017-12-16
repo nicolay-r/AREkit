@@ -29,6 +29,10 @@ class EntitiesFrequency(Base):
 
         return np.array([e1_freq, e2_freq])
 
+    def feature_names(self):
+        class_name = self.__class__.__name__
+        return [class_name + '_e1', class_name + '_e2']
+
     def _calculate_synonym_entities_count(self, e):
         assert(isinstance(e, Entity))
         e_c = 1

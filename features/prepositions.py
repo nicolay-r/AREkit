@@ -24,6 +24,9 @@ class PrepositionsCountFeature(Base):
 
         return np.array([preps])
 
+    def feature_names(self):
+        return [self.__class__.__name__]
+
     def _get_prepositions_count(self, s1, s2, e1, e2, news):
         r = 0
 
