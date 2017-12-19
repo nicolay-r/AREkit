@@ -35,18 +35,18 @@ class LexiconFeature(Base):
         if len(scores) == 0:
             scores.append(0)
 
-        scores_avg = float(sum(scores)) / len(scores)
-        scores_max = float(sum(s > 0 for s in scores)) / len(scores)
-        scores_min = float(sum(s < 0 for s in scores)) / len(scores)
+        scores_total = float(sum(scores))
+        scores_pos = float(sum(s > 0 for s in scores))
+        scores_neg = float(sum(s < 0 for s in scores))
 
-        return np.array([scores_avg, scores_max, scores_min])
+        return np.array([scores_total, scores_pos, scores_neg])
 
     def feature_names(self):
         # TODO. add lexicon name
         class_name = self.__class__.__name__
-        return [class_name + '_avg',
-                class_name + '_max',
-                class_name + '_min']
+        return [class_name + '_total',
+                class_name + '_pos',
+                class_name + '_neg']
 
     def _get_scores_of_processed(self, processed_lemmas):
         scores = []
