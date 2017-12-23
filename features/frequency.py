@@ -19,13 +19,11 @@ class EntitiesFrequency(Base):
         e1 = relation.news.entities.get_entity_by_id(relation.entity_left_ID)
         e2 = relation.news.entities.get_entity_by_id(relation.entity_right_ID)
 
-        entities = relation.news.get_entities()
-
         e1_c = float(self._calculate_synonym_entities_count(e1))
         e2_c = float(self._calculate_synonym_entities_count(e2))
 
-        e1_freq = e1_c / entities.count()
-        e2_freq = e2_c / entities.count()
+        e1_freq = e1_c / relation.news.get_words_count()
+        e2_freq = e2_c / relation.news.get_words_count()
 
         return np.array([e1_freq, e2_freq])
 

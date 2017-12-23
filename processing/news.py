@@ -8,10 +8,17 @@ class NewsProcessor:
         self.news = news
         self.lemmatized_sentences = self._process(news)
         self.sentence_by_entity = self._index_sentence_by_entity(news)
+        self.words_count = self._get_words_count()
 
     @property
     def sentences(self):
         return self.news.sentences
+
+    def _get_words_count(self):
+        result = 0
+        for s in self.lemmatized_sentences:
+            result += len(s)
+        return result
 
     def get_text_between_entities_to_lemmatized_list(self, e1, e2):
         assert(isinstance(e1, Entity))

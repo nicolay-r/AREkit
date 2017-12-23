@@ -15,6 +15,13 @@ class News:
         for s in self.sentences:
             yield s
 
+    def get_words_count(self):
+        count = self.processed.words_count
+        for e in self.entities:
+            words_in_entities = len(e.value.split(' '))
+            count -= (words_in_entities - 1)
+        return count
+
     def get_entities(self):
         return self.entities
 
