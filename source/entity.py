@@ -68,6 +68,18 @@ class EntityCollection:
         lemma = self._create_lemma(entity_value)
         return self.by_lemmas[lemma]
 
+    def get_previous_entity(self, entity):
+        index = self.entities.index(entity)
+        if index > 0:
+            return self.entities[index-1]
+        return None
+
+    def get_next_entity(self, entity):
+        index = self.entities.index(entity)
+        if index+1 < len(self.entities):
+            return self.entities[index+1]
+        return None
+
     def _create_lemma(self, entity_value):
         assert(type(entity_value) == unicode)
         return env.stemmer.lemmatize_to_str(entity_value)

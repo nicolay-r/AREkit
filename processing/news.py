@@ -16,7 +16,7 @@ class NewsProcessor:
 
     def _get_words_count(self):
         result = 0
-        for s in self.lemmatized_sentences:
+        for s in self.lemmatized_sentences.itervalues():
             result += len(s)
         return result
 
@@ -39,6 +39,13 @@ class NewsProcessor:
         text += self._lemmatize_to_list(s2.text[:e2.begin-s2.begin])
 
         return text
+
+    def get_text_between_sentence_bounds(self, sentence, left_bound, right_bound):
+        assert(type(left_bound) == int)
+        assert(type(right_bound) == int)
+        assert(left_bound <= right_bound)
+        print sentence.text[left_bound:right_bound]
+        return self._lemmatize_to_list(sentence.text[left_bound-sentence.begin:right_bound-sentence.begin])
 
     def get_text_between_entities_to_str(self, e1, e2):
         assert(isinstance(e1, Entity))
