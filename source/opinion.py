@@ -48,27 +48,41 @@ class OpinionCollection:
 
     @staticmethod
     def from_file(filepath, synonyms_filepath):
+        """
+            filepath: string or list
+                single filepath or list of filepaths.
+        """
+        assert(type(filepath) == str or type(filepath) == list)
+
         synonyms = SynonymsCollection.from_file(synonyms_filepath)
         opinions = []
-        with io.open(filepath, "r", encoding='utf-8') as f:
-            for i, line in enumerate(f.readlines()):
+        filepaths = []
 
-                if line == '\n':
-                    continue
+        if (type(filepath) == str):
+            filepaths.append(filepath)
+        elif (type(filepath) == list):
+            filepaths = filepath
 
-                args = line.strip().split(',')
+        for fp in filepaths:
+            with io.open(fp, "r", encoding='utf-8') as f:
+                for i, line in enumerate(f.readlines()):
 
-                if len(args) != 4:
-                    print "should be 4 args at line: {}, '{}'".format(
-                        i, line.encode('utf-8'))
-                    continue
+                    if line == '\n':
+                        continue
 
-                entity_left = args[0].strip()
-                entity_right = args[1].strip()
-                sentiment = Label.from_str(args[2].strip())
+                    args = line.strip().split(',')
 
-                o = Opinion(entity_left, entity_right, sentiment)
-                opinions.append(o)
+                    if len(args) != 4:
+                        print "should be 4 args at line: {}, '{}'".format(
+                            i, line.encode('utf-8'))
+                        continue
+
+                    entity_left = args[0].strip()
+                    entity_right = args[1].strip()
+                    sentiment = Label.from_str(args[2].strip())
+
+                    o = Opinion(entity_left, entity_right, sentiment)
+                    opinions.append(o)
 
         return OpinionCollection(opinions, synonyms)
 
