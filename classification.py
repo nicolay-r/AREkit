@@ -3,9 +3,35 @@ from labels import Label, NeutralLabel
 from statistic import MethodStatistic
 from source.synonyms import SynonymsCollection
 from source.opinion import OpinionCollection, Opinion
+from core.source.vectors import OpinionVectorCollection
 
 import numpy as np
+import pandas as pd
 from sklearn import svm, neighbors, ensemble, model_selection, naive_bayes
+
+
+def create_train_data(vectors_filepath_list):
+    assert(type(vectors_filepath_list) == list)
+    X_train = []
+    y_train = []
+    for vector_filepath in vectors_filepath_list:
+        collection = OpinionVectorCollection.from_file(vector_filepath)
+        X_train += [item.vector for item in collection]
+        y_train += [item.label.to_int() for item in collection]
+
+    return X_train, y_train
+
+
+def create_test_data(vectors_filepath_list):
+    assert(type(vectors_filepath_list) == list)
+    X_test = []
+    test_collections = []
+    for vector_filepath in vectors_filepath_list:
+        collection = OpinionVectorCollection.from_file(vector_filepath)
+        test_collections.append(collection)
+        X_test += [item.vector for item in collection]
+
+    return X_test, test_collections
 
 
 def evaluate(estimator, method_name, files_to_compare_list,
@@ -93,7 +119,7 @@ def create_test_opinions(test_collections, labels, synonyms_filepath):
     assert(type(labels) == np.ndarray)
 
     label_index = 0
-    test_opinions = []
+    opinion_collection_list = []
 
     synonyms = SynonymsCollection.from_file(synonyms_filepath)
     for c in test_collections:
@@ -111,8 +137,8 @@ def create_test_opinions(test_collections, labels, synonyms_filepath):
                 print "Failed for o={}".format(o.to_unicode().encode('utf-8'))
 
             label_index += 1
-        test_opinions.append(opinions)
-    return test_opinions
+        opinion_collection_list.append(opinions)
+    return opinion_collection_list
 
 
 def filter_features(model_name, model, X_train, X_test):
@@ -124,3 +150,46 @@ def filter_features(model_name, model, X_train, X_test):
     print "Train transform: {} -> {}".format(X_train.shape, X_train_new.shape)
     print "Test transform: {} -> {}".format(X_test.shape, X_test_new.shape)
     return (X_train_new, X_test_new)
+
+
+def create_model_feature_importances(model, method_name, support, feature_names):
+    """
+        support: list
+            list of boolean values, where 'true' corresponds to selected
+            features.
+    """
+    df = pd.DataFrame(columns=['support', 'coef', 'importance'])
+
+    for i, s in enumerate(support):
+        row_id = feature_names[i]
+        df.loc[row_id] = None
+        if s:
+            df.loc[row_id]['support'] = '+'
+
+    if hasattr(model, 'coef_'):
+        for i, coef in enumerate(model.coef_):
+            row_id = feature_names[i]
+            df.loc[row_id] = None
+            df.loc[row_id]['coef'] = coef[0]
+
+    if hasattr(model, 'feature_importances_'):
+        for i, importance in enumerate(model.feature_importances_):
+            row_id = feature_names[i]
+            if row_id not in df.index:
+                df.loc[row_id] = None
+            df.loc[row_id]['importance'] = importance
+
+    return df
+
+
+def plot_feature_importances(filepath):
+    offset_width = 0.2
+    row_width = 0.5
+    df = pd.read_csv(filepath, index_col=0)
+    df = df.sort_values(['coef', 'importance'], ascending=[True, True])
+    ax = df.plot(kind='barh',
+                 width=row_width,
+                 figsize=(15, offset_width * len(df)))
+    fig = ax.get_figure()
+    fig.tight_layout()
+    return fig
