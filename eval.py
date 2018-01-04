@@ -5,6 +5,7 @@ import pandas as pd
 from core.processing.stemmer import Stemmer
 from core.source.opinion import OpinionCollection
 from core.labels import PositiveLabel, NegativeLabel, NeutralLabel
+from core.statistic import FilesToCompare
 
 
 class Evaluator:
@@ -25,10 +26,9 @@ class Evaluator:
     C_RES = 'how_results'
     C_CMP = 'comparison'
 
-    def __init__(self, synonyms_filepath, user_answers_filepath, etalon_filepath):
+    def __init__(self, synonyms_filepath, user_answers_filepath):
         self.synonyms_filepath = synonyms_filepath
         self.user_answers = user_answers_filepath
-        self.etalon_answers = etalon_filepath
         self.stemmer = Stemmer()
 
         self.pos = PositiveLabel()
@@ -118,45 +118,48 @@ class Evaluator:
 
         return df
 
-    def _calc_a_file(self, num):
-        """ Data calculation for a file of 'num' index
-        """
+    # TODO. change it with the list of FilesToCompare objects.
+    def _calc_a_file(self, files_to_compare):
+        assert(isinstance(filesToComapre, FilesToCompare))
+
         # Reading test answers.
-        test_filepath = "{}/art{}.opin.txt".format(self.user_answers, str(num))
         test_opins = OpinionCollection.from_file(
-                test_filepath, self.synonyms_filepath)
+                files_to_compare.test_filepath, self.synonyms_filepath)
 
         # Reading etalon answers.
-        experts_filepath = "{}/art{}.opin.txt".format(self.etalon_answers, str(num))
         etalon_opins = OpinionCollection.from_file(
-                experts_filepath, self.synonyms_filepath)
+                files_to_compare.etalon_filepath, self.synonyms_filepath)
 
         # Comparing test and etalon results.
         results = self._check(etalon_opins, test_opins)
 
         # Save result comparison into file.
-        comparison_file = "{}/art{}.comp.txt".format(self.user_answers, str(num))
+        # TODO. remove path declaration from here.
+        comparison_file = "{}/art{}.comp.txt".format(
+                self.user_answers, str(files_to_compare.index))
         results.to_csv(comparison_file)
 
         return self._calcPrecisionAndRecall(results)
 
-    def evaluate(self, test_indices):
+    def evaluate(self, files_to_compare_list):
         """ Main evaluation subprogram
         """
+        assert(type(files_to_compare_list) == list)
+
         pos_prec, neg_prec, pos_recall, neg_recall = (0, 0, 0, 0)
 
-        for n in test_indices:
-            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self._calc_a_file(n)
+        for files_to_compare in files_to_compare_list:
+            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self._calc_a_file(files_to_compare)
 
             pos_prec += pos_prec1
             neg_prec += neg_prec1
             pos_recall += pos_recall1
             neg_recall += neg_recall1
 
-        pos_prec /= len(test_indices)
-        neg_prec /= len(test_indices)
-        pos_recall /= len(test_indices)
-        neg_recall /= len(test_indices)
+        pos_prec /= len(files_to_compare_list)
+        neg_prec /= len(files_to_compare_list)
+        pos_recall /= len(files_to_compare_list)
+        neg_recall /= len(files_to_compare_list)
 
         if pos_prec * pos_recall != 0:
             f1_pos = 2 * pos_prec * pos_recall / (pos_prec + pos_recall)

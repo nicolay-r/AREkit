@@ -23,25 +23,31 @@ class MethodStatistic:
         return founded
 
     @staticmethod
-    def get_method_statistic(method_name, test_root, etalon_root, test_indices, synonyms_filepath):
+    def get_method_statistic(files_to_compare_list, synonyms_filepath):
+        """
+            Calculate statistic based on result files
+            files_to_compare_list: list of FilesToCompare objects
+            synonyms_filepath: str
+        """
 
         columns = ["t_all", "t_pos", "t_neg", "e_all", "e_pos", "e_neg"]
 
         df = pd.DataFrame(columns=columns)
-        for n in test_indices:
+        for files_to_compare in files_to_compare_list:
 
-            eo_filepath = "{}/art{}.opin.txt".format(etalon_root, n)
-            to_filepath = "{}/art{}.opin.txt".format(test_root, n)
+            assert(isinstance(files_to_compare, FilesToCompare))
+            test_opins = OpinionCollection.from_file(
+                    files_to_compare.test_filepath, synonyms_filepath)
+            etalon_opins = OpinionCollection.from_file(
+                    files_to_compare.etalon_filepath, synonyms_filepath)
 
-            test_opins = OpinionCollection.from_file(to_filepath, synonyms_filepath)
-            etalon_opins = OpinionCollection.from_file(eo_filepath, synonyms_filepath)
-
-            df.loc[n] = [MethodStatistic.founded_opins(test_opins, etalon_opins),
-                         MethodStatistic.founded_opins(test_opins, etalon_opins, PositiveLabel()),
-                         MethodStatistic.founded_opins(test_opins, etalon_opins, NegativeLabel()),
-                         len(etalon_opins),
-                         len(list(etalon_opins.iter_sentiment(PositiveLabel()))),
-                         len(list(etalon_opins.iter_sentiment(NegativeLabel())))]
+            df.loc[files_to_compare.index] = [
+                    MethodStatistic.founded_opins(test_opins, etalon_opins),
+                    MethodStatistic.founded_opins(test_opins, etalon_opins, PositiveLabel()),
+                    MethodStatistic.founded_opins(test_opins, etalon_opins, NegativeLabel()),
+                    len(etalon_opins),
+                    len(list(etalon_opins.iter_sentiment(PositiveLabel()))),
+                    len(list(etalon_opins.iter_sentiment(NegativeLabel())))]
 
         df.loc['sum'] = [float(df[c].sum()) for c in columns]
 
@@ -51,3 +57,27 @@ class MethodStatistic:
         df.loc['found']['t_neg'] = float(df.loc['sum']['t_neg']) / df.loc['sum']['e_neg']
 
         return df
+
+
+# TODO. move from this file.
+class FilesToCompare:
+
+    def __init__(self, test_filepath, etalon_filepath, index):
+        assert(type(test_filepath) == str)
+        assert(type(etalon_filepath) == str)
+        assert(type(index) == int)
+        self.test_fp_ = test_filepath
+        self.etalon_fp_ = etalon_filepath
+        self.index_ = index
+
+    @property
+    def test_filepath(self):
+        return self.test_fp_
+
+    @property
+    def etalon_filepath(self):
+        return self.etalon_fp_
+
+    @property
+    def index(self):
+        return self.index_
