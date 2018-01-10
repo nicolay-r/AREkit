@@ -94,7 +94,6 @@ def get_estimator_settings(method):
     return None
 
 
-# TODO. Move into the core framework
 def fit_and_predict(method_path, estimator, X_train, y_train, X_test,
                     test_collections, synonyms_filepath):
     """ Fitting the approptiate method and then predicting
@@ -150,6 +149,18 @@ def filter_features(model_name, model, X_train, X_test):
     print "Train transform: {} -> {}".format(X_train.shape, X_train_new.shape)
     print "Test transform: {} -> {}".format(X_test.shape, X_test_new.shape)
     return (X_train_new, X_test_new)
+
+
+def filter_features_by_mask(X_train, X_test, mask):
+    """
+        mask : list
+            list of boolean values
+    """
+    assert(type(mask) == list)
+    assert(len(mask) == X_train.shape[1])
+    X_train = np.array(X_train)
+    X_test = np.array(X_test)
+    return (X_train[:, mask], X_test[:, mask])
 
 
 def create_model_feature_importances(model, method_name, support, feature_names):
