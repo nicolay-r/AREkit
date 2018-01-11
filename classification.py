@@ -157,9 +157,10 @@ def filter_features_by_mask(X_train, X_test, mask):
             list of boolean values
     """
     assert(type(mask) == list)
-    assert(len(mask) == X_train.shape[1])
     X_train = np.array(X_train)
     X_test = np.array(X_test)
+    print X_train.shape
+    print X_test.shape
     return (X_train[:, mask], X_test[:, mask])
 
 

@@ -120,7 +120,7 @@ class Evaluator:
 
     # TODO. change it with the list of FilesToCompare objects.
     def _calc_a_file(self, files_to_compare):
-        assert(isinstance(filesToComapre, FilesToCompare))
+        assert(isinstance(files_to_compare, FilesToCompare))
 
         # Reading test answers.
         test_opins = OpinionCollection.from_file(
