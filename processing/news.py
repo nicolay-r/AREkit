@@ -44,8 +44,8 @@ class NewsProcessor:
         assert(type(left_bound) == int)
         assert(type(right_bound) == int)
         assert(left_bound <= right_bound)
-        print sentence.text[left_bound:right_bound]
-        return self._lemmatize_to_list(sentence.text[left_bound-sentence.begin:right_bound-sentence.begin])
+        return self._lemmatize_to_list(
+            sentence.text[left_bound-sentence.begin:right_bound-sentence.begin])
 
     def get_text_between_entities_to_str(self, e1, e2):
         assert(isinstance(e1, Entity))

@@ -39,8 +39,6 @@ class EntityTagFeature(Base):
             [class_name + '_right_' + t for t in self.tags]
 
     def _get_entity_tags(self, entity):
-        if entity.str_type not in self.tags:
-            print entity.str_type
         assert(entity.str_type in self.tags)
         ind = self.tags.index(entity.str_type)
         result = [0] * len(self.tags)
