@@ -17,6 +17,17 @@ class ExternalRelationsFeature(Base):
         self.relation_lexicon = relation_lexicon
         self.synonyms = synonyms
 
+    def calculate(self, relations):
+        """ functions_list: np.average
+        """
+        assert(type(relations) == list)
+        results = []
+        for relation in relations:
+            results.append(self.create(relation))
+        return self._normalize(
+                np.array([np.average(results)])
+            )
+
     def create(self, relation):
         """ Get the similarity between two entities of relation
         """
