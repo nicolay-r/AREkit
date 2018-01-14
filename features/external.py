@@ -55,3 +55,8 @@ class ExternalRelationsFeature(Base):
 
     def feature_names(self):
         return [self.__class__.__name__]
+
+    def feature_function_names(self):
+        feature_names = self.feature_names()
+        f_avg = [f + '_avg' for f in feature_names]
+        return f_avg
