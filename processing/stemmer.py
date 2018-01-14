@@ -19,7 +19,7 @@ class Stemmer:
 
         result = " ".join(lemmas)
 
-        # print '"%s"->"%s"' % (text, result), ' ', len(lemmas)
+        # print '"%s"->"%s"' % (text.encode('utf-8'), result.encode('utf-8')), ' ', len(lemmas)
 
         # The problem when 'G8' word, it will not be lemmatized, so next line
         # is a fix
