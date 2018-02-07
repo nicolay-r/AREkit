@@ -11,10 +11,19 @@ class Label:
 
     @staticmethod
     def from_int(value):
+        assert(type(value) == int)
         for l in Label._get_supported_labels():
             if l.to_int() == value:
                 return l
         raise Exception("Label by value '{}' doesn't supported".format(value))
+
+    @staticmethod
+    def from_uint(value):
+        assert(type(value) == int and value >= 0)
+        for l in Label._get_supported_labels():
+            if l.to_uint() == value:
+                return l
+        raise Exception("Label by unsigned value '{}' doesn't supported".format(value))
 
     @staticmethod
     def _get_supported_labels():
@@ -29,6 +38,9 @@ class Label:
         raise Exception("Not implemented exception")
 
     def to_int(self):
+        raise Exception("Not implemented exception")
+
+    def to_uint(self):
         raise Exception("Not implemented exception")
 
     def __eq__(self, other):
@@ -48,6 +60,9 @@ class PositiveLabel(Label):
     def to_int(self):
         return int(1)
 
+    def to_uint(self):
+        return int(1)
+
 
 class NegativeLabel(Label):
 
@@ -57,6 +72,9 @@ class NegativeLabel(Label):
     def to_int(self):
         return int(-1)
 
+    def to_uint(self):
+        return int(2)
+
 
 class NeutralLabel(Label):
 
@@ -64,4 +82,7 @@ class NeutralLabel(Label):
         return 'neu'
 
     def to_int(self):
+        return int(0)
+
+    def to_uint(self):
         return int(0)
