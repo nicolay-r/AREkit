@@ -39,6 +39,7 @@ class Stemmer:
     def lemmatize_to_rusvectores_str(self, text):
         """ <lemma>_<POS tag>
         """
+
         result = []
         analysis = self.mystem.analyze(text.lower())
 
