@@ -54,6 +54,10 @@ class SynonymsCollection:
         index = self.by_synonym[id]
         return self.by_index[index]
 
+    def get_group_by_index(self, index):
+        assert(type(index) == int)
+        return self.by_index[index]
+
     def get_synonym_group_index(self, s):
         assert(type(s) == unicode)
         return self._get_group_index(s)

@@ -47,19 +47,6 @@ class NewsProcessor:
         return self._lemmatize_to_list(
             sentence.text[left_bound-sentence.begin:right_bound-sentence.begin])
 
-    def get_text_before_entity_as_str(self, e):
-        assert(isinstance(e, Entity))
-        s = self.get_sentence_by_entity(e)
-
-        # TODO. Copied from below
-        texts = []
-        for i in range(0, s.index):
-            texts.append(self.sentences[i].text)
-
-        texts.append(s.text[:e.begin-s.begin])
-
-        return u" ".join(texts)
-
     def get_text_between_entities_to_str(self, e1, e2):
         assert(isinstance(e1, Entity))
         assert(isinstance(e2, Entity))
