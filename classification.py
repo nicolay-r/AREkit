@@ -10,6 +10,35 @@ import pandas as pd
 from sklearn import svm, neighbors, ensemble, model_selection, naive_bayes
 
 
+def apply_classifier(train_vectors_list, test_vectors_list, estimator,
+        files_to_compare_list, method_name, method_root, synonyms_filepath):
+    """
+        Train classifier using 'train_vectors_list' and then apply it for
+        'test_vectors_list' test file.
+
+        train_vector_list: list str
+        test_vector_list: list str
+        method_name: str
+        synonyms_filepath: str
+    """
+    assert(type(train_vectors_list) == list)
+    assert(type(test_vectors_list) == list)
+    assert(type(method_name) == list)
+
+    X_train, y_train = create_train_data(train_vector_list)
+    X_test, test_collections = create_test_data(test_vectors_list)
+
+    test_opinions = fit_and_predict(
+            method_name, estimator, X_train, y_train, X_test,
+            test_collections, synonyms_filepath)
+    io_utils.save_test_opinions(test_opinions, method_name, indices=test_indices)
+
+    edf = evaluate(CLASSIFIERS[method_name], method_name,
+                   files_to_compare_list, method_root, synonyms_filepath)
+
+    return edf
+
+
 def create_train_data(vectors_filepath_list):
     assert(type(vectors_filepath_list) == list)
     X_train = []
