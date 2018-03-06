@@ -65,6 +65,10 @@ class SynonymsCollection:
         id = self._create_synonym_id(s)
         return self.by_synonym[id]
 
+    def get_group_by_index(self, index):
+        assert(type(index) == int)
+        return self.by_index[index]
+
     @staticmethod
     def _create_synonym_id(s):
         return env.stemmer.lemmatize_to_str(s)
