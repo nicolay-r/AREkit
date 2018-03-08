@@ -55,6 +55,9 @@ class RelationCollection:
 
         return RelationCollection(relations)
 
+    def apply_filter(self, filter_function):
+        self.relations = [r for r in self.relations if filter_function(r)]
+
     @staticmethod
     def _is_ignored(entity_value, stemmer, ignored_entitiy_values):
         assert(type(ignored_entitiy_values) == list)
