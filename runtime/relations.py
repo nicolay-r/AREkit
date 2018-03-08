@@ -1,32 +1,84 @@
 from core.source.news import News
+from core.env import stemmer
 from core.source.opinion import Opinion
+from core.source.synonyms import SynonymsCollection
 
 
 class RelationCollection:
 
-    def __init__(self):
-        pass
+    def __init__(self, relation_list=[]):
+        assert(type(relation_list) == list)
+        self.relations = relation_list
 
-    def from_news_opinion(news, opinion, synonyms):
-
-        def get_appropriate_entities_value(value):
-            if synonyms.has_synonym(value):
-                return filter(
-                    lambda s: entities.has_entity_by_value(s),
-                    synonyms.get_synonyms_list(value))
-
-            elif entities.has_entity_by_value(value):
-                return [value]
-            else:
-                return []
-
+    @staticmethod
+    def from_news_opinion(news, opinion, synonyms, ignored_entity_values=[]):
         assert(isinstance(news, News))
         assert(isinstance(opinion, Opinion))
-        # TODO. Create method in core that provides all pairs of entities
-        # related to a Opinion. Widely used.
+        assert(isinstance(synonyms, SynonymsCollection))
+
+        left_values = RelationCollection._get_appropriate_entities(
+            opinion.value_left, news.entities, synonyms)
+        right_values = RelationCollection._get_appropriate_entities(
+            opinion.value_right, news.entities, synonyms)
+
+        # TODO. We guarantee that these left and right values are not lemmatized
+        if len(left_values) == 0:
+            print "Appropriate entity for '{}'->'...' has not been found".format(
+                opinion.value_left.encode('utf-8'))
+            return RelationCollection()
+
+        if len(right_values) == 0:
+            print "Appropriate entity for '...'->'{}' has not been found".format(
+                opinion.value_right.encode('utf-8'))
+            return RelationCollection()
+
+        relations = []
+        for entity_left in left_values:
+            for entity_right in right_values:
+
+                if RelationCollection._is_ignored(entity_left, stemmer, ignored_entity_values):
+                    continue
+                if RelationCollection._is_ignored(entity_right, stemmer, ignored_entity_values):
+                    continue
+
+                entities_left_ids = news.entities.get_entity_by_value(entity_left)
+                entities_right_ids = news.entities.get_entity_by_value(entity_right)
+
+                for e1_ID in entities_left_ids:
+                    for e2_ID in entities_right_ids:
+                        e1 = news.entities.get_entity_by_id(e1_ID)
+                        e2 = news.entities.get_entity_by_id(e2_ID)
+                        r = Relation(e1.ID, e2.ID, news)
+                        relations.append(r)
+
+        return RelationCollection(relations)
+
+    @staticmethod
+    def _is_ignored(entity_value, stemmer, ignored_entitiy_values):
+        assert(type(ignored_entitiy_values) == list)
+        entity_value = stemmer.lemmatize_to_str(entity_value)
+        if entity_value in ignored_entitiy_values:
+            # print "ignored: '{}'".format(entity_value.encode('utf-8'))
+            return True
+        return False
+
+    @staticmethod
+    def _get_appropriate_entities(opinion_value, entities, synonyms):
+        if synonyms.has_synonym(opinion_value):
+            return filter(
+                lambda s: entities.has_entity_by_value(s),
+                synonyms.get_synonyms_list(opinion_value))
+        elif entities.has_entity_by_value(opinion_value):
+            return [opinion_value]
+        else:
+            return []
+
+    def __len__(self):
+        return len(self.relations)
 
     def __iter__(self):
-        pass
+        for r in self.relations:
+            yield r
 
 
 class Relation:
