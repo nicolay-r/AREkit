@@ -11,25 +11,27 @@ class RelationCollection:
         self.relations = relation_list
 
     @staticmethod
-    def from_news_opinion(news, opinion, synonyms, ignored_entity_values=[]):
+    def from_news_opinion(news, opinion, synonyms, ignored_entity_values=[], debug=False):
         assert(isinstance(news, News))
         assert(isinstance(opinion, Opinion))
         assert(isinstance(synonyms, SynonymsCollection))
 
-        left_values = RelationCollection._get_appropriate_entities(
+        left_values = RelationCollection._get_appropriate_entity_values(
             opinion.value_left, news.entities, synonyms)
-        right_values = RelationCollection._get_appropriate_entities(
+        right_values = RelationCollection._get_appropriate_entity_values(
             opinion.value_right, news.entities, synonyms)
 
         # TODO. We guarantee that these left and right values are not lemmatized
         if len(left_values) == 0:
-            print "Appropriate entity for '{}'->'...' has not been found".format(
-                opinion.value_left.encode('utf-8'))
+            if debug:
+                print "Appropriate entity for '{}'->'...' has not been found".format(
+                    opinion.value_left.encode('utf-8'))
             return RelationCollection()
 
         if len(right_values) == 0:
-            print "Appropriate entity for '...'->'{}' has not been found".format(
-                opinion.value_right.encode('utf-8'))
+            if debug:
+                print "Appropriate entity for '...'->'{}' has not been found".format(
+                    opinion.value_right.encode('utf-8'))
             return RelationCollection()
 
         relations = []
@@ -63,7 +65,7 @@ class RelationCollection:
         return False
 
     @staticmethod
-    def _get_appropriate_entities(opinion_value, entities, synonyms):
+    def _get_appropriate_entity_values(opinion_value, entities, synonyms):
         if synonyms.has_synonym(opinion_value):
             return filter(
                 lambda s: entities.has_entity_by_value(s),
@@ -72,6 +74,13 @@ class RelationCollection:
             return [opinion_value]
         else:
             return []
+
+    def __getitem__(self, item):
+        """
+        item: int
+        """
+        assert(type(item) == int)
+        return self.relations[item]
 
     def __len__(self):
         return len(self.relations)
@@ -92,3 +101,18 @@ class Relation:
         self.entity_left_ID = entity_left_ID
         self.entity_right_ID = entity_right_ID
         self.news = news
+
+
+    def get_left_entity_value(self):
+        """
+        returns: unicode
+        """
+        entity = self.news.entities.get_entity_by_id(self.entity_left_ID)
+        return entity.value
+
+    def get_right_entity_value(self):
+        """
+        returns: unicode
+        """
+        entity = self.news.entities.get_entity_by_id(self.entity_right_ID)
+        return entity.value

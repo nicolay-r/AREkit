@@ -2,7 +2,7 @@
 from pymystem3 import Mystem
 
 
-# TODO: move into the processing section
+# TODO. Add POS tags
 class Stemmer:
     """ MyStem wrapper
     """
