@@ -2,7 +2,7 @@ from math import exp
 
 import numpy as np
 
-from core.relations import Relation
+from core.runtime.relations import Relation
 
 
 class Base:

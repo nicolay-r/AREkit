@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
 
+from core.evaluation.labels import PositiveLabel, NegativeLabel, NeutralLabel
+from core.evaluation.statistic import FilesToCompare
 from core.processing.stemmer import Stemmer
 from core.source.opinion import OpinionCollection
-from core.labels import PositiveLabel, NegativeLabel, NeutralLabel
-from core.statistic import FilesToCompare
 
 
 class Evaluator:
@@ -130,6 +130,11 @@ class Evaluator:
         etalon_opins = OpinionCollection.from_file(
                 files_to_compare.etalon_filepath, self.synonyms_filepath)
 
+        print "{} <-> {}, {}".format(
+                files_to_compare.test_filepath,
+                files_to_compare.etalon_filepath,
+                files_to_compare.index)
+
         # Comparing test and etalon results.
         results = self._check(etalon_opins, test_opins)
 
@@ -155,6 +160,8 @@ class Evaluator:
             neg_prec += neg_prec1
             pos_recall += pos_recall1
             neg_recall += neg_recall1
+
+        print len(files_to_compare_list)
 
         pos_prec /= len(files_to_compare_list)
         neg_prec /= len(files_to_compare_list)

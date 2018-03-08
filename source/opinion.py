@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import io
+
 import core.env as env
+from core.evaluation.labels import Label
 from core.source.entity import Entity
 from core.source.synonyms import SynonymsCollection
-from core.labels import Label
 
 
 class OpinionCollection:

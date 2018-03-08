@@ -1,9 +1,9 @@
 import numpy as np
 
-from core.relations import Relation
-from core.source.synonyms import SynonymsCollection
-from core.source.entity import Entity
 from base import Base
+from core.runtime.relations import Relation
+from core.source.entity import Entity
+from core.source.synonyms import SynonymsCollection
 
 
 class EntitiesFrequency(Base):

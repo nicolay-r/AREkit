@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import io
-import numpy as np
 import operator
-from core.labels import Label, NeutralLabel
+
+import numpy as np
+
+from core.evaluation.labels import Label, NeutralLabel
 
 
 class OpinionVectorCollection:

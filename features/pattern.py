@@ -1,7 +1,7 @@
 import numpy as np
 
-from core.relations import Relation
 from base import Base
+from core.runtime.relations import Relation
 
 
 class PatternFeature(Base):

@@ -1,7 +1,8 @@
 
 import pandas as pd
+
+from core.evaluation.labels import Label, PositiveLabel, NegativeLabel
 from core.source.opinion import OpinionCollection
-from core.labels import Label, PositiveLabel, NegativeLabel
 
 
 class MethodStatistic:

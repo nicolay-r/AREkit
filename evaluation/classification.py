@@ -1,13 +1,13 @@
-from eval import Evaluator
-from labels import Label, NeutralLabel
-from statistic import MethodStatistic
-from source.synonyms import SynonymsCollection
-from source.opinion import OpinionCollection, Opinion
-from core.source.vectors import OpinionVectorCollection
-
 import numpy as np
 import pandas as pd
 from sklearn import svm, neighbors, ensemble, model_selection, naive_bayes
+
+from core.evaluation.eval import Evaluator
+from core.evaluation.labels import Label, NeutralLabel
+from core.evaluation.statistic import MethodStatistic
+from core.source.vectors import OpinionVectorCollection
+from core.source.opinion import OpinionCollection, Opinion
+from core.source.synonyms import SynonymsCollection
 
 
 def apply_classifier(train_vectors_list, test_vectors_list, estimator,

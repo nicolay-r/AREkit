@@ -1,9 +1,9 @@
 import numpy as np
 
-from core.processing.prefix import SentimentPrefixProcessor
-from core.source.lexicon import Lexicon
-from core.relations import Relation
 from base import Base
+from core.processing.prefix import SentimentPrefixProcessor
+from core.runtime.relations import Relation
+from core.source.lexicon import Lexicon
 
 
 class LexiconFeature(Base):

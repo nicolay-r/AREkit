@@ -1,9 +1,9 @@
 import numpy as np
 
 from base import Base
+from core.runtime.relations import Relation
 from core.source.lexicon import RelationLexicon
 from core.source.synonyms import SynonymsCollection
-from core.relations import Relation
 
 
 class ExternalRelationsFeature(Base):

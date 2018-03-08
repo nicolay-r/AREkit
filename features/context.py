@@ -1,8 +1,9 @@
 import numpy as np
+
 import core.env as env
-from core.source.lexicon import Lexicon
-from core.relations import Relation
 from base import Base
+from core.runtime.relations import Relation
+from core.source.lexicon import Lexicon
 
 
 class ContextSentimentAfterFeature(Base):
