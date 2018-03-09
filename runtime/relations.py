@@ -105,6 +105,12 @@ class Relation:
         self.entity_right_ID = entity_right_ID
         self.news = news
 
+    def get_left_entity(self):
+        return self.news.entities.get_entity_by_id(self.entity_left_ID)
+
+    def get_right_entity(self):
+        return self.news.entities.get_entity_by_id(self.entity_right_ID)
+
 
     def get_left_entity_value(self):
         """
