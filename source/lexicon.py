@@ -15,6 +15,11 @@ class Lexicon:
         s = self.lexicon[lemma.encode('utf-8') == self.lexicon['term']]
         return s['tone'].values[0] if len(s) > 0 else 0
 
+    def has_term(self, term):
+        assert(type(term) == unicode)
+        s = self.lexicon[term.encode('utf-8') == self.lexicon['term']]
+        return len(s) > 0
+
 
 class RelationLexicon:
 
