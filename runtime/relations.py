@@ -111,7 +111,6 @@ class Relation:
     def get_right_entity(self):
         return self.news.entities.get_entity_by_id(self.entity_right_ID)
 
-
     def get_left_entity_value(self):
         """
         returns: unicode
@@ -125,3 +124,12 @@ class Relation:
         """
         entity = self.news.entities.get_entity_by_id(self.entity_right_ID)
         return entity.value
+
+    def get_distance_in_sentences(self):
+        """
+        Distance between two features in sentences
+        """
+        e1 = self.get_left_entity_value()
+        e2 = self.get_right_entity_value()
+        return abs(self.news.get_sentence_by_entity(e1).index -
+                   self.news.get_sentence_by_entity(e2).index)
