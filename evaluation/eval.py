@@ -130,10 +130,10 @@ class Evaluator:
         etalon_opins = OpinionCollection.from_file(
                 files_to_compare.etalon_filepath, self.synonyms_filepath)
 
-        print "{} <-> {}, {}".format(
-                files_to_compare.test_filepath,
-                files_to_compare.etalon_filepath,
-                files_to_compare.index)
+        # print "{} <-> {}, {}".format(
+        #         files_to_compare.test_filepath,
+        #         files_to_compare.etalon_filepath,
+        #         files_to_compare.index)
 
         # Comparing test and etalon results.
         results = self._check(etalon_opins, test_opins)
@@ -161,7 +161,7 @@ class Evaluator:
             pos_recall += pos_recall1
             neg_recall += neg_recall1
 
-        print len(files_to_compare_list)
+        # print len(files_to_compare_list)
 
         pos_prec /= len(files_to_compare_list)
         neg_prec /= len(files_to_compare_list)
