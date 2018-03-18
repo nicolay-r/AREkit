@@ -69,7 +69,6 @@ class OpinionVectorCollection:
             yield v
 
 
-# TODO: maybe in core, file 'relation.py'
 class OpinionVector:
     """ Vector of Relation between two values of entities.
     """

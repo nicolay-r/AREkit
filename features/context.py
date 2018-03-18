@@ -76,7 +76,7 @@ class ContextPosBeforeFeature(Base):
 
     def _create_vector(self, news, e):
         l_before = news.Processed.get_lemmas_before_entity_to_list(e)[-self.LIMIT:]
-        p_before = env.stemmer.analyze_pos_list(l_before)
+        p_before = env.stemmer.get_terms_pos(l_before)
         return [1 if p in p_before else 0 for p in self.POS]
 
 

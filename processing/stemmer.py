@@ -57,25 +57,26 @@ class Stemmer:
         """
         return self.mystem.analyze(text.lower())
 
-    def analyze_pos_list(self, terms):
-        """ list of part of speach according to the certain word in text
+    def get_term_pos(self, term):
+        assert(type(term) == unicode)
+        return self._get_term_pos(self.mystem.analyze(term)[0])
+
+    def get_terms_pos(self, terms):
+        """ list of part of speech according to the certain word in text
+        """
+        assert(type(terms) == list)
+        return [self._get_term_pos(self.mystem.analyze(t)[0]) for t in terms]
+
+    def _get_term_pos(self, analysis):
+        """
             part of speech description:
                 https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
         """
-        assert(type(terms) == list)
+        if 'analysis' not in analysis:
+            return None
 
-        def get_term_pos(analysis):
+        info = analysis['analysis']
+        if len(info) == 0:
+            return None
 
-            if 'analysis' not in analysis:
-                return None
-
-            info = analysis['analysis']
-
-            if len(info) == 0:
-                return None
-
-            return self._get_pos(info[0])
-
-        pos_list = [get_term_pos(self.mystem.analyze(t)[0]) for t in terms]
-
-        return pos_list
+        return self._get_pos(info[0])
