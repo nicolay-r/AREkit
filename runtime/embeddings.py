@@ -35,11 +35,13 @@ class Embedding(object):
     def __contains__(self, item):
         assert(type(item) == unicode)
         print item
+        print len(self.w2v_model.vocab)
         return item in self.w2v_model
 
     def __getitem__(self, item):
         assert(type(item) == unicode)
         print item
+        print len(self.w2v_model.vocab)
         return self.w2v_model[item]
 
 
@@ -57,12 +59,12 @@ class RusvectoresEmbedding(Embedding):
     def __contains__(self, term):
         assert(type(term) == unicode)
         item = self._lemmatize_term_to_rusvectores(term)
-        super(RusvectoresEmbedding, self).__contains__(item)
+        return super(RusvectoresEmbedding, self).__contains__(item)
 
     def __getitem__(self, term):
         assert(type(term) == unicode)
         item = self._lemmatize_term_to_rusvectores(term)
-        super(RusvectoresEmbedding, self).__getitem__(item)
+        return super(RusvectoresEmbedding, self).__getitem__(item)
 
     @staticmethod
     def _lemmatize_term_to_rusvectores(term):
