@@ -4,7 +4,7 @@ from pymystem3 import Mystem
 
 # TODO. Add POS tags
 class Stemmer:
-    """ MyStem wrapper
+    """ Yandex MyStem wrapper
     """
 
     def __init__(self):
@@ -69,8 +69,9 @@ class Stemmer:
 
     def _get_term_pos(self, analysis):
         """
-            part of speech description:
-                https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
+        part of speech description:
+            https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
+        returns: str or None
         """
         if 'analysis' not in analysis:
             return None
