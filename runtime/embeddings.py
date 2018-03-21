@@ -17,7 +17,7 @@ class Embedding(object):
 
     @property
     def vocab(self):
-        return self.vocab
+        return self.w2v_model.vocab
 
     def get_vector_by_index(self, index):
         assert(type(index) == int)
