@@ -6,8 +6,8 @@ class Lexicon:
         self.lexicon = dataframe
 
     @staticmethod
-    def from_file(filepath):
-        df = pd.read_csv(filepath, sep=',')
+    def from_csv(filepath, separator=','):
+        df = pd.read_csv(filepath, sep=separator)
         return Lexicon(df)
 
     def get_score(self, lemma):
@@ -30,8 +30,8 @@ class RelationLexicon:
         print self.lexicon.index
 
     @staticmethod
-    def from_file(filepath):
-        df = pd.read_csv(filepath, sep=',')
+    def from_csv(filepath, separator=','):
+        df = pd.read_csv(filepath, sep=separator)
         return RelationLexicon(df)
 
     @staticmethod

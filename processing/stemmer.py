@@ -36,27 +36,6 @@ class Stemmer:
             pos = pos.split('=')[0]
         return pos
 
-    def lemmatize_to_rusvectores_str(self, text):
-        """ <lemma>_<POS tag>
-        """
-
-        result = []
-        analysis = self.mystem.analyze(text.lower())
-
-        for item in analysis:
-            info = item['analysis']
-            if len(info) == 0:
-                continue
-            a = info[0]
-            result.append("%s_%s" % (a['lex'], self._get_pos(a)))
-
-        return result
-
-    def analyze(self, text):
-        """ mystem analyzer
-        """
-        return self.mystem.analyze(text.lower())
-
     def get_term_pos(self, term):
         assert(type(term) == unicode)
         return self._get_term_pos(self.mystem.analyze(term)[0])
