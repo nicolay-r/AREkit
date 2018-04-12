@@ -47,8 +47,8 @@ class OpinionCollection:
                     o.value_left.encode('utf-8'), o.value_right.encode('utf-8'))
         return index
 
-    @staticmethod
-    def from_file(filepath, synonyms_filepath):
+    @classmethod
+    def from_file(cls, filepath, synonyms_filepath):
         """
             filepath: string or list
                 single filepath or list of filepaths.
@@ -85,7 +85,7 @@ class OpinionCollection:
                     o = Opinion(entity_left, entity_right, sentiment)
                     opinions.append(o)
 
-        return OpinionCollection(opinions, synonyms)
+        return cls(opinions, synonyms)
 
     def has_opinion_by_values(self, o):
         assert(isinstance(o, Opinion))
@@ -189,12 +189,12 @@ class Opinion:
         self.value_right = value_right.lower()
         self.sentiment = sentiment
 
-    @staticmethod
-    def from_entities(entity_left, entity_right, sentiment):
+    @classmethod
+    def from_entities(cls, entity_left, entity_right, sentiment):
         assert(isinstance(entity_left, Entity))
         assert(isinstance(entity_right, Entity))
         assert(type(sentiment) == unicode)
-        return Opinion(entity_left.value, entity_right.value, sentiment)
+        return cls(entity_left.value, entity_right.value, sentiment)
 
     # TODO: Should be a part of collection during save operation.
     def to_unicode(self):

@@ -32,8 +32,8 @@ class OpinionVectorCollection:
     def __create_key(self, vector):
         return u"{}_{}".format(vector.value_left, vector.value_right)
 
-    @staticmethod
-    def from_file(filepath):
+    @classmethod
+    def from_file(cls, filepath):
         """ Read the vectors from *.vectors.txt file
         """
         vectors = []
@@ -49,7 +49,7 @@ class OpinionVectorCollection:
                 vectors.append(OpinionVector(
                     opinion_value_left, opinion_value_right, vector, label))
 
-        return OpinionVectorCollection(vectors)
+        return cls(vectors)
 
     def get_by_popularity(self, limit=10):
         most_popular = sorted(

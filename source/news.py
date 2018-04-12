@@ -29,8 +29,8 @@ class News:
     def Processed(self):
         return self.processed
 
-    @staticmethod
-    def from_file(filepath, entities):
+    @classmethod
+    def from_file(cls, filepath, entities):
         """ Read news from file
         """
 
@@ -79,7 +79,7 @@ class News:
 
         assert(e_ind == entities.count())
 
-        return News(sentences, entities)
+        return cls(sentences, entities)
 
     def get_sentence_by_entity(self, entity):
         return self.processed.get_sentence_by_entity(entity)

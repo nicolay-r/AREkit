@@ -28,8 +28,8 @@ class EntityCollection:
                 index[key] = [e.ID]
         return index
 
-    @staticmethod
-    def from_file(filepath):
+    @classmethod
+    def from_file(cls, filepath):
         """ Read annotation collection from file
         """
         entities = []
@@ -49,7 +49,7 @@ class EntityCollection:
         # sort by beginning
         entities.sort(key=lambda e: e.begin)
 
-        return EntityCollection(entities)
+        return cls(entities)
 
     def has_entity_by_value(self, entity_value):
         assert(type(entity_value) == unicode)

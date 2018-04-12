@@ -5,10 +5,10 @@ class Lexicon:
     def __init__(self, dataframe):
         self.lexicon = dataframe
 
-    @staticmethod
-    def from_csv(filepath, separator=','):
+    @classmethod
+    def from_csv(cls, filepath, separator=','):
         df = pd.read_csv(filepath, sep=separator)
-        return Lexicon(df)
+        return cls(df)
 
     def get_score(self, lemma):
         assert(type(lemma) == unicode)
@@ -29,10 +29,10 @@ class RelationLexicon:
         self.lexicon = dataframe
         print self.lexicon.index
 
-    @staticmethod
-    def from_csv(filepath, separator=','):
+    @classmethod
+    def from_csv(cls, filepath, separator=','):
         df = pd.read_csv(filepath, sep=separator)
-        return RelationLexicon(df)
+        return cls(df)
 
     @staticmethod
     def _check(df):
