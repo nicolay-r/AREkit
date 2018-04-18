@@ -129,7 +129,7 @@ class Relation:
         """
         Distance between two features in sentences
         """
-        e1 = self.get_left_entity_value()
-        e2 = self.get_right_entity_value()
+        e1 = self.get_left_entity()
+        e2 = self.get_right_entity()
         return abs(self.news.get_sentence_by_entity(e1).index -
                    self.news.get_sentence_by_entity(e2).index)
