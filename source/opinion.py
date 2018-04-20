@@ -48,7 +48,7 @@ class OpinionCollection:
         return index
 
     @classmethod
-    def from_file(cls, filepath, synonyms_filepaths):
+    def from_file(cls, filepath, synonyms_filepaths, debug=False):
         """
             filepath: string or list
                 single filepath or list of filepaths.
@@ -78,8 +78,8 @@ class OpinionCollection:
 
                     args = line.strip().split(',')
 
-                    if len(args) != 4:
-                        print "should be 4 args at line: {}, '{}'".format(
+                    if len(args) < 3:
+                        print "should be at least 3 arguments: {}, '{}'".format(
                             i, line.encode('utf-8'))
                         continue
 
@@ -90,7 +90,7 @@ class OpinionCollection:
                     o = Opinion(entity_left, entity_right, sentiment)
                     opinions.append(o)
 
-        return cls(opinions, synonyms)
+        return cls(opinions, synonyms, debug)
 
     def has_opinion_by_values(self, o):
         assert(isinstance(o, Opinion))
