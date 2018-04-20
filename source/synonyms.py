@@ -45,7 +45,8 @@ class SynonymsCollection:
 
         with io.open(filepath, 'r', encoding='utf-8') as f:
             lines = f.readlines()
-            for group_index, line in enumerate(lines):
+            for line in lines:
+                group_index = len(by_index)
                 synonym_list = []
                 args = line.split(',')
 
