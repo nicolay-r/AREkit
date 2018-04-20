@@ -10,10 +10,39 @@ class SynonymsCollection:
         self.by_index = by_index
         self.by_synonym = by_synonym
 
-    @staticmethod
-    def from_file(filepath):
+    @classmethod
+    def from_file(cls, filepath):
+        assert(isinstance(filepath, str))
         by_index = []
         by_synonym = {}
+        SynonymsCollection._from_file(filepath, by_index, by_synonym)
+        return cls(by_index, by_synonym)
+
+
+    @classmethod
+    def from_files(cls, filepaths):
+        assert(isinstance(filepaths, list))
+        by_index = []
+        by_synonym = {}
+        for filepath in filepaths:
+            print 'Reading: {}'.format(filepath)
+            SynonymsCollection._from_file(filepath, by_index, by_synonym)
+        return cls(by_index, by_synonym)
+
+
+    @staticmethod
+    def _from_file(filepath, by_index, by_synonym):
+        """
+        reading from 'filepath' and initialize 'by_index' and 'by_synonym'
+        structures
+        by_index: list
+            to be initialized
+        by_synonym: dict
+            to be initialized
+        returns: None
+        """
+        assert(isinstance(by_index, list))
+        assert(isinstance(by_synonym, dict))
 
         with io.open(filepath, 'r', encoding='utf-8') as f:
             lines = f.readlines()
@@ -26,15 +55,13 @@ class SynonymsCollection:
                     id = SynonymsCollection._create_synonym_id(value)
 
                     if id in by_synonym:
-                        # print "Collection already has a value '{}'. Skipped".format(value.encode('utf-8'))
+                        print "Collection already has a value '{}'. Skipped".format(value.encode('utf-8'))
                         continue
 
                     synonym_list.append(value)
                     by_synonym[id] = group_index
 
                 by_index.append(synonym_list)
-
-        return SynonymsCollection(by_index, by_synonym)
 
     def add_synonym(self, s):
         assert(type(s) == unicode)
