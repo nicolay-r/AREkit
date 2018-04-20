@@ -48,17 +48,22 @@ class OpinionCollection:
         return index
 
     @classmethod
-    def from_file(cls, filepath, synonyms_filepath):
+    def from_file(cls, filepath, synonyms_filepaths):
         """
             filepath: string or list
                 single filepath or list of filepaths.
         """
-        assert(type(filepath) == str or type(filepath) == list)
+        assert(isinstance(filepath, str) or isinstance(filepath, list))
 
-        synonyms = SynonymsCollection.from_file(synonyms_filepath)
+        if isinstance(synonyms_filepaths, str):
+            synonyms = SynonymsCollection.from_file(synonyms_filepaths)
+        elif isinstance(synonyms_filepaths, list):
+            synonyms = SynonymsCollection.from_files(synonyms_filepaths)
+        else:
+            raise Exception("Unsupported type for 'synonyms_filepaths'")
+
         opinions = []
         filepaths = []
-
         if (type(filepath) == str):
             filepaths.append(filepath)
         elif (type(filepath) == list):

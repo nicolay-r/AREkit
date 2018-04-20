@@ -11,27 +11,26 @@ class SynonymsCollection:
         self.by_synonym = by_synonym
 
     @classmethod
-    def from_file(cls, filepath):
+    def from_file(cls, filepath, debug=False):
         assert(isinstance(filepath, str))
         by_index = []
         by_synonym = {}
-        SynonymsCollection._from_file(filepath, by_index, by_synonym)
+        SynonymsCollection._from_file(filepath, by_index, by_synonym, debug)
         return cls(by_index, by_synonym)
 
 
     @classmethod
-    def from_files(cls, filepaths):
+    def from_files(cls, filepaths, debug=False):
         assert(isinstance(filepaths, list))
         by_index = []
         by_synonym = {}
         for filepath in filepaths:
-            print 'Reading: {}'.format(filepath)
-            SynonymsCollection._from_file(filepath, by_index, by_synonym)
+            SynonymsCollection._from_file(filepath, by_index, by_synonym, debug)
         return cls(by_index, by_synonym)
 
 
     @staticmethod
-    def _from_file(filepath, by_index, by_synonym):
+    def _from_file(filepath, by_index, by_synonym, debug):
         """
         reading from 'filepath' and initialize 'by_index' and 'by_synonym'
         structures
@@ -54,7 +53,7 @@ class SynonymsCollection:
                     value = s.strip()
                     id = SynonymsCollection._create_synonym_id(value)
 
-                    if id in by_synonym:
+                    if id in by_synonym and debug:
                         print "Collection already has a value '{}'. Skipped".format(value.encode('utf-8'))
                         continue
 
