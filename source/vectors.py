@@ -6,6 +6,7 @@ import operator
 import numpy as np
 
 from core.evaluation.labels import Label, NeutralLabel
+from core.source.opinion import Opinion
 
 
 class OpinionVectorCollection:
@@ -29,14 +30,36 @@ class OpinionVectorCollection:
         key = self.__create_key(vector)
         return key in self.vectors
 
-    def __create_key(self, vector):
+    def has_opinion(self, opinion):
+        assert(isinstance(opinion, Opinion))
+        key = self._create_key(opinion)
+        return key in self.vectors
+
+    def find_by_opinion(self, opinion):
+        assert(isinstance(opinion, Opinion))
+        key = self._create_key(opinion)
+        for key, vector in self.vectors.iteritems():
+            if (key == self._create_key(opinion)):
+                return vector
+        return None
+
+    @staticmethod
+    def ___create_key(opinion_value_left, opinion_value_right):
+        return u"{}_{}".format(opinion_value_left, opinion_value_right)
+
+    @staticmethod
+    def __create_key(vector):
         return u"{}_{}".format(vector.value_left, vector.value_right)
+
+    @staticmethod
+    def _create_key(opinion):
+        return u"{}_{}".format(opinion.value_left, opinion.value_right)
 
     @classmethod
     def from_file(cls, filepath):
         """ Read the vectors from *.vectors.txt file
         """
-        vectors = []
+        vectors = {}
         with io.open(filepath, 'r', encoding='utf-8') as f:
             for line in f.readlines():
                 args = line.split(',')
@@ -46,8 +69,9 @@ class OpinionVectorCollection:
                 label = Label.from_str(args[len(args) - 1].strip())
                 vector = np.array([float(args[i]) for i in range(2, len(args)-1)])
 
-                vectors.append(OpinionVector(
-                    opinion_value_left, opinion_value_right, vector, label))
+                key = cls.___create_key(opinion_value_left, opinion_value_right)
+
+                vectors[key] = OpinionVector(opinion_value_left, opinion_value_right, vector, label)
 
         return cls(vectors)
 
