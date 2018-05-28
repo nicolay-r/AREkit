@@ -119,7 +119,7 @@ class Evaluator:
         return df
 
     # TODO. change it with the list of FilesToCompare objects.
-    def _calc_a_file(self, files_to_compare):
+    def _calc_a_file(self, files_to_compare, debug):
         assert(isinstance(files_to_compare, FilesToCompare))
 
         # Reading test answers.
@@ -130,10 +130,11 @@ class Evaluator:
         etalon_opins = OpinionCollection.from_file(
                 files_to_compare.etalon_filepath, self.synonyms_filepath)
 
-        # print "{} <-> {}, {}".format(
-        #         files_to_compare.test_filepath,
-        #         files_to_compare.etalon_filepath,
-        #         files_to_compare.index)
+        if debug:
+            print "{} <-> {}, {}".format(
+                    files_to_compare.test_filepath,
+                    files_to_compare.etalon_filepath,
+                    files_to_compare.index)
 
         # Comparing test and etalon results.
         results = self._check(etalon_opins, test_opins)
@@ -142,11 +143,15 @@ class Evaluator:
         # TODO. remove path declaration from here.
         comparison_file = "{}/art{}.comp.txt".format(
                 self.user_answers, str(files_to_compare.index))
+
+        if debug:
+            print "Save comparison file: {}".format(comparison_file)
+
         results.to_csv(comparison_file)
 
         return self._calcPrecisionAndRecall(results)
 
-    def evaluate(self, files_to_compare_list):
+    def evaluate(self, files_to_compare_list, debug=False):
         """ Main evaluation subprogram
         """
         assert(type(files_to_compare_list) == list)
@@ -154,7 +159,7 @@ class Evaluator:
         pos_prec, neg_prec, pos_recall, neg_recall = (0, 0, 0, 0)
 
         for files_to_compare in files_to_compare_list:
-            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self._calc_a_file(files_to_compare)
+            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self._calc_a_file(files_to_compare, debug=debug)
 
             pos_prec += pos_prec1
             neg_prec += neg_prec1
