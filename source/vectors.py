@@ -89,7 +89,7 @@ class OpinionVectorCollection:
                 output.write("{}\n".format(vector.to_unicode().encode('utf-8')))
 
     def __iter__(self):
-        for v in self.vectors:
+        for v in self.vectors.itervalues():
             yield v
 
 
