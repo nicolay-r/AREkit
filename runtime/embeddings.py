@@ -17,7 +17,7 @@ class Embedding(object):
 
     @property
     def vocab(self):
-        return self.w2v_model.vocab
+        return self.w2v_model.wv.vocab
 
     def get_vector_by_index(self, index):
         assert(type(index) == int)
@@ -25,11 +25,11 @@ class Embedding(object):
 
     def get_word_by_index(self, index):
         assert(type(index) == int)
-        return self.w2v_model.index2word[i]
+        return self.w2v_model.wv.index2word[index]
 
     def find_index_by_word(self, word):
         assert(type(word) == unicode)
-        return self.w2v_model.index2word.index(word)
+        return self.w2v_model.wv.index2word.index(word)
 
     @staticmethod
     def from_word2vec_filepath(filepath, is_binary):
