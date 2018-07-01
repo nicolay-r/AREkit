@@ -47,15 +47,17 @@ class CollectionGraph:
 
 
     @classmethod
-    def create_graph_by_opinions(cls, news, opinion_collections, synonyms):
+    def create_graph_by_opinions(cls, pairs, synonyms):
         """
         Create Grpaph from list of opinions collections
+
+        pairs: list of (news, opinion_collections)
         """
-        assert(isinstance(opinion_collections, list))
+        assert(isinstance(pairs, list))
         assert(isinstance(synonyms, SynonymsCollection))
 
-        def add_edge(graph, v1, v2, label, color=None, edges_count=0, style='solid', add=False):
-            assert(isinstance(graph, CollectionGraph))
+        def add_edge(graph_collection, v1, v2, label, color=None, edges_count=0, style='solid', add=False):
+            assert(isinstance(graph_collection, CollectionGraph))
             assert(isinstance(v1, int))
             assert(isinstance(v2, int))
             assert(isinstance(color, str) or color is None)
@@ -77,7 +79,7 @@ class CollectionGraph:
                      label='' if edges_count == 0 else str(edges_count),
                      style=style)
 
-            graph.add_edge(v1, v2, label)
+            graph_collection.add_edge(v1, v2, label)
             vertices.add(v1)
             vertices.add(v2)
 
@@ -99,38 +101,39 @@ class CollectionGraph:
         graph_backward = CollectionGraph()
         value_by_vertex = {}
 
-        for opinions in opinion_collections:
-            for o in opinions:
-                relations = RelationCollection.from_news_opinion(news, o, synonyms)
+        for news, opinion_collections in pairs:
+            for opinions in opinion_collections:
+                for o in opinions:
+                    relations = RelationCollection.from_news_opinion(news, o, synonyms)
 
-                if len(relations) == 0:
-                    continue
+                    if len(relations) == 0:
+                        continue
 
-                left_v = relations[0].get_left_entity_value()
-                right_v = relations[0].get_right_entity_value()
+                    left_v = relations[0].get_left_entity_value()
+                    right_v = relations[0].get_right_entity_value()
 
-                if not synonyms.has_synonym(left_v):
-                    synonyms.add_synonym(left_v)
+                    if not synonyms.has_synonym(left_v):
+                        synonyms.add_synonym(left_v)
 
-                if not synonyms.has_synonym(right_v):
-                    synonyms.add_synonym(right_v)
+                    if not synonyms.has_synonym(right_v):
+                        synonyms.add_synonym(right_v)
 
-                left_node_id = synonyms.get_synonym_group_index(left_v)
-                right_node_id = synonyms.get_synonym_group_index(right_v)
+                    left_node_id = synonyms.get_synonym_group_index(left_v)
+                    right_node_id = synonyms.get_synonym_group_index(right_v)
 
-                value_left_node = synonyms.get_group_by_index(left_node_id)[0]
-                value_right_node = synonyms.get_group_by_index(right_node_id)[0]
+                    value_left_node = synonyms.get_group_by_index(left_node_id)[0]
+                    value_right_node = synonyms.get_group_by_index(right_node_id)[0]
 
-                assert(isinstance(value_left_node, unicode))
-                assert(isinstance(value_right_node, unicode))
+                    assert(isinstance(value_left_node, unicode))
+                    assert(isinstance(value_right_node, unicode))
 
-                add_edge(graph, left_node_id, right_node_id, o.sentiment, edges_count=len(relations))
-                add_edge(graph_backward, right_node_id, left_node_id, o.sentiment)
+                    add_edge(graph, left_node_id, right_node_id, o.sentiment, edges_count=len(relations))
+                    add_edge(graph_backward, right_node_id, left_node_id, o.sentiment)
 
-                if left_node_id not in value_by_vertex:
-                    value_by_vertex[left_node_id] = o.value_left
-                if right_node_id not in value_by_vertex:
-                    value_by_vertex[right_node_id] = o.value_right
+                    if left_node_id not in value_by_vertex:
+                        value_by_vertex[left_node_id] = o.value_left
+                    if right_node_id not in value_by_vertex:
+                        value_by_vertex[right_node_id] = o.value_right
 
         graph.dot = dot
         return graph
