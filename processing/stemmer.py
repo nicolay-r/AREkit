@@ -5,7 +5,13 @@ from pymystem3 import Mystem
 # TODO. Add POS tags
 class Stemmer:
     """ Yandex MyStem wrapper
+
+        part of speech description:
+        https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
     """
+
+    pos_names = ["a", "adv", "advpro", "anum", "apro", "com", "conj",
+                 "intj", "num", "part", "pr", "s", "spro", "v"]
 
     def __init__(self):
         self.mystem = Mystem(entire_input=False)
@@ -60,3 +66,10 @@ class Stemmer:
             return None
 
         return self._get_pos(info[0])
+
+    def pos_to_int(self, pos):
+        assert(isinstance(pos, str))
+        pos = pos.lower()
+        if pos in self.pos_names:
+            self.pos_names.index(pos)
+        return -1
