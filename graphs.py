@@ -47,28 +47,37 @@ class CollectionGraph:
 
 
     @classmethod
-    def create_graph_by_opinions(cls, pairs, synonyms):
+    def create_graph_by_opinions(cls, triplets, synonyms,
+                                 default_color='blue', dot_format='dot'):
         """
         Create Grpaph from list of opinions collections
 
-        pairs: list of (news, opinion_collections)
+        triplets: list of (news, opinion_collections, colorize)
         """
-        assert(isinstance(pairs, list))
+        assert(isinstance(triplets, list))
         assert(isinstance(synonyms, SynonymsCollection))
 
-        def add_edge(graph_collection, v1, v2, label, color=None, edges_count=0, style='solid', add=False):
+        def add_edge(graph_collection, v1, v2, label, color=None,
+                     edges_count=0, style='solid', add=False, colorize=True,
+                     avoid_existed=True):
             assert(isinstance(graph_collection, CollectionGraph))
             assert(isinstance(v1, int))
             assert(isinstance(v2, int))
             assert(isinstance(color, str) or color is None)
             assert(isinstance(label, Label))
 
+            if ((graph_collection.has_edge(v1, v2) or
+                 graph_collection.has_edge(v2, v1))
+                 and avoid_existed):
+                return
+
             if color is None:
-                color = 'black'
-                if label == PositiveLabel():
-                    color = 'green'
-                elif label == NegativeLabel():
-                    color = 'red'
+                color = default_color
+                if colorize:
+                    if label == PositiveLabel():
+                        color = 'green'
+                    elif label == NegativeLabel():
+                        color = 'red'
 
             v_l = synonyms.get_group_by_index(v1)[0]
             v_r = synonyms.get_group_by_index(v2)[0]
@@ -92,16 +101,12 @@ class CollectionGraph:
 
 
         dot = Digraph()
-        dot.format = 'pdf'
-
-        # constraint_opinions = OpinionCollection(None, synonyms)
-
         vertices = set()
         graph = CollectionGraph()
         graph_backward = CollectionGraph()
         value_by_vertex = {}
 
-        for news, opinion_collections in pairs:
+        for news, opinion_collections, colorize in triplets:
             for opinions in opinion_collections:
                 for o in opinions:
                     relations = RelationCollection.from_news_opinion(news, o, synonyms)
@@ -127,8 +132,8 @@ class CollectionGraph:
                     assert(isinstance(value_left_node, unicode))
                     assert(isinstance(value_right_node, unicode))
 
-                    add_edge(graph, left_node_id, right_node_id, o.sentiment, edges_count=len(relations))
-                    add_edge(graph_backward, right_node_id, left_node_id, o.sentiment)
+                    add_edge(graph, left_node_id, right_node_id, o.sentiment, edges_count=len(relations), colorize=colorize)
+                    add_edge(graph_backward, right_node_id, left_node_id, o.sentiment, colorize=colorize)
 
                     if left_node_id not in value_by_vertex:
                         value_by_vertex[left_node_id] = o.value_left
