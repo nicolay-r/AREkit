@@ -93,6 +93,6 @@ class RusvectoresEmbedding(Embedding):
 
         term = stemmer.lemmatize_to_str(term)
         pos = stemmer.get_term_pos(term)
-        if pos is None:
+        if pos is stemmer.pos_unknown:
             return None
         return '_'.join([term, pos])
