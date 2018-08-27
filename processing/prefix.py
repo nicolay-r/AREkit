@@ -33,7 +33,7 @@ class SentimentPrefixProcessor:
                  filtered list with replaced by '+'/'-' patterns.
         """
 
-        assert(type(lemmas) == list)
+        assert(isinstance(lemmas, list))
         to_remove = []
         i = 0
 

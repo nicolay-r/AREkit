@@ -21,9 +21,9 @@ def apply_classifier(train_vectors_list, test_vectors_list, estimator,
         method_name: str
         synonyms_filepath: str
     """
-    assert(type(train_vectors_list) == list)
-    assert(type(test_vectors_list) == list)
-    assert(type(method_name) == list)
+    assert(isinstance(train_vectors_list, list))
+    assert(isinstance(test_vectors_list, list))
+    assert(isinstance(method_name, list))
 
     X_train, y_train = create_train_data(train_vector_list)
     X_test, test_collections = create_test_data(test_vectors_list)
@@ -40,7 +40,7 @@ def apply_classifier(train_vectors_list, test_vectors_list, estimator,
 
 
 def create_train_data(vectors_filepath_list):
-    assert(type(vectors_filepath_list) == list)
+    assert(isinstance(vectors_filepath_list, list))
     X_train = []
     y_train = []
     for vector_filepath in vectors_filepath_list:
@@ -52,7 +52,7 @@ def create_train_data(vectors_filepath_list):
 
 
 def create_test_data(vectors_filepath_list):
-    assert(type(vectors_filepath_list) == list)
+    assert(isinstance(vectors_filepath_list, list))
     X_test = []
     test_collections = []
     for vector_filepath in vectors_filepath_list:
@@ -151,8 +151,8 @@ def fit_and_predict(method_path, estimator, X_train, y_train, X_test,
 
 
 def create_test_opinions(test_collections, labels, synonyms_filepath):
-    assert(type(test_collections) == list)
-    assert(type(labels) == np.ndarray)
+    assert(isinstance(test_collections, list))
+    assert(isinstance(labels, np.ndarray))
 
     label_index = 0
     opinion_collection_list = []
@@ -193,7 +193,7 @@ def filter_features_by_mask(X_train, X_test, mask):
         mask : list
             list of boolean values
     """
-    assert(type(mask) == list)
+    assert(isinstance(mask, list))
     X_train = np.array(X_train)
     X_test = np.array(X_test)
     print X_train.shape
