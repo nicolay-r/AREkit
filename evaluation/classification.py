@@ -114,6 +114,14 @@ def get_estimator_settings(method):
         return {
             'n_neighbors': method.n_neighbors
         }
+    elif isinstance(method, ensemble.GradientBoostingClassifier):
+        return {
+           'n_estimators': method.n_estimators,
+           'max_depth': method.max_depth,
+           'min_samples_split': method.min_samples_split,
+           'min_samples_leaf': method.min_samples_leaf,
+           'subsample': method.subsample
+        }
     elif isinstance(method, model_selection.GridSearchCV):
         result = method.best_params_
         result['cv'] = method.cv
