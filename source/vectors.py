@@ -104,11 +104,11 @@ class OpinionVector:
                  label=NeutralLabel,
                  popularity=0):
 
-        assert(type(opinion_value_left) == unicode)
-        assert(type(opinion_value_right) == unicode)
+        assert(isinstance(opinion_value_left, unicode))
+        assert(isinstance(opinion_value_right, unicode))
         assert(isinstance(vector, np.ndarray))
         assert(isinstance(label, Label))
-        assert(type(popularity) == int)
+        assert(isinstance(popularity, int))
         self.value_left = opinion_value_left
         self.value_right = opinion_value_right
         self.vector = vector

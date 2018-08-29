@@ -12,9 +12,9 @@ class OpinionCollection:
     """
 
     def __init__(self, opinions, synonyms, debug_mode=False):
-        assert(type(opinions) == list or type(opinions) == type(None))
+        assert(isinstance(opinions, list) or isinstance(opinions, type(None)))
         assert(isinstance(synonyms, SynonymsCollection))
-        assert(type(debug_mode) == bool)
+        assert(isinstance(debug_mode, bool))
         self.debug_mode = debug_mode
         self.opinions = [] if opinions is None else opinions
         self.synonyms = synonyms
@@ -64,9 +64,9 @@ class OpinionCollection:
 
         opinions = []
         filepaths = []
-        if (type(filepath) == str):
+        if (isinstance(filepath, str)):
             filepaths.append(filepath)
-        elif (type(filepath) == list):
+        elif (isinstance(filepath, str)):
             filepaths = filepath
 
         for fp in filepaths:
@@ -148,7 +148,7 @@ class OpinionCollection:
 
     @staticmethod
     def _add_key(key, collection, check=True):
-        assert(type(key) == unicode)
+        assert(isinstance(key, unicode))
         if check:
             assert(key not in collection)
         if key in collection:
@@ -158,7 +158,7 @@ class OpinionCollection:
 
     @staticmethod
     def _add_key_value(key, value, collection, check=True):
-        assert(type(key) == unicode)
+        assert(isinstance(key, unicode))
         if check:
             assert(key not in collection)
         if key in collection:
@@ -185,8 +185,8 @@ class Opinion:
     """
 
     def __init__(self, value_left, value_right, sentiment):
-        assert(type(value_left) == unicode)
-        assert(type(value_right) == unicode)
+        assert(isinstance(value_left, unicode))
+        assert(isinstance(value_right, unicode))
         assert(isinstance(sentiment, Label))
         assert(',' not in value_left)
         assert(',' not in value_right)
@@ -198,7 +198,7 @@ class Opinion:
     def from_entities(cls, entity_left, entity_right, sentiment):
         assert(isinstance(entity_left, Entity))
         assert(isinstance(entity_right, Entity))
-        assert(type(sentiment) == unicode)
+        assert(isinstance(sentiment, unicode))
         return cls(entity_left.value, entity_right.value, sentiment)
 
     # TODO: Should be a part of collection during save operation.

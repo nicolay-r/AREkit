@@ -5,8 +5,8 @@ import core.env as env
 class SynonymsCollection:
 
     def __init__(self, by_index, by_synonym):
-        assert(type(by_index) == list)
-        assert(type(by_synonym) == dict)
+        assert(isinstance(by_index, list))
+        assert(isinstance(by_synonym, dict))
         self.by_index = by_index
         self.by_synonym = by_synonym
 
@@ -64,25 +64,25 @@ class SynonymsCollection:
                 by_index.append(synonym_list)
 
     def add_synonym(self, s):
-        assert(type(s) == unicode)
+        assert(isinstance(s, unicode))
         assert(not self.has_synonym(s))
         id = self._create_synonym_id(s)
         self.by_synonym[id] = self._get_groups_count()
         self.by_index.append([s])
 
     def has_synonym(self, s):
-        assert(type(s) == unicode)
+        assert(isinstance(s, unicode))
         id = self._create_synonym_id(s)
         return id in self.by_synonym
 
     def get_synonyms_list(self, s):
-        assert(type(s) == unicode)
+        assert(isinstance(s, unicode))
         id = self._create_synonym_id(s)
         index = self.by_synonym[id]
         return self.by_index[index]
 
     def get_synonym_group_index(self, s):
-        assert(type(s) == unicode)
+        assert(isinstance(s, unicode))
         return self._get_group_index(s)
 
     def _get_groups_count(self):
@@ -93,7 +93,7 @@ class SynonymsCollection:
         return self.by_synonym[id]
 
     def get_group_by_index(self, index):
-        assert(type(index) == int)
+        assert(isinstance(index, int))
         return self.by_index[index]
 
     @staticmethod
