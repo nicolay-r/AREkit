@@ -41,8 +41,8 @@ class NewsProcessor:
         return text
 
     def get_text_between_sentence_bounds(self, sentence, left_bound, right_bound):
-        assert(type(left_bound) == int)
-        assert(type(right_bound) == int)
+        assert(isinstance(left_bound, int))
+        assert(isinstance(right_bound, int))
         assert(left_bound <= right_bound)
         return self._lemmatize_to_list(
             sentence.text[left_bound-sentence.begin:right_bound-sentence.begin])

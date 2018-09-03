@@ -73,10 +73,10 @@ class Evaluator:
         pos_recall = self._calcRecall(results, pos_answers, self.pos)
         neg_recall = self._calcRecall(results, neg_answers, self.neg)
 
-        assert(type(pos_prec) == float)
-        assert(type(neg_prec) == float)
-        assert(type(pos_recall) == float)
-        assert(type(neg_recall) == float)
+        assert(isinstance(pos_prec, float))
+        assert(isinstance(neg_prec, float))
+        assert(isinstance(pos_recall, float))
+        assert(isinstance(neg_recall, float))
 
         return pos_prec, neg_prec, pos_recall, neg_recall
 
@@ -154,7 +154,7 @@ class Evaluator:
     def evaluate(self, files_to_compare_list, debug=False):
         """ Main evaluation subprogram
         """
-        assert(type(files_to_compare_list) == list)
+        assert(isinstance(files_to_compare_list, list))
 
         pos_prec, neg_prec, pos_recall, neg_recall = (0, 0, 0, 0)
 

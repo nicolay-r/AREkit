@@ -11,7 +11,7 @@ class Label:
 
     @staticmethod
     def from_int(value):
-        assert(type(value) == int)
+        assert(isinstance(value, int))
         for l in Label._get_supported_labels():
             if l.to_int() == value:
                 return l
@@ -19,7 +19,7 @@ class Label:
 
     @staticmethod
     def from_uint(value):
-        assert(type(value) == int and value >= 0)
+        assert(isinstance(value, int) and value >= 0)
         for l in Label._get_supported_labels():
             if l.to_uint() == value:
                 return l

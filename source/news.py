@@ -96,11 +96,11 @@ class News:
 class Sentence:
 
     def __init__(self, text, paragraph_id, begin, end, index):
-        assert(type(text) == unicode and len(text) > 0)
-        assert(type(paragraph_id) == int)
-        assert(type(begin) == int)
-        assert(type(end) == int)
-        assert(type(index) == int)
+        assert(isinstance(text, unicode) and len(text) > 0)
+        assert(isinstance(paragraph_id, int))
+        assert(isinstance(begin, int))
+        assert(isinstance(end, int))
+        assert(isinstance(index, int))
 
         self.text = text
         self.paragraph_id = paragraph_id
@@ -113,14 +113,14 @@ class Sentence:
     def add_entity(self, ID, begin, end):
         """ Local entity indices
         """
-        assert(type(ID) == unicode)
-        assert(type(begin) == int)
-        assert(type(end) == int)
+        assert(isinstance(ID, unicode))
+        assert(isinstance(begin, int))
+        assert(isinstance(end, int))
         self.entity_info.append((ID, begin, end))
         self.entity_set_ids.add(ID)
 
     def has_entity(self, entity_ID):
-        assert(type(entity_ID) == unicode)
+        assert(isinstance(entity_ID, unicode))
         return entity_ID in self.entity_set_ids
 
     @property

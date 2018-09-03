@@ -22,7 +22,7 @@ class Stemmer:
         return self.mystem.lemmatize(text.lower())
 
     def lemmatize_to_str(self, text):
-        assert(type(text) == unicode)
+        assert(isinstance(text, unicode))
         lemmas = self.mystem.lemmatize(text.lower())
 
         result = " ".join(lemmas)
@@ -34,7 +34,7 @@ class Stemmer:
         if len(result) == 0:
             result = text
 
-        assert(type(result) == unicode)
+        assert(isinstance(result, unicode))
         return result
 
     @staticmethod
@@ -45,14 +45,14 @@ class Stemmer:
         return pos
 
     def get_term_pos(self, term):
-        assert(type(term) == unicode)
+        assert(isinstance(term, unicode))
         analyzed = self.mystem.analyze(term)
         return self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.pos_unknown
 
     def get_terms_pos(self, terms):
         """ list of part of speech according to the certain word in text
         """
-        assert(type(terms) == list)
+        assert(isinstance(terms, list))
         pos_list = []
         for term in terms:
             analyzed = self.mystem.analyze(term)
@@ -60,7 +60,6 @@ class Stemmer:
             pos_list.append(pos)
 
         return pos_list
-
 
     def _get_term_pos(self, analysis):
         """
