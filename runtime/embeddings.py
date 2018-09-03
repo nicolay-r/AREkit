@@ -1,5 +1,6 @@
 from gensim.models.word2vec import Word2Vec
 from ..env import stemmer
+import numpy as np
 
 
 class Embedding(object):
@@ -96,3 +97,61 @@ class RusvectoresEmbedding(Embedding):
         if pos is stemmer.pos_unknown:
             return None
         return '_'.join([term, pos])
+
+
+class PunctuationEmbeddingVectors:
+    """
+    Embedding vectors for text punctuation
+    """
+
+    p_comma = u','
+    p_colon = u':'
+    p_semicolon = u';'
+    p_quote = u'"'
+    p_dash = u'-'
+
+    def __init__(self, vector_size):
+        self.E = {
+            self.p_comma: get_random_vector(vector_size, 1),
+            self.p_colon: get_random_vector(vector_size, 2),
+            self.p_semicolon: get_random_vector(vector_size, 3),
+            self.p_quote: get_random_vector(vector_size, 4),
+            self.p_dash: get_random_vector(vector_size, 5),
+        }
+
+    def __getitem__(self, item):
+        assert (isinstance(item, unicode))
+        return self.E[item]
+
+    def __contains__(self, item):
+        assert (isinstance(item, unicode))
+        return item in self.E
+
+
+class UnknownEmbeddingsVectors:
+    """
+    Embedding vectors for unknown text units, such as 'char', 'word'
+    """
+
+    p_unknown_char = u'<uknown_char>'
+    p_unknown_word = u'<uknown_word>'
+
+    def __init__(self, vector_size):
+        assert(isinstance(vector_size, int))
+        self.E = {
+            self.p_unknown_char: get_random_vector(vector_size, 6),
+            self.p_unknown_word: get_random_vector(vector_size, 7)
+        }
+
+    def __getitem__(self, item):
+        assert (isinstance(item, unicode))
+        return self.E[item]
+
+    def __contains__(self, item):
+        assert (isinstance(item, unicode))
+        return item in self.E
+
+
+def get_random_vector(vector_size, seed):
+    prng = np.random.RandomState(seed)
+    return prng.random_sample(vector_size)
