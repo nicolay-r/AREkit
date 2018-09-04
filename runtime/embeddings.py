@@ -1,6 +1,7 @@
 from gensim.models.word2vec import Word2Vec
 from ..env import stemmer
-import numpy as np
+from core.source.tokens import Tokens
+import utils
 
 
 class Embedding(object):
@@ -89,7 +90,9 @@ class RusvectoresEmbedding(Embedding):
 
     @staticmethod
     def _lemmatize_term_to_rusvectores(term):
-        """ combine lemmatized 'text' with POS tag (part of speech). """
+        """
+        Combine lemmatized 'text' with POS tag (part of speech).
+        """
         assert(type(term) == unicode)
 
         term = stemmer.lemmatize_to_str(term)
@@ -101,31 +104,29 @@ class RusvectoresEmbedding(Embedding):
 
 class PunctuationEmbeddingVectors:
     """
-    Embedding vectors for text punctuation
+    Embedding vectors for text punctuation, based on Tokens
     """
-
-    p_comma = u','
-    p_colon = u':'
-    p_semicolon = u';'
-    p_quote = u'"'
-    p_dash = u'-'
 
     def __init__(self, vector_size):
         self.E = {
-            self.p_comma: get_random_vector(vector_size, 1),
-            self.p_colon: get_random_vector(vector_size, 2),
-            self.p_semicolon: get_random_vector(vector_size, 3),
-            self.p_quote: get_random_vector(vector_size, 4),
-            self.p_dash: get_random_vector(vector_size, 5),
+            Tokens.COMMA: utils.get_random_vector(vector_size, 1),
+            Tokens.COLON: utils.get_random_vector(vector_size, 2),
+            Tokens.SEMICOLON: utils.get_random_vector(vector_size, 3),
+            Tokens.QUOTE: utils.get_random_vector(vector_size, 4),
+            Tokens.DASH: utils.get_random_vector(vector_size, 5),
+            Tokens.EXC_SIGN: utils.get_random_vector(vector_size, 6),
+            Tokens.QUESTION_SIGN: utils.get_random_vector(vector_size, 7),
+            Tokens.OPEN_BRACKET: utils.get_random_vector(vector_size, 8),
+            Tokens.CLOSED_BRACKET: utils.get_random_vector(vector_size, 9)
         }
 
-    def __getitem__(self, item):
-        assert (isinstance(item, unicode))
-        return self.E[item]
+    def __getitem__(self, token):
+        assert (isinstance(token, unicode))
+        return self.E[token]
 
-    def __contains__(self, item):
-        assert (isinstance(item, unicode))
-        return item in self.E
+    def __contains__(self, token):
+        assert (isinstance(token, unicode))
+        return token in self.E
 
 
 class UnknownEmbeddingsVectors:
@@ -133,25 +134,17 @@ class UnknownEmbeddingsVectors:
     Embedding vectors for unknown text units, such as 'char', 'word'
     """
 
-    p_unknown_char = u'<uknown_char>'
-    p_unknown_word = u'<uknown_word>'
-
     def __init__(self, vector_size):
         assert(isinstance(vector_size, int))
         self.E = {
-            self.p_unknown_char: get_random_vector(vector_size, 6),
-            self.p_unknown_word: get_random_vector(vector_size, 7)
+            Tokens.UNKNOWN_CHAR: utils.get_random_vector(vector_size, 100),
+            Tokens.UNKNOWN_WORD: utils.get_random_vector(vector_size, 101)
         }
 
-    def __getitem__(self, item):
-        assert (isinstance(item, unicode))
-        return self.E[item]
+    def __getitem__(self, token):
+        assert (isinstance(token, unicode))
+        return self.E[token]
 
-    def __contains__(self, item):
-        assert (isinstance(item, unicode))
-        return item in self.E
-
-
-def get_random_vector(vector_size, seed):
-    prng = np.random.RandomState(seed)
-    return prng.random_sample(vector_size)
+    def __contains__(self, token):
+        assert (isinstance(token, unicode))
+        return token in self.E
