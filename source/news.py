@@ -2,6 +2,7 @@
 
 import io
 from core.processing.news import NewsProcessor
+from core.source.entity import EntityCollection
 
 
 class News:
@@ -33,6 +34,8 @@ class News:
     def from_file(cls, filepath, entities):
         """ Read news from file
         """
+        assert(isinstance(filepath, unicode) or isinstance(filepath, str))
+        assert(isinstance(entities, EntityCollection))
 
         with io.open(filepath, 'rt', newline='\n', encoding='utf-8') as f:
 

@@ -102,49 +102,50 @@ class RusvectoresEmbedding(Embedding):
         return '_'.join([term, pos])
 
 
-class PunctuationEmbeddingVectors:
+class TokenEmbeddingVectors:
     """
     Embedding vectors for text punctuation, based on Tokens
     """
 
+    tokens = [Tokens.COMMA,
+              Tokens.COLON,
+              Tokens.SEMICOLON,
+              Tokens.QUOTE,
+              Tokens.DASH,
+              Tokens.EXC_SIGN,
+              Tokens.QUESTION_SIGN,
+              Tokens.OPEN_BRACKET,
+              Tokens.CLOSED_BRACKET,
+              Tokens.LONG_DASH,
+              Tokens.NUMBER,
+              Tokens.TRIPLE_DOTS,
+              Tokens.UNKNOWN_CHAR,
+              Tokens.UNKNOWN_WORD]
+
     def __init__(self, vector_size):
-        self.E = {
-            Tokens.COMMA: utils.get_random_vector(vector_size, 1),
-            Tokens.COLON: utils.get_random_vector(vector_size, 2),
-            Tokens.SEMICOLON: utils.get_random_vector(vector_size, 3),
-            Tokens.QUOTE: utils.get_random_vector(vector_size, 4),
-            Tokens.DASH: utils.get_random_vector(vector_size, 5),
-            Tokens.EXC_SIGN: utils.get_random_vector(vector_size, 6),
-            Tokens.QUESTION_SIGN: utils.get_random_vector(vector_size, 7),
-            Tokens.OPEN_BRACKET: utils.get_random_vector(vector_size, 8),
-            Tokens.CLOSED_BRACKET: utils.get_random_vector(vector_size, 9)
-        }
+        self.E = {}
+        for index, token in enumerate(self.tokens):
+            self.E[token] = utils.get_random_vector(vector_size, index)
+
+    @staticmethod
+    def count():
+        return len(TokenEmbeddingVectors.tokens)
+
+    @staticmethod
+    def get_token_index(token):
+        assert(isinstance(token, unicode))
+        return TokenEmbeddingVectors.tokens.index(token)
 
     def __getitem__(self, token):
         assert (isinstance(token, unicode))
         return self.E[token]
+
+    def __iter__(self):
+        for token in self.E:
+            yield token
 
     def __contains__(self, token):
         assert (isinstance(token, unicode))
         return token in self.E
 
 
-class UnknownEmbeddingsVectors:
-    """
-    Embedding vectors for unknown text units, such as 'char', 'word'
-    """
-
-    def __init__(self, vector_size):
-        assert(isinstance(vector_size, int))
-        self.E = {
-            Tokens.UNKNOWN_CHAR: utils.get_random_vector(vector_size, 100),
-            Tokens.UNKNOWN_WORD: utils.get_random_vector(vector_size, 101)
-        }
-
-    def __getitem__(self, token):
-        assert (isinstance(token, unicode))
-        return self.E[token]
-
-    def __contains__(self, token):
-        assert (isinstance(token, unicode))
-        return token in self.E
