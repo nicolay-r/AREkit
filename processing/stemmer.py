@@ -11,9 +11,11 @@ class Stemmer:
     """
 
     pos_unknown = u"unknown"
+    pos_empty = u"empty"
 
     pos_names = [u"a", u"adv", u"advpro", u"anum", u"apro", u"com", u"conj",
-                 u"intj", u"num", u"part", u"pr", u"s", u"spro", u"v", pos_unknown]
+                 u"intj", u"num", u"part", u"pr", u"s", u"spro", u"v",
+                 pos_unknown, pos_empty]
 
     def __init__(self):
         self.mystem = Mystem(entire_input=False)
