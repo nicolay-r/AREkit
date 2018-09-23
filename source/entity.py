@@ -92,6 +92,7 @@ class EntityCollection:
             yield a
 
 
+# TODO. Crate this element from collection (because of stemmer instance)
 class Entity:
     """ Entity description.
     """

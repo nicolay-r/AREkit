@@ -26,7 +26,9 @@ class Evaluator:
     C_RES = 'how_results'
     C_CMP = 'comparison'
 
-    def __init__(self, synonyms_filepath, user_answers_filepath):
+    def __init__(self, synonyms_filepath, user_answers_filepath, stemmer):
+        assert(isinstance(stemmer, Stemmer)) # for opinion collections
+
         self.synonyms_filepath = synonyms_filepath
         self.user_answers = user_answers_filepath
         self.stemmer = Stemmer()
@@ -124,11 +126,15 @@ class Evaluator:
 
         # Reading test answers.
         test_opins = OpinionCollection.from_file(
-                files_to_compare.test_filepath, self.synonyms_filepath)
+            files_to_compare.test_filepath,
+            self.synonyms_filepath,
+            stemmer=self.stemmer)
 
         # Reading etalon answers.
         etalon_opins = OpinionCollection.from_file(
-                files_to_compare.etalon_filepath, self.synonyms_filepath)
+            files_to_compare.etalon_filepath,
+            self.synonyms_filepath,
+            stemmer=self.stemmer)
 
         if debug:
             print "{} <-> {}, {}".format(

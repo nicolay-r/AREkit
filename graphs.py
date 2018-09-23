@@ -59,7 +59,7 @@ class CollectionGraph:
 
         def add_edge(graph_collection, v1, v2, label, color=None,
                      edges_count=0, style='solid', add=False, colorize=True,
-                     avoid_existed=True):
+                     avoid_existed=True, display_edge_label=False):
             assert(isinstance(graph_collection, CollectionGraph))
             assert(isinstance(v1, int))
             assert(isinstance(v2, int))
@@ -67,8 +67,7 @@ class CollectionGraph:
             assert(isinstance(label, Label))
 
             if ((graph_collection.has_edge(v1, v2) or
-                 graph_collection.has_edge(v2, v1))
-                 and avoid_existed):
+                 graph_collection.has_edge(v2, v1)) and avoid_existed):
                 return
 
             if color is None:
@@ -85,7 +84,7 @@ class CollectionGraph:
             dot.edge(translit(v_l, "ru", reversed=True),
                      translit(v_r, "ru", reversed=True),
                      color=color,
-                     label='' if edges_count == 0 else str(edges_count),
+                     label='' if edges_count == 0 or not display_edge_label else str(edges_count),
                      style=style)
 
             graph_collection.add_edge(v1, v2, label)
@@ -103,7 +102,6 @@ class CollectionGraph:
         dot = Digraph()
         vertices = set()
         graph = CollectionGraph()
-        graph_backward = CollectionGraph()
         value_by_vertex = {}
 
         for news, opinion_collections, colorize in triplets:
@@ -132,8 +130,8 @@ class CollectionGraph:
                     assert(isinstance(value_left_node, unicode))
                     assert(isinstance(value_right_node, unicode))
 
-                    add_edge(graph, left_node_id, right_node_id, o.sentiment, edges_count=len(relations), colorize=colorize)
-                    add_edge(graph_backward, right_node_id, left_node_id, o.sentiment, colorize=colorize)
+                    add_edge(graph, left_node_id, right_node_id, o.sentiment,
+                             edges_count=len(relations), colorize=colorize)
 
                     if left_node_id not in value_by_vertex:
                         value_by_vertex[left_node_id] = o.value_left

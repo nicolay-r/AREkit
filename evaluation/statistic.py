@@ -2,6 +2,7 @@
 import pandas as pd
 
 from core.evaluation.labels import Label, PositiveLabel, NegativeLabel
+from core.processing.stemmer import Stemmer
 from core.source.opinion import OpinionCollection
 
 
@@ -24,12 +25,15 @@ class MethodStatistic:
         return founded
 
     @staticmethod
-    def get_method_statistic(files_to_compare_list, synonyms_filepath):
+    def get_method_statistic(files_to_compare_list, synonyms_filepath, stemmer):
         """
             Calculate statistic based on result files
-            files_to_compare_list: list of FilesToCompare objects
+            files_to_compare_list: list
+                list of FilesToCompare objects
             synonyms_filepath: str
+            stemmer: Stemmer
         """
+        assert(isinstance(stemmer, Stemmer))
 
         columns = ["t_all", "t_pos", "t_neg", "e_all", "e_pos", "e_neg"]
 
@@ -38,9 +42,9 @@ class MethodStatistic:
 
             assert(isinstance(files_to_compare, FilesToCompare))
             test_opins = OpinionCollection.from_file(
-                    files_to_compare.test_filepath, synonyms_filepath)
+                    files_to_compare.test_filepath, synonyms_filepath, stemmer=stemmer)
             etalon_opins = OpinionCollection.from_file(
-                    files_to_compare.etalon_filepath, synonyms_filepath)
+                    files_to_compare.etalon_filepath, synonyms_filepath, stemmer=stemmer)
 
             df.loc[files_to_compare.index] = [
                     MethodStatistic.founded_opins(test_opins, etalon_opins),

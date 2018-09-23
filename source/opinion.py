@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import io
 
-import core.env as env
+from core.processing.stemmer import Stemmer
 from core.evaluation.labels import Label
-from core.source.entity import Entity
 from core.source.synonyms import SynonymsCollection
 
 
@@ -11,13 +10,15 @@ class OpinionCollection:
     """ Collection of sentiment opinions between entities
     """
 
-    def __init__(self, opinions, synonyms, debug_mode=False):
+    def __init__(self, opinions, synonyms, stemmer, debug_mode=False):
         assert(isinstance(opinions, list) or isinstance(opinions, type(None)))
         assert(isinstance(synonyms, SynonymsCollection))
+        assert(isinstance(stemmer, Stemmer))
         assert(isinstance(debug_mode, bool))
         self.debug_mode = debug_mode
         self.opinions = [] if opinions is None else opinions
         self.synonyms = synonyms
+        self.stemmer = stemmer
         self.by_value_set = self._create_set_by_value()
         self.by_synonym_dict = self._create_dict_by_synonyms(synonyms)
 
@@ -48,17 +49,18 @@ class OpinionCollection:
         return index
 
     @classmethod
-    def from_file(cls, filepath, synonyms_filepaths, debug=False):
+    def from_file(cls, filepath, synonyms_filepaths, stemmer, debug=False):
         """
             filepath: string or list
                 single filepath or list of filepaths.
         """
         assert(isinstance(filepath, str) or isinstance(filepath, list))
+        assert(isinstance(stemmer, Stemmer))
 
         if isinstance(synonyms_filepaths, str):
-            synonyms = SynonymsCollection.from_file(synonyms_filepaths)
+            synonyms = SynonymsCollection.from_file(synonyms_filepaths, stemmer=stemmer, debug=debug)
         elif isinstance(synonyms_filepaths, list):
-            synonyms = SynonymsCollection.from_files(synonyms_filepaths)
+            synonyms = SynonymsCollection.from_files(synonyms_filepaths, stemmer=stemmer, debug=debug)
         else:
             raise Exception("Unsupported type for 'synonyms_filepaths'")
 
@@ -87,10 +89,10 @@ class OpinionCollection:
                     entity_right = args[1].strip()
                     sentiment = Label.from_str(args[2].strip())
 
-                    o = Opinion(entity_left, entity_right, sentiment)
+                    o = Opinion(entity_left, entity_right, sentiment, stemmer)
                     opinions.append(o)
 
-        return cls(opinions, synonyms, debug)
+        return cls(opinions, synonyms, stemmer, debug)
 
     def has_opinion_by_values(self, o):
         assert(isinstance(o, Opinion))
@@ -119,6 +121,8 @@ class OpinionCollection:
 
     def add_opinion(self, o):
         assert(isinstance(o, Opinion))
+        # stemmers should be the same
+        assert(o.stemmer is self.stemmer)
 
         if not o.has_synonym_for_left(self.synonyms):
             self.synonyms.add_synonym(o.value_left)
@@ -135,6 +139,15 @@ class OpinionCollection:
         self.by_value_set.remove(o.create_value_id())
         del self.by_synonym_dict[o.create_synonym_id(self.synonyms)]
         self.opinions.remove(o)
+
+    def create_opinion(self, value_left, value_right, sentiment):
+        """
+        Create opinion with the same stemmer as in collection
+        """
+        return Opinion(value_left=value_left,
+                       value_right=value_right,
+                       sentiment=sentiment,
+                       stemmer=self.stemmer)
 
     def limit(self, count):
         self.opinions = self.opinions[:count]
@@ -184,22 +197,18 @@ class Opinion:
     """ Source opinion description
     """
 
-    def __init__(self, value_left, value_right, sentiment):
+    # TODO. Use create opinion from collection.
+    def __init__(self, value_left, value_right, sentiment, stemmer):
         assert(isinstance(value_left, unicode))
         assert(isinstance(value_right, unicode))
         assert(isinstance(sentiment, Label))
+        assert(isinstance(stemmer, Stemmer))
         assert(',' not in value_left)
         assert(',' not in value_right)
         self.value_left = value_left.lower()
         self.value_right = value_right.lower()
         self.sentiment = sentiment
-
-    @classmethod
-    def from_entities(cls, entity_left, entity_right, sentiment):
-        assert(isinstance(entity_left, Entity))
-        assert(isinstance(entity_right, Entity))
-        assert(isinstance(sentiment, unicode))
-        return cls(entity_left.value, entity_right.value, sentiment)
+        self.stemmer = stemmer
 
     # TODO: Should be a part of collection during save operation.
     def to_unicode(self):
@@ -210,8 +219,8 @@ class Opinion:
 
     def create_value_id(self):
         return u"{}_{}".format(
-            env.stemmer.lemmatize_to_str(self.value_left),
-            env.stemmer.lemmatize_to_str(self.value_right))
+            self.stemmer.lemmatize_to_str(self.value_left),
+            self.stemmer.lemmatize_to_str(self.value_right))
 
     def create_synonym_id(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))

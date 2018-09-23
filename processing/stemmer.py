@@ -2,7 +2,6 @@
 from pymystem3 import Mystem
 
 
-# TODO. Add POS tags
 class Stemmer:
     """ Yandex MyStem wrapper
 

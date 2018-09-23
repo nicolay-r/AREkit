@@ -16,6 +16,7 @@ class RelationCollection:
         assert(isinstance(opinion, Opinion))
         assert(isinstance(synonyms, SynonymsCollection))
 
+        # TODO. REMOVE ignored_entity_values
         left_values = RelationCollection._get_appropriate_entity_values(
             opinion.value_left, news.entities, synonyms)
         right_values = RelationCollection._get_appropriate_entity_values(
