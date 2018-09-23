@@ -17,20 +17,31 @@ class Stemmer:
                  u"intj", u"num", u"part", u"pr", u"s", u"spro", u"v",
                  pos_unknown, pos_empty]
 
-    def __init__(self):
-        self.mystem = Mystem(entire_input=False)
+    def __init__(self, entire_input=False):
+        """
+        entire_input: bool
+            Mystem parameter that allows to keep all information from input (true) or
+            remove garbage characters
+        """
+        self.mystem = Mystem(entire_input=entire_input)
 
     def lemmatize_to_list(self, text):
         return self.mystem.lemmatize(text.lower())
 
-    def lemmatize_to_str(self, text):
+    def lemmatize_to_str(self, text, remove_new_lines=True):
+        """
+        returns: unicode
+            lemmatized or original string (in case of empty lemmatization result)
+        """
         assert(isinstance(text, unicode))
         lemmas = self.mystem.lemmatize(text.lower())
+
+        if remove_new_lines:
+            self._remove_new_lines(lemmas)
 
         result = " ".join(lemmas)
 
         # print '"%s"->"%s"' % (text.encode('utf-8'), result.encode('utf-8')), ' ', len(lemmas)
-
         # The problem when 'G8' word, it will not be lemmatized, so next line
         # is a fix
         if len(result) == 0:
@@ -45,6 +56,15 @@ class Stemmer:
         if '=' in pos:
             pos = pos.split('=')[0]
         return pos
+
+    @staticmethod
+    def _remove_new_lines(terms):
+        """
+        Remove newline character in place
+        """
+        new_line = '\n'
+        while new_line in terms:
+            terms.remove(new_line)
 
     def get_term_pos(self, term):
         assert(isinstance(term, unicode))
