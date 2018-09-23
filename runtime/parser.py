@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.source.tokens import Tokens
+from core.processing.stemmer import Stemmer
 
 
 class TextParser:
@@ -15,17 +16,25 @@ class TextParser:
         pass
 
     @staticmethod
-    def parse_to_list(text, save_tokens=False, debug=False):
+    def parse_to_list(text, save_tokens=False, stemmer=None, debug=False):
         """
         Separates sentence into list of terms
+
+        save_tokens: bool
+            keep token information in result list of terms.
+        stemmer: None or Stemmer
+            apply stemmer for lemmatization
         return: list
             list of unicode terms, where each term: word or token
         """
         assert(isinstance(text, unicode))
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         result_terms = []
+        terms = stemmer.lemmatize_to_list(text) if stemmer is not None else \
+            [w.strip() for w in text.split(' ')]
 
-        for term in [w.strip() for w in text.split(' ')]:
+        for term in terms:
 
             if term is None:
                 continue
