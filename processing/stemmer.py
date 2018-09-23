@@ -23,10 +23,16 @@ class Stemmer:
             Mystem parameter that allows to keep all information from input (true) or
             remove garbage characters
         """
+        self.entire_input = entire_input
         self.mystem = Mystem(entire_input=entire_input)
 
     def lemmatize_to_list(self, text):
-        return self.mystem.lemmatize(text.lower())
+        result_list = self.mystem.lemmatize(text.lower())
+
+        if self.entire_input:
+            return [term.strip() for term in result_list if term.strip()]
+
+        return result_list
 
     def lemmatize_to_str(self, text, remove_new_lines=True):
         """
