@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import io
+from core.processing.stemmer import Stemmer
 from core.processing.news import NewsProcessor
 from core.source.entity import EntityCollection
 
 
 class News:
 
-    def __init__(self, sentences, entities):
+    def __init__(self, sentences, entities, stemmer):
         self.entities = entities
         self.sentences = sentences
-        self.processed = NewsProcessor(self)
+        self.processed = NewsProcessor(self, stemmer)
 
     def get_sentences(self):
         for s in self.sentences:
@@ -31,11 +32,12 @@ class News:
         return self.processed
 
     @classmethod
-    def from_file(cls, filepath, entities):
+    def from_file(cls, filepath, entities, stemmer):
         """ Read news from file
         """
         assert(isinstance(filepath, unicode) or isinstance(filepath, str))
         assert(isinstance(entities, EntityCollection))
+        assert(isinstance(stemmer, Stemmer))
 
         with io.open(filepath, 'rt', newline='\n', encoding='utf-8') as f:
 
@@ -82,7 +84,7 @@ class News:
 
         assert(e_ind == entities.count())
 
-        return cls(sentences, entities)
+        return cls(sentences, entities, stemmer)
 
     def get_sentence_by_entity(self, entity):
         return self.processed.get_sentence_by_entity(entity)

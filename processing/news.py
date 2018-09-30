@@ -1,5 +1,4 @@
 from core.source.entity import Entity
-import core.env as env
 
 
 class NewsProcessor:
@@ -30,13 +29,13 @@ class NewsProcessor:
         s2 = self.get_sentence_by_entity(e2)
 
         if (s1.index == s2.index):
-            return self._lemmatize_to_list(s1.text[e1.end-s1.begin:e2.begin-s1.begin])
+            return self.stemmer.lemmatize_to_list(s1.text[e1.end-s1.begin:e2.begin-s1.begin])
 
         text = []
-        text += self._lemmatize_to_list(s1.text[e1.end-s1.begin:])
+        text += self.stemmer.lemmatize_to_list(s1.text[e1.end-s1.begin:])
         for i in range(s1.index+1, s2.index):
             text += self.lemmatized_sentences[i]
-        text += self._lemmatize_to_list(s2.text[:e2.begin-s2.begin])
+        text += self.stemmer.lemmatize_to_list(s2.text[:e2.begin-s2.begin])
 
         return text
 
@@ -44,7 +43,7 @@ class NewsProcessor:
         assert(isinstance(left_bound, int))
         assert(isinstance(right_bound, int))
         assert(left_bound <= right_bound)
-        return self._lemmatize_to_list(
+        return self.stemmer.lemmatize_to_list(
             sentence.text[left_bound-sentence.begin:right_bound-sentence.begin])
 
     def get_text_before_entity_as_str(self, e):
@@ -84,13 +83,13 @@ class NewsProcessor:
         assert(isinstance(e, Entity))
         s = self.get_sentence_by_entity(e)
         text = s.text[e.end-s.begin:]
-        return self._lemmatize_to_list(text)
+        return self.stemmer.lemmatize_to_list(text)
 
     def get_lemmas_before_entity_to_list(self, e):
         assert(isinstance(e, Entity))
         s = self.get_sentence_by_entity(e)
         text = s.text[:e.begin-s.begin]
-        return self._lemmatize_to_list(text)
+        return self.stemmer.lemmatize_to_list(text)
 
     def get_sentence_by_entity(self, e):
         assert(isinstance(e, Entity))
@@ -100,25 +99,20 @@ class NewsProcessor:
 
     @staticmethod
     def _check_and_order_entities(e1, e2):
-        if (e1.get_int_ID() == e2.get_int_ID()):
+        if e1.get_int_ID() == e2.get_int_ID():
             raise Exception("Entities are equal!, {}->{}".format(
                 e1.value.encode('utf-8'), e2.value.encode('utf-8')))
             return None
 
-        if (e1.get_int_ID() > e2.get_int_ID()):
+        if e1.get_int_ID() > e2.get_int_ID():
             return e2, e1
         return e1, e2
 
-    @staticmethod
-    def _process(news):
+    def _process(self, news):
         lemmatized_sentences = {}
         for s in news.sentences:
-            lemmatized_sentences[s.index] = NewsProcessor._lemmatize_to_list(s.text)
+            lemmatized_sentences[s.index] = self.stemmer.lemmatize_to_list(s.text)
         return lemmatized_sentences
-
-    @staticmethod
-    def _lemmatize_to_list(text):
-        return env.stemmer.lemmatize_to_list(text)
 
     @staticmethod
     def _index_sentence_by_entity(news):
