@@ -2,7 +2,7 @@
 import pandas as pd
 
 from core.evaluation.labels import Label, PositiveLabel, NegativeLabel
-from core.processing.stemmer import Stemmer
+from core.processing.lemmatization.stemmer import Stemmer
 from core.source.opinion import OpinionCollection
 
 

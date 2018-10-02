@@ -1,5 +1,5 @@
 from core.source.entity import Entity
-from core.processing.stemmer import Stemmer
+from core.processing.lemmatization.stemmer import Stemmer
 
 
 class NewsProcessor:

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import io
-from core.processing.stemmer import Stemmer
+from core.processing.lemmatization.stemmer import Stemmer
 from core.processing.news import NewsProcessor
 from core.source.entity import EntityCollection
 
