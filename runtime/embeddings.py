@@ -1,5 +1,5 @@
 from gensim.models.word2vec import Word2Vec
-from ..env import stemmer
+from core.processing.stemmer import Stemmer
 from core.source.tokens import Tokens
 import utils
 
@@ -9,9 +9,11 @@ class Embedding(object):
     Represents default wrapper over W2V API.
     """
 
-    def __init__(self, w2v_model):
+    def __init__(self, w2v_model, stemmer):
         assert(isinstance(w2v_model, Word2Vec))
+        assert(isinstance(stemmer, Stemmer))
         self.w2v_model = w2v_model
+        self.stemmer = stemmer
 
     @property
     def vector_size(self):
@@ -33,11 +35,6 @@ class Embedding(object):
         assert(type(word) == unicode)
         return self.w2v_model.wv.index2word.index(word)
 
-    @staticmethod
-    def from_word2vec_filepath(filepath, is_binary):
-        w2v_model = Word2Vec.load_word2vec_format(filepath, binary=is_binary)
-        return Embedding(w2v_model)
-
     def similarity(self, word_1, word_2):
         assert(type(word_1) == unicode)
         assert(type(word_2) == unicode)
@@ -55,19 +52,15 @@ class Embedding(object):
 
 class RusvectoresEmbedding(Embedding):
 
-    def __init__(self, w2v_model):
+    def __init__(self, w2v_model, stemmer):
         assert(isinstance(w2v_model, Word2Vec))
-        super(RusvectoresEmbedding, self).__init__(w2v_model)
-
-    @staticmethod
-    def from_word2vec_filepath(filepath, is_binary):
-        w2v_model = Word2Vec.load_word2vec_format(filepath, binary=is_binary)
-        return RusvectoresEmbedding(w2v_model)
+        assert(isinstance(stemmer, Stemmer))
+        super(RusvectoresEmbedding, self).__init__(w2v_model, stemmer)
 
     def __contains__(self, term):
         assert(type(term) == unicode)
 
-        item = self._lemmatize_term_to_rusvectores(term)
+        item = self._lemmatize_term_to_rusvectores(term, self.stemmer)
         if item is None:
             return False
         return super(RusvectoresEmbedding, self).__contains__(item)
@@ -75,7 +68,7 @@ class RusvectoresEmbedding(Embedding):
     def __getitem__(self, term):
         assert(type(term) == unicode)
 
-        item = self._lemmatize_term_to_rusvectores(term)
+        item = self._lemmatize_term_to_rusvectores(term, self.stemmer)
         if item is None:
             return False
         return super(RusvectoresEmbedding, self).__getitem__(item)
@@ -83,13 +76,13 @@ class RusvectoresEmbedding(Embedding):
     def find_index_by_word(self, word):
         assert(type(word) == unicode)
 
-        item = self._lemmatize_term_to_rusvectores(word)
+        item = self._lemmatize_term_to_rusvectores(word, self.stemmer)
         if item is None:
             return False
         return super(RusvectoresEmbedding, self).find_index_by_word(item)
 
     @staticmethod
-    def _lemmatize_term_to_rusvectores(term):
+    def _lemmatize_term_to_rusvectores(term, stemmer):
         """
         Combine lemmatized 'text' with POS tag (part of speech).
         """

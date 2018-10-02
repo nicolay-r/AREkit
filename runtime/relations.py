@@ -1,6 +1,6 @@
 from core.source.news import News
-from core.env import stemmer
 from core.source.opinion import Opinion
+from core.processing.stemmer import Stemmer
 from core.source.synonyms import SynonymsCollection
 
 
@@ -12,6 +12,10 @@ class RelationCollection:
 
     @staticmethod
     def from_news_opinion(news, opinion, synonyms, ignored_entity_values=[], debug=False):
+        """
+        lemmatize_to_str_func: function
+            non lemmatized (unicode) -> (unicode), lemmatized string
+        """
         assert(isinstance(news, News))
         assert(isinstance(opinion, Opinion))
         assert(isinstance(synonyms, SynonymsCollection))
@@ -39,9 +43,9 @@ class RelationCollection:
         for entity_left in left_values:
             for entity_right in right_values:
 
-                if RelationCollection._is_ignored(entity_left, stemmer, ignored_entity_values):
+                if RelationCollection._is_ignored(entity_left, ignored_entity_values, synonyms.stemmer):
                     continue
-                if RelationCollection._is_ignored(entity_right, stemmer, ignored_entity_values):
+                if RelationCollection._is_ignored(entity_right, ignored_entity_values, synonyms.stemmer):
                     continue
 
                 entities_left_ids = news.entities.get_entity_by_value(entity_left)
@@ -60,10 +64,11 @@ class RelationCollection:
         self.relations = [r for r in self.relations if filter_function(r)]
 
     @staticmethod
-    def _is_ignored(entity_value, stemmer, ignored_entitiy_values):
-        assert(type(ignored_entitiy_values) == list)
+    def _is_ignored(entity_value, ignored_entity_values, stemmer):
+        assert(isinstance(ignored_entity_values, list))
+        assert(isinstance(stemmer, Stemmer))
         entity_value = stemmer.lemmatize_to_str(entity_value)
-        if entity_value in ignored_entitiy_values:
+        if entity_value in ignored_entity_values:
             # print "ignored: '{}'".format(entity_value.encode('utf-8'))
             return True
         return False

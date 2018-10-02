@@ -1,10 +1,13 @@
 from core.source.entity import Entity
+from core.processing.stemmer import Stemmer
 
 
 class NewsProcessor:
 
-    def __init__(self, news):
+    def __init__(self, news, stemmer):
+        assert(isinstance(stemmer, Stemmer))
         self.news = news
+        self.stemmer = stemmer
         self.lemmatized_sentences = self._process(news)
         self.sentence_by_entity = self._index_sentence_by_entity(news)
         self.words_count = self._get_words_count()
@@ -28,7 +31,7 @@ class NewsProcessor:
         s1 = self.get_sentence_by_entity(e1)
         s2 = self.get_sentence_by_entity(e2)
 
-        if (s1.index == s2.index):
+        if s1.index == s2.index:
             return self.stemmer.lemmatize_to_list(s1.text[e1.end-s1.begin:e2.begin-s1.begin])
 
         text = []
