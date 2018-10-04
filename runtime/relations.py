@@ -1,6 +1,6 @@
 from core.source.news import News
 from core.source.opinion import Opinion
-from core.processing.lemmatization.stemmer import Stemmer
+from core.processing.lemmatization.base import Stemmer
 from core.source.synonyms import SynonymsCollection
 
 

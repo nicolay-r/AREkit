@@ -5,7 +5,7 @@ from sklearn import svm, neighbors, ensemble, model_selection, naive_bayes
 from core.evaluation.eval import Evaluator
 from core.evaluation.labels import Label, NeutralLabel
 from core.evaluation.statistic import MethodStatistic
-from core.processing.lemmatization.stemmer import Stemmer
+from core.processing.lemmatization.base import Stemmer
 from core.source.vectors import OpinionVectorCollection
 from core.source.opinion import OpinionCollection
 from core.source.synonyms import SynonymsCollection

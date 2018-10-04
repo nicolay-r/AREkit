@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.source.tokens import Tokens
-from core.processing.lemmatization.stemmer import Stemmer
+from core.processing.lemmatization.base import Stemmer
 
 
 class TextParser:

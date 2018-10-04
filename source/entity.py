@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
-from core.processing.lemmatization.stemmer import Stemmer
+from core.processing.lemmatization.base import Stemmer
 
 
 class EntityCollection:
@@ -8,7 +8,7 @@ class EntityCollection:
     """
 
     def __init__(self, entities, stemmer):
-        assert(isinstance(stemmer, stemmer))
+        assert(isinstance(stemmer, Stemmer))
         self.entities = entities
         self.stemmer = stemmer
         self.by_id = self._index_by_id()
