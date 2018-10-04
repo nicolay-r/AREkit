@@ -11,7 +11,7 @@ class MystemWrapper(Stemmer):
 
     pos_names = [u"a", u"adv", u"advpro", u"anum", u"apro", u"com", u"conj",
                  u"intj", u"num", u"part", u"pr", u"s", u"spro", u"v",
-                 Stemmer.pos_unknown, Stemmer.pos_empty]
+                 Stemmer._pos_unknown, Stemmer._pos_empty]
 
     def __init__(self, entire_input=False):
         """
@@ -71,7 +71,7 @@ class MystemWrapper(Stemmer):
     def get_term_pos(self, term):
         assert(isinstance(term, unicode))
         analyzed = self.mystem.analyze(term)
-        return self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.pos_unknown
+        return self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self._pos_unknown
 
     def get_terms_pos(self, terms):
         """ list of part of speech according to the certain word in text
@@ -80,7 +80,7 @@ class MystemWrapper(Stemmer):
         pos_list = []
         for term in terms:
             analyzed = self.mystem.analyze(term)
-            pos = self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.pos_unknown
+            pos = self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self._pos_unknown
             pos_list.append(pos)
 
         return pos_list
@@ -92,11 +92,11 @@ class MystemWrapper(Stemmer):
         returns: str or None
         """
         if 'analysis' not in analysis:
-            return self.pos_unknown
+            return self._pos_unknown
 
         info = analysis['analysis']
         if len(info) == 0:
-            return self.pos_unknown
+            return self._pos_unknown
 
         return self._get_pos(info[0])
 

@@ -6,23 +6,29 @@ class Stemmer:
     Interface
     """
 
-    pos_unknown = u"unknown"
-    pos_empty = u"empty"
+    _pos_unknown = u"unknown"
+    _pos_empty = u"empty"
 
     def lemmatize_to_list(self, text):
-        pass
+        raise Exception("Not implemented")
 
     def lemmatize_to_str(self, text, remove_new_lines=True):
-        pass
+        raise Exception("Not implemented")
 
     # TODO: POS should be moved from here
     def get_term_pos(self, term):
-        pass
+        raise Exception("Not implemented")
 
     # TODO: POS should be moved from here
     def get_terms_pos(self, terms):
-        pass
+        raise Exception("Not implemented")
 
     # TODO: POS should be moved from here
     def pos_to_int(self, pos):
-        pass
+        raise Exception("Not implemented")
+
+    def get_pos_uknown_token(self):
+        return self._pos_unknown
+
+    def get_pos_empty(self):
+        return self._pos_empty
