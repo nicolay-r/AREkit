@@ -2,3 +2,4 @@ pymystem3
 pandas==0.20.3
 gensim==0.13.4
 scipy==0.18.1
+texterra==1.0.1
