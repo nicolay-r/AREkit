@@ -87,10 +87,11 @@ class RusvectoresEmbedding(Embedding):
         Combine lemmatized 'text' with POS tag (part of speech).
         """
         assert(type(term) == unicode)
+        assert(isinstance(stemmer, Stemmer))
 
         term = stemmer.lemmatize_to_str(term)
         pos = stemmer.get_term_pos(term)
-        if pos is stemmer.pos_unknown:
+        if pos is stemmer.get_pos_unknown_token():
             return None
         return '_'.join([term, pos])
 
