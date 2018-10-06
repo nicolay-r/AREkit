@@ -103,6 +103,7 @@ class TokenEmbeddingVectors:
 
     tokens = [Tokens.COMMA,
               Tokens.COLON,
+              Tokens.DOT,
               Tokens.SEMICOLON,
               Tokens.QUOTE,
               Tokens.DASH,

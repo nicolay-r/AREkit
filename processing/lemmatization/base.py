@@ -27,7 +27,7 @@ class Stemmer:
     def pos_to_int(self, pos):
         raise Exception("Not implemented")
 
-    def get_pos_uknown_token(self):
+    def get_pos_unknown_token(self):
         return self._pos_unknown
 
     def get_pos_empty(self):
