@@ -1,4 +1,5 @@
 from core.processing.ner.base import NamedEntityRecognition
+from core.source.entity import Entity
 import requests
 import json
 
@@ -21,4 +22,7 @@ class DeepNERWrap(NamedEntityRecognition):
                                  headers=self.headers,
                                  verify=False)
         data = response.json()
+
+        # TODO: Connect with entities.
+
         return data['tokens'], data['tags']

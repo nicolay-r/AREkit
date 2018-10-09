@@ -8,7 +8,15 @@ class EntityCollection:
     """
 
     def __init__(self, entities, stemmer):
+        """
+        entities: list of Entity types
+        stemmer: Stemmer
+        """
+        assert(isinstance(entities, list))
         assert(isinstance(stemmer, Stemmer))
+
+        entities.sort(key=lambda e: e.begin)
+
         self.entities = entities
         self.stemmer = stemmer
         self.by_id = self._index_by_id()
@@ -48,9 +56,6 @@ class EntityCollection:
                 a = Entity(e_ID, e_str_type, e_begin, e_end, e_value)
 
                 entities.append(a)
-
-        # sort by beginning
-        entities.sort(key=lambda e: e.begin)
 
         return cls(entities, stemmer)
 
