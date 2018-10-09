@@ -31,7 +31,7 @@ class Evaluator:
 
         self.synonyms_filepath = synonyms_filepath
         self.user_answers = user_answers_filepath
-        self.stemmer = Stemmer()
+        self.stemmer = stemmer
 
         self.pos = PositiveLabel()
         self.neg = NegativeLabel()
