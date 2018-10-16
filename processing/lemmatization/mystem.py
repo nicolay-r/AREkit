@@ -9,8 +9,11 @@ class MystemWrapper(Stemmer):
         https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
     """
 
-    pos_names = [u"a", u"adv", u"advpro", u"anum", u"apro", u"com", u"conj",
-                 u"intj", u"num", u"part", u"pr", u"s", u"spro", u"v",
+    _pos_adj = u"a"
+    _pos_noun = u"s"
+
+    pos_names = [_pos_noun, u"adv", u"advpro", u"anum", u"apro", u"com", u"conj",
+                 u"intj", u"num", u"part", u"pr", _pos_adj, u"spro", u"v",
                  Stemmer._pos_unknown, Stemmer._pos_empty]
 
     def __init__(self, entire_input=False):
@@ -73,15 +76,13 @@ class MystemWrapper(Stemmer):
         analyzed = self.mystem.analyze(term)
         return self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self._pos_unknown
 
-    @staticmethod
-    def is_adjective(pos_index):
-        assert(isinstance(pos_index, int))
-        return MystemWrapper.pos_names[pos_index] == "a"
+    def is_adjective(self, pos_type):
+        assert(isinstance(pos_type, unicode))
+        return pos_type.lower() == self._pos_adj
 
-    @staticmethod
-    def is_noun(pos_index):
-        assert(isinstance(pos_index, int))
-        return MystemWrapper.pos_names[pos_index] == "s"
+    def is_noun(self, pos_type):
+        assert(isinstance(pos_type, unicode))
+        return pos_type.lower() == self._pos_noun
 
     def get_terms_pos(self, terms):
         """ list of part of speech according to the certain word in text

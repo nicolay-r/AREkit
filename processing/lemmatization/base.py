@@ -27,12 +27,10 @@ class Stemmer:
     def pos_to_int(self, pos):
         raise Exception("Not implemented")
 
-    @staticmethod
-    def is_adjective(pos_index):
+    def is_adjective(self, pos_type):
         raise Exception("Not implemented")
 
-    @staticmethod
-    def is_noun(pos_index):
+    def is_noun(self, pos_type):
         raise Exception("Not implemented")
 
     def get_pos_unknown_token(self):
