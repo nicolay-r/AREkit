@@ -73,6 +73,16 @@ class MystemWrapper(Stemmer):
         analyzed = self.mystem.analyze(term)
         return self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self._pos_unknown
 
+    @staticmethod
+    def is_adjective(pos_index):
+        assert(isinstance(pos_index, int))
+        return MystemWrapper.pos_names[pos_index] == "a"
+
+    @staticmethod
+    def is_noun(pos_index):
+        assert(isinstance(pos_index, int))
+        return MystemWrapper.pos_names[pos_index] == "s"
+
     def get_terms_pos(self, terms):
         """ list of part of speech according to the certain word in text
         """

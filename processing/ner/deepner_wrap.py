@@ -9,6 +9,7 @@ class DeepNERWrap(NamedEntityRecognition):
     host = "localhost"
     port = 5000
     headers = {'content-type': 'application/json'}
+    separator = '-'
 
     def __init__(self):
         self.url = "http://{}:{}/ner".format(self.host, self.port)
@@ -40,21 +41,21 @@ class DeepNERWrap(NamedEntityRecognition):
     def _merge(self, tokens, tags):
         merged = []
         for i, tag in enumerate(tags):
-            part = self._tag_part()
+            part = self._tag_part(tag)
             if part == 'B':
                 merged.append([tokens[i]])
             elif part == 'I':
                 merged[len(merged)-1].append(tokens[i])
-            self._tag_part(tags)
         return merged
-
 
     @staticmethod
     def _tag_part(tag):
         assert(isinstance(tag, unicode))
-        return tag[:tag.index('-')]
+        return tag if DeepNERWrap.separator not in tag \
+            else tag[:tag.index(DeepNERWrap.separator)]
 
     @staticmethod
     def _tag_type(tag):
         assert(isinstance(tag, unicode))
-        return tag[tag.index('-') + 1:]
+        return "" if DeepNERWrap.separator not in tag \
+            else tag[tag.index(DeepNERWrap.separator) + 1:]
