@@ -21,6 +21,7 @@ class Tokens:
     OPEN_BRACKET = _wrapper.format(u'OPEN_BRACKET')
     CLOSED_BRACKET = _wrapper.format(u'CLOSED_BRACKET')
     NUMBER = _wrapper.format(u'NUMBER')
+    NEW_LINE = _wrapper.format(u"NEW_LINE")
     UNKNOWN_CHAR = _wrapper.format(u'UNKNOWN_CHAR')
     UNKNOWN_WORD = _wrapper.format(u'UNKNOWN_WORD')
 
@@ -40,6 +41,7 @@ class Tokens:
         u'}': CLOSED_BRACKET,
         u'[': OPEN_BRACKET,
         u']': CLOSED_BRACKET,
+        u'\n': NEW_LINE,
         u'«': QUOTE,
         u'»': QUOTE,
         u'"': QUOTE,
@@ -58,6 +60,7 @@ class Tokens:
         OPEN_BRACKET,
         CLOSED_BRACKET,
         NUMBER,
+        NEW_LINE,
         UNKNOWN_CHAR,
         UNKNOWN_WORD}
 

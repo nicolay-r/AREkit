@@ -29,7 +29,8 @@ class MystemWrapper(Stemmer):
         result_list = self.mystem.lemmatize(text.lower())
 
         if self.entire_input:
-            return [term.strip() for term in result_list if term.strip()]
+            separator = u' '
+            return [term.strip(separator) for term in result_list if term.strip(separator)]
 
         return result_list
 

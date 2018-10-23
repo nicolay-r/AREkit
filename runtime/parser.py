@@ -32,7 +32,7 @@ class TextParser:
 
         result_terms = []
         terms = stemmer.lemmatize_to_list(text) if stemmer is not None else \
-            [w.strip() for w in text.split(' ')]
+            [w.strip(chars=u' ') for w in text.split(' ')]
 
         for term in terms:
 
