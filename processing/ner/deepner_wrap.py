@@ -44,7 +44,7 @@ class DeepNERWrap(NamedEntityRecognition):
             part = self._tag_part(tag)
             if part == 'B':
                 merged.append([tokens[i]])
-            elif part == 'I':
+            elif part == 'I' and len(merged) > 0:
                 merged[len(merged)-1].append(tokens[i])
         return merged
 
