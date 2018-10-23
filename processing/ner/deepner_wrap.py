@@ -16,6 +16,8 @@ class DeepNERWrap(NamedEntityRecognition):
 
     def extract(self, text, merge=False):
         """
+        text: unicode
+            text which should be processed. text tokens should be removed.
         tags:
             Provides in a format <part>-<type>, where part could be: B, I, O
             and type: GEO, LOC,
