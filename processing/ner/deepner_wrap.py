@@ -14,17 +14,16 @@ class DeepNERWrap(NamedEntityRecognition):
     def __init__(self):
         self.url = "http://{}:{}/ner".format(self.host, self.port)
 
-    def extract(self, text, merge=False):
+    def extract(self, terms, merge=False):
         """
-        text: unicode
-            text which should be processed. text tokens should be removed.
+        terms: list
         tags:
             Provides in a format <part>-<type>, where part could be: B, I, O
             and type: GEO, LOC,
         """
-        assert(isinstance(text, unicode))
+        assert(isinstance(terms, list))
 
-        payload = {"text": text}
+        payload = {"terms": terms}
         response = requests.post(self.url,
                                  data=json.dumps(payload),
                                  headers=self.headers,
