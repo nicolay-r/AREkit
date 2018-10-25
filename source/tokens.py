@@ -88,3 +88,14 @@ class Tokens:
     def is_token(term):
         assert(isinstance(term, unicode))
         return term in Tokens._supported_tokens
+
+    @staticmethod
+    def iter_chars_by_token(term):
+        """
+        Iterate through charts that is related to term
+        token: char
+        """
+        assert(isinstance(term, unicode))
+        for char, token in Tokens._token_mapping.iteritems():
+            if term == token:
+                yield char

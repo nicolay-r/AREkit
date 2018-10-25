@@ -17,6 +17,15 @@ class TextParser:
 
     @staticmethod
     def parse_to_list(text, save_tokens=False, stemmer=None, debug=False):
+        return TextParser._parse_core(text, save_tokens, stemmer, debug)
+
+    @staticmethod
+    def parse(text, save_tokens=False, stemmer=None, debug=False):
+        terms = TextParser._parse_core(text, save_tokens, stemmer, debug)
+        return ParsedText(terms, keep_tokens=save_tokens, is_lemmatized=stemmer is not None)
+
+    @staticmethod
+    def _parse_core(text, save_tokens=False, stemmer=None, debug=False):
         """
         Separates sentence into list of terms
 
@@ -30,7 +39,7 @@ class TextParser:
         assert(isinstance(text, unicode))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
-        result_terms = []
+        parsed_terms = []
         terms = stemmer.lemmatize_to_list(text) if stemmer is not None else \
             [w.strip(chars=u' ') for w in text.split(' ')]
 
@@ -42,15 +51,16 @@ class TextParser:
             modified_term, tokens = TextParser._split_tokens(term)
 
             if modified_term is not None:
-                result_terms.append(modified_term)
+                parsed_terms.append(modified_term)
 
             if len(tokens) > 0 and save_tokens:
-                result_terms.extend(tokens)
+                parsed_terms.extend(tokens)
 
         if debug:
-            TextParser._print(result_terms)
+            TextParser._print(parsed_terms)
 
-        return result_terms
+        return parsed_terms
+
 
     @staticmethod
     def _split_tokens(term):
@@ -95,3 +105,75 @@ class TextParser:
     def _print(terms):
         for t in terms:
             print '"{}" '.format(t.encode('utf-8')),
+
+
+class ParsedText:
+
+    _number_example = u"0"
+
+    def __init__(self, terms, keep_tokens, is_lemmatized):
+        assert(isinstance(terms, list))
+        assert(isinstance(keep_tokens, bool))
+        assert(isinstance(is_lemmatized, bool))
+        self._terms = terms
+        self._mask = None
+        self.keep_tokens = keep_tokens
+        self.is_lemmatized = is_lemmatized
+
+    def subtext(self, begin, end):
+        assert(isinstance(begin, int))
+        assert(isinstance(end, int))
+        return ParsedText(self._terms[begin:end],
+                          keep_tokens=self.keep_tokens,
+                          is_lemmatized=self.is_lemmatized)
+
+    @property
+    def Terms(self):
+        return self._terms
+
+    def is_tokenized(self):
+        return self._mask is None
+
+    def untokenize(self):
+        """
+        replace tokens in list of terms with related term.
+        """
+        self._mask = [False] * len(self._terms)
+        for i, term in enumerate(self._terms):
+
+            changed = False
+            if term == Tokens.NUMBER:
+                self._terms[i] = self._number_example
+                changed = True
+            elif Tokens.is_token(term):
+                self._terms[i] = next(Tokens.iter_chars_by_token(term))
+                changed = True
+
+            self._mask[i] = changed
+
+    def tokenize(self):
+        """
+        revert some terms that were tokens into token values.
+        """
+        if self._mask is None:
+            return
+
+        for i, m in enumerate(self._mask):
+            if m is False:
+                continue
+            self._terms[i] = Tokens.NUMBER if self._terms[i] == self._number_example \
+                else Tokens.try_create(self._terms[i])
+
+        self._mask = None
+
+    def __len__(self):
+        return len(self._terms)
+
+    def __iter__(self):
+        for term in self._terms:
+            yield term
+
+
+
+
+
