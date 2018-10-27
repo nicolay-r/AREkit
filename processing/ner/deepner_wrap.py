@@ -30,13 +30,13 @@ class DeepNERWrap(NamedEntityRecognition):
                                  verify=False)
         data = response.json()
 
-        terms = data['tokens']
+        result_terms = data['tokens']
         tags = data['tags']
 
         if not merge:
-            return terms, tags
+            return result_terms, tags
 
-        merged_terms = self._merge(terms, tags)
+        merged_terms = self._merge(result_terms, tags)
         types = [self._tag_type(tag) for tag in tags if self._tag_part(tag) == 'B']
         positions = [i for i, tag in enumerate(tags) if self._tag_part(tag) == 'B']
         return merged_terms, types, positions

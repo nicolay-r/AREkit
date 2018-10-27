@@ -129,7 +129,8 @@ class ParsedText:
 
     @property
     def Terms(self):
-        return self._terms
+        for term in self._terms:
+            yield term
 
     def is_tokenized(self):
         return self._mask is None
@@ -172,8 +173,4 @@ class ParsedText:
     def __iter__(self):
         for term in self._terms:
             yield term
-
-
-
-
 
