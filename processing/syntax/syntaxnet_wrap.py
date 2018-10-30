@@ -1,5 +1,7 @@
 import socket
 import sys
+from syntaxnet.annot import Word
+from syntaxnet.conll import ConllFormatStreamParser
 
 
 class SyntaxNetParserWrapper:
@@ -27,8 +29,22 @@ class SyntaxNetParserWrapper:
         if raw_output:
             return raw_output_s
 
-        # TODO: add output processing.
-        pass
+        trees = self._parse_conll_format(raw_output_s)
+
+        if sentences:
+            self._fill_spans_in_trees(sentences, trees)
+
+        return trees
+
+    def _fill_spans_in_trees(self, sentences, trees):
+        """
+        (C) IINemo
+        Original: https://github.com/IINemo/syntaxnet_wrapper
+        """
+        for in_sent, p_sent in zip(sentences, trees):
+            for in_word, p_word in zip(in_sent, p_sent):
+                p_word.begin = in_word.begin
+                p_word.end = in_word.end
 
     def _prepare_raw_input_for_syntaxnet(self, text, sentences):
         """
@@ -66,45 +82,20 @@ class SyntaxNetParserWrapper:
 
         return buf
 
+    def _parse_conll_format(self, string):
+        result = list()
+        for sent in ConllFormatStreamParser(string):
+            new_sent = list()
+            for word in sent:
+                new_word = Word(word_form = word[1].decode('utf8'),
+                                pos_tag = word[3].decode('utf8'),
+                                morph = word[5].decode('utf8'),
+                                parent = int(word[6]) - 1,
+                                link_name = word[7].decode('utf8'))
+                new_sent.append(new_word)
+            result.append(new_sent)
 
-class PennPOSTags:
-    """
-    https://cs.nyu.edu/grishman/jet/guide/PennPOS.html
-    """
+        return result
 
-    tags = ["CC Coordinating conjunction",
-        "CD Cardinal number",
-        "DT Determiner",
-        "EX Existential there",
-        "FW Foreign word",
-        "IN Preposition or subordinating conjunction",
-        "JJ Adjective",
-        "JJR Adjective, comparative",
-        "JJS Adjective, superlative",
-        "LS List item marker",
-        "MD Modal",
-        "NN Noun, singular or mass",
-        "NNS Noun, plural",
-        "NNP Proper noun, singular",
-        "NNPS Proper noun, plural",
-        "PDT Predeterminer",
-        "POS Possessive ending",
-        "PRP Personal pronoun",
-        "PRP$ Possessive pronoun",
-        "RB Adverb",
-        "RBR Adverb, comparative",
-        "RBS Adverb, superlative",
-        "RP Particle",
-        "SYM Symbol",
-        "TO to",
-        "UH Interjection",
-        "VB Verb, base form",
-        "VBD Verb, past tense",
-        "VBG Verb, gerund or present participle",
-        "VBN Verb, past participle",
-        "VBP Verb, non - 3 rd person singular present",
-        "VBZ Verb, 3 rd person singular present",
-        "WDT Wh - determiner",
-        "WP Wh - pronoun",
-        "WP$ Possessive wh - pronoun",
-        "WRB Wh - adverb"]
+
+
