@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from urlparse import urlparse
 
 
 class Tokens:
@@ -24,6 +25,7 @@ class Tokens:
     NEW_LINE = _wrapper.format(u"NEW_LINE")
     UNKNOWN_CHAR = _wrapper.format(u'UNKNOWN_CHAR')
     UNKNOWN_WORD = _wrapper.format(u'UNKNOWN_WORD')
+    URL = _wrapper.format(u"URL")
 
     _token_mapping = {
         u',': COMMA,
@@ -60,6 +62,7 @@ class Tokens:
         OPEN_BRACKET,
         CLOSED_BRACKET,
         NUMBER,
+        URL,
         NEW_LINE,
         UNKNOWN_CHAR,
         UNKNOWN_WORD}
@@ -83,6 +86,13 @@ class Tokens:
     def try_create_number(term):
         assert(isinstance(term, unicode))
         return Tokens.NUMBER if term.isdigit() else None
+
+    @staticmethod
+    def try_create_url(term):
+        assert(isinstance(term, unicode))
+        result = urlparse(term)
+        is_correct = result.scheme and result.netloc and result.path
+        return Tokens.URL if is_correct else None
 
     @staticmethod
     def is_token(term):

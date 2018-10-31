@@ -12,6 +12,9 @@ class TextParser:
         2) Token
     """
 
+    # TODO: Create unique name based on this template.
+    _token_placeholder = "tokenplaceholder"
+
     def __init__(self):
         pass
 
@@ -37,17 +40,49 @@ class TextParser:
             list of unicode terms, where each term: word or token
         """
         assert(isinstance(text, unicode))
+        assert(isinstance(save_tokens, bool))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
-        parsed_terms = []
-        terms = stemmer.lemmatize_to_list(text) if stemmer is not None else \
-            [w.strip(chars=u' ') for w in text.split(' ')]
+        # Separate everything via spaces.
+        terms = [w.strip(u' ') for w in text.split(' ')]
 
+        # Process with tokens
+        processed_terms = TextParser._process_terms(terms, save_tokens)
+
+        if stemmer is not None:
+
+            # Temp replace tokens with placeholder
+            tokens = []
+            for i, t in enumerate(processed_terms):
+                if Tokens.is_token(t):
+                    tokens.append(t)
+                    processed_terms[i] = TextParser._token_placeholder
+
+            # Pass to lemmatizer, and then check the result.
+            processed_terms = stemmer.lemmatize_to_list(u' '.join(processed_terms))
+
+            # Replace placeholder back
+            j = 0
+            for i, t in enumerate(processed_terms):
+                if t == TextParser._token_placeholder and j < len(tokens):
+                    processed_terms[i] = tokens[j]
+                    j += 1
+
+        if debug:
+            TextParser._print(processed_terms)
+
+        return processed_terms
+
+    @staticmethod
+    def _process_terms(terms, save_tokens):
+        assert(isinstance(terms, list))
+        parsed_terms = []
         for term in terms:
 
             if term is None:
                 continue
 
+            # TODO: return list which combines terms and tokens.
             modified_term, tokens = TextParser._split_tokens(term)
 
             if modified_term is not None:
@@ -55,9 +90,6 @@ class TextParser:
 
             if len(tokens) > 0 and save_tokens:
                 parsed_terms.extend(tokens)
-
-        if debug:
-            TextParser._print(parsed_terms)
 
         return parsed_terms
 
@@ -78,8 +110,17 @@ class TextParser:
         if number is not None:
             return None, [number]
 
+        url = Tokens.try_create_url(term)
+        if url is not None:
+            return None, [url]
+
         first_index = 0
         last_index = len(term) - 1
+
+        # TODO: Fix bug of incorrect order of extracted tokens
+        # Refactor, this implementation.
+        # Support case
+        # w0:w1,w2;w3 -> [w0, 'colon', w1, 'comma', w2, 'semicolon', w3]
 
         while first_index <= last_index:
             token = Tokens.try_create(term[first_index])
@@ -108,8 +149,13 @@ class TextParser:
 
 
 class ParsedText:
+    """
+    Represents a processed text with extra parameters
+    that were used during parsing.
+    """
 
     _number_example = u"0"
+    _url_example = u"http://sample.url"
 
     def __init__(self, terms, keep_tokens, is_lemmatized):
         assert(isinstance(terms, list))
@@ -162,8 +208,13 @@ class ParsedText:
         for i, m in enumerate(self._mask):
             if m is False:
                 continue
-            self._terms[i] = Tokens.NUMBER if self._terms[i] == self._number_example \
-                else Tokens.try_create(self._terms[i])
+
+            if self._terms[i] == self._number_example:
+                self._terms[i] = Tokens.NUMBER
+            elif self._terms[i] == self._url_example:
+                self._terms[i] = Tokens.URL
+            else:
+                self._terms[i] = Tokens.try_create(self._terms[i])
 
         self._mask = None
 
@@ -173,4 +224,3 @@ class ParsedText:
     def __iter__(self):
         for term in self._terms:
             yield term
-
