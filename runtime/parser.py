@@ -127,7 +127,7 @@ class TextParser:
                 k = l + 1
                 while k < len(term):
                     token = Tokens.try_create(term[k])
-                    if token is not None:
+                    if token is not None and token != Tokens.DASH:
                         break
                     k += 1
                 terms.append(term[l:k])
