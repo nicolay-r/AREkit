@@ -82,14 +82,12 @@ class TextParser:
             if term is None:
                 continue
 
-            # TODO: return list which combines terms and tokens.
-            modified_term, tokens = TextParser._split_tokens(term)
+            separated_terms = TextParser._split_tokens(term)
 
-            if modified_term is not None:
-                parsed_terms.append(modified_term)
+            if not save_tokens:
+                separated_terms = [term for term in separated_terms if not Tokens.is_token(term)]
 
-            if len(tokens) > 0 and save_tokens:
-                parsed_terms.extend(tokens)
+            parsed_terms.extend(separated_terms)
 
         return parsed_terms
 
@@ -103,44 +101,39 @@ class TextParser:
             modified term and list of extracted tokens.
         """
 
-        tokens_before = []
-        tokens_after = []
-
-        number = Tokens.try_create_number(term)
-        if number is not None:
-            return None, [number]
-
         url = Tokens.try_create_url(term)
         if url is not None:
-            return None, [url]
+            return [url]
 
-        first_index = 0
-        last_index = len(term) - 1
+        l = 0
+        terms = []
+        while l < len(term):
+            # token
+            token = Tokens.try_create(term[l])
+            if token is not None:
+                terms.append(token)
+                l += 1
+            # number
+            elif unicode.isdigit(term[l]):
+                k = l + 1
+                while unicode.isdigit(term[k]) and k < len(term):
+                    k += 1
+                token = Tokens.try_create_number(term[l:k])
+                assert(token is not None)
+                terms.append(token)
+                l = k
+            # term
+            else:
+                k = l + 1
+                while k < len(term):
+                    token = Tokens.try_create(term[k])
+                    if token is not None:
+                        break
+                    k += 1
+                terms.append(term[l:k])
+                l = k
 
-        # TODO: Fix bug of incorrect order of extracted tokens
-        # Refactor, this implementation.
-        # Support case
-        # w0:w1,w2;w3 -> [w0, 'colon', w1, 'comma', w2, 'semicolon', w3]
-
-        while first_index <= last_index:
-            token = Tokens.try_create(term[first_index])
-            if token is None:
-                break
-            tokens_before.append(token)
-            first_index += 1
-
-        while last_index >= first_index:
-            token = Tokens.try_create(term[last_index])
-            if token is None:
-                break
-            tokens_after.append(token)
-            last_index -= 1
-
-        # inplace concat.
-        tokens_before.extend(tokens_after[::-1])
-
-        modified_term = term[first_index:last_index+1] if last_index >= first_index else None
-        return modified_term, tokens_before
+        return terms
 
     @staticmethod
     def _print(terms):
