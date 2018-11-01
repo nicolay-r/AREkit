@@ -116,7 +116,7 @@ class TextParser:
             # number
             elif unicode.isdigit(term[l]):
                 k = l + 1
-                while unicode.isdigit(term[k]) and k < len(term):
+                while k < len(term) and unicode.isdigit(term[k]):
                     k += 1
                 token = Tokens.try_create_number(term[l:k])
                 assert(token is not None)
