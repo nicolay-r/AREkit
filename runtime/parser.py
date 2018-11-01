@@ -19,10 +19,6 @@ class TextParser:
         pass
 
     @staticmethod
-    def parse_to_list(text, save_tokens=False, stemmer=None, debug=False):
-        return TextParser._parse_core(text, save_tokens, stemmer, debug)
-
-    @staticmethod
     def parse(text, save_tokens=False, stemmer=None, debug=False):
         terms = TextParser._parse_core(text, save_tokens, stemmer, debug)
         return ParsedText(terms, keep_tokens=save_tokens, is_lemmatized=stemmer is not None)
