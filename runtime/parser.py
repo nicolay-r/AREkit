@@ -143,8 +143,8 @@ class ParsedText:
     that were used during parsing.
     """
 
-    _number_example = u"numberplaceholder"
-    _url_example = u"urlplaceholder"
+    _number_example = u"0"
+    _url_example = u"http://sample.com"
 
     def __init__(self, terms, keep_tokens, is_lemmatized):
         assert(isinstance(terms, list))
@@ -178,10 +178,10 @@ class ParsedText:
         for i, term in enumerate(self._terms):
 
             changed = False
-            if term == Tokens.NUMBER:
+            if term is Tokens.NUMBER:
                 self._terms[i] = self._number_example
                 changed = True
-            if term == Tokens.URL:
+            elif term is Tokens.URL:
                 self._terms[i] = self._url_example
                 changed = True
             elif Tokens.is_token(term):
