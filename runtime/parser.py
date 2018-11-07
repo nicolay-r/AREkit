@@ -167,6 +167,9 @@ class ParsedText:
         for term in self._terms:
             yield term
 
+    def get_term(self, i):
+        return self._terms[i]
+
     def is_tokenized(self):
         return self._mask is None
 
