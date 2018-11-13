@@ -9,6 +9,8 @@ class MystemWrapper(Stemmer):
         https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
     """
 
+    separator = u' '
+
     pos_names = [u"a", u"adv", u"advpro", u"anum", u"apro", u"com", u"conj",
                  u"intj", u"num", u"part", u"pr", u"s", u"spro", u"v",
                  Stemmer._pos_unknown, Stemmer._pos_empty]
@@ -26,7 +28,7 @@ class MystemWrapper(Stemmer):
         result_list = self.mystem.lemmatize(text.lower())
 
         if self.entire_input:
-            return [term.strip() for term in result_list if term.strip()]
+            return self._filter_whitespaces(result_list, self.separator)
 
         return result_list
 
@@ -41,11 +43,13 @@ class MystemWrapper(Stemmer):
         if remove_new_lines:
             self._remove_new_lines(lemmas)
 
+        # remove whitespace strings.
+        lemmas = self._filter_whitespaces(lemmas, self.separator)
+
         result = " ".join(lemmas)
 
         # print '"%s"->"%s"' % (text.encode('utf-8'), result.encode('utf-8')), ' ', len(lemmas)
-        # The problem when 'G8' word, it will not be lemmatized, so next line
-        # is a fix
+        # The problem when 'G8' word, it will not be lemmatized, so next line is a fix
         if len(result) == 0:
             result = text
 
@@ -67,6 +71,10 @@ class MystemWrapper(Stemmer):
         new_line = '\n'
         while new_line in terms:
             terms.remove(new_line)
+
+    @staticmethod
+    def _filter_whitespaces(terms, separator):
+        return [term.strip(separator) for term in terms if term in term.strip(separator)]
 
     def get_term_pos(self, term):
         assert(isinstance(term, unicode))
