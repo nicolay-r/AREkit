@@ -73,11 +73,13 @@ class RusvectoresEmbedding(Embedding):
             return False
         return super(RusvectoresEmbedding, self).__getitem__(item)
 
-    def find_index_by_word(self, word):
+    def find_index_by_word(self, word, debug=True):
         assert(type(word) == unicode)
 
         item = self._lemmatize_term_to_rusvectores(word, self.stemmer)
         if item is None:
+            if debug:
+                print u"Word was not found in rusvectores: {}".format(word)
             return False
         return super(RusvectoresEmbedding, self).find_index_by_word(item)
 
