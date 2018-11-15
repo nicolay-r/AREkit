@@ -14,6 +14,26 @@ This core provides an additional wrappers for:
 * News collection from [rusvectores](http://rusvectores.org/ru/models/), which has specific pos prefixes for words of vocabulary;
 * Wrapper for additional punctuation signs (tokens) in text, i.e. `":", ";", ".", "!"` etc.
 
+## Processing
+
+### Lemmatization
+
+1. Yandex Mystem wrapper
+
+### Named entities recognition (NER)
+
+Provides wrappers for: 
+1. [DeepPavlov](https://github.com/deepmipt/ner)
+2. [Texterra](https://texterra.ispras.ru/)
+
+### Syntax parser
+
+Provides wrappers for:
+1. INemo SyntaxNet
+2. Texterra syntax parser
+
+
+
 ## Installation
 
 Using [virtualenv](https://www.pythoncentral.io/how-to-install-virtualenv-python/).

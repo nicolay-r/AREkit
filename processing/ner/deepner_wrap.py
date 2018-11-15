@@ -1,5 +1,4 @@
 from core.processing.ner.base import NamedEntityRecognition
-from core.source.entity import Entity
 import requests
 import json
 
