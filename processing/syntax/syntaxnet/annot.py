@@ -5,7 +5,7 @@ Original: https://github.com/IINemo/syntaxnet_wrapper
 
 
 class Span(object):
-    def __init__(self, begin = -1, end = -1):
+    def __init__(self, begin=-1, end=-1):
         self.begin = begin
         self.end = end
 
@@ -28,8 +28,8 @@ class Span(object):
 
 
 class Word(Span):
-    def __init__(self, pos_tag = u'', morph = u'', word_form = u'',
-                 parent = -1, link_name = u'', *args, **kwargs):
+    def __init__(self, pos_tag=u'', morph=u'', word_form=u'',
+                 parent=-1, link_name=u'', *args, **kwargs):
         super(Word, self).__init__(*args, **kwargs)
 
         self.pos_tag = pos_tag
@@ -39,11 +39,11 @@ class Word(Span):
         self.link_name = link_name
 
     def __unicode__(self):
-        return u'{} | word_form: {} pos_tag: {} morph: {} parent {} link_name: {}'.format(super(Word, self).__unicode__(),
-                                                                                          self.word_form,
-                                                                                     self.pos_tag,
-                                                                                     self.morph,
-                                                                                     self.parent,
-                                                                                     self.link_name)
+        return u'{}\tword_form: {}\tpos_tag: {}\tmorph: {}\tparent: {}\tlink_name: {}'.format(super(Word, self).__unicode__(),
+                                                                                             self.word_form,
+                                                                                             self.pos_tag,
+                                                                                             self.morph,
+                                                                                             self.parent,
+                                                                                             self.link_name)
     def __str__(self):
         return self.__unicode__().encode('utf8')

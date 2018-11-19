@@ -15,6 +15,8 @@ class SyntaxNetParserWrapper:
         pass
 
     def parse(self, text, sentences=None, raw_output=False, debug=False):
+        assert(isinstance(text, unicode))
+
         raw_input_s = self._prepare_raw_input_for_syntaxnet(text,
                                                             sentences)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -87,11 +89,11 @@ class SyntaxNetParserWrapper:
         for sent in ConllFormatStreamParser(string):
             new_sent = list()
             for word in sent:
-                new_word = Word(word_form = word[1].decode('utf8'),
-                                pos_tag = word[3].decode('utf8'),
-                                morph = word[5].decode('utf8'),
-                                parent = int(word[6]) - 1,
-                                link_name = word[7].decode('utf8'))
+                new_word = Word(word_form=word[1].decode('utf8'),
+                                pos_tag=word[3].decode('utf8'),
+                                morph=word[5].decode('utf8'),
+                                parent=int(word[6])-1,
+                                link_name=word[7].decode('utf8'))
                 new_sent.append(new_word)
             result.append(new_sent)
 
