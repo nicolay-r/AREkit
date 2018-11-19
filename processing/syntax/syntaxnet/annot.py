@@ -40,10 +40,10 @@ class Word(Span):
 
     def __unicode__(self):
         return u'{}\tword_form: {}\tpos_tag: {}\tmorph: {}\tparent: {}\tlink_name: {}'.format(super(Word, self).__unicode__(),
-                                                                                             self.word_form,
-                                                                                             self.pos_tag,
-                                                                                             self.morph,
-                                                                                             self.parent,
-                                                                                             self.link_name)
+                                                                                              self.word_form.ljust(20),
+                                                                                              self.pos_tag,
+                                                                                              self.morph.ljust(95),
+                                                                                              self.parent,
+                                                                                              self.link_name)
     def __str__(self):
         return self.__unicode__().encode('utf8')
