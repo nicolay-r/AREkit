@@ -31,7 +31,7 @@ class SyntaxNetParserWrapper:
         if raw_output:
             return raw_output_s
 
-        trees = self._parse_conll_format(raw_output_s)
+        trees = self._parse_conll_format(text, raw_output_s)
 
         if sentences:
             self._fill_spans_in_trees(sentences, trees)
@@ -84,15 +84,14 @@ class SyntaxNetParserWrapper:
 
         return buf
 
-    def _parse_conll_format(self, string):
+    def _parse_conll_format(self, text, string):
         result = list()
         for sent in ConllFormatStreamParser(string):
             new_sent = list()
             end = 0
             for word in sent:
                 word_form = word[1].decode('utf8')
-
-                begin = string.find(word_form, end)
+                begin = text.find(word_form, end)
                 end = begin + len(word_form)
 
                 new_word = Word(begin=begin,
