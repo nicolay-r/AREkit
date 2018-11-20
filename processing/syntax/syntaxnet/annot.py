@@ -21,7 +21,7 @@ class Span(object):
         return u'{} {}'.format(self.begin, self.end)
 
     def __str__(self):
-        return self.__unicode__().encode('utf8')
+        return self.__unicode__().encode('utf-8')
 
     def equal(self, other):
         return self.begin == other.begin and self.end == other.end
@@ -45,5 +45,6 @@ class Word(Span):
                                                                                               self.morph.ljust(95),
                                                                                               self.parent,
                                                                                               self.link_name)
+
     def __str__(self):
         return self.__unicode__().encode('utf8')

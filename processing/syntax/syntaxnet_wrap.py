@@ -88,12 +88,21 @@ class SyntaxNetParserWrapper:
         result = list()
         for sent in ConllFormatStreamParser(string):
             new_sent = list()
+            end = 0
             for word in sent:
-                new_word = Word(word_form=word[1].decode('utf8'),
+                word_form = word[1].decode('utf8')
+
+                begin = string.find(word_form, end)
+                end = begin + len(word_form)
+
+                new_word = Word(begin=begin,
+                                end=end,
+                                word_form=word_form,
                                 pos_tag=word[3].decode('utf8'),
                                 morph=word[5].decode('utf8'),
                                 parent=int(word[6])-1,
                                 link_name=word[7].decode('utf8'))
+
                 new_sent.append(new_word)
             result.append(new_sent)
 
