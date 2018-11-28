@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from core.source.tokens import Tokens
+from core.source.tokens import Tokens, Token
 from core.processing.lemmatization.base import Stemmer
 
 
@@ -19,9 +19,9 @@ class TextParser:
         pass
 
     @staticmethod
-    def parse(text, save_tokens=False, stemmer=None, debug=False):
-        terms = TextParser._parse_core(text, save_tokens, stemmer, debug)
-        return ParsedText(terms, keep_tokens=save_tokens, is_lemmatized=stemmer is not None)
+    def parse(text, keep_tokens=False, stemmer=None, debug=False):
+        terms = TextParser._parse_core(text, keep_tokens, stemmer, debug)
+        return ParsedText(terms, hide_tokens=keep_tokens)
 
     @staticmethod
     def _parse_core(text, save_tokens=False, stemmer=None, debug=False):
@@ -50,7 +50,7 @@ class TextParser:
             # Temp replace tokens with placeholder
             tokens = []
             for i, t in enumerate(processed_terms):
-                if Tokens.is_token(t):
+                if isinstance(t, Token):
                     tokens.append(t)
                     processed_terms[i] = TextParser._token_placeholder
 
@@ -70,22 +70,28 @@ class TextParser:
         return processed_terms
 
     @staticmethod
-    def _process_terms(terms, save_tokens):
+    def _process_terms(terms, keep_tokens):
+        """
+        terms: list
+            list of terms
+        keep_tokes: bool
+            keep or remove tokens from list of terms
+        """
         assert(isinstance(terms, list))
-        parsed_terms = []
+        parsed = []
         for term in terms:
 
             if term is None:
                 continue
 
-            separated_terms = TextParser._split_tokens(term)
+            terms_with_tokens = TextParser._split_tokens(term)
 
-            if not save_tokens:
-                separated_terms = [term for term in separated_terms if not Tokens.is_token(term)]
+            if not keep_tokens:
+                terms_with_tokens = [term for term in terms_with_tokens if not isinstance(term, Token)]
 
-            parsed_terms.extend(separated_terms)
+            parsed.extend(terms_with_tokens)
 
-        return parsed_terms
+        return parsed
 
 
     @staticmethod
@@ -102,34 +108,34 @@ class TextParser:
             return [url]
 
         l = 0
-        terms = []
+        terms_with_tokens = []
         while l < len(term):
             # token
-            token = Tokens.try_create(term[l])
-            if token is not None:
-                terms.append(token)
+            token_value = Tokens.try_create(term[l])
+            if token_value is not None:
+                terms_with_tokens.append(Token(term[l], token_value))
                 l += 1
             # number
             elif unicode.isdigit(term[l]):
                 k = l + 1
                 while k < len(term) and unicode.isdigit(term[k]):
                     k += 1
-                token = Tokens.try_create_number(term[l:k])
-                assert(token is not None)
-                terms.append(token)
+                token_value = Tokens.try_create_number(term[l:k])
+                assert(token_value is not None)
+                terms_with_tokens.append(Token(term[l:k], token_value))
                 l = k
             # term
             else:
                 k = l + 1
                 while k < len(term):
-                    token = Tokens.try_create(term[k])
-                    if token is not None and token != Tokens.DASH:
+                    token_value = Tokens.try_create(term[k])
+                    if token_value is not None and token_value != Tokens.DASH:
                         break
                     k += 1
-                terms.append(term[l:k])
+                terms_with_tokens.append(term[l:k])
                 l = k
 
-        return terms
+        return terms_with_tokens
 
     @staticmethod
     def _print(terms):
@@ -146,72 +152,47 @@ class ParsedText:
     _number_example = u"0"
     _url_example = u"http://sample.com"
 
-    def __init__(self, terms, keep_tokens, is_lemmatized):
+    def __init__(self, terms, hide_tokens):
         assert(isinstance(terms, list))
-        assert(isinstance(keep_tokens, bool))
-        assert(isinstance(is_lemmatized, bool))
+        assert(isinstance(hide_tokens, bool))
         self._terms = terms
-        self._mask = None
-        self.keep_tokens = keep_tokens
-        self.is_lemmatized = is_lemmatized
+        self.token_values_hidden = hide_tokens
 
     def subtext(self, begin, end):
         assert(isinstance(begin, int))
         assert(isinstance(end, int))
         return ParsedText(self._terms[begin:end],
-                          keep_tokens=self.keep_tokens,
-                          is_lemmatized=self.is_lemmatized)
+                          hide_tokens=self.token_values_hidden)
 
     @property
     def Terms(self):
         for term in self._terms:
-            yield term
+            yield self._output_term(term)
 
     def get_term(self, i):
-        return self._terms[i]
+        return self._output_term(self._terms[i])
 
-    def is_tokenized(self):
-        return self._mask is None
+    def is_token_values_hidden(self):
+        return self.token_values_hidden
 
-    def untokenize(self):
+    def unhide_token_values(self):
         """
-        replace tokens in list of terms with related term.
+        Display original token values, i.e. ',', '.'
         """
-        self._mask = [False] * len(self._terms)
-        for i, term in enumerate(self._terms):
+        self.token_values_hidden = False
 
-            changed = False
-            if term is Tokens.NUMBER:
-                self._terms[i] = self._number_example
-                changed = True
-            elif term is Tokens.URL:
-                self._terms[i] = self._url_example
-                changed = True
-            elif Tokens.is_token(term):
-                self._terms[i] = next(Tokens.iter_chars_by_token(term))
-                changed = True
-
-            self._mask[i] = changed
-
-    def tokenize(self):
+    def hide_token_values(self):
         """
-        revert some terms that were tokens into token values.
+        Display tokens as '<[COMMA]>', etc.
         """
-        if self._mask is None:
-            return
+        self.token_values_hidden = True
 
-        for i, m in enumerate(self._mask):
-            if m is False:
-                continue
+    def _output_term(self, term):
+        return self._get_token_as_term(term) if isinstance(term, Token) else term
 
-            if self._terms[i] == self._number_example:
-                self._terms[i] = Tokens.NUMBER
-            elif self._terms[i] == self._url_example:
-                self._terms[i] = Tokens.URL
-            else:
-                self._terms[i] = Tokens.try_create(self._terms[i])
-
-        self._mask = None
+    def _get_token_as_term(self, token):
+        return token.get_token_value() if self.token_values_hidden \
+            else u'"{}"'.format(token.get_original_value())
 
     def __len__(self):
         return len(self._terms)

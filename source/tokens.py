@@ -68,6 +68,7 @@ class Tokens:
         UNKNOWN_WORD}
 
     @staticmethod
+    # TODO. Return Token instance
     def try_create(subterm):
         """
         Trying create a token by given 'term' parameter
@@ -83,11 +84,13 @@ class Tokens:
         return Tokens._token_mapping[subterm]
 
     @staticmethod
+    # TODO. Return Token instance
     def try_create_number(term):
         assert(isinstance(term, unicode))
         return Tokens.NUMBER if term.isdigit() else None
 
     @staticmethod
+    # TODO. Return Token instance
     def try_create_url(term):
         assert(isinstance(term, unicode))
         result = urlparse(term)
@@ -109,3 +112,21 @@ class Tokens:
         for char, token in Tokens._token_mapping.iteritems():
             if term == token:
                 yield char
+
+
+class Token:
+    """
+    Token that stores original and resulted token values
+    i.e.: term=',', token_value='<[COMMA]>'
+    """
+    def __init__(self, term, token_value):
+        assert(isinstance(term, unicode))
+        assert(isinstance(token_value, unicode))
+        self._term = term
+        self._token_value = token_value
+
+    def get_original_value(self):
+        return self._term
+
+    def get_token_value(self):
+        return self._token_value
