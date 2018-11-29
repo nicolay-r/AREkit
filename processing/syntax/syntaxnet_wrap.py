@@ -15,18 +15,17 @@ class SyntaxNetParserWrapper:
     def __init__(self):
         pass
 
-    def parse(self, parsed_text, sentences=None, raw_output=False, debug=False):
-        assert(isinstance(parsed_text, ParsedText))
+    def parse(self, parsed_sentence, raw_output=False, debug=False):
+        assert(isinstance(parsed_sentence, ParsedText))
 
-        parsed_text.unhide_token_values()
-        text = u" ".join(parsed_text.Terms)
+        parsed_sentence.unhide_token_values()
+        text = u" ".join(parsed_sentence.Terms)
         if debug:
             print "------------------"
             print "SyntaxNetText (parsed text): {}".format(text.encode('utf-8'))
             print "------------------"
 
-        raw_input_s = self._prepare_raw_input_for_syntaxnet(text,
-                                                            sentences)
+        raw_input_s = self._prepare_raw_input_for_syntaxnet(text, sentences=None)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((self.host, self.port))
         sock.sendall(raw_input_s)
@@ -40,21 +39,7 @@ class SyntaxNetParserWrapper:
             return raw_output_s
 
         trees = self._parse_conll_format(text, raw_output_s)
-
-        if sentences:
-            self._fill_spans_in_trees(sentences, trees)
-
         return trees
-
-    def _fill_spans_in_trees(self, sentences, trees):
-        """
-        (C) IINemo
-        Original: https://github.com/IINemo/syntaxnet_wrapper
-        """
-        for in_sent, p_sent in zip(sentences, trees):
-            for in_word, p_word in zip(in_sent, p_sent):
-                p_word.begin = in_word.begin
-                p_word.end = in_word.end
 
     def _prepare_raw_input_for_syntaxnet(self, text, sentences):
         """
@@ -93,27 +78,25 @@ class SyntaxNetParserWrapper:
         return buf
 
     def _parse_conll_format(self, text, string):
-        result = list()
-        for sent in ConllFormatStreamParser(string):
-            new_sent = list()
-            end = 0
-            for word in sent:
-                word_form = word[1].decode('utf8')
-                begin = text.find(word_form, end)
-                end = begin + len(word_form)
+        sent = ConllFormatStreamParser(string).next()
+        words = list()
+        end = 0
+        for word in sent:
+            word_form = word[1].decode('utf8')
+            begin = text.find(word_form, end)
+            end = begin + len(word_form)
 
-                new_word = Word(begin=begin,
-                                end=end,
-                                word_form=word_form,
-                                pos_tag=word[3].decode('utf8'),
-                                morph=word[5].decode('utf8'),
-                                parent=int(word[6])-1,
-                                link_name=word[7].decode('utf8'))
+            new_word = Word(begin=begin,
+                            end=end,
+                            word_form=word_form,
+                            pos_tag=word[3].decode('utf8'),
+                            morph=word[5].decode('utf8'),
+                            parent=int(word[6])-1,
+                            link_name=word[7].decode('utf8'))
 
-                new_sent.append(new_word)
-            result.append(new_sent)
+            words.append(new_word)
 
-        return result
+        return words
 
 
 
