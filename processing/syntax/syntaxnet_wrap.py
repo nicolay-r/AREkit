@@ -18,7 +18,14 @@ class SyntaxNetParserWrapper:
     def parse(self, parsed_text, sentences=None, raw_output=False, debug=False):
         assert(isinstance(parsed_text, ParsedText))
 
-        raw_input_s = self._prepare_raw_input_for_syntaxnet(parsed_text,
+        parsed_text.unhide_token_values()
+        text = u" ".join(parsed_text.Terms)
+        if debug:
+            print "------------------"
+            print "SyntaxNetText (parsed text): {}".format(text.encode('utf-8'))
+            print "------------------"
+
+        raw_input_s = self._prepare_raw_input_for_syntaxnet(text,
                                                             sentences)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((self.host, self.port))
@@ -32,7 +39,6 @@ class SyntaxNetParserWrapper:
         if raw_output:
             return raw_output_s
 
-        text = u" ".join(parsed_text.Terms)
         trees = self._parse_conll_format(text, raw_output_s)
 
         if sentences:

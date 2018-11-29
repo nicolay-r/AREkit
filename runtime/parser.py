@@ -192,7 +192,7 @@ class ParsedText:
 
     def _get_token_as_term(self, token):
         return token.get_token_value() if self.token_values_hidden \
-            else u'"{}"'.format(token.get_original_value())
+            else token.get_original_value()
 
     def __len__(self):
         return len(self._terms)
