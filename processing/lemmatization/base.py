@@ -12,7 +12,7 @@ class Stemmer:
     def lemmatize_to_list(self, text):
         raise Exception("Not implemented")
 
-    def lemmatize_to_str(self, text, remove_new_lines=True):
+    def lemmatize_to_str(self, text):
         raise Exception("Not implemented")
 
     # TODO: POS should be moved from here

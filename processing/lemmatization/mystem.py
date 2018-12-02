@@ -12,8 +12,6 @@ class MystemWrapper(Stemmer):
     _pos_adj = u"a"
     _pos_noun = u"s"
 
-    separator = u' '
-
     pos_names = [_pos_noun, u"adv", u"advpro", u"anum", u"apro", u"com", u"conj",
                  u"intj", u"num", u"part", u"pr", _pos_adj, u"spro", u"v",
                  Stemmer._pos_unknown, Stemmer._pos_empty]
@@ -28,36 +26,21 @@ class MystemWrapper(Stemmer):
         self.mystem = Mystem(entire_input=entire_input)
 
     def lemmatize_to_list(self, text):
-        result_list = self.mystem.lemmatize(text.lower())
+        return self._lemmatize_core(text)
 
-        if self.entire_input:
-            return self._filter_whitespaces(result_list, self.separator)
+    def lemmatize_to_str(self, text):
+        result = u" ".join(self._lemmatize_core(text))
 
-        return result_list
+        # print '"%s"->"%s"' % (text.encode('utf-8'),
+        # result.encode('utf-8')), ' ', len(lemmas)
+        # The problem when 'G8' word, it will not be
+        # lemmatized, so next line is a hot fix
+        return result if len(result) != 0 else text
 
-    def lemmatize_to_str(self, text, remove_new_lines=True):
-        """
-        returns: unicode
-            lemmatized or original string (in case of empty lemmatization result)
-        """
+    def _lemmatize_core(self, text):
         assert(isinstance(text, unicode))
-        lemmas = self.mystem.lemmatize(text.lower())
-
-        if remove_new_lines:
-            self._remove_new_lines(lemmas)
-
-        # remove whitespace strings.
-        lemmas = self._filter_whitespaces(lemmas, self.separator)
-
-        result = " ".join(lemmas)
-
-        # print '"%s"->"%s"' % (text.encode('utf-8'), result.encode('utf-8')), ' ', len(lemmas)
-        # The problem when 'G8' word, it will not be lemmatized, so next line is a fix
-        if len(result) == 0:
-            result = text
-
-        assert(isinstance(result, unicode))
-        return result
+        result_list = self.mystem.lemmatize(text.lower())
+        return self._filter_whitespaces(result_list)
 
     @staticmethod
     def _get_pos(a):
@@ -67,17 +50,8 @@ class MystemWrapper(Stemmer):
         return pos
 
     @staticmethod
-    def _remove_new_lines(terms):
-        """
-        Remove newline character in place
-        """
-        new_line = '\n'
-        while new_line in terms:
-            terms.remove(new_line)
-
-    @staticmethod
-    def _filter_whitespaces(terms, separator):
-        return [term.strip(separator) for term in terms if term in term.strip(separator)]
+    def _filter_whitespaces(terms):
+        return [term.strip() for term in terms if term.strip()]
 
     def get_term_pos(self, term):
         assert(isinstance(term, unicode))
