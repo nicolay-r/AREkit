@@ -30,8 +30,14 @@ class Span(object):
 class Word(Span):
     def __init__(self, pos_tag=u'', morph=u'', word_form=u'',
                  parent=-1, link_name=u'', *args, **kwargs):
-        super(Word, self).__init__(*args, **kwargs)
+        assert(isinstance(pos_tag, unicode))
+        assert(isinstance(morph, unicode))
+        assert(isinstance(word_form, unicode))
+        assert(isinstance(pos_tag, unicode))
+        assert(isinstance(parent, int))
+        assert(isinstance(link_name, unicode))
 
+        super(Word, self).__init__(*args, **kwargs)
         self.pos_tag = pos_tag
         self.morph = morph
         self.word_form = word_form

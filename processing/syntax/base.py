@@ -3,7 +3,7 @@ class SyntaxParser:
     Interface
     """
 
-    def parse(self, text, debug=False):
+    def parse(self, text, raw_output=False, debug=False):
         """
         return: SyntaxAnalysisResult
         """
