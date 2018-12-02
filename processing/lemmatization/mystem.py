@@ -43,20 +43,8 @@ class MystemWrapper(Stemmer):
         return self._filter_whitespaces(result_list)
 
     @staticmethod
-    def _get_pos(a):
-        pos = a['gr'].split(',')[0]
-        if '=' in pos:
-            pos = pos.split('=')[0]
-        return pos
-
-    @staticmethod
     def _filter_whitespaces(terms):
         return [term.strip() for term in terms if term.strip()]
-
-    def get_term_pos(self, term):
-        assert(isinstance(term, unicode))
-        analyzed = self.mystem.analyze(term)
-        return self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self._pos_unknown
 
     def is_adjective(self, pos_type):
         assert(isinstance(pos_type, unicode))
@@ -65,35 +53,3 @@ class MystemWrapper(Stemmer):
     def is_noun(self, pos_type):
         assert(isinstance(pos_type, unicode))
         return pos_type.lower() == self._pos_noun
-
-    def get_terms_pos(self, terms):
-        """ list of part of speech according to the certain word in text
-        """
-        assert(isinstance(terms, list))
-        pos_list = []
-        for term in terms:
-            analyzed = self.mystem.analyze(term)
-            pos = self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self._pos_unknown
-            pos_list.append(pos)
-
-        return pos_list
-
-    def _get_term_pos(self, analysis):
-        """
-        part of speech description:
-            https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
-        returns: str or None
-        """
-        if 'analysis' not in analysis:
-            return self._pos_unknown
-
-        info = analysis['analysis']
-        if len(info) == 0:
-            return self._pos_unknown
-
-        return self._get_pos(info[0])
-
-    def pos_to_int(self, pos):
-        assert(isinstance(pos, unicode))
-        pos = pos.lower()
-        return self.pos_names.index(pos)

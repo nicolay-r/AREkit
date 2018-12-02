@@ -7,11 +7,9 @@ class Embedding(object):
     Represents default wrapper over W2V API.
     """
 
-    def __init__(self, w2v_model, stemmer):
+    def __init__(self, w2v_model):
         assert(isinstance(w2v_model, Word2Vec))
-        assert(isinstance(stemmer, Stemmer))
         self.w2v_model = w2v_model
-        self.stemmer = stemmer
 
     @property
     def vector_size(self):
