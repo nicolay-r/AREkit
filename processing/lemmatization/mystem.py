@@ -9,13 +9,6 @@ class MystemWrapper(Stemmer):
         https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
     """
 
-    _pos_adj = u"a"
-    _pos_noun = u"s"
-
-    pos_names = [_pos_noun, u"adv", u"advpro", u"anum", u"apro", u"com", u"conj",
-                 u"intj", u"num", u"part", u"pr", _pos_adj, u"spro", u"v",
-                 Stemmer._pos_unknown, Stemmer._pos_empty]
-
     def __init__(self, entire_input=False):
         """
         entire_input: bool
@@ -45,11 +38,3 @@ class MystemWrapper(Stemmer):
     @staticmethod
     def _filter_whitespaces(terms):
         return [term.strip() for term in terms if term.strip()]
-
-    def is_adjective(self, pos_type):
-        assert(isinstance(pos_type, unicode))
-        return pos_type.lower() == self._pos_adj
-
-    def is_noun(self, pos_type):
-        assert(isinstance(pos_type, unicode))
-        return pos_type.lower() == self._pos_noun
