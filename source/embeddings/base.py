@@ -1,5 +1,6 @@
 from gensim.models.word2vec import Word2Vec
 from core.processing.lemmatization.base import Stemmer
+from core.processing.pos.base import POSTagger
 
 
 class Embedding(object):
@@ -7,9 +8,21 @@ class Embedding(object):
     Represents default wrapper over W2V API.
     """
 
-    def __init__(self, w2v_model):
+    def __init__(self, w2v_model, stemmer=None, pos_tagger=None):
         assert(isinstance(w2v_model, Word2Vec))
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
+        assert(isinstance(pos_tagger, POSTagger) or pos_tagger is None)
         self.w2v_model = w2v_model
+        self._stemmer = stemmer
+        self._pos_tagger = pos_tagger
+
+    @property
+    def Stemmer(self):
+        return self._stemmer
+
+    @property
+    def PosTagger(self):
+        return self._pos_tagger
 
     @property
     def vector_size(self):
