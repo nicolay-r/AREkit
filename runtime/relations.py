@@ -10,8 +10,8 @@ class RelationCollection:
         assert(type(relation_list) == list)
         self.relations = relation_list
 
-    @staticmethod
-    def from_news_opinion(news, opinion, synonyms, ignored_entity_values=[], debug=False):
+    @classmethod
+    def from_news_opinion(cls, news, opinion, synonyms, ignored_entity_values=[], debug=False):
         """
         lemmatize_to_str_func: function
             non lemmatized (unicode) -> (unicode), lemmatized string
@@ -58,7 +58,7 @@ class RelationCollection:
                         r = Relation(e1.ID, e2.ID, news)
                         relations.append(r)
 
-        return RelationCollection(relations)
+        return cls(relations)
 
     def apply_filter(self, filter_function):
         self.relations = [r for r in self.relations if filter_function(r)]
