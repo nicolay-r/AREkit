@@ -25,8 +25,12 @@ class Embedding(object):
         return self._pos_tagger
 
     @property
-    def vector_size(self):
+    def VectorSize(self):
         return self.w2v_model.vector_size
+
+    @property
+    def VocabularySize(self):
+        raise Exception("Not Implemented")
 
     @property
     def vocab(self):

@@ -1,4 +1,4 @@
-from core.source.tokens import Tokens
+from core.source.tokens import Tokens, Token
 from core.runtime.utils import get_random_vector
 
 
@@ -33,8 +33,8 @@ class TokenEmbeddingVectors:
 
     @staticmethod
     def get_token_index(token):
-        assert(isinstance(token, unicode))
-        return TokenEmbeddingVectors.tokens.index(token)
+        assert(isinstance(token, Token))
+        return TokenEmbeddingVectors.tokens.index(token.get_token_value())
 
     def __getitem__(self, token):
         assert (isinstance(token, unicode))
