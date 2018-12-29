@@ -7,7 +7,7 @@ class TextParser:
     """
     Represents a parser of news sentences.
     Now uses in neural networks for text processing.
-    As a result we have a list of terms, where term could be a
+    As a result we have a list of TERMS, where term could be a
         1) Word
         2) Token
     """
@@ -38,38 +38,35 @@ class TextParser:
         assert(isinstance(text, unicode))
         assert(isinstance(save_tokens, bool))
 
-        # Separate everything via spaces.
-        terms = [w.strip(u' ') for w in text.split(' ')]
-
-        # Process with tokens
-        processed_terms = TextParser._process_terms(terms, save_tokens)
+        words = [word.strip(u' ') for word in text.split(' ')]
+        terms = TextParser._process_words(words, save_tokens)
 
         if debug:
-            TextParser._print(processed_terms)
+            TextParser._print(terms)
 
-        return processed_terms
+        return terms
 
     @staticmethod
-    def _process_terms(terms, keep_tokens):
+    def _process_words(words, keep_tokens):
         """
         terms: list
             list of terms
         keep_tokes: bool
             keep or remove tokens from list of terms
         """
-        assert(isinstance(terms, list))
+        assert(isinstance(words, list))
         parsed = []
-        for term in terms:
+        for word in words:
 
-            if term is None:
+            if word is None:
                 continue
 
-            terms_with_tokens = TextParser._split_tokens(term)
+            words_and_tokens = TextParser._split_tokens(word)
 
             if not keep_tokens:
-                terms_with_tokens = [term for term in terms_with_tokens if not isinstance(term, Token)]
+                words_and_tokens = [word for word in words_and_tokens if not isinstance(word, Token)]
 
-            parsed.extend(terms_with_tokens)
+            parsed.extend(words_and_tokens)
 
         return parsed
 
@@ -88,12 +85,12 @@ class TextParser:
             return [Token(url, Tokens.URL)]
 
         l = 0
-        terms_with_tokens = []
+        words_and_tokens = []
         while l < len(term):
             # token
             token_value = Tokens.try_create(term[l])
             if token_value is not None:
-                terms_with_tokens.append(Token(term[l], token_value))
+                words_and_tokens.append(Token(term[l], token_value))
                 l += 1
             # number
             elif unicode.isdigit(term[l]):
@@ -102,7 +99,7 @@ class TextParser:
                     k += 1
                 token_value = Tokens.try_create_number(term[l:k])
                 assert(token_value is not None)
-                terms_with_tokens.append(Token(term[l:k], token_value))
+                words_and_tokens.append(Token(term[l:k], token_value))
                 l = k
             # term
             else:
@@ -112,15 +109,20 @@ class TextParser:
                     if token_value is not None and token_value != Tokens.DASH:
                         break
                     k += 1
-                terms_with_tokens.append(term[l:k])
+                words_and_tokens.append(term[l:k])
                 l = k
 
-        return terms_with_tokens
+        return words_and_tokens
 
     @staticmethod
     def _print(terms):
-        for t in terms:
-            print '"{}" '.format(t.encode('utf-8')),
+        for term in terms:
+            if isinstance(term, Token):
+                print '"TOKEN: {}, {}" '.format(
+                    term.get_original_value().encode('utf-8'),
+                    term.get_token_value().encode('utf-8'))
+            else:
+                print '"WORD: {}" '.format(term.encode('utf-8'))
 
 
 class ParsedText:
