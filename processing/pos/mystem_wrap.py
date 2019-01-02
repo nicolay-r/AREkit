@@ -4,12 +4,25 @@ from pymystem3 import Mystem
 
 class POSMystemWrapper(POSTagger):
 
-    _pos_adj = u"a"
-    _pos_noun = u"s"
+    PosAdjective = u"a"
+    PosNoun = u"s"
 
-    pos_names = [_pos_noun, u"adv", u"advpro", u"anum", u"apro", u"com", u"conj",
-                 u"intj", u"num", u"part", u"pr", _pos_adj, u"spro", u"v",
-                 POSTagger._pos_unknown, POSTagger._pos_empty]
+    pos_names = [PosNoun,
+                 u"adv",
+                 u"advpro",
+                 u"anum",
+                 u"apro",
+                 u"com",
+                 u"conj",
+                 u"intj",
+                 u"num",
+                 u"part",
+                 u"pr",
+                 PosAdjective,
+                 u"spro",
+                 u"v",
+                 POSTagger.Unknown,
+                 POSTagger.Empty]
 
     def __init__(self, mystem):
         """
@@ -27,7 +40,7 @@ class POSMystemWrapper(POSTagger):
         pos_list = []
         for term in terms:
             analyzed = self.mystem.analyze(term)
-            pos = self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self._pos_unknown
+            pos = self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
             pos_list.append(pos)
 
         return pos_list
@@ -35,7 +48,7 @@ class POSMystemWrapper(POSTagger):
     def get_term_pos(self, term):
         assert(isinstance(term, unicode))
         analyzed = self.mystem.analyze(term)
-        return self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self._pos_unknown
+        return self._get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
 
     def pos_to_int(self, pos):
         assert(isinstance(pos, unicode))
@@ -49,11 +62,11 @@ class POSMystemWrapper(POSTagger):
         returns: str or None
         """
         if 'analysis' not in analysis:
-            return self._pos_unknown
+            return self.Unknown
 
         info = analysis['analysis']
         if len(info) == 0:
-            return self._pos_unknown
+            return self.Unknown
 
         return self._get_pos(info[0])
 
@@ -66,9 +79,9 @@ class POSMystemWrapper(POSTagger):
 
     def is_adjective(self, pos_type):
         assert(isinstance(pos_type, unicode))
-        return pos_type.lower() == self._pos_adj
+        return pos_type.lower() == self.PosAdjective
 
     def is_noun(self, pos_type):
         assert(isinstance(pos_type, unicode))
-        return pos_type.lower() == self._pos_noun
+        return pos_type.lower() == self.PosNoun
 

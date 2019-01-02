@@ -40,7 +40,7 @@ class RusvectoresEmbedding(Embedding):
 
         term = self._stemmer.lemmatize_to_str(term)
         pos = self._pos_tagger.get_term_pos(term)
-        if pos is self._pos_tagger.get_pos_unknown_token():
+        if pos is self._pos_tagger.Unknown:
             return None
         return '_'.join([term, pos])
 
