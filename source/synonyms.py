@@ -14,7 +14,7 @@ class SynonymsCollection:
 
     @classmethod
     def from_file(cls, filepath, stemmer, debug=False):
-        assert(isinstance(filepath, str))
+        assert(isinstance(filepath, unicode))
         assert(isinstance(stemmer, Stemmer))
         by_index = []
         by_synonym = {}

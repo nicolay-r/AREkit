@@ -54,10 +54,10 @@ class OpinionCollection:
             filepath: string or list
                 single filepath or list of filepaths.
         """
-        assert(isinstance(filepath, str) or isinstance(filepath, list))
+        assert(isinstance(filepath, unicode) or isinstance(filepath, list))
         assert(isinstance(stemmer, Stemmer))
 
-        if isinstance(synonyms_filepaths, str):
+        if isinstance(synonyms_filepaths, unicode):
             synonyms = SynonymsCollection.from_file(synonyms_filepaths, stemmer=stemmer, debug=debug)
         elif isinstance(synonyms_filepaths, list):
             synonyms = SynonymsCollection.from_files(synonyms_filepaths, stemmer=stemmer, debug=debug)
@@ -66,9 +66,9 @@ class OpinionCollection:
 
         opinions = []
         filepaths = []
-        if (isinstance(filepath, str)):
+        if (isinstance(filepath, unicode)):
             filepaths.append(filepath)
-        elif (isinstance(filepath, str)):
+        elif (isinstance(filepath, unicode)):
             filepaths = filepath
 
         for fp in filepaths:

@@ -63,7 +63,7 @@ class CollectionGraph:
             assert(isinstance(graph_collection, CollectionGraph))
             assert(isinstance(v1, int))
             assert(isinstance(v2, int))
-            assert(isinstance(color, str) or color is None)
+            assert(isinstance(color, unicode) or color is None)
             assert(isinstance(label, Label))
 
             if ((graph_collection.has_edge(v1, v2) or

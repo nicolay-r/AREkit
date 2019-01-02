@@ -35,7 +35,7 @@ class News:
     def from_file(cls, filepath, entities, stemmer):
         """ Read news from file
         """
-        assert(isinstance(filepath, unicode) or isinstance(filepath, str))
+        assert(isinstance(filepath, unicode) or isinstance(filepath, unicode))
         assert(isinstance(entities, EntityCollection))
         assert(isinstance(stemmer, Stemmer))
 

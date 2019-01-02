@@ -68,8 +68,8 @@ class MethodStatistic:
 class FilesToCompare:
 
     def __init__(self, test_filepath, etalon_filepath, index):
-        assert(isinstance(test_filepath, str))
-        assert(isinstance(etalon_filepath, str))
+        assert(isinstance(test_filepath, unicode))
+        assert(isinstance(etalon_filepath, unicode))
         assert(isinstance(index, int))
         self.test_fp_ = test_filepath
         self.etalon_fp_ = etalon_filepath
