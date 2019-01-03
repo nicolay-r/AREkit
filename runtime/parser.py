@@ -148,9 +148,14 @@ class ParsedText:
                           hide_tokens=self.token_values_hidden)
 
     @property
+    # TODO: Processing outside. Method also might be renamed as 'iter_*'
     def Terms(self):
         for term in self._terms:
             yield self._output_term(term)
+
+    def iter_raw_terms(self):
+        for term in self._terms:
+            yield term
 
     @property
     def Lemmas(self):

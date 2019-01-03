@@ -12,6 +12,7 @@ class TokenEmbeddingVectors:
                     Tokens.SEMICOLON,
                     Tokens.QUOTE,
                     Tokens.DASH,
+                    Tokens.DOT,
                     Tokens.EXC_SIGN,
                     Tokens.QUESTION_SIGN,
                     Tokens.OPEN_BRACKET,
@@ -20,6 +21,8 @@ class TokenEmbeddingVectors:
                     Tokens.NUMBER,
                     Tokens.TRIPLE_DOTS,
                     Tokens.UNKNOWN_CHAR,
+                    Tokens.NEW_LINE,
+                    Tokens.URL,
                     Tokens.UNKNOWN_WORD]
 
     def __init__(self, vector_size):
