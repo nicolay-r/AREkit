@@ -16,6 +16,16 @@ class Embedding(object):
         self._stemmer = stemmer
         self._pos_tagger = pos_tagger
 
+    @classmethod
+    def from_file(cls, filepath, binary, stemmer=None, pos_tagger=None):
+        assert(isinstance(binary, bool))
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
+        assert(isinstance(pos_tagger, POSTagger) or pos_tagger is None)
+
+        w2v_model = Word2Vec.load_word2vec_format(filepath, binary=binary)
+
+        return cls(w2v_model, stemmer, pos_tagger)
+
     @property
     def Stemmer(self):
         return self._stemmer
