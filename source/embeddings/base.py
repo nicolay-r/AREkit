@@ -8,8 +8,8 @@ class Embedding(object):
     Represents default wrapper over W2V API.
     """
 
-    def __init__(self, w2v_model, stemmer=None, pos_tagger=None):
-        assert(isinstance(w2v_model, Word2Vec))
+    def __init__(self, w2v_model=None, stemmer=None, pos_tagger=None):
+        assert(isinstance(w2v_model, Word2Vec) or w2v_model is None)
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
         assert(isinstance(pos_tagger, POSTagger) or pos_tagger is None)
         self.w2v_model = w2v_model
@@ -39,10 +39,6 @@ class Embedding(object):
         return self.w2v_model.vector_size
 
     @property
-    def VocabularySize(self):
-        raise Exception("Not Implemented")
-
-    @property
     def vocab(self):
         return self.w2v_model.wv.vocab
 
@@ -64,11 +60,11 @@ class Embedding(object):
         # TODO: Implement similarity.
         pass
 
-    def __contains__(self, item):
-        assert(isinstance(item, unicode))
-        return item in self.w2v_model
+    def __contains__(self, word):
+        assert(isinstance(word, unicode))
+        return word in self.w2v_model
 
-    def __getitem__(self, item):
-        assert(isinstance(item, unicode))
-        return self.w2v_model[item]
+    def __getitem__(self, word):
+        assert(isinstance(word, unicode))
+        return self.w2v_model[word]
 
