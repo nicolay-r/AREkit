@@ -86,3 +86,33 @@ class NeutralLabel(Label):
 
     def to_uint(self):
         return int(0)
+
+
+class LabelPair:
+
+    def __init__(self, forward, backward):
+        assert(isinstance(forward, Label))
+        assert(isinstance(backward, Label))
+        self._forward = forward
+        self._backward = backward
+
+    @staticmethod
+    def _pair_to_int(i, j):
+        return int("{}{}".format(i, j), 3)
+
+    def to_uint(self):
+        return self._pair_to_int(self._forward.to_uint(), self._backward.to_uint())
+
+    def to_int(self):
+        return self.to_uint()
+
+    def from_uint(self, value):
+        for i in range(3):
+            for j in range(3):
+                if value == self._pair_to_int(i, j):
+                    self._forward.from_int(i)
+                    self._backward.from_int(j)
+
+    def from_int(self, value):
+        return self.from_uint(value)
+
