@@ -96,6 +96,14 @@ class LabelPair:
         self._forward = forward
         self._backward = backward
 
+    @property
+    def Forward(self):
+        return self._forward
+
+    @property
+    def Backward(self):
+        return self._backward
+
     @staticmethod
     def _pair_to_int(i, j):
         return int("{}{}".format(i, j), 3)
