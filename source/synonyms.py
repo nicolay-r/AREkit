@@ -4,34 +4,47 @@ from core.processing.lemmatization.base import Stemmer
 
 class SynonymsCollection:
 
-    def __init__(self, by_index, by_synonym, stemmer):
+    def __init__(self, by_index, by_synonym, stemmer, is_read_only):
         assert(isinstance(by_index, list))
         assert(isinstance(by_synonym, dict))
         assert(isinstance(stemmer, Stemmer))
-        self.by_index = by_index
-        self.by_synonym = by_synonym
-        self.stemmer = stemmer
+        self.__by_index = by_index
+        self.__by_synonym = by_synonym
+        self.__stemmer = stemmer
+        self.__is_read_only = is_read_only
+
+    @property
+    def IsReadOnly(self):
+        return self.__is_read_only
+
+    @property
+    def Stemmer(self):
+        return self.__stemmer
 
     @classmethod
-    def from_file(cls, filepath, stemmer, debug=False):
+    def from_file(cls, filepath, stemmer, is_read_only=True, debug=False):
         assert(isinstance(filepath, unicode))
         assert(isinstance(stemmer, Stemmer))
         by_index = []
         by_synonym = {}
         SynonymsCollection._from_file(filepath, by_index, by_synonym, stemmer, debug)
-        return cls(by_index, by_synonym, stemmer)
-
+        return cls(by_index=by_index,
+                   by_synonym=by_synonym,
+                   stemmer=stemmer,
+                   is_read_only=is_read_only)
 
     @classmethod
-    def from_files(cls, filepaths, stemmer, debug=False):
+    def from_files(cls, filepaths, stemmer, is_read_only=True, debug=False):
         assert(isinstance(filepaths, list))
         assert(isinstance(stemmer, Stemmer))
         by_index = []
         by_synonym = {}
         for filepath in filepaths:
             SynonymsCollection._from_file(filepath, by_index, by_synonym, stemmer, debug)
-        return cls(by_index, by_synonym, stemmer)
-
+        return cls(by_index=by_index,
+                   by_synonym=by_synonym,
+                   stemmer=stemmer,
+                   is_read_only=is_read_only)
 
     @staticmethod
     def _from_file(filepath, by_index, by_synonym, stemmer, debug):
@@ -73,35 +86,36 @@ class SynonymsCollection:
     def add_synonym(self, s):
         assert(isinstance(s, unicode))
         assert(not self.has_synonym(s))
-        id = self._create_synonym_id(self.stemmer, s)
-        self.by_synonym[id] = self._get_groups_count()
-        self.by_index.append([s])
+        assert(not self.__is_read_only)
+        id = self._create_synonym_id(self.__stemmer, s)
+        self.__by_synonym[id] = self._get_groups_count()
+        self.__by_index.append([s])
 
     def has_synonym(self, s):
         assert(isinstance(s, unicode))
-        id = self._create_synonym_id(self.stemmer, s)
-        return id in self.by_synonym
+        id = self._create_synonym_id(self.__stemmer, s)
+        return id in self.__by_synonym
 
     def get_synonyms_list(self, s):
         assert(isinstance(s, unicode))
-        id = self._create_synonym_id(self.stemmer, s)
-        index = self.by_synonym[id]
-        return self.by_index[index]
+        id = self._create_synonym_id(self.__stemmer, s)
+        index = self.__by_synonym[id]
+        return self.__by_index[index]
 
     def get_synonym_group_index(self, s):
         assert(isinstance(s, unicode))
         return self._get_group_index(s)
 
     def _get_groups_count(self):
-        return len(self.by_index)
+        return len(self.__by_index)
 
     def _get_group_index(self, s):
-        id = self._create_synonym_id(self.stemmer, s)
-        return self.by_synonym[id]
+        id = self._create_synonym_id(self.__stemmer, s)
+        return self.__by_synonym[id]
 
     def get_group_by_index(self, index):
         assert(isinstance(index, int))
-        return self.by_index[index]
+        return self.__by_index[index]
 
     @staticmethod
     def _create_synonym_id(stemmer, s):

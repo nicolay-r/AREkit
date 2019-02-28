@@ -43,9 +43,9 @@ class RelationCollection:
         for entity_left in left_values:
             for entity_right in right_values:
 
-                if RelationCollection._is_ignored(entity_left, ignored_entity_values, synonyms.stemmer):
+                if RelationCollection._is_ignored(entity_left, ignored_entity_values, synonyms.Stemmer):
                     continue
-                if RelationCollection._is_ignored(entity_right, ignored_entity_values, synonyms.stemmer):
+                if RelationCollection._is_ignored(entity_right, ignored_entity_values, synonyms.Stemmer):
                     continue
 
                 entities_left_ids = news.entities.get_entity_by_value(entity_left)

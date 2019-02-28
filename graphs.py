@@ -56,6 +56,7 @@ class CollectionGraph:
         """
         assert(isinstance(triplets, list))
         assert(isinstance(synonyms, SynonymsCollection))
+        assert(not synonyms.IsReadOnly)
 
         def add_edge(graph_collection, v1, v2, label, color=None,
                      edges_count=0, style='solid', add=False, colorize=True,
