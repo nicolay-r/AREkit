@@ -6,6 +6,7 @@ from core.evaluation.labels import PositiveLabel, NegativeLabel, NeutralLabel
 from core.evaluation.statistic import FilesToCompare
 from core.processing.lemmatization.base import Stemmer
 from core.source.opinion import OpinionCollection
+from core.source.synonyms import SynonymsCollection
 
 
 class Evaluator:
@@ -26,10 +27,11 @@ class Evaluator:
     C_RES = 'how_results'
     C_CMP = 'comparison'
 
-    def __init__(self, synonyms_filepath, user_answers_filepath, stemmer):
-        assert(isinstance(stemmer, Stemmer)) # for opinion collections
+    def __init__(self, synonyms, user_answers_filepath, stemmer):
+        assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
+        assert(isinstance(stemmer, Stemmer))
 
-        self.synonyms_filepath = synonyms_filepath
+        self.synonyms = synonyms
         self.user_answers = user_answers_filepath
         self.stemmer = stemmer
 
@@ -126,14 +128,14 @@ class Evaluator:
 
         # Reading test answers.
         test_opins = OpinionCollection.from_file(
-            files_to_compare.test_filepath,
-            self.synonyms_filepath,
+            filepath=files_to_compare.test_filepath,
+            synonyms=self.synonyms,
             stemmer=self.stemmer)
 
         # Reading etalon answers.
         etalon_opins = OpinionCollection.from_file(
-            files_to_compare.etalon_filepath,
-            self.synonyms_filepath,
+            filepath=files_to_compare.etalon_filepath,
+            synonyms=self.synonyms,
             stemmer=self.stemmer)
 
         if debug:

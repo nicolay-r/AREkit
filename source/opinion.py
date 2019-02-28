@@ -22,15 +22,20 @@ class OpinionCollection:
         self.by_value_set = self._create_set_by_value()
         self.by_synonym_dict = self._create_dict_by_synonyms(synonyms)
 
+    def __add_synonym(self, value):
+        if self.synonyms.IsReadOnly:
+            raise Exception("Failed to add '{}'. Synonym collection is read only!".format(value))
+        self.synonyms.add_synonym(value)
+
     def _create_set_by_value(self):
         index = set()
         for o in self.opinions:
 
             if not o.has_synonym_for_left(self.synonyms):
-                self.synonyms.add_synonym(o.value_left)
+                self.__add_synonym(o.value_left)
 
             if not o.has_synonym_for_right(self.synonyms):
-                self.synonyms.add_synonym(o.value_right)
+                self.__add_synonym(o.value_right)
 
             added = self._add_key(o.create_value_id(), index, check=False)
             if not added and self.debug_mode:
@@ -49,26 +54,15 @@ class OpinionCollection:
         return index
 
     @classmethod
-    def from_file(cls, filepath, synonyms_filepaths, stemmer, debug=False):
-        """
-            filepath: string or list
-                single filepath or list of filepaths.
-        """
-        assert(isinstance(filepath, unicode) or isinstance(filepath, list))
+    def from_file(cls, filepath, synonyms, stemmer, debug=False):
+        assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(stemmer, Stemmer))
-
-        if isinstance(synonyms_filepaths, unicode):
-            synonyms = SynonymsCollection.from_file(synonyms_filepaths, stemmer=stemmer, debug=debug)
-        elif isinstance(synonyms_filepaths, list):
-            synonyms = SynonymsCollection.from_files(synonyms_filepaths, stemmer=stemmer, debug=debug)
-        else:
-            raise Exception("Unsupported type for 'synonyms_filepaths'")
 
         opinions = []
         filepaths = []
-        if (isinstance(filepath, unicode)):
+        if isinstance(filepath, unicode):
             filepaths.append(filepath)
-        elif (isinstance(filepath, unicode)):
+        elif isinstance(filepath, list):
             filepaths = filepath
 
         for fp in filepaths:
@@ -125,10 +119,10 @@ class OpinionCollection:
         assert(o.stemmer is self.stemmer)
 
         if not o.has_synonym_for_left(self.synonyms):
-            self.synonyms.add_synonym(o.value_left)
+            self.__add_synonym(o.value_left)
 
         if not o.has_synonym_for_right(self.synonyms):
-            self.synonyms.add_synonym(o.value_right)
+            self.__add_synonym(o.value_right)
 
         self._add_key(o.create_value_id(), self.by_value_set)
         self._add_key_value(o.create_synonym_id(self.synonyms), o, self.by_synonym_dict)

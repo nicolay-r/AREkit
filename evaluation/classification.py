@@ -40,18 +40,18 @@ def evaluate(estimator,
              stemmer,
              files_to_compare_list,
              method_root_filepath,
-             synonyms_filepath):
-
+             synonyms):
+    assert(isinstance(synonyms, SynonymsCollection))
     assert(isinstance(stemmer, Stemmer))
 
     df = MethodStatistic.get_method_statistic(
-            files_to_compare_list,
-            synonyms_filepath,
-            stemmer)
+            files_to_compare_list=files_to_compare_list,
+            synonyms=synonyms,
+            stemmer=stemmer)
 
     df.index.name = method_name
 
-    e = Evaluator(synonyms_filepath, method_root_filepath, stemmer=stemmer)
+    e = Evaluator(synonyms, method_root_filepath, stemmer=stemmer)
     r = e.evaluate(files_to_compare_list)
 
     for c in Evaluator.get_result_columns():
