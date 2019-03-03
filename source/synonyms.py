@@ -79,6 +79,7 @@ class SynonymsCollection:
                         continue
 
                     synonym_list.append(value)
+                    # print 'adding:', id.encode('utf-8'), '->', group_index
                     by_synonym[id] = group_index
 
                 by_index.append(synonym_list)
@@ -120,3 +121,7 @@ class SynonymsCollection:
     @staticmethod
     def _create_synonym_id(stemmer, s):
         return stemmer.lemmatize_to_str(s)
+
+    def iter_by_index(self):
+        for item in self.__by_index:
+            yield item

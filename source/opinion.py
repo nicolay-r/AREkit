@@ -24,7 +24,7 @@ class OpinionCollection:
 
     def __add_synonym(self, value):
         if self.synonyms.IsReadOnly:
-            raise Exception("Failed to add '{}'. Synonym collection is read only!".format(value))
+            raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
         self.synonyms.add_synonym(value)
 
     def _create_set_by_value(self):
