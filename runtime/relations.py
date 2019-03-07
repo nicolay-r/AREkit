@@ -1,94 +1,53 @@
+from core.source.entity import EntityCollection
 from core.source.news import News
 from core.source.opinion import Opinion
-from core.processing.lemmatization.base import Stemmer
-from core.source.synonyms import SynonymsCollection
 
 
 class RelationCollection:
 
-    def __init__(self, relation_list=[]):
-        assert(type(relation_list) == list)
+    def __init__(self, relation_list):
+        assert(isinstance(relation_list, list))
         self.relations = relation_list
 
     @classmethod
-    def from_news_opinion(cls, news, opinion, synonyms, ignored_entity_values=[], debug=False):
+    def from_news_opinion(cls, news, opinion, debug=False):
         """
         lemmatize_to_str_func: function
             non lemmatized (unicode) -> (unicode), lemmatized string
         """
         assert(isinstance(news, News))
         assert(isinstance(opinion, Opinion))
-        assert(isinstance(synonyms, SynonymsCollection))
 
-        # TODO. REMOVE ignored_entity_values
-        left_values = RelationCollection._get_appropriate_entity_values(
-            opinion.value_left, news.entities, synonyms)
-        right_values = RelationCollection._get_appropriate_entity_values(
-            opinion.value_right, news.entities, synonyms)
+        left_entities = news.entities.try_get_entities(
+            opinion.value_left, group_key=EntityCollection.KeyType.BY_SYNONYMS)
+        right_entities = news.entities.try_get_entities(
+            opinion.value_right, group_key=EntityCollection.KeyType.BY_SYNONYMS)
 
-        # TODO. We guarantee that these left and right values are not lemmatized
-        if len(left_values) == 0:
+        if left_entities is None:
             if debug:
                 print "Appropriate entity for '{}'->'...' has not been found".format(
                     opinion.value_left.encode('utf-8'))
-            return RelationCollection()
+            return cls(relation_list=[])
 
-        if len(right_values) == 0:
+        if right_entities is None:
             if debug:
                 print "Appropriate entity for '...'->'{}' has not been found".format(
                     opinion.value_right.encode('utf-8'))
-            return RelationCollection()
+            return cls(relation_list=[])
 
         relations = []
-        for entity_left in left_values:
-            for entity_right in right_values:
-
-                if RelationCollection._is_ignored(entity_left, ignored_entity_values, synonyms.Stemmer):
-                    continue
-                if RelationCollection._is_ignored(entity_right, ignored_entity_values, synonyms.Stemmer):
-                    continue
-
-                entities_left_ids = news.entities.get_entity_by_value(entity_left)
-                entities_right_ids = news.entities.get_entity_by_value(entity_right)
-
-                for e1_ID in entities_left_ids:
-                    for e2_ID in entities_right_ids:
-                        e1 = news.entities.get_entity_by_id(e1_ID)
-                        e2 = news.entities.get_entity_by_id(e2_ID)
-                        r = Relation(e1.ID, e2.ID, news)
-                        relations.append(r)
+        for entity_left in left_entities:
+            for entity_right in right_entities:
+                relation = Relation(entity_left.ID, entity_right.ID, news)
+                relations.append(relation)
 
         return cls(relations)
 
     def apply_filter(self, filter_function):
         self.relations = [r for r in self.relations if filter_function(r)]
 
-    @staticmethod
-    def _is_ignored(entity_value, ignored_entity_values, stemmer):
-        assert(isinstance(ignored_entity_values, list))
-        assert(isinstance(stemmer, Stemmer))
-        entity_value = stemmer.lemmatize_to_str(entity_value)
-        if entity_value in ignored_entity_values:
-            # print "ignored: '{}'".format(entity_value.encode('utf-8'))
-            return True
-        return False
-
-    @staticmethod
-    def _get_appropriate_entity_values(opinion_value, entities, synonyms):
-        if synonyms.has_synonym(opinion_value):
-            return filter(
-                lambda s: entities.has_entity_by_value(s),
-                synonyms.get_synonyms_list(opinion_value))
-        elif entities.has_entity_by_value(opinion_value):
-            return [opinion_value]
-        else:
-            return []
-
     def __getitem__(self, item):
-        """
-        item: int
-        """
-        assert(type(item) == int)
+        assert(isinstance(item,  int))
         return self.relations[item]
 
     def __len__(self):
@@ -104,8 +63,8 @@ class Relation:
     """
 
     def __init__(self, entity_left_ID, entity_right_ID, news):
-        assert(type(entity_left_ID) == unicode)
-        assert(type(entity_right_ID) == unicode)
+        assert(isinstance(entity_left_ID, unicode))
+        assert(isinstance(entity_right_ID, unicode))
         assert(isinstance(news, News))
         self.entity_left_ID = entity_left_ID
         self.entity_right_ID = entity_right_ID

@@ -1,48 +1,61 @@
 # -*- coding: utf-8 -*-
 import io
 from core.processing.lemmatization.base import Stemmer
+from core.source.synonyms import SynonymsCollection
 
 
 class EntityCollection:
     """ Collection of annotated entities
     """
 
-    def __init__(self, entities, stemmer):
+    class KeyType:
+        BY_SYNONYMS = 0
+        BY_LEMMAS = 1
+        BY_VALUE = 2
+
+    def __init__(self, entities, stemmer, synonyms):
         """
         entities: list of Entity types
         stemmer: Stemmer
         """
         assert(isinstance(entities, list))
         assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(synonyms, SynonymsCollection))
 
         entities.sort(key=lambda e: e.begin)
 
         self.entities = entities
         self.stemmer = stemmer
-        self.by_id = self._index_by_id()
-        self.by_lemmas = self._index_by_lemmas()
+        self.synonyms = synonyms
 
-    def _index_by_id(self):
-        index = {}
-        for e in self.entities:
-            index[e.ID] = e
-        return index
+        self.by_id = self.__create_index(entities, key_func=lambda e: e.ID)
+        self.by_value = self.__create_index(entities, key_func=lambda e: e.value)
+        self.by_lemmas = self.__create_index(
+            entities, key_func=lambda e: stemmer.lemmatize_to_str(e.value))
+        self.by_synonyms = self.__create_index(
+            entities, key_func=lambda e: synonyms.get_synonym_group_index(e.value))
 
-    def _index_by_lemmas(self):
+    @staticmethod
+    def __create_index(entities, key_func):
         index = {}
-        for e in self.entities:
-            key = self.stemmer.lemmatize_to_str(e.value)
+        for e in entities:
+            key = key_func(e)
             if key in index:
-                index[key].append(e.ID)
+                index[key].append(e)
             else:
-                index[key] = [e.ID]
+                index[key] = [e]
         return index
+
+    @staticmethod
+    def __value_or_none(d, key):
+        return d[key] if key in d else None
 
     @classmethod
-    def from_file(cls, filepath, stemmer):
+    def from_file(cls, filepath, stemmer, synonyms):
         """ Read annotation collection from file
         """
         assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(synonyms, SynonymsCollection))
         entities = []
         with io.open(filepath, "r", encoding='utf-8') as f:
             for line in f.readlines():
@@ -57,46 +70,37 @@ class EntityCollection:
 
                 entities.append(a)
 
-        return cls(entities, stemmer)
-
-    def has_entity_by_value(self, entity_value):
-        assert(type(entity_value) == unicode)
-        lemma = self.stemmer.lemmatize_to_str(entity_value)
-        return lemma in self.by_lemmas
+        return cls(entities, stemmer, synonyms)
 
     def get_entity_by_index(self, index):
+        assert(isinstance(index, int))
         return self.entities[index]
 
     def get_entity_by_id(self, ID):
-        assert(type(ID) == unicode)
-        return self.by_id[ID]
+        assert(isinstance(ID, unicode))
+        value = self.by_id[ID]
+        assert(len(value) == 1)
+        return value[0]
 
-    def get_entity_by_value(self, entity_value):
-        assert(type(entity_value) == unicode)
-        lemma = self.stemmer.lemmatize_to_str(entity_value)
-        return self.by_lemmas[lemma]
-
-    def get_previous_entity(self, entity):
-        index = self.entities.index(entity)
-        if index > 0:
-            return self.entities[index-1]
-        return None
-
-    def get_next_entity(self, entity):
-        index = self.entities.index(entity)
-        if index+1 < len(self.entities):
-            return self.entities[index+1]
-        return None
+    def try_get_entities(self, value, group_key):
+        assert(isinstance(value, unicode))
+        if group_key == self.KeyType.BY_LEMMAS:
+            key = self.stemmer.lemmatize_to_str(value)
+            return self.__value_or_none(self.by_lemmas, key)
+        if group_key == self.KeyType.BY_SYNONYMS:
+            key = self.synonyms.get_synonym_group_index(value)
+            return self.__value_or_none(self.by_synonyms, key)
+        if group_key == self.KeyType.BY_VALUE:
+            return self.__value_or_none(self.by_value, value)
 
     def count(self):
         return len(self.entities)
 
     def __iter__(self):
-        for a in self.entities:
-            yield a
+        for entity in self.entities:
+            yield entity
 
 
-# TODO. Crate this element from collection (because of stemmer instance)
 class Entity:
     """ Entity description.
     """
@@ -116,13 +120,3 @@ class Entity:
 
     def get_int_ID(self):
         return int(self.ID[1:len(self.ID)])
-
-    def show(self):
-        """ Displays annotation information
-        """
-        print "{}, {}, {}-{}, {}".format(
-            self.ID.encode('utf-8'),
-            self.str_type.encode('utf-8'),
-            self.begin,
-            self.end,
-            self.value.encode('utf-8'))

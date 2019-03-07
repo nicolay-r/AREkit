@@ -24,9 +24,6 @@ class News:
             count -= (words_in_entities - 1)
         return count
 
-    def get_entities(self):
-        return self.entities
-
     @property
     def Processed(self):
         return self.processed

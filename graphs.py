@@ -108,7 +108,7 @@ class CollectionGraph:
         for news, opinion_collections, colorize in triplets:
             for opinions in opinion_collections:
                 for o in opinions:
-                    relations = RelationCollection.from_news_opinion(news, o, synonyms)
+                    relations = RelationCollection.from_news_opinion(news, o)
 
                     if len(relations) == 0:
                         continue
