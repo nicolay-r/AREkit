@@ -7,7 +7,7 @@ from core.evaluation.labels import Label, NeutralLabel
 from core.evaluation.statistic import MethodStatistic
 from core.processing.lemmatization.base import Stemmer
 from core.source.vectors import OpinionVectorCollection
-from core.source.opinion import OpinionCollection
+from core.source.opinion import OpinionCollection, Opinion
 from core.source.synonyms import SynonymsCollection
 
 
@@ -150,11 +150,11 @@ def create_test_opinions(test_collections, labels, synonyms_filepath, stemmer):
         for opinion_vector in c:
             l = Label.from_int(int(labels[label_index]))
             opinion_vector.set_label(l)
-            o = opinions.create_opinion(opinion_vector.value_left,
-                                        opinion_vector.value_right,
-                                        opinion_vector.label)
+            o = Opinion(opinion_vector.value_left,
+                        opinion_vector.value_right,
+                        opinion_vector.label)
 
-            if not opinions.has_opinion_by_synonyms(o) and not isinstance(l, NeutralLabel):
+            if not opinions.has_synonymous_opinion(o) and not isinstance(l, NeutralLabel):
                 opinions.add_opinion(o)
             elif not isinstance(l, NeutralLabel):
                 print "Failed for o={}".format(o.to_unicode().encode('utf-8'))

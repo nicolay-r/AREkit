@@ -18,7 +18,7 @@ class MethodStatistic:
             if sentiment is not None:
                 if sentiment != opin.sentiment:
                     continue
-            if etalon_opins.has_opinion_by_synonyms(opin, sentiment):
+            if etalon_opins.has_synonymous_opinion(opin, sentiment):
                 founded += 1
 
         return founded
@@ -40,10 +40,8 @@ class MethodStatistic:
         for files_to_compare in files_to_compare_list:
 
             assert(isinstance(files_to_compare, FilesToCompare))
-            test_opins = OpinionCollection.from_file(
-                    files_to_compare.test_filepath, synonyms, stemmer=stemmer)
-            etalon_opins = OpinionCollection.from_file(
-                    files_to_compare.etalon_filepath, synonyms, stemmer=stemmer)
+            test_opins = OpinionCollection.from_file(files_to_compare.test_filepath, synonyms)
+            etalon_opins = OpinionCollection.from_file(files_to_compare.etalon_filepath, synonyms)
 
             df.loc[files_to_compare.index] = [
                     MethodStatistic.founded_opins(test_opins, etalon_opins),

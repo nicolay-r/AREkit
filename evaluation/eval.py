@@ -95,10 +95,10 @@ class Evaluator:
         # Append everithing that exist in etalon collection.
         for o_etalon in etalon_opins:
             comparison = False
-            has_opinion = test_opins.has_opinion_by_synonyms(o_etalon)
+            has_opinion = test_opins.has_synonymous_opinion(o_etalon)
 
             if has_opinion:
-                o_test = test_opins.get_opinion_by_synonyms(o_etalon)
+                o_test = test_opins.get_synonymous_opinion(o_etalon)
                 comparison = o_test.sentiment == o_etalon.sentiment
 
             df.loc[r_ind] = [o_etalon.value_left.encode('utf-8'),
@@ -110,7 +110,7 @@ class Evaluator:
 
         # Append everithing that exist in test collection.
         for o_test in test_opins:
-            has_opinion = etalon_opins.has_opinion_by_synonyms(o_test)
+            has_opinion = etalon_opins.has_synonymous_opinion(o_test)
             if has_opinion:
                 continue
             df.loc[r_ind] = [o_test.value_left.encode('utf-8'),
@@ -129,14 +129,12 @@ class Evaluator:
         # Reading test answers.
         test_opins = OpinionCollection.from_file(
             filepath=files_to_compare.test_filepath,
-            synonyms=self.synonyms,
-            stemmer=self.stemmer)
+            synonyms=self.synonyms)
 
         # Reading etalon answers.
         etalon_opins = OpinionCollection.from_file(
             filepath=files_to_compare.etalon_filepath,
-            synonyms=self.synonyms,
-            stemmer=self.stemmer)
+            synonyms=self.synonyms)
 
         if debug:
             print "{} <-> {}, {}".format(
