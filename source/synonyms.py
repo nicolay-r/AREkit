@@ -33,19 +33,6 @@ class SynonymsCollection:
                    stemmer=stemmer,
                    is_read_only=is_read_only)
 
-    @classmethod
-    def from_files(cls, filepaths, stemmer, is_read_only=True, debug=False):
-        assert(isinstance(filepaths, list))
-        assert(isinstance(stemmer, Stemmer))
-        by_index = []
-        by_synonym = {}
-        for filepath in filepaths:
-            SynonymsCollection._from_file(filepath, by_index, by_synonym, stemmer, debug)
-        return cls(by_index=by_index,
-                   by_synonym=by_synonym,
-                   stemmer=stemmer,
-                   is_read_only=is_read_only)
-
     @staticmethod
     def _from_file(filepath, by_index, by_synonym, stemmer, debug):
         """
