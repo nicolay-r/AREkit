@@ -13,20 +13,12 @@ class News:
         self.sentences = sentences
         self.processed = NewsProcessor(self, stemmer)
 
-    def get_sentences(self):
-        for s in self.sentences:
-            yield s
-
     def get_words_count(self):
         count = self.processed.words_count
         for e in self.entities:
             words_in_entities = len(e.value.split(' '))
             count -= (words_in_entities - 1)
         return count
-
-    @property
-    def Processed(self):
-        return self.processed
 
     @classmethod
     def from_file(cls, filepath, entities, stemmer):
