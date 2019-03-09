@@ -18,9 +18,12 @@ class RelationCollection:
         assert(isinstance(news, News))
         assert(isinstance(opinion, Opinion))
 
-        left_entities = news.entities.try_get_entities(
+        entities = news.entities
+        assert(isinstance(entities, EntityCollection))
+
+        left_entities = entities.try_get_entities(
             opinion.value_left, group_key=EntityCollection.KeyType.BY_SYNONYMS)
-        right_entities = news.entities.try_get_entities(
+        right_entities = entities.try_get_entities(
             opinion.value_right, group_key=EntityCollection.KeyType.BY_SYNONYMS)
 
         if left_entities is None:
@@ -38,7 +41,9 @@ class RelationCollection:
         relations = []
         for entity_left in left_entities:
             for entity_right in right_entities:
-                relation = Relation(entity_left.ID, entity_right.ID, news)
+                relation = Relation(entity_left_ID=entity_left.ID,
+                                    entity_right_ID=entity_right.ID,
+                                    entity_by_id_func=lambda id: entities.get_entity_by_id(id))
                 relations.append(relation)
 
         return cls(relations)
@@ -59,42 +64,40 @@ class RelationCollection:
 
 
 class Relation:
-    """ Strict Relation between two Entities
+    """
+    Strict Relation between two Entities
     """
 
-    def __init__(self, entity_left_ID, entity_right_ID, news):
+    def __init__(self, entity_left_ID, entity_right_ID, entity_by_id_func):
         assert(isinstance(entity_left_ID, unicode))
         assert(isinstance(entity_right_ID, unicode))
-        assert(isinstance(news, News))
-        self.entity_left_ID = entity_left_ID
-        self.entity_right_ID = entity_right_ID
-        self.news = news
+        assert(callable(entity_by_id_func))
+        self.__entity_left_ID = entity_left_ID
+        self.__entity_right_ID = entity_right_ID
+        self.__entity_by_id_func = entity_by_id_func
 
-    def get_left_entity(self):
-        return self.news.entities.get_entity_by_id(self.entity_left_ID)
+    @property
+    def LeftEntityID(self):
+        return self.__entity_left_ID
 
-    def get_right_entity(self):
-        return self.news.entities.get_entity_by_id(self.entity_right_ID)
+    @property
+    def RightEntityID(self):
+        return self.__entity_right_ID
 
-    def get_left_entity_value(self):
-        """
-        returns: unicode
-        """
-        entity = self.news.entities.get_entity_by_id(self.entity_left_ID)
+    @property
+    def LeftEntity(self):
+        return self.__entity_by_id_func(self.__entity_left_ID)
+
+    @property
+    def RightEntity(self):
+        return self.__entity_by_id_func(self.__entity_right_ID)
+
+    @property
+    def LeftEntityValue(self):
+        entity = self.__entity_by_id_func(self.__entity_left_ID)
         return entity.value
 
-    def get_right_entity_value(self):
-        """
-        returns: unicode
-        """
-        entity = self.news.entities.get_entity_by_id(self.entity_right_ID)
+    @property
+    def RigthEntityValue(self):
+        entity = self.__entity_by_id_func(self.__entity_left_ID)
         return entity.value
-
-    def get_distance_in_sentences(self):
-        """
-        Distance between two features in sentences
-        """
-        e1 = self.get_left_entity()
-        e2 = self.get_right_entity()
-        return abs(self.news.get_sentence_by_entity(e1).index -
-                   self.news.get_sentence_by_entity(e2).index)

@@ -113,8 +113,8 @@ class CollectionGraph:
                     if len(relations) == 0:
                         continue
 
-                    left_v = relations[0].get_left_entity_value()
-                    right_v = relations[0].get_right_entity_value()
+                    left_v = relations[0].LeftEntityValue
+                    right_v = relations[0].RigthEntityValue
 
                     if not synonyms.has_synonym(left_v):
                         synonyms.add_synonym(left_v)
