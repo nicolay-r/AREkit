@@ -121,6 +121,6 @@ class NewsProcessor:
     def _index_sentence_by_entity(news):
         index = {}
         for s in news.sentences:
-            for e_ID in s.entities_ids:
+            for e_ID in s.iter_entity_ids():
                 index[e_ID] = s.index
         return index

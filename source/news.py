@@ -50,7 +50,9 @@ class News:
                 continue
 
             if e.begin >= s.begin and e.end <= s.end:
-                s.add_entity(e.ID, e.begin - s.begin, e.end - s.begin)
+                s.add_entity(id=e.ID,
+                             begin=e.begin - s.begin,
+                             end=e.end - s.begin)
                 e_ind += 1
                 continue
 
@@ -82,8 +84,11 @@ class News:
                 if line == unicode('\r\n'):
                     paragraph_id += 1
                 else:
-                    s = Sentence(line, paragraph_id, line_start, line_end,
-                                 s_ind)
+                    s = Sentence(text=line,
+                                 paragraph_id=paragraph_id,
+                                 begin=line_start,
+                                 end=line_end,
+                                 index=s_ind)
                     s_ind += 1
                     sentences.append(s)
 
@@ -93,14 +98,6 @@ class News:
 
     def get_sentence_by_entity(self, entity):
         return self.processed.get_sentence_by_entity(entity)
-
-    def show(self):
-        for s in self.sentences:
-            print s.text.encode('utf-8')
-            for e in s.entities:
-                ID, begin, end = e
-                print "\t - {}, ({},{}) = {}".format(
-                    ID, begin, end, s.text[begin:end].encode('utf-8'))
 
 
 class Sentence:
@@ -115,30 +112,18 @@ class Sentence:
         self.text = text
         self.paragraph_id = paragraph_id
         self.entity_info = []
-        self.entity_set_ids = set()
         self.begin = begin
         self.end = end
         self.index = index
 
-    def add_entity(self, ID, begin, end):
+    def add_entity(self, id, begin, end):
         """ Local entity indices
         """
-        assert(isinstance(ID, unicode))
+        assert(isinstance(id, unicode))
         assert(isinstance(begin, int))
         assert(isinstance(end, int))
-        self.entity_info.append((ID, begin, end))
-        self.entity_set_ids.add(ID)
+        self.entity_info.append((id, begin, end))
 
-    def has_entity(self, entity_ID):
-        assert(isinstance(entity_ID, unicode))
-        return entity_ID in self.entity_set_ids
-
-    @property
-    def entities(self):
-        for e in self.entity_info:
-            yield e
-
-    @property
-    def entities_ids(self):
-        for e in self.entity_info:
-            yield e[0]  # ID
+    def iter_entity_ids(self):
+        for entity in self.entity_info:
+            yield entity[0]  # ID
