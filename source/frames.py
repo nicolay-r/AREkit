@@ -5,21 +5,22 @@ from core.runtime.parser import ParsedText
 from core.processing.lemmatization.base import Stemmer
 
 
-class SentiRuFrames:
+class FramesCollection:
 
-    def __init__(self, variants, groups_list):
+    def __init__(self, variants, frames_list):
         """
         frames: dict
             dictionary of frames: <str, Frame>
         """
         assert(isinstance(variants, dict))
-
         self.variants = variants
-        self._max_term_len = max([len(value.terms) for value in variants.itervalues()])
-        self.groups_list = groups_list
+        self.frames_list = frames_list
 
     @classmethod
     def from_file(cls, filepath, stemmer=None):
+        """
+        Reads SentiRuFrames collection -- list of variants with related frame groups.
+        """
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         frames = {}
@@ -48,7 +49,7 @@ class SentiRuFrames:
 
                 indices = [cls.__add_frame(frames_dict, frames_list, g) for g in groups]
 
-                frames[template] = Frame(template, indices)
+                frames[template] = Variant(template, indices)
 
         return cls(frames, frames_list)
 
@@ -65,8 +66,8 @@ class SentiRuFrames:
         for i, term in enumerate(terms):
             terms[i] = term.replace(u'ё', u'e')
 
-    def get_group_by_index(self, index):
-        return self.groups_list[index]
+    def get_frame_by_index(self, index):
+        return self.frames_list[index]
 
     def find_frames(self, parsed_text):
         """
@@ -84,10 +85,12 @@ class SentiRuFrames:
 
         self.__replace_specific_russian_chars(terms)
 
+        max_variant_len = max([len(value.terms) for value in self.variants.itervalues()])
+
         start_ind = 0
         last_ind = 0
         while start_ind < len(parsed_text):
-            for ctx_size in reversed(range(1, self._max_term_len)):
+            for ctx_size in reversed(range(1, max_variant_len)):
 
                 last_ind = start_ind + ctx_size - 1
 
@@ -99,7 +102,7 @@ class SentiRuFrames:
 
                 ctx = u" ".join(terms[start_ind:last_ind + 1])
                 if ctx in self.variants:
-                    result.append(TextFrame(self.variants[ctx], start_ind))
+                    result.append(VariantInText(self.variants[ctx], start_ind))
                     break
 
             start_ind = last_ind + 1
@@ -110,30 +113,29 @@ class SentiRuFrames:
         return result
 
 
-# TODO. Rename in Variant.
-class Frame:
+class Variant:
 
-    def __init__(self, template, group_indices):
+    def __init__(self, template, frame_indices):
         assert(isinstance(template, unicode))
         self.terms = template.lower().split()
-        self.group_indices = group_indices
+        self.frame_indices = frame_indices
 
 
-# TODO. Rename in Text Variant.
-class TextFrame:
+class VariantInText:
 
-    def __init__(self, frame, start_index):
-        assert(isinstance(frame, Frame))
+    def __init__(self, variant, start_index):
+        assert(isinstance(variant, Variant))
         assert(isinstance(start_index, int))
-        self._frame = frame
+        self.__variant = variant
         self.start_index = start_index
-
-    @property
-    def Terms(self):
-        return self._frame.terms
-
-    def __len__(self):
-        return len(self._frame.terms)
 
     def get_bounds(self):
         return self.start_index, self.start_index + len(self)
+
+    def iter_terms(self):
+        for term in self.__variant.terms:
+            yield term
+
+    def __len__(self):
+        return len(self.__variant.terms)
+
