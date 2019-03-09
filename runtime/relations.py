@@ -11,10 +11,6 @@ class RelationCollection:
 
     @classmethod
     def from_news_opinion(cls, news, opinion, debug=False):
-        """
-        lemmatize_to_str_func: function
-            non lemmatized (unicode) -> (unicode), lemmatized string
-        """
         assert(isinstance(news, News))
         assert(isinstance(opinion, Opinion))
 
@@ -91,13 +87,3 @@ class Relation:
     @property
     def RightEntity(self):
         return self.__entity_by_id_func(self.__entity_right_ID)
-
-    @property
-    def LeftEntityValue(self):
-        entity = self.__entity_by_id_func(self.__entity_left_ID)
-        return entity.value
-
-    @property
-    def RigthEntityValue(self):
-        entity = self.__entity_by_id_func(self.__entity_left_ID)
-        return entity.value
