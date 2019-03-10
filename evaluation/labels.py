@@ -88,7 +88,7 @@ class NeutralLabel(Label):
         return int(0)
 
 
-class LabelPair:
+class LabelPair(Label):
 
     def __init__(self, forward, backward):
         assert(isinstance(forward, Label))
