@@ -10,11 +10,9 @@ class OpinionCollection:
     """ Collection of sentiment opinions between entities
     """
 
-    def __init__(self, opinions, synonyms, debug_mode=False):
+    def __init__(self, opinions, synonyms):
         assert(isinstance(opinions, list) or isinstance(opinions, type(None)))
         assert(isinstance(synonyms, SynonymsCollection))
-        assert(isinstance(debug_mode, bool))
-        self.debug_mode = debug_mode
         self.opinions = [] if opinions is None else opinions
         self.synonyms = synonyms
         self.by_synonyms = self.__create_index()
@@ -31,7 +29,7 @@ class OpinionCollection:
         return index
 
     @classmethod
-    def from_file(cls, filepath, synonyms, debug=False):
+    def from_file(cls, filepath, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
 
         opinions = []
@@ -42,11 +40,7 @@ class OpinionCollection:
                     continue
 
                 args = line.strip().split(',')
-
-                if len(args) < 3:
-                    print "should be at least 3 arguments: {}, '{}'".format(
-                        i, line.encode('utf-8'))
-                    continue
+                assert(len(args) == 3)
 
                 entity_left = args[0].strip()
                 entity_right = args[1].strip()
@@ -55,7 +49,7 @@ class OpinionCollection:
                 o = Opinion(entity_left, entity_right, sentiment)
                 opinions.append(o)
 
-        return cls(opinions, synonyms, debug)
+        return cls(opinions, synonyms)
 
     def has_synonymous_opinion(self, opinion, sentiment=None):
         assert(isinstance(opinion, Opinion))
