@@ -1,50 +1,51 @@
 # -*- coding: utf-8 -*-
 
 import io
-from core.processing.lemmatization.base import Stemmer
-from core.processing.news import NewsProcessor
+from core.helpers.news import NewsHelper
 from core.source.entity import EntityCollection
 
 
 class News:
 
-    def __init__(self, sentences, entities, stemmer):
-        self.entities = entities
-        self.sentences = sentences
-        self.processed = NewsProcessor(self, stemmer)
+    def __init__(self, sentences, entities):
+        assert(isinstance(sentences, list))
+        assert(isinstance(entities, EntityCollection))
+        self.__sentences = sentences
+        self.__entities = entities
+        self.__helper = NewsHelper(self)
 
-    def get_words_count(self):
-        count = self.processed.words_count
-        for e in self.entities:
-            words_in_entities = len(e.value.split(' '))
-            count -= (words_in_entities - 1)
-        return count
+    @property
+    def Entities(self):
+        return self.__entities
+
+    @property
+    def Helper(self):
+        return self.__helper
 
     @classmethod
-    def from_file(cls, filepath, entities, stemmer):
+    def from_file(cls, filepath, entities):
         """ Read news from file
         """
         assert(isinstance(filepath, unicode))
         assert(isinstance(entities, EntityCollection))
-        assert(isinstance(stemmer, Stemmer))
 
         sentences = News.read_sentences(filepath)
 
         s_ind = 0
         e_ind = 0
 
-        while s_ind < len(sentences) and e_ind < entities.count():
+        while s_ind < len(sentences) and e_ind < len(entities):
             e = entities.get_entity_by_index(e_ind)
             s = sentences[s_ind]
 
-            if e.begin > s.end:
+            if e.begin > s.End:
                 s_ind += 1
                 continue
 
-            if e.begin >= s.begin and e.end <= s.end:
-                s.add_entity(id=e.ID,
-                             begin=e.begin - s.begin,
-                             end=e.end - s.begin)
+            if e.begin >= s.Begin and e.end <= s.End:
+                s.add_local_entity(id=e.ID,
+                                   begin=e.begin - s.Begin,
+                                   end=e.end - s.Begin)
                 e_ind += 1
                 continue
 
@@ -52,11 +53,11 @@ class News:
                 e_ind,
                 e.value.encode('utf-8'), e.begin, e.end,
                 s_ind,
-                s.begin, s.end))
+                s.Begin, s.End))
 
-        assert(e_ind == entities.count())
+        assert(e_ind == len(entities))
 
-        return cls(sentences, entities, stemmer)
+        return cls(sentences, entities)
 
     @staticmethod
     def read_sentences(filepath):
@@ -65,57 +66,65 @@ class News:
         with io.open(filepath, 'rt', newline='\n', encoding='utf-8') as f:
 
             sentences = []
-            paragraph_id = 0
             line_start = 0
-            line_end = 0
-            s_ind = 0
 
             for line in f.readlines():
                 line_end = line_start + len(line) - 1
 
-                if line == unicode('\r\n'):
-                    paragraph_id += 1
-                else:
+                if line != unicode('\r\n'):
                     s = Sentence(text=line,
-                                 paragraph_id=paragraph_id,
                                  begin=line_start,
-                                 end=line_end,
-                                 index=s_ind)
-                    s_ind += 1
+                                 end=line_end)
                     sentences.append(s)
 
                 line_start = line_end + 1
 
         return sentences
 
-    def get_sentence_by_entity(self, entity):
-        return self.processed.get_sentence_by_entity(entity)
+    def sentences_count(self):
+        return len(self.__sentences)
+
+    def get_sentence_by_index(self, index):
+        return self.__sentences[index]
+
+    def iter_sentences(self):
+        for sentence in self.__sentences:
+            yield sentence
 
 
 class Sentence:
 
-    def __init__(self, text, paragraph_id, begin, end, index):
+    def __init__(self, text, begin, end):
         assert(isinstance(text, unicode) and len(text) > 0)
-        assert(isinstance(paragraph_id, int))
         assert(isinstance(begin, int))
         assert(isinstance(end, int))
-        assert(isinstance(index, int))
+        self.__text = text
+        self.__entity_info = []
+        self.__begin = begin
+        self.__end = end
 
-        self.text = text
-        self.paragraph_id = paragraph_id
-        self.entity_info = []
-        self.begin = begin
-        self.end = end
-        self.index = index
+    @property
+    def Begin(self):
+        return self.__begin
 
-    def add_entity(self, id, begin, end):
-        """ Local entity indices
-        """
+    @property
+    def End(self):
+        return self.__end
+
+    @property
+    def Text(self):
+        return self.__text
+
+    def add_local_entity(self, id, begin, end):
         assert(isinstance(id, unicode))
         assert(isinstance(begin, int))
         assert(isinstance(end, int))
-        self.entity_info.append((id, begin, end))
+        self.__entity_info.append((id, begin, end))
 
     def iter_entity_ids(self):
-        for entity in self.entity_info:
+        for entity in self.__entity_info:
             yield entity[0]  # ID
+
+    def iter_entities_info(self):
+        for info in self.__entity_info:
+            yield info

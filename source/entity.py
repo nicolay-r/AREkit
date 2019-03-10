@@ -93,7 +93,7 @@ class EntityCollection:
         if group_key == self.KeyType.BY_VALUE:
             return self.__value_or_none(self.by_value, value)
 
-    def count(self):
+    def __len__(self):
         return len(self.entities)
 
     def __iter__(self):

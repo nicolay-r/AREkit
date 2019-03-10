@@ -14,7 +14,7 @@ class RelationCollection:
         assert(isinstance(news, News))
         assert(isinstance(opinion, Opinion))
 
-        entities = news.entities
+        entities = news.Entities
         assert(isinstance(entities, EntityCollection))
 
         left_entities = entities.try_get_entities(
@@ -87,3 +87,11 @@ class Relation:
     @property
     def RightEntity(self):
         return self.__entity_by_id_func(self.__entity_right_ID)
+
+    @property
+    def LeftEntityValue(self):
+        return self.__entity_by_id_func(self.__entity_left_ID).value
+
+    @property
+    def RightEntityValue(self):
+        return self.__entity_by_id_func(self.__entity_right_ID).value
