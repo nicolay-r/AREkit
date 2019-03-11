@@ -40,7 +40,7 @@ class OpinionCollection:
                     continue
 
                 args = line.strip().split(',')
-                assert(len(args) == 3)
+                assert(len(args) >= 3)
 
                 entity_left = args[0].strip()
                 entity_right = args[1].strip()

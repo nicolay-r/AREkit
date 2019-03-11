@@ -114,13 +114,17 @@ class LabelPair(Label):
     def to_int(self):
         return self.to_uint()
 
-    def from_uint(self, value):
+    def to_str(self):
+        return u"{}-{}".format(self._forward.to_str(), self._backward.to_str())
+
+    @staticmethod
+    def from_uint(value):
         for i in range(3):
             for j in range(3):
-                if value == self._pair_to_int(i, j):
-                    self._forward.from_int(i)
-                    self._backward.from_int(j)
+                if value == LabelPair._pair_to_int(i, j):
+                    return LabelPair(Label.from_uint(i), Label.from_uint(j))
 
-    def from_int(self, value):
-        return self.from_uint(value)
+    @staticmethod
+    def from_int(value):
+        return LabelPair.from_uint(value)
 
