@@ -104,6 +104,11 @@ class LabelPair(Label):
     def Backward(self):
         return self._backward
 
+    @classmethod
+    def create_inverted(cls, other):
+        assert(isinstance(other, LabelPair))
+        return LabelPair(other.Backward, other.Forward)
+
     @staticmethod
     def _pair_to_int(i, j):
         return int("{}{}".format(i, j), 3)
