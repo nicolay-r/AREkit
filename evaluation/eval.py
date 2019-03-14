@@ -9,9 +9,20 @@ from core.source.opinion import OpinionCollection
 from core.source.synonyms import SynonymsCollection
 
 
+class EvalResult:
+
+    def __init__(self, parameters):
+        assert(isinstance(parameters, dict))
+        self.__parameters = parameters
+
+    @property
+    def Parameters(self):
+        return self.__parameters
+
+
 class Evaluator:
 
-    # Columns
+    # TODO. Move into Eval result
     C_POS_PREC = 'pos_prec'
     C_NEG_PREC = 'neg_prec'
     C_POS_RECALL = 'pos_recall'
@@ -27,28 +38,15 @@ class Evaluator:
     C_RES = 'how_results'
     C_CMP = 'comparison'
 
-    def __init__(self, synonyms, user_answers_filepath, stemmer):
+    def __init__(self, synonyms, user_answers_filepath):
         assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
-        assert(isinstance(stemmer, Stemmer))
 
         self.synonyms = synonyms
         self.user_answers = user_answers_filepath
-        self.stemmer = stemmer
 
         self.pos = PositiveLabel()
         self.neg = NegativeLabel()
         self.neu = NeutralLabel()
-
-    @staticmethod
-    def get_result_columns():
-        return [Evaluator.C_POS_PREC,
-                Evaluator.C_POS_PREC,
-                Evaluator.C_NEG_PREC,
-                Evaluator.C_POS_RECALL,
-                Evaluator.C_NEG_RECALL,
-                Evaluator.C_F1_POS,
-                Evaluator.C_F1_NEG,
-                Evaluator.C_F1]
 
     @staticmethod
     def _calcRecall(results, answers, label):
@@ -65,7 +63,7 @@ class Evaluator:
         else:
             return 0.0
 
-    def _calcPrecisionAndRecall(self, results):
+    def __calc_prec_and_recall(self, results):
         """ Расчет полноты и точности.
         """
         pos_answers = results[(results[Evaluator.C_RES] == self.pos.to_str())]
@@ -84,7 +82,7 @@ class Evaluator:
 
         return pos_prec, neg_prec, pos_recall, neg_recall
 
-    def _check(self, etalon_opins, test_opins):
+    def __check(self, etalon_opins, test_opins):
         assert(isinstance(etalon_opins, OpinionCollection))
         assert(isinstance(test_opins, OpinionCollection))
 
@@ -122,30 +120,28 @@ class Evaluator:
 
         return df
 
-    # TODO. change it with the list of FilesToCompare objects.
-    def _calc_a_file(self, files_to_compare, debug):
+    def __calc_a_file(self, files_to_compare, debug):
         assert(isinstance(files_to_compare, FilesToCompare))
 
         # Reading test answers.
         test_opins = OpinionCollection.from_file(
-            filepath=files_to_compare.test_filepath,
+            filepath=files_to_compare.TestFilepath,
             synonyms=self.synonyms)
 
         # Reading etalon answers.
         etalon_opins = OpinionCollection.from_file(
-            filepath=files_to_compare.etalon_filepath,
+            filepath=files_to_compare.EtalonFilepath,
             synonyms=self.synonyms)
 
         if debug:
             print "{} <-> {}, {}".format(
-                    files_to_compare.test_filepath,
-                    files_to_compare.etalon_filepath,
+                    files_to_compare.TestFilepath,
+                    files_to_compare.EtalonFilepath,
                     files_to_compare.index)
 
         # Comparing test and etalon results.
-        results = self._check(etalon_opins, test_opins)
+        results = self.__check(etalon_opins, test_opins)
 
-        # Save result comparison into file.
         # TODO. remove path declaration from here.
         comparison_file = "{}/art{}.comp.txt".format(
                 self.user_answers, str(files_to_compare.index))
@@ -155,24 +151,24 @@ class Evaluator:
 
         results.to_csv(comparison_file)
 
-        return self._calcPrecisionAndRecall(results)
+        return self.__calc_prec_and_recall(results)
 
     def evaluate(self, files_to_compare_list, debug=False):
         """ Main evaluation subprogram
         """
         assert(isinstance(files_to_compare_list, list))
 
-        pos_prec, neg_prec, pos_recall, neg_recall = (0, 0, 0, 0)
+        pos_prec, neg_prec, pos_recall, neg_recall = (0.0, 0.0, 0.0, 0.0)
+
+        # TODO: Move to Result.
 
         for files_to_compare in files_to_compare_list:
-            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self._calc_a_file(files_to_compare, debug=debug)
+            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self.__calc_a_file(files_to_compare, debug=debug)
 
             pos_prec += pos_prec1
             neg_prec += neg_prec1
             pos_recall += pos_recall1
             neg_recall += neg_recall1
-
-        # print len(files_to_compare_list)
 
         pos_prec /= len(files_to_compare_list)
         neg_prec /= len(files_to_compare_list)

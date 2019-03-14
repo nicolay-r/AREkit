@@ -1,6 +1,5 @@
 import pandas as pd
 from core.evaluation.labels import Label, PositiveLabel, NegativeLabel
-from core.processing.lemmatization.base import Stemmer
 from core.source.opinion import OpinionCollection
 from core.source.synonyms import SynonymsCollection
 
@@ -24,7 +23,7 @@ class MethodStatistic:
         return founded
 
     @staticmethod
-    def get_method_statistic(files_to_compare_list, synonyms, stemmer):
+    def get_method_statistic(files_to_compare_list, synonyms):
         """
             Calculate statistic based on result files
             files_to_compare_list: list
@@ -32,7 +31,6 @@ class MethodStatistic:
             stemmer: Stemmer
         """
         assert(isinstance(synonyms, SynonymsCollection))
-        assert(isinstance(stemmer, Stemmer))
 
         columns = ["t_all", "t_pos", "t_neg", "e_all", "e_pos", "e_neg"]
 
@@ -40,8 +38,8 @@ class MethodStatistic:
         for files_to_compare in files_to_compare_list:
 
             assert(isinstance(files_to_compare, FilesToCompare))
-            test_opins = OpinionCollection.from_file(files_to_compare.test_filepath, synonyms)
-            etalon_opins = OpinionCollection.from_file(files_to_compare.etalon_filepath, synonyms)
+            test_opins = OpinionCollection.from_file(files_to_compare.TestFilepath, synonyms)
+            etalon_opins = OpinionCollection.from_file(files_to_compare.EtalonFilepath, synonyms)
 
             df.loc[files_to_compare.index] = [
                     MethodStatistic.founded_opins(test_opins, etalon_opins),
@@ -68,18 +66,18 @@ class FilesToCompare:
         assert(isinstance(test_filepath, unicode))
         assert(isinstance(etalon_filepath, unicode))
         assert(isinstance(index, int))
-        self.test_fp_ = test_filepath
-        self.etalon_fp_ = etalon_filepath
-        self.index_ = index
+        self.__test_fp = test_filepath
+        self.__etalon_fp = etalon_filepath
+        self.__index = index
 
     @property
-    def test_filepath(self):
-        return self.test_fp_
+    def TestFilepath(self):
+        return self.__test_fp
 
     @property
-    def etalon_filepath(self):
-        return self.etalon_fp_
+    def EtalonFilepath(self):
+        return self.__etalon_fp
 
     @property
     def index(self):
-        return self.index_
+        return self.__index
