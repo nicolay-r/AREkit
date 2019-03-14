@@ -28,7 +28,7 @@ class MystemWrapper(Stemmer):
         # result.encode('utf-8')), ' ', len(lemmas)
         # The problem when 'G8' word, it will not be
         # lemmatized, so next line is a hot fix
-        return result if len(result) != 0 else text
+        return result if len(result) != 0 else text.lower()
 
     def _lemmatize_core(self, text):
         assert(isinstance(text, unicode))
