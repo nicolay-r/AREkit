@@ -11,18 +11,6 @@ from core.source.synonyms import SynonymsCollection
 
 class EvalResult:
 
-    def __init__(self, parameters):
-        assert(isinstance(parameters, dict))
-        self.__parameters = parameters
-
-    @property
-    def Parameters(self):
-        return self.__parameters
-
-
-class Evaluator:
-
-    # TODO. Move into Eval result
     C_POS_PREC = 'pos_prec'
     C_NEG_PREC = 'neg_prec'
     C_POS_RECALL = 'pos_recall'
@@ -30,6 +18,73 @@ class Evaluator:
     C_F1_POS = 'f1_pos'
     C_F1_NEG = 'f1_neg'
     C_F1 = 'f1'
+
+    def __init__(self):
+        self.__documents = {}
+        self.__cmp_results = {}
+        self.__result = None
+
+    @property
+    def Result(self):
+        return self.__result
+
+    def add_document_results(self, doc_id, pos_prec, neg_prec, pos_recall, neg_recall):
+        assert(doc_id not in self.__documents)
+        self.__documents[doc_id] = {
+            self.C_POS_PREC: pos_prec,
+            self.C_NEG_PREC: neg_prec,
+            self.C_POS_RECALL: pos_recall,
+            self.C_NEG_RECALL: neg_recall
+        }
+
+    def add_cmp_results(self, doc_id, cmp_results):
+        assert(doc_id not in self.__cmp_results)
+        self.__cmp_results[doc_id] = cmp_results
+
+    def calculate(self):
+        pos_prec, neg_prec, pos_recall, neg_recall = (0.0, 0.0, 0.0, 0.0)
+
+        for info in self.__documents.itervalues():
+            pos_prec += info[self.C_POS_PREC]
+            neg_prec += info[self.C_NEG_PREC]
+            pos_recall += info[self.C_POS_RECALL]
+            neg_recall += info[self.C_NEG_RECALL]
+
+        pos_prec /= len(self.__documents)
+        neg_prec /= len(self.__documents)
+        pos_recall /= len(self.__documents)
+        neg_recall /= len(self.__documents)
+
+        if pos_prec * pos_recall != 0:
+            f1_pos = 2 * pos_prec * pos_recall / (pos_prec + pos_recall)
+        else:
+            f1_pos = 0
+
+        if neg_prec * neg_recall != 0:
+            f1_neg = 2 * neg_prec * neg_recall / (neg_prec + neg_recall)
+        else:
+            f1_neg = 0
+
+        self.__result = {self.C_POS_PREC: pos_prec,
+                         self.C_NEG_PREC: neg_prec,
+                         self.C_POS_RECALL: pos_recall,
+                         self.C_NEG_RECALL: neg_recall,
+                         self.C_F1_POS: f1_pos,
+                         self.C_F1_NEG: f1_neg,
+                         self.C_F1: (f1_pos + f1_neg) / 2}
+
+    @property
+    def iter_document_results(self):
+        for doc_id, info in self.__documents.iteritems():
+            yield doc_id, info
+
+    @property
+    def iter_document_cmp(self):
+        for doc_id, cmp_result in self.__cmp_results.iteritems():
+            yield doc_id, cmp_result
+
+
+class Evaluator:
 
     # Columns for differences
     C_WHO = 'who'
@@ -49,7 +104,7 @@ class Evaluator:
         self.neu = NeutralLabel()
 
     @staticmethod
-    def _calcRecall(results, answers, label):
+    def __calc_recall(results, answers, label):
         assert(isinstance(label, PositiveLabel) or isinstance(label, NegativeLabel))
         if len(results[results[Evaluator.C_ORIG] == label.to_str()]) != 0:
             return 1.0 * len(answers[(answers[Evaluator.C_CMP] == True)]) / len(results[results[Evaluator.C_ORIG] == label.to_str()])
@@ -57,23 +112,21 @@ class Evaluator:
             return 0.0
 
     @staticmethod
-    def _calcPrecision(answers):
+    def __calc_precision(answers):
         if len(answers) != 0:
             return 1.0 * len(answers[(answers[Evaluator.C_CMP] == True)]) / len(answers)
         else:
             return 0.0
 
     def __calc_prec_and_recall(self, results):
-        """ Расчет полноты и точности.
-        """
         pos_answers = results[(results[Evaluator.C_RES] == self.pos.to_str())]
         neg_answers = results[(results[Evaluator.C_RES] == self.neg.to_str())]
 
-        pos_prec = self._calcPrecision(pos_answers)
-        neg_prec = self._calcPrecision(neg_answers)
+        pos_prec = self.__calc_precision(pos_answers)
+        neg_prec = self.__calc_precision(neg_answers)
 
-        pos_recall = self._calcRecall(results, pos_answers, self.pos)
-        neg_recall = self._calcRecall(results, neg_answers, self.neg)
+        pos_recall = self.__calc_recall(results, pos_answers, self.pos)
+        neg_recall = self.__calc_recall(results, neg_answers, self.neg)
 
         assert(isinstance(pos_prec, float))
         assert(isinstance(neg_prec, float))
@@ -90,7 +143,6 @@ class Evaluator:
                 columns=[self.C_WHO, self.C_TO, self.C_ORIG, self.C_RES, self.C_CMP])
 
         r_ind = 0
-        # Append everithing that exist in etalon collection.
         for o_etalon in etalon_opins:
             comparison = False
             has_opinion = test_opins.has_synonymous_opinion(o_etalon)
@@ -106,16 +158,13 @@ class Evaluator:
                              comparison]
             r_ind += 1
 
-        # Append everithing that exist in test collection.
         for o_test in test_opins:
             has_opinion = etalon_opins.has_synonymous_opinion(o_test)
             if has_opinion:
                 continue
             df.loc[r_ind] = [o_test.value_left.encode('utf-8'),
                              o_test.value_right.encode('utf-8'),
-                             None,
-			                 o_test.sentiment.to_str(),
-                             False]
+                             None, o_test.sentiment.to_str(), False]
             r_ind += 1
 
         return df
@@ -139,56 +188,21 @@ class Evaluator:
                     files_to_compare.EtalonFilepath,
                     files_to_compare.index)
 
-        # Comparing test and etalon results.
         results = self.__check(etalon_opins, test_opins)
-
-        # TODO. remove path declaration from here.
-        comparison_file = "{}/art{}.comp.txt".format(
-                self.user_answers, str(files_to_compare.index))
-
-        if debug:
-            print "Save comparison file: {}".format(comparison_file)
-
-        results.to_csv(comparison_file)
-
-        return self.__calc_prec_and_recall(results)
+        return results
 
     def evaluate(self, files_to_compare_list, debug=False):
-        """ Main evaluation subprogram
-        """
         assert(isinstance(files_to_compare_list, list))
 
-        pos_prec, neg_prec, pos_recall, neg_recall = (0.0, 0.0, 0.0, 0.0)
-
-        # TODO: Move to Result.
-
+        result = EvalResult()
         for files_to_compare in files_to_compare_list:
-            [pos_prec1, neg_prec1, pos_recall1, neg_recall1] = self.__calc_a_file(files_to_compare, debug=debug)
+            cmp_results = self.__calc_a_file(files_to_compare, debug=debug)
+            pos_prec, neg_prec, pos_recall, neg_recall = self.__calc_prec_and_recall(cmp_results)
+            result.add_document_results(doc_id=files_to_compare.index,
+                                        pos_recall=pos_recall,
+                                        neg_recall=neg_recall,
+                                        pos_prec=pos_prec,
+                                        neg_prec=neg_prec)
 
-            pos_prec += pos_prec1
-            neg_prec += neg_prec1
-            pos_recall += pos_recall1
-            neg_recall += neg_recall1
-
-        pos_prec /= len(files_to_compare_list)
-        neg_prec /= len(files_to_compare_list)
-        pos_recall /= len(files_to_compare_list)
-        neg_recall /= len(files_to_compare_list)
-
-        if pos_prec * pos_recall != 0:
-            f1_pos = 2 * pos_prec * pos_recall / (pos_prec + pos_recall)
-        else:
-            f1_pos = 0
-
-        if neg_prec * neg_recall != 0:
-            f1_neg = 2 * neg_prec * neg_recall / (neg_prec + neg_recall)
-        else:
-            f1_neg = 0
-
-        return {self.C_POS_PREC: pos_prec,
-                self.C_NEG_PREC: neg_prec,
-                self.C_POS_RECALL: pos_recall,
-                self.C_NEG_RECALL: neg_recall,
-                self.C_F1_POS: f1_pos,
-                self.C_F1_NEG: f1_neg,
-                self.C_F1: (f1_pos + f1_neg) / 2}
+        result.calculate()
+        return result
