@@ -30,11 +30,18 @@ class EvalResult:
 
     def add_document_results(self, doc_id, pos_prec, neg_prec, pos_recall, neg_recall):
         assert(doc_id not in self.__documents)
+
+        f1 = self.__calc_f1(pos_prec=pos_prec,
+                            neg_prec=neg_prec,
+                            pos_recall=pos_recall,
+                            neg_recall=neg_recall)
+
         self.__documents[doc_id] = {
-            self.C_POS_PREC: pos_prec,
-            self.C_NEG_PREC: neg_prec,
-            self.C_POS_RECALL: pos_recall,
-            self.C_NEG_RECALL: neg_recall
+            self.C_F1: round(f1, 2),
+            self.C_POS_PREC: round(pos_prec, 4),
+            self.C_NEG_PREC: round(neg_prec, 5),
+            self.C_POS_RECALL: round(pos_recall, 5),
+            self.C_NEG_RECALL: round(neg_recall, 5),
         }
 
     def add_cmp_results(self, doc_id, cmp_results):
@@ -55,23 +62,33 @@ class EvalResult:
         pos_recall /= len(self.__documents)
         neg_recall /= len(self.__documents)
 
-        if pos_prec * pos_recall != 0:
-            f1_pos = 2 * pos_prec * pos_recall / (pos_prec + pos_recall)
-        else:
-            f1_pos = 0
-
-        if neg_prec * neg_recall != 0:
-            f1_neg = 2 * neg_prec * neg_recall / (neg_prec + neg_recall)
-        else:
-            f1_neg = 0
+        f1 = self.__calc_f1(pos_prec=pos_prec,
+                            neg_prec=neg_prec,
+                            pos_recall=pos_recall,
+                            neg_recall=neg_recall)
 
         self.__result = {self.C_POS_PREC: pos_prec,
                          self.C_NEG_PREC: neg_prec,
                          self.C_POS_RECALL: pos_recall,
                          self.C_NEG_RECALL: neg_recall,
-                         self.C_F1_POS: f1_pos,
-                         self.C_F1_NEG: f1_neg,
-                         self.C_F1: (f1_pos + f1_neg) / 2}
+                         self.C_F1_POS: self.__calc_f1_single_class(prec=pos_prec,
+                                                                    recall=pos_recall),
+                         self.C_F1_NEG: self.__calc_f1_single_class(prec=neg_prec,
+                                                                    recall=neg_recall),
+                         self.C_F1: f1}
+
+    @staticmethod
+    def __calc_f1_single_class(prec, recall):
+        if prec * recall != 0:
+            return 2 * prec * recall / (prec + recall)
+        else:
+            return 0
+
+    @staticmethod
+    def __calc_f1(pos_prec, neg_prec, pos_recall, neg_recall):
+        f1_pos = EvalResult.__calc_f1_single_class(prec=pos_prec, recall=pos_recall)
+        f1_neg = EvalResult.__calc_f1_single_class(prec=neg_prec, recall=neg_recall)
+        return (f1_pos + f1_neg) * 1.0 / 2
 
     @property
     def iter_document_results(self):
@@ -181,6 +198,8 @@ class Evaluator:
         etalon_opins = OpinionCollection.from_file(
             filepath=files_to_compare.EtalonFilepath,
             synonyms=self.synonyms)
+
+        print len(etalon_opins)
 
         if debug:
             print "{} <-> {}, {}".format(
