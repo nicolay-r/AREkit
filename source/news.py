@@ -49,6 +49,10 @@ class News:
                 e_ind += 1
                 continue
 
+            if e.value in [u'author', u'unknown']:
+                e_ind += 1
+                continue
+
             raise Exception("e_i:{} e:('{}',{},{}), s_i:{}  s({},{})".format(
                 e_ind,
                 e.value.encode('utf-8'), e.begin, e.end,
@@ -67,8 +71,15 @@ class News:
 
             sentences = []
             line_start = 0
+            unknown_entity = u"Unknown}"
 
             for line in f.readlines():
+
+                if unknown_entity in line:
+                    offset = line.index(unknown_entity) + len(unknown_entity)
+                    line_start += offset
+                    line = line[offset:]
+
                 line_end = line_start + len(line) - 1
 
                 if line != unicode('\r\n'):
