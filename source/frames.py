@@ -1,7 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-from core.source.tokens import Tokens
-from core.runtime.parser import ParsedText
 from core.processing.lemmatization.base import Stemmer
 
 
@@ -13,8 +10,8 @@ class FramesCollection:
             dictionary of frames: <str, Frame>
         """
         assert(isinstance(variants, dict))
-        self.variants = variants
-        self.frames_list = frames_list
+        self.__variants = variants
+        self.__frames_list = frames_list
 
     @classmethod
     def from_file(cls, filepath, stemmer=None):
@@ -61,56 +58,18 @@ class FramesCollection:
             frames_list.append(group)
         return frames_dict[group]
 
-    @staticmethod
-    def __replace_specific_russian_chars(terms):
-        for i, term in enumerate(terms):
-            terms[i] = term.replace(u'ё', u'e')
-
     def get_frame_by_index(self, index):
-        return self.frames_list[index]
+        return self.__frames_list[index]
 
-    def find_frames(self, parsed_text):
-        """
-        Searching frames that a part of terms
+    def get_variant_by_template(self, template):
+        return self.__variants[template]
 
-        terms: ParsedText
-            parsed text
-        return: list or None
-            list of tuples (frame, term_begin_index), or None
-        """
-        assert(isinstance(parsed_text, ParsedText))
+    def has_variant(self, template):
+        return template in self.__variants
 
-        result = []
-        terms = list(parsed_text.Terms)
-
-        self.__replace_specific_russian_chars(terms)
-
-        max_variant_len = max([len(value.terms) for value in self.variants.itervalues()])
-
-        start_ind = 0
-        last_ind = 0
-        while start_ind < len(parsed_text):
-            for ctx_size in reversed(range(1, max_variant_len)):
-
-                last_ind = start_ind + ctx_size - 1
-
-                if not(last_ind < len(parsed_text)):
-                    break
-
-                if Tokens.is_token(terms[last_ind]):
-                    continue
-
-                ctx = u" ".join(terms[start_ind:last_ind + 1])
-                if ctx in self.variants:
-                    result.append(VariantInText(self.variants[ctx], start_ind))
-                    break
-
-            start_ind = last_ind + 1
-
-        if len(result) == 0:
-            return None
-
-        return result
+    def iter_variants(self):
+        for template, variant in self.__variants.iteritems():
+            yield template, variant
 
 
 class Variant:
