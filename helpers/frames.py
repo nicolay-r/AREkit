@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.runtime.parser import ParsedText
 from core.source.frames import FrameVariantInText, FramesCollection
-from core.source.tokens import Token
 
 
 class FramesHelper:

@@ -135,32 +135,26 @@ class ParsedText:
         assert(isinstance(terms, list))
         assert(isinstance(hide_tokens, bool))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
-        self._terms = terms
-        self.token_values_hidden = hide_tokens
-        self._lemmas = None
+        self.__terms = terms
+        self.__token_values_hidden = hide_tokens
+        self.__lemmas = None
         if stemmer is not None:
             self.__lemmatize(stemmer)
-
-    def subtext(self, begin, end):
-        assert(isinstance(begin, int))
-        assert(isinstance(end, int))
-        return ParsedText(self._terms[begin:end],
-                          hide_tokens=self.token_values_hidden)
 
     @property
     # TODO: Processing outside. Method also might be renamed as 'iter_*'
     def Terms(self):
-        for term in self._terms:
+        for term in self.__terms:
             yield self.__output_term(term)
 
     def iter_raw_terms(self):
-        for term in self._terms:
+        for term in self.__terms:
             yield term
 
     @property
     def Lemmas(self):
-        assert(isinstance(self._lemmas, list))
-        for lemma in self._lemmas:
+        assert(isinstance(self.__lemmas, list))
+        for lemma in self.__lemmas:
             yield lemma
 
     def __lemmatize(self, stemmer):
@@ -169,30 +163,30 @@ class ParsedText:
         PS: Might be significantly slow, depending on stemmer were used.
         """
         assert(isinstance(stemmer, Stemmer))
-        self._lemmas = [self.__get_token_as_term(t) if isinstance(t, Token)
+        self.__lemmas = [self.__get_token_as_term(t) if isinstance(t, Token)
                         else u"".join(stemmer.lemmatize_to_list(t))
-                        for t in self._terms]
+                         for t in self.__terms]
 
     def get_term(self, i):
-        return self.__output_term(self._terms[i])
+        return self.__output_term(self.__terms[i])
 
     def get_lemma(self, i):
-        return self.__output_lemma(self._lemmas[i])
+        return self.__output_lemma(self.__lemmas[i])
 
     def is_token_values_hidden(self):
-        return self.token_values_hidden
+        return self.__token_values_hidden
 
     def unhide_token_values(self):
         """
         Display original token values, i.e. ',', '.'
         """
-        self.token_values_hidden = False
+        self.__token_values_hidden = False
 
     def hide_token_values(self):
         """
         Display tokens as '<[COMMA]>', etc.
         """
-        self.token_values_hidden = True
+        self.__token_values_hidden = True
 
     def __output_term(self, term):
         return self.__get_token_as_term(term) if isinstance(term, Token) else term
@@ -201,12 +195,12 @@ class ParsedText:
         return self.__get_token_as_term(lemma) if isinstance(lemma, Token) else lemma
 
     def __get_token_as_term(self, token):
-        return token.get_token_value() if self.token_values_hidden \
+        return token.get_token_value() if self.__token_values_hidden \
             else token.get_original_value()
 
     def __len__(self):
-        return len(self._terms)
+        return len(self.__terms)
 
     def __iter__(self):
-        for term in self._terms:
+        for term in self.__terms:
             yield term
