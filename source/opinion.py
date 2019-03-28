@@ -25,7 +25,7 @@ class OpinionCollection:
     def __create_index(self):
         index = {}
         for opinion in self.opinions:
-            OpinionCollection.__add_opinion(opinion, index, self.synonyms, check=False)
+            OpinionCollection.__add_opinion(opinion, index, self.synonyms, check=True)
         return index
 
     @classmethod
@@ -97,7 +97,9 @@ class OpinionCollection:
 
         assert(isinstance(key, unicode))
         if check:
-            assert(key not in collection)
+            if key in collection:
+                raise Exception(u"'{}->{}' already exists in collection".format(
+                    opinion.value_left, opinion.value_right).encode('utf-8'))
         if key in collection:
             return False
         collection[key] = opinion
