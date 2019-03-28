@@ -9,6 +9,28 @@ class FramesHelper:
         assert(isinstance(frames, FramesCollection))
         self.__frames = frames
 
+    def find_and_mark_frames(self, raw_terms):
+        assert(isinstance(raw_terms, list))
+
+        def __remove(terms, start, end):
+            while end > start:
+                del terms[start]
+                end -= 1
+
+        parsed_text = ParsedText(terms=raw_terms, hide_tokens=True)
+        frame_variants = self.find_frames(parsed_text)
+
+        if frame_variants is None:
+            return raw_terms
+
+        for variant in reversed(frame_variants):
+            assert (isinstance(variant, FrameVariantInText))
+            start, end = variant.get_bounds()
+            __remove(raw_terms, start, end)
+            raw_terms.insert(variant.start_index, variant)
+
+        return raw_terms
+
     def find_frames(self, parsed_text):
         """
         Searching frames that a part of terms
@@ -20,14 +42,22 @@ class FramesHelper:
         """
         def __replace_specific_russian_chars(terms):
             for i, term in enumerate(terms):
+                if not isinstance(term, unicode):
+                    continue
                 terms[i] = term.replace(u'ё', u'e')
+
+        def __check(terms, start_ind, last_ind):
+            for i in range(start_ind, last_ind + 1):
+                if not isinstance(terms[i], unicode):
+                    return False
+            return True
 
         assert(isinstance(parsed_text, ParsedText))
 
         result = []
         start_ind = 0
         last_ind = 0
-        terms = list(parsed_text.Terms)
+        terms = list(parsed_text.iter_raw_terms())
         __replace_specific_russian_chars(terms)
         max_variant_len = max([len(variant.terms) for _, variant in self.__frames.iter_variants()])
         while start_ind < len(terms):
@@ -37,6 +67,9 @@ class FramesHelper:
 
                 if not(last_ind < len(terms)):
                     break
+
+                if not __check(terms, start_ind, last_ind):
+                    continue
 
                 ctx_template = u" ".join(terms[start_ind:last_ind + 1])
                 if self.__frames.has_variant(ctx_template):
