@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.runtime.parser import ParsedText
-from core.source.frames import VariantInText, FramesCollection
+from core.source.frames import FrameVariantInText, FramesCollection
 from core.source.tokens import Token
 
 
@@ -41,7 +41,7 @@ class FramesHelper:
 
                 ctx_template = u" ".join(terms[start_ind:last_ind + 1])
                 if self.__frames.has_variant(ctx_template):
-                    result.append(VariantInText(self.__frames.get_variant_by_template(ctx_template), start_ind))
+                    result.append(FrameVariantInText(self.__frames.get_variant_by_template(ctx_template), start_ind))
                     break
 
             start_ind = last_ind + 1

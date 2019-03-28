@@ -46,7 +46,7 @@ class FramesCollection:
 
                 indices = [cls.__add_frame(frames_dict, frames_list, g) for g in groups]
 
-                frames[template] = Variant(template, indices)
+                frames[template] = FrameVariant(template, indices)
 
         return cls(frames, frames_list)
 
@@ -72,7 +72,7 @@ class FramesCollection:
             yield template, variant
 
 
-class Variant:
+class FrameVariant:
 
     def __init__(self, template, frame_indices):
         assert(isinstance(template, unicode))
@@ -80,10 +80,10 @@ class Variant:
         self.frame_indices = frame_indices
 
 
-class VariantInText:
+class FrameVariantInText:
 
     def __init__(self, variant, start_index):
-        assert(isinstance(variant, Variant))
+        assert(isinstance(variant, FrameVariant))
         assert(isinstance(start_index, int))
         self.__variant = variant
         self.start_index = start_index
