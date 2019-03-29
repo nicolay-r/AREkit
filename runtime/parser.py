@@ -147,6 +147,10 @@ class ParsedText:
         for term in self.__terms:
             yield self.__output_term(term)
 
+    @property
+    def IsTokenValuesHidden(self):
+        return self.__token_values_hidden
+
     def iter_raw_terms(self):
         for term in self.__terms:
             yield term
