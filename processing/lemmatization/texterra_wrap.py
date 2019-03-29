@@ -17,17 +17,17 @@ class TexterraLemmatizationWrap(Stemmer):
         if debug:
             print "Connecting to Texterra server: {}".format(url)
 
-        self.t = texterra.API(host=url)
+        self.__t = texterra.API(host=url)
 
     def lemmatize_to_list(self, text):
-        return self._lemmatize(text)
+        return self.__lemmatize(text)
 
     def lemmatize_to_str(self, text, remove_new_lines=True):
-        lemmas = self._lemmatize(text)
+        lemmas = self.__lemmatize(text)
         return " ".join(lemmas)
 
-    def _lemmatize(self, text):
-        results = self.t.lemmatization(text)
+    def __lemmatize(self, text):
+        results = self.__t.lemmatization(text)
         lemmas = []
         for r in results:
             for l in r:

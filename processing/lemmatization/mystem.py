@@ -15,26 +15,28 @@ class MystemWrapper(Stemmer):
             Mystem parameter that allows to keep all information from input (true) or
             remove garbage characters
         """
-        self.entire_input = entire_input
-        self.mystem = Mystem(entire_input=entire_input)
+        self.__mystem = Mystem(entire_input=entire_input)
+
+    @property
+    def MystemInstance(self):
+        return self.__mystem
 
     def lemmatize_to_list(self, text):
-        return self._lemmatize_core(text)
+        return self.__lemmatize_core(text)
 
     def lemmatize_to_str(self, text):
-        result = u" ".join(self._lemmatize_core(text))
+        result = u" ".join(self.__lemmatize_core(text))
+        return result if len(result) != 0 else self.__process_original_text(text)
 
-        # print '"%s"->"%s"' % (text.encode('utf-8'),
-        # result.encode('utf-8')), ' ', len(lemmas)
-        # The problem when 'G8' word, it will not be
-        # lemmatized, so next line is a hot fix
-        return result if len(result) != 0 else text.lower()
-
-    def _lemmatize_core(self, text):
+    def __lemmatize_core(self, text):
         assert(isinstance(text, unicode))
-        result_list = self.mystem.lemmatize(text.lower())
-        return self._filter_whitespaces(result_list)
+        result_list = self.__mystem.lemmatize(self.__process_original_text(text))
+        return self.__filter_whitespaces(result_list)
 
     @staticmethod
-    def _filter_whitespaces(terms):
+    def __process_original_text(text):
+        return text.lower()
+
+    @staticmethod
+    def __filter_whitespaces(terms):
         return [term.strip() for term in terms if term.strip()]

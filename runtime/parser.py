@@ -152,7 +152,7 @@ class ParsedText:
             yield term
 
     @property
-    def Lemmas(self):
+    def iter_lemmas(self):
         assert(isinstance(self.__lemmas, list))
         for lemma in self.__lemmas:
             yield lemma
