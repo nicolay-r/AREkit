@@ -54,7 +54,7 @@ class FramesHelper:
 
         assert(isinstance(parsed_text, ParsedText))
 
-        result = []
+        text_frame_variants = []
         start_ind = 0
         last_ind = 0
         terms = list(parsed_text.iter_raw_terms())
@@ -73,13 +73,16 @@ class FramesHelper:
 
                 ctx_template = u" ".join(terms[start_ind:last_ind + 1])
                 if self.__frames.has_variant(ctx_template):
-                    result.append(FrameVariantInText(self.__frames.get_variant_by_template(ctx_template), start_ind))
+                    frame_variant = FrameVariantInText(
+                        self.__frames.get_variant_by_template(ctx_template),
+                        start_ind)
+                    text_frame_variants.append(frame_variant)
                     break
 
             start_ind = last_ind + 1
 
-        if len(result) == 0:
+        if len(text_frame_variants) == 0:
             return None
 
-        return result
+        return text_frame_variants
 
