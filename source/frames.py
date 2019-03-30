@@ -76,8 +76,18 @@ class FrameVariant:
 
     def __init__(self, template, frame_indices):
         assert(isinstance(template, unicode))
-        self.terms = template.lower().split()
-        self.frame_indices = frame_indices
+        self.__terms = template.lower().split()
+        self.__frame_indices = frame_indices
+
+    def get_value(self):
+        return u" ".join(self.__terms)
+
+    def iter_terms(self):
+        for term in self.__terms:
+            yield term
+
+    def __len__(self):
+        return len(self.__terms)
 
 
 class FrameVariantInText:
@@ -88,13 +98,17 @@ class FrameVariantInText:
         self.__variant = variant
         self.start_index = start_index
 
+    @property
+    def Variant(self):
+        return self.__variant
+
     def get_bounds(self):
         return self.start_index, self.start_index + len(self)
 
     def iter_terms(self):
-        for term in self.__variant.terms:
+        for term in self.__variant.iter_terms():
             yield term
 
     def __len__(self):
-        return len(self.__variant.terms)
+        return len(self.__variant)
 

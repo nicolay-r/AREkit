@@ -158,22 +158,25 @@ class ParsedText:
             self.__lemmatize(stemmer)
 
     @property
+    def IsTokenValuesHidden(self):
+        return self.__hide_token_value
+
+    @property
     # TODO: Processing outside. Method also might be renamed as 'iter_*'
     def Terms(self):
         for term in self.__terms:
             yield self.__output_term(term, self.hide_token_values())
 
     @property
-    def IsTokenValuesHidden(self):
-        return self.__hide_token_value
+    def iter_lemmas(self):
+        for lemma in self.__lemmas:
+            yield self.__output_term(lemma, self.hide_token_values())
 
     def iter_raw_terms(self):
         for term in self.__terms:
             yield term
 
-    @property
-    def iter_lemmas(self):
-        assert(isinstance(self.__lemmas, list))
+    def iter_raw_lemmas(self):
         for lemma in self.__lemmas:
             yield lemma
 
@@ -183,15 +186,14 @@ class ParsedText:
         PS: Might be significantly slow, depending on stemmer were used.
         """
         assert(isinstance(stemmer, Stemmer))
-        self.__lemmas = [self.__get_token_as_term(t, self.__hide_token_value) if isinstance(t, Token)
-                         else u"".join(stemmer.lemmatize_to_list(t))
+        self.__lemmas = [t if isinstance(t, Token) else u"".join(stemmer.lemmatize_to_list(t))
                          for t in self.__terms]
 
     def get_term(self, i):
         return self.__output_term(self.__terms[i], self.__hide_token_value)
 
     def get_lemma(self, i):
-        return self.__output_lemma(self.__lemmas[i], self.__hide_token_value)
+        return self.__output_term(self.__terms[i], self.__hide_token_value)
 
     def is_token_values_hidden(self):
         return self.__hide_token_value
@@ -215,10 +217,6 @@ class ParsedText:
     @staticmethod
     def __output_term(term, hide_token_value):
         return ParsedText.__get_token_as_term(term, hide_token_value) if isinstance(term, Token) else term
-
-    @staticmethod
-    def __output_lemma(lemma, hide_token_value):
-        return ParsedText.__get_token_as_term(lemma, hide_token_value) if isinstance(lemma, Token) else lemma
 
     @staticmethod
     def __get_token_as_term(token, hide):

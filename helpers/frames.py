@@ -57,21 +57,21 @@ class FramesHelper:
         text_frame_variants = []
         start_ind = 0
         last_ind = 0
-        terms = list(parsed_text.iter_raw_terms())
-        __replace_specific_russian_chars(terms)
-        max_variant_len = max([len(variant.terms) for _, variant in self.__frames.iter_variants()])
-        while start_ind < len(terms):
+        lemmas = list(parsed_text.iter_raw_lemmas())
+        __replace_specific_russian_chars(lemmas)
+        max_variant_len = max([len(variant) for _, variant in self.__frames.iter_variants()])
+        while start_ind < len(lemmas):
             for ctx_size in reversed(range(1, max_variant_len)):
 
                 last_ind = start_ind + ctx_size - 1
 
-                if not(last_ind < len(terms)):
+                if not(last_ind < len(lemmas)):
                     break
 
-                if not __check(terms, start_ind, last_ind):
+                if not __check(lemmas, start_ind, last_ind):
                     continue
 
-                ctx_template = u" ".join(terms[start_ind:last_ind + 1])
+                ctx_template = u" ".join(lemmas[start_ind:last_ind + 1])
                 if self.__frames.has_variant(ctx_template):
                     frame_variant = FrameVariantInText(
                         self.__frames.get_variant_by_template(ctx_template),
