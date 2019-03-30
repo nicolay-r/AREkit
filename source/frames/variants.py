@@ -2,14 +2,11 @@
 from core.processing.lemmatization.base import Stemmer
 
 
-class FramesCollection:
+class FrameVariantsCollection:
 
     def __init__(self, variants, frames_list):
-        """
-        frames: dict
-            dictionary of frames: <str, Frame>
-        """
         assert(isinstance(variants, dict))
+        assert(isinstance(frames_list, list))
         self.__variants = variants
         self.__frames_list = frames_list
 

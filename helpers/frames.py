@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from core.runtime.parser import ParsedText
-from core.source.frames import FrameVariantInText, FramesCollection
+from core.source.frames.variants import FrameVariantInText, FrameVariantsCollection
 
 
 class FramesHelper:
 
     def __init__(self, frames):
-        assert(isinstance(frames, FramesCollection))
+        assert(isinstance(frames, FrameVariantsCollection))
         self.__frames = frames
 
     def find_and_mark_frames(self, raw_terms):
