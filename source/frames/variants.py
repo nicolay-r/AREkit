@@ -1,59 +1,41 @@
 # -*- coding: utf-8 -*-
-from core.processing.lemmatization.base import Stemmer
+import collections
+
+from core.common.bound import Bound
 
 
 class FrameVariantsCollection:
 
     def __init__(self, variants, frames_list):
+        """
+        frames_list: list
+            list of "frame_id" (typeof unicode) items.
+        """
         assert(isinstance(variants, dict))
         assert(isinstance(frames_list, list))
         self.__variants = variants
         self.__frames_list = frames_list
 
     @classmethod
-    def from_file(cls, filepath, stemmer=None):
-        """
-        Reads SentiRuFrames collection -- list of variants with related frame groups.
-        """
-        assert(isinstance(stemmer, Stemmer) or stemmer is None)
+    def from_iterable(cls, variants_with_id):
+        assert(isinstance(variants_with_id, collections.Iterable))
 
-        frames = {}
+        variants = {}
         frames_dict = {}
         frames_list = []
-        with open(filepath, "r") as f:
-            for line in f.readlines():
-                line = line.decode('utf-8')
-                char = u'–' if u'–' in line else u'-'
+        for frame_id, variant in variants_with_id:
+            FrameVariantsCollection.__register_frame(frames_dict, frames_list, frame_id)
+            variants[variant] = FrameVariant(variant, frame_id)
 
-                assert(len(filter(lambda c: c == char, line)) == 1)
-
-                separator = line.index(char)
-
-                template = line[0:separator].strip().lower()
-                if stemmer is not None:
-                    template = stemmer.lemmatize_to_str(template)
-
-                if u',' in template:
-                    print template
-                    raise Exception(template)
-
-                groups = line[separator + 1:].strip()
-                groups = groups[5:] if u'фрейм' in groups else groups
-                groups = [g.strip().lower() for g in groups.split(u',')]
-
-                indices = [cls.__add_frame(frames_dict, frames_list, g) for g in groups]
-
-                frames[template] = FrameVariant(template, indices)
-
-        return cls(frames, frames_list)
+        return cls(variants, frames_list)
 
     @staticmethod
-    def __add_frame(frames_dict, frames_list, group):
-        assert(isinstance(group, unicode))
-        if group not in frames_dict:
-            frames_dict[group] = len(frames_list)
-            frames_list.append(group)
-        return frames_dict[group]
+    def __register_frame(frames_dict, frames_list, id):
+        assert(isinstance(id, unicode))
+        if id not in frames_dict:
+            frames_dict[id] = len(frames_list)
+            frames_list.append(id)
+        return frames_dict[id]
 
     def get_frame_by_index(self, index):
         return self.__frames_list[index]
@@ -71,10 +53,15 @@ class FrameVariantsCollection:
 
 class FrameVariant:
 
-    def __init__(self, template, frame_indices):
-        assert(isinstance(template, unicode))
-        self.__terms = template.lower().split()
-        self.__frame_indices = frame_indices
+    def __init__(self, text, frame_id):
+        assert(isinstance(text, unicode))
+        assert(isinstance(frame_id, unicode))
+        self.__terms = text.lower().split()
+        self.__frame_id = frame_id
+
+    @property
+    def FrameID(self):
+        return self.__frame_id
 
     def get_value(self):
         return u" ".join(self.__terms)
@@ -99,8 +86,12 @@ class FrameVariantInText:
     def Variant(self):
         return self.__variant
 
+    # TODO: Deprecated. Use get_bound instead.
     def get_bounds(self):
         return self.start_index, self.start_index + len(self)
+
+    def get_bound(self):
+        return Bound(pos=self.start_index, length=len(self))
 
     def iter_terms(self):
         for term in self.__variant.iter_terms():

@@ -25,9 +25,11 @@ class FramesHelper:
 
         for variant in reversed(frame_variants):
             assert (isinstance(variant, FrameVariantInText))
-            start, end = variant.get_bounds()
-            __remove(raw_terms, start, end)
-            raw_terms.insert(variant.start_index, variant)
+            variant_bound = variant.get_bound()
+            __remove(raw_terms,
+                     start=variant_bound.TermIndex,
+                     end=variant_bound.TermIndex + variant_bound.Length)
+            raw_terms.insert(variant_bound.TermIndex, variant)
 
         return raw_terms
 
