@@ -88,31 +88,32 @@ class TextParser:
 
         url = Tokens.try_create_url(term)
         if url is not None:
-            return [Token(url, Tokens.URL)]
+            return [url]
 
         l = 0
         words_and_tokens = []
         while l < len(term):
             # token
-            token_value = Tokens.try_create(term[l])
-            if token_value is not None:
-                words_and_tokens.append(Token(term[l], token_value))
+            token = Tokens.try_create(term[l])
+            if token is not None:
+                if token.get_token_value() != Tokens.NEW_LINE:
+                    words_and_tokens.append(token)
                 l += 1
             # number
             elif unicode.isdigit(term[l]):
                 k = l + 1
                 while k < len(term) and unicode.isdigit(term[k]):
                     k += 1
-                token_value = Tokens.try_create_number(term[l:k])
-                assert(token_value is not None)
-                words_and_tokens.append(Token(term[l:k], token_value))
+                token = Tokens.try_create_number(term[l:k])
+                assert(token is not None)
+                words_and_tokens.append(token)
                 l = k
             # term
             else:
                 k = l + 1
                 while k < len(term):
-                    token_value = Tokens.try_create(term[k])
-                    if token_value is not None and token_value != Tokens.DASH:
+                    token = Tokens.try_create(term[k])
+                    if token is not None and token.get_token_value() != Tokens.DASH:
                         break
                     k += 1
                 words_and_tokens.append(term[l:k])

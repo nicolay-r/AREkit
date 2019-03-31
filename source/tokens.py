@@ -27,7 +27,7 @@ class Tokens:
     UNKNOWN_WORD = _wrapper.format(u'UNKNOWN_WORD')
     URL = _wrapper.format(u"URL")
 
-    _token_mapping = {
+    __token_mapping = {
         u',': COMMA,
         u'.': DOT,
         u'…': TRIPLE_DOTS,
@@ -49,7 +49,7 @@ class Tokens:
         u'"': QUOTE,
     }
 
-    _supported_tokens = {
+    __supported_tokens = {
         COMMA,
         SEMICOLON,
         COLON,
@@ -68,39 +68,37 @@ class Tokens:
         UNKNOWN_WORD}
 
     @staticmethod
-    # TODO. Return Token instance
     def try_create(subterm):
         """
         Trying create a token by given 'term' parameter
         subterm: unicode
            I.e. term ending, so means a part of original term
-        return: unicode or None
-            returns Token unicode or None
         """
         assert(isinstance(subterm, unicode))
-
-        if subterm not in Tokens._token_mapping:
+        if subterm not in Tokens.__token_mapping:
             return None
-        return Tokens._token_mapping[subterm]
+        return Token(term=subterm, token_value=Tokens.__token_mapping[subterm])
 
     @staticmethod
-    # TODO. Return Token instance
     def try_create_number(term):
         assert(isinstance(term, unicode))
-        return Tokens.NUMBER if term.isdigit() else None
+        if not term.isdigit():
+            return None
+        return Token(term=term, token_value=Tokens.NUMBER)
 
     @staticmethod
-    # TODO. Return Token instance
     def try_create_url(term):
         assert(isinstance(term, unicode))
         result = urlparse(term)
         is_correct = result.scheme and result.netloc and result.path
-        return Tokens.URL if is_correct else None
+        if not is_correct:
+            return None
+        return Token(term=term, token_value=Tokens.URL)
 
     @staticmethod
     def is_token(term):
         assert(isinstance(term, unicode))
-        return term in Tokens._supported_tokens
+        return term in Tokens.__supported_tokens
 
     @staticmethod
     def iter_chars_by_token(term):
@@ -109,7 +107,7 @@ class Tokens:
         token: char
         """
         assert(isinstance(term, unicode))
-        for char, token in Tokens._token_mapping.iteritems():
+        for char, token in Tokens.__token_mapping.iteritems():
             if term == token:
                 yield char
 
@@ -122,11 +120,11 @@ class Token:
     def __init__(self, term, token_value):
         assert(isinstance(term, unicode))
         assert(isinstance(token_value, unicode))
-        self._term = term
-        self._token_value = token_value
+        self.__term = term
+        self.__token_value = token_value
 
     def get_original_value(self):
-        return self._term
+        return self.__term
 
     def get_token_value(self):
-        return self._token_value
+        return self.__token_value
