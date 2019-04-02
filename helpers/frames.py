@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from core.processing.lemmatization.base import Stemmer
 from core.runtime.parser import ParsedText
 from core.source.frames.variants import FrameVariantInText, FrameVariantsCollection
 
@@ -9,15 +10,16 @@ class FramesHelper:
         assert(isinstance(frames, FrameVariantsCollection))
         self.__frames = frames
 
-    def find_and_mark_frames(self, raw_terms):
+    def find_and_mark_frames(self, raw_terms, stemmer):
         assert(isinstance(raw_terms, list))
+        assert(isinstance(stemmer, Stemmer))
 
         def __remove(terms, start, end):
             while end > start:
                 del terms[start]
                 end -= 1
 
-        parsed_text = ParsedText(terms=raw_terms, hide_tokens=True)
+        parsed_text = ParsedText(terms=raw_terms, hide_tokens=True, stemmer=stemmer)
         frame_variants = self.find_frames(parsed_text)
 
         if frame_variants is None:

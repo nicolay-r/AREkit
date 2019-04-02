@@ -187,7 +187,7 @@ class ParsedText:
         PS: Might be significantly slow, depending on stemmer were used.
         """
         assert(isinstance(stemmer, Stemmer))
-        self.__lemmas = [t if isinstance(t, Token) else u"".join(stemmer.lemmatize_to_list(t))
+        self.__lemmas = [u"".join(stemmer.lemmatize_to_list(t)) if isinstance(t, unicode) else t
                          for t in self.__terms]
 
     def get_term(self, i):
