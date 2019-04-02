@@ -7,6 +7,7 @@ class FramesCollection:
 
     __frames_key = u"frames"
     __polarity_key = u"polarity"
+    __states_key = u"states"
 
     def __init__(self, data):
         assert(isinstance(data, dict))
@@ -34,14 +35,24 @@ class FramesCollection:
 
     def get_frame_states(self, frame_id):
         assert(isinstance(frame_id, unicode))
+
+        if self.__states_key not in self.__data[frame_id][self.__frames_key]:
+            return []
+
         return [FrameState(role=args[0], label=args[1], prob=args[2])
-                for args in self.__data[frame_id][self.__frames_key]["states"]]
+                for args in self.__data[frame_id][self.__frames_key][self.__states_key]]
 
-    def get_frame_values(self):
+    def get_frame_values(self, frame_id):
+        assert(isinstance(frame_id, unicode))
         pass
 
-    def get_frame_effects(self):
+    def get_frame_effects(self, frame_id):
+        assert(isinstance(frame_id, unicode))
         pass
+
+    def iter_frames_ids(self):
+        for frame_id in self.__data.iterkeys():
+            yield frame_id
 
     def iter_frame_id_and_variants(self):
         for id, frame in self.__data.iteritems():
