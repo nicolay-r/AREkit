@@ -22,7 +22,8 @@ class FramesCollection:
 
     def get_frame_roles(self, frame_id):
         assert(isinstance(frame_id, unicode))
-        return self.__data[frame_id]["roles"]
+        return [FrameRole(source=key, description=value)
+                for key, value in self.__data[frame_id][u"roles"].iteritems()]
 
     def get_frame_polarities(self, frame_id):
         assert(isinstance(frame_id, unicode))
@@ -41,6 +42,10 @@ class FramesCollection:
 
         return [FrameState(role=args[0], label=args[1], prob=args[2])
                 for args in self.__data[frame_id][self.__frames_key][self.__states_key]]
+
+    def get_frame_titles(self, frame_id):
+        assert(isinstance(frame_id, unicode))
+        return self.__data[frame_id][u"title"]
 
     def get_frame_values(self, frame_id):
         assert(isinstance(frame_id, unicode))
@@ -112,9 +117,26 @@ class FrameState(object):
         return self.__prob
 
 
-class FrameValues(object):
-    pass
+class FrameRole(object):
+
+    def __init__(self, source, description):
+        assert(isinstance(source, unicode))
+        assert(isinstance(description, unicode))
+        self.__source = source
+        self.__description = description
+
+    @property
+    def Source(self):
+        return self.__source
+
+    @property
+    def Description(self):
+        return self.__description
 
 
 class FrameEffect(object):
+    pass
+
+
+class FrameValue(object):
     pass
