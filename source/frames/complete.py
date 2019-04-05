@@ -63,6 +63,9 @@ class FramesCollection:
         assert(isinstance(frame_id, unicode))
         pass
 
+    def get_frame_variants(self, frame_id):
+        return self.__data[frame_id][u"variants"]
+
     def get_frame_effects(self, frame_id):
         assert(isinstance(frame_id, unicode))
         pass

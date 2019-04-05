@@ -112,3 +112,6 @@ class SynonymsCollection:
     def iter_by_index(self):
         for item in self.__by_index:
             yield item
+
+    def __len__(self):
+        return len(self.__by_index)

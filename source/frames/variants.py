@@ -80,18 +80,18 @@ class FrameVariantInText:
         assert(isinstance(variant, FrameVariant))
         assert(isinstance(start_index, int))
         self.__variant = variant
-        self.start_index = start_index
+        self.__start_index = start_index
 
     @property
     def Variant(self):
         return self.__variant
 
-    # TODO: Deprecated. Use get_bound instead.
-    def get_bounds(self):
-        return self.start_index, self.start_index + len(self)
+    @property
+    def Position(self):
+        return self.__start_index
 
     def get_bound(self):
-        return Bound(pos=self.start_index, length=len(self))
+        return Bound(pos=self.__start_index, length=len(self))
 
     def iter_terms(self):
         for term in self.__variant.iter_terms():
