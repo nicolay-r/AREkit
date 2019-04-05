@@ -168,6 +168,10 @@ class ParsedText:
         for term in self.__terms:
             yield self.__output_term(term, self.hide_token_values())
 
+    def is_term(self, index):
+        assert(isinstance(index, int))
+        return isinstance(self.__terms[index], unicode)
+
     @property
     def iter_lemmas(self):
         for lemma in self.__lemmas:
