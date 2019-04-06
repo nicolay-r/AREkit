@@ -56,6 +56,13 @@ class FramesHelper:
                     return False
             return True
 
+        def __check_inverted_frame_prefix(terms, index):
+            if index == 0:
+                return False
+            if isinstance(terms[index - 1], unicode):
+                return terms[index - 1] == u'не'
+            return False
+
         assert(isinstance(parsed_text, ParsedText))
 
         text_frame_variants = []
@@ -76,12 +83,17 @@ class FramesHelper:
                     continue
 
                 ctx_template = u" ".join(lemmas[start_ind:last_ind + 1])
-                if self.__frames.has_variant(ctx_template):
-                    frame_variant = FrameVariantInText(
-                        self.__frames.get_variant_by_template(ctx_template),
-                        start_ind)
-                    text_frame_variants.append(frame_variant)
-                    break
+
+                if not self.__frames.has_variant(ctx_template):
+                    continue
+
+                frame_variant = FrameVariantInText(
+                    variant=self.__frames.get_variant_by_template(ctx_template),
+                    start_index=start_ind,
+                    is_inverted=__check_inverted_frame_prefix(lemmas, start_ind))
+
+                text_frame_variants.append(frame_variant)
+                break
 
             start_ind = last_ind + 1
 
