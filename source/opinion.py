@@ -13,19 +13,19 @@ class OpinionCollection:
     def __init__(self, opinions, synonyms):
         assert(isinstance(opinions, list) or isinstance(opinions, type(None)))
         assert(isinstance(synonyms, SynonymsCollection))
-        self.opinions = [] if opinions is None else opinions
-        self.synonyms = synonyms
-        self.by_synonyms = self.__create_index()
+        self.__opinions = [] if opinions is None else opinions
+        self.__synonyms = synonyms
+        self.__by_synonyms = self.__create_index()
 
     def __add_synonym(self, value):
-        if self.synonyms.IsReadOnly:
+        if self.__synonyms.IsReadOnly:
             raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
-        self.synonyms.add_synonym(value)
+        self.__synonyms.add_synonym(value)
 
     def __create_index(self):
         index = {}
-        for opinion in self.opinions:
-            OpinionCollection.__add_opinion(opinion, index, self.synonyms, check=True)
+        for opinion in self.__opinions:
+            OpinionCollection.__add_opinion(opinion, index, self.__synonyms, check=True)
         return index
 
     @classmethod
@@ -55,37 +55,37 @@ class OpinionCollection:
         assert(isinstance(opinion, Opinion))
         assert(sentiment is None or isinstance(sentiment, Label))
 
-        if not opinion.has_synonym_for_left(self.synonyms):
+        if not opinion.has_synonym_for_left(self.__synonyms):
             return False
-        if not opinion.has_synonym_for_right(self.synonyms):
+        if not opinion.has_synonym_for_right(self.__synonyms):
             return False
 
-        s_id = opinion.create_synonym_id(self.synonyms)
-        if s_id in self.by_synonyms:
-            f_o = self.by_synonyms[s_id]
+        s_id = opinion.create_synonym_id(self.__synonyms)
+        if s_id in self.__by_synonyms:
+            f_o = self.__by_synonyms[s_id]
             return True if sentiment is None else f_o.sentiment == sentiment
 
         return False
 
     def get_synonymous_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
-        s_id = opinion.create_synonym_id(self.synonyms)
-        return self.by_synonyms[s_id]
+        s_id = opinion.create_synonym_id(self.__synonyms)
+        return self.__by_synonyms[s_id]
 
     def add_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
 
-        if not opinion.has_synonym_for_left(self.synonyms):
+        if not opinion.has_synonym_for_left(self.__synonyms):
             self.__add_synonym(opinion.value_left)
 
-        if not opinion.has_synonym_for_right(self.synonyms):
+        if not opinion.has_synonym_for_right(self.__synonyms):
             self.__add_synonym(opinion.value_right)
 
-        self.__add_opinion(opinion, self.by_synonyms, self.synonyms)
-        self.opinions.append(opinion)
+        self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
+        self.__opinions.append(opinion)
 
     def save(self, filepath):
-        sorted_ops = sorted(self.opinions, key=lambda o: o.value_left + o.value_right)
+        sorted_ops = sorted(self.__opinions, key=lambda o: o.value_left + o.value_right)
         with io.open(filepath, 'w') as f:
             for o in sorted_ops:
                 f.write(o.to_unicode())
@@ -107,15 +107,15 @@ class OpinionCollection:
 
     def iter_sentiment(self, sentiment):
         assert(isinstance(sentiment, Label))
-        for o in self.opinions:
+        for o in self.__opinions:
             if o.sentiment == sentiment:
                 yield o
 
     def __len__(self):
-        return len(self.opinions)
+        return len(self.__opinions)
 
     def __iter__(self):
-        for o in self.opinions:
+        for o in self.__opinions:
             yield o
 
 
