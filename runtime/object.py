@@ -16,10 +16,19 @@ class TextObject:
         self.__terms = terms
         self.__position = position
         self.__obj_type = object_type
+        self.__tag = None
 
     @property
     def Position(self):
         return self.__position
+
+    @property
+    def Tag(self):
+        return self.__tag
+
+    @property
+    def ObjectType(self):
+        return self.__obj_type
 
     @classmethod
     def create_as_named_entity(cls, terms, position):
@@ -29,9 +38,8 @@ class TextObject:
     def create_as_lexicon_unit(cls, terms, position):
         return cls(terms, position, object_type=cls.ObjectTypes.LexiconUnit)
 
-    @property
-    def ObjectType(self):
-        return self.__obj_type
+    def set_tag(self, value):
+        self.__tag = value
 
     def get_value(self):
         return u' '.join(self.__terms)

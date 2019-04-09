@@ -1,15 +1,18 @@
+from core.evaluation.labels import Label
+
+
 class RefOpinion(object):
     """
     Provides references within Owner collection.
     """
 
-    def __init__(self, left_index, right_index, owner):
+    def __init__(self, left_index, right_index, sentiment):
         assert(isinstance(left_index, int))
         assert(isinstance(right_index, int))
-        assert(isinstance(owner, object))
+        assert(isinstance(sentiment, Label))
         self.__left_index = left_index
         self.__rigth_index = right_index
-        self.__owner = owner
+        self.__sentiment = sentiment
 
     @property
     def LeftIndex(self):
@@ -20,5 +23,12 @@ class RefOpinion(object):
         return self.__rigth_index
 
     @property
-    def Owner(self):
-        return self.__owner
+    def Sentiment(self):
+        return self.__sentiment
+
+    @property
+    def Tag(self):
+        return self.__tag
+
+    def set_tag(self, value):
+        self.__tag = value
