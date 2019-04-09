@@ -6,13 +6,14 @@ class RefOpinion(object):
     Provides references within Owner collection.
     """
 
-    def __init__(self, left_index, right_index, sentiment):
+    def __init__(self, left_index, right_index, sentiment, owner=None):
         assert(isinstance(left_index, int))
         assert(isinstance(right_index, int))
         assert(isinstance(sentiment, Label))
         self.__left_index = left_index
         self.__rigth_index = right_index
         self.__sentiment = sentiment
+        self.__owner = owner
 
     @property
     def LeftIndex(self):
