@@ -111,7 +111,6 @@ class Entity:
         assert(type(begin) == int)
         assert(type(end) == int)
         assert(type(value) == unicode and len(value) > 0)
-        assert(',' not in value)
         self.ID = ID
         self.str_type = str_type
         self.begin = begin
