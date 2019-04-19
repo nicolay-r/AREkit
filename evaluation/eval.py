@@ -197,8 +197,6 @@ class Evaluator:
             filepath=files_to_compare.EtalonFilepath,
             synonyms=self.synonyms)
 
-        print len(etalon_opins)
-
         if debug:
             print "{} <-> {}, {}".format(
                     files_to_compare.TestFilepath,
