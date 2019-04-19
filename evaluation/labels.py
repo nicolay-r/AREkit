@@ -93,16 +93,16 @@ class LabelPair(Label):
     def __init__(self, forward, backward):
         assert(isinstance(forward, Label))
         assert(isinstance(backward, Label))
-        self._forward = forward
-        self._backward = backward
+        self.__forward = forward
+        self.__backward = backward
 
     @property
     def Forward(self):
-        return self._forward
+        return self.__forward
 
     @property
     def Backward(self):
-        return self._backward
+        return self.__backward
 
     @classmethod
     def create_inverted(cls, other):
@@ -114,13 +114,13 @@ class LabelPair(Label):
         return int("{}{}".format(i, j), 3)
 
     def to_uint(self):
-        return self._pair_to_int(self._forward.to_uint(), self._backward.to_uint())
+        return self._pair_to_int(self.__forward.to_uint(), self.__backward.to_uint())
 
     def to_int(self):
         return self.to_uint()
 
     def to_str(self):
-        return u"{}-{}".format(self._forward.to_str(), self._backward.to_str())
+        return u"{}-{}".format(self.__forward.to_str(), self.__backward.to_str())
 
     @staticmethod
     def from_uint(value):

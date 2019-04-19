@@ -90,12 +90,10 @@ class EvalResult:
         f1_neg = EvalResult.__calc_f1_single_class(prec=neg_prec, recall=neg_recall)
         return (f1_pos + f1_neg) * 1.0 / 2
 
-    @property
     def iter_document_results(self):
         for doc_id, info in self.__documents.iteritems():
             yield doc_id, info
 
-    @property
     def iter_document_cmp(self):
         for doc_id, cmp_result in self.__cmp_results.iteritems():
             yield doc_id, cmp_result
