@@ -77,7 +77,7 @@ class FramesHelper:
                 last_ind = start_ind + ctx_size - 1
 
                 if not(last_ind < len(lemmas)):
-                    break
+                    continue
 
                 if not __check(lemmas, start_ind, last_ind):
                     continue
