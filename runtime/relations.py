@@ -7,7 +7,7 @@ class RelationCollection:
 
     def __init__(self, relation_list):
         assert(isinstance(relation_list, list))
-        self.relations = relation_list
+        self.__relations = relation_list
 
     @classmethod
     def from_news_opinion(cls, news, opinion, debug=False):
@@ -45,18 +45,18 @@ class RelationCollection:
         return cls(relations)
 
     def apply_filter(self, filter_function):
-        self.relations = [r for r in self.relations if filter_function(r)]
+        self.__relations = [r for r in self.__relations if filter_function(r)]
 
     def __getitem__(self, item):
         assert(isinstance(item,  int))
-        return self.relations[item]
+        return self.__relations[item]
 
     def __len__(self):
-        return len(self.relations)
+        return len(self.__relations)
 
     def __iter__(self):
-        for r in self.relations:
-            yield r
+        for relation in self.__relations:
+            yield relation
 
 
 class Relation:
