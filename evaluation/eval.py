@@ -4,7 +4,6 @@ import pandas as pd
 
 from core.evaluation.labels import PositiveLabel, NegativeLabel, NeutralLabel
 from core.evaluation.statistic import FilesToCompare
-from core.processing.lemmatization.base import Stemmer
 from core.source.opinion import OpinionCollection
 from core.source.synonyms import SynonymsCollection
 

@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import io
-
-from core.processing.lemmatization.base import Stemmer
 from core.evaluation.labels import Label
 from core.source.synonyms import SynonymsCollection
 

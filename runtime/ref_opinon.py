@@ -14,6 +14,7 @@ class RefOpinion(object):
         self.__rigth_index = right_index
         self.__sentiment = sentiment
         self.__owner = owner
+        self.__tag = None
 
     @property
     def LeftIndex(self):

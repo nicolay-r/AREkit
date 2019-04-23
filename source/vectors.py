@@ -37,9 +37,8 @@ class OpinionVectorCollection:
 
     def find_by_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
-        key = self._create_key(opinion)
         for key, vector in self.vectors.iteritems():
-            if (key == self._create_key(opinion)):
+            if key == self._create_key(opinion):
                 return vector
         return None
 

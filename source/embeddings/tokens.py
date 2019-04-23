@@ -1,4 +1,4 @@
-from core.source.tokens import Tokens, Token
+from core.source.tokens import Tokens
 from core.runtime.utils import get_random_vector
 
 

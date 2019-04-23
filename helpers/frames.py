@@ -50,8 +50,8 @@ class FramesHelper:
                     continue
                 terms[i] = term.replace(u'ё', u'e')
 
-        def __check(terms, start_ind, last_ind):
-            for i in range(start_ind, last_ind + 1):
+        def __check(terms, start_index, last_index):
+            for i in range(start_index, last_index + 1):
                 if not isinstance(terms[i], unicode):
                     return False
             return True
