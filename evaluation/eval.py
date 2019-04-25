@@ -37,13 +37,12 @@ class EvalResult:
                             pos_recall=pos_recall,
                             neg_recall=neg_recall)
 
-        self.__documents[doc_id] = {
-            self.C_F1: round(f1, 2),
-            self.C_POS_PREC: round(pos_prec, 4),
-            self.C_NEG_PREC: round(neg_prec, 5),
-            self.C_POS_RECALL: round(pos_recall, 5),
-            self.C_NEG_RECALL: round(neg_recall, 5),
-        }
+        self.__documents[doc_id] = OrderedDict()
+        self.__documents[doc_id][self.C_F1] = round(f1, 2)
+        self.__documents[doc_id][self.C_POS_PREC] = round(pos_prec, 4)
+        self.__documents[doc_id][self.C_NEG_PREC] = round(neg_prec, 5)
+        self.__documents[doc_id][self.C_POS_RECALL] = round(pos_recall, 5)
+        self.__documents[doc_id][self.C_NEG_RECALL] = round(neg_recall, 5)
 
     def add_cmp_results(self, doc_id, cmp_results):
         assert(doc_id not in self.__cmp_results)
