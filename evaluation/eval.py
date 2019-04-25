@@ -68,15 +68,14 @@ class EvalResult:
                             pos_recall=pos_recall,
                             neg_recall=neg_recall)
 
-        self.__result = {self.C_POS_PREC: pos_prec,
-                         self.C_NEG_PREC: neg_prec,
-                         self.C_POS_RECALL: pos_recall,
-                         self.C_NEG_RECALL: neg_recall,
-                         self.C_F1_POS: self.__calc_f1_single_class(prec=pos_prec,
-                                                                    recall=pos_recall),
-                         self.C_F1_NEG: self.__calc_f1_single_class(prec=neg_prec,
-                                                                    recall=neg_recall),
-                         self.C_F1: f1}
+        self.__result = OrderedDict()
+        self.__result[self.C_F1] = f1
+        self.__result[self.C_F1_POS] = self.__calc_f1_single_class(prec=pos_prec, recall=pos_recall)
+        self.__result[self.C_F1_NEG] = self.__calc_f1_single_class(prec=neg_prec, recall=neg_recall)
+        self.__result[self.C_POS_PREC] = pos_prec
+        self.__result[self.C_NEG_PREC] = neg_prec
+        self.__result[self.C_POS_RECALL] = pos_recall
+        self.__result[self.C_NEG_RECALL] = neg_recall
 
     @staticmethod
     def __calc_f1_single_class(prec, recall):
