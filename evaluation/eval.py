@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from collections import OrderedDict
+
 import pandas as pd
 
 from core.evaluation.labels import PositiveLabel, NegativeLabel, NeutralLabel
@@ -19,8 +21,8 @@ class EvalResult:
     C_F1 = 'f1'
 
     def __init__(self):
-        self.__documents = {}
-        self.__cmp_results = {}
+        self.__documents = OrderedDict()
+        self.__cmp_results = OrderedDict()
         self.__result = None
 
     @property
