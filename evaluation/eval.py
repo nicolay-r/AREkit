@@ -12,13 +12,13 @@ from core.source.synonyms import SynonymsCollection
 
 class EvalResult:
 
-    C_POS_PREC = 'pos_prec'
-    C_NEG_PREC = 'neg_prec'
-    C_POS_RECALL = 'pos_recall'
-    C_NEG_RECALL = 'neg_recall'
-    C_F1_POS = 'f1_pos'
-    C_F1_NEG = 'f1_neg'
-    C_F1 = 'f1'
+    C_POS_PREC = u'pos_prec'
+    C_NEG_PREC = u'neg_prec'
+    C_POS_RECALL = u'pos_recall'
+    C_NEG_RECALL = u'neg_recall'
+    C_F1_POS = u'f1_pos'
+    C_F1_NEG = u'f1_neg'
+    C_F1 = u'f1'
 
     def __init__(self):
         self.__documents = OrderedDict()
