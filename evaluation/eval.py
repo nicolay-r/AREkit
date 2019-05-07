@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from core.evaluation.labels import PositiveLabel, NegativeLabel, NeutralLabel
+from core.evaluation.labels import PositiveLabel, NegativeLabel, NeutralLabel, Label
 from core.evaluation.statistic import FilesToCompare
 from core.source.opinion import OpinionCollection
 from core.source.synonyms import SynonymsCollection
@@ -118,29 +118,34 @@ class Evaluator:
         self.neu = NeutralLabel()
 
     @staticmethod
-    def __calc_recall(results, answers, label):
+    def __calc_recall(results, answers, label, answer_exist):
         assert(isinstance(label, PositiveLabel) or isinstance(label, NegativeLabel))
+        assert(isinstance(answer_exist, bool))
         if len(results[results[Evaluator.C_ORIG] == label.to_str()]) != 0:
             return 1.0 * len(answers[(answers[Evaluator.C_CMP] == True)]) / len(results[results[Evaluator.C_ORIG] == label.to_str()])
         else:
-            return 0.0
+            return 0.0 if answer_exist else 1.0
 
     @staticmethod
-    def __calc_precision(answers):
+    def __calc_precision(answers, answer_exist):
+        assert(isinstance(answer_exist, bool))
         if len(answers) != 0:
             return 1.0 * len(answers[(answers[Evaluator.C_CMP] == True)]) / len(answers)
         else:
-            return 0.0
+            return 0.0 if answer_exist else 1.0
 
-    def __calc_prec_and_recall(self, results):
+    def __calc_prec_and_recall(self, results, pos_opinions_exist, neg_opinions_exist):
+        assert(isinstance(pos_opinions_exist, bool))
+        assert(isinstance(neg_opinions_exist, bool))
+
         pos_answers = results[(results[Evaluator.C_RES] == self.pos.to_str())]
         neg_answers = results[(results[Evaluator.C_RES] == self.neg.to_str())]
 
-        pos_prec = self.__calc_precision(pos_answers)
-        neg_prec = self.__calc_precision(neg_answers)
+        pos_prec = self.__calc_precision(pos_answers, answer_exist=pos_opinions_exist)
+        neg_prec = self.__calc_precision(neg_answers, answer_exist=neg_opinions_exist)
 
-        pos_recall = self.__calc_recall(results, pos_answers, self.pos)
-        neg_recall = self.__calc_recall(results, neg_answers, self.neg)
+        pos_recall = self.__calc_recall(results, pos_answers, self.pos, answer_exist=pos_opinions_exist)
+        neg_recall = self.__calc_recall(results, neg_answers, self.neg, answer_exist=neg_opinions_exist)
 
         assert(isinstance(pos_prec, float))
         assert(isinstance(neg_prec, float))
@@ -203,15 +208,28 @@ class Evaluator:
                     files_to_compare.index)
 
         results = self.__check(etalon_opins, test_opins)
-        return results
+
+        return results, \
+               self.__has_opinions_with_label(etalon_opins, PositiveLabel()),\
+               self.__has_opinions_with_label(etalon_opins, NegativeLabel())
+
+    def __has_opinions_with_label(self, opinions, label):
+        assert(isinstance(label, Label))
+        assert(isinstance(opinions, OpinionCollection))
+        for opinion in opinions:
+            if opinion.sentiment.to_int() == label.to_int():
+                return True
+        return False
 
     def evaluate(self, files_to_compare_list, debug=False):
         assert(isinstance(files_to_compare_list, list))
 
         result = EvalResult()
         for files_to_compare in files_to_compare_list:
-            cmp_results = self.__calc_a_file(files_to_compare, debug=debug)
-            pos_prec, neg_prec, pos_recall, neg_recall = self.__calc_prec_and_recall(cmp_results)
+            cmp_results, has_pos, has_neg = self.__calc_a_file(files_to_compare, debug=debug)
+            pos_prec, neg_prec, pos_recall, neg_recall = self.__calc_prec_and_recall(results=cmp_results,
+                                                                                     pos_opinions_exist=has_pos,
+                                                                                     neg_opinions_exist=has_neg)
             result.add_document_results(doc_id=files_to_compare.index,
                                         pos_recall=pos_recall,
                                         neg_recall=neg_recall,
