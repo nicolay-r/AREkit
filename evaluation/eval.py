@@ -110,12 +110,12 @@ class Evaluator:
     def __init__(self, synonyms, user_answers_filepath):
         assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
 
-        self.synonyms = synonyms
-        self.user_answers = user_answers_filepath
+        self.__synonyms = synonyms
+        self.__user_answers = user_answers_filepath
 
-        self.pos = PositiveLabel()
-        self.neg = NegativeLabel()
-        self.neu = NeutralLabel()
+        self.__pos_label = PositiveLabel()
+        self.__neg_label = NegativeLabel()
+        self.__neutral_label = NeutralLabel()
 
     @staticmethod
     def __calc_recall(results, answers, label, answer_exist):
@@ -138,14 +138,14 @@ class Evaluator:
         assert(isinstance(pos_opinions_exist, bool))
         assert(isinstance(neg_opinions_exist, bool))
 
-        pos_answers = results[(results[Evaluator.C_RES] == self.pos.to_str())]
-        neg_answers = results[(results[Evaluator.C_RES] == self.neg.to_str())]
+        pos_answers = results[(results[Evaluator.C_RES] == self.__pos_label.to_str())]
+        neg_answers = results[(results[Evaluator.C_RES] == self.__neg_label.to_str())]
 
         pos_prec = self.__calc_precision(pos_answers, answer_exist=pos_opinions_exist)
         neg_prec = self.__calc_precision(neg_answers, answer_exist=neg_opinions_exist)
 
-        pos_recall = self.__calc_recall(results, pos_answers, self.pos, answer_exist=pos_opinions_exist)
-        neg_recall = self.__calc_recall(results, neg_answers, self.neg, answer_exist=neg_opinions_exist)
+        pos_recall = self.__calc_recall(results, pos_answers, self.__pos_label, answer_exist=pos_opinions_exist)
+        neg_recall = self.__calc_recall(results, neg_answers, self.__neg_label, answer_exist=neg_opinions_exist)
 
         assert(isinstance(pos_prec, float))
         assert(isinstance(neg_prec, float))
@@ -194,12 +194,12 @@ class Evaluator:
         # Reading test answers.
         test_opins = OpinionCollection.from_file(
             filepath=files_to_compare.TestFilepath,
-            synonyms=self.synonyms)
+            synonyms=self.__synonyms)
 
         # Reading etalon answers.
         etalon_opins = OpinionCollection.from_file(
             filepath=files_to_compare.EtalonFilepath,
-            synonyms=self.synonyms)
+            synonyms=self.__synonyms)
 
         if debug:
             print "{} <-> {}, {}".format(
