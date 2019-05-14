@@ -107,12 +107,9 @@ class Evaluator:
     C_RES = 'how_results'
     C_CMP = 'comparison'
 
-    def __init__(self, synonyms, user_answers_filepath):
+    def __init__(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
-
         self.__synonyms = synonyms
-        self.__user_answers = user_answers_filepath
-
         self.__pos_label = PositiveLabel()
         self.__neg_label = NegativeLabel()
         self.__neutral_label = NeutralLabel()
