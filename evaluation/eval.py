@@ -10,6 +10,8 @@ from core.source.opinion import OpinionCollection
 from core.source.synonyms import SynonymsCollection
 
 
+# TODO: PNEvalResult
+# TODO: TO separated file (result.py)
 class EvalResult:
 
     C_POS_PREC = u'pos_prec'
@@ -98,6 +100,7 @@ class EvalResult:
             yield doc_id, cmp_result
 
 
+# TODO: New evaluator that is irrespective of the label
 class Evaluator:
 
     # Columns for differences
@@ -112,6 +115,7 @@ class Evaluator:
         self.__synonyms = synonyms
         self.__pos_label = PositiveLabel()
         self.__neg_label = NegativeLabel()
+        # TODO: This is useless variable.
         self.__neutral_label = NeutralLabel()
 
     @staticmethod
@@ -131,6 +135,7 @@ class Evaluator:
         else:
             return 0.0 if answer_exist else 1.0
 
+    # TODO: refactor for single parameter (pos/neg).
     def __calc_prec_and_recall(self, results, pos_opinions_exist, neg_opinions_exist):
         assert(isinstance(pos_opinions_exist, bool))
         assert(isinstance(neg_opinions_exist, bool))
@@ -151,6 +156,7 @@ class Evaluator:
 
         return pos_prec, neg_prec, pos_recall, neg_recall
 
+    # TODO: Rename, as it generates the differences.
     def __check(self, etalon_opins, test_opins):
         assert(isinstance(etalon_opins, OpinionCollection))
         assert(isinstance(test_opins, OpinionCollection))
@@ -224,6 +230,7 @@ class Evaluator:
         result = EvalResult()
         for files_to_compare in files_to_compare_list:
             cmp_results, has_pos, has_neg = self.__calc_a_file(files_to_compare, debug=debug)
+            # TODO: Two separated calls for pos/neg labels
             pos_prec, neg_prec, pos_recall, neg_recall = self.__calc_prec_and_recall(results=cmp_results,
                                                                                      pos_opinions_exist=has_pos,
                                                                                      neg_opinions_exist=has_neg)

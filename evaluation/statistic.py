@@ -4,6 +4,7 @@ from core.source.opinion import OpinionCollection
 from core.source.synonyms import SynonymsCollection
 
 
+# TODO: Move into stat branch of erc.
 class MethodStatistic:
 
     @staticmethod
@@ -59,7 +60,7 @@ class MethodStatistic:
         return df
 
 
-# TODO. move from this file.
+# TODO. move from this file. (cmp.py)
 class FilesToCompare:
 
     def __init__(self, test_filepath, etalon_filepath, index):
