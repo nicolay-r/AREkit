@@ -120,8 +120,10 @@ class Evaluator:
 
     @staticmethod
     def __calc_recall(results, answers, label, answer_exist):
+        # TODO: Add type checking for results.
         assert(isinstance(label, PositiveLabel) or isinstance(label, NegativeLabel))
         assert(isinstance(answer_exist, bool))
+        # TODO: same operation, len(...) refactor.
         if len(results[results[Evaluator.C_ORIG] == label.to_str()]) != 0:
             return 1.0 * len(answers[(answers[Evaluator.C_CMP] == True)]) / len(results[results[Evaluator.C_ORIG] == label.to_str()])
         else:
@@ -130,6 +132,7 @@ class Evaluator:
     @staticmethod
     def __calc_precision(answers, answer_exist):
         assert(isinstance(answer_exist, bool))
+        # TODO: same operation len(...), refactor.
         if len(answers) != 0:
             return 1.0 * len(answers[(answers[Evaluator.C_CMP] == True)]) / len(answers)
         else:
@@ -146,6 +149,7 @@ class Evaluator:
         pos_prec = self.__calc_precision(pos_answers, answer_exist=pos_opinions_exist)
         neg_prec = self.__calc_precision(neg_answers, answer_exist=neg_opinions_exist)
 
+        # TODO: write parameters.
         pos_recall = self.__calc_recall(results, pos_answers, self.__pos_label, answer_exist=pos_opinions_exist)
         neg_recall = self.__calc_recall(results, neg_answers, self.__neg_label, answer_exist=neg_opinions_exist)
 
@@ -168,6 +172,8 @@ class Evaluator:
         for o_etalon in etalon_opins:
             comparison = False
             has_opinion = test_opins.has_synonymous_opinion(o_etalon)
+
+            # TODO: Disable this check in case of non label evaluation method.
 
             if has_opinion:
                 o_test = test_opins.get_synonymous_opinion(o_etalon)
