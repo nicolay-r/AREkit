@@ -17,6 +17,9 @@ class BaseEvaluator(object):
         assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
         self.__synonyms = synonyms
 
+    def evaluate(self, files_to_compare_list, debug=False):
+        raise Exception("Not implemented")
+
     @property
     def Synonyms(self):
         return self.__synonyms

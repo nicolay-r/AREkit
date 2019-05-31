@@ -1,4 +1,3 @@
-# TODO. move from this file. (cmp.py)
 class FilesToCompare:
 
     def __init__(self, test_filepath, etalon_filepath, index):

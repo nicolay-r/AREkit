@@ -68,6 +68,7 @@ class TwoClassEvalResult(BaseEvalResult):
         self.__result[self.C_POS_RECALL] = pos_recall
         self.__result[self.C_NEG_RECALL] = neg_recall
 
+    # TODO: Common
     @staticmethod
     def __calc_f1_single_class(prec, recall):
         if prec * recall != 0:
@@ -75,6 +76,7 @@ class TwoClassEvalResult(BaseEvalResult):
         else:
             return 0
 
+    # TODO: Common
     @staticmethod
     def __calc_f1(pos_prec, neg_prec, pos_recall, neg_recall):
         f1_pos = TwoClassEvalResult.__calc_f1_single_class(prec=pos_prec, recall=pos_recall)
