@@ -1,7 +1,8 @@
 from collections import OrderedDict
+from core.evaluation.results.base import BaseEvalResult
 
 
-class EvalResult:
+class TwoClassEvalResult(BaseEvalResult):
 
     C_POS_PREC = u'pos_prec'
     C_NEG_PREC = u'neg_prec'
@@ -76,8 +77,8 @@ class EvalResult:
 
     @staticmethod
     def __calc_f1(pos_prec, neg_prec, pos_recall, neg_recall):
-        f1_pos = EvalResult.__calc_f1_single_class(prec=pos_prec, recall=pos_recall)
-        f1_neg = EvalResult.__calc_f1_single_class(prec=neg_prec, recall=neg_recall)
+        f1_pos = TwoClassEvalResult.__calc_f1_single_class(prec=pos_prec, recall=pos_recall)
+        f1_neg = TwoClassEvalResult.__calc_f1_single_class(prec=neg_prec, recall=neg_recall)
         return (f1_pos + f1_neg) * 1.0 / 2
 
     def iter_document_results(self):
