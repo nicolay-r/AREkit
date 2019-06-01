@@ -74,9 +74,7 @@ class SingleClassEvaluator(BaseEvaluator):
                                              label=self.__sentiment_label,
                                              opinions_exist=True)
 
-            result.add_document_results(doc_id=files_to_compare.index,
-                                        recall=r,
-                                        prec=p)
+            result.add_document_results(doc_id=files_to_compare.index, recall=r, prec=p)
 
         result.calculate()
         return result

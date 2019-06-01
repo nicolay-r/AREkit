@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from core.evaluation.results.base import BaseEvalResult
+from core.evaluation.results.utils import calc_f1_single_class, calc_f1
 
 
 class TwoClassEvalResult(BaseEvalResult):
@@ -24,10 +25,10 @@ class TwoClassEvalResult(BaseEvalResult):
     def add_document_results(self, doc_id, pos_prec, neg_prec, pos_recall, neg_recall):
         assert(doc_id not in self.__documents)
 
-        f1 = self.__calc_f1(pos_prec=pos_prec,
-                            neg_prec=neg_prec,
-                            pos_recall=pos_recall,
-                            neg_recall=neg_recall)
+        f1 = calc_f1(pos_prec=pos_prec,
+                     neg_prec=neg_prec,
+                     pos_recall=pos_recall,
+                     neg_recall=neg_recall)
 
         self.__documents[doc_id] = OrderedDict()
         self.__documents[doc_id][self.C_F1] = round(f1, 2)
@@ -54,34 +55,19 @@ class TwoClassEvalResult(BaseEvalResult):
         pos_recall /= len(self.__documents)
         neg_recall /= len(self.__documents)
 
-        f1 = self.__calc_f1(pos_prec=pos_prec,
-                            neg_prec=neg_prec,
-                            pos_recall=pos_recall,
-                            neg_recall=neg_recall)
+        f1 = calc_f1(pos_prec=pos_prec,
+                     neg_prec=neg_prec,
+                     pos_recall=pos_recall,
+                     neg_recall=neg_recall)
 
         self.__result = OrderedDict()
         self.__result[self.C_F1] = f1
-        self.__result[self.C_F1_POS] = self.__calc_f1_single_class(prec=pos_prec, recall=pos_recall)
-        self.__result[self.C_F1_NEG] = self.__calc_f1_single_class(prec=neg_prec, recall=neg_recall)
+        self.__result[self.C_F1_POS] = calc_f1_single_class(prec=pos_prec, recall=pos_recall)
+        self.__result[self.C_F1_NEG] = calc_f1_single_class(prec=neg_prec, recall=neg_recall)
         self.__result[self.C_POS_PREC] = pos_prec
         self.__result[self.C_NEG_PREC] = neg_prec
         self.__result[self.C_POS_RECALL] = pos_recall
         self.__result[self.C_NEG_RECALL] = neg_recall
-
-    # TODO: Common
-    @staticmethod
-    def __calc_f1_single_class(prec, recall):
-        if prec * recall != 0:
-            return 2 * prec * recall / (prec + recall)
-        else:
-            return 0
-
-    # TODO: Common
-    @staticmethod
-    def __calc_f1(pos_prec, neg_prec, pos_recall, neg_recall):
-        f1_pos = TwoClassEvalResult.__calc_f1_single_class(prec=pos_prec, recall=pos_recall)
-        f1_neg = TwoClassEvalResult.__calc_f1_single_class(prec=neg_prec, recall=neg_recall)
-        return (f1_pos + f1_neg) * 1.0 / 2
 
     def iter_document_results(self):
         for doc_id, info in self.__documents.iteritems():
@@ -90,5 +76,3 @@ class TwoClassEvalResult(BaseEvalResult):
     def iter_document_cmp(self):
         for doc_id, cmp_result in self.__cmp_results.iteritems():
             yield doc_id, cmp_result
-
-
