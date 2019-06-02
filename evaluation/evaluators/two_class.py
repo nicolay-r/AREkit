@@ -36,8 +36,12 @@ class TwoClassEvaluator(BaseEvaluator):
 
         result = TwoClassEvalResult()
         for files_to_compare in files_to_compare_list:
+
+            # TODO. Save cmp into results.
+
             cmp_results, has_pos, has_neg = self.calc_a_file(files_to_compare, debug=debug)
 
+            # TODO. Maybe in metrics method calc_prec_and_recall
             pos_prec, pos_recall = self.calc_prec_and_recall(results=cmp_results,
                                                              label=self.__pos_label,
                                                              opinions_exist=has_pos)

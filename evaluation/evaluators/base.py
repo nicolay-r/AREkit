@@ -24,6 +24,7 @@ class BaseEvaluator(object):
     def Synonyms(self):
         return self.__synonyms
 
+    # TODO. Into metrics.
     @staticmethod
     def calc_recall(results, answers, label, answer_exist):
         assert(isinstance(results, pd.DataFrame))
@@ -35,6 +36,7 @@ class BaseEvaluator(object):
         else:
             return 0.0 if answer_exist else 1.0
 
+    # TODO. Into metrics.
     @staticmethod
     def calc_precision(answers, answer_exist):
         assert(isinstance(answers, pd.DataFrame))
@@ -99,13 +101,16 @@ class BaseEvaluator(object):
 
         return test_opins, etalon_opins
 
+    # TODO. Into metrics.
     @staticmethod
     def calc_prec_and_recall(results, label, opinions_exist):
         assert(isinstance(opinions_exist, bool))
         assert(isinstance(label, Label))
 
         answers = results[(results[BaseEvaluator.C_RES] == label.to_str())]
+        # TODO. Into metrics.
         p = BaseEvaluator.calc_precision(answers, answer_exist=opinions_exist)
+        # TODO. Into metrics.
         r = BaseEvaluator.calc_recall(results, answers, label, answer_exist=opinions_exist)
 
         assert(isinstance(p, float))
