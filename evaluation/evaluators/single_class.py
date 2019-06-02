@@ -2,9 +2,13 @@ from core.evaluation.evaluators.base import BaseEvaluator
 from core.evaluation.labels import Label
 from core.evaluation.results.single_class import SingleClassEvalResult
 from core.source.opinion import OpinionCollection, Opinion
+import metrics
 
 
 class SentimentLabel(Label):
+
+    def __init__(self):
+        pass
 
     def to_str(self):
         return 'sent'
@@ -68,13 +72,18 @@ class SingleClassEvaluator(BaseEvaluator):
 
         result = SingleClassEvalResult()
         for files_to_compare in files_to_compare_list:
-            cmp_results, has_pos, has_neg = self.calc_a_file(files_to_compare, debug=debug)
+            cmp_table, has_pos, has_neg = self.calc_a_file(files_to_compare, debug=debug)
 
-            p, r = self.calc_prec_and_recall(results=cmp_results,
-                                             label=self.__sentiment_label,
-                                             opinions_exist=True)
+            p, r = metrics.calc_prec_and_recall(cmp_table=cmp_table,
+                                                label=self.__sentiment_label,
+                                                opinions_exist=True,
+                                                how_original_column=self.C_ORIG,
+                                                how_results_column=self.C_RES,
+                                                comparison_column=self.C_CMP)
 
-            result.add_document_results(doc_id=files_to_compare.index, recall=r, prec=p)
+            result.add_document_results(doc_id=files_to_compare.index,
+                                        cmp_table=cmp_table,
+                                        recall=r, prec=p)
 
         result.calculate()
         return result

@@ -1,3 +1,4 @@
+import pandas as pd
 from collections import OrderedDict
 from core.evaluation.results.base import BaseEvalResult
 from core.evaluation.results.utils import calc_f1_single_class, calc_f1
@@ -20,9 +21,11 @@ class SingleClassEvalResult(BaseEvalResult):
     def Result(self):
         return self.__result
 
-    def add_document_results(self, doc_id, prec, recall):
+    def add_document_results(self, doc_id, cmp_table, prec, recall):
         assert(doc_id not in self.__documents)
+        assert(isinstance(cmp_table, pd.DataFrame))
 
+        self.add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
         f1 = calc_f1_single_class(prec=prec, recall=recall)
 
         self.__documents[doc_id] = OrderedDict()

@@ -1,5 +1,4 @@
 import pandas as pd
-from core.evaluation.labels import Label
 from core.evaluation.utils import FilesToCompare
 from core.source.opinion import OpinionCollection
 from core.source.synonyms import SynonymsCollection
@@ -23,29 +22,6 @@ class BaseEvaluator(object):
     @property
     def Synonyms(self):
         return self.__synonyms
-
-    # TODO. Into metrics.
-    @staticmethod
-    def calc_recall(results, answers, label, answer_exist):
-        assert(isinstance(results, pd.DataFrame))
-        assert(isinstance(label, Label))
-        assert(isinstance(answer_exist, bool))
-        total = len(results[results[BaseEvaluator.C_ORIG] == label.to_str()])
-        if total != 0:
-            return 1.0 * len(answers[(answers[BaseEvaluator.C_CMP] == True)]) / total
-        else:
-            return 0.0 if answer_exist else 1.0
-
-    # TODO. Into metrics.
-    @staticmethod
-    def calc_precision(answers, answer_exist):
-        assert(isinstance(answers, pd.DataFrame))
-        assert(isinstance(answer_exist, bool))
-        total = len(answers)
-        if total != 0:
-            return 1.0 * len(answers[(answers[BaseEvaluator.C_CMP] == True)]) / total
-        else:
-            return 0.0 if answer_exist else 1.0
 
     def calc_difference(self, etalon_opins, test_opins):
         assert(isinstance(etalon_opins, OpinionCollection))
@@ -100,20 +76,3 @@ class BaseEvaluator(object):
                 files_to_compare.index)
 
         return test_opins, etalon_opins
-
-    # TODO. Into metrics.
-    @staticmethod
-    def calc_prec_and_recall(results, label, opinions_exist):
-        assert(isinstance(opinions_exist, bool))
-        assert(isinstance(label, Label))
-
-        answers = results[(results[BaseEvaluator.C_RES] == label.to_str())]
-        # TODO. Into metrics.
-        p = BaseEvaluator.calc_precision(answers, answer_exist=opinions_exist)
-        # TODO. Into metrics.
-        r = BaseEvaluator.calc_recall(results, answers, label, answer_exist=opinions_exist)
-
-        assert(isinstance(p, float))
-        assert(isinstance(r, float))
-
-        return p, r

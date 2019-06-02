@@ -1,3 +1,4 @@
+import pandas as pd
 from collections import OrderedDict
 from core.evaluation.results.base import BaseEvalResult
 from core.evaluation.results.utils import calc_f1_single_class, calc_f1
@@ -14,6 +15,8 @@ class TwoClassEvalResult(BaseEvalResult):
     C_F1 = u'f1'
 
     def __init__(self):
+        super(TwoClassEvalResult, self).__init__()
+
         self.__documents = OrderedDict()
         self.__cmp_results = OrderedDict()
         self.__result = None
@@ -22,8 +25,14 @@ class TwoClassEvalResult(BaseEvalResult):
     def Result(self):
         return self.__result
 
-    def add_document_results(self, doc_id, pos_prec, neg_prec, pos_recall, neg_recall):
+    def add_document_results(self, doc_id,
+                             cmp_table,
+                             pos_prec, neg_prec,
+                             pos_recall, neg_recall):
         assert(doc_id not in self.__documents)
+        assert(isinstance(cmp_table, pd.DataFrame))
+
+        self.add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
 
         f1 = calc_f1(pos_prec=pos_prec,
                      neg_prec=neg_prec,

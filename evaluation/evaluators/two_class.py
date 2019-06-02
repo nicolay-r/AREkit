@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+from core.evaluation.evaluators import metrics
 from core.evaluation.evaluators.base import BaseEvaluator
 from core.evaluation.labels import PositiveLabel, NegativeLabel, Label
 from core.evaluation.results.two_class import TwoClassEvalResult
@@ -19,7 +20,7 @@ class TwoClassEvaluator(BaseEvaluator):
         results = self.calc_difference(etalon_opins, test_opins)
 
         return results, \
-               self.__has_opinions_with_label(etalon_opins, self.__pos_label),\
+               self.__has_opinions_with_label(etalon_opins, self.__pos_label), \
                self.__has_opinions_with_label(etalon_opins, self.__neg_label)
 
     @staticmethod
@@ -36,21 +37,24 @@ class TwoClassEvaluator(BaseEvaluator):
 
         result = TwoClassEvalResult()
         for files_to_compare in files_to_compare_list:
+            cmp_table, has_pos, has_neg = self.calc_a_file(files_to_compare, debug=debug)
 
-            # TODO. Save cmp into results.
+            pos_prec, pos_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,
+                                                                label=self.__pos_label,
+                                                                opinions_exist=has_pos,
+                                                                how_results_column=self.C_RES,
+                                                                how_original_column=self.C_ORIG,
+                                                                comparison_column=self.C_CMP)
 
-            cmp_results, has_pos, has_neg = self.calc_a_file(files_to_compare, debug=debug)
-
-            # TODO. Maybe in metrics method calc_prec_and_recall
-            pos_prec, pos_recall = self.calc_prec_and_recall(results=cmp_results,
-                                                             label=self.__pos_label,
-                                                             opinions_exist=has_pos)
-
-            neg_prec, neg_recall = self.calc_prec_and_recall(results=cmp_results,
-                                                             label=self.__neg_label,
-                                                             opinions_exist=has_neg)
+            neg_prec, neg_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,
+                                                                label=self.__neg_label,
+                                                                opinions_exist=has_neg,
+                                                                how_results_column=self.C_RES,
+                                                                how_original_column=self.C_ORIG,
+                                                                comparison_column=self.C_CMP)
 
             result.add_document_results(doc_id=files_to_compare.index,
+                                        cmp_table=cmp_table,
                                         pos_recall=pos_recall,
                                         neg_recall=neg_recall,
                                         pos_prec=pos_prec,
