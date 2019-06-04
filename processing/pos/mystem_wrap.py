@@ -4,23 +4,23 @@ from pymystem3 import Mystem
 
 class POSMystemWrapper(POSTagger):
 
-    PosAdjective = u"a"
-    PosNoun = u"s"
-    PosVerb = u"v"
+    PosAdjective = u"A"
+    PosNoun = u"S"
+    PosVerb = u"V"
 
     pos_names = [PosNoun,
-                 u"adv",
-                 u"advpro",
-                 u"anum",
-                 u"apro",
-                 u"com",
-                 u"conj",
-                 u"intj",
-                 u"num",
-                 u"part",
-                 u"pr",
+                 u"ADV",
+                 u"ADVPRO",
+                 u"ANUM",
+                 u"APRO",
+                 u"COM",
+                 u"CONJ",
+                 u"INTJ",
+                 u"NUM",
+                 u"PART",
+                 u"PR",
                  PosAdjective,
-                 u"spro",
+                 u"SPRO",
                  PosVerb,
                  POSTagger.Unknown,
                  POSTagger.Empty]
