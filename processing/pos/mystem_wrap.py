@@ -6,6 +6,7 @@ class POSMystemWrapper(POSTagger):
 
     PosAdjective = u"a"
     PosNoun = u"s"
+    PosVerb = u"v"
 
     pos_names = [PosNoun,
                  u"adv",
@@ -20,7 +21,7 @@ class POSMystemWrapper(POSTagger):
                  u"pr",
                  PosAdjective,
                  u"spro",
-                 u"v",
+                 PosVerb,
                  POSTagger.Unknown,
                  POSTagger.Empty]
 
@@ -77,6 +78,10 @@ class POSMystemWrapper(POSTagger):
         return pos_type.lower() == self.PosAdjective
 
     def is_noun(self, pos_type):
+        assert(isinstance(pos_type, unicode))
+        return pos_type.lower() == self.PosNoun
+
+    def is_verb(self, pos_type):
         assert(isinstance(pos_type, unicode))
         return pos_type.lower() == self.PosNoun
 
