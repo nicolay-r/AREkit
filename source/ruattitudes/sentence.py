@@ -15,6 +15,7 @@ class ProcessedSentence(object):
         self.__ref_opinions = ref_opinions
         self.__objects = objects_list
         self.__sentence_index = sentence_index
+        self.__owner = None
 
     @property
     def SentenceIndex(self):
@@ -27,6 +28,15 @@ class ProcessedSentence(object):
     @property
     def IsTitle(self):
         return self.__is_title
+
+    @property
+    def Owner(self):
+        return self.__owner
+
+    def set_owner(self, owner):
+        if self.__owner is not None:
+            raise Exception("Owner is already declared")
+        self.__owner = owner
 
     def get_objects(self, ref_opinion):
         assert(isinstance(ref_opinion, RefOpinion))

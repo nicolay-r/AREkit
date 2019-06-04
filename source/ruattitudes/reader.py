@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.evaluation.labels import Label
+from core.processing.lemmatization.base import Stemmer
 from core.runtime.object import TextObject
 from core.runtime.parser import TextParser
 from core.runtime.ref_opinon import RefOpinion
@@ -7,6 +8,7 @@ from core.source.ruattitudes.news import ProcessedNews
 from core.source.ruattitudes.sentence import ProcessedSentence
 
 
+# TODO. Rename as RuAttitudesFormatReader.
 class ContextsReader(object):
 
     NEWS_SEP_KEY = u'--------'
@@ -25,8 +27,9 @@ class ContextsReader(object):
         pass
 
     @staticmethod
-    def iter_processed_news(filepath):
+    def iter_processed_news(filepath, stemmer=None):
         assert(isinstance(filepath, unicode))
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         reset = False
         title = None
@@ -70,7 +73,9 @@ class ContextsReader(object):
 
                 if ContextsReader.TITLE_KEY in line:
                     title = ProcessedSentence(is_title=True,
-                                              parsed_text=ContextsReader.__parse_sentence(line, is_title=True),
+                                              parsed_text=ContextsReader.__parse_sentence(line,
+                                                                                          is_title=True,
+                                                                                          stemmer=stemmer),
                                               ref_opinions=opinions_list,
                                               objects_list=objects_list,
                                               sentence_index=-1)
@@ -80,7 +85,9 @@ class ContextsReader(object):
 
                 if ContextsReader.STEXT_KEY in line:
                     sentence = ProcessedSentence(is_title=False,
-                                                 parsed_text=ContextsReader.__parse_sentence(line, is_title=False),
+                                                 parsed_text=ContextsReader.__parse_sentence(line,
+                                                                                             is_title=False,
+                                                                                             stemmer=stemmer),
                                                  ref_opinions=opinions_list,
                                                  objects_list=objects_list,
                                                  sentence_index=s_index)
@@ -162,12 +169,13 @@ class ContextsReader(object):
         return text_object
 
     @staticmethod
-    def __parse_sentence(line, is_title):
+    def __parse_sentence(line, is_title, stemmer):
         assert(isinstance(is_title, bool))
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
         key = ContextsReader.STEXT_KEY if not is_title else ContextsReader.TITLE_KEY
         text = line[len(key):]
         text = text.strip()
-        return TextParser.from_string(str=text)
+        return TextParser.from_string(str=text, stemmer=stemmer)
 
     @staticmethod
     def __parse_terms_in_title_count(line):

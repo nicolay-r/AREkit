@@ -1,3 +1,6 @@
+from core.source.ruattitudes.sentence import ProcessedSentence
+
+
 class ProcessedNews(object):
 
     def __init__(self, processed_sentences, news_index):
@@ -6,6 +9,7 @@ class ProcessedNews(object):
         assert(isinstance(news_index, int))
         self.__processed_sentences = processed_sentences
         self.__news_index = news_index
+        self.__set_owners()
 
     @property
     def Title(self):
@@ -15,9 +19,14 @@ class ProcessedNews(object):
     def NewsIndex(self):
         return self.__news_index
 
+    def __set_owners(self):
+        for sentence in self.__processed_sentences:
+            assert(isinstance(sentence, ProcessedSentence))
+            sentence.set_owner(self)
+
     def get_sentence(self, index):
         return self.__processed_sentences[index]
 
     def iter_processed_sentences(self):
-        for s in self.__processed_sentences:
-            yield s
+        for sentence in self.__processed_sentences:
+            yield sentence
