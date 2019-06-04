@@ -1,6 +1,5 @@
-import pandas as pd
 from collections import OrderedDict
-from core.evaluation.results.base import BaseEvalResult
+from core.evaluation.results.base import BaseEvalResult, DocumentCompareTable
 from core.evaluation.results.utils import calc_f1_single_class, calc_f1
 
 
@@ -30,7 +29,7 @@ class TwoClassEvalResult(BaseEvalResult):
                              pos_prec, neg_prec,
                              pos_recall, neg_recall):
         assert(doc_id not in self.__documents)
-        assert(isinstance(cmp_table, pd.DataFrame))
+        assert(isinstance(cmp_table, DocumentCompareTable))
 
         self.add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
 

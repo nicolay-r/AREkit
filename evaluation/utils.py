@@ -1,5 +1,6 @@
 class FilesToCompare:
 
+    # TODO. Provide functions instead
     def __init__(self, test_filepath, etalon_filepath, index):
         assert(isinstance(test_filepath, unicode))
         assert(isinstance(etalon_filepath, unicode))

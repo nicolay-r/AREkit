@@ -1,5 +1,6 @@
 from core.evaluation.evaluators.base import BaseEvaluator
 from core.evaluation.labels import Label
+from core.evaluation.results.base import DocumentCompareTable
 from core.evaluation.results.single_class import SingleClassEvalResult
 from core.source.opinion import OpinionCollection, Opinion
 import metrics
@@ -82,7 +83,7 @@ class SingleClassEvaluator(BaseEvaluator):
                                                 comparison_column=self.C_CMP)
 
             result.add_document_results(doc_id=files_to_compare.index,
-                                        cmp_table=cmp_table,
+                                        cmp_table=DocumentCompareTable(cmp_table),
                                         recall=r, prec=p)
 
         result.calculate()

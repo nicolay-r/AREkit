@@ -3,6 +3,7 @@
 from core.evaluation.evaluators import metrics
 from core.evaluation.evaluators.base import BaseEvaluator
 from core.evaluation.labels import PositiveLabel, NegativeLabel, Label
+from core.evaluation.results.base import DocumentCompareTable
 from core.evaluation.results.two_class import TwoClassEvalResult
 from core.source.opinion import OpinionCollection
 
@@ -54,7 +55,7 @@ class TwoClassEvaluator(BaseEvaluator):
                                                                 comparison_column=self.C_CMP)
 
             result.add_document_results(doc_id=files_to_compare.index,
-                                        cmp_table=cmp_table,
+                                        cmp_table=DocumentCompareTable(cmp_table),
                                         pos_recall=pos_recall,
                                         neg_recall=neg_recall,
                                         pos_prec=pos_prec,

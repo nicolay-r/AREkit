@@ -1,6 +1,21 @@
 import pandas as pd
 
 
+class DocumentCompareTable:
+
+    def __init__(self, cmp_table):
+        assert(isinstance(cmp_table, pd.DataFrame))
+        self.__cmp_table = cmp_table
+
+    def load(self, filepath):
+        assert(isinstance(filepath, unicode))
+        self.__cmp_table.from_csv(filepath)
+
+    def save(self, filepath):
+        assert(isinstance(filepath, unicode))
+        self.__cmp_table.to_csv(filepath)
+
+
 class BaseEvalResult(object):
 
     def __init__(self):
@@ -11,11 +26,11 @@ class BaseEvalResult(object):
         return self.__documents[doc_id]
 
     def calculate(self):
-        pass
+        raise Exception("Not implemented")
 
     def add_cmp_table(self, doc_id, cmp_table):
         assert(doc_id not in self.__documents)
-        assert(isinstance(cmp_table, pd.DataFrame))
+        assert(isinstance(cmp_table, DocumentCompareTable))
         self.__documents[doc_id] = cmp_table
 
     def iter_document_cmp_tables(self):
@@ -25,4 +40,3 @@ class BaseEvalResult(object):
     def iter_document_ids(self):
         for doc_id in self.__documents.iterkeys():
             yield doc_id
-
