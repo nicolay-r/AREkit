@@ -22,3 +22,7 @@ class BaseEvalResult(object):
         for doc_id, cmp_table in self.__documents.iteritems():
             yield doc_id, cmp_table
 
+    def iter_document_ids(self):
+        for doc_id in self.__documents.iterkeys():
+            yield doc_id
+
