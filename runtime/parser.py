@@ -180,8 +180,20 @@ class ParsedText:
         for term in self.__terms:
             yield term
 
+    def iter_raw_words(self):
+        for term in self.__terms:
+            if not isinstance(term, unicode):
+                continue
+            yield term
+
     def iter_raw_lemmas(self):
         for lemma in self.__lemmas:
+            yield lemma
+
+    def iter_raw_word_lemmas(self):
+        for lemma in self.__lemmas:
+            if not isinstance(lemma, unicode):
+                continue
             yield lemma
 
     def __lemmatize(self, stemmer):

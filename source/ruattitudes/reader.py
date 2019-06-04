@@ -7,6 +7,7 @@ from core.source.ruattitudes.news import ProcessedNews
 from core.source.ruattitudes.sentence import ProcessedSentence
 
 
+# TODO. Rename as RuAttitudesFormatReader.
 class ContextsReader(object):
 
     NEWS_SEP_KEY = u'--------'
