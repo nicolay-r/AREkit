@@ -57,3 +57,6 @@ class ProcessedSentence(object):
     def iter_ref_opinions(self):
         for opinion in self.__ref_opinions:
             yield opinion
+
+    def __len__(self):
+        return len(self.ParsedText)
