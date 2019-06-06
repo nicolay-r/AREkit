@@ -48,7 +48,7 @@ class POSMystemWrapper(POSTagger):
 
     def pos_to_int(self, pos):
         assert(isinstance(pos, unicode))
-        pos = pos.lower()
+        pos = pos.upper()
         return self.pos_names.index(pos)
 
     def __get_term_pos(self, analysis):
