@@ -11,9 +11,10 @@ class DocumentCompareTable:
         assert(isinstance(cmp_table, pd.DataFrame))
         self.__cmp_table = cmp_table
 
-    def load(self, filepath):
+    @classmethod
+    def load(cls, filepath):
         assert(isinstance(filepath, unicode))
-        self.__cmp_table.from_csv(filepath)
+        return cls(cmp_table=pd.DataFrame.from_csv(filepath))
 
     def save(self, filepath):
         assert(isinstance(filepath, unicode))
