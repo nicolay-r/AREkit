@@ -54,6 +54,7 @@ class BaseEvaluator(object):
                              None, o_test.sentiment.to_str(), False]
             r_ind += 1
 
+        # TODO. Return CmpTable
         return df
 
     def calc_a_file(self, files_to_compare, debug):

@@ -100,7 +100,7 @@ class EntityCollection:
         for entity in self.entities:
             yield entity
 
-
+# TODO. To /common/entity.py
 class Entity:
     """ Entity description.
     """

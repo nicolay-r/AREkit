@@ -1,7 +1,11 @@
 import pandas as pd
 
 
+# TODO. Move into separated file (eval/cmp_table.py).
 class DocumentCompareTable:
+
+    # TODO. Move column names here (from eval).
+    # TODO. Move filtering operations here.
 
     def __init__(self, cmp_table):
         assert(isinstance(cmp_table, pd.DataFrame))

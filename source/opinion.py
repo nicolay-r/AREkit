@@ -117,6 +117,7 @@ class OpinionCollection:
             yield o
 
 
+# TODO. To /common/entity.py
 class Opinion:
     """ Source opinion description
     """

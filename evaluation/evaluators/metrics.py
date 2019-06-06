@@ -8,6 +8,7 @@ def calc_recall(cmp_table,
                 answer_exist,
                 how_original_column,
                 comparison_column):
+    # TODO. cmp_table type of DocumentCmpTable
     assert(isinstance(cmp_table, pd.DataFrame))
     assert(isinstance(answers, pd.DataFrame))
     assert(isinstance(label, Label))
@@ -25,6 +26,7 @@ def calc_recall(cmp_table,
 def calc_precision(correct_answers,
                    answer_exist,
                    comparison_column):
+    # TODO. cmp_table type of DocumentCmpTable
     assert(isinstance(correct_answers, pd.DataFrame))
     assert(isinstance(answer_exist, bool))
     assert(isinstance(comparison_column, str))
@@ -41,6 +43,7 @@ def calc_prec_and_recall(cmp_table,
                          how_original_column,
                          how_results_column,
                          comparison_column):
+    # TODO. cmp_table type of DocumentCmpTable
     assert(isinstance(cmp_table, pd.DataFrame))
     assert(isinstance(opinions_exist, bool))
     assert(isinstance(label, Label))
