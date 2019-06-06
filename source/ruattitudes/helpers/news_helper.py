@@ -1,5 +1,8 @@
 import collections
+
+from core.runtime.object import TextObject
 from core.runtime.ref_opinon import RefOpinion
+from core.source.opinion import Opinion
 from core.source.ruattitudes.news import ProcessedNews
 from core.source.ruattitudes.sentence import ProcessedSentence
 
@@ -28,19 +31,49 @@ class NewsProcessingHelper(object):
         return docs
 
     @staticmethod
-    def iter_news_opinion_refs(processed_news):
+    def iter_opinions_with_related_sentences(processed_news):
         assert(isinstance(processed_news, ProcessedNews))
 
         doc_opinions = NewsProcessingHelper.build_opinion_dict(processed_news=processed_news)
         assert(isinstance(doc_opinions, dict))
 
         for ref_opinion_tag, value in doc_opinions.iteritems():
+
+            opinion = None
+            related_sentences = []
+
             for sentence in processed_news.iter_processed_sentences():
+
                 ref_opinion = sentence.find_ref_opinion_by_key(ref_opinion_tag)
                 if ref_opinion is None:
                     continue
 
-                yield ref_opinion, sentence
+                related_sentences.append(sentence)
+
+                if opinion is not None:
+                    continue
+
+                opinion = NewsProcessingHelper.__convert_ref_opinion_to_opinion(sentence=sentence,
+                                                                                ref_opinion=ref_opinion)
+
+            if len(related_sentences) == 0:
+                continue
+
+            yield opinion, related_sentences
+
+    @staticmethod
+    def __convert_ref_opinion_to_opinion(sentence, ref_opinion):
+        assert(isinstance(sentence, ProcessedSentence))
+        assert(isinstance(ref_opinion, RefOpinion))
+
+        l_obj, r_obj = sentence.get_objects(ref_opinion)
+
+        assert (isinstance(l_obj, TextObject))
+        assert (isinstance(r_obj, TextObject))
+
+        return Opinion(value_left=l_obj.get_value(),
+                       value_right=r_obj.get_value(),
+                       sentiment=ref_opinion.Sentiment)
 
     @staticmethod
     def __build_opinion_dict(processed_news):
