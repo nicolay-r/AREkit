@@ -3,6 +3,7 @@ from core.source.tokens import Tokens, Token
 from core.processing.lemmatization.base import Stemmer
 
 
+# TODO. Move into processing/text directory.
 class TextParser:
     """
     Represents a parser of news sentences.
@@ -141,7 +142,7 @@ class TextParser:
             else:
                 print u'"WORD: {}" '.format(term).decode('utf-8')
 
-
+# TODO. Move into processing/text directory.
 class ParsedText:
     """
     Represents a processed text with extra parameters

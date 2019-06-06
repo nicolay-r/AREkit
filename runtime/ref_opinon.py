@@ -1,6 +1,6 @@
 from core.evaluation.labels import Label
 
-
+# TODO. move into common directory.
 class RefOpinion(object):
     """
     Provides references within Owner collection.
