@@ -1,24 +1,4 @@
-import pandas as pd
-
-
-# TODO. Move into separated file (eval/cmp_table.py).
-class DocumentCompareTable:
-
-    # TODO. Move column names here (from eval).
-    # TODO. Move filtering operations here.
-
-    def __init__(self, cmp_table):
-        assert(isinstance(cmp_table, pd.DataFrame))
-        self.__cmp_table = cmp_table
-
-    @classmethod
-    def load(cls, filepath):
-        assert(isinstance(filepath, unicode))
-        return cls(cmp_table=pd.DataFrame.from_csv(filepath))
-
-    def save(self, filepath):
-        assert(isinstance(filepath, unicode))
-        self.__cmp_table.to_csv(filepath)
+from core.evaluation.evaluators.cmp_table import DocumentCompareTable
 
 
 class BaseEvalResult(object):

@@ -1,6 +1,5 @@
 from core.evaluation.evaluators.base import BaseEvaluator
 from core.evaluation.labels import Label
-from core.evaluation.results.base import DocumentCompareTable
 from core.evaluation.results.single_class import SingleClassEvalResult
 from core.source.opinion import OpinionCollection, Opinion
 import metrics
@@ -38,9 +37,9 @@ class SingleClassEvaluator(BaseEvaluator):
         test_opins = self.__clone_with_different_label(test_opins, self.__sentiment_label)
         etalon_opins = self.__clone_with_different_label(etalon_opins, self.__sentiment_label)
 
-        results = self.calc_difference(etalon_opins, test_opins)
+        cmp_table = self.calc_difference(etalon_opins, test_opins)
 
-        return results
+        return cmp_table
 
     def __clone_with_different_label(self, opinions, label):
         assert(isinstance(opinions, OpinionCollection))
@@ -83,7 +82,7 @@ class SingleClassEvaluator(BaseEvaluator):
                                                 comparison_column=self.C_CMP)
 
             result.add_document_results(doc_id=files_to_compare.index,
-                                        cmp_table=DocumentCompareTable(cmp_table),
+                                        cmp_table=cmp_table,
                                         recall=r, prec=p)
 
         result.calculate()

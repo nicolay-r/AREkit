@@ -18,9 +18,9 @@ class TwoClassEvaluator(BaseEvaluator):
     def calc_a_file(self, files_to_compare, debug):
         test_opins, etalon_opins = super(TwoClassEvaluator, self).calc_a_file(files_to_compare=files_to_compare,
                                                                               debug=debug)
-        results = self.calc_difference(etalon_opins, test_opins)
+        cmp_table = self.calc_difference(etalon_opins, test_opins)
 
-        return results, \
+        return cmp_table, \
                self.__has_opinions_with_label(etalon_opins, self.__pos_label), \
                self.__has_opinions_with_label(etalon_opins, self.__neg_label)
 
