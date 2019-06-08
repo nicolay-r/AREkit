@@ -4,6 +4,7 @@ from core.processing.lemmatization.base import Stemmer
 from core.source.synonyms import SynonymsCollection
 
 
+# TODO. rename as DocumentEntityCollection in rusentrel/entities.py
 class EntityCollection:
     """ Collection of annotated entities
     """

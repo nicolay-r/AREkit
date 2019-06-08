@@ -3,7 +3,8 @@ import io
 from core.evaluation.labels import Label
 from core.source.synonyms import SynonymsCollection
 
-
+# TODO. This class should be in common.
+# TODO. nested as NewsOpinionCollection in rusentrel/opinions.py
 class OpinionCollection:
     """ Collection of sentiment opinions between entities
     """
@@ -26,6 +27,7 @@ class OpinionCollection:
             OpinionCollection.__add_opinion(opinion, index, self.__synonyms, check=True)
         return index
 
+    # TODO. Stay this in rusentrel/opinions.py
     @classmethod
     def from_file(cls, filepath, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
@@ -82,6 +84,7 @@ class OpinionCollection:
         self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
         self.__opinions.append(opinion)
 
+    # TODO. Stay this in rusentrel/opinions.py
     def save(self, filepath):
         sorted_ops = sorted(self.__opinions, key=lambda o: o.value_left + o.value_right)
         with io.open(filepath, 'w') as f:
