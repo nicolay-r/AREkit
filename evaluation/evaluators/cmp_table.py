@@ -49,12 +49,19 @@ class DocumentCompareTable:
     def iter_opinions(self, str_to_label_func):
         assert(callable(str_to_label_func))
 
-        for row in self.__cmp_table.iteritems():
+        for i in range(len(self.__cmp_table)):
 
-            o = Opinion(value_left=row[self.C_WHO],
-                        value_right=row[self.C_TO],
-                        sentiment=str_to_label_func(row[self.C_RES])),
+            res = self.__cmp_table.iloc[i][self.C_RES]
+            if not isinstance(res, str):
+                # TODO. Support this later.
+                continue
 
-            orig = str_to_label_func(row[self.C_ORIG])
+            sentiment = str_to_label_func(res)
 
-            yield o, orig, row[self.C_CMP]
+            o = Opinion(value_left=self.__cmp_table.iloc[i][self.C_WHO].decode('utf-8'),
+                        value_right=self.__cmp_table.iloc[i][self.C_TO].decode('utf-8'),
+                        sentiment=sentiment)
+
+            orig = str_to_label_func(self.__cmp_table.iloc[i][self.C_ORIG].decode('utf-8'))
+
+            yield o, orig, bool(self.__cmp_table.iloc[i][self.C_CMP])
