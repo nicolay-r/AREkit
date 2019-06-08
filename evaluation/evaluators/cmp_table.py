@@ -1,5 +1,6 @@
 import pandas as pd
 from core.evaluation.labels import Label
+from core.source.opinion import Opinion
 
 
 class DocumentCompareTable:
@@ -44,3 +45,16 @@ class DocumentCompareTable:
 
     def __len__(self):
         return len(self.__cmp_table)
+
+    def iter_opinions(self, str_to_label_func):
+        assert(callable(str_to_label_func))
+
+        for row in self.__cmp_table.iteritems():
+
+            o = Opinion(value_left=row[self.C_WHO],
+                        value_right=row[self.C_TO],
+                        sentiment=str_to_label_func(row[self.C_RES])),
+
+            orig = str_to_label_func(row[self.C_ORIG])
+
+            yield o, orig, row[self.C_CMP]
