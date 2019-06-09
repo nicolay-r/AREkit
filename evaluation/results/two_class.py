@@ -1,5 +1,7 @@
 from collections import OrderedDict
-from core.evaluation.results.base import BaseEvalResult, DocumentCompareTable
+
+from core.evaluation.evaluators.cmp_table import DocumentCompareTable
+from core.evaluation.results.base import BaseEvalResult
 from core.evaluation.results.utils import calc_f1_single_class, calc_f1
 
 

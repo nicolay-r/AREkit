@@ -3,7 +3,8 @@ import io
 from core.evaluation.labels import Label
 from core.source.synonyms import SynonymsCollection
 
-
+# TODO. This class should be in common.
+# TODO. nested as NewsOpinionCollection in rusentrel/opinions.py
 class OpinionCollection:
     """ Collection of sentiment opinions between entities
     """
@@ -26,6 +27,7 @@ class OpinionCollection:
             OpinionCollection.__add_opinion(opinion, index, self.__synonyms, check=True)
         return index
 
+    # TODO. Stay this in rusentrel/opinions.py
     @classmethod
     def from_file(cls, filepath, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
@@ -82,6 +84,7 @@ class OpinionCollection:
         self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
         self.__opinions.append(opinion)
 
+    # TODO. Stay this in rusentrel/opinions.py
     def save(self, filepath):
         sorted_ops = sorted(self.__opinions, key=lambda o: o.value_left + o.value_right)
         with io.open(filepath, 'w') as f:
@@ -117,7 +120,7 @@ class OpinionCollection:
             yield o
 
 
-# TODO. To /common/entity.py
+# TODO. To /common/opinion.py
 class Opinion:
     """ Source opinion description
     """
@@ -131,12 +134,14 @@ class Opinion:
         self.value_left = value_left.lower()
         self.value_right = value_right.lower()
         self.sentiment = sentiment
+        self.__tag = None
 
-    def to_unicode(self):
-        return u"{}, {}, {}, current".format(
-            self.value_left,
-            self.value_right,
-            self.sentiment.to_str())
+    @property
+    def Tag(self):
+        return self.__tag
+
+    def set_tag(self, value):
+        self.__tag = value
 
     def create_synonym_id(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
@@ -151,3 +156,10 @@ class Opinion:
     def has_synonym_for_right(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
         return synonyms.has_synonym(self.value_right)
+
+    # TODO. Leave in RuSentRelOpinion (/rusentrel/opinion.py), nested from Opinion.
+    def to_unicode(self):
+        return u"{}, {}, {}, current".format(
+            self.value_left,
+            self.value_right,
+            self.sentiment.to_str())

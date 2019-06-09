@@ -5,6 +5,7 @@ from core.helpers.news import NewsHelper
 from core.source.entity import EntityCollection
 
 
+# TODO. Class should be in rusentrel/news.py
 class News:
 
     def __init__(self, sentences, entities):
@@ -103,6 +104,7 @@ class News:
             yield sentence
 
 
+# TODO. Class should be in rusentrel/sentence.py
 class Sentence:
 
     def __init__(self, text, begin, end):

@@ -1,68 +1,51 @@
-import pandas as pd
+from core.evaluation.evaluators.cmp_table import DocumentCompareTable
 from core.evaluation.labels import Label
 
 
 def calc_recall(cmp_table,
                 answers,
                 label,
-                answer_exist,
-                how_original_column,
-                comparison_column):
-    # TODO. cmp_table type of DocumentCmpTable
-    assert(isinstance(cmp_table, pd.DataFrame))
-    assert(isinstance(answers, pd.DataFrame))
+                answer_exist):
+    assert(isinstance(cmp_table, DocumentCompareTable))
+    assert(isinstance(answers, DocumentCompareTable))
     assert(isinstance(label, Label))
     assert(isinstance(answer_exist, bool))
-    assert(isinstance(how_original_column, str))
-    assert(isinstance(comparison_column, str))
 
-    total = len(cmp_table[cmp_table[how_original_column] == label.to_str()])
+    total = cmp_table.filter_original_column_by_label(label)
     if total != 0:
-        return 1.0 * len(answers[(answers[comparison_column] == True)]) / total
+        return 1.0 * len(answers.filter_comparison_true()) / total
     else:
         return 0.0 if answer_exist else 1.0
 
 
 def calc_precision(correct_answers,
-                   answer_exist,
-                   comparison_column):
-    # TODO. cmp_table type of DocumentCmpTable
-    assert(isinstance(correct_answers, pd.DataFrame))
+                   answer_exist):
+    assert(isinstance(correct_answers, DocumentCompareTable))
     assert(isinstance(answer_exist, bool))
-    assert(isinstance(comparison_column, str))
+
     total = len(correct_answers)
     if total != 0:
-        return 1.0 * len(correct_answers[(correct_answers[comparison_column] == True)]) / total
+        return 1.0 * len(correct_answers.filter_comparison_true()) / total
     else:
         return 0.0 if answer_exist else 1.0
 
 
 def calc_prec_and_recall(cmp_table,
                          label,
-                         opinions_exist,
-                         how_original_column,
-                         how_results_column,
-                         comparison_column):
-    # TODO. cmp_table type of DocumentCmpTable
-    assert(isinstance(cmp_table, pd.DataFrame))
+                         opinions_exist):
+    assert(isinstance(cmp_table, DocumentCompareTable))
     assert(isinstance(opinions_exist, bool))
     assert(isinstance(label, Label))
-    assert(isinstance(how_results_column, str))
-    assert(isinstance(how_original_column, str))
-    assert(isinstance(comparison_column, str))
 
-    correct_answers = cmp_table[(cmp_table[how_results_column] == label.to_str())]
+    correct_answers = cmp_table.filter_result_column_by_label(label)
 
     p = calc_precision(correct_answers=correct_answers,
-                       answer_exist=opinions_exist,
-                       comparison_column=comparison_column)
+                       answer_exist=opinions_exist)
 
     r = calc_recall(cmp_table=cmp_table,
                     answers=correct_answers,
                     label=label,
-                    answer_exist=opinions_exist,
-                    how_original_column=how_original_column,
-                    comparison_column=comparison_column)
+                    answer_exist=opinions_exist)
 
     assert(isinstance(p, float))
     assert(isinstance(r, float))
