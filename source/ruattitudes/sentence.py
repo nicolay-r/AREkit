@@ -1,4 +1,4 @@
-from core.processing.text.parser import ParsedText
+from core.processing.text.parsed import ParsedText
 from core.common.ref_opinon import RefOpinion
 
 

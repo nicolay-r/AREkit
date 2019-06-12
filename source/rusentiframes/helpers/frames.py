@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.processing.lemmatization.base import Stemmer
-from core.processing.text.parser import ParsedText
+from core.processing.text.parsed import ParsedText
 from core.source.rusentiframes.variants.collection import FrameVariantsCollection
 from core.source.rusentiframes.variants.text_variant import FrameVariantInText
 
