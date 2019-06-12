@@ -19,20 +19,20 @@ class RuSentRelContextOpinionCollection:
         assert(isinstance(entities, RuSentRelEntityCollection))
 
         left_entities = entities.try_get_entities(
-            opinion.value_left, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
+            opinion.ValueLeft, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
         right_entities = entities.try_get_entities(
-            opinion.value_right, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
+            opinion.ValueRight, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
 
         if left_entities is None:
             if debug:
                 print "Appropriate entity for '{}'->'...' has not been found".format(
-                    opinion.value_left.encode('utf-8'))
+                    opinion.ValueLeft.encode('utf-8'))
             return cls(relation_list=[])
 
         if right_entities is None:
             if debug:
                 print "Appropriate entity for '...'->'{}' has not been found".format(
-                    opinion.value_right.encode('utf-8'))
+                    opinion.ValueRight.encode('utf-8'))
             return cls(relation_list=[])
 
         relations = []

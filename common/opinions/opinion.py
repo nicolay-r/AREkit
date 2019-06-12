@@ -12,10 +12,22 @@ class Opinion(object):
         assert(isinstance(sentiment, Label))
         assert(',' not in value_left)
         assert(',' not in value_right)
-        self.value_left = value_left.lower()
-        self.value_right = value_right.lower()
-        self.sentiment = sentiment
+        self.__value_left = value_left.lower()
+        self.__value_right = value_right.lower()
+        self.__sentiment = sentiment
         self.__tag = None
+
+    @property
+    def ValueLeft(self):
+        return self.__value_left
+
+    @property
+    def ValueRight(self):
+        return self.__value_right
+
+    @property
+    def Sentiment(self):
+        return self.__sentiment
 
     @property
     def Tag(self):
@@ -27,13 +39,13 @@ class Opinion(object):
     def create_synonym_id(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
         return u"{}_{}".format(
-            synonyms.get_synonym_group_index(self.value_left),
-            synonyms.get_synonym_group_index(self.value_right))
+            synonyms.get_synonym_group_index(self.__value_left),
+            synonyms.get_synonym_group_index(self.__value_right))
 
     def has_synonym_for_left(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return synonyms.has_synonym(self.value_left)
+        return synonyms.has_synonym(self.__value_left)
 
     def has_synonym_for_right(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return synonyms.has_synonym(self.value_right)
+        return synonyms.has_synonym(self.__value_right)

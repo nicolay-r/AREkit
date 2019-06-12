@@ -51,10 +51,10 @@ class OpinionCollection(object):
         assert(isinstance(opinion, Opinion))
 
         if not opinion.has_synonym_for_left(self.__synonyms):
-            self.__add_synonym(opinion.value_left)
+            self.__add_synonym(opinion.ValueLeft)
 
         if not opinion.has_synonym_for_right(self.__synonyms):
-            self.__add_synonym(opinion.value_right)
+            self.__add_synonym(opinion.ValueRight)
 
         self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
         self.__opinions.append(opinion)

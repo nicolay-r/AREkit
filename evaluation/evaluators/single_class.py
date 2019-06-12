@@ -51,8 +51,8 @@ class SingleClassEvaluator(BaseEvaluator):
 
         for o in opinions:
             assert(isinstance(o, Opinion))
-            no = Opinion(value_left=o.value_left,
-                         value_right=o.value_right,
+            no = Opinion(value_left=o.ValueLeft,
+                         value_right=o.ValueRight,
                          sentiment=label)
 
             ro.add_opinion(no)
@@ -77,10 +77,7 @@ class SingleClassEvaluator(BaseEvaluator):
 
             p, r = metrics.calc_prec_and_recall(cmp_table=cmp_table,
                                                 label=self.__sentiment_label,
-                                                opinions_exist=True,
-                                                how_original_column=self.C_ORIG,
-                                                how_results_column=self.C_RES,
-                                                comparison_column=self.C_CMP)
+                                                opinions_exist=True)
 
             result.add_document_results(doc_id=files_to_compare.index,
                                         cmp_table=cmp_table,

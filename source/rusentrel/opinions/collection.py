@@ -48,6 +48,6 @@ class RuSentRelOpinionCollection(OpinionCollection):
     def __opinion_to_str(opinion):
         assert(isinstance(opinion, Opinion))
         return u"{}, {}, {}, current".format(
-            opinion.value_left,
-            opinion.value_right,
-            opinion.sentiment.to_str())
+            opinion.ValueLeft,
+            opinion.ValueRight,
+            opinion.Sentiment.to_str())
