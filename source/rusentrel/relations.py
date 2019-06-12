@@ -1,10 +1,9 @@
-from core.source.rusentrel.entities.collection import DocumentEntityCollection
-from core.source.rusentrel.news import NewsDocument
-from core.source.rusentrel.opinions.opinion import Opinion
+from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
+from core.source.rusentrel.news import RuSentRelNews
+from core.common.opinions.opinion import Opinion
 
 
-# TODO. Rename as NewsOpinionHelper
-class RelationCollection:
+class ContextOpinionCollection:
 
     def __init__(self, relation_list):
         assert(isinstance(relation_list, list))
@@ -12,16 +11,16 @@ class RelationCollection:
 
     @classmethod
     def from_news_opinion(cls, news, opinion, debug=False):
-        assert(isinstance(news, NewsDocument))
+        assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinion, Opinion))
 
         entities = news.Entities
-        assert(isinstance(entities, DocumentEntityCollection))
+        assert(isinstance(entities, RuSentRelEntityCollection))
 
         left_entities = entities.try_get_entities(
-            opinion.value_left, group_key=DocumentEntityCollection.KeyType.BY_SYNONYMS)
+            opinion.value_left, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
         right_entities = entities.try_get_entities(
-            opinion.value_right, group_key=DocumentEntityCollection.KeyType.BY_SYNONYMS)
+            opinion.value_right, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
 
         if left_entities is None:
             if debug:

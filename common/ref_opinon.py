@@ -1,6 +1,6 @@
 from core.evaluation.labels import Label
 
-# TODO. move into common directory.
+
 class RefOpinion(object):
     """
     Provides references within Owner collection.
@@ -11,7 +11,7 @@ class RefOpinion(object):
         assert(isinstance(right_index, int))
         assert(isinstance(sentiment, Label))
         self.__left_index = left_index
-        self.__rigth_index = right_index
+        self.__right_index = right_index
         self.__sentiment = sentiment
         self.__owner = owner
         self.__tag = None
@@ -22,7 +22,7 @@ class RefOpinion(object):
 
     @property
     def RightIndex(self):
-        return self.__rigth_index
+        return self.__right_index
 
     @property
     def Sentiment(self):

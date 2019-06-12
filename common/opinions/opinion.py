@@ -1,5 +1,5 @@
 from core.evaluation.labels import Label
-from core.source.synonyms import SynonymsCollection
+from core.common.synonyms import SynonymsCollection
 
 
 # TODO. To /common/collection.py
@@ -38,10 +38,3 @@ class Opinion(object):
     def has_synonym_for_right(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
         return synonyms.has_synonym(self.value_right)
-
-    # TODO. Leave in RuSentRelOpinion (/rusentrel/collection.py), nested from Opinion.
-    def to_unicode(self):
-        return u"{}, {}, {}, current".format(
-            self.value_left,
-            self.value_right,
-            self.sentiment.to_str())

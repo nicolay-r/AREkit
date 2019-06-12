@@ -1,4 +1,4 @@
-class Sentence:
+class Sentence(object):
 
     def __init__(self, text, begin, end):
         assert(isinstance(text, unicode) and len(text) > 0)

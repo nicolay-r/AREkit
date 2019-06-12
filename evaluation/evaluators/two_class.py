@@ -5,7 +5,7 @@ from core.evaluation.evaluators.base import BaseEvaluator
 from core.evaluation.labels import PositiveLabel, NegativeLabel, Label
 from core.evaluation.results.base import DocumentCompareTable
 from core.evaluation.results.two_class import TwoClassEvalResult
-from core.source.rusentrel.opinions.collection import OpinionCollection
+from core.common.opinions.collection import OpinionCollection
 
 
 class TwoClassEvaluator(BaseEvaluator):

@@ -15,5 +15,6 @@ class Entity(object):
         self.end = end
         self.value = value.lower()
 
-    def get_int_ID(self):
+    @property
+    def IdInDocument(self):
         return int(self.ID[1:len(self.ID)])

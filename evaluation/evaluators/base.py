@@ -1,7 +1,7 @@
 from core.evaluation.evaluators.cmp_table import DocumentCompareTable
 from core.evaluation.utils import FilesToCompare
-from core.source.rusentrel.opinions.collection import OpinionCollection
-from core.source.synonyms import SynonymsCollection
+from core.common.opinions.collection import OpinionCollection
+from core.common.synonyms import SynonymsCollection
 
 
 class BaseEvaluator(object):

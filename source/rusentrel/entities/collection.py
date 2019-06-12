@@ -2,10 +2,10 @@
 import io
 from core.processing.lemmatization.base import Stemmer
 from core.source.rusentrel.entities.entity import Entity
-from core.source.synonyms import SynonymsCollection
+from core.common.synonyms import SynonymsCollection
 
 
-class DocumentEntityCollection:
+class RuSentRelEntityCollection:
     """ Collection of annotated entities
     """
 

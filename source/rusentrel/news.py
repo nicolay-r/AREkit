@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 import io
-from core.helpers.news import NewsHelper
-from core.source.rusentrel.entities.collection import DocumentEntityCollection
+from core.source.rusentrel.helpers.news import NewsHelper
+from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
 from core.source.rusentrel.sentence import Sentence
 
 
-class NewsDocument:
+class RuSentRelNews(object):
 
     def __init__(self, sentences, entities):
         assert(isinstance(sentences, list))
-        assert(isinstance(entities, DocumentEntityCollection))
+        assert(isinstance(entities, RuSentRelEntityCollection))
         self.__sentences = sentences
         self.__entities = entities
         self.__helper = NewsHelper(self)
@@ -27,9 +27,9 @@ class NewsDocument:
         """ Read news from file
         """
         assert(isinstance(filepath, unicode))
-        assert(isinstance(entities, DocumentEntityCollection))
+        assert(isinstance(entities, RuSentRelEntityCollection))
 
-        sentences = NewsDocument.read_sentences(filepath)
+        sentences = RuSentRelNews.read_sentences(filepath)
 
         s_ind = 0
         e_ind = 0
