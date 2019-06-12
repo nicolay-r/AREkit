@@ -3,6 +3,7 @@ from core.source.rusentrel.news import NewsDocument
 from core.source.rusentrel.opinions.opinion import Opinion
 
 
+# TODO. Rename as NewsOpinionHelper
 class RelationCollection:
 
     def __init__(self, relation_list):
@@ -59,6 +60,7 @@ class RelationCollection:
             yield relation
 
 
+# TODO. Also this is a TextOpinion
 class Relation:
     """
     Strict Relation between two Entities

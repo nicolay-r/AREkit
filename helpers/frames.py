@@ -4,6 +4,7 @@ from core.processing.text.parser import ParsedText
 from core.source.frames.variants import FrameVariantInText, FrameVariantsCollection
 
 
+# TODO. This should be in source/frames/helper.py
 class FramesHelper:
 
     def __init__(self, frames):

@@ -3,6 +3,7 @@ import json
 from core.evaluation.labels import Label
 
 
+# TODO. Rename as SentiRuFramesFormatCollection
 class FramesCollection:
 
     __frames_key = u"frames"

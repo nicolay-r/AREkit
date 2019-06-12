@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import collections
-
 from core.common.bound import Bound
 from core.processing.lemmatization.base import Stemmer
 
 
+#TODO. Create folder Variant.
 class FrameVariantsCollection:
 
     def __init__(self, variants, frames_list, stemmer):
@@ -70,7 +70,7 @@ class FrameVariantsCollection:
         for template, variant in self.__variants.iteritems():
             yield template, variant
 
-
+#TODO. To other files.
 class FrameVariant:
 
     def __init__(self, text, frame_id):
@@ -94,6 +94,7 @@ class FrameVariant:
         return len(self.__terms)
 
 
+#TODO. To other files.
 class FrameVariantInText:
 
     def __init__(self, variant, start_index, is_inverted):

@@ -2,6 +2,8 @@ import io
 from core.processing.lemmatization.base import Stemmer
 
 
+# TODO. Move to common.
+# TODO. Create Nested class in RuSentRel as it has specific reader (from_file).
 class SynonymsCollection:
 
     def __init__(self, by_index, by_synonym, stemmer, is_read_only):
