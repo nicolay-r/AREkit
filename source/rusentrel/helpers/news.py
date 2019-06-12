@@ -1,4 +1,4 @@
-from core.source.rusentrel.entities.entity import Entity
+from core.common.entities.entity import Entity
 
 
 # TODO. Move to source/rusentrel/news/helper.py

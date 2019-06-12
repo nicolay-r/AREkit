@@ -1,9 +1,10 @@
+from core.common.opinions.opinion import Opinion
 from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
 from core.source.rusentrel.news import RuSentRelNews
-from core.common.opinions.opinion import Opinion
+from core.source.rusentrel.helpers.context.opinion import RuSentRelContextOpinion
 
 
-class ContextOpinionCollection:
+class RuSentRelContextOpinionCollection:
 
     def __init__(self, relation_list):
         assert(isinstance(relation_list, list))
@@ -37,9 +38,9 @@ class ContextOpinionCollection:
         relations = []
         for entity_left in left_entities:
             for entity_right in right_entities:
-                relation = Relation(entity_left_ID=entity_left.ID,
-                                    entity_right_ID=entity_right.ID,
-                                    entity_by_id_func=lambda id: entities.get_entity_by_id(id))
+                relation = RuSentRelContextOpinion(entity_left_ID=entity_left.ID,
+                                                   entity_right_ID=entity_right.ID,
+                                                   entity_by_id_func=entities.get_entity_by_id)
                 relations.append(relation)
 
         return cls(relations)
@@ -57,42 +58,3 @@ class ContextOpinionCollection:
     def __iter__(self):
         for relation in self.__relations:
             yield relation
-
-
-# TODO. Also this is a TextOpinion
-class Relation:
-    """
-    Strict Relation between two Entities
-    """
-
-    def __init__(self, entity_left_ID, entity_right_ID, entity_by_id_func):
-        assert(isinstance(entity_left_ID, unicode))
-        assert(isinstance(entity_right_ID, unicode))
-        assert(callable(entity_by_id_func))
-        self.__entity_left_ID = entity_left_ID
-        self.__entity_right_ID = entity_right_ID
-        self.__entity_by_id_func = entity_by_id_func
-
-    @property
-    def LeftEntityID(self):
-        return self.__entity_left_ID
-
-    @property
-    def RightEntityID(self):
-        return self.__entity_right_ID
-
-    @property
-    def LeftEntity(self):
-        return self.__entity_by_id_func(self.__entity_left_ID)
-
-    @property
-    def RightEntity(self):
-        return self.__entity_by_id_func(self.__entity_right_ID)
-
-    @property
-    def LeftEntityValue(self):
-        return self.__entity_by_id_func(self.__entity_left_ID).value
-
-    @property
-    def RightEntityValue(self):
-        return self.__entity_by_id_func(self.__entity_right_ID).value

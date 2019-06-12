@@ -24,18 +24,18 @@ class SynonymsCollection(object):
         assert(isinstance(s, unicode))
         assert(not self.has_synonym(s))
         assert(not self.__is_read_only)
-        id = self._create_synonym_id(self.__stemmer, s)
+        id = self.create_synonym_id(self.__stemmer, s)
         self.__by_synonym[id] = self._get_groups_count()
         self.__by_index.append([s])
 
     def has_synonym(self, s):
         assert(isinstance(s, unicode))
-        id = self._create_synonym_id(self.__stemmer, s)
+        id = self.create_synonym_id(self.__stemmer, s)
         return id in self.__by_synonym
 
     def get_synonyms_list(self, s):
         assert(isinstance(s, unicode))
-        id = self._create_synonym_id(self.__stemmer, s)
+        id = self.create_synonym_id(self.__stemmer, s)
         index = self.__by_synonym[id]
         return self.__by_index[index]
 
@@ -47,7 +47,7 @@ class SynonymsCollection(object):
         return len(self.__by_index)
 
     def _get_group_index(self, s):
-        id = self._create_synonym_id(self.__stemmer, s)
+        id = self.create_synonym_id(self.__stemmer, s)
         return self.__by_synonym[id]
 
     #TODO: Deprecated. Use iter instead
@@ -56,7 +56,7 @@ class SynonymsCollection(object):
         return self.__by_index[index]
 
     @staticmethod
-    def _create_synonym_id(stemmer, s):
+    def create_synonym_id(stemmer, s):
         return stemmer.lemmatize_to_str(s)
 
     def iter_by_index(self):

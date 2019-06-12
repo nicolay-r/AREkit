@@ -2,7 +2,6 @@ from core.evaluation.labels import Label
 from core.common.synonyms import SynonymsCollection
 
 
-# TODO. To /common/collection.py
 class Opinion(object):
     """ Source opinion description
     """
