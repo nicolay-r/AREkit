@@ -1,0 +1,2 @@
+class FrameValue(object):
+    pass

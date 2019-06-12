@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from core.processing.lemmatization.base import Stemmer
 from core.processing.text.parser import ParsedText
-from core.source.frames.variants import FrameVariantInText, FrameVariantsCollection
+from core.source.rusentiframes.variants.collection import FrameVariantsCollection
+from core.source.rusentiframes.variants.text_variant import FrameVariantInText
 
 
-# TODO. This should be in source/frames/helper.py
 class FramesHelper:
 
     def __init__(self, frames):

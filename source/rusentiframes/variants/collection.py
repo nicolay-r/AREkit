@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import collections
-from core.common.bound import Bound
 from core.processing.lemmatization.base import Stemmer
+from core.source.rusentiframes.variants.variant import FrameVariant
 
 
-#TODO. Create folder Variant.
 class FrameVariantsCollection:
 
     def __init__(self, variants, frames_list, stemmer):
@@ -69,61 +68,4 @@ class FrameVariantsCollection:
     def iter_variants(self):
         for template, variant in self.__variants.iteritems():
             yield template, variant
-
-#TODO. To other files.
-class FrameVariant:
-
-    def __init__(self, text, frame_id):
-        assert(isinstance(text, unicode))
-        assert(isinstance(frame_id, unicode))
-        self.__terms = text.lower().split()
-        self.__frame_id = frame_id
-
-    @property
-    def FrameID(self):
-        return self.__frame_id
-
-    def get_value(self):
-        return u" ".join(self.__terms)
-
-    def iter_terms(self):
-        for term in self.__terms:
-            yield term
-
-    def __len__(self):
-        return len(self.__terms)
-
-
-#TODO. To other files.
-class FrameVariantInText:
-
-    def __init__(self, variant, start_index, is_inverted):
-        assert(isinstance(variant, FrameVariant))
-        assert(isinstance(start_index, int))
-        assert(isinstance(is_inverted, bool))
-        self.__variant = variant
-        self.__start_index = start_index
-        self.__is_inverted = is_inverted
-
-    @property
-    def Variant(self):
-        return self.__variant
-
-    @property
-    def Position(self):
-        return self.__start_index
-
-    @property
-    def IsInverted(self):
-        return self.__is_inverted
-
-    def get_bound(self):
-        return Bound(pos=self.__start_index, length=len(self))
-
-    def iter_terms(self):
-        for term in self.__variant.iter_terms():
-            yield term
-
-    def __len__(self):
-        return len(self.__variant)
 

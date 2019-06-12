@@ -1,10 +1,12 @@
 import json
 
 from core.evaluation.labels import Label
+from core.source.rusentiframes.polarity import FramePolarity
+from core.source.rusentiframes.role import FrameRole
+from core.source.rusentiframes.state import FrameState
 
 
-# TODO. Rename as SentiRuFramesFormatCollection
-class FramesCollection:
+class RuSentiFramesCollection:
 
     __frames_key = u"frames"
     __polarity_key = u"polarity"
@@ -60,15 +62,17 @@ class FramesCollection:
         assert(isinstance(frame_id, unicode))
         return self.__data[frame_id][u"title"]
 
-    def get_frame_values(self, frame_id):
-        assert(isinstance(frame_id, unicode))
-        pass
-
     def get_frame_variants(self, frame_id):
         return self.__data[frame_id][u"variants"]
 
+    def get_frame_values(self, frame_id):
+        assert(isinstance(frame_id, unicode))
+        # TODO. Not implemented yet.
+        pass
+
     def get_frame_effects(self, frame_id):
         assert(isinstance(frame_id, unicode))
+        # TODO. Not implemented yet.
         pass
 
     def iter_frames_ids(self):
@@ -86,80 +90,3 @@ class FramesCollection:
         for id, frame in self.__data.iteritems():
             for variant in frame["variants"]:
                 yield id, variant
-
-
-class FramePolarity(object):
-
-    def __init__(self, src, dest, label, prob):
-        assert(isinstance(src, unicode))
-        assert(isinstance(dest, unicode))
-        assert(isinstance(label, Label))
-        assert(isinstance(prob, float))
-        self.__src = src
-        self.__dest = dest
-        self.__label = label
-        self.__prob = prob
-
-    @property
-    def Source(self):
-        return self.__src
-
-    @property
-    def Destination(self):
-        return self.__dest
-
-    @property
-    def Label(self):
-        return self.__label
-
-    @property
-    def Prob(self):
-        return self.__prob
-
-
-class FrameState(object):
-
-    def __init__(self, role, label, prob):
-        assert(isinstance(role, unicode))
-        assert(isinstance(label, Label))
-        assert(isinstance(prob, float))
-        self.__role = role
-        self.__label = label
-        self.__prob = prob
-
-    @property
-    def Role(self):
-        return self.__role
-
-    @property
-    def Label(self):
-        return self.__label
-
-    @property
-    def Prob(self):
-        return self.__prob
-
-
-class FrameRole(object):
-
-    def __init__(self, source, description):
-        assert(isinstance(source, unicode))
-        assert(isinstance(description, unicode))
-        self.__source = source
-        self.__description = description
-
-    @property
-    def Source(self):
-        return self.__source
-
-    @property
-    def Description(self):
-        return self.__description
-
-
-class FrameEffect(object):
-    pass
-
-
-class FrameValue(object):
-    pass

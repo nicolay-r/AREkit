@@ -1,0 +1,2 @@
+class FrameEffect(object):
+    pass
