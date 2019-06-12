@@ -1,6 +1,6 @@
 import pandas as pd
 from core.evaluation.labels import Label
-from core.source.opinion import Opinion
+from core.source.rusentrel.opinions.opinion import Opinion
 
 
 class DocumentCompareTable:

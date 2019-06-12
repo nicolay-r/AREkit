@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from core.evaluation.labels import Label
 from core.processing.lemmatization.base import Stemmer
-from core.runtime.object import TextObject
-from core.runtime.parser import TextParser
-from core.runtime.ref_opinon import RefOpinion
+from core.common.object import TextObject
+from core.processing.text.parser import TextParser
+from core.common.ref_opinon import RefOpinion
 from core.source.ruattitudes.news import ProcessedNews
 from core.source.ruattitudes.sentence import ProcessedSentence
 

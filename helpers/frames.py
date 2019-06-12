@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.processing.lemmatization.base import Stemmer
-from core.runtime.parser import ParsedText
+from core.processing.text.parser import ParsedText
 from core.source.frames.variants import FrameVariantInText, FrameVariantsCollection
 
 

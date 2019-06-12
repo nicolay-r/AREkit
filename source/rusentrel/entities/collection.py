@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import io
 from core.processing.lemmatization.base import Stemmer
+from core.source.rusentrel.entities.entity import Entity
 from core.source.synonyms import SynonymsCollection
 
 
-# TODO. rename as DocumentEntityCollection in rusentrel/entities.py
-class EntityCollection:
+class DocumentEntityCollection:
     """ Collection of annotated entities
     """
 
@@ -101,22 +101,3 @@ class EntityCollection:
         for entity in self.entities:
             yield entity
 
-# TODO. To /common/entity.py
-class Entity:
-    """ Entity description.
-    """
-
-    def __init__(self, ID, str_type, begin, end, value):
-        assert(type(ID) == unicode)
-        assert(type(str_type) == unicode)
-        assert(type(begin) == int)
-        assert(type(end) == int)
-        assert(type(value) == unicode and len(value) > 0)
-        self.ID = ID
-        self.str_type = str_type
-        self.begin = begin
-        self.end = end
-        self.value = value.lower()
-
-    def get_int_ID(self):
-        return int(self.ID[1:len(self.ID)])

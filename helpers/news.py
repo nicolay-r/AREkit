@@ -1,4 +1,4 @@
-from core.source.entity import Entity
+from core.source.rusentrel.entities.entity import Entity
 
 
 class NewsHelper:

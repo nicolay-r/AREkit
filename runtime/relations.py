@@ -1,6 +1,6 @@
-from core.source.entity import EntityCollection
-from core.source.news import News
-from core.source.opinion import Opinion
+from core.source.rusentrel.entities.collection import DocumentEntityCollection
+from core.source.rusentrel.news import NewsDocument
+from core.source.rusentrel.opinions.opinion import Opinion
 
 
 class RelationCollection:
@@ -11,16 +11,16 @@ class RelationCollection:
 
     @classmethod
     def from_news_opinion(cls, news, opinion, debug=False):
-        assert(isinstance(news, News))
+        assert(isinstance(news, NewsDocument))
         assert(isinstance(opinion, Opinion))
 
         entities = news.Entities
-        assert(isinstance(entities, EntityCollection))
+        assert(isinstance(entities, DocumentEntityCollection))
 
         left_entities = entities.try_get_entities(
-            opinion.value_left, group_key=EntityCollection.KeyType.BY_SYNONYMS)
+            opinion.value_left, group_key=DocumentEntityCollection.KeyType.BY_SYNONYMS)
         right_entities = entities.try_get_entities(
-            opinion.value_right, group_key=EntityCollection.KeyType.BY_SYNONYMS)
+            opinion.value_right, group_key=DocumentEntityCollection.KeyType.BY_SYNONYMS)
 
         if left_entities is None:
             if debug:

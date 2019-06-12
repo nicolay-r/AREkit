@@ -1,5 +1,5 @@
-from core.source.tokens import Tokens
-from core.runtime.utils import get_random_vector
+from core.processing.text.tokens import Tokens
+from core.common.utils import get_random_vector
 
 
 class TokenEmbeddingVectors:

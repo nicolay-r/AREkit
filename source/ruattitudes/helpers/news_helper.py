@@ -1,8 +1,8 @@
 import collections
 
-from core.runtime.object import TextObject
-from core.runtime.ref_opinon import RefOpinion
-from core.source.opinion import Opinion
+from core.common.object import TextObject
+from core.common.ref_opinon import RefOpinion
+from core.source.rusentrel.opinions.opinion import Opinion
 from core.source.ruattitudes.news import ProcessedNews
 from core.source.ruattitudes.sentence import ProcessedSentence
 

@@ -1,6 +1,6 @@
 import socket
 import sys
-from core.runtime.parser import ParsedText
+from core.processing.text.parser import ParsedText
 from syntaxnet.annot import Word
 from syntaxnet.conll import ConllFormatStreamParser
 

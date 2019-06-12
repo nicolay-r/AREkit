@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-
 import io
 from core.helpers.news import NewsHelper
-from core.source.entity import EntityCollection
+from core.source.rusentrel.entities.collection import DocumentEntityCollection
+from core.source.rusentrel.sentence import Sentence
 
 
-# TODO. Class should be in rusentrel/news.py
-class News:
+class NewsDocument:
 
     def __init__(self, sentences, entities):
         assert(isinstance(sentences, list))
-        assert(isinstance(entities, EntityCollection))
+        assert(isinstance(entities, DocumentEntityCollection))
         self.__sentences = sentences
         self.__entities = entities
         self.__helper = NewsHelper(self)
@@ -28,9 +27,9 @@ class News:
         """ Read news from file
         """
         assert(isinstance(filepath, unicode))
-        assert(isinstance(entities, EntityCollection))
+        assert(isinstance(entities, DocumentEntityCollection))
 
-        sentences = News.read_sentences(filepath)
+        sentences = NewsDocument.read_sentences(filepath)
 
         s_ind = 0
         e_ind = 0
@@ -102,42 +101,3 @@ class News:
     def iter_sentences(self):
         for sentence in self.__sentences:
             yield sentence
-
-
-# TODO. Class should be in rusentrel/sentence.py
-class Sentence:
-
-    def __init__(self, text, begin, end):
-        assert(isinstance(text, unicode) and len(text) > 0)
-        assert(isinstance(begin, int))
-        assert(isinstance(end, int))
-        self.__text = text
-        self.__entity_info = []
-        self.__begin = begin
-        self.__end = end
-
-    @property
-    def Begin(self):
-        return self.__begin
-
-    @property
-    def End(self):
-        return self.__end
-
-    @property
-    def Text(self):
-        return self.__text
-
-    def add_local_entity(self, id, begin, end):
-        assert(isinstance(id, unicode))
-        assert(isinstance(begin, int))
-        assert(isinstance(end, int))
-        self.__entity_info.append((id, begin, end))
-
-    def iter_entity_ids(self):
-        for entity in self.__entity_info:
-            yield entity[0]  # ID
-
-    def iter_entities_info(self):
-        for info in self.__entity_info:
-            yield info

@@ -1,5 +1,5 @@
-from core.runtime.parser import ParsedText
-from core.runtime.ref_opinon import RefOpinion
+from core.processing.text.parser import ParsedText
+from core.common.ref_opinon import RefOpinion
 
 
 class ProcessedSentence(object):

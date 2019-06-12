@@ -1,6 +1,6 @@
 from core.evaluation.evaluators.cmp_table import DocumentCompareTable
 from core.evaluation.utils import FilesToCompare
-from core.source.opinion import OpinionCollection
+from core.source.rusentrel.opinions.collection import OpinionCollection
 from core.source.synonyms import SynonymsCollection
 
 

@@ -1,6 +1,6 @@
 import hashlib
 
-from core.runtime.utils import get_random_vector
+from core.common.utils import get_random_vector
 from core.source.embeddings.base import Embedding
 
 

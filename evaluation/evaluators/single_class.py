@@ -1,7 +1,8 @@
 from core.evaluation.evaluators.base import BaseEvaluator
 from core.evaluation.labels import Label
 from core.evaluation.results.single_class import SingleClassEvalResult
-from core.source.opinion import OpinionCollection, Opinion
+from core.source.rusentrel.opinions.collection import OpinionCollection
+from core.source.rusentrel.opinions.opinion import Opinion
 import metrics
 
 
