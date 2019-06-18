@@ -18,5 +18,9 @@ class RuSentRelEntity(Entity):
         self.__end = end
 
     @property
+    def Begin(self):
+        return self.__begin
+
+    @property
     def IdInDocument(self):
         return int(self.__doc_id[1:len(self.__doc_id)])

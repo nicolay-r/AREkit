@@ -17,27 +17,27 @@ class EntityCollection(object):
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(synonyms, SynonymsCollection))
 
-        entities.sort(key=lambda e: e.begin)
-
         self.__entities = entities
         self.__stemmer = stemmer
         self.__synonyms = synonyms
 
-        self.by_id = self.__create_index(entities=entities,
-                                         key_func=lambda e: e.ID)
-        self.by_value = self.__create_index(entities=entities,
-                                            key_func=lambda e: e.value)
+        self.by_value = self.create_index(entities=entities,
+                                          key_func=lambda e: e.Value)
 
-        self.by_lemmas = self.__create_index(
+        self.by_lemmas = self.create_index(
             entities=entities,
-            key_func=lambda e: stemmer.lemmatize_to_str(e.value))
+            key_func=lambda e: stemmer.lemmatize_to_str(e.Value))
 
-        self.by_synonyms = self.__create_index(
+        self.by_synonyms = self.create_index(
             entities=entities,
-            key_func=lambda e: synonyms.get_synonym_group_index(e.value))
+            key_func=lambda e: synonyms.get_synonym_group_index(e.Value))
+
+    def sort_entities(self, key):
+        assert(callable(key))
+        self.__entities.sort(key=key)
 
     @staticmethod
-    def __create_index(entities, key_func):
+    def create_index(entities, key_func):
         index = {}
         for e in entities:
             key = key_func(e)

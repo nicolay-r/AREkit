@@ -10,6 +10,17 @@ class RuSentRelEntityCollection(EntityCollection):
     """ Collection of annotated entities
     """
 
+    def __init__(self, entities, stemmer, synonyms):
+        super(RuSentRelEntityCollection, self).__init__(entities=entities,
+                                                        stemmer=stemmer,
+                                                        synonyms=synonyms)
+
+        self.sort_entities(key=lambda entity: entity.Begin)
+
+        self.__by_id = self.create_index(entities=entities,
+                                         key_func=lambda e: e.ID)
+
+
     @classmethod
     def from_file(cls, filepath, stemmer, synonyms):
         """ Read annotation collection from file
@@ -40,7 +51,7 @@ class RuSentRelEntityCollection(EntityCollection):
     def get_entity_by_id(self, id):
         assert(isinstance(id, unicode))
 
-        value = self.by_id[id]
+        value = self.__by_id[id]
         assert(len(value) == 1)
         return value[0]
 
