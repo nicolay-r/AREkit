@@ -71,8 +71,8 @@ class NewsProcessingHelper(object):
         assert (isinstance(l_obj, TextObject))
         assert (isinstance(r_obj, TextObject))
 
-        return Opinion(value_left=l_obj.get_value(),
-                       value_right=r_obj.get_value(),
+        return Opinion(source_value=l_obj.get_value(),
+                       target_value=r_obj.get_value(),
                        sentiment=ref_opinion.Sentiment)
 
     @staticmethod

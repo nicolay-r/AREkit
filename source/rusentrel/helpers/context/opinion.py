@@ -15,8 +15,8 @@ class RuSentRelContextOpinion(RefOpinion):
         assert(isinstance(e_source_doc_level_id, int))
         assert(isinstance(e_target_doc_level_id, int))
         assert(isinstance(doc_entities, RuSentRelEntityCollection))
-        super(RuSentRelContextOpinion, self).__init__(left_index=e_source_doc_level_id,
-                                                      right_index=e_target_doc_level_id,
+        super(RuSentRelContextOpinion, self).__init__(source_id=e_source_doc_level_id,
+                                                      target_id=e_target_doc_level_id,
                                                       sentiment=NeutralLabel(),
                                                       owner=doc_entities)
 

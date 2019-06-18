@@ -125,13 +125,13 @@ class RuAttitudesFormatReader(object):
 
         o_from = line.index(u'oi:[')
         o_to = line.index(u']', o_from)
-        left_object_id, right_object_id = line[o_from+4:o_to].split(u',')
+        source_object_id, target_object_id = line[o_from + 4:o_to].split(u',')
 
-        left_object_id = int(left_object_id)
-        right_object_id = int(right_object_id)
+        source_object_id = int(source_object_id)
+        target_object_id = int(target_object_id)
 
-        ref_opinion = RefOpinion(left_index=left_object_id,
-                                 right_index=right_object_id,
+        ref_opinion = RefOpinion(source_id=source_object_id,
+                                 target_id=target_object_id,
                                  sentiment=label,
                                  owner=objects_list)
 

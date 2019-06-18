@@ -3,26 +3,26 @@ from core.evaluation.labels import Label
 
 class RefOpinion(object):
     """
-    Provides references within Owner collection.
+    Provides references within Owner collection with id's.
     """
 
-    def __init__(self, left_index, right_index, sentiment, owner=None):
-        assert(isinstance(left_index, int))
-        assert(isinstance(right_index, int))
+    def __init__(self, source_id, target_id, sentiment, owner=None):
+        assert(isinstance(source_id, int))
+        assert(isinstance(target_id, int))
         assert(isinstance(sentiment, Label))
-        self.__source_index = left_index
-        self.__target_index = right_index
+        self.__source_id = source_id
+        self.__target_id = target_id
         self.__sentiment = sentiment
         self.__owner = owner
         self.__tag = None
 
     @property
-    def SourceIndex(self):
-        return self.__source_index
+    def SourceId(self):
+        return self.__source_id
 
     @property
-    def TargetIndex(self):
-        return self.__target_index
+    def TargetId(self):
+        return self.__target_id
 
     @property
     def Sentiment(self):

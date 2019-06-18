@@ -58,8 +58,8 @@ class DocumentCompareTable:
 
             sentiment = str_to_label_func(res)
 
-            o = Opinion(value_left=self.__cmp_table.iloc[i][self.C_WHO].decode('utf-8'),
-                        value_right=self.__cmp_table.iloc[i][self.C_TO].decode('utf-8'),
+            o = Opinion(source_value=self.__cmp_table.iloc[i][self.C_WHO].decode('utf-8'),
+                        target_value=self.__cmp_table.iloc[i][self.C_TO].decode('utf-8'),
                         sentiment=sentiment)
 
             orig = str_to_label_func(self.__cmp_table.iloc[i][self.C_ORIG].decode('utf-8'))

@@ -38,9 +38,9 @@ class RuSentRelOpinionCollection(OpinionCollection):
     def save(self, filepath):
         assert(isinstance(filepath, unicode))
 
-        def __opinion_key(opinon):
-            assert(isinstance(opinon, RuSentRelOpinion))
-            return opinon.ValueLeft + opinon.ValueRight
+        def __opinion_key(opinion):
+            assert(isinstance(opinion, RuSentRelOpinion))
+            return opinion.SourceValue + opinion.TargetValue
 
         sorted_ops = sorted(self, key=__opinion_key)
 
@@ -53,6 +53,6 @@ class RuSentRelOpinionCollection(OpinionCollection):
     def __opinion_to_str(opinion):
         assert(isinstance(opinion, RuSentRelOpinion))
         return u"{}, {}, {}, current".format(
-            opinion.ValueLeft,
-            opinion.ValueRight,
+            opinion.SourceValue,
+            opinion.TargetValue,
             opinion.Sentiment.to_str())

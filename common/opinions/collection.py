@@ -30,9 +30,9 @@ class OpinionCollection(object):
         assert(isinstance(opinion, Opinion))
         assert(sentiment is None or isinstance(sentiment, Label))
 
-        if not opinion.has_synonym_for_left(self.__synonyms):
+        if not opinion.has_synonym_for_source(self.__synonyms):
             return False
-        if not opinion.has_synonym_for_right(self.__synonyms):
+        if not opinion.has_synonym_for_target(self.__synonyms):
             return False
 
         s_id = opinion.create_synonym_id(self.__synonyms)
@@ -50,11 +50,11 @@ class OpinionCollection(object):
     def add_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
 
-        if not opinion.has_synonym_for_left(self.__synonyms):
-            self.__add_synonym(opinion.ValueLeft)
+        if not opinion.has_synonym_for_source(self.__synonyms):
+            self.__add_synonym(opinion.SourceValue)
 
-        if not opinion.has_synonym_for_right(self.__synonyms):
-            self.__add_synonym(opinion.ValueRight)
+        if not opinion.has_synonym_for_target(self.__synonyms):
+            self.__add_synonym(opinion.TargetValue)
 
         self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
         self.__opinions.append(opinion)

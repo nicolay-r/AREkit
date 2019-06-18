@@ -41,8 +41,8 @@ class ProcessedSentence(object):
     # TODO. src, trg objects. Rename!
     def get_objects(self, ref_opinion):
         assert(isinstance(ref_opinion, RefOpinion))
-        l_obj = self.__objects[ref_opinion.SourceIndex]
-        r_obj = self.__objects[ref_opinion.TargetIndex]
+        l_obj = self.__objects[ref_opinion.SourceId]
+        r_obj = self.__objects[ref_opinion.TargetId]
         return l_obj, r_obj
 
     def iter_objects(self):

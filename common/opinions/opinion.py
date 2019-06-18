@@ -6,24 +6,24 @@ class Opinion(object):
     """ Source opinion description
     """
 
-    def __init__(self, value_left, value_right, sentiment):
-        assert(isinstance(value_left, unicode))
-        assert(isinstance(value_right, unicode))
+    def __init__(self, source_value, target_value, sentiment):
+        assert(isinstance(source_value, unicode))
+        assert(isinstance(target_value, unicode))
         assert(isinstance(sentiment, Label))
-        self.__value_left = value_left.lower()
-        self.__value_right = value_right.lower()
+        self.__source_value = source_value.lower()
+        self.__target_value = target_value.lower()
         self.__sentiment = sentiment
         self.__tag = None
 
     # TODO. Value source and value target. Rename!
 
     @property
-    def ValueLeft(self):
-        return self.__value_left
+    def SourceValue(self):
+        return self.__source_value
 
     @property
-    def ValueRight(self):
-        return self.__value_right
+    def TargetValue(self):
+        return self.__target_value
 
     @property
     def Sentiment(self):
@@ -39,13 +39,13 @@ class Opinion(object):
     def create_synonym_id(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
         return u"{}_{}".format(
-            synonyms.get_synonym_group_index(self.__value_left),
-            synonyms.get_synonym_group_index(self.__value_right))
+            synonyms.get_synonym_group_index(self.__source_value),
+            synonyms.get_synonym_group_index(self.__target_value))
 
-    def has_synonym_for_left(self, synonyms):
+    def has_synonym_for_source(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return synonyms.has_synonym(self.__value_left)
+        return synonyms.has_synonym(self.__source_value)
 
-    def has_synonym_for_right(self, synonyms):
+    def has_synonym_for_target(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return synonyms.has_synonym(self.__value_right)
+        return synonyms.has_synonym(self.__target_value)

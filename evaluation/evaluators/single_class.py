@@ -51,8 +51,8 @@ class SingleClassEvaluator(BaseEvaluator):
 
         for o in opinions:
             assert(isinstance(o, Opinion))
-            no = Opinion(value_left=o.ValueLeft,
-                         value_right=o.ValueRight,
+            no = Opinion(source_value=o.SourceValue,
+                         target_value=o.TargetValue,
                          sentiment=label)
 
             ro.add_opinion(no)
