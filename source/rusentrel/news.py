@@ -3,7 +3,7 @@ import io
 from core.source.rusentrel.entities.entity import RuSentRelEntity
 from core.source.rusentrel.helpers.news import NewsHelper
 from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
-from core.source.rusentrel.sentence import Sentence
+from core.source.rusentrel.sentence import RuSentRelSentence
 
 
 class RuSentRelNews(object):
@@ -84,9 +84,9 @@ class RuSentRelNews(object):
                 line_end = line_start + len(line) - 1
 
                 if line != unicode('\r\n'):
-                    s = Sentence(text=line,
-                                 begin=line_start,
-                                 end=line_end)
+                    s = RuSentRelSentence(text=line,
+                                          begin=line_start,
+                                          end=line_end)
                     sentences.append(s)
 
                 line_start = line_end + 1
