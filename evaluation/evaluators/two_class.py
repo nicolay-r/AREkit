@@ -42,17 +42,11 @@ class TwoClassEvaluator(BaseEvaluator):
 
             pos_prec, pos_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,
                                                                 label=self.__pos_label,
-                                                                opinions_exist=has_pos,
-                                                                how_results_column=self.C_RES,
-                                                                how_original_column=self.C_ORIG,
-                                                                comparison_column=self.C_CMP)
+                                                                opinions_exist=has_pos)
 
             neg_prec, neg_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,
                                                                 label=self.__neg_label,
-                                                                opinions_exist=has_neg,
-                                                                how_results_column=self.C_RES,
-                                                                how_original_column=self.C_ORIG,
-                                                                comparison_column=self.C_CMP)
+                                                                opinions_exist=has_neg)
 
             result.add_document_results(doc_id=files_to_compare.index,
                                         cmp_table=DocumentCompareTable(cmp_table),

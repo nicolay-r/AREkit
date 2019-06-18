@@ -1,7 +1,6 @@
-from core.common.entities.entity import Entity
+from core.source.rusentrel.entities.entity import RuSentRelEntity
 
 
-# TODO. Move to source/rusentrel/news/helper.py
 class NewsHelper:
 
     def __init__(self, news):
@@ -10,12 +9,12 @@ class NewsHelper:
         self.__sentence_index_by_entity = NewsHelper.__index_sentence_by_entity(news)
 
     def get_sentence_by_entity(self, entity):
-        assert(isinstance(entity, Entity))
-        return self.__sentence_by_index_func(self.__sentence_index_by_entity[entity.ID])
+        assert(isinstance(entity, RuSentRelEntity))
+        return self.__sentence_by_index_func(self.__sentence_index_by_entity[entity.IdInDocument])
 
     def get_sentence_index_by_entity(self, entity):
-        assert(isinstance(entity, Entity))
-        return self.__sentence_index_by_entity[entity.ID]
+        assert(isinstance(entity, RuSentRelEntity))
+        return self.__sentence_index_by_entity[entity.IdInDocument]
 
     @staticmethod
     def __index_sentence_by_entity(news):

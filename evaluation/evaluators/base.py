@@ -2,6 +2,7 @@ from core.evaluation.evaluators.cmp_table import DocumentCompareTable
 from core.evaluation.utils import FilesToCompare
 from core.common.opinions.collection import OpinionCollection
 from core.common.synonyms import SynonymsCollection
+from core.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 
 class BaseEvaluator(object):
@@ -53,12 +54,12 @@ class BaseEvaluator(object):
         assert(isinstance(files_to_compare, FilesToCompare))
 
         # Reading test answers.
-        test_opins = OpinionCollection.from_file(
+        test_opins = RuSentRelOpinionCollection.from_file(
             filepath=files_to_compare.TestFilepath,
             synonyms=self.__synonyms)
 
         # Reading etalon answers.
-        etalon_opins = OpinionCollection.from_file(
+        etalon_opins = RuSentRelOpinionCollection.from_file(
             filepath=files_to_compare.EtalonFilepath,
             synonyms=self.__synonyms)
 
