@@ -38,10 +38,11 @@ class ProcessedSentence(object):
             raise Exception("Owner is already declared")
         self.__owner = owner
 
+    # TODO. src, trg objects. Rename!
     def get_objects(self, ref_opinion):
         assert(isinstance(ref_opinion, RefOpinion))
-        l_obj = self.__objects[ref_opinion.LeftIndex]
-        r_obj = self.__objects[ref_opinion.RightIndex]
+        l_obj = self.__objects[ref_opinion.SourceIndex]
+        r_obj = self.__objects[ref_opinion.TargetIndex]
         return l_obj, r_obj
 
     def iter_objects(self):

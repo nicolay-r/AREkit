@@ -10,12 +10,12 @@ class Opinion(object):
         assert(isinstance(value_left, unicode))
         assert(isinstance(value_right, unicode))
         assert(isinstance(sentiment, Label))
-        assert(',' not in value_left)
-        assert(',' not in value_right)
         self.__value_left = value_left.lower()
         self.__value_right = value_right.lower()
         self.__sentiment = sentiment
         self.__tag = None
+
+    # TODO. Value source and value target. Rename!
 
     @property
     def ValueLeft(self):

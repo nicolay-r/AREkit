@@ -22,7 +22,7 @@ class Sentence(object):
         return self.__text
 
     def add_local_entity(self, id, begin, end):
-        assert(isinstance(id, unicode))
+        assert(isinstance(id, int))
         assert(isinstance(begin, int))
         assert(isinstance(end, int))
         self.__entity_info.append((id, begin, end))

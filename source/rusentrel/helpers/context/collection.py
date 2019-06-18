@@ -1,10 +1,11 @@
 from core.common.opinions.opinion import Opinion
 from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
+from core.source.rusentrel.entities.entity import RuSentRelEntity
 from core.source.rusentrel.news import RuSentRelNews
 from core.source.rusentrel.helpers.context.opinion import RuSentRelContextOpinion
 
 
-class RuSentRelContextOpinionCollection:
+class RuSentRelContextOpinionList:
 
     def __init__(self, relation_list):
         assert(isinstance(relation_list, list))
@@ -15,12 +16,12 @@ class RuSentRelContextOpinionCollection:
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinion, Opinion))
 
-        entities = news.Entities
-        assert(isinstance(entities, RuSentRelEntityCollection))
+        doc_entities = news.DocEntities
+        assert(isinstance(doc_entities, RuSentRelEntityCollection))
 
-        left_entities = entities.try_get_entities(
+        left_entities = doc_entities.try_get_entities(
             opinion.ValueLeft, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
-        right_entities = entities.try_get_entities(
+        right_entities = doc_entities.try_get_entities(
             opinion.ValueRight, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
 
         if left_entities is None:
@@ -38,9 +39,11 @@ class RuSentRelContextOpinionCollection:
         relations = []
         for entity_left in left_entities:
             for entity_right in right_entities:
-                relation = RuSentRelContextOpinion(entity_left_ID=entity_left.ID,
-                                                   entity_right_ID=entity_right.ID,
-                                                   entity_by_id_func=entities.get_entity_by_id)
+                assert(isinstance(entity_left, RuSentRelEntity))
+                assert(isinstance(entity_right, RuSentRelEntity))
+                relation = RuSentRelContextOpinion(e_source_doc_level_id=entity_left.IdInDocument,
+                                                   e_target_doc_level_id=entity_right.IdInDocument,
+                                                   doc_entities=doc_entities)
                 relations.append(relation)
 
         return cls(relations)

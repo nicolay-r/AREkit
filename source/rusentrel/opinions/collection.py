@@ -2,8 +2,8 @@
 import io
 from core.common.opinions.collection import OpinionCollection
 from core.evaluation.labels import Label
-from core.common.opinions.opinion import Opinion
 from core.common.synonyms import SynonymsCollection
+from core.source.rusentrel.opinions.opinion import RuSentRelOpinion
 
 
 class RuSentRelOpinionCollection(OpinionCollection):
@@ -24,11 +24,13 @@ class RuSentRelOpinionCollection(OpinionCollection):
                 args = line.strip().split(',')
                 assert(len(args) >= 3)
 
-                entity_left = args[0].strip()
-                entity_right = args[1].strip()
+                value_source = args[0].strip()
+                value_target = args[1].strip()
                 sentiment = Label.from_str(args[2].strip())
 
-                o = Opinion(entity_left, entity_right, sentiment)
+                o = RuSentRelOpinion(value_source=value_source,
+                                     value_target=value_target,
+                                     sentiment=sentiment)
                 opinions.append(o)
 
         return cls(opinions, synonyms)
@@ -36,8 +38,11 @@ class RuSentRelOpinionCollection(OpinionCollection):
     def save(self, filepath):
         assert(isinstance(filepath, unicode))
 
-        sorted_ops = sorted(self.__opinions,
-                            key=lambda o: o.value_left + o.value_right)
+        def __opinion_key(opinon):
+            assert(isinstance(opinon, RuSentRelOpinion))
+            return opinon.ValueLeft + opinon.ValueRight
+
+        sorted_ops = sorted(self, key=__opinion_key)
 
         with io.open(filepath, 'w') as f:
             for o in sorted_ops:
@@ -46,7 +51,7 @@ class RuSentRelOpinionCollection(OpinionCollection):
 
     @staticmethod
     def __opinion_to_str(opinion):
-        assert(isinstance(opinion, Opinion))
+        assert(isinstance(opinion, RuSentRelOpinion))
         return u"{}, {}, {}, current".format(
             opinion.ValueLeft,
             opinion.ValueRight,

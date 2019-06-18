@@ -1,36 +1,41 @@
-class RuSentRelContextOpinion:
+from core.common.ref_opinon import RefOpinion
+from core.evaluation.labels import NeutralLabel
+from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
+
+
+class RuSentRelContextOpinion(RefOpinion):
     """
     Strict Relation between two Entities
     """
 
-    def __init__(self, entity_left_ID, entity_right_ID, entity_by_id_func):
-        assert(isinstance(entity_left_ID, unicode))
-        assert(isinstance(entity_right_ID, unicode))
-        assert(callable(entity_by_id_func))
-        self.__entity_left_ID = entity_left_ID
-        self.__entity_right_ID = entity_right_ID
-        self.__entity_by_id_func = entity_by_id_func
+    def __init__(self,
+                 e_source_doc_level_id,
+                 e_target_doc_level_id,
+                 doc_entities):
+        assert(isinstance(e_source_doc_level_id, int))
+        assert(isinstance(e_target_doc_level_id, int))
+        assert(isinstance(doc_entities, RuSentRelEntityCollection))
+        super(RuSentRelContextOpinion, self).__init__(left_index=e_source_doc_level_id,
+                                                      right_index=e_target_doc_level_id,
+                                                      sentiment=NeutralLabel(),
+                                                      owner=doc_entities)
+
+        self.__entity_left_ID = e_source_doc_level_id
+        self.__entity_right_ID = e_target_doc_level_id
+        self.__entity_by_id_func = doc_entities.get_entity_by_id
 
     @property
-    def LeftEntityID(self):
-        return self.__entity_left_ID
-
-    @property
-    def RightEntityID(self):
-        return self.__entity_right_ID
-
-    @property
-    def LeftEntity(self):
+    def SourceEntity(self):
         return self.__entity_by_id_func(self.__entity_left_ID)
 
     @property
-    def RightEntity(self):
+    def TargetEntity(self):
         return self.__entity_by_id_func(self.__entity_right_ID)
 
     @property
-    def LeftEntityValue(self):
-        return self.__entity_by_id_func(self.__entity_left_ID).value
+    def SourceEntityValue(self):
+        return self.__entity_by_id_func(self.__entity_left_ID).Value
 
     @property
-    def RightEntityValue(self):
-        return self.__entity_by_id_func(self.__entity_right_ID).value
+    def TargetEntityValue(self):
+        return self.__entity_by_id_func(self.__entity_right_ID).Value

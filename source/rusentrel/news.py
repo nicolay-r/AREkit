@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
+from core.source.rusentrel.entities.entity import RuSentRelEntity
 from core.source.rusentrel.helpers.news import NewsHelper
 from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
 from core.source.rusentrel.sentence import Sentence
@@ -15,7 +16,7 @@ class RuSentRelNews(object):
         self.__helper = NewsHelper(self)
 
     @property
-    def Entities(self):
+    def DocEntities(self):
         return self.__entities
 
     @property
@@ -24,8 +25,6 @@ class RuSentRelNews(object):
 
     @classmethod
     def from_file(cls, filepath, entities):
-        """ Read news from file
-        """
         assert(isinstance(filepath, unicode))
         assert(isinstance(entities, RuSentRelEntityCollection))
 
@@ -36,26 +35,28 @@ class RuSentRelNews(object):
 
         while s_ind < len(sentences) and e_ind < len(entities):
             e = entities.get_entity_by_index(e_ind)
+            assert(isinstance(e, RuSentRelEntity))
+
             s = sentences[s_ind]
 
-            if e.begin > s.End:
+            if e.Begin > s.End:
                 s_ind += 1
                 continue
 
-            if e.begin >= s.Begin and e.end <= s.End:
-                s.add_local_entity(id=e.ID,
-                                   begin=e.begin - s.Begin,
-                                   end=e.end - s.Begin)
+            if e.Begin >= s.Begin and e.End <= s.End:
+                s.add_local_entity(id=e.IdInDocument,
+                                   begin=e.Begin - s.Begin,
+                                   end=e.End - s.Begin)
                 e_ind += 1
                 continue
 
-            if e.value in [u'author', u'unknown']:
+            if e.Value in [u'author', u'unknown']:
                 e_ind += 1
                 continue
 
             raise Exception("e_i:{} e:('{}',{},{}), s_i:{}  s({},{})".format(
                 e_ind,
-                e.value.encode('utf-8'), e.begin, e.end,
+                e.Value.encode('utf-8'), e.Begin, e.End,
                 s_ind,
                 s.Begin, s.End))
 

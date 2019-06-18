@@ -10,19 +10,19 @@ class RefOpinion(object):
         assert(isinstance(left_index, int))
         assert(isinstance(right_index, int))
         assert(isinstance(sentiment, Label))
-        self.__left_index = left_index
-        self.__right_index = right_index
+        self.__source_index = left_index
+        self.__target_index = right_index
         self.__sentiment = sentiment
         self.__owner = owner
         self.__tag = None
 
     @property
-    def LeftIndex(self):
-        return self.__left_index
+    def SourceIndex(self):
+        return self.__source_index
 
     @property
-    def RightIndex(self):
-        return self.__right_index
+    def TargetIndex(self):
+        return self.__target_index
 
     @property
     def Sentiment(self):

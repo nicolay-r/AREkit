@@ -18,7 +18,7 @@ class RuSentRelEntityCollection(EntityCollection):
         self.sort_entities(key=lambda entity: entity.Begin)
 
         self.__by_id = self.create_index(entities=entities,
-                                         key_func=lambda e: e.ID)
+                                         key_func=lambda e: e.IdInDocument)
 
 
     @classmethod
@@ -32,7 +32,7 @@ class RuSentRelEntityCollection(EntityCollection):
             for line in f.readlines():
                 args = line.split()
 
-                e_id = args[0]
+                e_id = int(args[0][1:])
                 e_str_type = args[1]
                 e_begin = int(args[2])
                 e_end = int(args[3])
@@ -49,7 +49,7 @@ class RuSentRelEntityCollection(EntityCollection):
         return cls(entities, stemmer, synonyms)
 
     def get_entity_by_id(self, id):
-        assert(isinstance(id, unicode))
+        assert(isinstance(id, int))
 
         value = self.__by_id[id]
         assert(len(value) == 1)
