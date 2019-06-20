@@ -39,7 +39,7 @@ class RuSentRelNews(object):
 
             s = sentences[s_ind]
 
-            if e not in s:
+            if s.is_entity_goes_after(e):
                 s_ind += 1
                 continue
 

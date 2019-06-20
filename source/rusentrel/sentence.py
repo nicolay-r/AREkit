@@ -33,6 +33,10 @@ class RuSentRelSentence(object):
         for entity in self.__entities:
             yield entity
 
+    def is_entity_goes_after(self, entity):
+        assert(isinstance(entity, RuSentRelEntity))
+        return entity.CharIndexBegin > self.__end
+
     def __contains__(self, entity):
         assert(isinstance(entity, RuSentRelEntity))
         return entity.CharIndexBegin >= self.__begin and entity.CharIndexEnd <= self.__end
