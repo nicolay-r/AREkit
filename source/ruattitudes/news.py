@@ -1,6 +1,6 @@
 from core.source.ruattitudes.sentence import ProcessedSentence
 
-
+# TODO. Rename as RuAttitudeNews
 class ProcessedNews(object):
 
     def __init__(self, processed_sentences, news_index):

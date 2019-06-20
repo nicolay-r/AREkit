@@ -2,6 +2,7 @@ from core.processing.text.parsed import ParsedText
 from core.common.ref_opinon import RefOpinion
 
 
+# TODO. Rename RuAttitudeSentence
 class ProcessedSentence(object):
 
     def __init__(self, is_title, parsed_text, ref_opinions, objects_list, sentence_index):

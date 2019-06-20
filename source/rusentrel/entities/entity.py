@@ -2,9 +2,12 @@ from core.common.entities.entity import Entity
 
 
 class RuSentRelEntity(Entity):
-    """ Entity description.
+    """ Annotated entity in RuSentRel corpus.
+        Provides bounds, i.e. char indices in related sentence.
     """
 
+    # TODO. Use Bound instead of begin/end
+    # TODO. Rename, it is a TEXT LEVEL char bounds
     def __init__(self, doc_id, str_type, begin, end, value):
         assert(isinstance(doc_id, int))
         assert(isinstance(str_type, unicode))
@@ -17,10 +20,12 @@ class RuSentRelEntity(Entity):
         self.__begin = begin
         self.__end = end
 
+    # TODO. Use bound
     @property
     def Begin(self):
         return self.__begin
 
+    # TODO. Use bound
     @property
     def End(self):
         return self.__end

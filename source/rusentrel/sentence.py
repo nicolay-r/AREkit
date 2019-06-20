@@ -40,7 +40,7 @@ class RuSentRelSentence(object):
         for entity in self.__entity_info:
             yield entity[0]  # ID
 
-    # TODO. iter by entities
+    # TODO. iter by RuSentRelEntity objects
     def iter_entities_info(self):
         for info in self.__entity_info:
             yield info
