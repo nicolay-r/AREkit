@@ -39,14 +39,12 @@ class RuSentRelNews(object):
 
             s = sentences[s_ind]
 
-            if e.Begin > s.End:
+            if e not in s:
                 s_ind += 1
                 continue
 
-            if e.Begin >= s.Begin and e.End <= s.End:
-                s.add_local_entity(id=e.IdInDocument,
-                                   begin=e.Begin - s.Begin,
-                                   end=e.End - s.Begin)
+            if e in s:
+                s.add_local_entity(entity=e)
                 e_ind += 1
                 continue
 
@@ -54,11 +52,10 @@ class RuSentRelNews(object):
                 e_ind += 1
                 continue
 
-            raise Exception("e_i:{} e:('{}',{},{}), s_i:{}  s({},{})".format(
+            raise Exception("e_i:{} e:('{}',{},{}), s_i:{}".format(
                 e_ind,
-                e.Value.encode('utf-8'), e.Begin, e.End,
-                s_ind,
-                s.Begin, s.End))
+                e.Value.encode('utf-8'), e.CharIndexBegin, e.CharIndexEnd,
+                s_ind))
 
         assert(e_ind == len(entities))
 
@@ -85,8 +82,8 @@ class RuSentRelNews(object):
 
                 if line != unicode('\r\n'):
                     s = RuSentRelSentence(text=line,
-                                          begin=line_start,
-                                          end=line_end)
+                                          char_ind_begin=line_start,
+                                          char_ind_end=line_end)
                     sentences.append(s)
 
                 line_start = line_end + 1

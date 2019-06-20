@@ -15,7 +15,7 @@ class RuSentRelEntityCollection(EntityCollection):
                                                         stemmer=stemmer,
                                                         synonyms=synonyms)
 
-        self.sort_entities(key=lambda entity: entity.Begin)
+        self.sort_entities(key=lambda entity: entity.CharIndexBegin)
 
         self.__by_id = self.create_index(entities=entities,
                                          key_func=lambda e: e.IdInDocument)
@@ -40,8 +40,8 @@ class RuSentRelEntityCollection(EntityCollection):
 
                 entity = RuSentRelEntity(doc_id=e_id,
                                          str_type=e_str_type,
-                                         begin=e_begin,
-                                         end=e_end,
+                                         char_index_begin=e_begin,
+                                         char_index_end=e_end,
                                          value=e_value)
 
                 entities.append(entity)
