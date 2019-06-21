@@ -1,6 +1,8 @@
 import collections
 
 
+# TODO. provide iteration by collections, to irrespect from specific formats.
+# TODO. Provide here function that allows to read opnion collection from file.
 class FilesToCompareUtils:
 
     def __init__(self):

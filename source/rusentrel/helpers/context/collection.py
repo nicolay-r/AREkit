@@ -5,6 +5,8 @@ from core.source.rusentrel.news import RuSentRelNews
 from core.source.rusentrel.helpers.context.opinion import RuSentRelContextOpinion
 
 
+# TODO. This should depend on textOpinionCollection.
+# TODO. Since the latter appears in core library.
 class RuSentRelContextOpinionList:
 
     def __init__(self, opinion_list):

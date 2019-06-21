@@ -6,7 +6,6 @@ from core.processing.text.tokens import Tokens, Token
 class TextParser:
     """
     Represents a parser of news sentences.
-    Now uses in neural networks for text processing.
     As a result we have a list of TERMS, where term could be a
         1) Word
         2) Token
