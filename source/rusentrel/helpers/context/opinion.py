@@ -20,22 +20,30 @@ class RuSentRelContextOpinion(RefOpinion):
                                                       sentiment=NeutralLabel(),
                                                       owner=doc_entities)
 
-        self.__entity_left_ID = e_source_doc_level_id
-        self.__entity_right_ID = e_target_doc_level_id
+        self.__entity_source_ID = e_source_doc_level_id
+        self.__entity_target_ID = e_target_doc_level_id
         self.__entity_by_id_func = doc_entities.get_entity_by_id
 
     @property
     def SourceEntity(self):
-        return self.__entity_by_id_func(self.__entity_left_ID)
+        return self.__entity_by_id_func(self.__entity_source_ID)
+
+    @property
+    def SourceIdInDocument(self):
+        return self.__entity_source_ID
+
+    @property
+    def TargetIdInDocument(self):
+        return self.__entity_target_ID
 
     @property
     def TargetEntity(self):
-        return self.__entity_by_id_func(self.__entity_right_ID)
+        return self.__entity_by_id_func(self.__entity_target_ID)
 
     @property
     def SourceEntityValue(self):
-        return self.__entity_by_id_func(self.__entity_left_ID).Value
+        return self.__entity_by_id_func(self.__entity_source_ID).Value
 
     @property
     def TargetEntityValue(self):
-        return self.__entity_by_id_func(self.__entity_right_ID).Value
+        return self.__entity_by_id_func(self.__entity_target_ID).Value

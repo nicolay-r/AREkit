@@ -25,6 +25,10 @@ class RefOpinion(object):
         return self.__target_id
 
     @property
+    def Owner(self):
+        return self.__owner
+
+    @property
     def Sentiment(self):
         return self.__sentiment
 
