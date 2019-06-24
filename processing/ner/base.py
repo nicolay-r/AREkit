@@ -5,10 +5,10 @@ class NamedEntityRecognition:
         text: unicode
             text
         merge: bool
-            merge multiword entities into single list of terms
+            merge multiword entities into single list of parsed_news
 
         returns: list
-            list of terms (in case merge = False)
-            or list of list of terms (when merge = True)
+            list of parsed_news (in case merge = False)
+            or list of list of parsed_news (when merge = True)
         """
         pass

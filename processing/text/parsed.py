@@ -58,7 +58,7 @@ class ParsedText:
 
     def __lemmatize(self, stemmer):
         """
-        Compose a list of lemmatized versions of terms
+        Compose a list of lemmatized versions of parsed_news
         PS: Might be significantly slow, depending on stemmer were used.
         """
         assert(isinstance(stemmer, Stemmer))

@@ -38,9 +38,9 @@ class FramesHelper:
 
     def find_frames(self, parsed_text):
         """
-        Searching frames that a part of terms
+        Searching frames that a part of parsed_news
 
-        terms: ParsedText
+        parsed_news: ParsedText
             parsed text
         return: list or None
             list of tuples (frame, term_begin_index), or None

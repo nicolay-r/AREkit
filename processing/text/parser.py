@@ -34,12 +34,12 @@ class TextParser:
     @staticmethod
     def __parse_core(text, keep_tokens=False, debug=False):
         """
-        Separates sentence into list of terms
+        Separates sentence into list of parsed_news
 
         save_tokens: bool
-            keep token information in result list of terms.
+            keep token information in result list of parsed_news.
         return: list
-            list of unicode terms, where each term: word or token
+            list of unicode parsed_news, where each term: word or token
         """
         assert(isinstance(text, unicode))
         assert(isinstance(keep_tokens, bool))
@@ -55,10 +55,10 @@ class TextParser:
     @staticmethod
     def __process_words(words, keep_tokens):
         """
-        terms: list
-            list of terms
+        parsed_news: list
+            list of parsed_news
         keep_tokes: bool
-            keep or remove tokens from list of terms
+            keep or remove tokens from list of parsed_news
         """
         assert(isinstance(words, list))
         parsed = []
@@ -79,7 +79,7 @@ class TextParser:
     @staticmethod
     def __split_tokens(term):
         """
-        Splitting off tokens from terms ending, i.e. for example:
+        Splitting off tokens from parsed_news ending, i.e. for example:
             term: "сказать,-" -> "(term: "сказать", ["COMMA_TOKEN", "DASH_TOKEN"])
         return: (unicode or None, list)
             modified term and list of extracted tokens.

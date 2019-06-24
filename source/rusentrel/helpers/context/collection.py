@@ -13,6 +13,7 @@ class RuSentRelContextOpinionList:
         assert(isinstance(opinion_list, list))
         self.__ctx_opinions = opinion_list
 
+    # TODO: This could be moved into other helper.
     @classmethod
     def from_news_opinion(cls, news, opinion, debug=False):
         assert(isinstance(news, RuSentRelNews))

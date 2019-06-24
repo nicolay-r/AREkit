@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import io
 from core.source.rusentrel.entities.entity import RuSentRelEntity
-from core.source.rusentrel.helpers.news import NewsHelper
+from core.source.rusentrel.helpers.news import RuSentRelNewsHelper
 from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
 from core.source.rusentrel.sentence import RuSentRelSentence
 
@@ -13,7 +13,7 @@ class RuSentRelNews(object):
         assert(isinstance(entities, RuSentRelEntityCollection))
         self.__sentences = sentences
         self.__entities = entities
-        self.__helper = NewsHelper(self)
+        self.__helper = RuSentRelNewsHelper(self)
 
     @property
     def DocEntities(self):

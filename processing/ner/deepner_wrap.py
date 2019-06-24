@@ -15,14 +15,14 @@ class DeepNERWrap(NamedEntityRecognition):
 
     def extract(self, terms, merge=False):
         """
-        terms: list
+        parsed_news: list
         tags:
             Provides in a format <part>-<type>, where part could be: B, I, O
             and type: GEO, LOC,
         """
         assert(isinstance(terms, list))
 
-        payload = {"terms": terms}
+        payload = {"parsed_news": terms}
         response = requests.post(self.url,
                                  data=json.dumps(payload),
                                  headers=self.headers,
