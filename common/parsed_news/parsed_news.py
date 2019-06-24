@@ -9,7 +9,7 @@ class ParsedNews(object):
         - entities (positions).
     """
 
-    def __init__(self, news_id, terms, entity_positions, sentences_count, sentence_begin_inds):
+    def __init__(self, news_id, terms, entity_positions, sentence_begin_inds):
         """
         news_id:
         terms:
@@ -19,14 +19,15 @@ class ParsedNews(object):
         """
         assert(isinstance(news_id, int))
         assert(isinstance(terms, list))
+        # TODO. Remove
         assert(isinstance(entity_positions, dict))
-        assert(isinstance(sentences_count, int))
         assert(isinstance(sentence_begin_inds, list))
         self.__news_id = news_id
         self.__terms = terms
+        # TODO. Automatically calculate this dictionary
         self.__entity_positions = entity_positions
-        self.__sentences_count = sentences_count
         self.__sentence_begin_inds = sentence_begin_inds
+        self.__sentences_count = len(sentence_begin_inds)
 
     @property
     def RelatedNewsID(self):

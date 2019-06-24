@@ -19,7 +19,6 @@ class RuSentRelParsedNews(ParsedNews):
         return cls(news_id=rusentrel_news_id,
                    terms=terms,
                    entity_positions=entity_positions,
-                   sentences_count=rusentrel_news.sentences_count(),
                    sentence_begin_inds=sentence_begin_inds)
 
     # TODO. Simplify
