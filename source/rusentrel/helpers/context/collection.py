@@ -1,65 +1,99 @@
+from core.common.opinions.collection import OpinionCollection
 from core.common.opinions.opinion import Opinion
-from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
+from core.common.text_opinions.collection import TextOpinionCollection
+from core.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from core.source.rusentrel.entities.entity import RuSentRelEntity
-from core.source.rusentrel.news import RuSentRelNews
-from core.source.rusentrel.helpers.context.opinion import RuSentRelContextOpinion
+from core.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 
 
-# TODO. This should depends on TextOpinionCollection.
-class RuSentRelContextOpinionList:
+class RuSentRelTextOpinionCollection(TextOpinionCollection):
 
     def __init__(self, text_opinions):
-        assert(isinstance(text_opinions, list))
-        self.__text_opinions = text_opinions
+        super(RuSentRelTextOpinionCollection, self).__init__(
+            parsed_news_collection=None,
+            text_opinions=text_opinions)
 
     @classmethod
-    def from_rusentrel_news_opinion(cls, news, opinion, debug=False):
-        assert(isinstance(news, RuSentRelNews))
+    def from_opinions(cls,
+                      rusentrel_news_id,
+                      doc_entities,
+                      opinions,
+                      check_text_opinion_correctness,
+                      debug=False):
+        assert(isinstance(rusentrel_news_id, int))
+        assert(isinstance(opinions, OpinionCollection))
+        text_opinions = []
+        for opinion in opinions:
+            text_opinions.extend(
+                cls.__from_opinion(
+                    rusentrel_news_id=rusentrel_news_id,
+                    doc_entities=doc_entities,
+                    opinion=opinion,
+                    check_text_opinion_correctness=check_text_opinion_correctness,
+                    debug=debug))
+
+        return cls(text_opinions)
+
+    @classmethod
+    def from_opinion(cls,
+                     rusentrel_news_id,
+                     doc_entities,
+                     opinion,
+                     check_text_opinion_correctness,
+                     debug=False):
+        return cls(cls.__from_opinion(
+            rusentrel_news_id=rusentrel_news_id,
+            doc_entities=doc_entities,
+            opinion=opinion,
+            check_text_opinion_correctness=check_text_opinion_correctness,
+            debug=debug))
+
+    @staticmethod
+    def __from_opinion(
+            rusentrel_news_id,
+            doc_entities,
+            opinion,
+            check_text_opinion_correctness,
+            debug=False):
+        assert(isinstance(rusentrel_news_id, int))
+        assert(isinstance(doc_entities, RuSentRelDocumentEntityCollection))
         assert(isinstance(opinion, Opinion))
-
-        doc_entities = news.DocEntities
-
-        assert(isinstance(doc_entities, RuSentRelEntityCollection))
+        assert(callable(check_text_opinion_correctness) or
+               check_text_opinion_correctness is None)
 
         source_entities = doc_entities.try_get_entities(
-            opinion.SourceValue, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
+            opinion.SourceValue, group_key=RuSentRelDocumentEntityCollection.KeyType.BY_SYNONYMS)
         target_entities = doc_entities.try_get_entities(
-            opinion.TargetValue, group_key=RuSentRelEntityCollection.KeyType.BY_SYNONYMS)
+            opinion.TargetValue, group_key=RuSentRelDocumentEntityCollection.KeyType.BY_SYNONYMS)
 
         if source_entities is None:
             if debug:
                 print "Appropriate entity for '{}'->'...' has not been found".format(
                     opinion.SourceValue.encode('utf-8'))
-            return cls(text_opinions=[])
+            return []
 
         if target_entities is None:
             if debug:
                 print "Appropriate entity for '...'->'{}' has not been found".format(
                     opinion.TargetValue.encode('utf-8'))
-            return cls(text_opinions=[])
+            return []
 
-        ctx_opinions = []
+        text_opinions = []
         for source_entity in source_entities:
             for target_entity in target_entities:
                 assert(isinstance(source_entity, RuSentRelEntity))
                 assert(isinstance(target_entity, RuSentRelEntity))
-                relation = RuSentRelContextOpinion(e_source_doc_level_id=source_entity.IdInDocument,
-                                                   e_target_doc_level_id=target_entity.IdInDocument,
-                                                   doc_entities=doc_entities)
-                ctx_opinions.append(relation)
 
-        return cls(ctx_opinions)
+                text_opinion = RuSentRelTextOpinion(
+                    rusentrel_news_id=rusentrel_news_id,
+                    e_source_doc_level_id=source_entity.IdInDocument,
+                    e_target_doc_level_id=target_entity.IdInDocument,
+                    doc_entities=doc_entities)
 
-    def apply_filter(self, filter_function):
-        self.__text_opinions = [r for r in self.__text_opinions if filter_function(r)]
+                if check_text_opinion_correctness is not None:
+                    if not check_text_opinion_correctness(text_opinion):
+                        continue
 
-    def __getitem__(self, item):
-        assert(isinstance(item,  int))
-        return self.__text_opinions[item]
+                text_opinions.append(text_opinion)
 
-    def __len__(self):
-        return len(self.__text_opinions)
-
-    def __iter__(self):
-        for opinion in self.__text_opinions:
-            yield opinion
+        return text_opinions

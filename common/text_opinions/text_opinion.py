@@ -6,7 +6,8 @@ class TextOpinion(RefOpinion):
     """
     Represents a relation which were found in news article
     and composed between two named entities
-    (it was found especially by Opinion with predefined label)
+        (it was found especially by Opinion with predefined label)
+        allows to modify label using set_label
     """
 
     def __init__(self, news_id, text_opinion_id, source_id, target_id, owner, label):

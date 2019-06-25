@@ -1,7 +1,7 @@
 from core.common.parsed_news.collection import ParsedNewsCollection
-from core.common.linked_text_opinions.text_opinion import TextOpinion
+from core.common.text_opinions.text_opinion import TextOpinion
 from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from core.common.linked_text_opinions.end_type import EntityEndType
+from core.common.text_opinions.end_type import EntityEndType
 
 
 class TextOpinionHelper(object):

@@ -6,14 +6,14 @@ from core.common.synonyms import SynonymsCollection
 from core.source.rusentrel.entities.entity import RuSentRelEntity
 
 
-class RuSentRelEntityCollection(EntityCollection):
+class RuSentRelDocumentEntityCollection(EntityCollection):
     """ Collection of annotated entities
     """
 
     def __init__(self, entities, stemmer, synonyms):
-        super(RuSentRelEntityCollection, self).__init__(entities=entities,
-                                                        stemmer=stemmer,
-                                                        synonyms=synonyms)
+        super(RuSentRelDocumentEntityCollection, self).__init__(entities=entities,
+                                                                stemmer=stemmer,
+                                                                synonyms=synonyms)
 
         self.sort_entities(key=lambda entity: entity.CharIndexBegin)
 

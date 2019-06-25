@@ -2,7 +2,7 @@
 import io
 from core.source.rusentrel.entities.entity import RuSentRelEntity
 from core.source.rusentrel.helpers.news import RuSentRelNewsHelper
-from core.source.rusentrel.entities.collection import RuSentRelEntityCollection
+from core.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from core.source.rusentrel.sentence import RuSentRelSentence
 
 
@@ -10,7 +10,7 @@ class RuSentRelNews(object):
 
     def __init__(self, sentences, entities):
         assert(isinstance(sentences, list))
-        assert(isinstance(entities, RuSentRelEntityCollection))
+        assert(isinstance(entities, RuSentRelDocumentEntityCollection))
         self.__sentences = sentences
         self.__entities = entities
         self.__helper = RuSentRelNewsHelper(self)
@@ -26,7 +26,7 @@ class RuSentRelNews(object):
     @classmethod
     def from_file(cls, filepath, entities):
         assert(isinstance(filepath, unicode))
-        assert(isinstance(entities, RuSentRelEntityCollection))
+        assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
         sentences = RuSentRelNews.read_sentences(filepath)
 

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import cPickle as pickle
 import collections
-from core.common.linked_text_opinions.text_opinion import TextOpinion
+from core.common.text_opinions.text_opinion import TextOpinion
 from core.common.parsed_news.collection import ParsedNewsCollection
+from core.common.text_opinions.collection import TextOpinionCollection
 
 
-class LabeledLinkedTextOpinionCollection(object):
+class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
     """
     Describes text opinions with a position precision and forward connection
 
@@ -21,28 +22,15 @@ class LabeledLinkedTextOpinionCollection(object):
 
     def __init__(self, parsed_news_collection):
         assert(isinstance(parsed_news_collection, ParsedNewsCollection))
-        # list ExtractedRelations
-        # TODO. In Base.
-        self.__text_opinions = []
+        super(LabeledLinkedTextOpinionCollection, self).__init__(parsed_news_collection=parsed_news_collection,
+                                                                 text_opinions=[])
+
         # list describes that has i'th relation continuation in text.
         self.__next_opinion_id = []
         # provides original label by text_opinion_id
         self.__text_opinion_labels = []
         # labels defined
         self.__labels_defined = []
-        # related collection of parsed news
-        # TODO. In Base.
-        self.__parsed_news_collection = parsed_news_collection
-
-    # TODO. In Base.
-    @property
-    def RelatedParsedNewsCollection(self):
-        return self.__parsed_news_collection
-
-    # TODO. In base
-    @property
-    def TextOpinionCount(self):
-        return len(self.__text_opinions)
 
     def add_text_opinions(self,
                           text_opinions,
@@ -59,7 +47,7 @@ class LabeledLinkedTextOpinionCollection(object):
                 missed += 1
                 continue
 
-            text_opinion.set_text_opinion_id(len(self.__text_opinions))
+            text_opinion.set_text_opinion_id(len(self))
 
             self.register_text_opinion(text_opinion)
 
@@ -71,7 +59,7 @@ class LabeledLinkedTextOpinionCollection(object):
 
     def register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
-        self.__text_opinions.append(text_opinion)
+        super(LabeledLinkedTextOpinionCollection, self).register_text_opinion(text_opinion)
         self.__next_opinion_id.append(text_opinion.TextOpinionID + 1)
         self.__text_opinion_labels.append(text_opinion.Sentiment)
         self.__labels_defined.append(True)
@@ -85,11 +73,12 @@ class LabeledLinkedTextOpinionCollection(object):
     def apply_label(self, label, text_opinion_id):
         assert(isinstance(text_opinion_id, int))
 
+        text_opinion = self[text_opinion_id]
         if self.__labels_defined[text_opinion_id] is not False:
-            assert(self.__text_opinions[text_opinion_id].Label == label)
+            assert(text_opinion.Label == label)
             return
 
-        self.__text_opinions[text_opinion_id].set_label(label)
+        text_opinion.set_label(label)
         self.__labels_defined[text_opinion_id] = True
 
     def get_original_label(self, text_opinion_id):
@@ -97,8 +86,8 @@ class LabeledLinkedTextOpinionCollection(object):
         return self.__text_opinion_labels[text_opinion_id]
 
     def reset_labels(self):
-        for opinion in self.__text_opinions:
-            opinion.set_label(self.__text_opinion_labels[opinion.TextOpinionID])
+        for text_opinion in self:
+            text_opinion.set_label(self.__text_opinion_labels[text_opinion.TextOpinionID])
         self.__labels_defined = [False] * len(self.__labels_defined)
 
     def save(self, pickle_filepath):
@@ -109,15 +98,16 @@ class LabeledLinkedTextOpinionCollection(object):
         return pickle.load(open(pickle_filepath, 'rb'))
 
     def __iter_by_linked_text_opinions(self):
-        lst = []
-        for index, text_opinion in enumerate(self.__text_opinions):
-            lst.append(text_opinion)
+        linked_opinions = []
+        for index, text_opinion in enumerate(self):
+            linked_opinions.append(text_opinion)
             if self.__next_opinion_id[index] == self.NO_NEXT_RELATION:
-                yield lst
-                lst = []
+                yield linked_opinions
+                linked_opinions = []
 
     def iter_by_linked_text_opinions(self):
-        return self.__iter_by_linked_text_opinions()
+        for linked_opinions in self.__iter_by_linked_text_opinions():
+            yield linked_opinions
 
     def iter_by_linked_text_opinion_groups(self, group_size):
         assert(isinstance(group_size, int))
@@ -127,10 +117,3 @@ class LabeledLinkedTextOpinionCollection(object):
             if len(group) == group_size:
                 yield group
                 group = []
-
-    def __iter__(self):
-        for text_opinion in self.__text_opinions:
-            yield text_opinion
-
-    def __len__(self):
-        return len(self.__text_opinions)
