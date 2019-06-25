@@ -5,21 +5,20 @@ from core.source.rusentrel.news import RuSentRelNews
 from core.source.rusentrel.helpers.context.opinion import RuSentRelContextOpinion
 
 
-# TODO. This should depend on textOpinionCollection.
-# TODO. Since the latter appears in core library.
+# TODO. This should depends on TextOpinionCollection.
 class RuSentRelContextOpinionList:
 
-    def __init__(self, opinion_list):
-        assert(isinstance(opinion_list, list))
-        self.__ctx_opinions = opinion_list
+    def __init__(self, text_opinions):
+        assert(isinstance(text_opinions, list))
+        self.__text_opinions = text_opinions
 
-    # TODO: This could be moved into other helper.
     @classmethod
-    def from_news_opinion(cls, news, opinion, debug=False):
+    def from_rusentrel_news_opinion(cls, news, opinion, debug=False):
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinion, Opinion))
 
         doc_entities = news.DocEntities
+
         assert(isinstance(doc_entities, RuSentRelEntityCollection))
 
         source_entities = doc_entities.try_get_entities(
@@ -31,13 +30,13 @@ class RuSentRelContextOpinionList:
             if debug:
                 print "Appropriate entity for '{}'->'...' has not been found".format(
                     opinion.SourceValue.encode('utf-8'))
-            return cls(opinion_list=[])
+            return cls(text_opinions=[])
 
         if target_entities is None:
             if debug:
                 print "Appropriate entity for '...'->'{}' has not been found".format(
                     opinion.TargetValue.encode('utf-8'))
-            return cls(opinion_list=[])
+            return cls(text_opinions=[])
 
         ctx_opinions = []
         for source_entity in source_entities:
@@ -52,15 +51,15 @@ class RuSentRelContextOpinionList:
         return cls(ctx_opinions)
 
     def apply_filter(self, filter_function):
-        self.__ctx_opinions = [r for r in self.__ctx_opinions if filter_function(r)]
+        self.__text_opinions = [r for r in self.__text_opinions if filter_function(r)]
 
     def __getitem__(self, item):
         assert(isinstance(item,  int))
-        return self.__ctx_opinions[item]
+        return self.__text_opinions[item]
 
     def __len__(self):
-        return len(self.__ctx_opinions)
+        return len(self.__text_opinions)
 
     def __iter__(self):
-        for opinion in self.__ctx_opinions:
+        for opinion in self.__text_opinions:
             yield opinion

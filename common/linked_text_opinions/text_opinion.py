@@ -1,0 +1,43 @@
+from core.common.ref_opinon import RefOpinion
+from core.evaluation.labels import Label
+
+
+class TextOpinion(RefOpinion):
+    """
+    Represents a relation which were found in news article
+    and composed between two named entities
+    (it was found especially by Opinion with predefined label)
+    """
+
+    def __init__(self, news_id, text_opinion_id, source_id, target_id, owner, label):
+        assert(isinstance(news_id, int))
+        assert(isinstance(text_opinion_id, int) or text_opinion_id is None)
+
+        super(TextOpinion, self).__init__(source_id=source_id,
+                                          target_id=target_id,
+                                          sentiment=label,
+                                          owner=owner)
+        self.__news_id = news_id
+        self.__text_opinion_id = text_opinion_id
+        self.__label = label
+
+    @property
+    def Sentiment(self):
+        return self.__label
+
+    @property
+    def NewsID(self):
+        return self.__news_id
+
+    @property
+    def TextOpinionID(self):
+        return self.__text_opinion_id
+
+    def set_text_opinion_id(self, relation_id):
+        assert(isinstance(relation_id, int))
+        self.__text_opinion_id = relation_id
+
+    def set_label(self, label):
+        assert(isinstance(label, Label))
+        self.__label = label
+
