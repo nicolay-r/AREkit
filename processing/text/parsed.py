@@ -1,5 +1,5 @@
 from core.processing.lemmatization.base import Stemmer
-from core.processing.text.tokens import Token
+from core.processing.text.token import Token
 
 
 class ParsedText:

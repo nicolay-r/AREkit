@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from core.processing.text.parsed import ParsedText
-from core.processing.text.tokens import Tokens, Token
+from core.processing.text.tokens import Tokens
+from core.processing.text.token import Token
 
 
 class TextParser:
