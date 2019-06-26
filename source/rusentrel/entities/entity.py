@@ -6,14 +6,14 @@ class RuSentRelEntity(Entity):
         Provides bounds, i.e. char indices in related sentence.
     """
 
-    def __init__(self, doc_id, str_type, char_index_begin, char_index_end, value):
-        assert(isinstance(doc_id, int))
+    def __init__(self, id_in_doc, str_type, char_index_begin, char_index_end, value):
+        assert(isinstance(id_in_doc, int))
         assert(isinstance(str_type, unicode))
         assert(isinstance(char_index_begin, int))
         assert(isinstance(char_index_end, int))
-        super(RuSentRelEntity, self).__init__(value)
+        super(RuSentRelEntity, self).__init__(value=value,
+                                              id_in_doc=id_in_doc)
 
-        self.__id = doc_id
         self.__str_type = str_type
         self.__begin = char_index_begin
         self.__end = char_index_end
@@ -25,7 +25,3 @@ class RuSentRelEntity(Entity):
     @property
     def CharIndexEnd(self):
         return self.__end
-
-    @property
-    def IdInDocument(self):
-        return self.__id

@@ -9,7 +9,7 @@ class ParsedNews(object):
         - entities (positions).
     """
 
-    def __init__(self, news_id, terms, entity_positions, sentence_begin_inds):
+    def __init__(self, news_id, terms, sentence_begin_inds):
         """
         news_id:
         terms:
@@ -19,19 +19,31 @@ class ParsedNews(object):
         """
         assert(isinstance(news_id, int))
         assert(isinstance(terms, list))
-        # TODO. Remove
-        assert(isinstance(entity_positions, dict))
         assert(isinstance(sentence_begin_inds, list))
         self.__news_id = news_id
         self.__terms = terms
-        # TODO. Automatically calculate this dictionary
-        self.__entity_positions = entity_positions
         self.__sentence_begin_inds = sentence_begin_inds
         self.__sentences_count = len(sentence_begin_inds)
+        self.__entity_positions = self.__init_positions()
 
     @property
     def RelatedNewsID(self):
         return self.__news_id
+
+    def __init_positions(self):
+        positions = {}
+        for term_index, term in enumerate(self.__terms):
+            if not isinstance(term, Entity):
+                continue
+            positions[term.IdInDocument] = (term_index, self.__get_sentence_ind(term_index))
+        return positions
+
+    def __get_sentence_ind(self, term_index):
+        for s_index, start in enumerate(self.__sentence_begin_inds):
+            if start == term_index:
+                return s_index
+            elif start > term_index:
+                return s_index - 1
 
     def get_term_index_in_sentence(self, term_index):
         assert(isinstance(term_index, int))

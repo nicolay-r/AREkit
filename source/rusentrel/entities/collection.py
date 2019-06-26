@@ -38,7 +38,7 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
                 e_end = int(args[3])
                 e_value = " ".join([arg.strip().replace(',', '') for arg in args[4:]])
 
-                entity = RuSentRelEntity(doc_id=e_id,
+                entity = RuSentRelEntity(id_in_doc=e_id,
                                          str_type=e_str_type,
                                          char_index_begin=e_begin,
                                          char_index_end=e_end,

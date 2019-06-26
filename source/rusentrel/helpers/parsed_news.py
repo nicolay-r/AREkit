@@ -12,13 +12,10 @@ class RuSentRelParsedNews(ParsedNews):
         assert(isinstance(rusentrel_news, RuSentRelNews))
         assert(isinstance(keep_tokens, bool))
 
-        terms, entity_positions, sentence_begin_inds = cls.__process(
-            rusentrel_news,
-            keep_tokens)
+        terms, sentence_begin_inds = cls.__process(rusentrel_news, keep_tokens)
 
         return cls(news_id=rusentrel_news_id,
                    terms=terms,
-                   entity_positions=entity_positions,
                    sentence_begin_inds=sentence_begin_inds)
 
     # TODO. Simplify
@@ -29,7 +26,6 @@ class RuSentRelParsedNews(ParsedNews):
 
         sentence_begin = []
         terms = []
-        entity_positions = {}
         for s_index, sentence in enumerate(rusentrel_news.iter_sentences()):
             assert(isinstance(sentence, RuSentRelSentence))
             sentence_begin.append(len(terms))
@@ -44,8 +40,6 @@ class RuSentRelParsedNews(ParsedNews):
                                                           keep_tokens=keep_tokens)
                     terms.extend(parsed_text_before.iter_raw_terms())
 
-                # add entity position
-                entity_positions[e.IdInDocument] = (len(terms), s_index)
                 # add entity_text
                 terms.append(rusentrel_news.DocEntities.get_entity_by_id(e.IdInDocument))
                 s_pos = e.CharIndexEnd
@@ -55,4 +49,4 @@ class RuSentRelParsedNews(ParsedNews):
                                                 keep_tokens=keep_tokens)
             terms.extend(parsed_text_last.iter_raw_terms())
 
-        return terms, entity_positions, sentence_begin
+        return terms, sentence_begin
