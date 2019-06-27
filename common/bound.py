@@ -7,7 +7,7 @@ class Bound:
         self.__length = length
 
     @property
-    def TermIndex(self):
+    def Position(self):
         return self.__pos
 
     @property

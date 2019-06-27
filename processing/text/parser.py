@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import collections
+
 from core.processing.text.parsed import ParsedText
 from core.processing.text.tokens import Tokens
 from core.processing.text.token import Token
@@ -17,7 +19,22 @@ class TextParser:
 
     @staticmethod
     def parse(text, keep_tokens=False, stemmer=None, debug=False):
+        assert(isinstance(text, unicode))
         terms = TextParser.__parse_core(text, keep_tokens, debug=debug)
+        return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
+
+    @staticmethod
+    def parse_string_list(string_list, keep_tokens=False, stemmer=None, debug=False):
+        assert(isinstance(string_list, collections.Iterable))
+
+        terms = []
+        for text in string_list:
+            if not isinstance(text, unicode):
+                terms.append(text)
+                continue
+            new_terms = TextParser.__parse_core(text, keep_tokens, debug=debug)
+            terms.extend(new_terms)
+
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
     @staticmethod

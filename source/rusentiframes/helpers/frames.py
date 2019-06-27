@@ -30,9 +30,9 @@ class FramesHelper:
             assert (isinstance(variant, FrameVariantInText))
             variant_bound = variant.get_bound()
             __remove(raw_terms,
-                     start=variant_bound.TermIndex,
-                     end=variant_bound.TermIndex + variant_bound.Length)
-            raw_terms.insert(variant_bound.TermIndex, variant)
+                     start=variant_bound.Position,
+                     end=variant_bound.Position + variant_bound.Length)
+            raw_terms.insert(variant_bound.Position, variant)
 
         return raw_terms
 

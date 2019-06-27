@@ -1,3 +1,4 @@
+from core.common.bound import Bound
 from core.common.parsed_news.parsed_news import ParsedNews
 from core.processing.text.parser import TextParser
 from core.source.rusentrel.entities.entity import RuSentRelEntity
@@ -9,44 +10,34 @@ class RuSentRelParsedNews(ParsedNews):
 
     @classmethod
     def create_from_rusentrel_news(cls, rusentrel_news_id, rusentrel_news, keep_tokens):
+        assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(rusentrel_news, RuSentRelNews))
         assert(isinstance(keep_tokens, bool))
-
-        terms, sentence_begin_inds = cls.__process(rusentrel_news, keep_tokens)
-
         return cls(news_id=rusentrel_news_id,
-                   terms=terms,
-                   sentence_begin_inds=sentence_begin_inds)
+                   parsed_sentences=list(cls.__to_parsed_sentences(rusentrel_news, keep_tokens)))
 
-    # TODO. Simplify
     @staticmethod
-    def __process(rusentrel_news, keep_tokens):
+    def __to_parsed_sentences(rusentrel_news, keep_tokens):
         assert(isinstance(rusentrel_news, RuSentRelNews))
         assert(isinstance(keep_tokens, bool))
 
-        sentence_begin = []
-        terms = []
         for s_index, sentence in enumerate(rusentrel_news.iter_sentences()):
-            assert(isinstance(sentence, RuSentRelSentence))
-            sentence_begin.append(len(terms))
-            s_pos = 0
+            string_list = RuSentRelParsedNews.__sentence_to_list(sentence)
+            parsed_sentence = TextParser.parse_string_list(string_list, keep_tokens=keep_tokens)
+            yield parsed_sentence
 
-            # TODO: guarantee that entities ordered by e_begin.
-            for e in sentence.iter_entities():
-                assert(isinstance(e, RuSentRelEntity))
-                # add parsed_news before entity
-                if e.CharIndexBegin > s_pos:
-                    parsed_text_before = TextParser.parse(text=sentence.Text[s_pos:e.CharIndexBegin],
-                                                          keep_tokens=keep_tokens)
-                    terms.extend(parsed_text_before.iter_raw_terms())
+    @staticmethod
+    def __sentence_to_list(sentence):
+        assert(isinstance(sentence, RuSentRelSentence))
 
-                # add entity_text
-                terms.append(rusentrel_news.DocEntities.get_entity_by_id(e.IdInDocument))
-                s_pos = e.CharIndexEnd
+        start = 0
+        string_list = []
+        for entity, bound in sentence.iter_entity_with_local_bounds():
+            assert(isinstance(entity, RuSentRelEntity))
+            assert(isinstance(bound, Bound))
+            string_list.append(sentence.Text[start:bound.Position - start])
+            string_list.append(entity)
+            start = bound.Position + bound.Length
 
-            # add text part after last entity of sentence.
-            parsed_text_last = TextParser.parse(text=sentence.Text[s_pos:len(sentence.Text)],
-                                                keep_tokens=keep_tokens)
-            terms.extend(parsed_text_last.iter_raw_terms())
-
-        return terms, sentence_begin
+        string_list.append(sentence.Text[start:len(sentence.Text) - start])
+        return string_list

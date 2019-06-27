@@ -24,18 +24,23 @@ class TextOpinionHelper(object):
                parsed_news.get_entity_sentence_index(t_id)
 
     @staticmethod
-    def EntityTermIndex(text_opinion, end_type):
-        return TextOpinionHelper.__entity_term_index(text_opinion, end_type)
+    def EntityDocumentLevelTermIndex(text_opinion, end_type):
+        return TextOpinionHelper.__entity_document_level_term_index(text_opinion, end_type)
+
+    @staticmethod
+    def EntitySentenceLevelTermIndex(text_opinion, end_type):
+        parsed_news, id = TextOpinionHelper.__get(text_opinion, end_type)
+        return parsed_news.get_entity_sentence_level_term_index(id)
 
     @staticmethod
     def DistanceBetweenEntitiesInTerms(text_opinion):
-        return abs(TextOpinionHelper.__entity_term_index(text_opinion, EntityEndType.Source) -
-                   TextOpinionHelper.__entity_term_index(text_opinion, EntityEndType.Target))
+        return abs(TextOpinionHelper.__entity_document_level_term_index(text_opinion, EntityEndType.Source) -
+                   TextOpinionHelper.__entity_document_level_term_index(text_opinion, EntityEndType.Target))
 
     @staticmethod
-    def __entity_term_index(text_opinion, end_type):
+    def __entity_document_level_term_index(text_opinion, end_type):
         parsed_news, id = TextOpinionHelper.__get(text_opinion, end_type)
-        return parsed_news.get_entity_term_index(id)
+        return parsed_news.get_entity_document_level_term_index(id)
 
     @staticmethod
     def __get(text_opinion, end_type):

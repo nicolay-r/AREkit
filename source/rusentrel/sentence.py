@@ -1,3 +1,4 @@
+from core.common.bound import Bound
 from core.source.rusentrel.entities.entity import RuSentRelEntity
 
 
@@ -32,6 +33,12 @@ class RuSentRelSentence(object):
     def iter_entities(self):
         for entity in self.__entities:
             yield entity
+
+    def iter_entity_with_local_bounds(self):
+        for entity in self.__entities:
+            start = entity.CharIndexBegin - self.__begin
+            end = entity.CharIndexEnd - self.__begin
+            yield entity, Bound(pos=start, length=end - start)
 
     def is_entity_goes_after(self, entity):
         assert(isinstance(entity, RuSentRelEntity))
