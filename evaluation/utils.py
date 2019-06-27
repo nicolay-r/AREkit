@@ -3,6 +3,7 @@ import collections
 
 # TODO. provide iteration by collections, to irrespect from specific formats.
 # TODO. Provide here function that allows to read opnion collection from file.
+# TODO. Refactor: OpinionCollectionsToCompareUtils.
 class FilesToCompareUtils:
 
     def __init__(self):
@@ -18,6 +19,7 @@ class FilesToCompareUtils:
                 for index in indices]
 
 
+# TODO. Refactor: OpinionCollectionsToCompare.
 class FilesToCompare:
 
     def __init__(self, test_filepath_func, etalon_filepath_func, index):

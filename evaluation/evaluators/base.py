@@ -11,6 +11,7 @@ class BaseEvaluator(object):
         assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
         self.__synonyms = synonyms
 
+    # TODO. Refactor. Opinions to compare list
     def evaluate(self, files_to_compare_list, debug=False):
         raise Exception("Not implemented")
 
@@ -50,15 +51,18 @@ class BaseEvaluator(object):
 
         return DocumentCompareTable(cmp_table=cmp_table)
 
+    # TODO. Should be removed due to deals with opinion collections already readed.
     def calc_a_file(self, files_to_compare, debug):
         assert(isinstance(files_to_compare, FilesToCompare))
 
         # Reading test answers.
+        # TODO. Should be outside, to irrespect from the specific formats.
         test_opins = RuSentRelOpinionCollection.from_file(
             filepath=files_to_compare.TestFilepath,
             synonyms=self.__synonyms)
 
         # Reading etalon answers.
+        # TODO. Should be outside, to irrespect from the specific formats.
         etalon_opins = RuSentRelOpinionCollection.from_file(
             filepath=files_to_compare.EtalonFilepath,
             synonyms=self.__synonyms)

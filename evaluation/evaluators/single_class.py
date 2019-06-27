@@ -68,6 +68,7 @@ class SingleClassEvaluator(BaseEvaluator):
                 return True
         return False
 
+    # TODO. Refactor. Opinions to compare list
     def evaluate(self, files_to_compare_list, debug=False):
         assert(isinstance(files_to_compare_list, list))
 

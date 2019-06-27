@@ -5,13 +5,14 @@ from core.source.rusentiframes.variants.collection import FrameVariantsCollectio
 from core.source.rusentiframes.variants.text_variant import FrameVariantInText
 
 
+# TODO. FramesParsing, FramesSearch helpers.
 class FramesHelper:
 
     def __init__(self, frames):
         assert(isinstance(frames, FrameVariantsCollection))
         self.__frames = frames
 
-    def find_and_mark_frames(self, raw_terms, stemmer):
+    def parse_frames_in_raw_terms(self, raw_terms, stemmer):
         assert(isinstance(raw_terms, list))
         assert(isinstance(stemmer, Stemmer))
 
@@ -36,6 +37,13 @@ class FramesHelper:
 
         return raw_terms
 
+    def parse_frames_in_parsed_text(self, parsed_text):
+        assert(isinstance(parsed_text, ParsedText))
+        # TODO. Add method create_modified() in ParsedText.
+        # TODO. Which allows to create new ParsedText with same settings.
+        pass
+
+    # TODO. internal
     def find_frames(self, parsed_text):
         """
         Searching frames that a part of parsed_news
@@ -45,6 +53,7 @@ class FramesHelper:
         return: list or None
             list of tuples (frame, term_begin_index), or None
         """
+        # TODO. To languages folder.
         def __replace_specific_russian_chars(terms):
             for i, term in enumerate(terms):
                 if not isinstance(term, unicode):
@@ -57,6 +66,7 @@ class FramesHelper:
                     return False
             return True
 
+        # TODO. To languages folder.
         def __check_inverted_frame_prefix(terms, index):
             if index == 0:
                 return False
@@ -98,8 +108,10 @@ class FramesHelper:
 
             start_ind = last_ind + 1
 
+        # TODO. yield output.
         if len(text_frame_variants) == 0:
             return None
 
+        # TODO. yield output.
         return text_frame_variants
 
