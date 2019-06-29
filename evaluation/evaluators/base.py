@@ -11,7 +11,7 @@ class BaseEvaluator(object):
         assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
         self.__synonyms = synonyms
 
-    def evaluate(self, opinions_to_cmp):
+    def evaluate(self, cmp_pairs):
         raise Exception("Not implemented")
 
     @property
