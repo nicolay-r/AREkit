@@ -1,3 +1,6 @@
+import collections
+
+from core.evaluation.cmp_opinions import OpinionCollectionsToCompare
 from core.evaluation.evaluators.base import BaseEvaluator
 from core.evaluation.labels import Label
 from core.evaluation.results.single_class import SingleClassEvalResult
@@ -27,16 +30,13 @@ class SingleClassEvaluator(BaseEvaluator):
         super(SingleClassEvaluator, self).__init__(synonyms=synonyms)
         self.__sentiment_label = SentimentLabel()
 
-    def calc_a_file(self, files_to_compare, debug):
-        test_opins, etalon_opins = super(SingleClassEvaluator, self).calc_a_file(
-            files_to_compare=files_to_compare,
-            debug=debug)
+    def calc_a_file(self, cmp_pair):
+        assert(isinstance(cmp_pair, OpinionCollectionsToCompare))
 
-        assert(isinstance(test_opins, OpinionCollection))
-        assert(isinstance(etalon_opins, OpinionCollection))
-
-        test_opins = self.__clone_with_different_label(test_opins, self.__sentiment_label)
-        etalon_opins = self.__clone_with_different_label(etalon_opins, self.__sentiment_label)
+        test_opins = self.__clone_with_different_label(opinions=cmp_pair.TestOpinionCollection,
+                                                       label=self.__sentiment_label)
+        etalon_opins = self.__clone_with_different_label(opinions=cmp_pair.EtalonOpinionCollection,
+                                                         label=self.__sentiment_label)
 
         cmp_table = self.calc_difference(etalon_opins, test_opins)
 
@@ -68,19 +68,18 @@ class SingleClassEvaluator(BaseEvaluator):
                 return True
         return False
 
-    # TODO. Refactor. Opinions to compare list
-    def evaluate(self, files_to_compare_list, debug=False):
-        assert(isinstance(files_to_compare_list, list))
+    def evaluate(self, cmp_pairs):
+        assert(isinstance(cmp_pairs, collections.Iterable))
 
         result = SingleClassEvalResult()
-        for files_to_compare in files_to_compare_list:
-            cmp_table, has_pos, has_neg = self.calc_a_file(files_to_compare, debug=debug)
+        for cmp_pair in cmp_pairs:
+            cmp_table, has_pos, has_neg = self.calc_a_file(cmp_pair)
 
             p, r = metrics.calc_prec_and_recall(cmp_table=cmp_table,
                                                 label=self.__sentiment_label,
                                                 opinions_exist=True)
 
-            result.add_document_results(doc_id=files_to_compare.index,
+            result.add_document_results(doc_id=cmp_pair.index,
                                         cmp_table=cmp_table,
                                         recall=r, prec=p)
 
