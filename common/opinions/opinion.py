@@ -15,8 +15,6 @@ class Opinion(object):
         self.__sentiment = sentiment
         self.__tag = None
 
-    # TODO. Value source and value target. Rename!
-
     @property
     def SourceValue(self):
         return self.__source_value

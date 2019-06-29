@@ -10,9 +10,6 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
     """
     Describes text opinions with a position precision and forward connection
 
-    Usage:
-    It is possible to add linked_text_opinions from news using add_news_relations call
-
     Limitations:
     Not it represents IN-MEMORY implementation.
     Therefore it is supposed not so large amount of linked_text_opinions.
@@ -64,10 +61,10 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         self.__text_opinion_labels.append(text_opinion.Sentiment)
         self.__labels_defined.append(True)
 
-    def check_all_relations_has_labels(self):
+    def check_all_text_opinions_has_labels(self):
         return not (False in self.__labels_defined)
 
-    def check_all_relations_without_labels(self):
+    def check_all_text_opinions_without_labels(self):
         return not (True in self.__labels_defined)
 
     def apply_label(self, label, text_opinion_id):
