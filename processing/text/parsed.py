@@ -15,6 +15,7 @@ class ParsedText:
         self.__terms = terms
         self.__hide_token_value = hide_tokens
         self.__lemmas = None
+        self.__stemmer = stemmer
         if stemmer is not None:
             self.__lemmatize(stemmer)
 
@@ -27,6 +28,11 @@ class ParsedText:
     def Terms(self):
         for term in self.__terms:
             yield self.__output_term(term, self.hide_token_values())
+
+    def copy_modified(self, terms):
+        return ParsedText(terms=terms,
+                          hide_tokens=self.__hide_token_value,
+                          stemmer=self.__stemmer)
 
     def is_term(self, index):
         assert(isinstance(index, int))
