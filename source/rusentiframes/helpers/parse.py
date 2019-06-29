@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.languages.mods import BaseLanguageMods
 from core.languages.ru.mods import RussianLanguageMods
-from core.processing.lemmatization.base import Stemmer
 from core.processing.text.parsed import ParsedText
 from core.source.rusentiframes.helpers.search import RuSentiFramesSearchHelper
 from core.source.rusentiframes.variants.collection import FrameVariantsCollection
@@ -31,27 +30,6 @@ class RuSentiFramesParseHelper:
             frame_variants=frame_variants)
 
         return parsed_text.copy_modified(terms=updated_terms)
-
-    # TODO. Remove?
-    def parse_frames_in_raw_terms(self, raw_terms, stemmer, hide_tokens=True, locale_mods=RussianLanguageMods):
-        assert(isinstance(raw_terms, list))
-        assert(isinstance(stemmer, Stemmer))
-        assert(isinstance(locale_mods, BaseLanguageMods))
-
-        parsed_text = ParsedText(terms=raw_terms,
-                                 hide_tokens=hide_tokens,
-                                 stemmer=stemmer)
-
-        frame_variants = RuSentiFramesSearchHelper.iter_frames_from_parsed_text(
-            frames=self.__frames,
-            parsed_text=parsed_text,
-            locale_mods=locale_mods)
-
-        if frame_variants is None:
-            return raw_terms
-
-        return self.__insert_frame_variants_into_raw_terms_list(raw_terms_list=raw_terms,
-                                                                frame_variants=frame_variants)
 
     @staticmethod
     def __insert_frame_variants_into_raw_terms_list(raw_terms_list, frame_variants):
