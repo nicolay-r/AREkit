@@ -112,3 +112,8 @@ class Tokens:
         for char, token in Tokens.__token_mapping.iteritems():
             if term == token:
                 yield char
+
+    @staticmethod
+    def iter_supported_tokens():
+        for token in Tokens.__supported_tokens:
+            yield token
