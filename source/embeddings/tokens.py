@@ -7,6 +7,7 @@ class TokenEmbeddingVectors:
     Embedding vectors for text punctuation, based on Tokens
     """
 
+    # TODO. Iter token values.
     token_values = [Tokens.COMMA,
                     Tokens.COLON,
                     Tokens.SEMICOLON,
