@@ -1,54 +1,82 @@
+import numpy as np
+
+from core.processing.lemmatization.base import Stemmer
 from core.source.embeddings.base import Embedding
-from gensim.models.word2vec import Word2Vec
 
 
 class RusvectoresEmbedding(Embedding):
 
-    def __init__(self, matrix, words, stemmer, pos_tagger):
+    def __init__(self, matrix, words):
         super(RusvectoresEmbedding, self).__init__(matrix=matrix,
-                                                   words=words,
-                                                   stemmer=stemmer,
-                                                   pos_tagger=pos_tagger)
+                                                   words=words)
 
-    # TODO. Provide API for complex embedding generation.
-    def create_term_embedding(self, word):
+        self.__index_without_pos = self.__create_terms_without_pos()
+        self.__stemmer = None
+
+    def set_stemmer(self, stemmer):
+        assert(isinstance(stemmer, Stemmer))
+        self.__stemmer = stemmer
+
+    def create_term_embedding(self, word, max_part_size=3):
         assert(isinstance(word, unicode))
-        assert(word not in self)
-        pass
 
-    def find_index_by_word(self, word, return_unknown=False):
+        if word in self:
+            return self[word]
+
+        c_i = 0
+        c_l = max_part_size
+        count = 0
+        result_v = np.zeros(self.VectorSize)
+
+        while c_i < len(word):
+
+            if c_l == 0:
+                c_i += 1
+                c_l = max_part_size
+                continue
+
+            left_b = c_i
+            right_b = min(len(word), left_b+c_l)
+            s_i = self.__find_index(term=word[left_b:right_b],
+                                    lemmatize=False)
+
+            if s_i is None:
+                c_l -= 1
+                continue
+
+            result_v += self.get_vector_by_index(s_i)
+            c_i += 1
+            count += 1
+
+        return result_v / count if count > 0 else result_v
+
+    def find_index_by_word(self, word):
         assert(isinstance(word, unicode))
-        assert(return_unknown is False)
+        return self.__find_index(word)
 
-        item = self.__lemmatize_term_to_rusvectores(word)
-        if item is None:
-            return False
-        return super(RusvectoresEmbedding, self).find_index_by_word(item)
-
-    def __lemmatize_term_to_rusvectores(self, term):
-        """
-        Combine lemmatized 'text' with POS tag (part of speech).
-        """
+    def __find_index(self, term, lemmatize=True):
         assert(isinstance(term, unicode))
+        assert(isinstance(lemmatize, bool))
+        if lemmatize:
+            term = self.__stemmer.lemmatize_to_str(term)
+        return self.__index_without_pos[term] \
+            if term in self.__index_without_pos else None
 
-        term = self.Stemmer.lemmatize_to_str(term)
-        pos = self.PosTagger.get_term_pos(term)
-        if pos is self.PosTagger.Unknown:
-            return None
-        return '_'.join([term, pos])
+    def __create_terms_without_pos(self):
+        d = {}
+        for word_with_pos, index in self.iter_vocabulary():
+            word = word_with_pos.split('_')[0]
+            if word in d:
+                continue
+            d[word] = index
+
+        return d
 
     def __contains__(self, term):
         assert(isinstance(term, unicode))
-
-        item = self.__lemmatize_term_to_rusvectores(term)
-        if item is None:
-            return False
-        return super(RusvectoresEmbedding, self).__contains__(item)
+        return self.__find_index(term) is not None
 
     def __getitem__(self, term):
         assert(isinstance(term, unicode))
-
-        item = self.__lemmatize_term_to_rusvectores(term)
-        if item is None:
-            return False
-        return super(RusvectoresEmbedding, self).__getitem__(item)
+        index = self.__find_index(term)
+        return self.get_vector_by_index(index)

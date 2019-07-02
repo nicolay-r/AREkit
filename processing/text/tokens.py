@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from urlparse import urlparse
-
 from core.processing.text.token import Token
 
 
@@ -58,6 +57,7 @@ class Tokens:
         QUOTE,
         DASH,
         DOT,
+        LONG_DASH,
         TRIPLE_DOTS,
         EXC_SIGN,
         QUESTION_SIGN,

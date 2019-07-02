@@ -1,34 +1,22 @@
+import numpy as np
+
 from core.processing.text.tokens import Tokens
 from core.common.utils import get_random_vector
+from core.source.embeddings.base import Embedding
 
 
-class TokenEmbeddingVectors:
+class TokenEmbedding(Embedding):
     """
     Embedding vectors for text punctuation, based on Tokens in parsed text
     """
 
-    # TODO. Use default ctor.
-    def __init__(self, vector_size):
-        self.E = {}
-        for index, token_value in enumerate(Tokens.iter_supported_tokens()):
-            self.E[token_value] = get_random_vector(vector_size, index)
+    @classmethod
+    def from_supported_tokens(cls, vector_size):
+        matrix = []
+        tokens_list = list(Tokens.iter_supported_tokens())
 
-    # TODO. Provide classmethod.
+        for _ in tokens_list:
+            matrix.append(get_random_vector(vector_size, seed=1))
 
-    # TODO. Remove. Use non-static VocabularySize instead.
-    @staticmethod
-    def count():
-        return len(TokenEmbeddingVectors.token_values)
-
-    @staticmethod
-    def get_token_index(token_value):
-        assert(isinstance(token_value, unicode))
-        return TokenEmbeddingVectors.token_values.index(token_value)
-
-    def __getitem__(self, token_value):
-        assert (isinstance(token_value, unicode))
-        return self.E[token_value]
-
-    def __contains__(self, token_value):
-        assert (isinstance(token_value, unicode))
-        return token_value in self.E
+        return cls(matrix=np.array(matrix),
+                   words=tokens_list)
