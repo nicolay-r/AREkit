@@ -1,10 +1,7 @@
 import numpy as np
 from gensim.models.word2vec import Word2Vec
-from core.processing.lemmatization.base import Stemmer
-from core.processing.pos.base import POSTagger
 
 
-# TODO. Remove pos tagger.
 class Embedding(object):
     """
     Represents default wrapper over W2V API.
@@ -34,6 +31,18 @@ class Embedding(object):
 
         return cls(matrix=np.array([vector for vector in w2v_model.syn0]),
                    words=[w2v_model.wv.index2word[index] for index in range(words_count)])
+
+    @classmethod
+    def from_list_with_embedding_func(cls, words, embedding_func):
+        assert(isinstance(words, list))
+        assert(callable(embedding_func))
+
+        matrix = []
+        for word in words:
+            matrix.append(embedding_func(word))
+
+        return cls(matrix=np.array(matrix),
+                   words=words)
 
     def __create_index(self, words):
         index = {}
