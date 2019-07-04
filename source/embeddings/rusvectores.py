@@ -17,37 +17,54 @@ class RusvectoresEmbedding(Embedding):
         assert(isinstance(stemmer, Stemmer))
         self.__stemmer = stemmer
 
-    def create_term_embedding(self, word, max_part_size=3):
+    def create_term_embedding(self, term, max_part_size=3):
+        assert(isinstance(term, unicode))
+
+        count = 0
+        vector = np.zeros(self.VectorSize)
+        for word in term.split(u' '):
+            v, c = self.__create_embedding_for_word(word=word,
+                                                    max_part_size=max_part_size)
+            count += c
+            vector += v
+
+        return vector / count if count > 0 else vector
+
+    def __create_embedding_for_word(self, word, max_part_size):
         assert(isinstance(word, unicode))
 
         if word in self:
-            return self[word]
+            return self[word], 1
 
         c_i = 0
         c_l = max_part_size
         count = 0
-        result_v = np.zeros(self.VectorSize)
+        vector = np.zeros(self.VectorSize)
+        missings = []
 
         while c_i < len(word):
 
             if c_l == 0:
+                missings.append(c_i)
                 c_i += 1
                 c_l = max_part_size
                 continue
 
-            right_b = min(len(word), c_i+c_l)
+            right_b = min(len(word), c_i + c_l)
             s_i = self.__find_index(term=word[c_i:right_b],
                                     lemmatize=False)
 
             if s_i is None:
                 c_l -= 1
                 continue
-
-            result_v += self.get_vector_by_index(s_i)
+            vector += self.get_vector_by_index(s_i)
             c_i += c_l
             count += 1
 
-        return result_v / count if count > 0 else result_v
+        # w = u''.join([u'?' if i in missings else ch for i, ch in enumerate(word)])
+        # print u'Embedded: {}'.format(w).encode('utf-8')
+
+        return vector, count
 
     def find_index_by_word(self, word):
         assert(isinstance(word, unicode))
@@ -64,7 +81,8 @@ class RusvectoresEmbedding(Embedding):
     def __create_terms_without_pos(self):
         d = {}
         for word_with_pos, index in self.iter_vocabulary():
-            word = word_with_pos.split('_')[0]
+            assert(isinstance(word_with_pos, unicode))
+            word = word_with_pos.split(u'_')[0]
             if word in d:
                 continue
             d[word] = index
