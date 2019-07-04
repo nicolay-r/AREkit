@@ -2,7 +2,7 @@ from core.languages.mods import BaseLanguageMods
 from core.languages.ru.mods import RussianLanguageMods
 from core.processing.text.parsed import ParsedText
 from core.source.rusentiframes.variants.collection import FrameVariantsCollection
-from core.source.rusentiframes.variants.text_variant import FrameVariantInText
+from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 
 
 class RuSentiFramesSearchHelper(object):
@@ -43,7 +43,7 @@ class RuSentiFramesSearchHelper(object):
                 prep_term = RuSentiFramesSearchHelper.__get_preposition(terms=lemmas,
                                                                         index=start_ind)
 
-                yield FrameVariantInText(
+                yield TextFrameVariant(
                     variant=frame_variants.get_variant_by_template(ctx_template),
                     start_index=start_ind,
                     is_inverted=locale_mods.is_negation_word(prep_term) if prep_term is not None else False)

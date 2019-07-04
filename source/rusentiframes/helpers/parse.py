@@ -6,7 +6,7 @@ from core.languages.ru.mods import RussianLanguageMods
 from core.processing.text.parsed import ParsedText
 from core.source.rusentiframes.helpers.search import RuSentiFramesSearchHelper
 from core.source.rusentiframes.variants.collection import FrameVariantsCollection
-from core.source.rusentiframes.variants.text_variant import FrameVariantInText
+from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 
 
 class RuSentiFramesParseHelper:
@@ -42,7 +42,7 @@ class RuSentiFramesParseHelper:
                 end -= 1
 
         for variant in reversed(list(frame_variants_iter)):
-            assert (isinstance(variant, FrameVariantInText))
+            assert (isinstance(variant, TextFrameVariant))
             variant_bound = variant.get_bound()
             __remove(terms=raw_terms_list,
                      start=variant_bound.Position,

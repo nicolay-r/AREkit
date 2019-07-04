@@ -39,7 +39,8 @@ class Embedding(object):
 
         matrix = []
         for word in words:
-            matrix.append(embedding_func(word))
+            vector = embedding_func(word)
+            matrix.append(vector)
 
         return cls(matrix=np.array(matrix),
                    words=words)
