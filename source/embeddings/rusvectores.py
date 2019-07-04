@@ -35,9 +35,8 @@ class RusvectoresEmbedding(Embedding):
                 c_l = max_part_size
                 continue
 
-            left_b = c_i
-            right_b = min(len(word), left_b+c_l)
-            s_i = self.__find_index(term=word[left_b:right_b],
+            right_b = min(len(word), c_i+c_l)
+            s_i = self.__find_index(term=word[c_i:right_b],
                                     lemmatize=False)
 
             if s_i is None:
@@ -45,7 +44,7 @@ class RusvectoresEmbedding(Embedding):
                 continue
 
             result_v += self.get_vector_by_index(s_i)
-            c_i += 1
+            c_i += c_l
             count += 1
 
         return result_v / count if count > 0 else result_v
