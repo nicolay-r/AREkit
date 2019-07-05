@@ -1,11 +1,39 @@
 # Description
 ![](https://img.shields.io/badge/Python-2.7-brightgreen.svg)
 
-This project is a core library for
-[RuSentRel](https://github.com/nicolay-r/RuSentRel) dataset processing.
-This library provides API for synonyms, news, opinions, entities files reading.
+**arekit** -- is a python toolkit (library) for sentiment **attitudes relation extraction** (ARE) task.
+Large news and analytical articles shares a large amount of opinions conveyed as by author towards 
+mentioned entities/events, and also between mentioned entities, i.e. from **subject** towards **object**.
+The contribution of this library is as follows: 
+
+* Brings the task of sentiment attitudes extraction at 
+fundamental level by providing a common types/structures that are important for domain research;
+Please refer to `common/` source directory for more details.
+
+* Provides a necessary toolset to perform natural language processing (NLP): 
+text parsers, 
+syntax processing, 
+named entity recognition (NER), 
+part of speech tagging (POS),
+stemmer;
+Please refer to `processing/` source directory for more details.
+
+* Provides implemented ML models `networks/` that are intended for automatic sentiment relation extraction (RE) 
+on document level.
+
+Structuraly, the fundamental task representation could be departed into following domains: 
+
+1. **Named Entity Recognition** -- to extract mentioned named entities;
+3. **Coreference Search**, or Entity Linking -- to match synonymous entities 
+(considering SynonymsCollection at `common/`);
+2. **Relation Extraction** -- to extract Subject->Object sentiment relation type
+[[domain review](https://github.com/roomylee/awesome-relation-extraction)];
 
 ## Source
+
+### Datasets
+
+Provides reader for [RuSentRel](https://github.com/nicolay-r/RuSentRel) dataset.
 
 ### Embeddings
 
