@@ -79,6 +79,9 @@ class OpinionCollection(object):
             if o.sentiment == sentiment:
                 yield o
 
+    def save(self, filepath):
+        raise NotImplementedError()
+
     def __len__(self):
         return len(self.__opinions)
 

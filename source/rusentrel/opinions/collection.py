@@ -7,7 +7,8 @@ from core.source.rusentrel.opinions.opinion import RuSentRelOpinion
 
 
 class RuSentRelOpinionCollection(OpinionCollection):
-    """ Collection of sentiment opinions between entities
+    """
+    Collection of sentiment opinions between entities
     """
 
     @classmethod
