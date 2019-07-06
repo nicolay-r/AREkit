@@ -1,7 +1,6 @@
 import tensorflow as tf
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations import RNNConfig, CellTypes
-
+from core.networks.context.configurations.rnn import RNNConfig, CellTypes
 import utils
 
 # Copyright (c) Joohong Lee
@@ -24,14 +23,14 @@ class RNN(BaseContextNeuralNetwork):
         assert(isinstance(self.Config, RNNConfig))
 
         with tf.name_scope("rnn"):
-            length = tf.cast(utils.length(self.InputX), tf.int32)
+            length = tf.cast(utils.calculate_sequence_length(self.InputX), tf.int32)
             cell = self.get_cell(self.Config.HiddenSize, self.Config.CellType)
             cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=self.dropout_keep_prob)
             all_outputs, _ = tf.nn.dynamic_rnn(cell=cell,
                                                inputs=embedded_terms,
                                                sequence_length=length,
                                                dtype=tf.float32)
-            h_outputs = self.last_relevant(all_outputs, length)
+            h_outputs = self.__last_relevant(all_outputs, length)
 
         return h_outputs
 
@@ -46,11 +45,15 @@ class RNN(BaseContextNeuralNetwork):
         return logits, tf.nn.dropout(logits, self.dropout_keep_prob)
 
     def init_hidden_states(self):
-        self.__W = tf.get_variable("W",
-                                   shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-                                   initializer=tf.contrib.layers.xavier_initializer())
-        self.__b = tf.Variable(tf.constant(0.1, shape=[self.Config.ClassesCount]),
+        self.__W = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+                                   initializer=tf.contrib.layers.xavier_initializer(),
+                                   name="W")
+        self.__b = tf.Variable(initial_value=tf.constant(0.1, shape=[self.Config.ClassesCount]),
                                name="b")
+
+    def get_parameters_to_investigate(self):
+        return ["W", "b"], \
+               [self.__W, self.__b]
 
     @staticmethod
     def get_cell(hidden_size, cell_type):
@@ -66,7 +69,7 @@ class RNN(BaseContextNeuralNetwork):
             return None
 
     @staticmethod
-    def last_relevant(seq, length):
+    def __last_relevant(seq, length):
         batch_size = tf.shape(seq)[0]
         max_length = int(seq.get_shape()[1])
         input_size = int(seq.get_shape()[2])

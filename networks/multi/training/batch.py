@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from core.networks.context.debug import DebugKeys
-from core.networks.context.training.bags import Bag
-from core.networks.context.training import MiniBatch
+from core.networks.context.training.batch import MiniBatch
 
 
 class MultiInstanceBatch(MiniBatch):

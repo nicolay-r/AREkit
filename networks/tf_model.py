@@ -28,6 +28,8 @@ class TensorflowModel(object):
         self.__network = network
         self.__callback = callback
 
+    # region Properties
+
     @property
     def Settings(self):
         raise Exception("Not Implemented")
@@ -52,12 +54,10 @@ class TensorflowModel(object):
     def IO(self):
         return self.__io
 
+    # endregion
+
     def set_optimiser_value(self, value):
         self.__optimiser = value
-
-    def __notify_initialized(self):
-        if self.__callback is not None:
-            self.__callback.on_initialized(self)
 
     def load_model(self, save_path):
         assert(isinstance(self.__saver, Saver))
@@ -70,17 +70,6 @@ class TensorflowModel(object):
         self.__saver.save(self.__sess,
                           save_path=save_path,
                           write_meta_graph=False)
-
-    def __initialize_session(self):
-        """
-        Tensorflow session initialization
-        """
-        init_op = tf.global_variables_initializer()
-        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=self.get_gpu_memory_fraction())
-        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
-        sess.run(init_op)
-        self.__saver = tf.train.Saver(max_to_keep=2)
-        self.__sess = sess
 
     def dispose_session(self):
         """
@@ -103,14 +92,37 @@ class TensorflowModel(object):
         self.fit()
         self.dispose_session()
 
+    # region Abstract
+
     def fit(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def predict(self, dest_data_type=DataType.Test):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def set_optimiser(self):
-        raise Exception("Not Implemented")
+        raise NotImplementedError()
 
     def get_gpu_memory_fraction(self):
-        raise Exception("Not Implemented")
+        raise NotImplementedError()
+
+    # endregion
+
+    # region Private
+
+    def __notify_initialized(self):
+        if self.__callback is not None:
+            self.__callback.on_initialized(self)
+
+    def __initialize_session(self):
+        """
+        Tensorflow session initialization
+        """
+        init_op = tf.global_variables_initializer()
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=self.get_gpu_memory_fraction())
+        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        sess.run(init_op)
+        self.__saver = tf.train.Saver(max_to_keep=2)
+        self.__sess = sess
+
+    # endregion

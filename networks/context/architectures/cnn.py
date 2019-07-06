@@ -9,9 +9,9 @@ class VanillaCNN(BaseContextNeuralNetwork):
     def __init__(self):
         super(VanillaCNN, self).__init__()
         self.W = None
-        self.bias = None
+        self.b = None
         self.W2 = None
-        self.bias2 = None
+        self.b2 = None
         self.conv_filter = None
 
     @property
@@ -56,19 +56,36 @@ class VanillaCNN(BaseContextNeuralNetwork):
 
     def init_logits_unscaled(self, context_embedding):
         return utils.get_two_layer_logits(
-            context_embedding,
-            self.W, self.bias,
-            self.W2, self.bias2,
-            self.dropout_keep_prob,
+            g=context_embedding,
+            W1=self.W,
+            b1=self.b,
+            W2=self.W2,
+            b2=self.b2,
+            dropout_keep_prob=self.dropout_keep_prob,
             activations=[tf.tanh, tf.tanh, None])
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
-        self.W = tf.Variable(tf.random_normal([self.ContextEmbeddingSize, self.Config.HiddenSize]), dtype=tf.float32)
-        self.bias = tf.Variable(tf.random_normal([self.Config.HiddenSize]), dtype=tf.float32)
-        self.W2 = tf.Variable(tf.random_normal([self.Config.HiddenSize, self.Config.ClassesCount]), dtype=tf.float32)
-        self.bias2 = tf.Variable(tf.random_normal([self.Config.ClassesCount]), dtype=tf.float32)
-        self.conv_filter = tf.Variable(tf.random_normal([self.Config.WindowSize * self.TermEmbeddingSize, 1, self.Config.FiltersCount]), dtype=tf.float32)
+        self.W = tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.HiddenSize]),
+                             dtype=tf.float32,
+                             name="W")
+        self.b = tf.Variable(initial_value=tf.random_normal([self.Config.HiddenSize]),
+                             dtype=tf.float32,
+                             name="b")
+        self.W2 = tf.Variable(initial_value=tf.random_normal([self.Config.HiddenSize, self.Config.ClassesCount]),
+                              dtype=tf.float32,
+                              name="W2")
+        self.b2 = tf.Variable(initial_value=tf.random_normal([self.Config.ClassesCount]),
+                              dtype=tf.float32,
+                              name="b2")
+        self.conv_filter = tf.Variable(initial_value=tf.random_normal([self.Config.WindowSize * self.TermEmbeddingSize, 1, self.Config.FiltersCount]),
+                                       dtype=tf.float32,
+                                       name="C")
+
+    # TODO. To Dictionary
+    def get_parameters_to_investigate(self):
+        return ["W", "b", "W2", "b2", "C"], \
+               [self.W, self.b, self.W2, self.b2, self.conv_filter]
 
     @staticmethod
     def padding(embedded_data, window_size):

@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.python.ops import math_ops
 
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations import IANConfig
+from core.networks.context.configurations.ian import IANConfig
 from core.networks.context.training.sample import Sample
 import utils
 
@@ -16,7 +16,9 @@ class IAN(BaseContextNeuralNetwork):
         super(IAN, self).__init__()
         self.__aspects = None
         self.__E_aspects = None
+        # TODO. May use {} instead on None at init.
         self.__weights = None
+        # TODO. May use {} instead on None at init.
         self.__biases = None
         self.__aspect_inputs = None
 
@@ -43,6 +45,7 @@ class IAN(BaseContextNeuralNetwork):
         assert(isinstance(self.Config, IANConfig))
 
         with tf.name_scope('weights'):
+            # TODO. Init in different
             self.__weights = {
                 'aspect_score': tf.get_variable(
                     name='W_a',
@@ -65,6 +68,7 @@ class IAN(BaseContextNeuralNetwork):
             }
 
         with tf.name_scope('biases'):
+            # TODO. Init in different
             self.__biases = {
                 'aspect_score': tf.get_variable(
                     name='B_a',
@@ -101,7 +105,7 @@ class IAN(BaseContextNeuralNetwork):
             aspect_inputs = self.__aspect_inputs
 
         with tf.name_scope('dynamic_rnn'):
-            aspect_lens = utils.length(self.__aspects)
+            aspect_lens = utils.calculate_sequence_length(self.__aspects)
             aspect_outputs, aspect_state = tf.nn.dynamic_rnn(
                 tf.contrib.rnn.LSTMCell(self.Config.HiddenSize),
                 inputs=aspect_inputs,
@@ -111,7 +115,7 @@ class IAN(BaseContextNeuralNetwork):
             )
             aspect_avg = tf.reduce_mean(aspect_outputs, 1)
 
-            context_lens = utils.length(self.InputX)
+            context_lens = utils.calculate_sequence_length(self.InputX)
             context_outputs, context_state = tf.nn.dynamic_rnn(
                 tf.contrib.rnn.LSTMCell(self.Config.HiddenSize),
                 inputs=context_inputs,
@@ -194,14 +198,25 @@ class IAN(BaseContextNeuralNetwork):
             return tf.concat([self.__aspect_reps, self.__context_reps], 1)
 
     def init_logits_unscaled(self, context_embedding):
-        return utils.get_single_layer_logits(
-            context_embedding,
-            self.__weights['softmax'], self.__biases['softmax'],
-            self.dropout_keep_prob)
+        return utils.get_single_layer_logits(g=context_embedding,
+                                             W1=self.__weights['softmax'],
+                                             b1=self.__biases['softmax'],
+                                             dropout_keep_prob=self.dropout_keep_prob)
+
+    def get_parameters_to_investigate(self):
+        assert(isinstance(self.__weights, dict))
+        assert(isinstance(self.__biases, dict))
+
+        # TODO. To Dictionary
+        for key, value in self.__weights.iteritems():
+            yield key, value
+
+        # TODO. To Dictionary
+        for key, value in self.__biases.iteritems():
+            yield key, value
 
     def create_feed_dict(self, input, data_type):
         feed_dict = super(IAN, self).create_feed_dict(input, data_type)
-
         # TODO: HERE, pass for aspects something interesting, like frame variants.
         subj_ind = input[Sample.I_SUBJ_IND]
         obj_ind = input[Sample.I_OBJ_IND]

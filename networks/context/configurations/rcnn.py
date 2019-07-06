@@ -1,5 +1,5 @@
 from base import CommonModelSettings
-from core.networks.context.configurations import CellTypes
+from core.networks.context.configurations.rnn import CellTypes
 
 
 class RCNNConfig(CommonModelSettings):

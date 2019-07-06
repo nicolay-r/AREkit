@@ -1,4 +1,4 @@
-from core.networks.context.configurations import CommonModelSettings, LabelCalculationMode
+from core.networks.context.configurations.base import CommonModelSettings, LabelCalculationMode
 
 
 class MIMLRESettings(CommonModelSettings):

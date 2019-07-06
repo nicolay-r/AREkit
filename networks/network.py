@@ -2,46 +2,27 @@ class NeuralNetwork(object):
 
     @property
     def ParametersDictionary(self):
-        """
-        returns: dict
-            Dictionary that illustrates a parameter values by it's string keys
-        """
         return {}
 
     @property
     def Cost(self):
-        """
-        returns: Tensor
-            Error result
-        """
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     @property
     def Labels(self):
-        """
-        returns: Tensor
-            Result labels by passed batch through the neural network
-        """
-        raise Exception("Not implemented")
-
-    # TODO. rename like: get_variables_to_investigate
-    @property
-    def Variables(self):
-        """
-        return: list, list
-            parameter names and perameter values
-        """
-        return [], []
+        raise NotImplementedError()
 
     @property
     def Accuracy(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
+
+    # TODO. Return as dict
+    def get_parameters_to_investigate(self):
+        return [], []
 
     def compile(self, config, reset_graph):
-        """
-        compile tf graph
-        """
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def create_feed_dict(self, input, data_type):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
+

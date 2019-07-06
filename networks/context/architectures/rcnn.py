@@ -1,7 +1,7 @@
 import tensorflow as tf
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.architectures.rnn import RNN
-from core.networks.context.configurations import RCNNConfig
+from core.networks.context.configurations.rcnn import RCNNConfig
 import utils
 
 # Copyright (c) Joohong Lee
@@ -22,13 +22,9 @@ class RCNN(BaseContextNeuralNetwork):
         return self.Config.HiddenSize + \
                self._get_attention_vector_size(self.Config)
 
-    def __text_embedding_size(self):
-        return self.TermEmbeddingSize + \
-               2 * self.Config.SurroundingOneSideContextEmbeddingSize
-
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, RCNNConfig))
-        text_length = utils.length(self.InputX)
+        text_length = utils.calculate_sequence_length(self.InputX)
 
         with tf.name_scope("bi-rnn"):
             fw_cell = RNN.get_cell(self.Config.SurroundingOneSideContextEmbeddingSize, self.Config.CellType)
@@ -73,12 +69,24 @@ class RCNN(BaseContextNeuralNetwork):
     def init_hidden_states(self):
         assert(isinstance(self.Config, RCNNConfig))
 
-        self.__W1 = tf.Variable(tf.random_uniform([self.__text_embedding_size(), self.Config.HiddenSize], -1.0, 1.0), name="W1")
-        self.__b1 = tf.Variable(tf.constant(0.1, shape=[self.Config.HiddenSize]), name="b1")
+        self.__W1 = tf.Variable(initial_value=tf.random_uniform([self.__text_embedding_size(), self.Config.HiddenSize], -1.0, 1.0),
+                                name="W1")
+        self.__b1 = tf.Variable(initial_value=tf.constant(0.1, shape=[self.Config.HiddenSize]),
+                                name="b1")
 
-        self.__W2 = tf.get_variable("W2",
-                                    shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-                                    initializer=tf.contrib.layers.xavier_initializer())
-        self.__b2 = tf.get_variable("b2",
-                                    shape=[self.Config.ClassesCount],
-                                    initializer=tf.contrib.layers.xavier_initializer())
+        self.__W2 = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+                                    initializer=tf.contrib.layers.xavier_initializer(),
+                                    name="W2")
+        self.__b2 = tf.get_variable(shape=[self.Config.ClassesCount],
+                                    initializer=tf.contrib.layers.xavier_initializer(),
+                                    name="b2")
+
+    # TODO. To Dictionary
+    def get_parameters_to_investigate(self):
+        return ["W1", "b1", "W2", "b2"], \
+               [self.__W1,  self.__b1, self.__W2,  self.__b2]
+
+    def __text_embedding_size(self):
+        return self.TermEmbeddingSize + \
+               2 * self.Config.SurroundingOneSideContextEmbeddingSize
+

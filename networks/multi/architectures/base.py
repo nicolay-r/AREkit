@@ -1,11 +1,11 @@
 import tensorflow as tf
 
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.architectures import get_two_layer_logits
+from core.networks.context.architectures.utils import get_two_layer_logits
 from core.networks.context.training.sample import Sample
 from core.networks.context.training.data_type import DataType
-from core.networks.multi.configuration import MIMLRESettings
-from core.networks.multi import MultiInstanceBatch
+from core.networks.multi.configuration.base import MIMLRESettings
+from core.networks.multi.training.batch import MultiInstanceBatch
 from core.networks.network import NeuralNetwork
 
 

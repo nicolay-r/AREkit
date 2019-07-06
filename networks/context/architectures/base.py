@@ -119,7 +119,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     @property
     def ContextEmbeddingSize(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def init_embedding_hidden_states(self):
         self.__term_emb = tf.constant(value=self.__cfg.TermEmbeddingMatrix,
@@ -139,13 +139,13 @@ class BaseContextNeuralNetwork(NeuralNetwork):
                                          name="pos_emb")
 
     def init_hidden_states(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def init_context_embedding(self, embedded_terms):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def init_logits_unscaled(self, context_embedding):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def init_attention_embedding(self):
         assert(isinstance(self.__cfg.AttentionModel, Attention))

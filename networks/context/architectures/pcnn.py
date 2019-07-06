@@ -1,6 +1,6 @@
 #!/usr/bin/python
 import tensorflow as tf
-from core.networks.context.architectures import VanillaCNN
+from core.networks.context.architectures.cnn import VanillaCNN
 from core.networks.context.configurations.cnn import CNNConfig
 import utils
 
@@ -52,16 +52,21 @@ class PiecewiseCNN(VanillaCNN):
 
     def init_logits_unscaled(self, context_embedding):
         return utils.get_two_layer_logits(
-            context_embedding,
-            self.W, self.bias,
-            self.W2, self.bias2,
-            self.dropout_keep_prob,
+            g=context_embedding,
+            W1=self.W,
+            b1=self.b,
+            W2=self.W2,
+            b2=self.b2,
+            dropout_keep_prob=self.dropout_keep_prob,
             activations=[tf.tanh, tf.tanh, None])
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
         super(PiecewiseCNN, self).init_hidden_states()
-        self.W = tf.Variable(tf.random_normal([self.ContextEmbeddingSize, self.Config.HiddenSize]), dtype=tf.float32)
+
+        self.W = tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.HiddenSize]),
+                             dtype=tf.float32,
+                             name="W")
 
     @staticmethod
     def splitting(i, p_subj_ind, p_obj_ind, bwc_conv, channels_count, outputs):

@@ -3,13 +3,11 @@ Bi-directional Recurrent Neural Network.
 Modified version of Original Author: Aymeric Damien
 Project: https://github.com/aymericdamien/TensorFlow-Examples/
 """
+import utils
 import tensorflow as tf
 from tensorflow.contrib import rnn
-
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations import BiLSTMConfig
-
-import utils
+from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 
 
 class BiLSTM(BaseContextNeuralNetwork):
@@ -39,11 +37,22 @@ class BiLSTM(BaseContextNeuralNetwork):
         return outputs[-1]
 
     def init_logits_unscaled(self, context_embedding):
-        return utils.get_single_layer_logits(context_embedding, self.__W, self.__b, self.dropout_keep_prob)
+        return utils.get_single_layer_logits(
+            g=context_embedding,
+            W1=self.__W,
+            b1=self.__b,
+            dropout_keep_prob=self.dropout_keep_prob)
 
     def init_hidden_states(self):
-        self.__W = tf.Variable(tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]))
-        self.__b = tf.Variable(tf.random_normal([self.Config.ClassesCount]))
+        self.__W = tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]),
+                               name="W")
+        self.__b = tf.Variable(initial_value=tf.random_normal([self.Config.ClassesCount]),
+                               name="b")
+
+    # TODO. To Dictionary
+    def get_parameters_to_investigate(self):
+        return ["W", "b"], \
+               [self.__W, self.__b]
 
     @staticmethod
     def __get_cell(hidden_size):

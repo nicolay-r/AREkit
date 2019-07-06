@@ -1,40 +1,14 @@
 import tensorflow as tf
-import numpy as np
 
 
-def merge_with_embedding(embedding, vectors):
-    """
-    Merges embedding layer with additional features, where each feature
-    is a vector of an embedding_size.
-
-    embedding: tf object
-        words embedding of shape [batch_size, sequence_length, embedding_size]
-
-    vectors: list
-        list of vectors, where shape of each vector is [batch_size, sequence_length]
-    """
-    assert(isinstance(vectors, list))
-
-    for index, v in enumerate(vectors):
-        vectors[index] = tf.expand_dims(v, -1)
-
-    return tf.concat([embedding] + vectors, axis=-1)
-
-
-def to_one_hot(y_list, size):
-    y = np.array(y_list)
-    y_one_hot = np.zeros((y.size, size))
-    y_one_hot[np.arange(y.size), y] = 1
-    return y_one_hot
-
-
-def length(seq):
+def calculate_sequence_length(seq):
     relevant = tf.sign(tf.abs(seq))
     length = tf.reduce_sum(relevant, reduction_indices=1)
     length = tf.cast(length, tf.int32)
     return length
 
 
+# TODO. This shoud depends on lists of W and b params.
 def get_two_layer_logits(g, W1, b1, W2, b2, dropout_keep_prob, activations=None):
 
     if activations is None:
@@ -58,6 +32,7 @@ def get_two_layer_logits(g, W1, b1, W2, b2, dropout_keep_prob, activations=None)
     return r2, r2d
 
 
+# TODO. This should be removed as we already have method above
 def get_single_layer_logits(g, W1, b1, dropout_keep_prob, activations=None):
 
     if activations is None:
