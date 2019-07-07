@@ -16,7 +16,7 @@ class NeuralNetwork(object):
     def Accuracy(self):
         raise NotImplementedError()
 
-    # TODO. Return as dict
+    # TODO. Change with OrderedDict
     def get_parameters_to_investigate(self):
         return [], []
 
@@ -25,4 +25,3 @@ class NeuralNetwork(object):
 
     def create_feed_dict(self, input, data_type):
         raise NotImplementedError()
-

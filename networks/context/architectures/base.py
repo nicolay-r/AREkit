@@ -1,5 +1,6 @@
 import tensorflow as tf
-from core.networks.context.architectures.attention.base import Attention
+
+from core.networks.attention.architectures.base import Attention
 from core.networks.context.configurations.base import CommonModelSettings
 from core.networks.context.training.batch import MiniBatch
 from core.networks.context.training.sample import Sample
@@ -51,6 +52,31 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     @property
     def InputPSubjInd(self):
         return self.__p_subj_ind
+
+    @property
+    def Labels(self):
+        return self.__labels
+
+    @property
+    def Accuracy(self):
+        return self.__accuracy
+
+    @property
+    def Cost(self):
+        return self.__cost
+
+    @property
+    def TermEmbeddingSize(self):
+        size = self.__cfg.TermEmbeddingShape[1] + 2 * self.__cfg.DistanceEmbeddingSize + 1
+
+        if self.__cfg.UsePOSEmbedding:
+            size += self.__cfg.PosEmbeddingSize
+
+        return size
+
+    @property
+    def ContextEmbeddingSize(self):
+        raise NotImplementedError()
 
     def set_input_x(self, x):
         self.__x = x
@@ -106,19 +132,27 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         # Get output for each sample
         output = tf.nn.softmax(logits_unscaled)
         # Create labels only for whole bags
-        self.__labels = tf.cast(tf.argmax(self.to_mean_of_bag(output), axis=1), tf.int32)
+        self.__labels = tf.cast(tf.argmax(self.__to_mean_of_bag(output), axis=1), tf.int32)
 
         with tf.name_scope("cost"):
             self.__weights, self.__cost = self.init_weighted_cost(
-                logits_unscaled_dropout=self.to_mean_of_bag(logits_unscaled_dropped),
+                logits_unscaled_dropout=self.__to_mean_of_bag(logits_unscaled_dropped),
                 true_labels=self.__y,
                 config=config)
 
         with tf.name_scope("accuracy"):
             self.__accuracy = self.init_accuracy(labels=self.Labels, true_labels=self.__y)
 
-    @property
-    def ContextEmbeddingSize(self):
+    def init_hidden_states(self):
+        raise NotImplementedError()
+
+    def init_context_embedding(self, embedded_terms):
+        raise NotImplementedError()
+
+    def init_logits_unscaled(self, context_embedding):
+        raise NotImplementedError()
+
+    def get_parameters_to_investigate(self):
         raise NotImplementedError()
 
     def init_embedding_hidden_states(self):
@@ -137,15 +171,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
                                          shape=[len(self.__cfg.PosTagger.pos_names), self.__cfg.PosEmbeddingSize],
                                          trainable=True,
                                          name="pos_emb")
-
-    def init_hidden_states(self):
-        raise NotImplementedError()
-
-    def init_context_embedding(self, embedded_terms):
-        raise NotImplementedError()
-
-    def init_logits_unscaled(self, context_embedding):
-        raise NotImplementedError()
 
     def init_attention_embedding(self):
         assert(isinstance(self.__cfg.AttentionModel, Attention))
@@ -191,15 +216,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def _get_attention_vector_size(cfg):
         return 0 if not cfg.UseAttention else cfg.AttentionModel.AttentionEmbeddingSize
 
-    @property
-    def TermEmbeddingSize(self):
-        size = self.__cfg.TermEmbeddingShape[1] + 2 * self.__cfg.DistanceEmbeddingSize + 1
-
-        if self.__cfg.UsePOSEmbedding:
-            size += self.__cfg.PosEmbeddingSize
-
-        return size
-
     def init_embedded_terms(self):
 
         embedded_terms = tf.concat([tf.nn.embedding_lookup(self.__term_emb, self.__x),
@@ -239,10 +255,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         return weights, cost
 
-    def to_mean_of_bag(self, logits):
-        loss = tf.reshape(logits, [self.__cfg.BagsPerMinibatch, self.__cfg.BagSize, self.__cfg.ClassesCount])
-        return tf.reduce_mean(loss, axis=1)
-
     def create_feed_dict(self, input, data_type):
 
         feed_dict = {
@@ -251,7 +263,9 @@ class BaseContextNeuralNetwork(NeuralNetwork):
             self.__dist_from_subj: input[Sample.I_SUBJ_DISTS],
             self.__dist_from_obj: input[Sample.I_OBJ_DISTS],
             self.__term_type: input[Sample.I_TERM_TYPE],
+            # TODO. Underscore
             self.dropout_keep_prob: self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
+            # TODO. Underscore
             self.embedding_dropout_keep_prob: self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0,
             self.__p_subj_ind: input[Sample.I_SUBJ_IND],
             self.__p_obj_ind: input[Sample.I_OBJ_IND]
@@ -262,14 +276,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         return feed_dict
 
-    @property
-    def Labels(self):
-        return self.__labels
-
-    @property
-    def Accuracy(self):
-        return self.__accuracy
-
-    @property
-    def Cost(self):
-        return self.__cost
+    def __to_mean_of_bag(self, logits):
+        loss = tf.reshape(logits, [self.__cfg.BagsPerMinibatch, self.__cfg.BagSize, self.__cfg.ClassesCount])
+        return tf.reduce_mean(loss, axis=1)

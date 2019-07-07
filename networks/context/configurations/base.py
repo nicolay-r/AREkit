@@ -1,10 +1,11 @@
 import tensorflow as tf
+
+from core.networks.attention.architectures.base import Attention
 from core.processing.lemmatization.mystem import MystemWrapper
 from core.processing.pos.mystem_wrap import POSMystemWrapper
 from core.source.embeddings.base import Embedding
 from core.source.embeddings.tokens import TokenEmbedding
-from core.networks.context.architectures.attention.base import Attention
-from core.networks.context.configurations.attention.base import AttentionConfig
+from core.networks.attention.configurations.base import AttentionConfig
 
 
 class LabelCalculationMode:
@@ -12,6 +13,7 @@ class LabelCalculationMode:
     AVERAGE = u'average'
 
 
+# TODO. Rename as DefaultConfig
 class CommonModelSettings(object):
 
     GPUMemoryFraction = 0.25

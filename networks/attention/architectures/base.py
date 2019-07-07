@@ -1,8 +1,10 @@
 import tensorflow as tf
 from core.networks.context.architectures.utils import get_two_layer_logits
-from core.networks.context.configurations.attention.base import AttentionConfig
+from core.networks.attention.configurations.base import AttentionConfig
 
 
+# TODO. Nested from Base.
+# TODO. Rename this Attention.
 class Attention(object):
 
     def __init__(self, cfg, batch_size, terms_per_context, term_embedding_size):
