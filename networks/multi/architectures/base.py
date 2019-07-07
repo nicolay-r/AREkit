@@ -28,6 +28,7 @@ class MIMLRE(NeuralNetwork):
         self.__cost = None
         self.__accuracy = None
 
+        # TODO. Use dictionary for input parameters.
         self.__x = None
         self.__y = None
         self.__dist_from_subj = None
@@ -39,9 +40,27 @@ class MIMLRE(NeuralNetwork):
         self.__dropout_keep_prob = None
         self.__embedding_dropout_keep_prob = None
 
+    # region properties
+
     @property
     def ContextsPerOpinion(self):
         return self.cfg.BagSize
+
+    @property
+    def Labels(self):
+        return self.__labels
+
+    @property
+    def Accuracy(self):
+        return self.__accuracy
+
+    @property
+    def Cost(self):
+        return self.__cost
+
+    # endregion
+
+    # region body
 
     def compile(self, config, reset_graph):
         assert(isinstance(config, MIMLRESettings))
@@ -118,6 +137,8 @@ class MIMLRE(NeuralNetwork):
                     """
                     return tf.squeeze(tf.gather(tensor, [i], axis=1), [1])
 
+                # TODO. Store keys in sample!
+                # TODO. store variables in dictionary.
                 self.context_network.set_input_x(__to_ctx(self.__x))
                 self.context_network.set_input_dist_from_subj(__to_ctx(self.__dist_from_subj))
                 self.context_network.set_input_dist_from_obj(__to_ctx(self.__dist_from_obj))
@@ -183,15 +204,9 @@ class MIMLRE(NeuralNetwork):
             return self.__contexts_max_pooling(context_outputs=sliced_contexts,
                                                contexts_per_opinion=self.ContextsPerOpinion)  # [batches, max_pooling]
 
-    @staticmethod
-    def __get_context_embedding_size(opinion):
-        return opinion.get_shape().as_list()[-1]
+    # endregion
 
-    def init_hidden_states(self):
-        self.__W1 = tf.Variable(tf.random_normal([self.context_network.ContextEmbeddingSize, self.cfg.HiddenSize]), dtype=tf.float32)
-        self.__W2 = tf.Variable(tf.random_normal([self.cfg.HiddenSize, self.cfg.ClassesCount]), dtype=tf.float32)
-        self.__b1 = tf.Variable(tf.random_normal([self.cfg.HiddenSize]), dtype=tf.float32)
-        self.__b2 = tf.Variable(tf.random_normal([self.cfg.ClassesCount]), dtype=tf.float32)
+    # region static methods
 
     @staticmethod
     def __calculate_opinion_lens(x):
@@ -211,6 +226,12 @@ class MIMLRE(NeuralNetwork):
             padding='VALID',
             data_format="NHWC")
         return tf.squeeze(context_outputs)                       # [batches, max_pooling]
+
+    @staticmethod
+    def __get_context_embedding_size(opinion):
+        return opinion.get_shape().as_list()[-1]
+
+    # endregion
 
     def init_input(self):
         """
@@ -233,6 +254,12 @@ class MIMLRE(NeuralNetwork):
         self.__dropout_keep_prob = tf.placeholder(tf.float32)
         self.__embedding_dropout_keep_prob = tf.placeholder(tf.float32)
 
+    def init_hidden_states(self):
+        self.__W1 = tf.Variable(tf.random_normal([self.context_network.ContextEmbeddingSize, self.cfg.HiddenSize]), dtype=tf.float32)
+        self.__W2 = tf.Variable(tf.random_normal([self.cfg.HiddenSize, self.cfg.ClassesCount]), dtype=tf.float32)
+        self.__b1 = tf.Variable(tf.random_normal([self.cfg.HiddenSize]), dtype=tf.float32)
+        self.__b2 = tf.Variable(tf.random_normal([self.cfg.ClassesCount]), dtype=tf.float32)
+
     def create_feed_dict(self, input, data_type):
 
         feed_dict = {
@@ -251,15 +278,3 @@ class MIMLRE(NeuralNetwork):
             feed_dict[self.__pos] = input[Sample.I_POS_INDS]
 
         return feed_dict
-
-    @property
-    def Labels(self):
-        return self.__labels
-
-    @property
-    def Accuracy(self):
-        return self.__accuracy
-
-    @property
-    def Cost(self):
-        return self.__cost

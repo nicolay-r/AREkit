@@ -17,6 +17,7 @@ class Sample(object):
     generates an input info in an appropriate way
     """
 
+    # TODO. These samples could be used for network inputs
     I_X_INDS = "x_indices"
     I_SUBJ_IND = "subj_inds"
     I_OBJ_IND = "obj_inds"

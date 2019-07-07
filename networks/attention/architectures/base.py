@@ -87,6 +87,7 @@ class Attention(object):
                 weights, _ = get_two_layer_logits(merged,
                                                   W1=self.__W_we, b1=self.__b_we,
                                                   W2=self.__W_a, b2=self.__b_a,
+                                                  # TODO. Dropout is not used
                                                   dropout_keep_prob=self.__cfg.DropoutKeepProb,
                                                   activations=[None,
                                                                lambda tensor: tf.tanh(tensor),
