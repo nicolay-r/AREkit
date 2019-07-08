@@ -8,6 +8,7 @@ class VanillaCNN(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(VanillaCNN, self).__init__()
+        # TODO: Use dict for hidden paramters
         self.W = None
         self.b = None
         self.W2 = None
@@ -50,6 +51,8 @@ class VanillaCNN(BaseContextNeuralNetwork):
         g = tf.reshape(bc_mpool, [self.Config.BatchSize, self.Config.FiltersCount])
 
         if self.Config.UseAttention:
+            # TODO. in Nested class, as it is specific att application.
+            # TODO. Maybe as separated model (ATT-CNN)?
             g = tf.concat([g, self.init_attention_embedding()], axis=-1)
 
         return tf.concat(g, axis=-1)

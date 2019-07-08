@@ -9,15 +9,20 @@ from core.networks.multi.training.batch import MultiInstanceBatch
 from core.networks.network import NeuralNetwork
 
 
+# todo. rename multicontextneuralnetwork.
+# todo. Mimlre as nested in mp.py
 class MIMLRE(NeuralNetwork):
 
     _context_network_scope_name = "context_network"
 
     def __init__(self, context_network):
         assert(isinstance(context_network, BaseContextNeuralNetwork))
+        # TODO. Should be private.
         self.context_network = context_network
         self.cfg = None
 
+        # TODO. In nested,
+        # TODO. As dict
         self.__W1 = None
         self.__W2 = None
         self.__b1 = None
@@ -74,6 +79,11 @@ class MIMLRE(NeuralNetwork):
         self.init_input()
         self.init_hidden_states()
 
+        # TODO. This should be in NotImplemented and separated method.
+        # TODO. Move this into nested class as specific transformation of embedded sentences. (in nested class).
+        # TODO. def embedded_contexts_encoder()
+        # TODO. def init_hidden_states()
+        # -----
         max_pooling = self.init_body()
         logits_unscaled, logits_unscaled_dropped = get_two_layer_logits(
             max_pooling,
@@ -81,6 +91,7 @@ class MIMLRE(NeuralNetwork):
             self.__W2, self.__b2,
             self.__dropout_keep_prob,
             activations=[tf.tanh, tf.tanh, None])
+        # -----
         output = tf.nn.softmax(logits_unscaled)
         self.__labels = tf.cast(tf.argmax(output, axis=1), tf.int32)
 
@@ -241,6 +252,7 @@ class MIMLRE(NeuralNetwork):
         contexts_count = self.cfg.BagSize
         batch_size = self.cfg.BagsPerMinibatch
 
+        # TODO. Use dictionary for input parameters.
         self.__x = tf.placeholder(dtype=tf.int32, shape=[batch_size, contexts_count, self.cfg.TermsPerContext])
         self.__y = tf.placeholder(dtype=tf.int32, shape=[batch_size])
 
@@ -254,6 +266,7 @@ class MIMLRE(NeuralNetwork):
         self.__dropout_keep_prob = tf.placeholder(tf.float32)
         self.__embedding_dropout_keep_prob = tf.placeholder(tf.float32)
 
+    # TODO. In nested
     def init_hidden_states(self):
         self.__W1 = tf.Variable(tf.random_normal([self.context_network.ContextEmbeddingSize, self.cfg.HiddenSize]), dtype=tf.float32)
         self.__W2 = tf.Variable(tf.random_normal([self.cfg.HiddenSize, self.cfg.ClassesCount]), dtype=tf.float32)
@@ -262,6 +275,7 @@ class MIMLRE(NeuralNetwork):
 
     def create_feed_dict(self, input, data_type):
 
+        # TODO. Access to dict for input parameters.
         feed_dict = {
             self.__x: input[Sample.I_X_INDS],
             self.__y: input[MultiInstanceBatch.I_LABELS],

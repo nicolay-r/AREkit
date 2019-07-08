@@ -10,6 +10,8 @@ from core.common.text_opinions.text_opinion import TextOpinion
 from core.networks.context.configurations.base import CommonModelSettings
 
 
+# TODO. Rename as InputSample.
+# TODO. Move at ../input.py
 class Sample(object):
     """
     Base sample which is a part of a Bag

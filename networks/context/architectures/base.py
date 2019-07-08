@@ -8,6 +8,7 @@ from core.networks.context.training.data_type import DataType
 from core.networks.network import NeuralNetwork
 
 
+# TODO. Rename SingleContextNeuralNetwork
 class BaseContextNeuralNetwork(NeuralNetwork):
 
     __attention_var_scope_name = 'attention-model'
@@ -180,6 +181,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def get_parameters_to_investigate(self):
         raise NotImplementedError()
 
+    # TODO. Maybe in nested architecture that supports attention?
     def init_attention_embedding(self):
         assert(isinstance(self.__cfg.AttentionModel, Attention))
         self.__cfg.AttentionModel.set_x(self.__x)

@@ -46,6 +46,7 @@ class PiecewiseCNN(VanillaCNN):
         g = tf.reshape(bcw_mpool, [self.Config.BatchSize, 3 * self.Config.FiltersCount])
 
         if self.Config.UseAttention:
+            # TODO. in Nested class, as it is specific att application.
             g = tf.concat([g, self.init_attention_embedding()], axis=1)
 
         return tf.concat(g, axis=-1)

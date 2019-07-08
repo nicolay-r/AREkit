@@ -12,6 +12,7 @@ class RNN(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(RNN, self).__init__()
+        # TODO: Use dict for hidden paramters
         self.__W = None
         self.__b = None
 

@@ -14,6 +14,7 @@ class BiLSTM(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(BiLSTM, self).__init__()
+        # TODO: Use dict for hidden paramters
         self.__W = None
         self.__b = None
 

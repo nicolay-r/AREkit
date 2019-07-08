@@ -12,6 +12,7 @@ class RCNN(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(RCNN, self).__init__()
+        # TODO. Use dict for hidden parameters
         self.__W1 = None
         self.__b1 = None
         self.__W2 = None
@@ -52,6 +53,7 @@ class RCNN(BaseContextNeuralNetwork):
             y3 = tf.reduce_max(y2, axis=1)
 
         if self.Config.UseAttention:
+            # TODO. in Nested class
             y3 = tf.concat([y3, self.init_attention_embedding()], axis=-1)
 
         return y3
