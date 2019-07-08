@@ -17,6 +17,7 @@ class NeuralNetwork(object):
         raise NotImplementedError()
 
     # TODO. Change with OrderedDict
+    # TODO. Rename as iter_hidden_parameters
     def get_parameters_to_investigate(self):
         return [], []
 
