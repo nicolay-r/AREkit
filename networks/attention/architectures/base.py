@@ -15,9 +15,11 @@ class Attention(object):
         self.__terms_per_context = terms_per_context
         self.__term_embedding_size = term_embedding_size
 
+        # TODO. To input
         self.__x = None
         self.__entities = None
 
+        # TODO. To dict
         self.__W_we = None
         self.__b_we = None
         self.__W_a = None
