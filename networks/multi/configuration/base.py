@@ -1,6 +1,7 @@
 from core.networks.context.configurations.base import DefaultNetworkConfig, LabelCalculationMode
 
 
+# TODO. Rename as BaseMultiInstanceConfig
 class MIMLREConfig(DefaultNetworkConfig):
 
     __hidden_size = 300

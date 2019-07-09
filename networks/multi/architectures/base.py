@@ -1,7 +1,6 @@
 import tensorflow as tf
 
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.architectures.utils import get_two_layer_logits
 from core.networks.context.sample import InputSample
 from core.networks.context.training.data_type import DataType
 from core.networks.multi.configuration.base import MIMLREConfig
@@ -9,24 +8,15 @@ from core.networks.multi.training.batch import MultiInstanceBatch
 from core.networks.network import NeuralNetwork
 
 
-# todo. rename multicontextneuralnetwork.
-# todo. Mimlre as nested in mp.py
-class MIMLRE(NeuralNetwork):
+class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
 
     _context_network_scope_name = "context_network"
 
     def __init__(self, context_network):
         assert(isinstance(context_network, BaseContextNeuralNetwork))
-        # TODO. Should be private.
-        self.context_network = context_network
-        self.cfg = None
 
-        # TODO. In nested,
-        # TODO. As dict
-        self.__W1 = None
-        self.__W2 = None
-        self.__b1 = None
-        self.__b2 = None
+        self.__context_network = context_network
+        self.__cfg = None
 
         self.__labels = None
         self.__weights = None
@@ -37,13 +27,13 @@ class MIMLRE(NeuralNetwork):
 
         self.__y = None
         self.__dropout_keep_prob = None
-        self.__embedding_dropout_keep_prob = None
+        self.__dropout_emb_keep_prob = None
 
     # region properties
 
     @property
     def ContextsPerOpinion(self):
-        return self.cfg.BagSize
+        return self.__cfg.BagSize
 
     @property
     def Labels(self):
@@ -64,28 +54,20 @@ class MIMLRE(NeuralNetwork):
     def compile(self, config, reset_graph):
         assert(isinstance(config, MIMLREConfig))
 
-        self.cfg = config
+        self.__cfg = config
         tf.reset_default_graph()
 
         with tf.variable_scope("ctx-network"):
-            self.context_network.compile(config=config.ContextConfig, reset_graph=False)
+            self.__context_network.compile(config=config.ContextConfig, reset_graph=False)
 
         self.init_input()
         self.init_hidden_states()
 
-        # TODO. This should be in NotImplemented and separated method.
-        # TODO. Move this into nested class as specific transformation of embedded sentences. (in nested class).
-        # TODO. def embedded_contexts_encoder()
-        # TODO. def init_hidden_states()
-        # -----
-        max_pooling = self.init_body()
-        logits_unscaled, logits_unscaled_dropped = get_two_layer_logits(
-            max_pooling,
-            self.__W1, self.__b1,
-            self.__W2, self.__b2,
-            self.__dropout_keep_prob,
-            activations=[tf.tanh, tf.tanh, None])
-        # -----
+        context_outputs = self.init_body()
+        max_pooling = self.init_multiinstance_embedding(context_outputs)
+        logits_unscaled, logits_unscaled_dropped = self.init_logits_unscaled(
+            encoded_contexts=max_pooling)
+
         output = tf.nn.softmax(logits_unscaled)
         self.__labels = tf.cast(tf.argmax(output, axis=1), tf.int32)
 
@@ -99,7 +81,10 @@ class MIMLRE(NeuralNetwork):
             self.__accuracy = BaseContextNeuralNetwork.init_accuracy(labels=self.__labels, true_labels=self.__y)
 
     def init_body(self):
-        assert(isinstance(self.cfg, MIMLREConfig))
+        """
+        return: [batches, sentences, embedding]
+        """
+        assert(isinstance(self.__cfg, MIMLREConfig))
 
         with tf.name_scope("mi-body"):
 
@@ -111,7 +96,7 @@ class MIMLRE(NeuralNetwork):
                 opinion = tf.squeeze(opinion, [0])                      # [sentences, embedding]
                 opinion_len = tf.gather(opinion_lens, [i], axis=0)      # [len]
 
-                opinion = tf.reshape(opinion, [self.ContextsPerOpinion, self.context_network.ContextEmbeddingSize])
+                opinion = tf.reshape(opinion, [self.ContextsPerOpinion, self.__context_network.ContextEmbeddingSize])
 
                 slice_size = tf.pad(opinion_len, [[0, 1]], constant_values=self.__get_context_embedding_size(opinion))
                 slice_size = tf.cast(slice_size, dtype=tf.int32)
@@ -143,14 +128,14 @@ class MIMLRE(NeuralNetwork):
                     return tf.squeeze(tf.gather(tensor, [i], axis=1), [1])
 
                 for param, value in self.__input.iteritems():
-                    self.context_network.set_input_parameter(param=param,
-                                                             value=__to_ctx(value))
+                    self.__context_network.set_input_parameter(param=param,
+                                                               value=__to_ctx(value))
 
-                self.context_network.set_input_dropout_keep_prob(self.__dropout_keep_prob)
-                self.context_network.set_input_embedding_dropout_keep_prob(self.__embedding_dropout_keep_prob)
+                self.__context_network.set_input_dropout_keep_prob(self.__dropout_keep_prob)
+                self.__context_network.set_input_embedding_dropout_keep_prob(self.__dropout_emb_keep_prob)
 
-                embedded_terms = self.context_network.init_embedded_input()
-                context_embedding = self.context_network.init_context_embedding(embedded_terms)
+                embedded_terms = self.__context_network.init_embedded_input()
+                context_embedding = self.__context_network.init_context_embedding(embedded_terms)
 
                 return i + 1, context_embeddings.write(i, context_embedding)
 
@@ -180,12 +165,12 @@ class MIMLRE(NeuralNetwork):
                 context_iter = tf.TensorArray(
                     dtype=tf.float32,
                     name="context_iter",
-                    size=self.cfg.BatchSize,
+                    size=self.__cfg.BatchSize,
                     infer_shape=False,
                     dynamic_size=True)
 
                 _, _, _, output = tf.while_loop(
-                    lambda i, *_: tf.less(i, self.cfg.BatchSize),
+                    lambda i, *_: tf.less(i, self.__cfg.BatchSize),
                     handler,
                     (0, x, opinion_lens, context_iter))
 
@@ -201,8 +186,7 @@ class MIMLRE(NeuralNetwork):
                 handler=__process_opinion,
                 opinion_lens=self.__calculate_opinion_lens(self.__input[InputSample.I_X_INDS]))
 
-            return self.__contexts_max_pooling(context_outputs=sliced_contexts,
-                                               contexts_per_opinion=self.ContextsPerOpinion)  # [batches, max_pooling]
+            return sliced_contexts
 
     # endregion
 
@@ -217,17 +201,6 @@ class MIMLRE(NeuralNetwork):
         return length
 
     @staticmethod
-    def __contexts_max_pooling(context_outputs, contexts_per_opinion):
-        context_outputs = tf.expand_dims(context_outputs, 0)     # [1, batches, sentences, embedding]
-        context_outputs = tf.nn.max_pool(
-            context_outputs,
-            ksize=[1, 1, contexts_per_opinion, 1],
-            strides=[1, 1, contexts_per_opinion, 1],
-            padding='VALID',
-            data_format="NHWC")
-        return tf.squeeze(context_outputs)                       # [batches, max_pooling]
-
-    @staticmethod
     def __get_context_embedding_size(opinion):
         return opinion.get_shape().as_list()[-1]
 
@@ -238,34 +211,34 @@ class MIMLRE(NeuralNetwork):
         These parameters actually are the same as in ctx model, but the shape has
         contexts count -- extra parameter.
         """
-        contexts_count = self.cfg.BagSize
-        batch_size = self.cfg.BagsPerMinibatch
+        contexts_count = self.__cfg.BagSize
+        batch_size = self.__cfg.BagsPerMinibatch
 
         prefix = 'mi_'
 
         self.__input[InputSample.I_X_INDS] = tf.placeholder(
             dtype=tf.int32,
-            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_X_INDS)
 
         self.__input[InputSample.I_SUBJ_DISTS] = tf.placeholder(
             dtype=tf.int32,
-            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_SUBJ_DISTS)
 
         self.__input[InputSample.I_OBJ_DISTS] = tf.placeholder(
             dtype=tf.int32,
-            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_OBJ_DISTS)
 
         self.__input[InputSample.I_TERM_TYPE] = tf.placeholder(
             dtype=tf.float32,
-            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_TERM_TYPE)
 
         self.__input[InputSample.I_POS_INDS] = tf.placeholder(
             dtype=tf.int32,
-            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_POS_INDS)
 
         self.__input[InputSample.I_SUBJ_IND] = tf.placeholder(
@@ -280,14 +253,16 @@ class MIMLRE(NeuralNetwork):
 
         self.__y = tf.placeholder(dtype=tf.int32, shape=[batch_size])
         self.__dropout_keep_prob = tf.placeholder(tf.float32)
-        self.__embedding_dropout_keep_prob = tf.placeholder(tf.float32)
+        self.__dropout_emb_keep_prob = tf.placeholder(tf.float32)
 
-    # TODO. In nested
     def init_hidden_states(self):
-        self.__W1 = tf.Variable(tf.random_normal([self.context_network.ContextEmbeddingSize, self.cfg.HiddenSize]), dtype=tf.float32)
-        self.__W2 = tf.Variable(tf.random_normal([self.cfg.HiddenSize, self.cfg.ClassesCount]), dtype=tf.float32)
-        self.__b1 = tf.Variable(tf.random_normal([self.cfg.HiddenSize]), dtype=tf.float32)
-        self.__b2 = tf.Variable(tf.random_normal([self.cfg.ClassesCount]), dtype=tf.float32)
+        raise NotImplementedError()
+
+    def init_logits_unscaled(self, encoded_contexts):
+        raise NotImplementedError()
+
+    def init_multiinstance_embedding(self, context_outputs):
+        raise NotImplementedError()
 
     def create_feed_dict(self, input, data_type):
         assert(isinstance(input, dict))
@@ -298,7 +273,7 @@ class MIMLRE(NeuralNetwork):
             feed_dict[self.__input[param]] = input[param]
 
         feed_dict[self.__y] = input[MultiInstanceBatch.I_LABELS],
-        feed_dict[self.__dropout_keep_prob] = self.cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
-        feed_dict[self.__embedding_dropout_keep_prob] = self.cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0
+        feed_dict[self.__dropout_keep_prob] = self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
+        feed_dict[self.__dropout_emb_keep_prob] = self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0
 
         return feed_dict
