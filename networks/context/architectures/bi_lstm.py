@@ -51,7 +51,7 @@ class BiLSTM(BaseContextNeuralNetwork):
                                name="b")
 
     # TODO. To Dictionary
-    def get_parameters_to_investigate(self):
+    def hidden_parameters(self):
         return ["W", "b"], \
                [self.__W, self.__b]
 

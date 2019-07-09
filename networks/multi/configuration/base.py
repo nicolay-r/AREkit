@@ -1,8 +1,7 @@
 from core.networks.context.configurations.base import DefaultNetworkConfig, LabelCalculationMode
 
 
-# TODO. Rename as BaseMultiInstanceConfig
-class MIMLREConfig(DefaultNetworkConfig):
+class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     __hidden_size = 300
     __contexts_per_opinion = 5
@@ -10,7 +9,7 @@ class MIMLREConfig(DefaultNetworkConfig):
 
     def __init__(self, context_config):
         assert(isinstance(context_config, DefaultNetworkConfig))
-        super(MIMLREConfig, self).__init__()
+        super(BaseMultiInstanceConfig, self).__init__()
         self.__context_config = context_config
         self.__context_parameters_fix()
 
@@ -18,39 +17,39 @@ class MIMLREConfig(DefaultNetworkConfig):
         self.__contexts_per_opinion = value
 
     def set_term_embedding(self, embedding_matrix):
-        super(MIMLREConfig, self).set_term_embedding(embedding_matrix)
+        super(BaseMultiInstanceConfig, self).set_term_embedding(embedding_matrix)
         self.__context_config.set_term_embedding(embedding_matrix)
 
     def set_missed_words_embedding(self, embedding):
-        super(MIMLREConfig, self).set_missed_words_embedding(embedding)
+        super(BaseMultiInstanceConfig, self).set_missed_words_embedding(embedding)
         self.__context_config.set_missed_words_embedding(embedding)
 
     def set_class_weights(self, class_weights):
-        super(MIMLREConfig, self).set_class_weights(class_weights)
+        super(BaseMultiInstanceConfig, self).set_class_weights(class_weights)
         self.__context_config.set_class_weights(class_weights)
 
     def modify_bags_per_minibatch(self, value):
-        super(MIMLREConfig, self).modify_bags_per_minibatch(value)
+        super(BaseMultiInstanceConfig, self).modify_bags_per_minibatch(value)
         self.__context_parameters_fix()
 
     def modify_classes_count(self, value):
-        super(MIMLREConfig, self).modify_classes_count(value)
+        super(BaseMultiInstanceConfig, self).modify_classes_count(value)
         self.__context_config.modify_classes_count(value)
 
     def modify_dropout_keep_prob(self, value):
-        super(MIMLREConfig, self).modify_dropout_keep_prob(value)
+        super(BaseMultiInstanceConfig, self).modify_dropout_keep_prob(value)
         self.__context_config.modify_dropout_keep_prob(value)
 
     def modify_learning_rate(self, value):
-        super(MIMLREConfig, self).modify_learning_rate(value)
+        super(BaseMultiInstanceConfig, self).modify_learning_rate(value)
         self.__context_config.modify_learning_rate(value)
 
     def modify_use_class_weights(self, value):
-        super(MIMLREConfig, self).modify_use_class_weights(value)
+        super(BaseMultiInstanceConfig, self).modify_use_class_weights(value)
         self.__context_config.modify_use_class_weights(value)
 
     def modify_use_attention(self, value):
-        super(MIMLREConfig, self).modify_use_attention(value)
+        super(BaseMultiInstanceConfig, self).modify_use_attention(value)
         self.__context_config.modify_use_attention(value)
 
     def __context_parameters_fix(self):
@@ -71,7 +70,7 @@ class MIMLREConfig(DefaultNetworkConfig):
 
     @property
     def BagsPerMinibatch(self):
-        return super(MIMLREConfig, self).BagsPerMinibatch
+        return super(BaseMultiInstanceConfig, self).BagsPerMinibatch
 
     @property
     def BatchSize(self):

@@ -86,7 +86,7 @@ class VanillaCNN(BaseContextNeuralNetwork):
                                        name="C")
 
     # TODO. To Dictionary
-    def get_parameters_to_investigate(self):
+    def hidden_parameters(self):
         return ["W", "b", "W2", "b2", "C"], \
                [self.W, self.b, self.W2, self.b2, self.conv_filter]
 

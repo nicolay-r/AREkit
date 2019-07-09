@@ -84,7 +84,7 @@ class RCNN(BaseContextNeuralNetwork):
                                     name="b2")
 
     # TODO. To Dictionary
-    def get_parameters_to_investigate(self):
+    def hidden_parameters(self):
         return ["W1", "b1", "W2", "b2"], \
                [self.__W1,  self.__b1, self.__W2,  self.__b2]
 

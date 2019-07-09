@@ -3,7 +3,7 @@ import tensorflow as tf
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.sample import InputSample
 from core.networks.context.training.data_type import DataType
-from core.networks.multi.configuration.base import MIMLREConfig
+from core.networks.multi.configuration.base import BaseMultiInstanceConfig
 from core.networks.multi.training.batch import MultiInstanceBatch
 from core.networks.network import NeuralNetwork
 
@@ -52,7 +52,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
     # region body
 
     def compile(self, config, reset_graph):
-        assert(isinstance(config, MIMLREConfig))
+        assert(isinstance(config, BaseMultiInstanceConfig))
 
         self.__cfg = config
         tf.reset_default_graph()
@@ -84,7 +84,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         """
         return: [batches, sentences, embedding]
         """
-        assert(isinstance(self.__cfg, MIMLREConfig))
+        assert(isinstance(self.__cfg, BaseMultiInstanceConfig))
 
         with tf.name_scope("mi-body"):
 

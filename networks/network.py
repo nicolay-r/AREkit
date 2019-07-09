@@ -16,10 +16,8 @@ class NeuralNetwork(object):
     def Accuracy(self):
         raise NotImplementedError()
 
-    # TODO. Change with OrderedDict
-    # TODO. Rename as iter_hidden_parameters
-    def get_parameters_to_investigate(self):
-        return [], []
+    def hidden_parameters(self):
+        raise NotImplementedError()
 
     def compile(self, config, reset_graph):
         raise NotImplementedError()

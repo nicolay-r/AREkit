@@ -147,9 +147,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def init_logits_unscaled(self, context_embedding):
         raise NotImplementedError()
 
-    def get_parameters_to_investigate(self):
-        raise NotImplementedError()
-
     # TODO. Maybe in nested architecture that supports attention?
     def init_attention_embedding(self):
         assert(isinstance(self.__cfg.AttentionModel, Attention))
@@ -252,11 +249,13 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def _get_attention_vector_size(cfg):
         return 0 if not cfg.UseAttention else cfg.AttentionModel.AttentionEmbeddingSize
 
+    # TODO. To utils.
     @staticmethod
     def init_accuracy(labels, true_labels):
         correct = tf.equal(labels, true_labels)
         return tf.reduce_mean(tf.cast(correct, tf.float32))
 
+    # TODO. To utils
     @staticmethod
     def init_weighted_cost(logits_unscaled_dropout, true_labels, config):
         """

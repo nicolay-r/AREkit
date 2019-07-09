@@ -203,7 +203,7 @@ class IAN(BaseContextNeuralNetwork):
                                              b1=self.__biases['softmax'],
                                              dropout_keep_prob=self.DropoutKeepProb)
 
-    def get_parameters_to_investigate(self):
+    def hidden_parameters(self):
         assert(isinstance(self.__weights, dict))
         assert(isinstance(self.__biases, dict))
 

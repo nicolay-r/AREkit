@@ -52,7 +52,7 @@ class RNN(BaseContextNeuralNetwork):
         self.__b = tf.Variable(initial_value=tf.constant(0.1, shape=[self.Config.ClassesCount]),
                                name="b")
 
-    def get_parameters_to_investigate(self):
+    def hidden_parameters(self):
         return ["W", "b"], \
                [self.__W, self.__b]
 
