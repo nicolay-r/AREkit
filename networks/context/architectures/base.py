@@ -36,6 +36,11 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__pos = None
         self.__p_subj_ind = None
         self.__p_obj_ind = None
+
+        self.__hidden = {}
+        for input_param in InputSample.iter_parameters():
+            self.__hidden[input_param] = None
+
         self.__dropout_keep_prob = None
         self.__embedding_dropout_keep_prob = None
 

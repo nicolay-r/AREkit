@@ -17,7 +17,7 @@ class InputSample(object):
     generates an input info in an appropriate way
     """
 
-    # TODO. These samples could be used for network inputs
+    # It is important to name with 'I_' prefix
     I_X_INDS = "x_indices"
     I_SUBJ_IND = "subj_inds"
     I_OBJ_IND = "obj_inds"
@@ -210,6 +210,13 @@ class InputSample(object):
 
     def load(self, filepath):
         pass
+
+    @staticmethod
+    def iter_parameters():
+        for var_name in dir(InputSample):
+            if var_name.startswith('I_'):
+                continue
+            yield getattr(InputSample, var_name)
 
     def __iter__(self):
         for key, value in self.values.iteritems():
