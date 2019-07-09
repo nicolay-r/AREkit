@@ -26,7 +26,7 @@ class RNN(BaseContextNeuralNetwork):
         with tf.name_scope("rnn"):
             length = tf.cast(utils.calculate_sequence_length(self.InputX), tf.int32)
             cell = self.get_cell(self.Config.HiddenSize, self.Config.CellType)
-            cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=self.dropout_keep_prob)
+            cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=self.DropoutKeepProb)
             all_outputs, _ = tf.nn.dynamic_rnn(cell=cell,
                                                inputs=embedded_terms,
                                                sequence_length=length,
@@ -43,7 +43,7 @@ class RNN(BaseContextNeuralNetwork):
             l2_loss += tf.nn.l2_loss(self.__b)
             logits = tf.nn.xw_plus_b(context_embedding, self.__W, self.__b, name="logits")
 
-        return logits, tf.nn.dropout(logits, self.dropout_keep_prob)
+        return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
     def init_hidden_states(self):
         self.__W = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],

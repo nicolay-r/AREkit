@@ -64,7 +64,7 @@ class VanillaCNN(BaseContextNeuralNetwork):
             b1=self.b,
             W2=self.W2,
             b2=self.b2,
-            dropout_keep_prob=self.dropout_keep_prob,
+            dropout_keep_prob=self.DropoutKeepProb,
             activations=[tf.tanh, tf.tanh, None])
 
     def init_hidden_states(self):

@@ -36,10 +36,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__pos = None
         self.__p_subj_ind = None
         self.__p_obj_ind = None
-        # TODO. make private + property
-        self.dropout_keep_prob = None
-        # TODO. make private + property
-        self.embedding_dropout_keep_prob = None
+        self.__dropout_keep_prob = None
+        self.__embedding_dropout_keep_prob = None
 
     # region property
 
@@ -84,6 +82,14 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         return size
 
     @property
+    def EmbeddingDropoutKeepProb(self):
+        return self.__embedding_dropout_keep_prob
+
+    @property
+    def DropoutKeepProb(self):
+        return self.__dropout_keep_prob
+
+    @property
     def ContextEmbeddingSize(self):
         raise NotImplementedError()
 
@@ -124,11 +130,11 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     # TODO. Leave a single method to update value based on key in dict
     def set_input_dropout_keep_prob(self, value):
-        self.dropout_keep_prob = value
+        self.__dropout_keep_prob = value
 
     # TODO. Leave a single method to update value based on key in dict
     def set_input_embedding_dropout_keep_prob(self, value):
-        self.embedding_dropout_keep_prob = value
+        self.__embedding_dropout_keep_prob = value
 
     # region body
 
@@ -192,7 +198,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def init_embedded_input(self):
         return self.optional_process_embedded_data(self.__cfg,
                                                    self.__init_embedded_terms(),
-                                                   self.embedding_dropout_keep_prob)
+                                                   self.__embedding_dropout_keep_prob)
 
     def init_input(self):
         """
@@ -204,10 +210,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__dist_from_obj = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext], name="ctx_dist_from_obj")
         self.__term_type = tf.placeholder(tf.float32, shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext], name="ctx_term_type")
         self.__pos = tf.placeholder(tf.int32, shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext], name="ctx_pos")
-        # TODO. make private + property
-        self.dropout_keep_prob = tf.placeholder(tf.float32, name="ctx_dropout_keep_prob")
-        # TODO. make private + property
-        self.embedding_dropout_keep_prob = tf.placeholder(tf.float32, name="cxt_emb_dropout_keep_prob")
+        self.__dropout_keep_prob = tf.placeholder(tf.float32, name="ctx_dropout_keep_prob")
+        self.__embedding_dropout_keep_prob = tf.placeholder(tf.float32, name="cxt_emb_dropout_keep_prob")
         self.__p_subj_ind = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BatchSize], name="ctx_p_subj_ind")
         self.__p_obj_ind = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BatchSize], name="ctx_p_obj_ind")
 
@@ -223,10 +227,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
             self.__dist_from_subj: input[InputSample.I_SUBJ_DISTS],
             self.__dist_from_obj: input[InputSample.I_OBJ_DISTS],
             self.__term_type: input[InputSample.I_TERM_TYPE],
-            # TODO. Underscore
-            self.dropout_keep_prob: self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
-            # TODO. Underscore
-            self.embedding_dropout_keep_prob: self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0,
+            self.__dropout_keep_prob: self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
+            self.__embedding_dropout_keep_prob: self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0,
             self.__p_subj_ind: input[InputSample.I_SUBJ_IND],
             self.__p_obj_ind: input[InputSample.I_OBJ_IND]
         }

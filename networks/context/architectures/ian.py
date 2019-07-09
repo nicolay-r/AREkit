@@ -97,7 +97,7 @@ class IAN(BaseContextNeuralNetwork):
         self.__aspect_inputs = self.optional_process_embedded_data(
             self.Config,
             aspect_inputs,
-            self.embedding_dropout_keep_prob)
+            self.EmbeddingDropoutKeepProb)
 
     def init_context_embedding(self, embedded_terms):
         with tf.name_scope('inputs'):
@@ -201,7 +201,7 @@ class IAN(BaseContextNeuralNetwork):
         return utils.get_single_layer_logits(g=context_embedding,
                                              W1=self.__weights['softmax'],
                                              b1=self.__biases['softmax'],
-                                             dropout_keep_prob=self.dropout_keep_prob)
+                                             dropout_keep_prob=self.DropoutKeepProb)
 
     def get_parameters_to_investigate(self):
         assert(isinstance(self.__weights, dict))

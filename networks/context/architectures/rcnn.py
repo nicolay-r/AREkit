@@ -29,9 +29,9 @@ class RCNN(BaseContextNeuralNetwork):
 
         with tf.name_scope("bi-rnn"):
             fw_cell = RNN.get_cell(self.Config.SurroundingOneSideContextEmbeddingSize, self.Config.CellType)
-            fw_cell = tf.nn.rnn_cell.DropoutWrapper(fw_cell, output_keep_prob=self.dropout_keep_prob)
+            fw_cell = tf.nn.rnn_cell.DropoutWrapper(fw_cell, output_keep_prob=self.__dropout_keep_prob)
             bw_cell = RNN.get_cell(self.Config.SurroundingOneSideContextEmbeddingSize, self.Config.CellType)
-            bw_cell = tf.nn.rnn_cell.DropoutWrapper(bw_cell, output_keep_prob=self.dropout_keep_prob)
+            bw_cell = tf.nn.rnn_cell.DropoutWrapper(bw_cell, output_keep_prob=self.__dropout_keep_prob)
             (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
                                                                                        cell_bw=bw_cell,
                                                                                        inputs=embedded_terms,
@@ -66,7 +66,7 @@ class RCNN(BaseContextNeuralNetwork):
             l2_loss += tf.nn.l2_loss(self.__b2)
             logits = tf.nn.xw_plus_b(context_embedding, self.__W2, self.__b2, name="logits")
 
-        return logits, tf.nn.dropout(logits, self.dropout_keep_prob)
+        return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, RCNNConfig))

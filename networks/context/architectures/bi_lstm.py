@@ -29,7 +29,7 @@ class BiLSTM(BaseContextNeuralNetwork):
         lstm_fw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
         lstm_bw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
         lstm_bw_cell = tf.nn.rnn_cell.DropoutWrapper(lstm_bw_cell,
-                                                     output_keep_prob=self.dropout_keep_prob)
+                                                     output_keep_prob=self.DropoutKeepProb)
 
         outputs, _, _ = rnn.static_bidirectional_rnn(lstm_fw_cell,
                                                      lstm_bw_cell,
@@ -42,7 +42,7 @@ class BiLSTM(BaseContextNeuralNetwork):
             g=context_embedding,
             W1=self.__W,
             b1=self.__b,
-            dropout_keep_prob=self.dropout_keep_prob)
+            dropout_keep_prob=self.DropoutKeepProb)
 
     def init_hidden_states(self):
         self.__W = tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]),
