@@ -1,4 +1,4 @@
-from base import CommonModelSettings
+from base import DefaultNetworkConfig
 
 
 class CellTypes:
@@ -7,7 +7,7 @@ class CellTypes:
     GRU = u'gru'
 
 
-class RNNConfig(CommonModelSettings):
+class RNNConfig(DefaultNetworkConfig):
 
     __hidden_size = 300
     __cell_type = CellTypes.LSTM

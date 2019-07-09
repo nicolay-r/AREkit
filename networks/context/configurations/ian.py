@@ -1,8 +1,8 @@
 import tensorflow as tf
-from base import CommonModelSettings
+from base import DefaultNetworkConfig
 
 
-class IANConfig(CommonModelSettings):
+class IANConfig(DefaultNetworkConfig):
 
     __l2_reg = 0.001
     __hidden_size = 128

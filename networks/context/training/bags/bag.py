@@ -1,5 +1,5 @@
 from core.evaluation.labels import LabelPair, Label
-from core.networks.context.training.sample import Sample
+from core.networks.context.sample import InputSample
 
 
 class Bag:
@@ -15,7 +15,7 @@ class Bag:
         self.__label = label
 
     def add_sample(self, sample):
-        assert(isinstance(sample, Sample))
+        assert(isinstance(sample, InputSample))
         self.__samples.append(sample)
 
     @property

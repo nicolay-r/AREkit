@@ -7,12 +7,10 @@ from core.common.entities.entity import Entity
 from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
 from core.common.text_opinions.text_opinion import TextOpinion
-from core.networks.context.configurations.base import CommonModelSettings
+from core.networks.context.configurations.base import DefaultNetworkConfig
 
 
-# TODO. Rename as InputSample.
-# TODO. Move at ../input.py
-class Sample(object):
+class InputSample(object):
     """
     Base sample which is a part of a Bag
     It provides a to_network_input method which
@@ -62,18 +60,18 @@ class Sample(object):
         self.__text_opinion_id = text_opinion_id
 
         self.values = OrderedDict(
-            [(Sample.I_X_INDS, X),
-             (Sample.I_SUBJ_IND, subj_ind),
-             (Sample.I_OBJ_IND, obj_ind),
-             (Sample.I_SUBJ_DISTS, dist_from_subj),
-             (Sample.I_OBJ_DISTS, dist_from_obj),
-             (Sample.I_POS_INDS, pos_indices),
-             (Sample.I_TERM_TYPE, term_type)])
+            [(InputSample.I_X_INDS, X),
+             (InputSample.I_SUBJ_IND, subj_ind),
+             (InputSample.I_OBJ_IND, obj_ind),
+             (InputSample.I_SUBJ_DISTS, dist_from_subj),
+             (InputSample.I_OBJ_DISTS, dist_from_obj),
+             (InputSample.I_POS_INDS, pos_indices),
+             (InputSample.I_TERM_TYPE, term_type)])
 
     @classmethod
-    def create_empty(cls, settings):
-        assert(isinstance(settings, CommonModelSettings))
-        blank = np.zeros(settings.TermsPerContext)
+    def create_empty(cls, config):
+        assert(isinstance(config, DefaultNetworkConfig))
+        blank = np.zeros(config.TermsPerContext)
         return cls(X=blank,
                    subj_ind=0,
                    obj_ind=1,
@@ -84,31 +82,31 @@ class Sample(object):
                    text_opinion_id=-1)
 
     @classmethod
-    def from_text_opinion(cls, text_opinion, terms, settings):
+    def from_text_opinion(cls, text_opinion, terms, config):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(terms, list))
-        assert(isinstance(settings, CommonModelSettings))
+        assert(isinstance(config, DefaultNetworkConfig))
 
         subj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Source)
         obj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Target)
 
         pos_indices = core.networks.context.training.embedding.indices.calculate_pos_indices_for_terms(
             terms=terms,
-            pos_tagger=settings.PosTagger)
+            pos_tagger=config.PosTagger)
 
         x_indices = core.networks.context.training.embedding.indices.calculate_embedding_indices_for_terms(
             terms=terms,
-            term_embedding_matrix=settings.TermEmbeddingMatrix,
-            word_embedding=settings.WordEmbedding,
-            missed_word_embedding=settings.MissedWordEmbedding,
-            token_embedding=settings.TokenEmbedding,
-            frames_embedding=settings.FrameEmbedding)
+            term_embedding_matrix=config.TermEmbeddingMatrix,
+            word_embedding=config.WordEmbedding,
+            missed_word_embedding=config.MissedWordEmbedding,
+            token_embedding=config.TokenEmbedding,
+            frames_embedding=config.FrameEmbedding)
 
-        term_type = Sample.__create_term_types(terms)
+        term_type = InputSample.__create_term_types(terms)
 
         sentence_len = len(x_indices)
 
-        pad_size = settings.TermsPerContext
+        pad_size = config.TermsPerContext
         pad_value = 0
 
         if sentence_len < pad_size:
@@ -118,7 +116,7 @@ class Sample(object):
         else:
             b, e, subj_ind, obj_ind = cls.__crop_bounds(
                 sentence_len=sentence_len,
-                window_size=settings.TermsPerContext,
+                window_size=config.TermsPerContext,
                 e1=subj_ind,
                 e2=obj_ind)
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
@@ -126,10 +124,10 @@ class Sample(object):
         assert(len(pos_indices) ==
                len(x_indices) ==
                len(term_type) ==
-               settings.TermsPerContext)
+               config.TermsPerContext)
 
-        dist_from_subj = Sample.__dist(subj_ind, settings.TermsPerContext)
-        dist_from_obj = Sample.__dist(obj_ind, settings.TermsPerContext)
+        dist_from_subj = InputSample.__dist(subj_ind, config.TermsPerContext)
+        dist_from_obj = InputSample.__dist(obj_ind, config.TermsPerContext)
 
         return cls(X=np.array(x_indices),
                    subj_ind=subj_ind,
@@ -181,8 +179,8 @@ class Sample(object):
         assert(e1 < sentence_len and e2 < sentence_len)
         w_begin = 0
         w_end = window_size
-        while not (Sample.__in_window(w_b=w_begin, w_e=w_end, i=e1) and
-                   Sample.__in_window(w_b=w_begin, w_e=w_end, i=e2)):
+        while not (InputSample.__in_window(w_b=w_begin, w_e=w_end, i=e1) and
+                   InputSample.__in_window(w_b=w_begin, w_e=w_end, i=e2)):
             w_begin += 1
             w_end += 1
 

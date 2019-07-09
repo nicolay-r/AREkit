@@ -4,7 +4,7 @@ from core.common.text_opinions.text_opinion import TextOpinion
 from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from core.networks.context.training.bags.bag import Bag
 
-from core.networks.context.training.sample import Sample
+from core.networks.context.sample import InputSample
 
 
 class BagsCollection:
@@ -38,7 +38,7 @@ class BagsCollection:
                     bags.append(Bag(opinion.Sentiment))
 
                 s = create_sample_func(opinion)
-                assert(isinstance(s, Sample))
+                assert(isinstance(s, InputSample))
 
                 bags[-1].add_sample(s)
 

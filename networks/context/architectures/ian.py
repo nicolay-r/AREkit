@@ -3,7 +3,7 @@ from tensorflow.python.ops import math_ops
 
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.ian import IANConfig
-from core.networks.context.training.sample import Sample
+from core.networks.context.sample import InputSample
 import utils
 
 # (C) Peiqin Lin
@@ -218,7 +218,7 @@ class IAN(BaseContextNeuralNetwork):
     def create_feed_dict(self, input, data_type):
         feed_dict = super(IAN, self).create_feed_dict(input, data_type)
         # TODO: HERE, pass for aspects something interesting, like frame variants.
-        subj_ind = input[Sample.I_SUBJ_IND]
-        obj_ind = input[Sample.I_OBJ_IND]
-        feed_dict[self.__aspects] = [[subj_ind[i], obj_ind[i]] for i in range(len(input[Sample.I_X_INDS]))]
+        subj_ind = input[InputSample.I_SUBJ_IND]
+        obj_ind = input[InputSample.I_OBJ_IND]
+        feed_dict[self.__aspects] = [[subj_ind[i], obj_ind[i]] for i in range(len(input[InputSample.I_X_INDS]))]
         return feed_dict

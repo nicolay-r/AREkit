@@ -1,7 +1,7 @@
-from base import CommonModelSettings
+from base import DefaultNetworkConfig
 
 
-class BiLSTMConfig(CommonModelSettings):
+class BiLSTMConfig(DefaultNetworkConfig):
 
     __hidden_size = 128
 

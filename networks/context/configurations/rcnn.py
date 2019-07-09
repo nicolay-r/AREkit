@@ -1,8 +1,8 @@
-from base import CommonModelSettings
+from base import DefaultNetworkConfig
 from core.networks.context.configurations.rnn import CellTypes
 
 
-class RCNNConfig(CommonModelSettings):
+class RCNNConfig(DefaultNetworkConfig):
 
     __hidden_size = 128
     __context_embedding_size = 300

@@ -1,60 +1,60 @@
-from core.networks.context.configurations.base import CommonModelSettings, LabelCalculationMode
+from core.networks.context.configurations.base import DefaultNetworkConfig, LabelCalculationMode
 
 
-class MIMLRESettings(CommonModelSettings):
+class MIMLREConfig(DefaultNetworkConfig):
 
     __hidden_size = 300
     __contexts_per_opinion = 5
-    __context_settings = None
+    __context_config = None
 
-    def __init__(self, context_settings):
-        assert(isinstance(context_settings, CommonModelSettings))
-        super(MIMLRESettings, self).__init__()
-        self.__context_settings = context_settings
+    def __init__(self, context_config):
+        assert(isinstance(context_config, DefaultNetworkConfig))
+        super(MIMLREConfig, self).__init__()
+        self.__context_config = context_config
         self.__context_parameters_fix()
 
     def set_contexts_per_opinion(self, value):
         self.__contexts_per_opinion = value
 
     def set_term_embedding(self, embedding_matrix):
-        super(MIMLRESettings, self).set_term_embedding(embedding_matrix)
-        self.__context_settings.set_term_embedding(embedding_matrix)
+        super(MIMLREConfig, self).set_term_embedding(embedding_matrix)
+        self.__context_config.set_term_embedding(embedding_matrix)
 
     def set_missed_words_embedding(self, embedding):
-        super(MIMLRESettings, self).set_missed_words_embedding(embedding)
-        self.__context_settings.set_missed_words_embedding(embedding)
+        super(MIMLREConfig, self).set_missed_words_embedding(embedding)
+        self.__context_config.set_missed_words_embedding(embedding)
 
     def set_class_weights(self, class_weights):
-        super(MIMLRESettings, self).set_class_weights(class_weights)
-        self.__context_settings.set_class_weights(class_weights)
+        super(MIMLREConfig, self).set_class_weights(class_weights)
+        self.__context_config.set_class_weights(class_weights)
 
     def modify_bags_per_minibatch(self, value):
-        super(MIMLRESettings, self).modify_bags_per_minibatch(value)
+        super(MIMLREConfig, self).modify_bags_per_minibatch(value)
         self.__context_parameters_fix()
 
     def modify_classes_count(self, value):
-        super(MIMLRESettings, self).modify_classes_count(value)
-        self.__context_settings.modify_classes_count(value)
+        super(MIMLREConfig, self).modify_classes_count(value)
+        self.__context_config.modify_classes_count(value)
 
     def modify_dropout_keep_prob(self, value):
-        super(MIMLRESettings, self).modify_dropout_keep_prob(value)
-        self.__context_settings.modify_dropout_keep_prob(value)
+        super(MIMLREConfig, self).modify_dropout_keep_prob(value)
+        self.__context_config.modify_dropout_keep_prob(value)
 
     def modify_learning_rate(self, value):
-        super(MIMLRESettings, self).modify_learning_rate(value)
-        self.__context_settings.modify_learning_rate(value)
+        super(MIMLREConfig, self).modify_learning_rate(value)
+        self.__context_config.modify_learning_rate(value)
 
     def modify_use_class_weights(self, value):
-        super(MIMLRESettings, self).modify_use_class_weights(value)
-        self.__context_settings.modify_use_class_weights(value)
+        super(MIMLREConfig, self).modify_use_class_weights(value)
+        self.__context_config.modify_use_class_weights(value)
 
     def modify_use_attention(self, value):
-        super(MIMLRESettings, self).modify_use_attention(value)
-        self.__context_settings.modify_use_attention(value)
+        super(MIMLREConfig, self).modify_use_attention(value)
+        self.__context_config.modify_use_attention(value)
 
     def __context_parameters_fix(self):
-        self.__context_settings.modify_bag_size(1)
-        self.__context_settings.modify_bags_per_minibatch(self.BatchSize)
+        self.__context_config.modify_bag_size(1)
+        self.__context_config.modify_bags_per_minibatch(self.BatchSize)
 
     @property
     def LearningRate(self):
@@ -70,7 +70,7 @@ class MIMLRESettings(CommonModelSettings):
 
     @property
     def BagsPerMinibatch(self):
-        return super(MIMLRESettings, self).BagsPerMinibatch
+        return super(MIMLREConfig, self).BagsPerMinibatch
 
     @property
     def BatchSize(self):
@@ -81,8 +81,8 @@ class MIMLRESettings(CommonModelSettings):
         return self.__contexts_per_opinion
 
     @property
-    def ContextSettings(self):
-        return self.__context_settings
+    def ContextConfig(self):
+        return self.__context_config
 
     @property
     def HiddenSize(self):
@@ -100,6 +100,6 @@ class MIMLRESettings(CommonModelSettings):
             ("mi:Optimiser", self.Optimiser)
         ]
 
-        parameters.extend(self.__context_settings._internal_get_parameters())
+        parameters.extend(self.__context_config._internal_get_parameters())
 
         return parameters

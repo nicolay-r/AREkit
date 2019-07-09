@@ -2,9 +2,9 @@ import tensorflow as tf
 
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.architectures.utils import get_two_layer_logits
-from core.networks.context.training.sample import Sample
+from core.networks.context.sample import InputSample
 from core.networks.context.training.data_type import DataType
-from core.networks.multi.configuration.base import MIMLRESettings
+from core.networks.multi.configuration.base import MIMLREConfig
 from core.networks.multi.training.batch import MultiInstanceBatch
 from core.networks.network import NeuralNetwork
 
@@ -68,13 +68,13 @@ class MIMLRE(NeuralNetwork):
     # region body
 
     def compile(self, config, reset_graph):
-        assert(isinstance(config, MIMLRESettings))
+        assert(isinstance(config, MIMLREConfig))
 
         self.cfg = config
         tf.reset_default_graph()
 
         with tf.variable_scope("ctx-network"):
-            self.context_network.compile(config=config.ContextSettings, reset_graph=False)
+            self.context_network.compile(config=config.ContextConfig, reset_graph=False)
 
         self.init_input()
         self.init_hidden_states()
@@ -105,7 +105,7 @@ class MIMLRE(NeuralNetwork):
             self.__accuracy = BaseContextNeuralNetwork.init_accuracy(labels=self.__labels, true_labels=self.__y)
 
     def init_body(self):
-        assert(isinstance(self.cfg, MIMLRESettings))
+        assert(isinstance(self.cfg, MIMLREConfig))
 
         with tf.name_scope("mi-body"):
 
@@ -277,18 +277,18 @@ class MIMLRE(NeuralNetwork):
 
         # TODO. Access to dict for input parameters.
         feed_dict = {
-            self.__x: input[Sample.I_X_INDS],
+            self.__x: input[InputSample.I_X_INDS],
             self.__y: input[MultiInstanceBatch.I_LABELS],
-            self.__dist_from_subj: input[Sample.I_SUBJ_DISTS],
-            self.__dist_from_obj: input[Sample.I_OBJ_DISTS],
-            self.__term_type: input[Sample.I_TERM_TYPE],
-            self.__p_subj_ind: input[Sample.I_SUBJ_IND],
-            self.__p_obj_ind: input[Sample.I_OBJ_IND],
+            self.__dist_from_subj: input[InputSample.I_SUBJ_DISTS],
+            self.__dist_from_obj: input[InputSample.I_OBJ_DISTS],
+            self.__term_type: input[InputSample.I_TERM_TYPE],
+            self.__p_subj_ind: input[InputSample.I_SUBJ_IND],
+            self.__p_obj_ind: input[InputSample.I_OBJ_IND],
             self.__dropout_keep_prob: self.cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
             self.__embedding_dropout_keep_prob: self.cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0
         }
 
         if self.cfg.UsePOSEmbedding:
-            feed_dict[self.__pos] = input[Sample.I_POS_INDS]
+            feed_dict[self.__pos] = input[InputSample.I_POS_INDS]
 
         return feed_dict

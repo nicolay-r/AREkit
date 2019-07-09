@@ -1,10 +1,9 @@
 import tensorflow as tf
 
+from core.common.embedding import Embedding
 from core.networks.attention.architectures.base import Attention
 from core.processing.lemmatization.mystem import MystemWrapper
 from core.processing.pos.mystem_wrap import POSMystemWrapper
-from core.source.embeddings.base import Embedding
-from core.source.embeddings.tokens import TokenEmbedding
 from core.networks.attention.configurations.base import AttentionConfig
 
 
@@ -13,8 +12,7 @@ class LabelCalculationMode:
     AVERAGE = u'average'
 
 
-# TODO. Rename as DefaultConfig
-class CommonModelSettings(object):
+class DefaultNetworkConfig(object):
 
     GPUMemoryFraction = 0.25
 
@@ -129,7 +127,7 @@ class CommonModelSettings(object):
                                            term_embedding_size=self.TermEmbeddingShape[1])
 
     def set_token_embedding(self, token_embedding):
-        assert(isinstance(token_embedding, TokenEmbedding))
+        assert(isinstance(token_embedding, Embedding))
         assert(self.__token_embedding is None)
         self.__token_embedding = token_embedding
 

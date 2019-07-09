@@ -1,9 +1,9 @@
 import tensorflow as tf
 
 from core.networks.attention.architectures.base import Attention
-from core.networks.context.configurations.base import CommonModelSettings
+from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.training.batch import MiniBatch
-from core.networks.context.training.sample import Sample
+from core.networks.context.sample import InputSample
 from core.networks.context.training.data_type import DataType
 from core.networks.network import NeuralNetwork
 
@@ -133,7 +133,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     # region body
 
     def compile(self, config, reset_graph):
-        assert(isinstance(config, CommonModelSettings))
+        assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(reset_graph, bool))
 
         self.__cfg = config
@@ -218,21 +218,21 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def create_feed_dict(self, input, data_type):
 
         feed_dict = {
-            self.__x: input[Sample.I_X_INDS],
+            self.__x: input[InputSample.I_X_INDS],
             self.__y: input[MiniBatch.I_LABELS],
-            self.__dist_from_subj: input[Sample.I_SUBJ_DISTS],
-            self.__dist_from_obj: input[Sample.I_OBJ_DISTS],
-            self.__term_type: input[Sample.I_TERM_TYPE],
+            self.__dist_from_subj: input[InputSample.I_SUBJ_DISTS],
+            self.__dist_from_obj: input[InputSample.I_OBJ_DISTS],
+            self.__term_type: input[InputSample.I_TERM_TYPE],
             # TODO. Underscore
             self.dropout_keep_prob: self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
             # TODO. Underscore
             self.embedding_dropout_keep_prob: self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0,
-            self.__p_subj_ind: input[Sample.I_SUBJ_IND],
-            self.__p_obj_ind: input[Sample.I_OBJ_IND]
+            self.__p_subj_ind: input[InputSample.I_SUBJ_IND],
+            self.__p_obj_ind: input[InputSample.I_OBJ_IND]
         }
 
         if self.__cfg.UsePOSEmbedding:
-            feed_dict[self.__pos] = input[Sample.I_POS_INDS]
+            feed_dict[self.__pos] = input[InputSample.I_POS_INDS]
 
         return feed_dict
 
@@ -240,7 +240,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     @staticmethod
     def optional_process_embedded_data(config, embedded, dropout_keep_prob):
-        assert(isinstance(config, CommonModelSettings))
+        assert(isinstance(config, DefaultNetworkConfig))
 
         if config.UseEmbeddingDropout:
             return tf.nn.dropout(embedded, keep_prob=dropout_keep_prob)

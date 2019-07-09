@@ -1,7 +1,7 @@
 import numpy as np
 
 from core.networks.context.training.embedding.offsets import TermsEmbeddingOffsets
-from core.source.embeddings.base import Embedding
+from core.common.embedding import Embedding
 from core.source.embeddings.tokens import TokenEmbedding
 from core.networks.context.debug import DebugKeys
 

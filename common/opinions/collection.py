@@ -67,7 +67,7 @@ class OpinionCollection(object):
         if check:
             if key in collection:
                 raise Exception(u"'{}->{}' already exists in collection".format(
-                    opinion.value_left, opinion.value_right).encode('utf-8'))
+                    opinion.SourceValue, opinion.TargetValue).encode('utf-8'))
         if key in collection:
             return False
         collection[key] = opinion

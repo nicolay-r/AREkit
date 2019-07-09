@@ -1,7 +1,7 @@
-from base import CommonModelSettings
+from base import DefaultNetworkConfig
 
 
-class CNNConfig(CommonModelSettings):
+class CNNConfig(DefaultNetworkConfig):
 
     __window_size = 3
     __filters_count = 300

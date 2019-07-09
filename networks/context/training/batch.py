@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from core.networks.context.debug import DebugKeys
-from core.networks.context.training.sample import Sample
+from core.networks.context.sample import InputSample
 
 
 class MiniBatch(object):
@@ -21,7 +21,7 @@ class MiniBatch(object):
 
         for sample in self.iter_by_samples():
 
-            assert(isinstance(sample, Sample))
+            assert(isinstance(sample, InputSample))
 
             for arg, value in sample:
                 if arg not in result:
