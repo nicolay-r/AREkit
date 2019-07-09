@@ -20,7 +20,7 @@ class PiecewiseCNN(VanillaCNN):
                                (self.Config.TermsPerContext + (self.Config.WindowSize - 1)) * self.TermEmbeddingSize,
                                1])
 
-        bwc_conv = tf.nn.conv1d(bwc_line, self.conv_filter, self.TermEmbeddingSize,
+        bwc_conv = tf.nn.conv1d(bwc_line, self.Hidden[self.H_conv_filter], self.TermEmbeddingSize,
                                 "VALID",
                                 data_format="NHWC",
                                 name="conv")
@@ -51,23 +51,13 @@ class PiecewiseCNN(VanillaCNN):
 
         return tf.concat(g, axis=-1)
 
-    def init_logits_unscaled(self, context_embedding):
-        return utils.get_two_layer_logits(
-            g=context_embedding,
-            W1=self.W,
-            b1=self.b,
-            W2=self.W2,
-            b2=self.b2,
-            dropout_keep_prob=self.DropoutKeepProb,
-            activations=[tf.tanh, tf.tanh, None])
-
     def init_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
         super(PiecewiseCNN, self).init_hidden_states()
 
-        self.W = tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.HiddenSize]),
-                             dtype=tf.float32,
-                             name="W")
+        self.Hidden[self.H_W] = tf.Variable(
+            initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.HiddenSize]),
+            dtype=tf.float32)
 
     @staticmethod
     def splitting(i, p_subj_ind, p_obj_ind, bwc_conv, channels_count, outputs):

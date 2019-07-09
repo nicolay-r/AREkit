@@ -1,5 +1,5 @@
 import tensorflow as tf
-from core.networks.context.architectures.utils import get_two_layer_logits
+from core.networks.context.architectures.utils import get_k_layer_logits
 from core.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
 
 
@@ -40,7 +40,7 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
 
     def init_logits_unscaled(self, encoded_contexts):
         # TODO. Now it is hardcoded two layer network.
-        return get_two_layer_logits(
+        return get_k_layer_logits(
             encoded_contexts,
             W1=self.__hidden[self.H_W1],
             b1=self.__hidden[self.H_b1],

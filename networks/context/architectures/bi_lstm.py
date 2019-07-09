@@ -38,11 +38,12 @@ class BiLSTM(BaseContextNeuralNetwork):
         return outputs[-1]
 
     def init_logits_unscaled(self, context_embedding):
-        return utils.get_single_layer_logits(
+        return utils.get_k_layer_pair_logits(
             g=context_embedding,
-            W1=self.__W,
-            b1=self.__b,
-            dropout_keep_prob=self.DropoutKeepProb)
+            W=[self.__W],
+            b=[self.__b],
+            dropout_keep_prob=self.DropoutKeepProb,
+            activations=[tf.tanh, None])
 
     def init_hidden_states(self):
         self.__W = tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]),

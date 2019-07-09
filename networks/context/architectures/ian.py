@@ -198,10 +198,11 @@ class IAN(BaseContextNeuralNetwork):
             return tf.concat([self.__aspect_reps, self.__context_reps], 1)
 
     def init_logits_unscaled(self, context_embedding):
-        return utils.get_single_layer_logits(g=context_embedding,
-                                             W1=self.__weights['softmax'],
-                                             b1=self.__biases['softmax'],
-                                             dropout_keep_prob=self.DropoutKeepProb)
+        return utils.get_k_layer_pair_logits(g=context_embedding,
+                                             W=[self.__weights['softmax']],
+                                             b=[self.__biases['softmax']],
+                                             dropout_keep_prob=self.DropoutKeepProb,
+                                             activations=[tf.tanh, None])
 
     def hidden_parameters(self):
         assert(isinstance(self.__weights, dict))

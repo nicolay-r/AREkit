@@ -1,5 +1,5 @@
 import tensorflow as tf
-from core.networks.context.architectures.utils import get_two_layer_logits
+from core.networks.context.architectures.utils import get_k_layer_logits
 from core.networks.attention.configurations.base import AttentionConfig
 
 
@@ -86,14 +86,12 @@ class Attention(object):
                 merged = tf.concat([embedded_terms, e], axis=-1)
                 merged = tf.reshape(merged, [self.__batch_size * self.__terms_per_context, 2 * self.__term_embedding_size])
 
-                weights, _ = get_two_layer_logits(merged,
-                                                  W1=self.__W_we, b1=self.__b_we,
-                                                  W2=self.__W_a, b2=self.__b_a,
-                                                  # TODO. Dropout is not used
-                                                  dropout_keep_prob=self.__cfg.DropoutKeepProb,
-                                                  activations=[None,
-                                                               lambda tensor: tf.tanh(tensor),
-                                                               None])       # [batch_size * terms_per_context, 1]
+                weights, _ = get_k_layer_logits(g=merged,
+                                                W=[self.__W_we, self.__W_a],
+                                                b=[self.__b_we, self.__b_a],
+                                                activations=[None,
+                                                             lambda tensor: tf.tanh(tensor),
+                                                             None])       # [batch_size * terms_per_context, 1]
 
                 original_embedding = tf.reshape(embedded_terms,
                                                 [self.__batch_size * self.__terms_per_context, self.__term_embedding_size])

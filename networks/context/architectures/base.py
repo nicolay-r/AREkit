@@ -16,6 +16,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def __init__(self):
         self.__cfg = None
 
+        # TODO. remove from here.
+        # TODO. Should be nested from CNN model.
         self.__att_weights = None
 
         self.__labels = None
@@ -148,6 +150,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         raise NotImplementedError()
 
     # TODO. Maybe in nested architecture that supports attention?
+    # TODO. In utils.
+    # TODO. Depends att_model, input, config
     def init_attention_embedding(self):
         assert(isinstance(self.__cfg.AttentionModel, Attention))
 

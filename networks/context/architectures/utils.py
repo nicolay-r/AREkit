@@ -8,44 +8,38 @@ def calculate_sequence_length(seq):
     return length
 
 
-# TODO. This shoud depends on lists of W and b params.
-def get_two_layer_logits(g, W1, b1, W2, b2, dropout_keep_prob, activations=None):
+def get_k_layer_logits(g, W, b, dropout_keep_prob=None, activations=None):
+    assert(isinstance(W, list))
+    assert(isinstance(b, list))
+    assert(isinstance(activations, list))
+    assert(len(W) == len(b) == len(activations) - 1)
+
+    def __activate(tensor, activation):
+        return activation(tensor) if activation is not None else tensor
 
     if activations is None:
-        activations = [None, None, None]
+        activations = [None] * (len(W) + 1)
 
-    g = __optional_activate(g, activations[0])
+    r = g
 
-    r1 = tf.matmul(g, W1) + b1
-    r1d = tf.nn.dropout(r1, dropout_keep_prob)
+    for i in range(len(W)):
+        r = __activate(r, activations[0])
+        r = tf.matmul(r, W[i]) + b[i]
 
-    r1 = __optional_activate(r1, activations[1])
-    r1d = __optional_activate(r1d, activations[1])
+        if dropout_keep_prob is None:
+            continue
 
-    r2 = tf.matmul(r1, W2) + b2
-    r2d = tf.matmul(r1d, W2) + b2
-    r2d = tf.nn.dropout(r2d, dropout_keep_prob)
+        r = tf.nn.dropout(r, dropout_keep_prob)
 
-    r2 = __optional_activate(r2, activations[2])
-    r2d = __optional_activate(r2d, activations[2])
-
-    return r2, r2d
+    return __activate(r, activations[-1])
 
 
-# TODO. This should be removed as we already have method above
-def get_single_layer_logits(g, W1, b1, dropout_keep_prob, activations=None):
+def get_k_layer_pair_logits(g, W, b, dropout_keep_prob, activations):
+    assert(dropout_keep_prob is not None)
 
-    if activations is None:
-        activations = [None, None]
+    result = get_k_layer_logits(g, W, b, activations=activations)
+    result_dropout = get_k_layer_logits(g, W, b,
+                                        dropout_keep_prob=dropout_keep_prob,
+                                        activations=activations)
 
-    g = __optional_activate(g, activations[0])
-    r = tf.matmul(g, W1) + b1
-    rd = tf.nn.dropout(r, dropout_keep_prob)
-
-    r = __optional_activate(r, activations[1])
-    rd = __optional_activate(rd, activations[1])
-
-    return r, rd
-
-def __optional_activate(tensor, activation):
-    return activation(tensor) if activation is not None else tensor
+    return result, result_dropout
