@@ -17,6 +17,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__cfg = None
 
         self.__att_weights = None
+
         self.__labels = None
 
         self.__term_emb = None
@@ -27,20 +28,9 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__weights = None
         self.__accuracy = None
 
-        # TODO. Use input dict instead of variables
-        self.__x = None
+        self.__input = {}
+
         self.__y = None
-        self.__dist_from_subj = None
-        self.__dist_from_obj = None
-        self.__term_type = None
-        self.__pos = None
-        self.__p_subj_ind = None
-        self.__p_obj_ind = None
-
-        self.__hidden = {}
-        for input_param in InputSample.iter_parameters():
-            self.__hidden[input_param] = None
-
         self.__dropout_keep_prob = None
         self.__embedding_dropout_keep_prob = None
 
@@ -53,17 +43,17 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     # TODO Use intput property instead
     @property
     def InputX(self):
-        return self.__x
+        return self.__input[InputSample.I_X_INDS]
 
     # TODO Use intput property instead
     @property
     def InputPObjInd(self):
-        return self.__p_obj_ind
+        return self.__input[InputSample.I_OBJ_IND]
 
     # TODO Use intput property instead
     @property
     def InputPSubjInd(self):
-        return self.__p_subj_ind
+        return self.__input[InputSample.I_SUBJ_IND]
 
     @property
     def Labels(self):
@@ -100,44 +90,12 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     # endregion
 
-    # TODO. Leave a single method to update value based on key in dict
-    # TODO. Store keys in sample!
-    def set_input_x(self, x):
-        self.__x = x
+    def set_input_parameter(self, param, value):
+        self.__input[param] = value
 
-    # TODO. Leave a single method to update value based on key in dict
-    def set_input_y(self, y):
-        self.__y = y
-
-    # TODO. Leave a single method to update value based on key in dict
-    def set_input_dist_from_subj(self, dist_from_subj):
-        self.__dist_from_subj = dist_from_subj
-
-    # TODO. Leave a single method to update value based on key in dict
-    def set_input_dist_from_obj(self, dist_from_obj):
-        self.__dist_from_obj = dist_from_obj
-
-    # TODO. Leave a single method to update value based on key in dict
-    def set_input_term_type(self, term_type):
-        self.__term_type = term_type
-
-    # TODO. Leave a single method to update value based on key in dict
-    def set_input_pos(self, pos):
-        self.__pos = pos
-
-    # TODO. Leave a single method to update value based on key in dict
-    def set_input_p_subj_ind(self, p_subj_ind):
-        self.__p_subj_ind = p_subj_ind
-
-    # TODO. Leave a single method to update value based on key in dict
-    def set_input_p_obj_ind(self, p_obj_ind):
-        self.__p_obj_ind = p_obj_ind
-
-    # TODO. Leave a single method to update value based on key in dict
     def set_input_dropout_keep_prob(self, value):
         self.__dropout_keep_prob = value
 
-    # TODO. Leave a single method to update value based on key in dict
     def set_input_embedding_dropout_keep_prob(self, value):
         self.__embedding_dropout_keep_prob = value
 
@@ -195,8 +153,14 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     # TODO. Maybe in nested architecture that supports attention?
     def init_attention_embedding(self):
         assert(isinstance(self.__cfg.AttentionModel, Attention))
-        self.__cfg.AttentionModel.set_x(self.__x)
-        self.__cfg.AttentionModel.set_entities(tf.stack([self.__p_subj_ind, self.__p_obj_ind], axis=-1))         # [batch_size, 2]
+
+        entities = tf.stack([self.__input[InputSample.I_SUBJ_IND],
+                             self.__input[InputSample.I_OBJ_IND]],
+                            axis=-1)
+
+        self.__cfg.AttentionModel.set_x(self.__input[InputSample.I_X_INDS])
+        self.__cfg.AttentionModel.set_entities(entities)         # [batch_size, 2]
+
         att_e, self.__att_weights = self.__cfg.AttentionModel.init_body(self.__term_emb)
         return att_e
 
@@ -209,37 +173,67 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         """
         Input placeholders
         """
-        self.__x = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext], name="ctx_x")
-        self.__y = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BagsPerMinibatch], name="ctx_y")
-        self.__dist_from_subj = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext], name="ctx_dist_from_subj")
-        self.__dist_from_obj = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext], name="ctx_dist_from_obj")
-        self.__term_type = tf.placeholder(tf.float32, shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext], name="ctx_term_type")
-        self.__pos = tf.placeholder(tf.int32, shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext], name="ctx_pos")
-        self.__dropout_keep_prob = tf.placeholder(tf.float32, name="ctx_dropout_keep_prob")
-        self.__embedding_dropout_keep_prob = tf.placeholder(tf.float32, name="cxt_emb_dropout_keep_prob")
-        self.__p_subj_ind = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BatchSize], name="ctx_p_subj_ind")
-        self.__p_obj_ind = tf.placeholder(dtype=tf.int32, shape=[self.__cfg.BatchSize], name="ctx_p_obj_ind")
+        prefix = 'ctx_'
+
+        self.__input[InputSample.I_X_INDS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_X_INDS)
+
+        self.__input[InputSample.I_SUBJ_DISTS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_SUBJ_IND)
+
+        self.__input[InputSample.I_OBJ_DISTS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_OBJ_IND)
+
+        self.__input[InputSample.I_TERM_TYPE] = tf.placeholder(
+            dtype=tf.float32,
+            shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_OBJ_IND)
+
+        self.__input[InputSample.I_POS_INDS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_POS_INDS)
+
+        self.__input[InputSample.I_SUBJ_IND] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[self.__cfg.BatchSize],
+            name=prefix + InputSample.I_SUBJ_IND)
+
+        self.__input[InputSample.I_OBJ_IND] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[self.__cfg.BatchSize],
+            name=prefix + InputSample.I_OBJ_IND)
+
+        self.__y = tf.placeholder(dtype=tf.int32,
+                                  shape=[self.__cfg.BagsPerMinibatch],
+                                  name=prefix + MiniBatch.I_LABELS)
+
+        self.__dropout_keep_prob = tf.placeholder(dtype=tf.float32,
+                                                  name="ctx_dropout_keep_prob")
+
+        self.__embedding_dropout_keep_prob = tf.placeholder(dtype=tf.float32,
+                                                            name="cxt_emb_dropout_keep_prob")
 
         if self.__cfg.UseAttention:
             with tf.variable_scope(self.__attention_var_scope_name):
                 self.__cfg.AttentionModel.init_input()
 
     def create_feed_dict(self, input, data_type):
+        assert(isinstance(input, dict))
 
-        feed_dict = {
-            self.__x: input[InputSample.I_X_INDS],
-            self.__y: input[MiniBatch.I_LABELS],
-            self.__dist_from_subj: input[InputSample.I_SUBJ_DISTS],
-            self.__dist_from_obj: input[InputSample.I_OBJ_DISTS],
-            self.__term_type: input[InputSample.I_TERM_TYPE],
-            self.__dropout_keep_prob: self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
-            self.__embedding_dropout_keep_prob: self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0,
-            self.__p_subj_ind: input[InputSample.I_SUBJ_IND],
-            self.__p_obj_ind: input[InputSample.I_OBJ_IND]
-        }
+        feed_dict = {}
+        for param in InputSample.iter_parameters():
+            feed_dict[self.__input[param]] = input[param]
 
-        if self.__cfg.UsePOSEmbedding:
-            feed_dict[self.__pos] = input[InputSample.I_POS_INDS]
+        feed_dict[self.__y] = input[MiniBatch.I_LABELS]
+        feed_dict[self.__dropout_keep_prob] = self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0
+        feed_dict[self.__embedding_dropout_keep_prob] = self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0,
 
         return feed_dict
 
@@ -291,16 +285,16 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         return tf.reduce_mean(loss, axis=1)
 
     def __init_embedded_terms(self):
-
-        embedded_terms = tf.concat([tf.nn.embedding_lookup(self.__term_emb, self.__x),
-                                    tf.nn.embedding_lookup(self.__dist_emb, self.__dist_from_subj),
-                                    tf.nn.embedding_lookup(self.__dist_emb, self.__dist_from_obj),
-                                    tf.reshape(self.__term_type, [self.__cfg.BatchSize, self.__cfg.TermsPerContext, 1])],
+        embedded_terms = tf.concat([tf.nn.embedding_lookup(self.__term_emb, self.__input[InputSample.I_X_INDS]),
+                                    tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_SUBJ_DISTS]),
+                                    tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_OBJ_DISTS]),
+                                    tf.reshape(self.__input[InputSample.I_TERM_TYPE],
+                                               [self.__cfg.BatchSize, self.__cfg.TermsPerContext, 1])],
                                    axis=-1)
 
         if self.__cfg.UsePOSEmbedding:
             embedded_terms = tf.concat([embedded_terms,
-                                        tf.nn.embedding_lookup(self.__pos_emb, self.__pos)],
+                                        tf.nn.embedding_lookup(self.__pos_emb, self.__input[InputSample.I_POS_INDS])],
                                        axis=-1)
 
         return embedded_terms

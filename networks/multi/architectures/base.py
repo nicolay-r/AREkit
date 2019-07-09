@@ -33,15 +33,9 @@ class MIMLRE(NeuralNetwork):
         self.__cost = None
         self.__accuracy = None
 
-        # TODO. Use dictionary for input parameters.
-        self.__x = None
+        self.__input = {}
+
         self.__y = None
-        self.__dist_from_subj = None
-        self.__dist_from_obj = None
-        self.__term_type = None
-        self.__pos = None
-        self.__p_subj_ind = None
-        self.__p_obj_ind = None
         self.__dropout_keep_prob = None
         self.__embedding_dropout_keep_prob = None
 
@@ -148,15 +142,10 @@ class MIMLRE(NeuralNetwork):
                     """
                     return tf.squeeze(tf.gather(tensor, [i], axis=1), [1])
 
-                # TODO. Store keys in sample!
-                # TODO. store variables in dictionary.
-                self.context_network.set_input_x(__to_ctx(self.__x))
-                self.context_network.set_input_dist_from_subj(__to_ctx(self.__dist_from_subj))
-                self.context_network.set_input_dist_from_obj(__to_ctx(self.__dist_from_obj))
-                self.context_network.set_input_term_type(__to_ctx(self.__term_type))
-                self.context_network.set_input_pos(__to_ctx(self.__pos))
-                self.context_network.set_input_p_subj_ind(__to_ctx(self.__p_subj_ind))
-                self.context_network.set_input_p_obj_ind(__to_ctx(self.__p_obj_ind))
+                for param, value in self.__input.iteritems():
+                    self.context_network.set_input_parameter(param=param,
+                                                             value=__to_ctx(value))
+
                 self.context_network.set_input_dropout_keep_prob(self.__dropout_keep_prob)
                 self.context_network.set_input_embedding_dropout_keep_prob(self.__embedding_dropout_keep_prob)
 
@@ -210,7 +199,7 @@ class MIMLRE(NeuralNetwork):
             sliced_contexts = __iter_x_by_opinions(
                 x=context_outputs,
                 handler=__process_opinion,
-                opinion_lens=self.__calculate_opinion_lens(self.__x))
+                opinion_lens=self.__calculate_opinion_lens(self.__input[InputSample.I_X_INDS]))
 
             return self.__contexts_max_pooling(context_outputs=sliced_contexts,
                                                contexts_per_opinion=self.ContextsPerOpinion)  # [batches, max_pooling]
@@ -252,17 +241,44 @@ class MIMLRE(NeuralNetwork):
         contexts_count = self.cfg.BagSize
         batch_size = self.cfg.BagsPerMinibatch
 
-        # TODO. Use dictionary for input parameters.
-        self.__x = tf.placeholder(dtype=tf.int32, shape=[batch_size, contexts_count, self.cfg.TermsPerContext])
+        prefix = 'mi_'
+
+        self.__input[InputSample.I_X_INDS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            name=prefix + InputSample.I_X_INDS)
+
+        self.__input[InputSample.I_SUBJ_DISTS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            name=prefix + InputSample.I_SUBJ_DISTS)
+
+        self.__input[InputSample.I_OBJ_DISTS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            name=prefix + InputSample.I_OBJ_DISTS)
+
+        self.__input[InputSample.I_TERM_TYPE] = tf.placeholder(
+            dtype=tf.float32,
+            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            name=prefix + InputSample.I_TERM_TYPE)
+
+        self.__input[InputSample.I_POS_INDS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count, self.cfg.TermsPerContext],
+            name=prefix + InputSample.I_POS_INDS)
+
+        self.__input[InputSample.I_SUBJ_IND] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count],
+            name=prefix + InputSample.I_SUBJ_IND)
+
+        self.__input[InputSample.I_OBJ_IND] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count],
+            name=prefix + InputSample.I_OBJ_IND)
+
         self.__y = tf.placeholder(dtype=tf.int32, shape=[batch_size])
-
-        self.__dist_from_subj = tf.placeholder(dtype=tf.int32, shape=[batch_size, contexts_count, self.cfg.TermsPerContext])
-        self.__dist_from_obj = tf.placeholder(dtype=tf.int32, shape=[batch_size, contexts_count, self.cfg.TermsPerContext])
-        self.__term_type = tf.placeholder(tf.float32, shape=[batch_size, contexts_count, self.cfg.TermsPerContext])
-        self.__pos = tf.placeholder(tf.int32, shape=[batch_size, contexts_count, self.cfg.TermsPerContext])
-        self.__p_subj_ind = tf.placeholder(dtype=tf.int32, shape=[batch_size, contexts_count])
-        self.__p_obj_ind = tf.placeholder(dtype=tf.int32, shape=[batch_size, contexts_count])
-
         self.__dropout_keep_prob = tf.placeholder(tf.float32)
         self.__embedding_dropout_keep_prob = tf.placeholder(tf.float32)
 
@@ -274,21 +290,15 @@ class MIMLRE(NeuralNetwork):
         self.__b2 = tf.Variable(tf.random_normal([self.cfg.ClassesCount]), dtype=tf.float32)
 
     def create_feed_dict(self, input, data_type):
+        assert(isinstance(input, dict))
 
-        # TODO. Access to dict for input parameters.
-        feed_dict = {
-            self.__x: input[InputSample.I_X_INDS],
-            self.__y: input[MultiInstanceBatch.I_LABELS],
-            self.__dist_from_subj: input[InputSample.I_SUBJ_DISTS],
-            self.__dist_from_obj: input[InputSample.I_OBJ_DISTS],
-            self.__term_type: input[InputSample.I_TERM_TYPE],
-            self.__p_subj_ind: input[InputSample.I_SUBJ_IND],
-            self.__p_obj_ind: input[InputSample.I_OBJ_IND],
-            self.__dropout_keep_prob: self.cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
-            self.__embedding_dropout_keep_prob: self.cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0
-        }
+        feed_dict = {}
 
-        if self.cfg.UsePOSEmbedding:
-            feed_dict[self.__pos] = input[InputSample.I_POS_INDS]
+        for param in InputSample.iter_parameters():
+            feed_dict[self.__input[param]] = input[param]
+
+        feed_dict[self.__y] = input[MultiInstanceBatch.I_LABELS],
+        feed_dict[self.__dropout_keep_prob] = self.cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
+        feed_dict[self.__embedding_dropout_keep_prob] = self.cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0
 
         return feed_dict
