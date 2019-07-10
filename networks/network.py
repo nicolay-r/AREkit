@@ -16,7 +16,7 @@ class NeuralNetwork(object):
     def Accuracy(self):
         raise NotImplementedError()
 
-    def hidden_parameters(self):
+    def iter_hidden_parameters(self):
         raise NotImplementedError()
 
     def compile(self, config, reset_graph):

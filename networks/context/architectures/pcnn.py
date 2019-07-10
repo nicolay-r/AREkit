@@ -2,7 +2,7 @@
 import tensorflow as tf
 from core.networks.context.architectures.cnn import VanillaCNN
 from core.networks.context.configurations.cnn import CNNConfig
-import utils
+from core.networks.context.sample import InputSample
 
 
 class PiecewiseCNN(VanillaCNN):
@@ -30,7 +30,12 @@ class PiecewiseCNN(VanillaCNN):
         _, _, _, _, _, sliced = tf.while_loop(
                 lambda i, *_: tf.less(i, self.Config.BatchSize),
                 self.splitting,
-                [0, self.InputPSubjInd, self.InputPObjInd, bwc_conv, self.Config.FiltersCount, sliced])
+                [0,
+                 self.get_input_parameter(InputSample.I_SUBJ_IND),
+                 self.get_input_parameter(InputSample.I_OBJ_IND),
+                 bwc_conv,
+                 self.Config.FiltersCount, sliced])
+
         sliced = tf.squeeze(sliced.concat())
 
         # Max Pooling

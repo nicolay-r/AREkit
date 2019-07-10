@@ -1,6 +1,7 @@
 import tensorflow as tf
 
 from core.networks.attention.architectures.base import Attention
+from core.networks.context.architectures.utils import init_weighted_cost, init_accuracy
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.training.batch import MiniBatch
 from core.networks.context.sample import InputSample
@@ -42,21 +43,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def Config(self):
         return self.__cfg
 
-    # TODO Use intput property instead
-    @property
-    def InputX(self):
-        return self.__input[InputSample.I_X_INDS]
-
-    # TODO Use intput property instead
-    @property
-    def InputPObjInd(self):
-        return self.__input[InputSample.I_OBJ_IND]
-
-    # TODO Use intput property instead
-    @property
-    def InputPSubjInd(self):
-        return self.__input[InputSample.I_SUBJ_IND]
-
     @property
     def Labels(self):
         return self.__labels
@@ -91,6 +77,9 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         raise NotImplementedError()
 
     # endregion
+
+    def get_input_parameter(self, param):
+        return self.__input[param]
 
     def set_input_parameter(self, param, value):
         self.__input[param] = value
@@ -130,13 +119,13 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__labels = tf.cast(tf.argmax(self.__to_mean_of_bag(output), axis=1), tf.int32)
 
         with tf.name_scope("cost"):
-            self.__weights, self.__cost = self.init_weighted_cost(
+            self.__weights, self.__cost = init_weighted_cost(
                 logits_unscaled_dropout=self.__to_mean_of_bag(logits_unscaled_dropped),
                 true_labels=self.__y,
                 config=config)
 
         with tf.name_scope("accuracy"):
-            self.__accuracy = self.init_accuracy(labels=self.Labels, true_labels=self.__y)
+            self.__accuracy = init_accuracy(labels=self.Labels, true_labels=self.__y)
 
     # endregion
 
@@ -252,32 +241,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     @staticmethod
     def _get_attention_vector_size(cfg):
         return 0 if not cfg.UseAttention else cfg.AttentionModel.AttentionEmbeddingSize
-
-    # TODO. To utils.
-    @staticmethod
-    def init_accuracy(labels, true_labels):
-        correct = tf.equal(labels, true_labels)
-        return tf.reduce_mean(tf.cast(correct, tf.float32))
-
-    # TODO. To utils
-    @staticmethod
-    def init_weighted_cost(logits_unscaled_dropout, true_labels, config):
-        """
-        Init loss with weights for tensorflow model.
-        'labels' suppose to be a list of indices (not priorities)
-        """
-        cost = tf.nn.sparse_softmax_cross_entropy_with_logits(
-            logits=logits_unscaled_dropout,
-            labels=true_labels)
-
-        weights = tf.reduce_sum(
-            config.ClassWeights * tf.one_hot(indices=true_labels, depth=config.ClassesCount),
-            axis=1)
-
-        if config.UseClassWeights:
-            cost = cost * weights
-
-        return weights, cost
 
     # endregion
 

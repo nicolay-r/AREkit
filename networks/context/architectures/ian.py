@@ -115,7 +115,7 @@ class IAN(BaseContextNeuralNetwork):
             )
             aspect_avg = tf.reduce_mean(aspect_outputs, 1)
 
-            context_lens = utils.calculate_sequence_length(self.InputX)
+            context_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             context_outputs, context_state = tf.nn.dynamic_rnn(
                 tf.contrib.rnn.LSTMCell(self.Config.HiddenSize),
                 inputs=context_inputs,
@@ -204,15 +204,13 @@ class IAN(BaseContextNeuralNetwork):
                                              dropout_keep_prob=self.DropoutKeepProb,
                                              activations=[tf.tanh, None])
 
-    def hidden_parameters(self):
+    def iter_hidden_parameters(self):
         assert(isinstance(self.__weights, dict))
         assert(isinstance(self.__biases, dict))
 
-        # TODO. To Dictionary
         for key, value in self.__weights.iteritems():
             yield key, value
 
-        # TODO. To Dictionary
         for key, value in self.__biases.iteritems():
             yield key, value
 

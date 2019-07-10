@@ -1,6 +1,7 @@
 import tensorflow as tf
 
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.context.architectures.utils import init_weighted_cost, init_accuracy
 from core.networks.context.sample import InputSample
 from core.networks.context.training.data_type import DataType
 from core.networks.multi.configuration.base import BaseMultiInstanceConfig
@@ -47,6 +48,10 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
     def Cost(self):
         return self.__cost
 
+    @property
+    def DropoutKeepProb(self):
+        return self.__dropout_keep_prob
+
     # endregion
 
     # region body
@@ -72,13 +77,13 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         self.__labels = tf.cast(tf.argmax(output, axis=1), tf.int32)
 
         with tf.name_scope("cost"):
-            self.__weights, self.__cost = BaseContextNeuralNetwork.init_weighted_cost(
+            self.__weights, self.__cost = init_weighted_cost(
                 logits_unscaled_dropout=logits_unscaled_dropped,
                 true_labels=self.__y,
                 config=config)
 
         with tf.name_scope("accuracy"):
-            self.__accuracy = BaseContextNeuralNetwork.init_accuracy(labels=self.__labels, true_labels=self.__y)
+            self.__accuracy = init_accuracy(labels=self.__labels, true_labels=self.__y)
 
     def init_body(self):
         """

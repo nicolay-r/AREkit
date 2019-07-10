@@ -1,5 +1,5 @@
 import tensorflow as tf
-from core.networks.context.architectures.utils import get_k_layer_logits
+from core.networks.context.architectures.utils import get_k_layer_logits, get_k_layer_pair_logits
 from core.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
 
 
@@ -39,15 +39,15 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
         }
 
     def init_logits_unscaled(self, encoded_contexts):
-        # TODO. Now it is hardcoded two layer network.
-        return get_k_layer_logits(
-            encoded_contexts,
-            W1=self.__hidden[self.H_W1],
-            b1=self.__hidden[self.H_b1],
-            W2=self.__hidden[self.H_W2],
-            b2=self.__hidden[self.H_b2],
-            dropout_keep_prob=self.__dropout_keep_prob,
-            activations=[tf.tanh, tf.tanh, None])
+        W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
+        b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
+        activations = [tf.tanh] * len(W)
+        activations.append(None)
+        return get_k_layer_pair_logits(g=encoded_contexts,
+                                       W=W,
+                                       b=b,
+                                       dropout_keep_prob=self.DropoutKeepProb,
+                                       activations=activations)
 
     @staticmethod
     def __contexts_max_pooling(context_outputs, contexts_per_opinion):
@@ -60,6 +60,6 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
             data_format="NHWC")
         return tf.squeeze(context_outputs)                       # [batches, max_pooling]
 
-    def hidden_parameters(self):
+    def iter_hidden_parameters(self):
         return self.__hidden
 

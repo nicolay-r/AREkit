@@ -93,8 +93,9 @@ class VanillaCNN(BaseContextNeuralNetwork):
                 dtype=tf.float32)
         }
 
-    def hidden_parameters(self):
-        return self.__hidden
+    def iter_hidden_parameters(self):
+        for key, value in self.__hidden:
+            yield key, value
 
     @staticmethod
     def padding(embedded_data, window_size):

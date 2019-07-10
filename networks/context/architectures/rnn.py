@@ -1,4 +1,5 @@
 import tensorflow as tf
+from core.networks.context.sample import InputSample
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.rnn import RNNConfig, CellTypes
 import utils
@@ -10,11 +11,12 @@ import utils
 
 class RNN(BaseContextNeuralNetwork):
 
+    H_W = "W"
+    H_b = "b"
+
     def __init__(self):
         super(RNN, self).__init__()
-        # TODO: Use dict for hidden paramters
-        self.__W = None
-        self.__b = None
+        self.__hidden = {}
 
     @property
     def ContextEmbeddingSize(self):
@@ -24,7 +26,8 @@ class RNN(BaseContextNeuralNetwork):
         assert(isinstance(self.Config, RNNConfig))
 
         with tf.name_scope("rnn"):
-            length = tf.cast(utils.calculate_sequence_length(self.InputX), tf.int32)
+            length = tf.cast(x=utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS)),
+                             dtype=tf.int32)
             cell = self.get_cell(self.Config.HiddenSize, self.Config.CellType)
             cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=self.DropoutKeepProb)
             all_outputs, _ = tf.nn.dynamic_rnn(cell=cell,
@@ -39,22 +42,23 @@ class RNN(BaseContextNeuralNetwork):
 
         with tf.name_scope("output"):
             l2_loss = tf.constant(0.0)
-            l2_loss += tf.nn.l2_loss(self.__W)
-            l2_loss += tf.nn.l2_loss(self.__b)
-            logits = tf.nn.xw_plus_b(context_embedding, self.__W, self.__b, name="logits")
+            l2_loss += tf.nn.l2_loss(self.__hidden[self.H_W])
+            l2_loss += tf.nn.l2_loss(self.__hidden[self.H_b])
+            logits = tf.nn.xw_plus_b(context_embedding,
+                                     self.__hidden[self.H_W],
+                                     self.__hidden[self.H_b],
+                                     name="logits")
 
         return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
     def init_hidden_states(self):
-        self.__W = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-                                   initializer=tf.contrib.layers.xavier_initializer(),
-                                   name="W")
-        self.__b = tf.Variable(initial_value=tf.constant(0.1, shape=[self.Config.ClassesCount]),
-                               name="b")
+        self.__hidden[self.H_W] = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+                                                  initializer=tf.contrib.layers.xavier_initializer())
+        self.__hidden[self.H_b] = tf.Variable(initial_value=tf.constant(0.1, shape=[self.Config.ClassesCount]))
 
-    def hidden_parameters(self):
-        return ["W", "b"], \
-               [self.__W, self.__b]
+    def iter_hidden_parameters(self):
+        for key, value in self.__hidden.iteritems():
+            yield key, value
 
     @staticmethod
     def get_cell(hidden_size, cell_type):
