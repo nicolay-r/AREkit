@@ -1,10 +1,7 @@
 import tensorflow as tf
-
 from core.common.embedding import Embedding
-from core.networks.attention.architectures.base import Attention
 from core.processing.lemmatization.mystem import MystemWrapper
 from core.processing.pos.mystem_wrap import POSMystemWrapper
-from core.networks.attention.configurations.base import AttentionConfig
 
 
 class LabelCalculationMode:
@@ -46,10 +43,6 @@ class DefaultNetworkConfig(object):
     __pos_emb_size = 5
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
-
-    __use_attention = True
-    __attention_model = None
-    __attention_config = AttentionConfig()
 
     def __init__(self):
         self.__embedding_dropout_keep = 1.0 - 1.0 / self.TermsPerContext
@@ -94,10 +87,6 @@ class DefaultNetworkConfig(object):
         assert(isinstance(value, bool))
         self.__use_class_weights = value
 
-    def modify_use_attention(self, value):
-        assert(isinstance(value, bool))
-        self.__use_attention = value
-
     def modify_dropout_keep_prob(self, value):
         assert(isinstance(value, float))
         assert(0 < value <= 1.0)
@@ -118,13 +107,7 @@ class DefaultNetworkConfig(object):
 
     def set_term_embedding(self, embedding_matrix):
         assert(self.__term_embedding_matrix is None)
-        assert(self.__attention_model is None)
-
         self.__term_embedding_matrix = embedding_matrix
-        self.__attention_model = Attention(cfg=self.__attention_config,
-                                           batch_size=self.BatchSize,
-                                           terms_per_context=self.TermsPerContext,
-                                           term_embedding_size=self.TermEmbeddingShape[1])
 
     def set_token_embedding(self, token_embedding):
         assert(isinstance(token_embedding, Embedding))
@@ -145,6 +128,9 @@ class DefaultNetworkConfig(object):
         assert(isinstance(embedding, Embedding))
         assert(self.__frames_embedding is None)
         self.__frames_embedding = embedding
+
+    def notify_initialization_completed(self):
+        pass
 
     @property
     def ClassesCount(self):
@@ -238,20 +224,8 @@ class DefaultNetworkConfig(object):
     def UseEmbeddingDropout(self):
         return self.__use_embedding_dropout
 
-    @property
-    def UseAttention(self):
-        return self.__use_attention
-
-    @property
-    def AttentionModel(self):
-        return self.__attention_model
-
-    @property
-    def AttentionConfig(self):
-        return self.__attention_config
-
     def _internal_get_parameters(self):
-        base_parameters = [
+        return [
             ("base:use_class_weights", self.UseClassWeights),
             ("base:dropout (keep prob)", self.DropoutKeepProb),
             ("base:classes_count", self.ClassesCount),
@@ -271,13 +245,7 @@ class DefaultNetworkConfig(object):
             ("base:embedding dropout (keep prob)", self.EmbeddingDropoutKeepProb),
             ("base:optimizer", self.Optimiser),
             ("base:learning_rate", self.LearningRate),
-            ("base:use_attention", self.__use_attention)
         ]
-
-        if self.UseAttention:
-            base_parameters += self.AttentionConfig.get_parameters()
-
-        return base_parameters
 
     def get_parameters(self):
         return [list(p) for p in zip(*self._internal_get_parameters())]

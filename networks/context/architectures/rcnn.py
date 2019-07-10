@@ -22,8 +22,7 @@ class RCNN(BaseContextNeuralNetwork):
 
     @property
     def ContextEmbeddingSize(self):
-        return self.Config.HiddenSize + \
-               self._get_attention_vector_size(self.Config)
+        return self.Config.HiddenSize
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, RCNNConfig))
@@ -53,10 +52,6 @@ class RCNN(BaseContextNeuralNetwork):
 
         with tf.name_scope("max-pooling"):
             y3 = tf.reduce_max(y2, axis=1)
-
-        # TODO. in Nested class
-        if self.Config.UseAttention:
-            y3 = tf.concat([y3, self.init_attention_embedding()], axis=-1)
 
         return y3
 

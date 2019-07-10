@@ -9,8 +9,7 @@ class PiecewiseCNN(VanillaCNN):
 
     @property
     def ContextEmbeddingSize(self):
-        return 3 * self.Config.FiltersCount + \
-               self._get_attention_vector_size(self.Config)
+        return 3 * self.Config.FiltersCount
 
     def init_context_embedding(self, embedded_terms):
         embedded_terms = self.padding(embedded_terms, self.Config.WindowSize)
@@ -49,10 +48,6 @@ class PiecewiseCNN(VanillaCNN):
         bwc_mpool = tf.squeeze(bwgc_mpool, [2])
         bcw_mpool = tf.transpose(bwc_mpool, perm=[0, 2, 1])
         g = tf.reshape(bcw_mpool, [self.Config.BatchSize, 3 * self.Config.FiltersCount])
-
-        if self.Config.UseAttention:
-            # TODO. in Nested class, as it is specific att application.
-            g = tf.concat([g, self.init_attention_embedding()], axis=1)
 
         return tf.concat(g, axis=-1)
 

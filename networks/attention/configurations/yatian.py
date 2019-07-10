@@ -1,4 +1,4 @@
-class AttentionConfig(object):
+class AttentionYatianColing2016Config(object):
 
     __entities_per_context = 2
     __hidden_size = 10
@@ -13,8 +13,8 @@ class AttentionConfig(object):
 
     def get_parameters(self):
         parameters = [
-            ("attention:entities_per_context", self.EntitiesPerContext),
-            ("attention:hidden_size", self.HiddenSize)
+            ("attention-yatian-coling-2016:entities_per_context", self.EntitiesPerContext),
+            ("attention-yatian-coling-2016:hidden_size", self.HiddenSize)
         ]
 
         return parameters

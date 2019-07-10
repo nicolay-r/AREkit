@@ -22,10 +22,13 @@ class VanillaCNN(BaseContextNeuralNetwork):
 
     @property
     def ContextEmbeddingSize(self):
-        return self.Config.FiltersCount + \
-               self._get_attention_vector_size(self.Config)
+        return self.Config.FiltersCount
 
     def init_context_embedding(self, embedded_terms):
+        embedding = self.init_context_embedding_core(embedded_terms)
+        return tf.concat(embedding, axis=-1)
+
+    def init_context_embedding_core(self, embedded_terms):
         embedded_terms = self.padding(embedded_terms, self.Config.WindowSize)
 
         bwc_line = tf.reshape(embedded_terms,
@@ -55,12 +58,7 @@ class VanillaCNN(BaseContextNeuralNetwork):
 
         g = tf.reshape(bc_mpool, [self.Config.BatchSize, self.Config.FiltersCount])
 
-        if self.Config.UseAttention:
-            # TODO. in Nested class, as it is specific att application.
-            # TODO. Maybe as separated model (ATT-CNN)?
-            g = tf.concat([g, self.init_attention_embedding()], axis=-1)
-
-        return tf.concat(g, axis=-1)
+        return g
 
     def init_logits_unscaled(self, context_embedding):
         W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]

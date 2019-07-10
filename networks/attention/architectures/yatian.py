@@ -1,54 +1,61 @@
 import tensorflow as tf
+from ..configurations.yatian import AttentionYatianColing2016Config
 from core.networks.context.architectures.utils import get_k_layer_logits
-from core.networks.attention.configurations.base import AttentionConfig
 
 
-# TODO. Nested from Base.
-# TODO. Rename this Attention.
-class Attention(object):
+class AttentionYatianColing2016(object):
+    """
+    Authors: Yatian Shen, Xuanjing Huang
+    https://www.aclweb.org/anthology/C16-1238
+    """
+
+    H_W_we = "H_W_we"
+    H_W_a = "H_W_a"
+    H_b_we = "H_b_we"
+    H_b_a = "H_b_a"
+
+    I_x = "I_x"
+    I_entities = "I_e"
 
     def __init__(self, cfg, batch_size, terms_per_context, term_embedding_size):
-        assert(isinstance(cfg, AttentionConfig))
+        assert(isinstance(cfg, AttentionYatianColing2016Config))
         self.__cfg = cfg
 
         self.__batch_size = batch_size
         self.__terms_per_context = terms_per_context
         self.__term_embedding_size = term_embedding_size
 
-        # TODO. To input
-        self.__x = None
-        self.__entities = None
-
-        # TODO. To dict
-        self.__W_we = None
-        self.__b_we = None
-        self.__W_a = None
-        self.__b_a = None
+        self.__input = {}
+        self.__hidden = {}
 
     @property
     def AttentionEmbeddingSize(self):
         return self.__cfg.EntitiesPerContext * self.__term_embedding_size
 
-    def set_x(self, x):
-        self.__x = x
-
-    def set_entities(self, entities):
-        self.__entities = entities
+    def set_input(self, x, entities):
+        self.__input[self.I_x] = x
+        self.__input[self.I_entities] = entities
 
     def init_input(self):
-        self.__x = tf.placeholder(dtype=tf.int32, shape=[self.__batch_size, self.__terms_per_context])
-        self.__entities = tf.placeholder(dtype=tf.int32, shape=[self.__batch_size, self.__cfg.EntitiesPerContext])
+        self.__input[self.I_x] = tf.placeholder(dtype=tf.int32,
+                                                shape=[self.__batch_size, self.__terms_per_context])
+        self.__input[self.I_entities] = tf.placeholder(dtype=tf.int32,
+                                                       shape=[self.__batch_size, self.__cfg.EntitiesPerContext])
 
     def init_hidden(self):
-        # init hidden
-        self.__W_we = tf.Variable(tf.random_normal([2 * self.__term_embedding_size, self.__cfg.HiddenSize]), dtype=tf.float32)
-        self.__b_we = tf.Variable(tf.random_normal([self.__cfg.HiddenSize]), dtype=tf.float32)
-        self.__W_a = tf.Variable(tf.random_normal([self.__cfg.HiddenSize, 1]), dtype=tf.float32)
-        self.__b_a = tf.Variable(tf.random_normal([1]), dtype=tf.float32)
+        self.__hidden[self.H_W_we] = tf.Variable(tf.random_normal([2 * self.__term_embedding_size, self.__cfg.HiddenSize]),
+                                                 dtype=tf.float32)
+        self.__hidden[self.H_b_we] = tf.Variable(tf.random_normal([self.__cfg.HiddenSize]),
+                                                 dtype=tf.float32)
+        self.__hidden[self.H_W_a] = tf.Variable(tf.random_normal([self.__cfg.HiddenSize, 1]),
+                                                dtype=tf.float32)
+        self.__hidden[self.H_b_a] = tf.Variable(tf.random_normal([1]),
+                                                dtype=tf.float32)
 
     def init_body(self, term_embedding):
         # embedded_terms: [batch_size, terms_per_context, embedding_size]
-        embedded_terms = tf.nn.embedding_lookup(term_embedding, self.__x)
+        embedded_terms = tf.nn.embedding_lookup(params=term_embedding,
+                                                ids=self.__input[self.I_x])
 
         with tf.name_scope("attention"):
 
@@ -80,15 +87,15 @@ class Attention(object):
                 # entities: [batch_size, entities_per_context]
 
                 e = tf.gather(entities, [i], axis=1)                       # [batch_size, 1] -- term positions
-                e = tf.tile(e, [1, self.__terms_per_context])                # [batch_size, terms_per_context]
+                e = tf.tile(e, [1, self.__terms_per_context])              # [batch_size, terms_per_context]
                 e = tf.nn.embedding_lookup(term_embedding, e)              # [batch_size, terms_per_context, embedding_size]
 
                 merged = tf.concat([embedded_terms, e], axis=-1)
                 merged = tf.reshape(merged, [self.__batch_size * self.__terms_per_context, 2 * self.__term_embedding_size])
 
                 weights, _ = get_k_layer_logits(g=merged,
-                                                W=[self.__W_we, self.__W_a],
-                                                b=[self.__b_we, self.__b_a],
+                                                W=[self.__hidden[self.H_W_we], self.__hidden[self.H_W_a]],
+                                                b=[self.__hidden[self.H_b_we], self.__hidden[self.H_b_a]],
                                                 activations=[None,
                                                              lambda tensor: tf.tanh(tensor),
                                                              None])       # [batch_size * terms_per_context, 1]
@@ -106,13 +113,14 @@ class Attention(object):
                         att_embeddings.write(i, weighted_sum),
                         att_weights.write(i, tf.reshape(weights, [self.__batch_size, self.__terms_per_context])))
 
-            att_e, att_w = iter_by_entities(self.__entities, process_entity)
+            att_e, att_w = iter_by_entities(self.__input[self.I_entities], process_entity)
 
             # att_e: [entity_per_context, batch_size, term_embedding_size]
             # att_w: [entity_per_context, batch_size, terms_per_context]
 
             att_e = tf.transpose(att_e, perm=[1, 0, 2])  # [batch_size, entity_per_context, term_embedding_size]
-            att_e = tf.reshape(att_e, [self.__batch_size, self.AttentionEmbeddingSize])
+            att_e = tf.reshape(att_e, [self.__batch_size,
+                                       self.AttentionEmbeddingSize])
 
             att_w = tf.transpose(att_w, perm=[1, 0, 2])  # [batch_size, entity_per_context, terms_per_context]
 

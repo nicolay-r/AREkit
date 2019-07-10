@@ -1,6 +1,4 @@
 import tensorflow as tf
-
-from core.networks.attention.architectures.base import Attention
 from core.networks.context.architectures.utils import init_weighted_cost, init_accuracy
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.training.batch import MiniBatch
@@ -12,14 +10,8 @@ from core.networks.network import NeuralNetwork
 # TODO. Rename SingleContextNeuralNetwork
 class BaseContextNeuralNetwork(NeuralNetwork):
 
-    __attention_var_scope_name = 'attention-model'
-
     def __init__(self):
         self.__cfg = None
-
-        # TODO. remove from here.
-        # TODO. Should be nested from CNN model.
-        self.__att_weights = None
 
         self.__labels = None
 
@@ -101,10 +93,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         if reset_graph:
             tf.reset_default_graph()
 
-        if self.__cfg.UseAttention:
-            with tf.variable_scope(self.__attention_var_scope_name):
-                self.__cfg.AttentionModel.init_hidden()
-
         self.init_input()
         self.__init_embedding_hidden_states()
         self.init_hidden_states()
@@ -129,6 +117,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     # endregion
 
+    # region init
+
     def init_hidden_states(self):
         raise NotImplementedError()
 
@@ -137,22 +127,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     def init_logits_unscaled(self, context_embedding):
         raise NotImplementedError()
-
-    # TODO. Maybe in nested architecture that supports attention?
-    # TODO. In utils.
-    # TODO. Depends att_model, input, config
-    def init_attention_embedding(self):
-        assert(isinstance(self.__cfg.AttentionModel, Attention))
-
-        entities = tf.stack([self.__input[InputSample.I_SUBJ_IND],
-                             self.__input[InputSample.I_OBJ_IND]],
-                            axis=-1)
-
-        self.__cfg.AttentionModel.set_x(self.__input[InputSample.I_X_INDS])
-        self.__cfg.AttentionModel.set_entities(entities)         # [batch_size, 2]
-
-        att_e, self.__att_weights = self.__cfg.AttentionModel.init_body(self.__term_emb)
-        return att_e
 
     def init_embedded_input(self):
         return self.optional_process_embedded_data(self.__cfg,
@@ -210,9 +184,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__embedding_dropout_keep_prob = tf.placeholder(dtype=tf.float32,
                                                             name="cxt_emb_dropout_keep_prob")
 
-        if self.__cfg.UseAttention:
-            with tf.variable_scope(self.__attention_var_scope_name):
-                self.__cfg.AttentionModel.init_input()
+    # endregion
 
     def create_feed_dict(self, input, data_type):
         assert(isinstance(input, dict))
@@ -237,10 +209,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
             return tf.nn.dropout(embedded, keep_prob=dropout_keep_prob)
 
         return embedded
-
-    @staticmethod
-    def _get_attention_vector_size(cfg):
-        return 0 if not cfg.UseAttention else cfg.AttentionModel.AttentionEmbeddingSize
 
     # endregion
 
