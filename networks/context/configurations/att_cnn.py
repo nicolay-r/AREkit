@@ -5,11 +5,10 @@ from core.networks.context.configurations.cnn import CNNConfig
 
 class AttentionCNNConfig(CNNConfig):
 
-    def __init__(self, attention_config):
-        assert(isinstance(attention_config, AttentionYatianColing2016Config))
+    def __init__(self):
         super(AttentionCNNConfig, self).__init__()
         self.__attention = None
-        self.__attention_config = attention_config
+        self.__attention_config = AttentionYatianColing2016Config()
 
     def AttentionModel(self):
         return self.__attention
