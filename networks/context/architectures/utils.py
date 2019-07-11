@@ -23,7 +23,7 @@ def get_k_layer_logits(g, W, b, dropout_keep_prob=None, activations=None):
     r = g
 
     for i in range(len(W)):
-        r = __activate(r, activations[0])
+        r = __activate(r, activations[i])
         r = tf.matmul(r, W[i]) + b[i]
 
         if dropout_keep_prob is None:

@@ -53,6 +53,8 @@ class AttentionYatianColing2016(object):
                                                 dtype=tf.float32)
 
     def init_body(self, term_embedding):
+        assert(isinstance(term_embedding, tf.Tensor))
+
         # embedded_terms: [batch_size, terms_per_context, embedding_size]
         embedded_terms = tf.nn.embedding_lookup(params=term_embedding,
                                                 ids=self.__input[self.I_x])
@@ -62,7 +64,7 @@ class AttentionYatianColing2016(object):
             def iter_by_entities(entities, handler):
                 # entities: [batch_size, entities]
 
-                att_emb_array = tf.TensorArray(
+                att_sum_array = tf.TensorArray(
                     dtype=tf.float32,
                     name="context_iter",
                     size=self.__cfg.EntitiesPerContext,
@@ -76,14 +78,15 @@ class AttentionYatianColing2016(object):
                     infer_shape=False,
                     dynamic_size=True)
 
-                _, _, att_emb, att_weights = tf.while_loop(
+                _, _, att_sum, att_weights = tf.while_loop(
                     lambda i, *_: tf.less(i, self.__cfg.EntitiesPerContext),
                     handler,
-                    (0, entities, att_emb_array, att_weights_array))
+                    (0, entities, att_sum_array, att_weights_array))
 
-                return att_emb.stack(), att_weights.stack()
+                return att_sum.stack(), \
+                       att_weights.stack()
 
-            def process_entity(i, entities, att_embeddings, att_weights):
+            def process_entity(i, entities, att_sum, att_weights):
                 # entities: [batch_size, entities_per_context]
 
                 e = tf.gather(entities, [i], axis=1)                       # [batch_size, 1] -- term positions
@@ -93,35 +96,37 @@ class AttentionYatianColing2016(object):
                 merged = tf.concat([embedded_terms, e], axis=-1)
                 merged = tf.reshape(merged, [self.__batch_size * self.__terms_per_context, 2 * self.__term_embedding_size])
 
-                weights, _ = get_k_layer_logits(g=merged,
-                                                W=[self.__hidden[self.H_W_we], self.__hidden[self.H_W_a]],
-                                                b=[self.__hidden[self.H_b_we], self.__hidden[self.H_b_a]],
-                                                activations=[None,
-                                                             lambda tensor: tf.tanh(tensor),
-                                                             None])       # [batch_size * terms_per_context, 1]
+                u = get_k_layer_logits(g=merged,
+                                       W=[self.__hidden[self.H_W_we], self.__hidden[self.H_W_a]],
+                                       b=[self.__hidden[self.H_b_we], self.__hidden[self.H_b_a]],
+                                       activations=[None,
+                                                    lambda tensor: tf.tanh(tensor),
+                                                    None])       # [batch_size * terms_per_context, 1]
+
+                alphas = tf.reshape(u, [self.__batch_size, self.__terms_per_context])
+                alphas = tf.nn.softmax(alphas)
+                alphas = tf.reshape(alphas, [self.__batch_size * self.__terms_per_context, 1])
 
                 original_embedding = tf.reshape(embedded_terms,
                                                 [self.__batch_size * self.__terms_per_context, self.__term_embedding_size])
 
-                weighted = tf.multiply(weights, original_embedding)
-                weighted = tf.reshape(weighted, [self.__batch_size, self.__terms_per_context, self.__term_embedding_size])
-                weighted_sum = tf.reduce_sum(weighted, axis=1)             # [batch_size, embedding_size]
-                weighted_sum = tf.nn.softmax(weighted_sum)
+                w_embedding = tf.multiply(alphas, original_embedding)
+                w_embedding = tf.reshape(w_embedding, [self.__batch_size, self.__terms_per_context, self.__term_embedding_size])
+                w_sum = tf.reduce_sum(w_embedding, axis=1)             # [batch_size, embedding_size]
 
                 return (i + 1,
                         entities,
-                        att_embeddings.write(i, weighted_sum),
-                        att_weights.write(i, tf.reshape(weights, [self.__batch_size, self.__terms_per_context])))
+                        att_sum.write(i, w_sum),
+                        att_weights.write(i, tf.reshape(alphas, [self.__batch_size, self.__terms_per_context])))
 
-            att_e, att_w = iter_by_entities(self.__input[self.I_entities], process_entity)
+            att_sum, att_weights = iter_by_entities(self.__input[self.I_entities], process_entity)
 
-            # att_e: [entity_per_context, batch_size, term_embedding_size]
-            # att_w: [entity_per_context, batch_size, terms_per_context]
+            # att_sum: [entity_per_context, batch_size, term_embedding_size]
+            # att_weights: [entity_per_context, batch_size, terms_per_context]
 
-            att_e = tf.transpose(att_e, perm=[1, 0, 2])  # [batch_size, entity_per_context, term_embedding_size]
-            att_e = tf.reshape(att_e, [self.__batch_size,
-                                       self.AttentionEmbeddingSize])
+            att_sum = tf.transpose(att_sum, perm=[1, 0, 2])  # [batch_size, entity_per_context, term_embedding_size]
+            att_sum = tf.reshape(att_sum, shape=[self.__batch_size, self.AttentionEmbeddingSize])
 
-            att_w = tf.transpose(att_w, perm=[1, 0, 2])  # [batch_size, entity_per_context, terms_per_context]
+            att_weights = tf.transpose(att_weights, perm=[1, 0, 2])  # [batch_size, entity_per_context, terms_per_context]
 
-        return att_e, att_w
+        return att_sum, att_weights
