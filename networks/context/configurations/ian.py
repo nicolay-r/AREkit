@@ -12,6 +12,8 @@ class IANConfig(DefaultNetworkConfig):
     def __init__(self):
         super(IANConfig, self).__init__()
 
+    # region Properties
+
     @property
     def L2Reg(self):
         return self.__l2_reg
@@ -40,13 +42,14 @@ class IANConfig(DefaultNetworkConfig):
     def AspectsEmbeddingShape(self):
         return self.__aspect_embedding_matrix.shape
 
-    def set_term_embedding(self, embedding_matrix):
-        super(IANConfig, self).set_term_embedding(embedding_matrix)
-        self.__aspect_embedding_matrix = embedding_matrix
-
     @property
     def Optimiser(self):
         return tf.train.AdamOptimizer(learning_rate=self.LearningRate)
+
+    # endregion
+
+    def notify_initialization_completed(self):
+        self.__aspect_embedding_matrix = self.TermEmbeddingMatrix
 
     def _internal_get_parameters(self):
         parameters = super(IANConfig, self)._internal_get_parameters()

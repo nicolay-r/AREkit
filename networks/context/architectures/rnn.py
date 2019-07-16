@@ -1,4 +1,5 @@
 import tensorflow as tf
+from collections import OrderedDict
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.rnn import RNNConfig, CellTypes
@@ -16,7 +17,7 @@ class RNN(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(RNN, self).__init__()
-        self.__hidden = {}
+        self.__hidden = OrderedDict()
 
     @property
     def ContextEmbeddingSize(self):
@@ -53,7 +54,8 @@ class RNN(BaseContextNeuralNetwork):
 
     def init_hidden_states(self):
         self.__hidden[self.H_W] = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-                                                  initializer=tf.contrib.layers.xavier_initializer())
+                                                  initializer=tf.contrib.layers.xavier_initializer(),
+                                                  name=self.H_W)
         self.__hidden[self.H_b] = tf.Variable(initial_value=tf.constant(0.1, shape=[self.Config.ClassesCount]))
 
     def iter_hidden_parameters(self):

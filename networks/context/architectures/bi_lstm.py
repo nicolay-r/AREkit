@@ -6,6 +6,7 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 import utils
 import tensorflow as tf
 from tensorflow.contrib import rnn
+from collections import OrderedDict
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 
@@ -17,7 +18,7 @@ class BiLSTM(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(BiLSTM, self).__init__()
-        self.__hidden = {}
+        self.__hidden = OrderedDict()
 
     @property
     def ContextEmbeddingSize(self):

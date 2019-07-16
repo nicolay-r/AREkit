@@ -1,4 +1,5 @@
 import tensorflow as tf
+from collections import OrderedDict
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.cnn import CNNConfig
 import utils
@@ -14,7 +15,7 @@ class VanillaCNN(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(VanillaCNN, self).__init__()
-        self.__hidden = {}
+        self.__hidden = OrderedDict()
 
     @property
     def Hidden(self):
@@ -65,31 +66,33 @@ class VanillaCNN(BaseContextNeuralNetwork):
         b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
         activations = [tf.tanh] * len(W)
         activations.append(None)
-        return utils.get_k_layer_pair_logits(g=context_embedding,
-                                             W=W,
-                                             b=b,
-                                             dropout_keep_prob=self.DropoutKeepProb,
-                                             activations=activations)
+        print "Context embedding size: {}".format(context_embedding.shape)
+        result, result_dropout = utils.get_k_layer_pair_logits(g=context_embedding,
+                                                               W=W,
+                                                               b=b,
+                                                               dropout_keep_prob=self.DropoutKeepProb,
+                                                               activations=activations)
+        print "X: {}".format(result.shape)
+        print "X: {}".format(result_dropout.shape)
+        return result, result_dropout
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
-        self.__hidden = {
-            self.H_W: tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize,
-                                                                  self.Config.HiddenSize]),
-                                  dtype=tf.float32),
-            self.H_b: tf.Variable(initial_value=tf.random_normal([self.Config.HiddenSize]),
-                                  dtype=tf.float32),
-            self.H_W2: tf.Variable(initial_value=tf.random_normal([self.Config.HiddenSize,
-                                                                   self.Config.ClassesCount]),
-                                   dtype=tf.float32),
-            self.H_b2: tf.Variable(initial_value=tf.random_normal([self.Config.ClassesCount]),
-                                   dtype=tf.float32),
-            self.H_conv_filter: tf.Variable(
-                initial_value=tf.random_normal([self.Config.WindowSize * self.TermEmbeddingSize,
-                                                1,
-                                                self.Config.FiltersCount]),
-                dtype=tf.float32)
-        }
+        self.__hidden[self.H_W] = tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize,
+                                                                              self.Config.HiddenSize]),
+                                              dtype=tf.float32)
+        self.__hidden[self.H_b] = tf.Variable(initial_value=tf.random_normal([self.Config.HiddenSize]),
+                                              dtype=tf.float32)
+        self.__hidden[self.H_W2] = tf.Variable(initial_value=tf.random_normal([self.Config.HiddenSize,
+                                                                               self.Config.ClassesCount]),
+                                               dtype=tf.float32)
+        self.__hidden[self.H_b2] = tf.Variable(initial_value=tf.random_normal([self.Config.ClassesCount]),
+                                               dtype=tf.float32)
+        self.__hidden[self.H_conv_filter] = tf.Variable(
+            initial_value=tf.random_normal([self.Config.WindowSize * self.TermEmbeddingSize,
+                                            1,
+                                            self.Config.FiltersCount]),
+            dtype=tf.float32)
 
     def iter_hidden_parameters(self):
         for key, value in self.__hidden:

@@ -61,7 +61,7 @@ class IAN(BaseContextNeuralNetwork):
                 ),
                 'softmax': tf.get_variable(
                     name='W_l',
-                    shape=[self.ContextEmbeddingSize(), self.Config.ClassesCount],
+                    shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
                     initializer=tf.random_uniform_initializer(-0.1, 0.1),
                     regularizer=tf.contrib.layers.l2_regularizer(self.Config.L2Reg)
                 ),
@@ -91,13 +91,13 @@ class IAN(BaseContextNeuralNetwork):
             }
 
     def init_embedded_input(self):
-        super(IAN, self).init_embedded_input()
-
         aspect_inputs = tf.cast(tf.nn.embedding_lookup(self.__E_aspects, self.__aspects), tf.float32)
         self.__aspect_inputs = self.optional_process_embedded_data(
             self.Config,
             aspect_inputs,
             self.EmbeddingDropoutKeepProb)
+
+        return super(IAN, self).init_embedded_input()
 
     def init_context_embedding(self, embedded_terms):
         with tf.name_scope('inputs'):
