@@ -10,13 +10,14 @@ class AttentionCNNConfig(CNNConfig):
         self.__attention = None
         self.__attention_config = AttentionYatianColing2016Config()
 
+    @property
     def AttentionModel(self):
         return self.__attention
 
     def notify_initialization_completed(self):
-        assert(self.__attention_model is None)
+        assert(self.__attention is None)
 
-        self.__attention_model = AttentionYatianColing2016(
+        self.__attention = AttentionYatianColing2016(
             cfg=self.__attention_config,
             batch_size=self.BatchSize,
             terms_per_context=self.TermsPerContext,

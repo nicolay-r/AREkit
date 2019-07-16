@@ -68,6 +68,10 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def ContextEmbeddingSize(self):
         raise NotImplementedError()
 
+    @property
+    def TermEmbedding(self):
+        return self.__term_emb
+
     # endregion
 
     def get_input_parameter(self, param):

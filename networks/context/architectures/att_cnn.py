@@ -23,7 +23,7 @@ class AttentionCNN(VanillaCNN):
         g = super(AttentionCNN, self).init_context_embedding_core(embedded_terms)
 
         with tf.variable_scope(self.__attention_var_scope_name):
-            self.__cfg.AttentionModel.init_hidden()
+            self.Config.AttentionModel.init_hidden()
 
         g = tf.concat([g, self.__init_attention_embedding()], axis=-1)
 
@@ -33,7 +33,7 @@ class AttentionCNN(VanillaCNN):
         super(AttentionCNN, self).init_input()
 
         with tf.variable_scope(self.__attention_var_scope_name):
-            self.__cfg.AttentionModel.init_input()
+            self.Config.AttentionModel.init_input()
 
     def iter_hidden_parameters(self):
         for key, value in super(AttentionCNN, self).iter_hidden_parameters():
@@ -42,19 +42,19 @@ class AttentionCNN(VanillaCNN):
         yield "ATT_Weights", self.__att_weights
 
     def __init_attention_embedding(self):
-        assert(isinstance(self.__cfg, AttentionCNNConfig))
+        assert(isinstance(self.Config, AttentionCNNConfig))
 
-        att = self.__cfg.AttentionModel
+        att = self.Config.AttentionModel
 
         assert(isinstance(att, AttentionYatianColing2016))
 
-        entities = tf.stack([self.__input[InputSample.I_SUBJ_IND],
-                             self.__input[InputSample.I_OBJ_IND]],
+        entities = tf.stack([self.get_input_parameter(InputSample.I_SUBJ_IND),
+                             self.get_input_parameter(InputSample.I_OBJ_IND)],
                             axis=-1)
 
-        att.set_input(x=self.__input[InputSample.I_X_INDS],
+        att.set_input(x=self.get_input_parameter(InputSample.I_X_INDS),
                       entities=entities)
 
-        att_e, self.__att_weights = att.init_body(self.__term_emb)
+        att_e, self.__att_weights = att.init_body(self.TermEmbedding)
         return att_e
 
