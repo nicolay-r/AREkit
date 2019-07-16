@@ -8,8 +8,8 @@ from core.networks.context.architectures.cnn import VanillaCNN
 
 class AttentionCNN(VanillaCNN):
     """
-    Author:
-    Paper: TODO.
+    Author: Yatian Shen, Xuanjing Huang
+    Paper: https://www.aclweb.org/anthology/C16-1238
     """
 
     __attention_var_scope_name = 'attention-model'
@@ -23,21 +23,19 @@ class AttentionCNN(VanillaCNN):
         return super(AttentionCNN, self).ContextEmbeddingSize + \
                self.Config.AttentionModel.AttentionEmbeddingSize
 
-    def init_context_embedding_core(self, embedded_terms):
-        g = super(AttentionCNN, self).init_context_embedding_core(embedded_terms)
+    def init_input(self):
+        super(AttentionCNN, self).init_input()
+        with tf.variable_scope(self.__attention_var_scope_name):
+            self.Config.AttentionModel.init_input()
 
+    def init_hidden_states(self):
+        super(AttentionCNN, self).init_hidden_states()
         with tf.variable_scope(self.__attention_var_scope_name):
             self.Config.AttentionModel.init_hidden()
 
-        g = tf.concat([g, self.__init_attention_embedding()], axis=-1)
-
-        return g
-
-    def init_input(self):
-        super(AttentionCNN, self).init_input()
-
-        with tf.variable_scope(self.__attention_var_scope_name):
-            self.Config.AttentionModel.init_input()
+    def init_context_embedding_core(self, embedded_terms):
+        g = super(AttentionCNN, self).init_context_embedding_core(embedded_terms)
+        return tf.concat([g, self.__init_attention_embedding()], axis=-1)
 
     def iter_hidden_parameters(self):
         for key, value in super(AttentionCNN, self).iter_hidden_parameters():

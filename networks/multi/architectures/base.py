@@ -33,6 +33,14 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
     # region properties
 
     @property
+    def ContextNetwork(self):
+        return self.__context_network
+
+    @property
+    def Config(self):
+        return self.__cfg
+
+    @property
     def ContextsPerOpinion(self):
         return self.__cfg.BagSize
 

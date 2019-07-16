@@ -1,5 +1,6 @@
 import tensorflow as tf
-from core.networks.context.architectures.utils import get_k_layer_logits, get_k_layer_pair_logits
+from collections import OrderedDict
+from core.networks.context.architectures.utils import get_k_layer_pair_logits
 from core.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
 
 
@@ -8,14 +9,14 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
     Provides encoder as a maxpooling over embedded contexts.
     TODO. Provide link
     """
-    H_W1 = "W1"
-    H_W2 = "W1"
-    H_b1 = "b1"
+    H_W1 = "W"
+    H_W2 = "W2"
+    H_b1 = "b"
     H_b2 = "b2"
 
     def __init__(self, context_network):
         super(MaxPoolingMultiInstanceNetwork, self).__init__(context_network)
-        self.__hidden = {}
+        self.__hidden = OrderedDict()
 
     def init_multiinstance_embedding(self, context_outputs):
         """
@@ -25,24 +26,23 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
                                            contexts_per_opinion=self.ContextsPerOpinion)  # [batches, max_pooling]
 
     def init_hidden_states(self):
-        self.__hidden = {
-            self.H_W1: tf.Variable(initial_value=tf.random_normal([self.__context_network.ContextEmbeddingSize,
-                                                                   self.__cfg.HiddenSize]),
-                                   dtype=tf.float32),
-            self.H_W2: tf.Variable(initial_value=tf.random_normal([self.__cfg.HiddenSize,
-                                                                   self.__cfg.ClassesCount]),
-                                   dtype=tf.float32),
-            self.H_b1: tf.Variable(initial_value=tf.random_normal([self.__cfg.HiddenSize]),
-                                   dtype=tf.float32),
-            self.H_b2: tf.Variable(initial_value=tf.random_normal([self.__cfg.ClassesCount]),
-                                   dtype=tf.float32)
-        }
+        self.__hidden[self.H_W1] = tf.Variable(
+            initial_value=tf.random_normal([self.ContextNetwork.ContextEmbeddingSize, self.Config.HiddenSize]),
+            dtype=tf.float32)
+        self.__hidden[self.H_W2] = tf.Variable(
+            initial_value=tf.random_normal([self.Config.HiddenSize, self.Config.ClassesCount]),
+            dtype=tf.float32)
+        self.__hidden[self.H_b1] = tf.Variable(
+            initial_value=tf.random_normal([self.Config.HiddenSize]),
+            dtype=tf.float32)
+        self.__hidden[self.H_b2] = tf.Variable(
+            initial_value=tf.random_normal([self.Config.ClassesCount]),
+            dtype=tf.float32)
 
     def init_logits_unscaled(self, encoded_contexts):
         W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
         b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
-        activations = [tf.tanh] * len(W)
-        activations.append(None)
+        activations = [tf.tanh] * len(W) + [None]
         return get_k_layer_pair_logits(g=encoded_contexts,
                                        W=W,
                                        b=b,

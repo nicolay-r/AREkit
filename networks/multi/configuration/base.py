@@ -13,6 +13,38 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
         self.__context_config = context_config
         self.__context_parameters_fix()
 
+    @property
+    def LearningRate(self):
+        return 0.2
+
+    @property
+    def DropoutKeepProb(self):
+        return 0.85
+
+    @property
+    def TextOpinionLabelCalculationMode(self):
+        return LabelCalculationMode.FIRST_APPEARED
+
+    @property
+    def BagsPerMinibatch(self):
+        return super(BaseMultiInstanceConfig, self).BagsPerMinibatch
+
+    @property
+    def BatchSize(self):
+        return self.BagsPerMinibatch
+
+    @property
+    def BagSize(self):
+        return self.__contexts_per_opinion
+
+    @property
+    def ContextConfig(self):
+        return self.__context_config
+
+    @property
+    def HiddenSize(self):
+        return self.__hidden_size
+
     def set_contexts_per_opinion(self, value):
         self.__contexts_per_opinion = value
 
@@ -48,45 +80,13 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
         super(BaseMultiInstanceConfig, self).modify_use_class_weights(value)
         self.__context_config.modify_use_class_weights(value)
 
-    def modify_use_attention(self, value):
-        super(BaseMultiInstanceConfig, self).modify_use_attention(value)
-        self.__context_config.modify_use_attention(value)
+    def notify_initialization_completed(self):
+        super(BaseMultiInstanceConfig, self).notify_initialization_completed()
+        self.__context_config.notify_initialization_completed()
 
     def __context_parameters_fix(self):
         self.__context_config.modify_bag_size(1)
         self.__context_config.modify_bags_per_minibatch(self.BatchSize)
-
-    @property
-    def LearningRate(self):
-        return 0.2
-
-    @property
-    def DropoutKeepProb(self):
-        return 0.85
-
-    @property
-    def TextOpinionLabelCalculationMode(self):
-        return LabelCalculationMode.FIRST_APPEARED
-
-    @property
-    def BagsPerMinibatch(self):
-        return super(BaseMultiInstanceConfig, self).BagsPerMinibatch
-
-    @property
-    def BatchSize(self):
-        return self.BagsPerMinibatch
-
-    @property
-    def BagSize(self):
-        return self.__contexts_per_opinion
-
-    @property
-    def ContextConfig(self):
-        return self.__context_config
-
-    @property
-    def HiddenSize(self):
-        return self.__hidden_size
 
     def _internal_get_parameters(self):
 
