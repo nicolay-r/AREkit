@@ -6,6 +6,10 @@ from core.networks.context.sample import InputSample
 
 
 class PiecewiseCNN(VanillaCNN):
+    """
+    Author:
+    paper: TODO.
+    """
 
     @property
     def ContextEmbeddingSize(self):

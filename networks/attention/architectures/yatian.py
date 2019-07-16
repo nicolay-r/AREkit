@@ -6,7 +6,7 @@ from core.networks.context.architectures.utils import get_k_layer_logits
 class AttentionYatianColing2016(object):
     """
     Authors: Yatian Shen, Xuanjing Huang
-    https://www.aclweb.org/anthology/C16-1238
+    Paper: https://www.aclweb.org/anthology/C16-1238
     """
 
     H_W_we = "H_W_we"

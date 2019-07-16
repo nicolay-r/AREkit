@@ -6,11 +6,12 @@ from core.networks.context.configurations.rcnn import RCNNConfig
 from core.networks.context.sample import InputSample
 import utils
 
-# Copyright (c) Joohong Lee
-# page: https://github.com/roomylee
-
 
 class RCNN(BaseContextNeuralNetwork):
+    """
+    Copyright (c) Joohong Lee
+    page: https://github.com/roomylee
+    """
 
     H_W = "W"
     H_b = "b"

@@ -7,6 +7,10 @@ from core.networks.context.architectures.cnn import VanillaCNN
 
 
 class AttentionCNN(VanillaCNN):
+    """
+    Author:
+    Paper: TODO.
+    """
 
     __attention_var_scope_name = 'attention-model'
 
