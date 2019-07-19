@@ -195,6 +195,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         feed_dict = {}
         for param in InputSample.iter_parameters():
+            if param not in self.__input:
+                continue
             feed_dict[self.__input[param]] = input[param]
 
         feed_dict[self.__y] = input[MiniBatch.I_LABELS]

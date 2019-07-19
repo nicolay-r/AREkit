@@ -26,7 +26,6 @@ class InputSample(object):
     I_POS_INDS = "pos_inds"
     I_TERM_TYPE = "term_type"
     I_POSITION_IN_TEXT = "pos_in_text"
-    I_NLP_FEATURES = "nlp_features"
 
     def __init__(self, X,
                  subj_ind,
@@ -214,7 +213,7 @@ class InputSample(object):
     @staticmethod
     def iter_parameters():
         for var_name in dir(InputSample):
-            if var_name.startswith('I_'):
+            if not var_name.startswith('I_'):
                 continue
             yield getattr(InputSample, var_name)
 
