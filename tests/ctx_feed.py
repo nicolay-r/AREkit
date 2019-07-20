@@ -75,7 +75,7 @@ def test_feed(network, network_config):
 test_feed(network_config=CNNConfig(), network=VanillaCNN())
 test_feed(network_config=CNNConfig(), network=PiecewiseCNN())
 test_feed(network_config=AttentionCNNConfig(), network=AttentionCNN())
-# test_feed(network_config=RNNConfig(), network=RNN())
+test_feed(network_config=RNNConfig(), network=RNN())
 test_feed(network_config=BiLSTMConfig(), network=BiLSTM())
 test_feed(network_config=RCNNConfig(), network=RCNN())
 test_feed(network_config=IANConfig(), network=IAN())

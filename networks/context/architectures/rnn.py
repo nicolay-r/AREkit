@@ -27,15 +27,16 @@ class RNN(BaseContextNeuralNetwork):
         assert(isinstance(self.Config, RNNConfig))
 
         with tf.name_scope("rnn"):
-            length = tf.cast(x=utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS)),
-                             dtype=tf.int32)
             cell = self.get_cell(self.Config.HiddenSize, self.Config.CellType)
             cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=self.DropoutKeepProb)
+
+            x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
             all_outputs, _ = tf.nn.dynamic_rnn(cell=cell,
                                                inputs=embedded_terms,
-                                               sequence_length=length,
+                                               sequence_length=s_length,
                                                dtype=tf.float32)
-            h_outputs = self.__last_relevant(all_outputs, length)
+            h_outputs = utils.select_last_relevant_in_sequence(all_outputs, s_length)
 
         return h_outputs
 
@@ -74,12 +75,3 @@ class RNN(BaseContextNeuralNetwork):
         else:
             Exception("Incorrect cell_type={}".format(cell_type))
             return None
-
-    @staticmethod
-    def __last_relevant(seq, length):
-        batch_size = tf.shape(seq)[0]
-        max_length = int(seq.get_shape()[1])
-        input_size = int(seq.get_shape()[2])
-        index = tf.range(0, batch_size) * max_length + (length - 1)
-        flat = tf.reshape(seq, [-1, input_size])
-        return tf.gather(flat, index)

@@ -1,11 +1,25 @@
 import tensorflow as tf
 
 
-def calculate_sequence_length(seq):
-    relevant = tf.sign(tf.abs(seq))
+def calculate_sequence_length(sequence):
+    assert(isinstance(sequence, tf.Tensor))
+
+    relevant = tf.sign(tf.abs(sequence))
     length = tf.reduce_sum(relevant, reduction_indices=1)
     length = tf.cast(length, tf.int32)
     return length
+
+
+def select_last_relevant_in_sequence(sequence, length):
+    assert(isinstance(sequence, tf.Tensor))
+    assert(isinstance(length, tf.Tensor))
+
+    batch_size = tf.shape(sequence)[0]
+    max_length = int(sequence.get_shape()[1])
+    input_size = int(sequence.get_shape()[2])
+    index = tf.range(0, batch_size) * max_length + (length - 1)
+    flat = tf.reshape(sequence, [-1, input_size])
+    return tf.gather(flat, index)
 
 
 def get_k_layer_logits(g, W, b, dropout_keep_prob=None, activations=None):
