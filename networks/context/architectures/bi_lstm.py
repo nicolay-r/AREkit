@@ -68,7 +68,7 @@ class BiLSTM(BaseContextNeuralNetwork):
             initial_value=tf.random_normal([self.Config.ClassesCount]))
 
     def iter_hidden_parameters(self):
-        for key, value in self.__hidden:
+        for key, value in self.__hidden.iteritems():
             yield key, value
 
     @staticmethod

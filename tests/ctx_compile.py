@@ -22,56 +22,21 @@ def init_config(config):
     config.set_term_embedding(np.zeros((100, 100)))
     config.set_class_weights([1] * config.ClassesCount)
     config.notify_initialization_completed()
-    return config
 
 
-def test_cnn_pcnn():
-    config = init_config(CNNConfig())
-    cnn = VanillaCNN()
-    pcnn = PiecewiseCNN()
-    cnn.compile(config, reset_graph=True)
-    pcnn.compile(config, reset_graph=True)
-
-
-def test_rnn():
-    config = init_config(RNNConfig())
-    rnn = RNN()
-    rnn.compile(config, reset_graph=True)
-
-
-def test_rcnn():
-    config = init_config(RCNNConfig())
-    rcnn = RCNN()
-    rcnn.compile(config, reset_graph=True)
-
-
-def test_bilstm():
-    config = init_config(BiLSTMConfig())
-    bilstm = BiLSTM()
-    bilstm.compile(config, reset_graph=True)
-
-
-def test_ian():
-    config = init_config(IANConfig())
-    arnn = IAN()
-    arnn.compile(config, reset_graph=True)
-
-def test_attcnn():
-    config = init_config(AttentionCNNConfig())
-    attcnn = AttentionCNN()
-    attcnn.compile(config, reset_graph=True)
+def contexts_supported():
+    return [(CNNConfig(), VanillaCNN()),
+            (CNNConfig(), PiecewiseCNN()),
+            (RNNConfig(), RNN()),
+            (BiLSTMConfig(), BiLSTM()),
+            (RCNNConfig(), RCNN()),
+            # (IANConfig(), IAN()),
+            (AttentionCNNConfig(), AttentionCNN())]
 
 
 if __name__ == "__main__":
 
-    # CNN models
-    test_cnn_pcnn()
-
-    # Recurrent networks
-    test_rnn()
-    test_rcnn()
-    test_bilstm()
-
-    # Models with attention
-    test_ian()
-    test_attcnn()
+    for config, network in contexts_supported():
+        print "Compile: {}".format(type(network))
+        init_config(config)
+        network.compile(config, reset_graph=True)

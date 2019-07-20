@@ -66,14 +66,11 @@ class VanillaCNN(BaseContextNeuralNetwork):
         b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
         activations = [tf.tanh] * len(W)
         activations.append(None)
-        print "Context embedding size: {}".format(context_embedding.shape)
         result, result_dropout = utils.get_k_layer_pair_logits(g=context_embedding,
                                                                W=W,
                                                                b=b,
                                                                dropout_keep_prob=self.DropoutKeepProb,
                                                                activations=activations)
-        print "X: {}".format(result.shape)
-        print "X: {}".format(result_dropout.shape)
         return result, result_dropout
 
     def init_hidden_states(self):
@@ -95,7 +92,7 @@ class VanillaCNN(BaseContextNeuralNetwork):
             dtype=tf.float32)
 
     def iter_hidden_parameters(self):
-        for key, value in self.__hidden:
+        for key, value in self.__hidden.iteritems():
             yield key, value
 
     @staticmethod

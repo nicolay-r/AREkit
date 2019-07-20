@@ -84,7 +84,7 @@ class RCNN(BaseContextNeuralNetwork):
                                                    name=self.H_b2)
 
     def iter_hidden_parameters(self):
-        for key, value in self.__hidden:
+        for key, value in self.__hidden.iteritems():
             yield key, value
 
     def __text_embedding_size(self):

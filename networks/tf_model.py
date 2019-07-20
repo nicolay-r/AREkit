@@ -31,8 +31,8 @@ class TensorflowModel(object):
     # region Properties
 
     @property
-    def Settings(self):
-        raise Exception("Not Implemented")
+    def Config(self):
+        raise NotImplementedError()
 
     @property
     def Session(self):
@@ -78,7 +78,7 @@ class TensorflowModel(object):
         self.__sess.close()
 
     def run(self, load_model=False):
-        self.__network.compile(self.Settings, reset_graph=True)
+        self.__network.compile(self.Config, reset_graph=True)
         self.set_optimiser()
         self.__notify_initialized()
 

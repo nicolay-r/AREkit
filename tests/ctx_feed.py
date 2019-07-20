@@ -2,25 +2,13 @@ import tensorflow as tf
 import numpy as np
 
 from core.evaluation.labels import PositiveLabel
-from core.networks.context.architectures.att_cnn import AttentionCNN
-from core.networks.context.architectures.bi_lstm import BiLSTM
-from core.networks.context.architectures.cnn import VanillaCNN
-from core.networks.context.architectures.ian import IAN
-from core.networks.context.architectures.pcnn import PiecewiseCNN
-from core.networks.context.architectures.rcnn import RCNN
-from core.networks.context.architectures.rnn import RNN
-from core.networks.context.configurations.att_cnn import AttentionCNNConfig
 from core.networks.context.configurations.base import DefaultNetworkConfig
-from core.networks.context.configurations.bi_lstm import BiLSTMConfig
-from core.networks.context.configurations.cnn import CNNConfig
-from core.networks.context.configurations.ian import IANConfig
-from core.networks.context.configurations.rcnn import RCNNConfig
-from core.networks.context.configurations.rnn import RNNConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.training.bags.bag import Bag
 from core.networks.context.training.batch import MiniBatch
 from core.networks.context.training.data_type import DataType
 from core.networks.network import NeuralNetwork
+from core.tests.ctx_compile import contexts_supported
 
 
 def init_session():
@@ -68,27 +56,25 @@ def test_ctx_feed(network, network_config, create_minibatch_func):
         # Init feed dict
         feed_dict = network.create_feed_dict(input=minibatch.to_network_input(),
                                              data_type=DataType.Train)
+
+        hidden_list = list(network.iter_hidden_parameters())
+        hidden_names = [name for name, _ in hidden_list]
+        fetches_hidden = [tensor for _, tensor in hidden_list]
+        fetches_default = [network_optimiser, network.Cost, network.Accuracy]
+
         # feed
-        result = sess.run(fetches=[network_optimiser,
-                                   network.Cost,
-                                   network.Accuracy],
+        result = sess.run(fetches=fetches_default + fetches_hidden,
                           feed_dict=feed_dict)
 
-        print result
-
-
-def contexts_supported():
-    return [(CNNConfig(), VanillaCNN()),
-            (CNNConfig(), PiecewiseCNN()),
-            (RNNConfig(), RNN()),
-            (BiLSTMConfig(), BiLSTM()),
-            (RCNNConfig(), RCNN()),
-            # (IANConfig(), IAN()),
-            (AttentionCNNConfig(), AttentionCNN())]
+        # Show hidden parameters
+        hidden_values = result[len(fetches_default):]
+        for i, value in enumerate(hidden_values):
+            print 'Value type: {}'.format(type(value))
+            print 'Hidden parameter "{}": {}'.format(hidden_names[i], value)
 
 
 if __name__ == "__main__":
 
     for cfg, network in contexts_supported():
-        print type(network)
+        print "Feed to the network: {}".format(type(network))
         test_ctx_feed(network, cfg, create_minibatch)
