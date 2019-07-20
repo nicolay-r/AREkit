@@ -20,6 +20,7 @@ from core.networks.context.sample import InputSample
 from core.networks.context.training.bags.bag import Bag
 from core.networks.context.training.batch import MiniBatch
 from core.networks.context.training.data_type import DataType
+from core.networks.network import NeuralNetwork
 
 
 def init_session():
@@ -52,11 +53,15 @@ def create_minibatch(config):
     return MiniBatch(bags=bags, batch_id=None)
 
 
-def test_feed(network, network_config):
+def test_ctx_feed(network, network_config, create_minibatch_func):
+    assert(isinstance(network, NeuralNetwork))
+    assert(isinstance(network_config, DefaultNetworkConfig))
+    assert(callable(create_minibatch_func))
+
     config = init_config(network_config)
     # Init network.
     network.compile(config=config, reset_graph=True)
-    minibatch = create_minibatch(config)
+    minibatch = create_minibatch_func(config)
 
     network_optimiser = config.Optimiser.minimize(network.Cost)
     with init_session() as sess:
@@ -72,10 +77,18 @@ def test_feed(network, network_config):
         print result
 
 
-test_feed(network_config=CNNConfig(), network=VanillaCNN())
-test_feed(network_config=CNNConfig(), network=PiecewiseCNN())
-test_feed(network_config=AttentionCNNConfig(), network=AttentionCNN())
-test_feed(network_config=RNNConfig(), network=RNN())
-test_feed(network_config=BiLSTMConfig(), network=BiLSTM())
-test_feed(network_config=RCNNConfig(), network=RCNN())
-test_feed(network_config=IANConfig(), network=IAN())
+def contexts_supported():
+    return [(CNNConfig(), VanillaCNN()),
+            (CNNConfig(), PiecewiseCNN()),
+            (RNNConfig(), RNN()),
+            (BiLSTMConfig(), BiLSTM()),
+            (RCNNConfig(), RCNN()),
+            # (IANConfig(), IAN()),
+            (AttentionCNNConfig(), AttentionCNN())]
+
+
+if __name__ == "__main__":
+
+    for cfg, network in contexts_supported():
+        print type(network)
+        test_ctx_feed(network, cfg, create_minibatch)

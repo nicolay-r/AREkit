@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from core.networks.context.debug import DebugKeys
+from core.networks.context.training.bags.bag import Bag
 from core.networks.context.training.batch import MiniBatch
 
 
