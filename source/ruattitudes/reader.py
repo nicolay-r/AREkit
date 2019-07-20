@@ -11,16 +11,16 @@ from core.source.ruattitudes.sentence import ProcessedSentence
 class RuAttitudesFormatReader(object):
 
     NEWS_SEP_KEY = u'--------'
-    FILE_KEY = u"Файл:"
-    OBJ_KEY = u"Oбъект:"
-    TITLE_KEY = u"Заголовок:"
-    SINDEX_KEY = u"Предложение:"
-    OPINION_KEY = u"Отношение:"
-    STEXT_KEY = u"Текст:"
-    TEXT_IND_KEY = u"Номер:"
-    TERMS_IN_TITLE = u"Термов в заголовке:"
-    TERMS_IN_TEXT = u"Термов в тексте:"
-    FRAMEVAR_TITLE = u"Вариант фрейма:"
+    FILE_KEY = u"File:"
+    OBJ_KEY = u"Object:"
+    TITLE_KEY = u"Title:"
+    SINDEX_KEY = u"Sentence:"
+    OPINION_KEY = u"Attitude:"
+    STEXT_KEY = u"Text:"
+    TEXT_IND_KEY = u"TextID:"
+    TERMS_IN_TITLE = u"TermsInTitle:"
+    TERMS_IN_TEXT = u"TermsInText:"
+    FRAMEVAR_TITLE = u"FrameVariant:"
 
     def __iter__(self):
         pass
