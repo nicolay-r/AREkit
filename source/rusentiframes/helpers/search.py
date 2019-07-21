@@ -35,16 +35,16 @@ class RuSentiFramesSearchHelper(object):
                 if not is_all_words_within:
                     continue
 
-                ctx_template = u" ".join(lemmas[start_ind:last_ind + 1])
+                ctx_value = u" ".join(lemmas[start_ind:last_ind + 1])
 
-                if not frame_variants.has_variant(ctx_template):
+                if not frame_variants.has_variant(ctx_value):
                     continue
 
                 prep_term = RuSentiFramesSearchHelper.__get_preposition(terms=lemmas,
                                                                         index=start_ind)
 
                 yield TextFrameVariant(
-                    variant=frame_variants.get_variant_by_template(ctx_template),
+                    variant=frame_variants.get_variant_by_value(ctx_value),
                     start_index=start_ind,
                     is_inverted=locale_mods.is_negation_word(prep_term) if prep_term is not None else False)
 

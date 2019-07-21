@@ -55,17 +55,17 @@ class FrameVariantsCollection:
     def get_frame_by_index(self, index):
         return self.__frames_list[index]
 
-    def get_variant_by_template(self, template):
-        if template in self.__variants:
-            return self.__variants[template]
-        return self.__lemma_variants[template]
+    def get_variant_by_value(self, value):
+        if value in self.__variants:
+            return self.__variants[value]
+        return self.__lemma_variants[value]
 
-    def has_variant(self, template):
-        if template in self.__variants:
+    def has_variant(self, value):
+        if value in self.__variants:
             return True
-        return template in self.__lemma_variants
+        return value in self.__lemma_variants
 
     def iter_variants(self):
-        for template, variant in self.__variants.iteritems():
-            yield template, variant
+        for value, variant in self.__variants.iteritems():
+            yield value, variant
 
