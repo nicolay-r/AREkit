@@ -3,24 +3,24 @@ import collections
 from core.common.text_object import TextObject
 from core.common.ref_opinon import RefOpinion
 from core.common.opinions.opinion import Opinion
-from core.source.ruattitudes.news import ProcessedNews
-from core.source.ruattitudes.sentence import ProcessedSentence
+from core.source.ruattitudes.news import News
+from core.source.ruattitudes.sentence import Sentence
 
 
-class NewsProcessingHelper(object):
-
-    @staticmethod
-    def build_opinion_dict(processed_news):
-        return NewsProcessingHelper.__build_opinion_dict(processed_news)
+class NewsHelper(object):
 
     @staticmethod
-    def to_processed_news_dict(processed_sentence_list):
-        assert(isinstance(processed_sentence_list, collections.Iterable))
+    def build_opinion_dict(news):
+        return NewsHelper.__build_opinion_dict(news)
+
+    @staticmethod
+    def to_news_dict(sentence_list):
+        assert(isinstance(sentence_list, collections.Iterable))
         docs = {}
 
-        for s in processed_sentence_list:
-            assert(isinstance(s, ProcessedSentence))
-            assert(isinstance(s.Owner, ProcessedNews))
+        for s in sentence_list:
+            assert(isinstance(s, Sentence))
+            assert(isinstance(s.Owner, News))
             news_id = s.Owner.NewsIndex
 
             if news_id in docs:
@@ -31,10 +31,10 @@ class NewsProcessingHelper(object):
         return docs
 
     @staticmethod
-    def iter_opinions_with_related_sentences(processed_news):
-        assert(isinstance(processed_news, ProcessedNews))
+    def iter_opinions_with_related_sentences(news):
+        assert(isinstance(news, News))
 
-        doc_opinions = NewsProcessingHelper.build_opinion_dict(processed_news=processed_news)
+        doc_opinions = NewsHelper.build_opinion_dict(news=news)
         assert(isinstance(doc_opinions, dict))
 
         for ref_opinion_tag, value in doc_opinions.iteritems():
@@ -42,7 +42,7 @@ class NewsProcessingHelper(object):
             opinion = None
             related_sentences = []
 
-            for sentence in processed_news.iter_processed_sentences():
+            for sentence in news.iter_sentences():
 
                 ref_opinion = sentence.find_ref_opinion_by_key(ref_opinion_tag)
                 if ref_opinion is None:
@@ -53,8 +53,8 @@ class NewsProcessingHelper(object):
                 if opinion is not None:
                     continue
 
-                opinion = NewsProcessingHelper.__convert_ref_opinion_to_opinion(sentence=sentence,
-                                                                                ref_opinion=ref_opinion)
+                opinion = NewsHelper.__convert_ref_opinion_to_opinion(sentence=sentence,
+                                                                      ref_opinion=ref_opinion)
 
             if len(related_sentences) == 0:
                 continue
@@ -63,7 +63,7 @@ class NewsProcessingHelper(object):
 
     @staticmethod
     def __convert_ref_opinion_to_opinion(sentence, ref_opinion):
-        assert(isinstance(sentence, ProcessedSentence))
+        assert(isinstance(sentence, Sentence))
         assert(isinstance(ref_opinion, RefOpinion))
 
         l_obj, r_obj = sentence.get_objects(ref_opinion)
@@ -76,11 +76,11 @@ class NewsProcessingHelper(object):
                        sentiment=ref_opinion.Sentiment)
 
     @staticmethod
-    def __build_opinion_dict(processed_news):
+    def __build_opinion_dict(news):
         opin_dict = {}
 
-        for s_ind, sentence in enumerate(processed_news.iter_processed_sentences()):
-            assert(isinstance(sentence, ProcessedSentence))
+        for s_ind, sentence in enumerate(news.iter_sentences()):
+            assert(isinstance(sentence, Sentence))
             for ref_opinion in sentence.iter_ref_opinions():
                 assert(isinstance(ref_opinion, RefOpinion))
                 key = ref_opinion.Tag

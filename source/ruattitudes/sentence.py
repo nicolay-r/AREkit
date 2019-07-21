@@ -2,8 +2,7 @@ from core.processing.text.parsed import ParsedText
 from core.common.ref_opinon import RefOpinion
 
 
-# TODO. Rename RuAttitudeSentence
-class ProcessedSentence(object):
+class Sentence(object):
 
     def __init__(self, is_title, parsed_text, ref_opinions, objects_list, sentence_index):
         assert(isinstance(is_title, bool))
@@ -39,12 +38,11 @@ class ProcessedSentence(object):
             raise Exception("Owner is already declared")
         self.__owner = owner
 
-    # TODO. src, trg objects. Rename!
     def get_objects(self, ref_opinion):
         assert(isinstance(ref_opinion, RefOpinion))
-        l_obj = self.__objects[ref_opinion.SourceId]
-        r_obj = self.__objects[ref_opinion.TargetId]
-        return l_obj, r_obj
+        source_obj = self.__objects[ref_opinion.SourceId]
+        target_obj = self.__objects[ref_opinion.TargetId]
+        return source_obj, target_obj
 
     def iter_objects(self):
         for object in self.__objects:

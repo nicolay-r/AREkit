@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+from core.common.text_object import TextObject
+from core.common.ref_opinon import RefOpinion
 from core.evaluation.labels import Label
 from core.processing.lemmatization.base import Stemmer
-from core.common.text_object import TextObject
 from core.processing.text.parser import TextParser
-from core.common.ref_opinon import RefOpinion
-from core.source.ruattitudes.news import ProcessedNews
-from core.source.ruattitudes.sentence import ProcessedSentence
+from core.source.ruattitudes.news import News
+from core.source.ruattitudes.sentence import Sentence
 
 
 class RuAttitudesFormatReader(object):
@@ -26,7 +26,7 @@ class RuAttitudesFormatReader(object):
         pass
 
     @staticmethod
-    def iter_processed_news(filepath, stemmer=None):
+    def iter_news(filepath, stemmer=None):
         assert(isinstance(filepath, unicode))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
@@ -34,7 +34,7 @@ class RuAttitudesFormatReader(object):
         title = None
         title_terms_count = None
         text_terms_count = None
-        processed_sentences = []
+        sentences = []
         opinions_list = []
         objects_list = []
         s_index = 0
@@ -71,33 +71,33 @@ class RuAttitudesFormatReader(object):
                     news_index = RuAttitudesFormatReader.__parse_text_index(line)
 
                 if RuAttitudesFormatReader.TITLE_KEY in line:
-                    title = ProcessedSentence(is_title=True,
-                                              parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
-                                                                                                   is_title=True,
-                                                                                                   stemmer=stemmer),
-                                              ref_opinions=opinions_list,
-                                              objects_list=objects_list,
-                                              sentence_index=-1)
-                    processed_sentences.append(title)
+                    title = Sentence(is_title=True,
+                                     parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
+                                                                                          is_title=True,
+                                                                                          stemmer=stemmer),
+                                     ref_opinions=opinions_list,
+                                     objects_list=objects_list,
+                                     sentence_index=-1)
+                    sentences.append(title)
                     assert(title_terms_count == len(title.ParsedText) or title_terms_count is None)
                     reset = True
 
                 if RuAttitudesFormatReader.STEXT_KEY in line:
-                    sentence = ProcessedSentence(is_title=False,
-                                                 parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
-                                                                                                      is_title=False,
-                                                                                                      stemmer=stemmer),
-                                                 ref_opinions=opinions_list,
-                                                 objects_list=objects_list,
-                                                 sentence_index=s_index)
-                    processed_sentences.append(sentence)
+                    sentence = Sentence(is_title=False,
+                                        parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
+                                                                                             is_title=False,
+                                                                                             stemmer=stemmer),
+                                        ref_opinions=opinions_list,
+                                        objects_list=objects_list,
+                                        sentence_index=s_index)
+                    sentences.append(sentence)
                     assert(text_terms_count == len(sentence.ParsedText) or text_terms_count is None)
                     reset = True
 
                 if RuAttitudesFormatReader.NEWS_SEP_KEY in line and title is not None:
-                    yield ProcessedNews(processed_sentences=processed_sentences,
-                                        news_index=news_index)
-                    processed_sentences = []
+                    yield News(sentences=sentences,
+                               news_index=news_index)
+                    sentences = []
                     reset = True
 
                 if reset:
@@ -106,12 +106,12 @@ class RuAttitudesFormatReader(object):
                     title_terms_count = None
                     reset = False
 
-        if len(processed_sentences) > 0:
-            yield ProcessedNews(processed_sentences=processed_sentences,
-                                news_index=news_index)
-            processed_sentences = []
+        if len(sentences) > 0:
+            yield News(sentences=sentences,
+                       news_index=news_index)
+            sentences = []
 
-        assert(len(processed_sentences) == 0)
+        assert(len(sentences) == 0)
 
     @staticmethod
     def __parse_opinion(line, objects_list):
