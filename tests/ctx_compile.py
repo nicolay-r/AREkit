@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import numpy as np
+
+from core.networks.context.architectures.att_bilstm import AttBiLSTM
 from core.networks.context.architectures.att_cnn import AttentionCNN
 from core.networks.context.architectures.bi_lstm import BiLSTM
 from core.networks.context.architectures.cnn import VanillaCNN
@@ -8,6 +10,7 @@ from core.networks.context.architectures.ian import IAN
 from core.networks.context.architectures.pcnn import PiecewiseCNN
 from core.networks.context.architectures.rcnn import RCNN
 from core.networks.context.architectures.rnn import RNN
+from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
 from core.networks.context.configurations.att_cnn import AttentionCNNConfig
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
@@ -25,7 +28,8 @@ def init_config(config):
 
 
 def contexts_supported():
-    return [(CNNConfig(), VanillaCNN()),
+    return [(AttBiLSTMConfig(), AttBiLSTM()),
+            (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),
             (RNNConfig(), RNN()),
             (BiLSTMConfig(), BiLSTM()),

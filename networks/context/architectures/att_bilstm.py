@@ -1,9 +1,14 @@
+from collections import OrderedDict
+
 import tensorflow as tf
-from networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.attention.architectures.zhou import AttentionZhouACL2016
+from core.networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
+from core.networks.context.sample import InputSample
+import utils
 
 
-# TODO. Refactor.
-class AttentionLSTM(BaseContextNeuralNetwork):
+class AttBiLSTM(BaseContextNeuralNetwork):
     """
     Authors: Peng Zhou, Wei Shi, Jun Tian, Zhenyu Qi, Bingchen Li, Hongwei Hao, Bo Xu
     Paper: https://www.aclweb.org/anthology/P16-2034
@@ -11,73 +16,72 @@ class AttentionLSTM(BaseContextNeuralNetwork):
     Code: https://github.com/SeoSangwoo/Attention-Based-BiLSTM-relation-extraction
     """
 
-    def __init__(self, sequence_length, num_classes, vocab_size, embedding_size,
-                 hidden_size, l2_reg_lambda=0.0):
-        # Placeholders for input, output and dropout
-        # TODO. Use predefined parameters.
-        self.input_text = tf.placeholder(tf.int32, shape=[None, sequence_length], name='input_text')
-        self.input_y = tf.placeholder(tf.float32, shape=[None, num_classes], name='input_y')
-        # TODO. Already declared.
-        self.emb_dropout_keep_prob = tf.placeholder(tf.float32, name='emb_dropout_keep_prob')
-        self.rnn_dropout_keep_prob = tf.placeholder(tf.float32, name='rnn_dropout_keep_prob')
-        self.dropout_keep_prob = tf.placeholder(tf.float32, name='dropout_keep_prob')
+    H_W = "W"
+    H_b = "b"
+    __attention_scope = "attention"
+
+    def __init__(self):
+        super(AttBiLSTM, self).__init__()
+        self.__attention = AttentionZhouACL2016()
+        self.__att_alphas = None
+        self.__hidden = OrderedDict()
+
+    @property
+    def ContextEmbeddingSize(self):
+        return self.Config.HiddenSize
+
+    def init_context_embedding(self, embedded_terms):
+        assert(isinstance(self.Config, AttBiLSTMConfig))
 
         initializer = tf.keras.initializers.glorot_normal
 
-        # Word Embedding Layer
-        with tf.device('/cpu:0'), tf.variable_scope("word-embeddings"):
-            self.W_text = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -0.25, 0.25), name="W_text")
-            self.embedded_chars = tf.nn.embedding_lookup(self.W_text, self.input_text)
-
-        # Dropout for Word Embedding
-        with tf.variable_scope('dropout-embeddings'):
-            self.embedded_chars = tf.nn.dropout(self.embedded_chars, self.emb_dropout_keep_prob)
-
         # Bidirectional LSTM
         with tf.variable_scope("bi-lstm"):
-            _fw_cell = tf.nn.rnn_cell.LSTMCell(hidden_size, initializer=initializer())
-            fw_cell = tf.nn.rnn_cell.DropoutWrapper(_fw_cell, self.rnn_dropout_keep_prob)
-            _bw_cell = tf.nn.rnn_cell.LSTMCell(hidden_size, initializer=initializer())
-            bw_cell = tf.nn.rnn_cell.DropoutWrapper(_bw_cell, self.rnn_dropout_keep_prob)
-            self.rnn_outputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
-                                                                  cell_bw=bw_cell,
-                                                                  inputs=self.embedded_chars,
-                                                                  sequence_length=self._length(self.input_text),
-                                                                  dtype=tf.float32)
-            self.rnn_outputs = tf.add(self.rnn_outputs[0], self.rnn_outputs[1])
+
+            x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
+
+            _fw_cell = tf.nn.rnn_cell.LSTMCell(self.Config.HiddenSize, initializer=initializer())
+            fw_cell = tf.nn.rnn_cell.DropoutWrapper(_fw_cell, self.Config.DropoutRNNKeepProb)
+
+            _bw_cell = tf.nn.rnn_cell.LSTMCell(self.Config.HiddenSize, initializer=initializer())
+            bw_cell = tf.nn.rnn_cell.DropoutWrapper(_bw_cell, self.Config.DropoutRNNKeepProb)
+
+            rnn_outputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
+                                                             cell_bw=bw_cell,
+                                                             inputs=embedded_terms,
+                                                             sequence_length=s_length,
+                                                             dtype=tf.float32)
+
+            rnn_outputs = tf.add(rnn_outputs[0], rnn_outputs[1])
 
         # Attention
-        # TODO. Use zhou attention.
         with tf.variable_scope('attention'):
-            self.attn, self.alphas = attention(self.rnn_outputs)
+            # TODO. Move attention back into this class.
+            self.__attention.set_input(rnn_outputs)
+            attn, self.__att_alphas = self.__attention.init_body()
 
-        # Dropout
-        with tf.variable_scope('dropout'):
-            self.h_drop = tf.nn.dropout(self.attn, self.dropout_keep_prob)
+        return attn
 
-        # Fully connected layer
-        with tf.variable_scope('output'):
-            self.logits = tf.layers.dense(self.h_drop, num_classes, kernel_initializer=initializer())
-            self.predictions = tf.argmax(self.logits, 1, name="predictions")
+    def init_logits_unscaled(self, context_embedding):
+        W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
+        b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
+        activations = [tf.tanh] * len(W)
+        activations.append(None)
+        return utils.get_k_layer_pair_logits(g=context_embedding,
+                                             W=W,
+                                             b=b,
+                                             dropout_keep_prob=self.DropoutKeepProb,
+                                             activations=activations)
 
-        # TODO. Use declared
-        # Calculate mean cross-entropy loss
-        with tf.variable_scope("loss"):
-            losses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.logits, labels=self.input_y)
-            self.l2 = tf.add_n([tf.nn.l2_loss(v) for v in tf.trainable_variables()])
-            self.loss = tf.reduce_mean(losses) + l2_reg_lambda * self.l2
+    def init_hidden_states(self):
+        self.__hidden[self.H_W] = tf.Variable(
+            initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]))
+        self.__hidden[self.H_b] = tf.Variable(
+            initial_value=tf.random_normal([self.Config.ClassesCount]))
 
-        # TODO. Use declared
-        # Accuracy
-        with tf.variable_scope("accuracy"):
-            correct_predictions = tf.equal(self.predictions, tf.argmax(self.input_y, 1))
-            self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, tf.float32), name="accuracy")
+    def iter_hidden_parameters(self):
+        for key, value in self.__hidden.iteritems():
+            yield key, value
 
-    # TODO. Use alredy declared method for this.
-    # Length of the sequence data
-    @staticmethod
-    def _length(seq):
-        relevant = tf.sign(tf.abs(seq))
-        length = tf.reduce_sum(relevant, reduction_indices=1)
-        length = tf.cast(length, tf.int32)
-        return length
+        yield "ATT_Weights", self.__att_alphas
