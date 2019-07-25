@@ -61,9 +61,6 @@ class RuAttitudesFormatReader(object):
                 if RuAttitudesFormatReader.TERMS_IN_TITLE in line:
                     title_terms_count = RuAttitudesFormatReader.__parse_terms_in_title_count(line)
 
-                if RuAttitudesFormatReader.TERMS_IN_TEXT in line:
-                    text_terms_count = RuAttitudesFormatReader.__parse_terms_in_text_count(line)
-
                 if RuAttitudesFormatReader.SINDEX_KEY in line:
                     s_index = RuAttitudesFormatReader.__parse_sentence_index(line)
 
@@ -82,7 +79,7 @@ class RuAttitudesFormatReader(object):
                     assert(title_terms_count == len(title.ParsedText) or title_terms_count is None)
                     reset = True
 
-                if RuAttitudesFormatReader.STEXT_KEY in line:
+                if RuAttitudesFormatReader.STEXT_KEY in line and line.index(RuAttitudesFormatReader.STEXT_KEY) == 0:
                     sentence = Sentence(is_title=False,
                                         parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
                                                                                              is_title=False,
@@ -99,6 +96,9 @@ class RuAttitudesFormatReader(object):
                                news_index=news_index)
                     sentences = []
                     reset = True
+
+                if RuAttitudesFormatReader.TERMS_IN_TEXT in line:
+                    text_terms_count = RuAttitudesFormatReader.__parse_terms_in_text_count(line)
 
                 if reset:
                     opinions_list = []
