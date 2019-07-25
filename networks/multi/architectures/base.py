@@ -20,7 +20,6 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         self.__cfg = None
 
         self.__labels = None
-        self.__weights = None
         self.__cost = None
         self.__accuracy = None
 
@@ -85,7 +84,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         self.__labels = tf.cast(tf.argmax(output, axis=1), tf.int32)
 
         with tf.name_scope("cost"):
-            self.__weights, self.__cost = init_weighted_cost(
+            self.__cost = init_weighted_cost(
                 logits_unscaled_dropout=logits_unscaled_dropped,
                 true_labels=self.__y,
                 config=config)

@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 import tensorflow as tf
-from core.networks.attention.architectures.zhou import AttentionZhouACL2016
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
 from core.networks.context.sample import InputSample
@@ -22,7 +21,6 @@ class AttBiLSTM(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(AttBiLSTM, self).__init__()
-        self.__attention = AttentionZhouACL2016()
         self.__att_alphas = None
         self.__hidden = OrderedDict()
 
@@ -57,11 +55,32 @@ class AttBiLSTM(BaseContextNeuralNetwork):
 
         # Attention
         with tf.variable_scope('attention'):
-            # TODO. Move attention back into this class.
-            self.__attention.set_input(rnn_outputs)
-            attn, self.__att_alphas = self.__attention.init_body()
+            attn, self.__att_alphas = self.__attention(rnn_outputs)
 
         return attn
+
+    @staticmethod
+    def __attention(inputs):
+        # Trainable parameters
+        hidden_size = inputs.shape[2].value
+        u_omega = tf.get_variable(name="u_omega",
+                                  shape=[hidden_size],
+                                  initializer=tf.keras.initializers.glorot_normal())
+
+        with tf.name_scope('v'):
+            v = tf.tanh(inputs)
+
+        # For each of the timestamps its vector of size A from `v` is reduced with `u` vector
+        vu = tf.tensordot(v, u_omega, axes=1, name='vu')  # (B,T) shape
+        alphas = tf.nn.softmax(vu, name='alphas')  # (B,T) shape
+
+        # Output of (Bi-)RNN is reduced with attention vector; the result has (B,D) shape
+        output = tf.reduce_sum(inputs * tf.expand_dims(alphas, -1), 1)
+
+        # Final output with tanh
+        output = tf.tanh(output)
+
+        return output, alphas
 
     def init_logits_unscaled(self, context_embedding):
         W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]

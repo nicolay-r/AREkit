@@ -20,7 +20,6 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__pos_emb = None
 
         self.__cost = None
-        self.__weights = None
         self.__accuracy = None
 
         self.__input = {}
@@ -110,11 +109,15 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         # Create labels only for whole bags
         self.__labels = tf.cast(tf.argmax(self.__to_mean_of_bag(output), axis=1), tf.int32)
 
+        # TODO. to the methods.
+
         with tf.name_scope("cost"):
-            self.__weights, self.__cost = init_weighted_cost(
+            self.__cost = init_weighted_cost(
                 logits_unscaled_dropout=self.__to_mean_of_bag(logits_unscaled_dropped),
                 true_labels=self.__y,
                 config=config)
+
+        # TODO. to the methods.
 
         with tf.name_scope("accuracy"):
             self.__accuracy = init_accuracy(labels=self.Labels, true_labels=self.__y)

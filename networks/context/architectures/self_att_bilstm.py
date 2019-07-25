@@ -1,5 +1,5 @@
 import tensorflow as tf
-from networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.context.architectures.base import BaseContextNeuralNetwork
 
 
 class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
@@ -62,6 +62,8 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             self.logits = tf.nn.xw_plus_b(self.fc, W_output, b_output, name="logits")
             self.predictions = tf.argmax(self.logits, 1, name="predictions")
 
+        # TODO: below penalty + loss -- into the Cost
+
         with tf.name_scope("penalization"):
             self.AA_T = tf.matmul(self.A, tf.transpose(self.A, [0, 2, 1]))
             self.I = tf.reshape(tf.tile(tf.eye(r_size), [tf.shape(self.A)[0], 1]), [-1, r_size, r_size])
@@ -73,12 +75,16 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             self.loss_P = tf.reduce_mean(self.P * p_coef)
             self.loss = tf.reduce_mean(losses) + self.loss_P
 
+        # TODO: ACCURACY IS THE SAME AS Base method.
+
         # Accuracy
         with tf.name_scope("accuracy"):
             correct_predictions = tf.equal(self.predictions, tf.argmax(self.input_y, axis=1))
             self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, tf.float32), name="accuracy")
 
-    # Length of the sequence data
+
+    # TODO. Length is a default.
+
     @staticmethod
     def _length(seq):
         relevant = tf.sign(tf.abs(seq))

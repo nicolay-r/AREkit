@@ -69,10 +69,6 @@ def init_accuracy(labels, true_labels):
 
 
 def init_weighted_cost(logits_unscaled_dropout, true_labels, config):
-    """
-    Init loss with weights for tensorflow model.
-    'labels' suppose to be a list of indices (not priorities)
-    """
     cost = tf.nn.sparse_softmax_cross_entropy_with_logits(
         logits=logits_unscaled_dropout,
         labels=true_labels)
@@ -84,4 +80,4 @@ def init_weighted_cost(logits_unscaled_dropout, true_labels, config):
     if config.UseClassWeights:
         cost = cost * weights
 
-    return weights, cost
+    return cost
