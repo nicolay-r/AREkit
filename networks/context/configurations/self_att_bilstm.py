@@ -9,11 +9,21 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
     """
 
     def __init__(self):
+        """
+        d_a_size: 350
+            Size of W_s1 embedding
+        r_size: 30
+            Size of W_s2 embedding
+        fc_size: 2000
+            Size of fully connected laye
+        p_coef: 1.0
+            Coefficient for penalty
+        """
         super(SelfAttentionBiLSTMConfig, self).__init__()
-        self.__fc_size = 300
-        self.__r_size = 3
-        self.__d_a_size = 0
-        self.__p_coef = 0
+        self.__fc_size = 2000
+        self.__r_size = 30
+        self.__d_a_size = 350
+        self.__p_coef = 1.0
 
     @property
     def FullyConnectionSize(self):
