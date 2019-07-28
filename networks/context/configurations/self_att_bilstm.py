@@ -10,3 +10,23 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
 
     def __init__(self):
         super(SelfAttentionBiLSTMConfig, self).__init__()
+        self.__fc_size = 300
+        self.__r_size = 3
+        self.__d_a_size = 0
+        self.__p_coef = 0
+
+    @property
+    def FullyConnectionSize(self):
+        return self.__fc_size
+
+    @property
+    def RSize(self):
+        return self.__r_size
+
+    @property
+    def PCoef(self):
+        return self.__p_coef
+
+    @property
+    def DASize(self):
+        return self.__d_a_size

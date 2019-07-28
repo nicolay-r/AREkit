@@ -10,8 +10,3 @@ class AttBiLSTMConfig(BiLSTMConfig):
 
     def __init__(self):
         super(AttBiLSTMConfig, self).__init__()
-
-    # TODO. To base.
-    @property
-    def DropoutRNNKeepProb(self):
-        return 0.8

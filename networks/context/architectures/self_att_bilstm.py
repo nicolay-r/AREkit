@@ -26,11 +26,15 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         self.__W_output = None
         self.__b_output = None
 
+    @property
+    def ContextEmbeddingSize(self):
+        """
+        return 2u, where u is an output of a single direction in bilstm.
+        """
+        return 2 * self.Config.HiddenSize
+
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
-
-        # TODO. To config.
-        r_size = 0
 
         # Bidirectional(Left&Right) Recurrent Structure
         with tf.name_scope("bi-lstm"):
@@ -53,7 +57,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         with tf.name_scope("self-attention"):
             _H_s1 = tf.nn.tanh(tf.matmul(H_reshape, self.__W_s1))
             _H_s2 = tf.matmul(_H_s1, self.__W_s2)
-            _H_s2_reshape = tf.transpose(tf.reshape(_H_s2, [-1, self.Config.TermsPerContext, r_size]),
+            _H_s2_reshape = tf.transpose(tf.reshape(_H_s2, [-1, self.Config.TermsPerContext, self.Config.RSize]),
                                          perm=[0, 2, 1])
 
             self.__A = tf.nn.softmax(_H_s2_reshape, name="attention")
@@ -64,19 +68,15 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         return M
 
     def init_hidden_states(self):
-        # TODO. To config.
-        d_a_size = 0
-        r_size = 0
-        fc_size = 0
-
+        assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
         self.__W_s1 = tf.get_variable("W_s1",
-                                      shape=[2*self.Config.HiddenSize, d_a_size],
+                                      shape=[2 * self.Config.HiddenSize, self.Config.DASize],
                                       initializer=self.__initializer)
         self.__W_s2 = tf.get_variable("W_s2",
-                                      shape=[d_a_size, r_size],
+                                      shape=[self.Config.DASize, self.Config.RSize],
                                       initializer=self.__initializer)
         self.__W_output = tf.get_variable("W_output",
-                                          shape=[fc_size, self.Config.ClassesCount],
+                                          shape=[self.Config.FullyConnectionSize, self.Config.ClassesCount],
                                           initializer=self.__initializer)
         self.__b_output = tf.Variable(tf.constant(0.1, shape=[self.Config.ClassesCount]),
                                       name="b_output")
@@ -93,19 +93,16 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         context_embedding: M parameter of init_context_embedding.
         """
 
-        # TODO. To config.
-        fc_size = 0
-        r_size = 0
-
         with tf.name_scope("fully-connected"):
             M_flat = tf.reshape(context_embedding,
-                                shape=[-1, 2 * self.Config.HiddenSize * r_size])
+                                shape=[-1, 2 * self.Config.HiddenSize * self.Config.RSize])
 
             W_fc = tf.get_variable("W_fc",
-                                   shape=[2 * self.Config.HiddenSize * r_size, fc_size],
+                                   shape=[2 * self.Config.HiddenSize * self.Config.RSize,
+                                          self.Config.FullyConnectionSize],
                                    initializer=self.__initializer)
 
-            b_fc = tf.Variable(tf.constant(0.1, shape=[fc_size]), name="b_fc")
+            b_fc = tf.Variable(tf.constant(0.1, shape=[self.Config.FullyConnectionSize]), name="b_fc")
             fc = tf.nn.relu(tf.nn.xw_plus_b(M_flat, W_fc, b_fc), name="fc")
 
         with tf.name_scope("output"):
@@ -117,14 +114,10 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         return logits
 
     def init_cost(self, logits_unscaled_dropped):
-
-        # TODO. To config.
-        r_size = 0
-        p_coef = 0
-
         with tf.name_scope("penalization"):
             AA_T = tf.matmul(self.__A, tf.transpose(self.__A, [0, 2, 1]))
-            I = tf.reshape(tf.tile(tf.eye(r_size), [tf.shape(self.__A)[0], 1]), [-1, r_size, r_size])
+            I = tf.reshape(tensor=tf.tile(tf.eye(self.Config.RSize), [tf.shape(self.__A)[0], 1]),
+                           shape=[-1, self.Config.RSize, self.Config.RSize])
             P = tf.square(tf.norm(AA_T - I, axis=[-2, -1], ord="fro"))
 
         # Calculate mean cross-entropy loss
@@ -132,7 +125,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             y = self.get_input_parameter(MiniBatch.I_LABELS)
             losses = tf.nn.softmax_cross_entropy_with_logits(logits=logits_unscaled_dropped,
                                                              labels=y)
-            loss_P = tf.reduce_mean(P * p_coef)
+            loss_P = tf.reduce_mean(P * self.Config.PCoef)
             loss = tf.reduce_mean(losses) + loss_P
 
         return loss
