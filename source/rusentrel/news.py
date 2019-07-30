@@ -24,6 +24,11 @@ class RuSentRelNews(object):
         return self.__helper
 
     @classmethod
+    def from_zip_archive(self, zip_file, doc_index, entities):
+        # TODO. Implement.
+        pass
+
+    @classmethod
     def from_file(cls, filepath, entities):
         assert(isinstance(filepath, unicode))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))

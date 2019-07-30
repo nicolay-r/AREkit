@@ -20,6 +20,10 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
         self.__by_id = self.create_index(entities=entities,
                                          key_func=lambda e: e.IdInDocument)
 
+    @classmethod
+    def from_zip_archive(self, zip_file, doc_index, stemmer, synonyms):
+        # TODO. Implement.
+        pass
 
     @classmethod
     def from_file(cls, filepath, stemmer, synonyms):

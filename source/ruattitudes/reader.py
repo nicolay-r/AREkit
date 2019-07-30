@@ -26,8 +26,8 @@ class RuAttitudesFormatReader(object):
         pass
 
     @staticmethod
-    def iter_news(filepath, stemmer=None):
-        assert(isinstance(filepath, unicode))
+    def iter_news(input_file, stemmer=None):
+        print type(input_file)
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         reset = False
@@ -40,71 +40,70 @@ class RuAttitudesFormatReader(object):
         s_index = 0
         news_index = None
 
-        with open(filepath, 'r') as input:
-            for line in input.readlines():
-                line = line.decode('utf-8')
+        for line in input_file.readlines():
+            line = line.decode('utf-8')
 
-                if RuAttitudesFormatReader.FILE_KEY in line:
-                    pass
+            if RuAttitudesFormatReader.FILE_KEY in line:
+                pass
 
-                if RuAttitudesFormatReader.OBJ_KEY in line:
-                    object = RuAttitudesFormatReader.__parse_object(line)
-                    objects_list.append(object)
+            if RuAttitudesFormatReader.OBJ_KEY in line:
+                object = RuAttitudesFormatReader.__parse_object(line)
+                objects_list.append(object)
 
-                if RuAttitudesFormatReader.OPINION_KEY in line:
-                    opinion = RuAttitudesFormatReader.__parse_opinion(line, objects_list=objects_list)
-                    opinions_list.append(opinion)
+            if RuAttitudesFormatReader.OPINION_KEY in line:
+                opinion = RuAttitudesFormatReader.__parse_opinion(line, objects_list=objects_list)
+                opinions_list.append(opinion)
 
-                if RuAttitudesFormatReader.FRAMEVAR_TITLE in line:
-                    pass
+            if RuAttitudesFormatReader.FRAMEVAR_TITLE in line:
+                pass
 
-                if RuAttitudesFormatReader.TERMS_IN_TITLE in line:
-                    title_terms_count = RuAttitudesFormatReader.__parse_terms_in_title_count(line)
+            if RuAttitudesFormatReader.TERMS_IN_TITLE in line:
+                title_terms_count = RuAttitudesFormatReader.__parse_terms_in_title_count(line)
 
-                if RuAttitudesFormatReader.SINDEX_KEY in line:
-                    s_index = RuAttitudesFormatReader.__parse_sentence_index(line)
+            if RuAttitudesFormatReader.SINDEX_KEY in line:
+                s_index = RuAttitudesFormatReader.__parse_sentence_index(line)
 
-                if RuAttitudesFormatReader.TEXT_IND_KEY in line:
-                    news_index = RuAttitudesFormatReader.__parse_text_index(line)
+            if RuAttitudesFormatReader.TEXT_IND_KEY in line:
+                news_index = RuAttitudesFormatReader.__parse_text_index(line)
 
-                if RuAttitudesFormatReader.TITLE_KEY in line:
-                    title = Sentence(is_title=True,
-                                     parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
-                                                                                          is_title=True,
-                                                                                          stemmer=stemmer),
-                                     ref_opinions=opinions_list,
-                                     objects_list=objects_list,
-                                     sentence_index=-1)
-                    sentences.append(title)
-                    assert(title_terms_count == len(title.ParsedText) or title_terms_count is None)
-                    reset = True
+            if RuAttitudesFormatReader.TITLE_KEY in line:
+                title = Sentence(is_title=True,
+                                 parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
+                                                                                      is_title=True,
+                                                                                      stemmer=stemmer),
+                                 ref_opinions=opinions_list,
+                                 objects_list=objects_list,
+                                 sentence_index=-1)
+                sentences.append(title)
+                assert(title_terms_count == len(title.ParsedText) or title_terms_count is None)
+                reset = True
 
-                if RuAttitudesFormatReader.STEXT_KEY in line and line.index(RuAttitudesFormatReader.STEXT_KEY) == 0:
-                    sentence = Sentence(is_title=False,
-                                        parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
-                                                                                             is_title=False,
-                                                                                             stemmer=stemmer),
-                                        ref_opinions=opinions_list,
-                                        objects_list=objects_list,
-                                        sentence_index=s_index)
-                    sentences.append(sentence)
-                    assert(text_terms_count == len(sentence.ParsedText) or text_terms_count is None)
-                    reset = True
+            if RuAttitudesFormatReader.STEXT_KEY in line and line.index(RuAttitudesFormatReader.STEXT_KEY) == 0:
+                sentence = Sentence(is_title=False,
+                                    parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
+                                                                                         is_title=False,
+                                                                                         stemmer=stemmer),
+                                    ref_opinions=opinions_list,
+                                    objects_list=objects_list,
+                                    sentence_index=s_index)
+                sentences.append(sentence)
+                assert(text_terms_count == len(sentence.ParsedText) or text_terms_count is None)
+                reset = True
 
-                if RuAttitudesFormatReader.NEWS_SEP_KEY in line and title is not None:
-                    yield News(sentences=sentences,
-                               news_index=news_index)
-                    sentences = []
-                    reset = True
+            if RuAttitudesFormatReader.NEWS_SEP_KEY in line and title is not None:
+                yield News(sentences=sentences,
+                           news_index=news_index)
+                sentences = []
+                reset = True
 
-                if RuAttitudesFormatReader.TERMS_IN_TEXT in line:
-                    text_terms_count = RuAttitudesFormatReader.__parse_terms_in_text_count(line)
+            if RuAttitudesFormatReader.TERMS_IN_TEXT in line:
+                text_terms_count = RuAttitudesFormatReader.__parse_terms_in_text_count(line)
 
-                if reset:
-                    opinions_list = []
-                    objects_list = []
-                    title_terms_count = None
-                    reset = False
+            if reset:
+                opinions_list = []
+                objects_list = []
+                title_terms_count = None
+                reset = False
 
         if len(sentences) > 0:
             yield News(sentences=sentences,

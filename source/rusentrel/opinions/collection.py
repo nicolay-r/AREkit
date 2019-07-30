@@ -12,6 +12,11 @@ class RuSentRelOpinionCollection(OpinionCollection):
     """
 
     @classmethod
+    def from_zip_archive(self, zip_file, doc_index, stemmer, synonyms):
+        # TODO. Implement.
+        pass
+
+    @classmethod
     def from_file(cls, filepath, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
 

@@ -6,6 +6,12 @@ from core.processing.lemmatization.base import Stemmer
 class RuSentRelSynonymsCollection(SynonymsCollection):
 
     @classmethod
+    def from_zip_archive(cls, zip_filepath, filepath, is_readonly=True, debug=False):
+        # TODO. Implement.
+        pass
+
+    # TODO. Remove.
+    @classmethod
     def from_file(cls, filepath, stemmer, is_read_only=True, debug=False):
         assert(isinstance(filepath, unicode))
         assert(isinstance(stemmer, Stemmer))
@@ -34,6 +40,7 @@ class RuSentRelSynonymsCollection(SynonymsCollection):
         assert(isinstance(by_synonym, dict))
         assert(isinstance(stemmer, Stemmer))
 
+        # TODO. refactor, i.e. pass the opened file.
         with io.open(filepath, 'r', encoding='utf-8') as f:
             lines = f.readlines()
             for line in lines:
