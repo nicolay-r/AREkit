@@ -38,8 +38,6 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
         # Bidirectional(Left&Right) Recurrent Structure
         with tf.name_scope("bi-lstm"):
-            x = tf.unstack(embedded_terms, axis=1)
-
             x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
@@ -48,7 +46,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
             (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
                                                                                        cell_bw=bw_cell,
-                                                                                       inputs=x,
+                                                                                       inputs=embedded_terms,
                                                                                        sequence_length=s_length,
                                                                                        dtype=tf.float32)
             H = tf.concat([self.output_fw, self.output_bw], axis=2)
@@ -82,11 +80,11 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                                       name="b_output")
 
     def iter_hidden_parameters(self):
-        yield "A", self.__A
-        yield "W_s1", self.__W_s1
-        yield "W_s2", self.__W_s2
-        yield "W_output", self.__W_output
-        yield "b_output", self.__b_output
+        yield ("A", self.__A)
+        yield ("W_s1", self.__W_s1)
+        yield ("W_s2", self.__W_s2)
+        yield ("W_output", self.__W_output)
+        yield ("b_output", self.__b_output)
 
     def init_logits_unscaled(self, context_embedding):
         """
@@ -111,7 +109,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                                      biases=self.__b_output,
                                      name="logits")
 
-        return logits
+        return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
     def init_cost(self, logits_unscaled_dropped):
         with tf.name_scope("penalization"):
@@ -122,9 +120,9 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
         # Calculate mean cross-entropy loss
         with tf.name_scope("loss"):
-            y = self.get_input_parameter(MiniBatch.I_LABELS)
-            losses = tf.nn.softmax_cross_entropy_with_logits(logits=logits_unscaled_dropped,
-                                                             labels=y)
+            y = self.get_input_labels()
+            losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits_unscaled_dropped,
+                                                                    labels=y)
             loss_P = tf.reduce_mean(P * self.Config.PCoef)
             loss = tf.reduce_mean(losses) + loss_P
 

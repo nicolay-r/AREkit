@@ -76,6 +76,9 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def get_input_parameter(self, param):
         return self.__input[param]
 
+    def get_input_labels(self):
+        return self.__y
+
     def set_input_parameter(self, param, value):
         self.__input[param] = value
 

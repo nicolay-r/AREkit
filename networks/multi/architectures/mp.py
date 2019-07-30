@@ -61,5 +61,6 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
         return tf.squeeze(context_outputs)                       # [batches, max_pooling]
 
     def iter_hidden_parameters(self):
-        return self.__hidden
+        for name, value in self.__hidden.iteritems():
+            yield name, value
 
