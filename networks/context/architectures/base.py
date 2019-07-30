@@ -109,18 +109,10 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         # Create labels only for whole bags
         self.__labels = tf.cast(tf.argmax(self.__to_mean_of_bag(output), axis=1), tf.int32)
 
-        # TODO. to the methods.
+        mean_logits_unscaled_dropped = self.__to_mean_of_bag(logits_unscaled_dropped)
+        self.__cost = self.init_cost(mean_logits_unscaled_dropped)
 
-        with tf.name_scope("cost"):
-            self.__cost = init_weighted_cost(
-                logits_unscaled_dropout=self.__to_mean_of_bag(logits_unscaled_dropped),
-                true_labels=self.__y,
-                config=config)
-
-        # TODO. to the methods.
-
-        with tf.name_scope("accuracy"):
-            self.__accuracy = init_accuracy(labels=self.Labels, true_labels=self.__y)
+        self.__accuracy = self.init_accuracy()
 
     # endregion
 
@@ -190,6 +182,19 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         self.__embedding_dropout_keep_prob = tf.placeholder(dtype=tf.float32,
                                                             name="cxt_emb_dropout_keep_prob")
+
+    def init_cost(self, logits_unscaled_dropped):
+        with tf.name_scope("cost"):
+            cost = init_weighted_cost(
+                logits_unscaled_dropout=self.__to_mean_of_bag(logits_unscaled_dropped),
+                true_labels=self.__y,
+                config=self.Config)
+        return cost
+
+    def init_accuracy(self):
+        with tf.name_scope("accuracy"):
+            accuracy = init_accuracy(labels=self.Labels, true_labels=self.__y)
+        return accuracy
 
     # endregion
 

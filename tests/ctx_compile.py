@@ -10,6 +10,7 @@ from core.networks.context.architectures.ian import IAN
 from core.networks.context.architectures.pcnn import PiecewiseCNN
 from core.networks.context.architectures.rcnn import RCNN
 from core.networks.context.architectures.rnn import RNN
+from core.networks.context.architectures.self_att_bilstm import SelfAttentionBiLSTM
 from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
 from core.networks.context.configurations.att_cnn import AttentionCNNConfig
 from core.networks.context.configurations.base import DefaultNetworkConfig
@@ -18,6 +19,7 @@ from core.networks.context.configurations.cnn import CNNConfig
 from core.networks.context.configurations.ian import IANConfig
 from core.networks.context.configurations.rcnn import RCNNConfig
 from core.networks.context.configurations.rnn import RNNConfig
+from core.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 
 
 def init_config(config):
@@ -28,7 +30,8 @@ def init_config(config):
 
 
 def contexts_supported():
-    return [(AttBiLSTMConfig(), AttBiLSTM()),
+    return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
+            (AttBiLSTMConfig(), AttBiLSTM()),
             (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),
             (RNNConfig(), RNN()),

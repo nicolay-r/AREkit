@@ -1,5 +1,10 @@
 import tensorflow as tf
-from core.networks.context.architectures.base import BaseContextNeuralNetwork
+
+from core.networks.context.sample import InputSample
+from core.networks.context.training.batch import MiniBatch
+from ..configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
+from base import BaseContextNeuralNetwork
+import utils
 
 
 class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
@@ -9,85 +14,119 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
     Code: https://github.com/roomylee/self-attentive-emb-tf
     """
 
-    # TODO. Refactor.
-    def __init__(self, sequence_length, num_classes,
-                 vocab_size, embedding_size, hidden_size, d_a_size, r_size, fc_size, p_coef):
-        # Placeholders for input, output and dropout
-        # TODO. Move inits
-        self.input_text = tf.placeholder(tf.int32, shape=[None, sequence_length], name='input_text')
-        self.input_y = tf.placeholder(tf.float32, shape=[None, num_classes], name='input_y')
+    def __init__(self):
+        super(SelfAttentionBiLSTM, self).__init__()
+        self.__att_alphas = None
+        self.__initializer = tf.contrib.layers.xavier_initializer()
 
-        text_length = self._length(self.input_text)
-        initializer = tf.contrib.layers.xavier_initializer()
+        # hidden
+        self.__A = None
+        self.__W_s1 = None
+        self.__W_s2 = None
+        self.__W_output = None
+        self.__b_output = None
 
-        # Embeddings
-        with tf.device('/cpu:0'), tf.name_scope("embedding"):
-            self.W_text = tf.Variable(tf.random_uniform([vocab_size, embedding_size], -1.0, 1.0), name="W_text")
-            self.embedded_chars = tf.nn.embedding_lookup(self.W_text, self.input_text)
+    @property
+    def ContextEmbeddingSize(self):
+        """
+        return 2u, where u is an output of a single direction in bilstm.
+        """
+        return 2 * self.Config.HiddenSize
+
+    def init_context_embedding(self, embedded_terms):
+        assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
 
         # Bidirectional(Left&Right) Recurrent Structure
         with tf.name_scope("bi-lstm"):
-            fw_cell = tf.nn.rnn_cell.BasicLSTMCell(hidden_size)
-            bw_cell = tf.nn.rnn_cell.BasicLSTMCell(hidden_size)
+            x = tf.unstack(embedded_terms, axis=1)
+
+            x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
+
+            fw_cell = tf.nn.rnn_cell.BasicLSTMCell(self.Config.HiddenSize)
+            bw_cell = tf.nn.rnn_cell.BasicLSTMCell(self.Config.HiddenSize)
+
             (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
                                                                                        cell_bw=bw_cell,
-                                                                                       inputs=self.embedded_chars,
-                                                                                       sequence_length=text_length,
+                                                                                       inputs=x,
+                                                                                       sequence_length=s_length,
                                                                                        dtype=tf.float32)
-            self.H = tf.concat([self.output_fw, self.output_bw], axis=2)
-            H_reshape = tf.reshape(self.H, [-1, 2 * hidden_size])
+            H = tf.concat([self.output_fw, self.output_bw], axis=2)
+            H_reshape = tf.reshape(H, [-1, 2 * self.Config.HiddenSize])
 
         with tf.name_scope("self-attention"):
-            self.W_s1 = tf.get_variable("W_s1", shape=[2*hidden_size, d_a_size], initializer=initializer)
-            _H_s1 = tf.nn.tanh(tf.matmul(H_reshape, self.W_s1))
-            self.W_s2 = tf.get_variable("W_s2", shape=[d_a_size, r_size], initializer=initializer)
-            _H_s2 = tf.matmul(_H_s1, self.W_s2)
-            _H_s2_reshape = tf.transpose(tf.reshape(_H_s2, [-1, sequence_length, r_size]), [0, 2, 1])
-            self.A = tf.nn.softmax(_H_s2_reshape, name="attention")
+            _H_s1 = tf.nn.tanh(tf.matmul(H_reshape, self.__W_s1))
+            _H_s2 = tf.matmul(_H_s1, self.__W_s2)
+            _H_s2_reshape = tf.transpose(tf.reshape(_H_s2, [-1, self.Config.TermsPerContext, self.Config.RSize]),
+                                         perm=[0, 2, 1])
+
+            self.__A = tf.nn.softmax(_H_s2_reshape, name="attention")
 
         with tf.name_scope("sentence-embedding"):
-            self.M = tf.matmul(self.A, self.H)
+            M = tf.matmul(self.__A, H)
+
+        return M
+
+    def init_hidden_states(self):
+        assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
+        self.__W_s1 = tf.get_variable("W_s1",
+                                      shape=[2 * self.Config.HiddenSize, self.Config.DASize],
+                                      initializer=self.__initializer)
+        self.__W_s2 = tf.get_variable("W_s2",
+                                      shape=[self.Config.DASize, self.Config.RSize],
+                                      initializer=self.__initializer)
+        self.__W_output = tf.get_variable("W_output",
+                                          shape=[self.Config.FullyConnectionSize, self.Config.ClassesCount],
+                                          initializer=self.__initializer)
+        self.__b_output = tf.Variable(tf.constant(0.1, shape=[self.Config.ClassesCount]),
+                                      name="b_output")
+
+    def iter_hidden_parameters(self):
+        yield "A", self.__A
+        yield "W_s1", self.__W_s1
+        yield "W_s2", self.__W_s2
+        yield "W_output", self.__W_output
+        yield "b_output", self.__b_output
+
+    def init_logits_unscaled(self, context_embedding):
+        """
+        context_embedding: M parameter of init_context_embedding.
+        """
 
         with tf.name_scope("fully-connected"):
-            # self.M_pool = tf.reduce_mean(self.M, axis=1)
-            # W_fc = tf.get_variable("W_fc", shape=[2 * hidden_size, fc_size], initializer=initializer)
-            self.M_flat = tf.reshape(self.M, shape=[-1, 2 * hidden_size * r_size])
-            W_fc = tf.get_variable("W_fc", shape=[2 * hidden_size * r_size, fc_size], initializer=initializer)
-            b_fc = tf.Variable(tf.constant(0.1, shape=[fc_size]), name="b_fc")
-            self.fc = tf.nn.relu(tf.nn.xw_plus_b(self.M_flat, W_fc, b_fc), name="fc")
+            M_flat = tf.reshape(context_embedding,
+                                shape=[-1, 2 * self.Config.HiddenSize * self.Config.RSize])
+
+            W_fc = tf.get_variable("W_fc",
+                                   shape=[2 * self.Config.HiddenSize * self.Config.RSize,
+                                          self.Config.FullyConnectionSize],
+                                   initializer=self.__initializer)
+
+            b_fc = tf.Variable(tf.constant(0.1, shape=[self.Config.FullyConnectionSize]), name="b_fc")
+            fc = tf.nn.relu(tf.nn.xw_plus_b(M_flat, W_fc, b_fc), name="fc")
 
         with tf.name_scope("output"):
-            W_output = tf.get_variable("W_output", shape=[fc_size, num_classes], initializer=initializer)
-            b_output = tf.Variable(tf.constant(0.1, shape=[num_classes]), name="b_output")
-            self.logits = tf.nn.xw_plus_b(self.fc, W_output, b_output, name="logits")
-            self.predictions = tf.argmax(self.logits, 1, name="predictions")
+            logits = tf.nn.xw_plus_b(x=fc,
+                                     weights=self.__W_output,
+                                     biases=self.__b_output,
+                                     name="logits")
 
-        # TODO: below penalty + loss -- into the Cost
+        return logits
 
+    def init_cost(self, logits_unscaled_dropped):
         with tf.name_scope("penalization"):
-            self.AA_T = tf.matmul(self.A, tf.transpose(self.A, [0, 2, 1]))
-            self.I = tf.reshape(tf.tile(tf.eye(r_size), [tf.shape(self.A)[0], 1]), [-1, r_size, r_size])
-            self.P = tf.square(tf.norm(self.AA_T - self.I, axis=[-2, -1], ord="fro"))
+            AA_T = tf.matmul(self.__A, tf.transpose(self.__A, [0, 2, 1]))
+            I = tf.reshape(tensor=tf.tile(tf.eye(self.Config.RSize), [tf.shape(self.__A)[0], 1]),
+                           shape=[-1, self.Config.RSize, self.Config.RSize])
+            P = tf.square(tf.norm(AA_T - I, axis=[-2, -1], ord="fro"))
 
         # Calculate mean cross-entropy loss
         with tf.name_scope("loss"):
-            losses = tf.nn.softmax_cross_entropy_with_logits(logits=self.logits, labels=self.input_y)
-            self.loss_P = tf.reduce_mean(self.P * p_coef)
-            self.loss = tf.reduce_mean(losses) + self.loss_P
+            y = self.get_input_parameter(MiniBatch.I_LABELS)
+            losses = tf.nn.softmax_cross_entropy_with_logits(logits=logits_unscaled_dropped,
+                                                             labels=y)
+            loss_P = tf.reduce_mean(P * self.Config.PCoef)
+            loss = tf.reduce_mean(losses) + loss_P
 
-        # TODO: ACCURACY IS THE SAME AS Base method.
+        return loss
 
-        # Accuracy
-        with tf.name_scope("accuracy"):
-            correct_predictions = tf.equal(self.predictions, tf.argmax(self.input_y, axis=1))
-            self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, tf.float32), name="accuracy")
-
-
-    # TODO. Length is a default.
-
-    @staticmethod
-    def _length(seq):
-        relevant = tf.sign(tf.abs(seq))
-        length = tf.reduce_sum(relevant, reduction_indices=1)
-        length = tf.cast(length, tf.int32)
-        return length

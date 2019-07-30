@@ -34,7 +34,7 @@ class BiLSTM(BaseContextNeuralNetwork):
             lstm_fw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
             lstm_bw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
             lstm_bw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=lstm_bw_cell,
-                                                         output_keep_prob=self.DropoutKeepProb)
+                                                         output_keep_prob=self.Config.DropoutRNNKeepProb)
 
             x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
