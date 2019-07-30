@@ -23,14 +23,17 @@ synonyms = RuSentRelSynonymsCollection.from_file(filepath=RuSentRelIOUtils.get_s
 train_root = 'test'
 
 
-for news_id in RuSentRelIOUtils.iter_test_indices():
+for doc_id in RuSentRelIOUtils.iter_test_indices():
 
-    print("NewsID: {}".format(news_id))
+    print("NewsID: {}".format(doc_id))
 
     # Init filepaths
-    entities_filepath = RuSentRelIOUtils.get_entity_filepath(news_id, root=train_root)
-    news_filepath = RuSentRelIOUtils.get_news_filepath(news_id, root=train_root)
-    opinion_filepath = RuSentRelIOUtils.get_sentiment_opin_filepath(news_id, root=train_root, is_etalon=True)
+    # TODO. root no need!
+    entities_filepath = RuSentRelIOUtils.get_entity_filepath(doc_id, root=train_root)
+    # TODO. root no need!
+    news_filepath = RuSentRelIOUtils.get_news_filepath(doc_id, root=train_root)
+    # TODO. root no need!
+    opinion_filepath = RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id, root=train_root, is_etalon=True)
 
     # Read collections
     # TODO. Read from zip archive

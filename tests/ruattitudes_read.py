@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import zipfile
 from core.source.ruattitudes.reader import RuAttitudesFormatReader
-from core.source.ruattitudes.utils_io import RuAttitudesIO
+from core.source.ruattitudes.io_utils import RuAttitudesIO
 
 # open collection
 
