@@ -3,6 +3,7 @@ import io
 from core.common.opinions.collection import OpinionCollection
 from core.evaluation.labels import Label
 from core.common.synonyms import SynonymsCollection
+from core.source.rusentrel.io_utils import RuSentRelIOUtils
 from core.source.rusentrel.opinions.opinion import RuSentRelOpinion
 
 
@@ -12,34 +13,45 @@ class RuSentRelOpinionCollection(OpinionCollection):
     """
 
     @classmethod
-    def from_zip_archive(self, zip_file, doc_index, stemmer, synonyms):
-        # TODO. Implement.
-        pass
+    def read_collection(cls, doc_id, synonyms):
+        return RuSentRelIOUtils.read_opinions(
+            doc_id=doc_id,
+            process_func=lambda input_file: cls.__from_file(input_file, synonyms))
 
     @classmethod
-    def from_file(cls, filepath, synonyms):
+    def __from_file(cls, input_file, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
 
         opinions = []
-        with io.open(filepath, "r", encoding='utf-8') as f:
-            for i, line in enumerate(f.readlines()):
+        for i, line in enumerate(input_file.readlines()):
 
-                if line == '\n':
-                    continue
+            line = line.decode('utf-8')
 
-                args = line.strip().split(',')
-                assert(len(args) >= 3)
+            if line == '\n':
+                continue
 
-                value_source = args[0].strip()
-                value_target = args[1].strip()
-                sentiment = Label.from_str(args[2].strip())
+            args = line.strip().split(',')
+            print args
+            assert(len(args) >= 3)
 
-                o = RuSentRelOpinion(value_source=value_source,
-                                     value_target=value_target,
-                                     sentiment=sentiment)
-                opinions.append(o)
+            value_source = args[0].strip()
+            value_target = args[1].strip()
+            sentiment = Label.from_str(args[2].strip())
+
+            o = RuSentRelOpinion(value_source=value_source,
+                                 value_target=value_target,
+                                 sentiment=sentiment)
+            opinions.append(o)
 
         return cls(opinions, synonyms)
+
+    @staticmethod
+    def __opinion_to_str(opinion):
+        assert(isinstance(opinion, RuSentRelOpinion))
+        return u"{}, {}, {}, current".format(
+            opinion.SourceValue,
+            opinion.TargetValue,
+            opinion.Sentiment.to_str())
 
     def save(self, filepath):
         assert(isinstance(filepath, unicode))
@@ -54,11 +66,3 @@ class RuSentRelOpinionCollection(OpinionCollection):
             for o in sorted_ops:
                 f.write(self.__opinion_to_str(o))
                 f.write(u'\n')
-
-    @staticmethod
-    def __opinion_to_str(opinion):
-        assert(isinstance(opinion, RuSentRelOpinion))
-        return u"{}, {}, {}, current".format(
-            opinion.SourceValue,
-            opinion.TargetValue,
-            opinion.Sentiment.to_str())

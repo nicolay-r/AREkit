@@ -16,32 +16,17 @@ stemmer = MystemWrapper()
 
 # Reading synonyms collection.
 # TODO. Read from zip archive
-synonyms = RuSentRelSynonymsCollection.from_file(filepath=RuSentRelIOUtils.get_synonyms_filepath(),
+synonyms = RuSentRelSynonymsCollection.from_file(filepath=RuSentRelIOUtils.get_synonyms_innerpath(),
                                                  stemmer=stemmer)
 
-# Reading 'train' subfolder of collection.
-train_root = 'test'
-
-
-for doc_id in RuSentRelIOUtils.iter_test_indices():
+for doc_id in RuSentRelIOUtils.iter_collection_indices():
 
     print("NewsID: {}".format(doc_id))
 
-    # Init filepaths
-    # TODO. root no need!
-    entities_filepath = RuSentRelIOUtils.get_entity_filepath(doc_id, root=train_root)
-    # TODO. root no need!
-    news_filepath = RuSentRelIOUtils.get_news_filepath(doc_id, root=train_root)
-    # TODO. root no need!
-    opinion_filepath = RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id, root=train_root, is_etalon=True)
-
     # Read collections
-    # TODO. Read from zip archive
-    entities = RuSentRelDocumentEntityCollection.from_file(entities_filepath, stemmer=stemmer, synonyms=synonyms)
-    # TODO. Read from zip archive
-    news = RuSentRelNews.from_file(news_filepath, entities)
-    # TODO. Read from zip archive
-    opininons = RuSentRelOpinionCollection.from_file(opinion_filepath, synonyms=synonyms)
+    entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id, stemmer=stemmer, synonyms=synonyms)
+    news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
+    opininons = RuSentRelOpinionCollection.read_collection(doc_id=doc_id, synonyms=synonyms)
 
     # Example: Access to the read OPINIONS collection.
     for opinion in opininons:

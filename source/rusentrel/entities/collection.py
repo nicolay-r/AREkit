@@ -1,9 +1,9 @@
 # -*- coding: utf-7 -*-
-import io
 from core.common.entities.collection import EntityCollection
 from core.processing.lemmatization.base import Stemmer
 from core.common.synonyms import SynonymsCollection
 from core.source.rusentrel.entities.entity import RuSentRelEntity
+from core.source.rusentrel.io_utils import RuSentRelIOUtils
 
 
 class RuSentRelDocumentEntityCollection(EntityCollection):
@@ -21,34 +21,41 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
                                          key_func=lambda e: e.IdInDocument)
 
     @classmethod
-    def from_zip_archive(self, zip_file, doc_index, stemmer, synonyms):
-        # TODO. Implement.
-        pass
+    def read_collection(cls, doc_id, stemmer, synonyms):
+        assert(isinstance(doc_id, int))
+
+        return RuSentRelIOUtils.read_entities(
+            doc_id=doc_id,
+            process_func=lambda input_file: cls.__from_file(
+                input_file=input_file,
+                stemmer=stemmer,
+                synonyms=synonyms))
 
     @classmethod
-    def from_file(cls, filepath, stemmer, synonyms):
+    def __from_file(cls, input_file, stemmer, synonyms):
         """ Read annotation collection from file
         """
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(synonyms, SynonymsCollection))
         entities = []
-        with io.open(filepath, "r", encoding='utf-8') as f:
-            for line in f.readlines():
-                args = line.split()
 
-                e_id = int(args[0][1:])
-                e_str_type = args[1]
-                e_begin = int(args[2])
-                e_end = int(args[3])
-                e_value = " ".join([arg.strip().replace(',', '') for arg in args[4:]])
+        for line in input_file.readlines():
+            line = line.decode('utf-8')
 
-                entity = RuSentRelEntity(id_in_doc=e_id,
-                                         str_type=e_str_type,
-                                         char_index_begin=e_begin,
-                                         char_index_end=e_end,
-                                         value=e_value)
+            args = line.split()
+            e_id = int(args[0][1:])
+            e_str_type = args[1]
+            e_begin = int(args[2])
+            e_end = int(args[3])
+            e_value = " ".join([arg.strip().replace(',', '') for arg in args[4:]])
 
-                entities.append(entity)
+            entity = RuSentRelEntity(id_in_doc=e_id,
+                                     str_type=e_str_type,
+                                     char_index_begin=e_begin,
+                                     char_index_end=e_end,
+                                     value=e_value)
+
+            entities.append(entity)
 
         return cls(entities, stemmer, synonyms)
 

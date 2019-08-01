@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import io
 from core.source.rusentrel.entities.entity import RuSentRelEntity
 from core.source.rusentrel.helpers.news import RuSentRelNewsHelper
 from core.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
+from core.source.rusentrel.io_utils import RuSentRelIOUtils
 from core.source.rusentrel.sentence import RuSentRelSentence
 
 
@@ -24,16 +24,16 @@ class RuSentRelNews(object):
         return self.__helper
 
     @classmethod
-    def from_zip_archive(self, zip_file, doc_index, entities):
-        # TODO. Implement.
-        pass
+    def read_document(cls, doc_id, entities):
+        return RuSentRelIOUtils.read_news_file(
+            doc_id=doc_id,
+            process_func=lambda input_file: cls.__from_file(input_file, entities))
 
     @classmethod
-    def from_file(cls, filepath, entities):
-        assert(isinstance(filepath, unicode))
+    def __from_file(cls, input_file, entities):
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
-        sentences = RuSentRelNews.read_sentences(filepath)
+        sentences = RuSentRelNews.__read_sentences(input_file)
 
         s_ind = 0
         e_ind = 0
@@ -67,31 +67,29 @@ class RuSentRelNews(object):
         return cls(sentences, entities)
 
     @staticmethod
-    def read_sentences(filepath):
-        assert(isinstance(filepath, unicode))
+    def __read_sentences(input_file):
+        sentences = []
+        line_start = 0
+        unknown_entity = u"Unknown}"
 
-        with io.open(filepath, 'rt', newline='\n', encoding='utf-8') as f:
+        for line in input_file.readlines():
 
-            sentences = []
-            line_start = 0
-            unknown_entity = u"Unknown}"
+            line = line.decode('utf-8')
 
-            for line in f.readlines():
+            if unknown_entity in line:
+                offset = line.index(unknown_entity) + len(unknown_entity)
+                line_start += offset
+                line = line[offset:]
 
-                if unknown_entity in line:
-                    offset = line.index(unknown_entity) + len(unknown_entity)
-                    line_start += offset
-                    line = line[offset:]
+            line_end = line_start + len(line) - 1
 
-                line_end = line_start + len(line) - 1
+            if line != unicode('\r\n'):
+                s = RuSentRelSentence(text=line,
+                                      char_ind_begin=line_start,
+                                      char_ind_end=line_end)
+                sentences.append(s)
 
-                if line != unicode('\r\n'):
-                    s = RuSentRelSentence(text=line,
-                                          char_ind_begin=line_start,
-                                          char_ind_end=line_end)
-                    sentences.append(s)
-
-                line_start = line_end + 1
+            line_start = line_end + 1
 
         return sentences
 
