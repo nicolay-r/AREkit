@@ -14,8 +14,8 @@ class RuSentRelOpinionCollection(OpinionCollection):
 
     @classmethod
     def read_collection(cls, doc_id, synonyms):
-        return RuSentRelIOUtils.read_opinions(
-            doc_id=doc_id,
+        return RuSentRelIOUtils.read_from_zip(
+            inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id),
             process_func=lambda input_file: cls.__from_file(input_file, synonyms))
 
     @classmethod

@@ -25,8 +25,8 @@ class RuSentRelNews(object):
 
     @classmethod
     def read_document(cls, doc_id, entities):
-        return RuSentRelIOUtils.read_news_file(
-            doc_id=doc_id,
+        return RuSentRelIOUtils.read_from_zip(
+            inner_path=RuSentRelIOUtils.get_news_innerpath(doc_id),
             process_func=lambda input_file: cls.__from_file(input_file, entities))
 
     @classmethod

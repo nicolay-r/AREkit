@@ -15,44 +15,17 @@ class RuSentRelIOUtils(BaseIOUtils):
     # region internal methods
 
     @staticmethod
-    def read_news_file(doc_id, process_func):
+    def read_from_zip(inner_path, process_func):
         """
         process_func:
             func which receives a file reader
         """
-        assert(isinstance(doc_id, int))
+        assert(isinstance(inner_path, unicode))
         assert(callable(process_func))
 
         with zipfile.ZipFile(RuSentRelIOUtils.get_archive_filepath(), "r") as zip_ref:
-            with zip_ref.open(RuSentRelIOUtils.get_news_innerpath(doc_id), mode='r') as c_file:
+            with zip_ref.open(inner_path, mode='r') as c_file:
                 return process_func(c_file)
-
-    @staticmethod
-    def read_synonyms(process_func):
-        assert(callable(process_func))
-        with zipfile.ZipFile(RuSentRelIOUtils.get_archive_filepath(), "r") as zip_ref:
-            with zip_ref.open(RuSentRelIOUtils.get_synonyms_innerpath(), mode='r') as s_file:
-                return process_func(s_file)
-
-    @staticmethod
-    def read_opinions(process_func, doc_id):
-        assert(isinstance(doc_id, int))
-        assert(callable(process_func))
-
-        with zipfile.ZipFile(RuSentRelIOUtils.get_archive_filepath(), "r") as zip_ref:
-            filepath = RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id)
-            with zip_ref.open(filepath, mode='r') as o_file:
-                return process_func(o_file)
-
-    @staticmethod
-    def read_entities(process_func, doc_id):
-        assert(callable(process_func))
-        assert(isinstance(doc_id, int))
-
-        with zipfile.ZipFile(RuSentRelIOUtils.get_archive_filepath(), "r") as zip_ref:
-            filepath = RuSentRelIOUtils.get_entity_innerpath(doc_id)
-            with zip_ref.open(filepath, mode='r') as e_file:
-                return process_func(e_file)
 
     @staticmethod
     def get_sentiment_opin_filepath(index, prefix=u'art'):
@@ -75,13 +48,13 @@ class RuSentRelIOUtils(BaseIOUtils):
     def get_synonyms_innerpath():
         return u"synonyms.txt"
 
+    # endregion
+
     @staticmethod
     def __get_root_by_index(doc_id, is_opinion=False):
         assert(isinstance(doc_id, int))
         other_dir = u'etalon' if is_opinion else u'test'
         return other_dir if doc_id >= RuSentRelIOUtils.__sep_doc_id else u"train"
-
-    # endregion
 
     # region public methods
 

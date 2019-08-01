@@ -24,8 +24,8 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
     def read_collection(cls, doc_id, stemmer, synonyms):
         assert(isinstance(doc_id, int))
 
-        return RuSentRelIOUtils.read_entities(
-            doc_id=doc_id,
+        return RuSentRelIOUtils.read_from_zip(
+            inner_path=RuSentRelIOUtils.get_entity_innerpath(doc_id),
             process_func=lambda input_file: cls.__from_file(
                 input_file=input_file,
                 stemmer=stemmer,

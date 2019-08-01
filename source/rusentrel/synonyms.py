@@ -12,7 +12,8 @@ class RuSentRelSynonymsCollection(SynonymsCollection):
 
         by_index = []
         by_synonym = {}
-        RuSentRelIOUtils.read_synonyms(
+        RuSentRelIOUtils.read_from_zip(
+            inner_path=RuSentRelIOUtils.get_synonyms_innerpath(),
             process_func=lambda input_file: cls.__from_file(
                 input_file, by_index, by_synonym, stemmer, debug))
 
