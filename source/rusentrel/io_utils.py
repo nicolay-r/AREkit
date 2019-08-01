@@ -1,6 +1,4 @@
-import zipfile
 from os import path
-from core.io_utils import get_data_root
 from core.source.base import BaseIOUtils
 
 
@@ -10,22 +8,9 @@ class RuSentRelIOUtils(BaseIOUtils):
 
     @staticmethod
     def get_archive_filepath():
-        return path.join(get_data_root(), u"rusentrel-v1_1.zip")
+        return path.join(RuSentRelIOUtils.get_data_root(), u"rusentrel-v1_1.zip")
 
     # region internal methods
-
-    @staticmethod
-    def read_from_zip(inner_path, process_func):
-        """
-        process_func:
-            func which receives a file reader
-        """
-        assert(isinstance(inner_path, unicode))
-        assert(callable(process_func))
-
-        with zipfile.ZipFile(RuSentRelIOUtils.get_archive_filepath(), "r") as zip_ref:
-            with zip_ref.open(inner_path, mode='r') as c_file:
-                return process_func(c_file)
 
     @staticmethod
     def get_sentiment_opin_filepath(index, prefix=u'art'):

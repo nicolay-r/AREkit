@@ -1,15 +1,14 @@
 from os import path
-from core.io_utils import get_data_root
+from core.source.base import BaseIOUtils
 
 
-# TODO. Use this io in reader, i.e. inside core (not outside)!
-class RuAttitudesIO(object):
+class RuAttitudesIOUtils(BaseIOUtils):
 
     # region internal methods
 
     @staticmethod
-    def get_filepath():
-        return path.join(get_data_root(), u"ruattitudes-v1_0.zip")
+    def get_archive_filepath():
+        return path.join(RuAttitudesIOUtils.get_data_root(), u"ruattitudes-v1_0.zip")
 
     @staticmethod
     def get_collection_filepath():

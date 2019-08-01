@@ -1,6 +1,6 @@
 import json
-
 from core.evaluation.labels import Label
+from core.source.rusentiframes.io_utils import RuSentiFramesIOUtils
 from core.source.rusentiframes.polarity import FramePolarity
 from core.source.rusentiframes.role import FrameRole
 from core.source.rusentiframes.state import FrameState
@@ -17,10 +17,14 @@ class RuSentiFramesCollection:
         self.__data = data
 
     @classmethod
-    def from_json(cls, filepath):
-        assert(isinstance(filepath, unicode))
-        with open(filepath, 'r') as f:
-            data = json.load(f)
+    def read_collection(cls):
+        return RuSentiFramesIOUtils.read_from_zip(
+            inner_path=RuSentiFramesIOUtils.get_collection_filepath(),
+            process_func=lambda input_file: cls.__from_json(input_file))
+
+    @classmethod
+    def __from_json(cls, input_file):
+        data = json.load(input_file)
         return cls(data)
 
     def get_frame_roles(self, frame_id):

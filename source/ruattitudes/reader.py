@@ -4,6 +4,7 @@ from core.common.ref_opinon import RefOpinion
 from core.evaluation.labels import Label
 from core.processing.lemmatization.base import Stemmer
 from core.processing.text.parser import TextParser
+from core.source.ruattitudes.io_utils import RuAttitudesIOUtils
 from core.source.ruattitudes.news import News
 from core.source.ruattitudes.sentence import Sentence
 
@@ -26,8 +27,17 @@ class RuAttitudesFormatReader(object):
         pass
 
     @staticmethod
-    def iter_news(input_file, stemmer=None):
-        print type(input_file)
+    def iter_news(stemmer=None):
+
+        it = RuAttitudesIOUtils.iter_from_zip(
+            inner_path=RuAttitudesIOUtils.get_collection_filepath(),
+            process_func=lambda input_file: RuAttitudesFormatReader.__iter_news(input_file, stemmer))
+
+        for news in it:
+            yield news
+
+    @staticmethod
+    def __iter_news(input_file, stemmer=None):
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         reset = False
