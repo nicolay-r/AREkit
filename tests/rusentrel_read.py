@@ -16,8 +16,7 @@ stemmer = MystemWrapper()
 
 # Reading synonyms collection.
 # TODO. Read from zip archive
-synonyms = RuSentRelSynonymsCollection.from_file(filepath=RuSentRelIOUtils.get_synonyms_innerpath(),
-                                                 stemmer=stemmer)
+synonyms = RuSentRelSynonymsCollection.read_collection(stemmer=stemmer)
 
 for doc_id in RuSentRelIOUtils.iter_collection_indices():
 

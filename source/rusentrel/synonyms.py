@@ -7,13 +7,7 @@ from core.source.rusentrel.io_utils import RuSentRelIOUtils
 class RuSentRelSynonymsCollection(SynonymsCollection):
 
     @classmethod
-    def read_collection(cls, is_readonly=True, debug=False):
-        # TODO. Implement.
-        pass
-
-    @classmethod
-    def from_file(cls, filepath, stemmer, is_read_only=True, debug=False):
-        assert(isinstance(filepath, unicode))
+    def read_collection(cls, stemmer, is_read_only=True, debug=False):
         assert(isinstance(stemmer, Stemmer))
 
         by_index = []
