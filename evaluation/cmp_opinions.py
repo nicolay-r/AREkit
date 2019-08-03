@@ -1,18 +1,16 @@
 class OpinionCollectionsToCompare(object):
 
     def __init__(self,
-                 test_filepath_func,
-                 etalon_filepath_func,
-                 read_collection_func,
-                 index):
-        assert(callable(test_filepath_func))
-        assert(callable(etalon_filepath_func))
-        assert(callable(read_collection_func))
-        assert(isinstance(index, int))
+                 doc_id,
+                 read_etalon_collection_func,
+                 read_result_collection_func):
+        assert(isinstance(doc_id, int))
+        assert(callable(read_etalon_collection_func))
+        assert(callable(read_result_collection_func))
 
-        self.__test_opinions = read_collection_func(test_filepath_func(index))
-        self.__etalon_opinions = read_collection_func(etalon_filepath_func(index))
-        self.__index = index
+        self.__test_opinions = read_result_collection_func(doc_id)
+        self.__etalon_opinions = read_etalon_collection_func(doc_id)
+        self.__doc_id = doc_id
 
     @property
     def TestOpinionCollection(self):
@@ -23,5 +21,5 @@ class OpinionCollectionsToCompare(object):
         return self.__etalon_opinions
 
     @property
-    def index(self):
-        return self.__index
+    def DocumentID(self):
+        return self.__doc_id

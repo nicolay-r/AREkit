@@ -52,7 +52,7 @@ class TwoClassEvaluator(BaseEvaluator):
                                                                 label=self.__neg_label,
                                                                 opinions_exist=has_neg)
 
-            result.add_document_results(doc_id=cmp_pair.index,
+            result.add_document_results(doc_id=cmp_pair.DocumentID,
                                         cmp_table=DocumentCompareTable(cmp_table),
                                         pos_recall=pos_recall,
                                         neg_recall=neg_recall,

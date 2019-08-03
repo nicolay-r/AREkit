@@ -79,7 +79,7 @@ class SingleClassEvaluator(BaseEvaluator):
                                                 label=self.__sentiment_label,
                                                 opinions_exist=True)
 
-            result.add_document_results(doc_id=cmp_pair.index,
+            result.add_document_results(doc_id=cmp_pair.DocumentID,
                                         cmp_table=cmp_table,
                                         recall=r, prec=p)
 

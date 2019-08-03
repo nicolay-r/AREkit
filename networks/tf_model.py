@@ -85,7 +85,7 @@ class TensorflowModel(object):
         self.__initialize_session()
 
         if load_model:
-            save_path = self.__io.get_model_state_filepath()
+            save_path = self.__io.create_model_state_filepath()
             print "Loading model: {}".format(save_path)
             self.load_model(save_path)
 

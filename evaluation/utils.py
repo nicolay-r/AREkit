@@ -8,17 +8,16 @@ class OpinionCollectionsToCompareUtils:
         pass
 
     @staticmethod
-    def iter_comparable_collections(test_filepath_func,
-                                    etalon_filepath_func,
-                                    read_collection_func,
-                                    indices):
-        assert(isinstance(indices, collections.Iterable))
+    def iter_comparable_collections(doc_ids,
+                                    read_result_collection_func,
+                                    read_etalon_collection_func):
+        assert(isinstance(doc_ids, collections.Iterable))
 
-        for index in indices:
-            yield OpinionCollectionsToCompare(test_filepath_func=test_filepath_func,
-                                              etalon_filepath_func=etalon_filepath_func,
-                                              read_collection_func=read_collection_func,
-                                              index=index)
+        for doc_id in doc_ids:
+            yield OpinionCollectionsToCompare(doc_id=doc_id,
+                                              read_result_collection_func=read_result_collection_func,
+                                              read_etalon_collection_func=read_etalon_collection_func)
+
 
 
 

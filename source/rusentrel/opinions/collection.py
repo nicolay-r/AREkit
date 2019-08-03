@@ -19,6 +19,17 @@ class RuSentRelOpinionCollection(OpinionCollection):
             process_func=lambda input_file: cls.__from_file(input_file, synonyms))
 
     @classmethod
+    def read_from_file(cls, filepath, synonyms):
+        """
+        Important: For externaly saved collections (using save_to_file method) and related usage
+        """
+        assert(isinstance(filepath, unicode))
+        assert(isinstance(synonyms, SynonymsCollection))
+
+        with open(filepath, 'r') as input_file:
+            return cls.__from_file(input_file, synonyms=synonyms)
+
+    @classmethod
     def __from_file(cls, input_file, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
 
@@ -53,7 +64,7 @@ class RuSentRelOpinionCollection(OpinionCollection):
             opinion.TargetValue,
             opinion.Sentiment.to_str())
 
-    def save(self, filepath):
+    def save_to_file(self, filepath):
         assert(isinstance(filepath, unicode))
 
         def __opinion_key(opinion):
