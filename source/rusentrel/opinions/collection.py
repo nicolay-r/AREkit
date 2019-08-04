@@ -42,7 +42,6 @@ class RuSentRelOpinionCollection(OpinionCollection):
                 continue
 
             args = line.strip().split(',')
-            print args
             assert(len(args) >= 3)
 
             value_source = args[0].strip()

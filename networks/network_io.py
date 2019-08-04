@@ -16,3 +16,8 @@ class NetworkIO(object):
     def create_model_state_filepath(self):
         raise NotImplementedError()
 
+    def get_answer_filepath(self, doc_id):
+        raise NotImplementedError()
+
+    def get_hidden_parameter_filepath(self, parameter_name, epoch):
+        raise NotImplementedError()
