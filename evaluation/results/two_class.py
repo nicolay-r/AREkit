@@ -22,9 +22,17 @@ class TwoClassEvalResult(BaseEvalResult):
         self.__cmp_results = OrderedDict()
         self.__result = None
 
-    @property
-    def Result(self):
-        return self.__result
+    def get_result_as_str(self):
+        return str(self.__result)
+
+    def get_result_by_metric(self, metric_name):
+        assert(isinstance(metric_name, unicode))
+        return self.__result[metric_name]
+
+    def iter_results(self):
+        assert(self.__result is not None)
+        for metric_name, value in self.__result.iteritems():
+            yield metric_name, value
 
     def add_document_results(self, doc_id,
                              cmp_table,
@@ -60,10 +68,11 @@ class TwoClassEvalResult(BaseEvalResult):
             pos_recall += info[self.C_POS_RECALL]
             neg_recall += info[self.C_NEG_RECALL]
 
-        pos_prec /= len(self.__documents)
-        neg_prec /= len(self.__documents)
-        pos_recall /= len(self.__documents)
-        neg_recall /= len(self.__documents)
+        if len(self.__documents) > 0:
+            pos_prec /= len(self.__documents)
+            neg_prec /= len(self.__documents)
+            pos_recall /= len(self.__documents)
+            neg_recall /= len(self.__documents)
 
         f1 = calc_f1(pos_prec=pos_prec,
                      neg_prec=neg_prec,
