@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 
-class NetworkVariables:
+class NetworkInputDependentVariables:
 
     def __init__(self):
         self.__text_opinion_ids = []

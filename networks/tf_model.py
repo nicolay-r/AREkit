@@ -11,7 +11,7 @@ from core.networks.context.training.batch import MiniBatch
 from core.networks.network_io import NetworkIO
 from core.networks.network import NeuralNetwork
 from core.networks.context.training.data_type import DataType
-from core.networks.predict_log import NetworkVariables
+from core.networks.predict_log import NetworkInputDependentVariables
 
 
 class TensorflowModel(object):
@@ -63,6 +63,10 @@ class TensorflowModel(object):
 
     # endregion
 
+    @staticmethod
+    def display_log(log_names, log_values):
+        pass
+
     def set_optimiser_value(self, value):
         self.__optimiser = value
 
@@ -100,11 +104,9 @@ class TensorflowModel(object):
         self.dispose_session()
 
     def before_labeling_func_application(self, text_opinions):
-        pass
         assert(text_opinions.check_all_text_opinions_without_labels())
 
     def after_labeling_func_application(self, text_opinions):
-        pass
         assert(text_opinions.check_all_text_opinions_has_labels())
 
     def predict_core(self,
@@ -167,13 +169,13 @@ class TensorflowModel(object):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
         self.set_optimiser_value(optimiser)
 
+    def get_labels_helper(self):
+        raise NotImplementedError
+
     def get_gpu_memory_fraction(self):
         raise NotImplementedError()
 
     def create_batch_by_bags_group(self, bags_group):
-        raise NotImplementedError()
-
-    def get_labels_helper(self):
         raise NotImplementedError()
 
     def get_text_opinions_collection(self, data_type):
@@ -226,7 +228,7 @@ class TensorflowModel(object):
             cost = result[1]
 
             if DebugKeys.FitBatchDisplayLog:
-                self.__display_log(hidden_names, result[len(fetches_default):])
+                self.display_log(hidden_names, result[len(fetches_default):])
 
             total_cost += np.mean(cost)
             total_acc += result[2]
@@ -237,14 +239,6 @@ class TensorflowModel(object):
 
         return total_cost / groups_count, \
                total_acc / groups_count
-
-    @staticmethod
-    def __display_log(log_names, log_values):
-        assert(len(log_names) == len(log_values))
-        print '==========================================='
-        for index, log_value in enumerate(log_values):
-            print "{}: {}".format(log_names[index], log_value)
-        print '==========================================='
 
     def __notify_initialized(self):
         if self.__callback is not None:
@@ -268,7 +262,7 @@ class TensorflowModel(object):
         # TODO. Hidden parameters irrespect from text_opinions! Should be refactored.
         # TODO. Move it from here, and remain only parameters like attention weights that is depends on input.
         # TODO. Refactor
-        predict_log = NetworkVariables()
+        predict_log = NetworkInputDependentVariables()
 
         var_names = []
         var_tensors = []
@@ -289,9 +283,9 @@ class TensorflowModel(object):
                             text_opinion_ids=[sample.TextOpinionID for sample in minibatch.iter_by_samples()])
 
             if DebugKeys.PredictBatchDisplayLog:
-                self.__display_log(var_names, result[1:])
+                self.display_log(var_names, result[1:])
 
-            # apply labels
+            # apply labeling
             for bag_index, bag in enumerate(minibatch.iter_by_bags()):
 
                 label = self.get_labels_helper().create_label_from_uint(
@@ -304,5 +298,4 @@ class TensorflowModel(object):
 
         return predict_log
 
-
-    # endregion
+        # endregion

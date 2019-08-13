@@ -26,7 +26,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         self.__next_opinion_id = []
         # provides original label by text_opinion_id
         self.__text_opinion_labels = []
-        # labels defined
+        # labeling defined
         self.__labels_defined = []
 
     def add_text_opinions(self,
