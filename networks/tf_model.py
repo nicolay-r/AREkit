@@ -2,6 +2,8 @@ import os
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.training.saver import Saver
+
+from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from core.networks.callback import Callback
 from core.networks.cancellation import OperationCancellation
 from core.networks.context.debug import DebugKeys
@@ -9,6 +11,7 @@ from core.networks.context.training.batch import MiniBatch
 from core.networks.network_io import NetworkIO
 from core.networks.network import NeuralNetwork
 from core.networks.context.training.data_type import DataType
+from core.networks.predict_log import NetworkVariables
 
 
 class TensorflowModel(object):
@@ -96,6 +99,39 @@ class TensorflowModel(object):
         self.fit()
         self.dispose_session()
 
+    def before_labeling_func_application(self, text_opinions):
+        pass
+        assert(text_opinions.check_all_text_opinions_without_labels())
+
+    def after_labeling_func_application(self, text_opinions):
+        pass
+        assert(text_opinions.check_all_text_opinions_has_labels())
+
+    def predict_core(self,
+                     dest_data_type,
+                     labeling_callback,
+                     eval_callback):
+        assert(isinstance(dest_data_type, unicode))
+        assert(callable(labeling_callback))
+        assert(callable(eval_callback))
+
+        text_opinions = self.get_text_opinions_collection(dest_data_type)
+        assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
+
+        text_opinions.reset_labels()
+
+        # Predict.
+        self.before_labeling_func_application(text_opinions)
+        predict_log = labeling_callback(text_opinions, dest_data_type)
+        self.after_labeling_func_application(text_opinions)
+
+        # Evaluate
+        eval_result = eval_callback(dest_data_type)
+
+        text_opinions.reset_labels()
+
+        return eval_result, predict_log
+
     # region Abstract
 
     def fit(self):
@@ -122,7 +158,10 @@ class TensorflowModel(object):
             self.Callback.on_fit_finished()
 
     def predict(self, dest_data_type=DataType.Test):
-        raise NotImplementedError()
+        eval_result, predict_log = self.predict_core(dest_data_type=dest_data_type,
+                                                     labeling_callback=self.__text_opinions_labeling,
+                                                     eval_callback=self.eval_callback)
+        return eval_result, predict_log
 
     def set_optimiser(self):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
@@ -132,6 +171,18 @@ class TensorflowModel(object):
         raise NotImplementedError()
 
     def create_batch_by_bags_group(self, bags_group):
+        raise NotImplementedError()
+
+    def get_labels_helper(self):
+        raise NotImplementedError()
+
+    def get_text_opinions_collection(self, data_type):
+        raise NotImplementedError()
+
+    def get_bags_collection(self, data_type):
+        raise NotImplementedError()
+
+    def eval_callback(self, dest_data_type):
         raise NotImplementedError()
 
     def create_feed_dict(self, minibatch, data_type):
@@ -209,5 +260,49 @@ class TensorflowModel(object):
         sess.run(init_op)
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess
+
+    def __text_opinions_labeling(self, text_opinions, dest_data_type):
+        assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
+        assert(isinstance(dest_data_type, unicode))
+
+        # TODO. Hidden parameters irrespect from text_opinions! Should be refactored.
+        # TODO. Move it from here, and remain only parameters like attention weights that is depends on input.
+        # TODO. Refactor
+        predict_log = NetworkVariables()
+
+        var_names = []
+        var_tensors = []
+        for name, tensor in self.Network.iter_hidden_parameters():
+            var_names.append(name)
+            var_tensors.append(tensor)
+
+        for bags_group in self.get_bags_collection(dest_data_type).iter_by_groups(self.Config.BagsPerMinibatch):
+
+            minibatch = self.create_batch_by_bags_group(bags_group)
+            feed_dict = self.create_feed_dict(minibatch, data_type=dest_data_type)
+
+            result = self.Session.run([self.Network.Labels] + var_tensors, feed_dict=feed_dict)
+            uint_labels = result[0]
+
+            predict_log.add(names=var_names,
+                            tensor_values=result[1:],
+                            text_opinion_ids=[sample.TextOpinionID for sample in minibatch.iter_by_samples()])
+
+            if DebugKeys.PredictBatchDisplayLog:
+                self.__display_log(var_names, result[1:])
+
+            # apply labels
+            for bag_index, bag in enumerate(minibatch.iter_by_bags()):
+
+                label = self.get_labels_helper().create_label_from_uint(
+                    label_uint=int(uint_labels[bag_index]))
+
+                for sample in bag:
+                    if sample.TextOpinionID < 0:
+                        continue
+                    text_opinions.apply_label(label, sample.TextOpinionID)
+
+        return predict_log
+
 
     # endregion
