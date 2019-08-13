@@ -174,6 +174,11 @@ class TensorflowModel(object):
                                                      labeling_callback=self.__text_opinions_labeling)
         return eval_result, predict_log
 
+    def get_hidden_parameters(self):
+        names, tensors = list(self.Network.iter_hidden_parameters())
+        result_list = self.Session.run(tensors)
+        return names, result_list
+
     def set_optimiser(self):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
         self.set_optimiser_value(optimiser)
@@ -268,9 +273,7 @@ class TensorflowModel(object):
         assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
         assert(isinstance(dest_data_type, unicode))
 
-        # TODO. Hidden parameters irrespect from text_opinions! Should be refactored.
-        # TODO. Move it from here, and remain only parameters like attention weights that is depends on input.
-        # TODO. Refactor
+        # TODO. In separated function.
         predict_log = NetworkInputDependentVariables()
 
         var_names = []

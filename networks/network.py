@@ -19,6 +19,9 @@ class NeuralNetwork(object):
     def iter_hidden_parameters(self):
         raise NotImplementedError()
 
+    def iter_input_dependent_hidden_parameters(self):
+        raise NotImplementedError()
+
     def compile(self, config, reset_graph):
         raise NotImplementedError()
 
