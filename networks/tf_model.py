@@ -61,6 +61,10 @@ class TensorflowModel(object):
     def IO(self):
         return self.__io
 
+    @property
+    def ReadOnlySynonymsCollection(self):
+        raise NotImplementedError()
+
     # endregion
 
     @staticmethod
@@ -109,13 +113,14 @@ class TensorflowModel(object):
     def after_labeling_func_application(self, text_opinions):
         assert(text_opinions.check_all_text_opinions_has_labels())
 
+    def before_evaluation(self, dest_data_type):
+        pass
+
     def predict_core(self,
                      dest_data_type,
-                     labeling_callback,
-                     eval_callback):
+                     labeling_callback):
         assert(isinstance(dest_data_type, unicode))
         assert(callable(labeling_callback))
-        assert(callable(eval_callback))
 
         text_opinions = self.get_text_opinions_collection(dest_data_type)
         assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
@@ -127,8 +132,13 @@ class TensorflowModel(object):
         predict_log = labeling_callback(text_opinions, dest_data_type)
         self.after_labeling_func_application(text_opinions)
 
-        # Evaluate
-        eval_result = eval_callback(dest_data_type)
+        self.before_evaluation(dest_data_type)
+
+        eval_result = self.get_eval_helper().evaluate_model(
+            data_type=dest_data_type,
+            io=self.IO,
+            doc_ids=text_opinions.iter_unique_news_ids(),
+            synonyms=self.ReadOnlySynonymsCollection)
 
         text_opinions.reset_labels()
 
@@ -161,16 +171,18 @@ class TensorflowModel(object):
 
     def predict(self, dest_data_type=DataType.Test):
         eval_result, predict_log = self.predict_core(dest_data_type=dest_data_type,
-                                                     labeling_callback=self.__text_opinions_labeling,
-                                                     eval_callback=self.eval_callback)
+                                                     labeling_callback=self.__text_opinions_labeling)
         return eval_result, predict_log
 
     def set_optimiser(self):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
         self.set_optimiser_value(optimiser)
 
+    def get_eval_helper(self):
+        raise NotImplementedError()
+
     def get_labels_helper(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def get_gpu_memory_fraction(self):
         raise NotImplementedError()
@@ -182,9 +194,6 @@ class TensorflowModel(object):
         raise NotImplementedError()
 
     def get_bags_collection(self, data_type):
-        raise NotImplementedError()
-
-    def eval_callback(self, dest_data_type):
         raise NotImplementedError()
 
     def create_feed_dict(self, minibatch, data_type):
