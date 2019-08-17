@@ -46,18 +46,18 @@ class SingleClassEvaluator(BaseEvaluator):
         assert(isinstance(opinions, OpinionCollection))
         assert(isinstance(label, Label))
 
-        ro = OpinionCollection(opinions=[],
-                               synonyms=self.Synonyms)
+        new_collection = OpinionCollection(opinions=[],
+                                           synonyms=self.Synonyms)
 
-        for o in opinions:
-            assert(isinstance(o, Opinion))
-            no = Opinion(source_value=o.SourceValue,
-                         target_value=o.TargetValue,
-                         sentiment=label)
+        for opinion in opinions:
+            assert(isinstance(opinion, Opinion))
+            new_opinion = Opinion(source_value=opinion.SourceValue,
+                                  target_value=opinion.TargetValue,
+                                  sentiment=label)
 
-            ro.add_opinion(no)
+            new_collection.add_opinion(new_opinion)
 
-        return ro
+        return new_collection
 
     @staticmethod
     def __has_opinions_with_label(opinions, label):

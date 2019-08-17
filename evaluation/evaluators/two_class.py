@@ -33,7 +33,7 @@ class TwoClassEvaluator(BaseEvaluator):
         assert(isinstance(label, Label))
         assert(isinstance(opinions, OpinionCollection))
         for opinion in opinions:
-            if opinion.sentiment.to_int() == label.to_int():
+            if opinion.Sentiment == label:
                 return True
         return False
 
@@ -53,7 +53,7 @@ class TwoClassEvaluator(BaseEvaluator):
                                                                 opinions_exist=has_neg)
 
             result.add_document_results(doc_id=cmp_pair.DocumentID,
-                                        cmp_table=DocumentCompareTable(cmp_table),
+                                        cmp_table=cmp_table,
                                         pos_recall=pos_recall,
                                         neg_recall=neg_recall,
                                         pos_prec=pos_prec,

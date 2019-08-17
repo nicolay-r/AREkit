@@ -71,8 +71,10 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         assert(isinstance(text_opinion_id, int))
 
         text_opinion = self[text_opinion_id]
+        assert(isinstance(text_opinion, TextOpinion))
+
         if self.__labels_defined[text_opinion_id] is not False:
-            assert(text_opinion.Label == label)
+            assert(text_opinion.Sentiment == label)
             return
 
         text_opinion.set_label(label)

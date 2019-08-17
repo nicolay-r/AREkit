@@ -177,7 +177,8 @@ class TensorflowModel(object):
     def get_hidden_parameters(self):
         names, tensors = list(self.Network.iter_hidden_parameters())
         result_list = self.Session.run(tensors)
-        return names, result_list
+        for i, value in enumerate(result_list):
+            yield names[i], value
 
     def set_optimiser(self):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)

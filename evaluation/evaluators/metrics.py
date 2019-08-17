@@ -11,7 +11,7 @@ def calc_recall(cmp_table,
     assert(isinstance(label, Label))
     assert(isinstance(answer_exist, bool))
 
-    total = cmp_table.filter_original_column_by_label(label)
+    total = len(cmp_table.filter_original_column_by_label(label))
     if total != 0:
         return 1.0 * len(answers.filter_comparison_true()) / total
     else:

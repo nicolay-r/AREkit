@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import io
+import os
 from core.common.opinions.collection import OpinionCollection
+from core.common.utils import create_dir_if_not_exists
 from core.evaluation.labels import Label
 from core.common.synonyms import SynonymsCollection
 from core.source.rusentrel.io_utils import RuSentRelIOUtils
@@ -71,6 +73,8 @@ class RuSentRelOpinionCollection(OpinionCollection):
             return opinion.SourceValue + opinion.TargetValue
 
         sorted_ops = sorted(self, key=__opinion_key)
+
+        create_dir_if_not_exists(filepath)
 
         with io.open(filepath, 'w') as f:
             for o in sorted_ops:
