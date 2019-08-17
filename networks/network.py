@@ -20,7 +20,7 @@ class NeuralNetwork(object):
         raise NotImplementedError()
 
     def iter_input_dependent_hidden_parameters(self):
-        raise NotImplementedError()
+        return [], []
 
     def compile(self, config, reset_graph):
         raise NotImplementedError()

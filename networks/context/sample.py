@@ -2,7 +2,9 @@ import collections
 import numpy as np
 from collections import OrderedDict
 
-import core.networks.context.training.embedding.indices
+from core.networks.context.training.embedding.indices import \
+    calculate_embedding_indices_for_terms, \
+    calculate_pos_indices_for_terms
 from core.common.entities.entity import Entity
 from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
@@ -89,11 +91,11 @@ class InputSample(object):
         subj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Source)
         obj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Target)
 
-        pos_indices = core.networks.context.training.embedding.indices.calculate_pos_indices_for_terms(
+        pos_indices = calculate_pos_indices_for_terms(
             terms=terms,
             pos_tagger=config.PosTagger)
 
-        x_indices = core.networks.context.training.embedding.indices.calculate_embedding_indices_for_terms(
+        x_indices = calculate_embedding_indices_for_terms(
             terms=terms,
             term_embedding_matrix=config.TermEmbeddingMatrix,
             word_embedding=config.WordEmbedding,

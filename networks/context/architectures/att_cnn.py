@@ -37,11 +37,12 @@ class AttentionCNN(VanillaCNN):
         g = super(AttentionCNN, self).init_context_embedding_core(embedded_terms)
         return tf.concat([g, self.__init_attention_embedding()], axis=-1)
 
+    def iter_input_dependent_hidden_parameters(self):
+        yield "ATT_Weights", self.__att_weights
+
     def iter_hidden_parameters(self):
         for key, value in super(AttentionCNN, self).iter_hidden_parameters():
             yield key, value
-
-        yield "ATT_Weights", self.__att_weights
 
     def __init_attention_embedding(self):
         assert(isinstance(self.Config, AttentionCNNConfig))

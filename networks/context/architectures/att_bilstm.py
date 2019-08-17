@@ -103,4 +103,5 @@ class AttBiLSTM(BaseContextNeuralNetwork):
         for key, value in self.__hidden.iteritems():
             yield key, value
 
+    def iter_input_dependent_hidden_parameters(self):
         yield "ATT_Weights", self.__att_alphas
