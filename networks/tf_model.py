@@ -273,12 +273,10 @@ class TensorflowModel(object):
         assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
         assert(isinstance(dest_data_type, unicode))
 
-        # TODO. In separated function.
         predict_log = NetworkInputDependentVariables()
-
         var_names = []
         var_tensors = []
-        for name, tensor in self.Network.iter_hidden_parameters():
+        for name, tensor in self.Network.iter_input_dependent_hidden_parameters():
             var_names.append(name)
             var_tensors.append(tensor)
 
@@ -290,9 +288,12 @@ class TensorflowModel(object):
             result = self.Session.run([self.Network.Labels] + var_tensors, feed_dict=feed_dict)
             uint_labels = result[0]
 
-            predict_log.add(names=var_names,
-                            tensor_values=result[1:],
-                            text_opinion_ids=[sample.TextOpinionID for sample in minibatch.iter_by_samples()])
+            tensor_values = result[1:]
+            if len(var_names) > 0 and len(tensor_values) > 0:
+                predict_log.add(names=var_names,
+                                tensor_values=tensor_values,
+                                text_opinion_ids=[sample.TextOpinionID for sample in
+                                                  minibatch.iter_by_samples()])
 
             if DebugKeys.PredictBatchDisplayLog:
                 self.display_log(var_names, result[1:])

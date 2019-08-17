@@ -11,9 +11,16 @@ class NetworkInputDependentVariables:
         return var_name in self.__by_param_names
 
     def add(self, names, tensor_values, text_opinion_ids):
-        assert(isinstance(names, list))
-        assert(isinstance(tensor_values, list))
+        assert(isinstance(names, list) and len(names) > 0)
+        assert(isinstance(tensor_values, list) and len(tensor_values) > 0)
         assert(isinstance(text_opinion_ids, list))
+
+        print "text_opinion_ids_len: {}".format(len(text_opinion_ids))
+        print "tensor_values_len: {}".format(len(tensor_values))
+        print "names_len: {}".format(len(names))
+        for tensor in tensor_values:
+            print tensor.shape
+
         assert(len(text_opinion_ids) == len(tensor_values) == len(names))
 
         for i, name in enumerate(names):

@@ -69,6 +69,10 @@ class InputSample(object):
              (InputSample.I_POS_INDS, pos_indices),
              (InputSample.I_TERM_TYPE, term_type)])
 
+    @property
+    def TextOpinionID(self):
+        return self.__text_opinion_id
+
     @classmethod
     def create_empty(cls, config):
         assert(isinstance(config, DefaultNetworkConfig))
