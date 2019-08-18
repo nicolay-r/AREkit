@@ -175,10 +175,14 @@ class TensorflowModel(object):
         return eval_result, predict_log
 
     def get_hidden_parameters(self):
-        names, tensors = list(self.Network.iter_hidden_parameters())
+        names = []
+        tensors = []
+        for name, tensor in self.Network.iter_hidden_parameters():
+            names.append(name)
+            tensors.append(tensor)
+
         result_list = self.Session.run(tensors)
-        for i, value in enumerate(result_list):
-            yield names[i], value
+        return names, result_list
 
     def set_optimiser(self):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
