@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from core.networks.attention.architectures.yatian import AttentionYatianColing2016
+from core.networks.attention.architectures.mlp import MultiLayerPerceptronAttention
 from core.networks.context.configurations.att_cnn import AttentionCNNConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.cnn import VanillaCNN
@@ -49,7 +49,7 @@ class AttentionCNN(VanillaCNN):
 
         att = self.Config.AttentionModel
 
-        assert(isinstance(att, AttentionYatianColing2016))
+        assert(isinstance(att, MultiLayerPerceptronAttention))
 
         entities = tf.stack([self.get_input_parameter(InputSample.I_SUBJ_IND),
                              self.get_input_parameter(InputSample.I_OBJ_IND)],

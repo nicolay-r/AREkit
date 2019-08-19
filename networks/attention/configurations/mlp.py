@@ -1,4 +1,4 @@
-class AttentionYatianColing2016Config(object):
+class MultiLayerPerceptronAttentionConfig(object):
 
     __entities_per_context = 2
     __hidden_size = 10

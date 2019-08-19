@@ -11,6 +11,7 @@ def get_random_vector(vector_size, seed):
     state = np.random.RandomState(seed)
     return state.random_sample(vector_size)
 
+
 def create_dir_if_not_exists(filepath):
     dir = os.path.dirname(filepath)
     if not os.path.exists(dir):

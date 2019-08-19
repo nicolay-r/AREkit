@@ -1,9 +1,9 @@
 import tensorflow as tf
-from ..configurations.yatian import AttentionYatianColing2016Config
+from ..configurations.mlp import MultiLayerPerceptronAttentionConfig
 from core.networks.context.architectures.utils import get_k_layer_logits
 
 
-class AttentionYatianColing2016(object):
+class MultiLayerPerceptronAttention(object):
     """
     Authors: Yatian Shen, Xuanjing Huang
     Paper: https://www.aclweb.org/anthology/C16-1238
@@ -18,7 +18,7 @@ class AttentionYatianColing2016(object):
     I_entities = "I_e"
 
     def __init__(self, cfg, batch_size, terms_per_context, term_embedding_size):
-        assert(isinstance(cfg, AttentionYatianColing2016Config))
+        assert(isinstance(cfg, MultiLayerPerceptronAttentionConfig))
         self.__cfg = cfg
 
         self.__batch_size = batch_size
