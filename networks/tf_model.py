@@ -34,6 +34,7 @@ class TensorflowModel(object):
         self.__io = io
         self.__network = network
         self.__callback = callback
+        self.__current_epoch_index = 0
 
     # region Properties
 
@@ -138,7 +139,8 @@ class TensorflowModel(object):
             data_type=dest_data_type,
             io=self.IO,
             doc_ids=text_opinions.iter_unique_news_ids(),
-            synonyms=self.ReadOnlySynonymsCollection)
+            synonyms=self.ReadOnlySynonymsCollection,
+            epoch_index=self.__current_epoch_index)
 
         text_opinions.reset_labels()
 
@@ -165,6 +167,8 @@ class TensorflowModel(object):
                                                 avg_acc=e_acc,
                                                 epoch_index=epoch_index,
                                                 operation_cancel=operation_cancel)
+
+            self.__current_epoch_index += 1
 
         if self.Callback is not None:
             self.Callback.on_fit_finished()
@@ -211,11 +215,11 @@ class TensorflowModel(object):
         assert(isinstance(minibatch, MiniBatch))
         assert(isinstance(data_type, unicode))
 
-        input = minibatch.to_network_input()
+        network_input = minibatch.to_network_input()
         if DebugKeys.FeedDictShow:
-            MiniBatch.debug_output(input)
+            MiniBatch.debug_output(network_input)
 
-        return self.Network.create_feed_dict(input, data_type)
+        return self.Network.create_feed_dict(network_input, data_type)
 
     # endregion
 
@@ -256,8 +260,7 @@ class TensorflowModel(object):
         if DebugKeys.FitSaveTensorflowModelState:
             self.save_model(save_path=self.IO.get_model_filepath())
 
-        return total_cost / groups_count, \
-               total_acc / groups_count
+        return total_cost / groups_count, total_acc / groups_count
 
     def __notify_initialized(self):
         if self.__callback is not None:
