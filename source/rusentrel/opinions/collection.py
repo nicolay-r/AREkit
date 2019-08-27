@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import io
-import os
 from core.common.opinions.collection import OpinionCollection
+from core.common.opinions.opinion import Opinion
 from core.common.utils import create_dir_if_not_exists
 from core.evaluation.labels import Label
 from core.common.synonyms import SynonymsCollection
@@ -69,7 +69,7 @@ class RuSentRelOpinionCollection(OpinionCollection):
         assert(isinstance(filepath, unicode))
 
         def __opinion_key(opinion):
-            assert(isinstance(opinion, RuSentRelOpinion))
+            assert(isinstance(opinion, Opinion))
             return opinion.SourceValue + opinion.TargetValue
 
         sorted_ops = sorted(self, key=__opinion_key)
