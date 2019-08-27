@@ -39,6 +39,10 @@ class TensorflowModel(object):
     # region Properties
 
     @property
+    def CurrentEpochIndex(self):
+        return self.__current_epoch_index
+
+    @property
     def Config(self):
         raise NotImplementedError()
 
