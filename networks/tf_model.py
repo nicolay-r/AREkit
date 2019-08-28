@@ -292,8 +292,10 @@ class TensorflowModel(object):
             var_names.append(name)
             var_tensors.append(tensor)
 
+        __bags_group_count = 0
         for bags_group in self.get_bags_collection(dest_data_type).iter_by_groups(self.Config.BagsPerMinibatch):
 
+            __bags_group_count += 1
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch, data_type=dest_data_type)
 
@@ -319,7 +321,10 @@ class TensorflowModel(object):
                 for sample in bag:
                     if sample.TextOpinionID < 0:
                         continue
+                    print "Apply label '{}' to '{}'".format(label.to_str(), str(sample.TextOpinionID))
                     text_opinions.apply_label(label, sample.TextOpinionID)
+
+        print "Bags group count: {}".format(__bags_group_count)
 
         return predict_log
 
