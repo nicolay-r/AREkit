@@ -59,7 +59,7 @@ class RuSentRelOpinionCollection(OpinionCollection):
 
     @staticmethod
     def __opinion_to_str(opinion):
-        assert(isinstance(opinion, RuSentRelOpinion))
+        assert(isinstance(opinion, Opinion))
         return u"{}, {}, {}, current".format(
             opinion.SourceValue,
             opinion.TargetValue,
