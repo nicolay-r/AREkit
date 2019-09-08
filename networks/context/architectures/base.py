@@ -149,17 +149,17 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__input[InputSample.I_SUBJ_DISTS] = tf.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
-            name=prefix + InputSample.I_SUBJ_IND)
+            name=prefix + InputSample.I_SUBJ_DISTS)
 
         self.__input[InputSample.I_OBJ_DISTS] = tf.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
-            name=prefix + InputSample.I_OBJ_IND)
+            name=prefix + InputSample.I_OBJ_DISTS)
 
         self.__input[InputSample.I_TERM_TYPE] = tf.placeholder(
             dtype=tf.float32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
-            name=prefix + InputSample.I_OBJ_IND)
+            name=prefix + InputSample.I_TERM_TYPE)
 
         self.__input[InputSample.I_POS_INDS] = tf.placeholder(
             dtype=tf.int32,
