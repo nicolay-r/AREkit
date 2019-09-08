@@ -2,7 +2,7 @@ from core.processing.text.parsed import ParsedText
 from core.common.ref_opinon import RefOpinion
 
 
-class Sentence(object):
+class RuAttitudesSentence(object):
 
     def __init__(self, is_title, parsed_text, ref_opinions, objects_list, sentence_index):
         assert(isinstance(is_title, bool))

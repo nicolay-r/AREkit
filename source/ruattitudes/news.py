@@ -1,7 +1,7 @@
-from core.source.ruattitudes.sentence import Sentence
+from core.source.ruattitudes.sentence import RuAttitudesSentence
 
 
-class News(object):
+class RuAttitudesNews(object):
 
     def __init__(self, sentences, news_index):
         assert(isinstance(sentences, list))
@@ -21,7 +21,7 @@ class News(object):
 
     def __set_owners(self):
         for sentence in self.__sentences:
-            assert(isinstance(sentence, Sentence))
+            assert(isinstance(sentence, RuAttitudesSentence))
             sentence.set_owner(self)
 
     def get_sentence(self, index):

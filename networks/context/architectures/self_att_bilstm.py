@@ -1,7 +1,6 @@
 import tensorflow as tf
 
 from core.networks.context.sample import InputSample
-from core.networks.context.training.batch import MiniBatch
 from ..configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 from base import BaseContextNeuralNetwork
 import utils

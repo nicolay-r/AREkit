@@ -3,8 +3,8 @@ import collections
 from core.common.text_object import TextObject
 from core.common.ref_opinon import RefOpinion
 from core.common.opinions.opinion import Opinion
-from core.source.ruattitudes.news import News
-from core.source.ruattitudes.sentence import Sentence
+from core.source.ruattitudes.news import RuAttitudesNews
+from core.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class NewsHelper(object):
@@ -19,8 +19,8 @@ class NewsHelper(object):
         docs = {}
 
         for s in sentence_list:
-            assert(isinstance(s, Sentence))
-            assert(isinstance(s.Owner, News))
+            assert(isinstance(s, RuAttitudesSentence))
+            assert(isinstance(s.Owner, RuAttitudesNews))
             news_id = s.Owner.NewsIndex
 
             if news_id in docs:
@@ -32,7 +32,7 @@ class NewsHelper(object):
 
     @staticmethod
     def iter_opinions_with_related_sentences(news):
-        assert(isinstance(news, News))
+        assert(isinstance(news, RuAttitudesNews))
 
         doc_opinions = NewsHelper.build_opinion_dict(news=news)
         assert(isinstance(doc_opinions, dict))
@@ -63,7 +63,7 @@ class NewsHelper(object):
 
     @staticmethod
     def __convert_ref_opinion_to_opinion(sentence, ref_opinion):
-        assert(isinstance(sentence, Sentence))
+        assert(isinstance(sentence, RuAttitudesSentence))
         assert(isinstance(ref_opinion, RefOpinion))
 
         l_obj, r_obj = sentence.get_objects(ref_opinion)
@@ -80,7 +80,7 @@ class NewsHelper(object):
         opin_dict = {}
 
         for s_ind, sentence in enumerate(news.iter_sentences()):
-            assert(isinstance(sentence, Sentence))
+            assert(isinstance(sentence, RuAttitudesSentence))
             for ref_opinion in sentence.iter_ref_opinions():
                 assert(isinstance(ref_opinion, RefOpinion))
                 key = ref_opinion.Tag
