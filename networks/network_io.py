@@ -4,6 +4,10 @@ class NetworkIO(object):
     and it is specific towards RuSentiRel collection.
     """
 
+    @property
+    def SynonymsCollection(self):
+        raise NotImplementedError()
+
     def get_model_filepath(self):
         raise NotImplementedError()
 

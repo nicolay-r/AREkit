@@ -11,7 +11,7 @@ class LabelCalculationMode:
 
 class DefaultNetworkConfig(object):
 
-    GPUMemoryFraction = 0.25
+    __gpu_memory_fraction = 0.25
 
     # private settings
     __test_on_epoch = range(0, 30000, 50)
@@ -47,6 +47,8 @@ class DefaultNetworkConfig(object):
     def __init__(self):
         self.__embedding_dropout_keep = 1.0 - 1.0 / self.TermsPerContext
 
+    # region properties
+
     @property
     def DistanceEmbeddingSize(self):
         return self.__dist_emb_size
@@ -70,6 +72,12 @@ class DefaultNetworkConfig(object):
         for which embedding has been provided
         """
         return self.TermEmbeddingShape(0)
+
+    @property
+    def GPUMemoryFraction(self):
+        return self.__gpu_memory_fraction
+
+    # endregion
 
     def modify_test_on_epochs(self, value):
         assert(isinstance(value, list))
@@ -95,6 +103,10 @@ class DefaultNetworkConfig(object):
     def modify_bags_per_minibatch(self, value):
         assert(isinstance(value, int))
         self.__bags_per_minibatch = value
+
+    def modify_gpu_memory_fraction(self, value):
+        assert(isinstance(value, float))
+        self.__gpu_memory_fraction = value
 
     def modify_bag_size(self, value):
         assert(isinstance(value, int))
