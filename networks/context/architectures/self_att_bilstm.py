@@ -79,7 +79,6 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                                       name="b_output")
 
     def iter_hidden_parameters(self):
-        yield ("A", self.__A)
         yield ("W_s1", self.__W_s1)
         yield ("W_s2", self.__W_s2)
         yield ("W_output", self.__W_output)
