@@ -8,7 +8,11 @@ from core.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 from core.source.rusentrel.news import RuSentRelNews
 
 
+# TODO. This should be helper, static helper.
 class RuSentRelLinkedTextOpinionCollection(LabeledLinkedTextOpinionCollection):
+    """
+    TextOpinion provider from RuSentRel news
+    """
 
     def add_rusentrel_news_opinions(self,
                                     rusentrel_news_id,
@@ -37,6 +41,8 @@ class RuSentRelLinkedTextOpinionCollection(LabeledLinkedTextOpinionCollection):
                 check_text_opinion_is_correct=check_text_opinion_is_correct)
 
         return total_discarded
+
+    # region private methods
 
     def __add_rusentrel_text_opinion(self, text_opinion_entries, label, check_text_opinion_is_correct):
         assert(isinstance(text_opinion_entries, RuSentRelTextOpinionCollection))
@@ -82,3 +88,5 @@ class RuSentRelLinkedTextOpinionCollection(LabeledLinkedTextOpinionCollection):
                 check_text_opinion_correctness=same_sentence_text_opinions)
 
             yield opinion, entries
+
+    # endregion

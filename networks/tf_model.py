@@ -66,11 +66,6 @@ class TensorflowModel(object):
     def IO(self):
         return self.__io
 
-    # TODO. Move to the IO.
-    @property
-    def ReadOnlySynonymsCollection(self):
-        raise NotImplementedError()
-
     # endregion
 
     @staticmethod
@@ -144,9 +139,6 @@ class TensorflowModel(object):
             data_type=dest_data_type,
             io=self.IO,
             doc_ids=text_opinions.iter_unique_news_ids(),
-            # TODO. Access through io.
-            # TODO. Make it as follows: self.IO.SynonymsCollection
-            synonyms=self.ReadOnlySynonymsCollection,
             epoch_index=self.__current_epoch_index)
 
         text_opinions.reset_labels()
