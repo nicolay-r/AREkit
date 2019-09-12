@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from core.common.opinions.collection import OpinionCollection
-from core.common.opinions.opinion import Opinion
 from core.common.text_opinions.text_opinion import TextOpinion
 from core.source.rusentrel.helpers.context.collection import RuSentRelTextOpinionCollection
 from core.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
