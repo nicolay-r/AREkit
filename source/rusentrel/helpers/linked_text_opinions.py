@@ -8,69 +8,75 @@ from core.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 from core.source.rusentrel.news import RuSentRelNews
 
 
-# TODO. This should be helper, static helper.
-class RuSentRelLinkedTextOpinionCollection(LabeledLinkedTextOpinionCollection):
+class RuSentRelNewsTextOpinionExtractorHelper:
     """
     TextOpinion provider from RuSentRel news
     """
 
-    def add_rusentrel_news_opinions(self,
-                                    rusentrel_news_id,
-                                    news,
-                                    opinions,
-                                    check_text_opinion_is_correct):
-
+    @staticmethod
+    def add_entries(text_opinion_collection,
+                    rusentrel_news_id,
+                    news,
+                    opinions,
+                    check_text_opinion_is_correct):
+        assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinions, OpinionCollection))
         assert(callable(check_text_opinion_is_correct))
 
-        it = self.__iter_rusentrel_text_opinion_entries(
+        it_entries = RuSentRelNewsTextOpinionExtractorHelper.__iter_rusentrel_text_opinion_entries(
             rusentrel_news_id=rusentrel_news_id,
             news=news,
             opinions=opinions)
 
-        total_discarded = 0
-        for opinion, text_opinion_entries in it:
-            assert(isinstance(opinion, Opinion))
-            assert(isinstance(text_opinion_entries, RuSentRelTextOpinionCollection))
+        for entries in it_entries:
+            assert(isinstance(entries, RuSentRelTextOpinionCollection))
 
-            total_discarded += self.__add_rusentrel_text_opinion(
-                text_opinion_entries=text_opinion_entries,
-                label=opinion.Sentiment,    # TODO. Provide custom func for label generation
-                check_text_opinion_is_correct=check_text_opinion_is_correct)
+            text_opinions = RuSentRelNewsTextOpinionExtractorHelper.__iter_text_opinions(
+                entries=entries,
+                owner=text_opinion_collection,
+                # TODO. This is not a good idea to pass id.
+                opinion_id_func=len(text_opinion_collection))
 
-        return total_discarded
+            return text_opinion_collection.add_text_opinions(
+                text_opinions=text_opinions,
+                check_opinion_correctness=check_text_opinion_is_correct)
 
     # region private methods
 
-    def __add_rusentrel_text_opinion(self, text_opinion_entries, label, check_text_opinion_is_correct):
-        assert(isinstance(text_opinion_entries, RuSentRelTextOpinionCollection))
-        assert(callable(check_text_opinion_is_correct))
+    @staticmethod
+    def __iter_text_opinions(entries, owner, opinion_id_func):
+        assert(isinstance(owner, LabeledLinkedTextOpinionCollection))
+        assert(callable(opinion_id_func))
+        for entry in entries:
+            yield RuSentRelNewsTextOpinionExtractorHelper.__entry_to_text_opinion(
+                entry=entry,
+                owner=owner,
+                # TODO. This is not a good idea to pass id.
+                opinion_id_func=opinion_id_func)
 
-        discarded = 0
-        for index, rusentrel_text_opinion in enumerate(text_opinion_entries):
-            assert(isinstance(rusentrel_text_opinion, RuSentRelTextOpinion))
+    @staticmethod
+    def __entry_to_text_opinion(entry, owner, opinion_id_func):
+        """
+        Text Level Opinion -> Text Opinion
+        """
+        assert(isinstance(entry, RuSentRelTextOpinion))
+        assert(callable(opinion_id_func))
 
-            text_opinion = TextOpinion(
-                news_id=rusentrel_text_opinion.RuSentRelNewsId,
-                text_opinion_id=len(self),
-                source_id=rusentrel_text_opinion.SourceId,
-                target_id=rusentrel_text_opinion.TargetId,
-                owner=self,
-                label=label)
-
-            if not check_text_opinion_is_correct(text_opinion):
-                discarded += 1
-                continue
-
-            self.register_text_opinion(text_opinion)
-
-        self.set_none_for_last_text_opinion()
-        return discarded
+        return TextOpinion(
+            news_id=entry.RuSentRelNewsId,
+            source_id=entry.SourceId,
+            target_id=entry.TargetId,
+            label=entry.Sentiment,
+            owner=owner,
+            text_opinion_id=opinion_id_func())
 
     @staticmethod
     def __iter_rusentrel_text_opinion_entries(rusentrel_news_id, news, opinions):
+        """
+        Document Level Opinions -> Linked Text Level Opinions
+        """
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinions, OpinionCollection))
@@ -81,12 +87,10 @@ class RuSentRelLinkedTextOpinionCollection(LabeledLinkedTextOpinionCollection):
 
         for opinion in opinions:
 
-            entries = RuSentRelTextOpinionCollection.from_opinion(
+            yield RuSentRelTextOpinionCollection.from_opinion(
                 rusentrel_news_id=rusentrel_news_id,
                 doc_entities=news.DocEntities,
                 opinion=opinion,
                 check_text_opinion_correctness=same_sentence_text_opinions)
-
-            yield opinion, entries
 
     # endregion

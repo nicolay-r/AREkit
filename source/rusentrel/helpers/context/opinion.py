@@ -1,5 +1,5 @@
 from core.common.ref_opinon import RefOpinion
-from core.evaluation.labels import NeutralLabel
+from core.evaluation.labels import Label
 from core.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 
 
@@ -12,14 +12,16 @@ class RuSentRelTextOpinion(RefOpinion):
                  rusentrel_news_id,
                  e_source_doc_level_id,
                  e_target_doc_level_id,
+                 sentiment,
                  doc_entities):
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(e_source_doc_level_id, int))
         assert(isinstance(e_target_doc_level_id, int))
+        assert(isinstance(sentiment, Label))
         assert(isinstance(doc_entities, RuSentRelDocumentEntityCollection))
         super(RuSentRelTextOpinion, self).__init__(source_id=e_source_doc_level_id,
                                                    target_id=e_target_doc_level_id,
-                                                   sentiment=NeutralLabel(),
+                                                   sentiment=sentiment,
                                                    owner=doc_entities)
 
         self.__news_id = rusentrel_news_id

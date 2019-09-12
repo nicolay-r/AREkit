@@ -35,13 +35,13 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         assert(isinstance(text_opinions, collections.Iterable))
         assert(callable(check_opinion_correctness))
 
-        missed = 0
+        discarded = 0
         for index, text_opinion in enumerate(text_opinions):
             assert(isinstance(text_opinion, TextOpinion))
             assert(text_opinion.TextOpinionID is None)
 
             if not check_opinion_correctness(text_opinion):
-                missed += 1
+                discarded += 1
                 continue
 
             text_opinion.set_text_opinion_id(len(self))
@@ -49,7 +49,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
             self.register_text_opinion(text_opinion)
 
         self.set_none_for_last_text_opinion()
-        return missed
+        return discarded
 
     def set_none_for_last_text_opinion(self):
         self.__next_opinion_id[-1] = self.NO_NEXT_RELATION

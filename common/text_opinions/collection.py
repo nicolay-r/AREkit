@@ -1,4 +1,3 @@
-from collections import OrderedDict
 from core.common.text_opinions.text_opinion import TextOpinion
 from core.common.parsed_news.collection import ParsedNewsCollection
 

@@ -7,6 +7,9 @@ from core.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 
 
 class RuSentRelTextOpinionCollection(TextOpinionCollection):
+    """
+    Collection of a text-level opinions.
+    """
 
     def __init__(self, text_opinions):
         super(RuSentRelTextOpinionCollection, self).__init__(
@@ -88,6 +91,7 @@ class RuSentRelTextOpinionCollection(TextOpinionCollection):
                     rusentrel_news_id=rusentrel_news_id,
                     e_source_doc_level_id=source_entity.IdInDocument,
                     e_target_doc_level_id=target_entity.IdInDocument,
+                    sentiment=opinion.Sentiment,
                     doc_entities=doc_entities)
 
                 if check_text_opinion_correctness is not None:
