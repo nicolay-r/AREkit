@@ -49,7 +49,7 @@ class MultiInstanceBagsCollection(BagsCollection):
 
         for text_opinions in text_opinion_collection.iter_by_linked_text_opinions():
 
-            bags.append(Bag(label=text_opinions[0].Label))
+            bags.append(Bag(label=text_opinions[0].Sentiment))
             for o_ind, opinion in enumerate(text_opinions):
                 assert(isinstance(opinion, TextOpinion))
 
