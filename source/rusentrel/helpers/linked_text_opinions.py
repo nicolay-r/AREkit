@@ -34,9 +34,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
 
             text_opinions = RuSentRelNewsTextOpinionExtractorHelper.__iter_text_opinions(
                 entries=entries,
-                owner=text_opinion_collection,
-                # TODO. This is not a good idea to pass id.
-                opinion_id_func=lambda: len(text_opinion_collection))
+                owner=text_opinion_collection)
 
             return text_opinion_collection.add_text_opinions(
                 text_opinions=text_opinions,
@@ -45,23 +43,17 @@ class RuSentRelNewsTextOpinionExtractorHelper:
     # region private methods
 
     @staticmethod
-    def __iter_text_opinions(entries, owner, opinion_id_func):
+    def __iter_text_opinions(entries, owner):
         assert(isinstance(owner, LabeledLinkedTextOpinionCollection))
-        assert(callable(opinion_id_func))
         for entry in entries:
-            yield RuSentRelNewsTextOpinionExtractorHelper.__entry_to_text_opinion(
-                entry=entry,
-                owner=owner,
-                # TODO. This is not a good idea to pass id.
-                opinion_id_func=opinion_id_func)
+            yield RuSentRelNewsTextOpinionExtractorHelper.__entry_to_text_opinion(entry=entry, owner=owner)
 
     @staticmethod
-    def __entry_to_text_opinion(entry, owner, opinion_id_func):
+    def __entry_to_text_opinion(entry, owner):
         """
         Text Level Opinion -> Text Opinion
         """
         assert(isinstance(entry, RuSentRelTextOpinion))
-        assert(callable(opinion_id_func))
 
         return TextOpinion(
             news_id=entry.RuSentRelNewsId,
@@ -69,7 +61,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
             target_id=entry.TargetId,
             label=entry.Sentiment,
             owner=owner,
-            text_opinion_id=opinion_id_func())
+            text_opinion_id=None)
 
     @staticmethod
     def __iter_rusentrel_text_opinion_entries(rusentrel_news_id, news, opinions):
