@@ -29,6 +29,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
             news=news,
             opinions=opinions)
 
+        discarded = 0
         for entries in it_entries:
             assert(isinstance(entries, RuSentRelTextOpinionCollection))
 
@@ -36,9 +37,11 @@ class RuSentRelNewsTextOpinionExtractorHelper:
                 entries=entries,
                 owner=text_opinion_collection)
 
-            return text_opinion_collection.add_text_opinions(
+            discarded += text_opinion_collection.add_text_opinions(
                 text_opinions=text_opinions,
                 check_opinion_correctness=check_text_opinion_is_correct)
+
+        return discarded
 
     # region private methods
 
