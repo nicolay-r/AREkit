@@ -27,15 +27,22 @@ class RNN(BaseContextNeuralNetwork):
         assert(isinstance(self.Config, RNNConfig))
 
         with tf.name_scope("rnn"):
-            cell = self.get_cell(self.Config.HiddenSize, self.Config.CellType)
-            cell = tf.nn.rnn_cell.DropoutWrapper(cell, output_keep_prob=self.DropoutKeepProb)
 
+            # Length Calculation
             x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
+
+            # Forward cell
+            cell = self.get_cell(self.Config.HiddenSize, self.Config.CellType)
+            cell = tf.nn.rnn_cell.DropoutWrapper(cell=cell,
+                                                 output_keep_prob=self.DropoutKeepProb)
+
+            # Output
             all_outputs, _ = tf.nn.dynamic_rnn(cell=cell,
                                                inputs=embedded_terms,
                                                sequence_length=s_length,
                                                dtype=tf.float32)
+
             h_outputs = utils.select_last_relevant_in_sequence(all_outputs, s_length)
 
         return h_outputs

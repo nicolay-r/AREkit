@@ -31,16 +31,22 @@ class BiLSTM(BaseContextNeuralNetwork):
         with tf.name_scope("bi-lstm"):
             x = tf.unstack(embedded_terms, axis=1)
 
-            lstm_fw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
-            lstm_bw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
-            lstm_bw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=lstm_bw_cell,
-                                                         output_keep_prob=self.Config.DropoutRNNKeepProb)
-
+            # Length Calculation
             x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
-            h_output_list, _, _ = rnn.static_bidirectional_rnn(cell_fw=lstm_fw_cell,
-                                                               cell_bw=lstm_bw_cell,
+            # Forward
+            _fw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
+            fw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=_fw_cell,
+                                                    output_keep_prob=self.Config.DropoutRNNKeepProb)
+
+            # Backward
+            _bw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
+            bw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=_bw_cell,
+                                                    output_keep_prob=self.Config.DropoutRNNKeepProb)
+
+            h_output_list, _, _ = rnn.static_bidirectional_rnn(cell_fw=fw_cell,
+                                                               cell_bw=bw_cell,
                                                                inputs=x,
                                                                sequence_length=s_length,
                                                                dtype=tf.float32)
@@ -48,6 +54,7 @@ class BiLSTM(BaseContextNeuralNetwork):
             h_output_tensor = tf.convert_to_tensor(h_output_list, dtype=tf.float32)
             # [batch, terms_per_ctx, emb_size]
             h_output_tensor = tf.transpose(h_output_tensor, perm=[1, 0, 2])
+
         return utils.select_last_relevant_in_sequence(h_output_tensor, s_length)
 
     def init_logits_unscaled(self, context_embedding):

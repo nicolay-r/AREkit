@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
 import tensorflow as tf
+
+from core.networks.attention.architectures.peng_zhou import attention_by_peng_zhou
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
 from core.networks.context.sample import InputSample
@@ -36,15 +38,21 @@ class AttBiLSTM(BaseContextNeuralNetwork):
         # Bidirectional LSTM
         with tf.variable_scope("bi-lstm"):
 
+            # Length Calculation
             x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
+            # Forward
             _fw_cell = tf.nn.rnn_cell.LSTMCell(self.Config.HiddenSize, initializer=initializer())
-            fw_cell = tf.nn.rnn_cell.DropoutWrapper(_fw_cell, self.Config.DropoutRNNKeepProb)
+            fw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=_fw_cell,
+                                                    output_keep_prob=self.Config.DropoutRNNKeepProb)
 
+            # Backward
             _bw_cell = tf.nn.rnn_cell.LSTMCell(self.Config.HiddenSize, initializer=initializer())
-            bw_cell = tf.nn.rnn_cell.DropoutWrapper(_bw_cell, self.Config.DropoutRNNKeepProb)
+            bw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=_bw_cell,
+                                                    output_keep_prob=self.Config.DropoutRNNKeepProb)
 
+            # Output
             rnn_outputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
                                                              cell_bw=bw_cell,
                                                              inputs=embedded_terms,
@@ -60,32 +68,9 @@ class AttBiLSTM(BaseContextNeuralNetwork):
 
         # Attention
         with tf.variable_scope('attention'):
-            attn, self.__att_alphas = self.__attention(rnn_outputs)
+            attn, self.__att_alphas = attention_by_peng_zhou(rnn_outputs)
 
         return attn
-
-    @staticmethod
-    def __attention(inputs):
-        # Trainable parameters
-        hidden_size = inputs.shape[2].value
-        u_omega = tf.get_variable(name="u_omega",
-                                  shape=[hidden_size],
-                                  initializer=tf.keras.initializers.glorot_normal())
-
-        with tf.name_scope('v'):
-            v = tf.tanh(inputs)
-
-        # For each of the timestamps its vector of size A from `v` is reduced with `u` vector
-        vu = tf.tensordot(v, u_omega, axes=1, name='vu')  # (B,T) shape
-        alphas = tf.nn.softmax(vu, name='alphas')  # (B,T) shape
-
-        # Output of (Bi-)RNN is reduced with attention vector; the result has (B,D) shape
-        output = tf.reduce_sum(inputs * tf.expand_dims(alphas, -1), 1)
-
-        # Final output with tanh
-        output = tf.tanh(output)
-
-        return output, alphas
 
     def init_logits_unscaled(self, context_embedding):
         W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
