@@ -52,6 +52,8 @@ class AttentionCNN(VanillaCNN):
         assert(isinstance(att, MultiLayerPerceptronAttention))
 
         # TODO. Update it with frames.
+        # TODO. att_frames_cnn.
+        # TODO. att_frames_pcnn.
         entities = tf.stack([self.get_input_parameter(InputSample.I_SUBJ_IND),
                              self.get_input_parameter(InputSample.I_OBJ_IND)],
                             axis=-1)

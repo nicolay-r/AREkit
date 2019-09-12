@@ -51,7 +51,12 @@ class AttBiLSTM(BaseContextNeuralNetwork):
                                                              sequence_length=s_length,
                                                              dtype=tf.float32)
 
+            # TODO. Here we can make an extraction of frames.
+            # TODO. As a part of separated model
+            # TODO. att_frames_bilstm.
+            # TODO. ----------------------------------------
             rnn_outputs = tf.add(rnn_outputs[0], rnn_outputs[1])
+            # TODO. ----------------------------------------
 
         # Attention
         with tf.variable_scope('attention'):

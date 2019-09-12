@@ -6,6 +6,8 @@ class IANConfig(DefaultNetworkConfig):
 
     __l2_reg = 0.001
     __hidden_size = 128
+    # TODO. Should depends on a amount of frames which will be presented in DefaultNetworkConfig.
+    # TODO. Find most optimal value for parameter below.
     __aspect_len = 2
     __aspect_embedding_matrix = None
 
