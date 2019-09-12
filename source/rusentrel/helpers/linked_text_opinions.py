@@ -36,7 +36,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
                 entries=entries,
                 owner=text_opinion_collection,
                 # TODO. This is not a good idea to pass id.
-                opinion_id_func=len(text_opinion_collection))
+                opinion_id_func=lambda: len(text_opinion_collection))
 
             return text_opinion_collection.add_text_opinions(
                 text_opinions=text_opinions,
