@@ -67,6 +67,9 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
     def check_all_text_opinions_without_labels(self):
         return not (True in self.__labels_defined)
 
+    def get_labels_defined_count(self):
+        return self.__labels_defined.count(True)
+
     def apply_label(self, label, text_opinion_id):
         assert(isinstance(text_opinion_id, int))
 
