@@ -4,7 +4,7 @@ from core.networks.context.configurations.base import DefaultNetworkConfig, Labe
 class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     __hidden_size = 300
-    __contexts_per_opinion = 5
+    __contexts_per_opinion = 3
     __context_config = None
 
     def __init__(self, context_config):
