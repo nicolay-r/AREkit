@@ -22,6 +22,16 @@ class TextOpinion(RefOpinion):
         self.__text_opinion_id = text_opinion_id
         self.__label = label
 
+    @classmethod
+    def from_ref_opinion(cls, news_id, text_opinion_id, ref_opinion):
+        assert(isinstance(ref_opinion, RefOpinion))
+        return cls(news_id=news_id,
+                   text_opinion_id=text_opinion_id,
+                   source_id=ref_opinion.SourceId,
+                   target_id=ref_opinion.TargetId,
+                   owner=ref_opinion.Owner,
+                   label=ref_opinion.Sentiment)
+
     @property
     def Sentiment(self):
         return self.__label

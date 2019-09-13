@@ -71,9 +71,15 @@ class NewsHelper(object):
         assert (isinstance(l_obj, TextObject))
         assert (isinstance(r_obj, TextObject))
 
-        return Opinion(source_value=l_obj.get_value(),
-                       target_value=r_obj.get_value(),
-                       sentiment=ref_opinion.Sentiment)
+        opinion = Opinion(source_value=l_obj.get_value(),
+                          target_value=r_obj.get_value(),
+                          sentiment=ref_opinion.Sentiment)
+
+        # Using this tag allows to perform a revert operation,
+        # i.e. to find opinion_ref by opinion.
+        opinion.set_tag(ref_opinion.Tag)
+
+        return opinion
 
     @staticmethod
     def __build_opinion_dict(news):

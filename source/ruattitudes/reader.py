@@ -79,8 +79,8 @@ class RuAttitudesFormatReader(object):
             if RuAttitudesFormatReader.TITLE_KEY in line:
                 title = RuAttitudesSentence(is_title=True,
                                             parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
-                                                                                      is_title=True,
-                                                                                      stemmer=stemmer),
+                                                                                                 is_title=True,
+                                                                                                 stemmer=stemmer),
                                             ref_opinions=opinions_list,
                                             objects_list=objects_list,
                                             sentence_index=-1)
@@ -91,8 +91,8 @@ class RuAttitudesFormatReader(object):
             if RuAttitudesFormatReader.STEXT_KEY in line and line.index(RuAttitudesFormatReader.STEXT_KEY) == 0:
                 sentence = RuAttitudesSentence(is_title=False,
                                                parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
-                                                                                         is_title=False,
-                                                                                         stemmer=stemmer),
+                                                                                                    is_title=False,
+                                                                                                    stemmer=stemmer),
                                                ref_opinions=opinions_list,
                                                objects_list=objects_list,
                                                sentence_index=s_index)
