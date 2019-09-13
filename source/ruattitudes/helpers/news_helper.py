@@ -7,6 +7,7 @@ from core.source.ruattitudes.news import RuAttitudesNews
 from core.source.ruattitudes.sentence import RuAttitudesSentence
 
 
+# TODO. Rename as RuAttitudesNewsHelper
 class NewsHelper(object):
 
     @staticmethod
@@ -39,27 +40,37 @@ class NewsHelper(object):
 
         for ref_opinion_tag, value in doc_opinions.iteritems():
 
-            opinion = None
-            related_sentences = []
+            opinion, related_sentences = NewsHelper.__extract_opinion_with_related_sentences(
+                news=news,
+                ref_opinion_tag=ref_opinion_tag)
 
-            for sentence in news.iter_sentences():
-
-                ref_opinion = sentence.find_ref_opinion_by_key(ref_opinion_tag)
-                if ref_opinion is None:
-                    continue
-
-                related_sentences.append(sentence)
-
-                if opinion is not None:
-                    continue
-
-                opinion = NewsHelper.__convert_ref_opinion_to_opinion(sentence=sentence,
-                                                                      ref_opinion=ref_opinion)
-
-            if len(related_sentences) == 0:
+            if opinion is None:
                 continue
 
             yield opinion, related_sentences
+
+    # region private methods
+
+    @staticmethod
+    def __extract_opinion_with_related_sentences(news, ref_opinion_tag):
+        opinion = None
+        related_sentences = []
+
+        for sentence in news.iter_sentences():
+
+            ref_opinion = sentence.find_ref_opinion_by_key(ref_opinion_tag)
+            if ref_opinion is None:
+                continue
+
+            related_sentences.append(sentence)
+
+            if opinion is not None:
+                continue
+
+            opinion = NewsHelper.__convert_ref_opinion_to_opinion(sentence=sentence,
+                                                                  ref_opinion=ref_opinion)
+
+        return opinion, related_sentences
 
     @staticmethod
     def __convert_ref_opinion_to_opinion(sentence, ref_opinion):
@@ -95,3 +106,5 @@ class NewsHelper(object):
                 opin_dict[key].append(s_ind)
 
         return opin_dict
+
+    # endregion
