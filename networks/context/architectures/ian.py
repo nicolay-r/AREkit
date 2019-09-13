@@ -6,11 +6,14 @@ from core.networks.context.configurations.ian import IANConfig
 from core.networks.context.sample import InputSample
 import utils
 
-# (C) Peiqin Lin
-# original: https://github.com/lpq29743/IAN/blob/master/model.py
 
 
 class IAN(BaseContextNeuralNetwork):
+    """
+    Paper: https://arxiv.org/pdf/1709.00893.pdf
+    Author: Peiqin Lin
+    Code: https://github.com/lpq29743/IAN/blob/master/model.py
+    """
 
     def __init__(self):
         super(IAN, self).__init__()

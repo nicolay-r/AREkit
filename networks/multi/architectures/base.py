@@ -191,8 +191,8 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
             """
             Body
             """
-            context_outputs = __iter_x_by_contexts(__process_context)                    # [sentences, batches, embedding]
-            context_outputs = tf.transpose(context_outputs, perm=[1, 0, 2])              # [batches, sentences, embedding]
+            context_outputs = __iter_x_by_contexts(__process_context)        # [sentences, batches, embedding]
+            context_outputs = tf.transpose(context_outputs, perm=[1, 0, 2])  # [batches, sentences, embedding]
             sliced_contexts = __iter_x_by_opinions(
                 x=context_outputs,
                 handler=__process_opinion,
@@ -263,18 +263,15 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
             shape=[batch_size, contexts_count],
             name=prefix + InputSample.I_OBJ_IND)
 
-        self.__y = tf.placeholder(dtype=tf.int32, shape=[batch_size])
-        self.__dropout_keep_prob = tf.placeholder(tf.float32)
-        self.__dropout_emb_keep_prob = tf.placeholder(tf.float32)
-
-    def init_hidden_states(self):
-        raise NotImplementedError()
-
-    def init_logits_unscaled(self, encoded_contexts):
-        raise NotImplementedError()
-
-    def init_multiinstance_embedding(self, context_outputs):
-        raise NotImplementedError()
+        self.__y = tf.placeholder(dtype=tf.int32,
+                                  shape=[batch_size],
+                                  name=prefix + 'Y')
+        self.__dropout_keep_prob = tf.placeholder(
+            dtype=tf.float32,
+            name=prefix + 'dropout_keep_prob')
+        self.__dropout_emb_keep_prob = tf.placeholder(
+            dtype=tf.float32,
+            name=prefix + 'dropout_emb_keep_prob')
 
     def create_feed_dict(self, input, data_type):
         assert(isinstance(input, dict))
@@ -286,8 +283,23 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
                 continue
             feed_dict[self.__input[param]] = input[param]
 
-        feed_dict[self.__y] = input[MultiInstanceBatch.I_LABELS],
-        feed_dict[self.__dropout_keep_prob] = self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0,
-        feed_dict[self.__dropout_emb_keep_prob] = self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0
+        feed_dict[self.__y] = input[MultiInstanceBatch.I_LABELS]
+        feed_dict[self.__dropout_keep_prob] = self.__cfg.DropoutKeepProb \
+            if data_type == DataType.Train else 1.0
+        feed_dict[self.__dropout_emb_keep_prob] = self.__cfg.EmbeddingDropoutKeepProb \
+            if data_type == DataType.Train else 1.0
 
         return feed_dict
+
+    # region Not implemented
+
+    def init_hidden_states(self):
+        raise NotImplementedError()
+
+    def init_logits_unscaled(self, encoded_contexts):
+        raise NotImplementedError()
+
+    def init_multiinstance_embedding(self, context_outputs):
+        raise NotImplementedError()
+
+    # endregion

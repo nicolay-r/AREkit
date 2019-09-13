@@ -6,8 +6,8 @@ from core.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwor
 
 class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
     """
-    Provides encoder as a maxpooling over embedded contexts.
-    TODO. Provide link
+    Paper: https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf
+    Authors: Xiaotian Jiang, Quan Wang, Peng Li, Bin Wang
     """
     H_W1 = "W"
     H_W2 = "W2"
@@ -28,16 +28,20 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
     def init_hidden_states(self):
         self.__hidden[self.H_W1] = tf.Variable(
             initial_value=tf.random_normal([self.ContextNetwork.ContextEmbeddingSize, self.Config.HiddenSize]),
-            dtype=tf.float32)
+            dtype=tf.float32,
+            name=self.H_W1)
         self.__hidden[self.H_W2] = tf.Variable(
             initial_value=tf.random_normal([self.Config.HiddenSize, self.Config.ClassesCount]),
-            dtype=tf.float32)
+            dtype=tf.float32,
+            name=self.H_W2)
         self.__hidden[self.H_b1] = tf.Variable(
             initial_value=tf.random_normal([self.Config.HiddenSize]),
-            dtype=tf.float32)
+            dtype=tf.float32,
+            name=self.H_b1)
         self.__hidden[self.H_b2] = tf.Variable(
             initial_value=tf.random_normal([self.Config.ClassesCount]),
-            dtype=tf.float32)
+            dtype=tf.float32,
+            name=self.H_b2)
 
     def init_logits_unscaled(self, encoded_contexts):
         W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
