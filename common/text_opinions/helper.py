@@ -45,6 +45,7 @@ class TextOpinionHelper(object):
     @staticmethod
     def __get(text_opinion, end_type):
         owner = text_opinion.Owner
+        # TODO. Fix it: TextOpinionCollection instead of LabeledLinked...
         assert(isinstance(owner, LabeledLinkedTextOpinionCollection))
         id = TextOpinionHelper.__get_end_id(text_opinion, end_type)
         pnc = owner.RelatedParsedNewsCollection

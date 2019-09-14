@@ -50,8 +50,13 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
 
     @staticmethod
     def __ref_opinion_to_text_opinion(owner, ref_opinion):
+        # TODO. Owner should be text_opinion_collection type.
+        # TODO. And defined not here
+        # TODO. Remove related parameter
         assert(isinstance(owner, RuAttitudesNews))
         assert(isinstance(ref_opinion, RefOpinion))
+
+        # TODO. create new instance of ref_opinion without owner!
 
         return TextOpinion.from_ref_opinion(
             news_id=owner.NewsIndex,

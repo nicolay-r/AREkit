@@ -33,6 +33,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
         for entries in it_entries:
             assert(isinstance(entries, RuSentRelTextOpinionCollection))
 
+            # TODO. Remove owner
             text_opinions = RuSentRelNewsTextOpinionExtractorHelper.__iter_text_opinions(
                 entries=entries,
                 owner=text_opinion_collection)
@@ -47,6 +48,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
 
     @staticmethod
     def __iter_text_opinions(entries, owner):
+        # TODO. Remove owner
         assert(isinstance(owner, LabeledLinkedTextOpinionCollection))
         for entry in entries:
             yield RuSentRelNewsTextOpinionExtractorHelper.__entry_to_text_opinion(entry=entry, owner=owner)
@@ -56,6 +58,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
         """
         Text Level Opinion -> Text Opinion
         """
+        # TODO. Remove owner
         assert(isinstance(entry, RuSentRelTextOpinion))
 
         return TextOpinion(
