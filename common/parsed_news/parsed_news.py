@@ -1,3 +1,5 @@
+import collections
+
 from core.common.entities.entity import Entity
 from core.common.parsed_news.term_position import TermPosition
 from core.processing.text.parsed import ParsedText
@@ -9,21 +11,27 @@ class ParsedNews(object):
         - news words
         - tokens
         - entities (positions).
-    Allow to expand parsed senteces with other objects:
+    Allow to expand parsed sentences with other objects:
         modify_parsed_sentences(func)
     """
 
     def __init__(self, news_id, parsed_sentences):
+        """
+        parsed_sentences: iterable of ParsedSentence type
+            NOTE: Considered sentences with labeled Entities in it!
+        """
         assert(isinstance(news_id, int))
-        assert(isinstance(parsed_sentences, list))
+        assert(isinstance(parsed_sentences, collections.Iterable))
 
         self.__news_id = news_id
-        self.__parsed_sentences = parsed_sentences
+        self.__parsed_sentences = list(parsed_sentences)
         self.__entity_positions = self.__init_positions()
 
     @property
     def RelatedNewsID(self):
         return self.__news_id
+
+    # region private methods
 
     def __init_positions(self):
         positions = {}
@@ -39,6 +47,8 @@ class ParsedNews(object):
                 dl_term_index += 1
 
         return positions
+
+    # endregion
 
     def get_entity_sentence_level_term_index(self, id_in_document):
         position = self.__entity_positions[id_in_document]
