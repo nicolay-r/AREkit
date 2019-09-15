@@ -5,6 +5,11 @@ from core.common.text_opinions.end_type import EntityEndType
 
 
 class TextOpinionHelper(object):
+    """
+    This class provides a helper functions for those text_opinions,
+    which become a part of collection.
+    The latter is important becase of the dependecy from Owner.
+    """
 
     @staticmethod
     def EntityValue(text_opinion, end_type):

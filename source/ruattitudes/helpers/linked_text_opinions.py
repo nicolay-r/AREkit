@@ -2,7 +2,7 @@ from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinion
 from core.common.opinions.collection import OpinionCollection
 from core.common.ref_opinon import RefOpinion
 from core.common.text_opinions.text_opinion import TextOpinion
-from core.source.ruattitudes.helpers.news_helper import NewsHelper
+from core.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from core.source.ruattitudes.news import RuAttitudesNews
 from core.source.ruattitudes.sentence import RuAttitudesSentence
 
@@ -25,13 +25,13 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
         assert(callable(check_text_opinion_is_correct))
 
         discarded = 0
-        for opinion, sentences in NewsHelper.iter_opinions_with_related_sentences(news):
+        for opinion, sentences in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news):
 
             text_opinions = RuAttitudesNewsTextOpinionExtractorHelper.__iter_text_opinions(
                 opinion=opinion,
                 sentences=sentences)
 
-            discarded += text_opinion_collection.add_text_opinions(
+            discarded += text_opinion_collection.try_add_text_opinions(
                 text_opinions=text_opinions,
                 check_opinion_correctness=check_text_opinion_is_correct)
 
@@ -58,7 +58,7 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
             target_id=ref_opinion.TargetId,
             sentiment=ref_opinion.Sentiment)
 
-        return TextOpinion.from_ref_opinion(
+        return TextOpinion.create_from_ref_opinion(
             news_id=news_index,
             text_opinion_id=None,
             ref_opinion=cloned_ref_opinion)

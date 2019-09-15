@@ -35,7 +35,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
 
             text_opinions = RuSentRelNewsTextOpinionExtractorHelper.__iter_text_opinions(entries=entries)
 
-            discarded += text_opinion_collection.add_text_opinions(
+            discarded += text_opinion_collection.try_add_text_opinions(
                 text_opinions=text_opinions,
                 check_opinion_correctness=check_text_opinion_is_correct)
 

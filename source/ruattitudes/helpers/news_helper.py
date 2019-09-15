@@ -7,12 +7,13 @@ from core.source.ruattitudes.news import RuAttitudesNews
 from core.source.ruattitudes.sentence import RuAttitudesSentence
 
 
-# TODO. Rename as RuAttitudesNewsHelper
-class NewsHelper(object):
+class RuAttitudesNewsHelper(object):
+
+    # region public methods
 
     @staticmethod
     def build_opinion_dict(news):
-        return NewsHelper.__build_opinion_dict(news)
+        return RuAttitudesNewsHelper.__build_opinion_dict(news)
 
     @staticmethod
     def to_news_dict(sentence_list):
@@ -35,12 +36,12 @@ class NewsHelper(object):
     def iter_opinions_with_related_sentences(news):
         assert(isinstance(news, RuAttitudesNews))
 
-        doc_opinions = NewsHelper.build_opinion_dict(news=news)
+        doc_opinions = RuAttitudesNewsHelper.build_opinion_dict(news=news)
         assert(isinstance(doc_opinions, dict))
 
         for ref_opinion_tag, value in doc_opinions.iteritems():
 
-            opinion, related_sentences = NewsHelper.__extract_opinion_with_related_sentences(
+            opinion, related_sentences = RuAttitudesNewsHelper.__extract_opinion_with_related_sentences(
                 news=news,
                 ref_opinion_tag=ref_opinion_tag)
 
@@ -48,6 +49,8 @@ class NewsHelper(object):
                 continue
 
             yield opinion, related_sentences
+
+    # endregion
 
     # region private methods
 
@@ -67,8 +70,8 @@ class NewsHelper(object):
             if opinion is not None:
                 continue
 
-            opinion = NewsHelper.__convert_ref_opinion_to_opinion(sentence=sentence,
-                                                                  ref_opinion=ref_opinion)
+            opinion = RuAttitudesNewsHelper.__convert_ref_opinion_to_opinion(sentence=sentence,
+                                                                             ref_opinion=ref_opinion)
 
         return opinion, related_sentences
 

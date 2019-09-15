@@ -20,6 +20,9 @@ class TextOpinionCollection(object):
         assert(isinstance(text_opinion, TextOpinion))
         self.__text_opinions.append(text_opinion)
 
+    def remove_last_registered_text_opinion(self):
+        del self.__text_opinions[-1]
+
     def iter_unique_news_ids(self):
         unique_news_ids = set()
 
