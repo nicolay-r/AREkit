@@ -48,8 +48,6 @@ class TextOpinion(RefOpinion):
         assert(isinstance(relation_id, int))
         self.__text_opinion_id = relation_id
 
-    # TODO. add set owner here with the check that owner==null at first
-
     def set_label(self, label):
         assert(isinstance(label, Label))
         self.__label = label

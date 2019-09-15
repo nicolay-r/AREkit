@@ -45,22 +45,22 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
             assert(isinstance(sentence, RuAttitudesSentence))
             ref_opinion = sentence.find_ref_opinion_by_key(key=opinion.Tag)
             yield RuAttitudesNewsTextOpinionExtractorHelper.__ref_opinion_to_text_opinion(
-                owner=sentence.Owner,
+                news_index=sentence.Owner.NewsIndex,
                 ref_opinion=ref_opinion)
 
     @staticmethod
-    def __ref_opinion_to_text_opinion(owner, ref_opinion):
-        # TODO. Owner should be text_opinion_collection type.
-        # TODO. And defined not here
-        # TODO. Remove related parameter
-        assert(isinstance(owner, RuAttitudesNews))
+    def __ref_opinion_to_text_opinion(news_index, ref_opinion):
+        assert(isinstance(news_index, int))
         assert(isinstance(ref_opinion, RefOpinion))
 
-        # TODO. create new instance of ref_opinion without owner!
+        cloned_ref_opinion = RefOpinion(
+            source_id=ref_opinion.SourceId,
+            target_id=ref_opinion.TargetId,
+            sentiment=ref_opinion.Sentiment)
 
         return TextOpinion.from_ref_opinion(
-            news_id=owner.NewsIndex,
+            news_id=news_index,
             text_opinion_id=None,
-            ref_opinion=ref_opinion)
+            ref_opinion=cloned_ref_opinion)
 
     # endregion

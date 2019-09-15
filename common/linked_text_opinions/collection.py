@@ -39,15 +39,14 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         for index, text_opinion in enumerate(text_opinions):
             assert(isinstance(text_opinion, TextOpinion))
             assert(text_opinion.TextOpinionID is None)
-            # TODO. Add check that Owner in None
-            # TODO. The latter should be defined here.
+            assert(text_opinion.Owner is None)
 
             if not check_opinion_correctness(text_opinion):
                 discarded += 1
                 continue
 
             text_opinion.set_text_opinion_id(len(self))
-            # TODO. Set owner here.
+            text_opinion.set_owner(self)
 
             self.register_text_opinion(text_opinion)
 

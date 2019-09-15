@@ -38,3 +38,8 @@ class RefOpinion(object):
 
     def set_tag(self, value):
         self.__tag = value
+
+    def set_owner(self, owner):
+        assert(owner is not None)
+        assert(self.__owner is None)
+        self.__owner = owner

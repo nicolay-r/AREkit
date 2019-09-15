@@ -1,6 +1,6 @@
 from core.common.parsed_news.collection import ParsedNewsCollection
+from core.common.text_opinions.collection import TextOpinionCollection
 from core.common.text_opinions.text_opinion import TextOpinion
-from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from core.common.text_opinions.end_type import EntityEndType
 
 
@@ -45,8 +45,7 @@ class TextOpinionHelper(object):
     @staticmethod
     def __get(text_opinion, end_type):
         owner = text_opinion.Owner
-        # TODO. Fix it: TextOpinionCollection instead of LabeledLinked...
-        assert(isinstance(owner, LabeledLinkedTextOpinionCollection))
+        assert(isinstance(owner, TextOpinionCollection))
         id = TextOpinionHelper.__get_end_id(text_opinion, end_type)
         pnc = owner.RelatedParsedNewsCollection
         assert(isinstance(pnc, ParsedNewsCollection))
