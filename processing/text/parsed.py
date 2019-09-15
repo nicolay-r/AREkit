@@ -8,6 +8,8 @@ class ParsedText:
     that were used during parsing.
     """
 
+    # region constructors
+
     def __init__(self, terms, hide_tokens, stemmer=None):
         assert(isinstance(terms, list))
         assert(isinstance(hide_tokens, bool))
@@ -19,6 +21,15 @@ class ParsedText:
         if stemmer is not None:
             self.__lemmatize(stemmer)
 
+    def copy_modified(self, terms):
+        return ParsedText(terms=terms,
+                          hide_tokens=self.__hide_token_value,
+                          stemmer=self.__stemmer)
+
+    # endregion
+
+    # region properties
+
     @property
     def IsTokenValuesHidden(self):
         return self.__hide_token_value
@@ -29,14 +40,13 @@ class ParsedText:
         for term in self.__terms:
             yield self.__output_term(term, self.hide_token_values())
 
-    def copy_modified(self, terms):
-        return ParsedText(terms=terms,
-                          hide_tokens=self.__hide_token_value,
-                          stemmer=self.__stemmer)
+    # endregion
 
     def is_term(self, index):
         assert(isinstance(index, int))
         return isinstance(self.__terms[index], unicode)
+
+    # region 'iter' methods
 
     def iter_lemmas(self):
         for lemma in self.__lemmas:
@@ -61,6 +71,8 @@ class ParsedText:
             if not isinstance(lemma, unicode):
                 continue
             yield lemma
+
+    # endregion
 
     def __lemmatize(self, stemmer):
         """

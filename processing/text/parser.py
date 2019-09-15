@@ -24,11 +24,11 @@ class TextParser:
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
     @staticmethod
-    def parse_string_list(string_list, keep_tokens=False, stemmer=None, debug=False):
-        assert(isinstance(string_list, collections.Iterable))
+    def parse_string_list(string_iter, keep_tokens=False, stemmer=None, debug=False):
+        assert(isinstance(string_iter, collections.Iterable))
 
         terms = []
-        for text in string_list:
+        for text in string_iter:
             if not isinstance(text, unicode):
                 terms.append(text)
                 continue

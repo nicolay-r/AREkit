@@ -20,8 +20,10 @@ class RuSentRelNewsHelper:
     @staticmethod
     def __index_sentence_by_entity(news):
         index = {}
+
         for sentence_index, sentence in enumerate(news.iter_sentences()):
             for e_ID in sentence.iter_entity_ids():
                 assert(e_ID not in index)
                 index[e_ID] = sentence_index
+
         return index

@@ -33,6 +33,10 @@ class RuAttitudesSentence(object):
     def Owner(self):
         return self.__owner
 
+    @property
+    def ObjectsCount(self):
+        return len(self.__objects)
+
     def set_owner(self, owner):
         if self.__owner is not None:
             raise Exception("Owner is already declared")
