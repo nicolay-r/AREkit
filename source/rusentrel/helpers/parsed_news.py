@@ -8,7 +8,6 @@ from core.source.rusentrel.news import RuSentRelNews
 class RuSentRelParsedNewsHelper:
 
     @staticmethod
-    # TODO. Add frames parameter
     def create_parsed_news(rusentrel_news_id, rusentrel_news, stemmer, keep_tokens):
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(rusentrel_news, RuSentRelNews))
@@ -19,8 +18,6 @@ class RuSentRelParsedNewsHelper:
             rusentrel_news=rusentrel_news,
             keep_tokens=keep_tokens,
             stemmer=stemmer)
-
-        # TODO. Add frames
 
         return ParsedNews(news_id=rusentrel_news_id,
                           parsed_sentences=parsed_sentences_iter)

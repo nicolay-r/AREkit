@@ -65,6 +65,7 @@ class RuAttitudesFormatReader(object):
                 opinions_list.append(opinion)
 
             if RuAttitudesFormatReader.FRAMEVAR_TITLE in line:
+                # TODO. This information is ommited now.
                 pass
 
             if RuAttitudesFormatReader.TERMS_IN_TITLE in line:
