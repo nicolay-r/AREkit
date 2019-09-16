@@ -52,9 +52,6 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
         assert(isinstance(ref_opinion, RefOpinion))
         assert(callable(sent_to_doc_id_func))
 
-        print "{}->{}".format(ref_opinion.SourceId,
-                              ref_opinion.TargetId)
-
         cloned_ref_opinion = RefOpinion(
             source_id=sent_to_doc_id_func(ref_opinion.SourceId),
             target_id=sent_to_doc_id_func(ref_opinion.TargetId),

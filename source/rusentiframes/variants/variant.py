@@ -1,4 +1,4 @@
-class FrameVariant:
+class FrameVariant(object):
 
     def __init__(self, text, frame_id):
         assert(isinstance(text, unicode))

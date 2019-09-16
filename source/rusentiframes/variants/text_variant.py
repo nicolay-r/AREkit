@@ -2,7 +2,10 @@ from core.common.bound import Bound
 from core.source.rusentiframes.variants.variant import FrameVariant
 
 
-class TextFrameVariant:
+class TextFrameVariant(object):
+    """
+    FrameVariant in a text, i.e. related object provides position in text.
+    """
 
     def __init__(self, variant, start_index, is_inverted):
         assert(isinstance(variant, FrameVariant))
