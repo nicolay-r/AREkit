@@ -39,6 +39,7 @@ class RuSentRelParsedNewsHelper:
             parsed_sentence = TextParser.parse_string_list(string_iter=string_iter,
                                                            keep_tokens=keep_tokens,
                                                            stemmer=stemmer)
+
             yield parsed_sentence
 
     # endregion

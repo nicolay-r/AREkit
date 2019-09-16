@@ -34,8 +34,11 @@ class Embedding(object):
 
     @classmethod
     def from_list_with_embedding_func(cls, words, embedding_func):
+        # TODO. Make iterable
         assert(isinstance(words, list))
         assert(callable(embedding_func))
+
+        # TODO. Use set to skip same words
 
         matrix = []
         for word in words:

@@ -14,11 +14,13 @@ class RuSentRelNewsTextOpinionExtractorHelper:
 
     @staticmethod
     def add_entries(text_opinion_collection,
+                    # TODO. Remove NewsID
                     rusentrel_news_id,
                     news,
                     opinions,
                     check_text_opinion_is_correct):
         assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
+        # TODO. Remove NewsID
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinions, OpinionCollection))
@@ -63,11 +65,13 @@ class RuSentRelNewsTextOpinionExtractorHelper:
             owner=None,
             text_opinion_id=None)
 
+    # TODO. Remove NewsID
     @staticmethod
     def __iter_rusentrel_text_opinion_entries(rusentrel_news_id, news, opinions):
         """
         Document Level Opinions -> Linked Text Level Opinions
         """
+        # TODO. Remove NewsID
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinions, OpinionCollection))

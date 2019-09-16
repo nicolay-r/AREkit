@@ -31,6 +31,8 @@ class RuSentiFramesParseHelper:
 
         return parsed_text.copy_modified(terms=updated_terms)
 
+    # region private methods
+
     @staticmethod
     def __insert_frame_variants_into_raw_terms_list(raw_terms_list, frame_variants_iter):
         assert(isinstance(raw_terms_list, list))
@@ -50,3 +52,5 @@ class RuSentiFramesParseHelper:
             raw_terms_list.insert(variant_bound.Position, variant)
 
         return raw_terms_list
+
+    # endregion

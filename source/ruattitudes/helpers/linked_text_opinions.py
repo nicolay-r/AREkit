@@ -14,12 +14,10 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
 
     @staticmethod
     def add_entries(text_opinion_collection,
-                    news_id,
                     news,
                     opinions,
                     check_text_opinion_is_correct):
         assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
-        assert(isinstance(news_id, int))
         assert(isinstance(news, RuAttitudesNews))
         assert(isinstance(opinions, OpinionCollection))
         assert(callable(check_text_opinion_is_correct))

@@ -44,15 +44,15 @@ def iter_text_with_substitutions(text, iter_subs):
         assert(isinstance(bound, Bound))
         assert(bound.Position >= start)
 
-        __iter_text_part(text_part=text[start:bound.Position - start],
-                         is_list=is_list)
+        for part in __iter_text_part(text_part=text[start:bound.Position], is_list=is_list):
+            yield part
 
         yield value
 
         start = bound.Position + bound.Length
 
-    yield __iter_text_part(text_part=text[start:len(text) - start],
-                           is_list=is_list)
+    for part in __iter_text_part(text_part=text[start:len(text)], is_list=is_list):
+        yield part
 
 
 def __iter_text_part(text_part, is_list):
