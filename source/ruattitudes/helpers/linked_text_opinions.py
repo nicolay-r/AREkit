@@ -1,5 +1,4 @@
 from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from core.common.opinions.collection import OpinionCollection
 from core.common.ref_opinon import RefOpinion
 from core.common.text_opinions.text_opinion import TextOpinion
 from core.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
@@ -15,11 +14,9 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
     @staticmethod
     def add_entries(text_opinion_collection,
                     news,
-                    opinions,
                     check_text_opinion_is_correct):
         assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
         assert(isinstance(news, RuAttitudesNews))
-        assert(isinstance(opinions, OpinionCollection))
         assert(callable(check_text_opinion_is_correct))
 
         discarded = 0
@@ -44,16 +41,23 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
             ref_opinion = sentence.find_ref_opinion_by_key(key=opinion.Tag)
             yield RuAttitudesNewsTextOpinionExtractorHelper.__ref_opinion_to_text_opinion(
                 news_index=sentence.Owner.NewsIndex,
-                ref_opinion=ref_opinion)
+                ref_opinion=ref_opinion,
+                sent_to_doc_id_func=sentence.get_doc_level_text_object_id)
 
     @staticmethod
-    def __ref_opinion_to_text_opinion(news_index, ref_opinion):
+    def __ref_opinion_to_text_opinion(news_index,
+                                      ref_opinion,
+                                      sent_to_doc_id_func):
         assert(isinstance(news_index, int))
         assert(isinstance(ref_opinion, RefOpinion))
+        assert(callable(sent_to_doc_id_func))
+
+        print "{}->{}".format(ref_opinion.SourceId,
+                              ref_opinion.TargetId)
 
         cloned_ref_opinion = RefOpinion(
-            source_id=ref_opinion.SourceId,
-            target_id=ref_opinion.TargetId,
+            source_id=sent_to_doc_id_func(ref_opinion.SourceId),
+            target_id=sent_to_doc_id_func(ref_opinion.TargetId),
             sentiment=ref_opinion.Sentiment)
 
         return TextOpinion.create_from_ref_opinion(

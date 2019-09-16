@@ -10,6 +10,7 @@ class RuAttitudesNews(object):
         self.__sentences = sentences
         self.__news_index = news_index
         self.__set_owners()
+        self.__objects_before_sentence = self.__cache_objects_declared_before()
 
     @property
     def Title(self):
@@ -19,13 +20,31 @@ class RuAttitudesNews(object):
     def NewsIndex(self):
         return self.__news_index
 
+    # region private methods
+
     def __set_owners(self):
         for sentence in self.__sentences:
             assert(isinstance(sentence, RuAttitudesSentence))
             sentence.set_owner(self)
 
+    def __cache_objects_declared_before(self):
+        d = {}
+        before = 0
+        for s in self.__sentences:
+            assert(isinstance(s, RuAttitudesSentence))
+            d[s.SentenceIndex] = before
+            before += s.ObjectsCount
+
+        return d
+
+
+    # endregion
+
     def get_sentence(self, index):
         return self.__sentences[index]
+
+    def get_objects_declared_before(self, sentence_index):
+        return self.__objects_before_sentence[sentence_index]
 
     def iter_sentences(self):
         for sentence in self.__sentences:
