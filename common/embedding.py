@@ -50,6 +50,7 @@ class Embedding(object):
 
             vector = embedding_func(word)
             matrix.append(vector)
+            words.append(word)
 
         return cls(matrix=np.array(matrix),
                    words=words)
