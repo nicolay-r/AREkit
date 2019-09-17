@@ -1,3 +1,5 @@
+import collections
+
 import numpy as np
 from gensim.models.word2vec import Word2Vec
 
@@ -33,15 +35,19 @@ class Embedding(object):
                    words=[w2v_model.wv.index2word[index] for index in range(words_count)])
 
     @classmethod
-    def from_list_with_embedding_func(cls, words, embedding_func):
-        # TODO. Make iterable
-        assert(isinstance(words, list))
+    def from_list_with_embedding_func(cls, words_iter, embedding_func):
+        assert(isinstance(words_iter, collections.Iterable))
         assert(callable(embedding_func))
 
-        # TODO. Use set to skip same words
-
         matrix = []
-        for word in words:
+        words = []
+        used = set()
+        for word in words_iter:
+
+            if word in used:
+                continue
+            used.add(word)
+
             vector = embedding_func(word)
             matrix.append(vector)
 
