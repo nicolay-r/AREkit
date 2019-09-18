@@ -61,8 +61,9 @@ Provides wrappers for:
 2. Texterra syntax parser
 
 
-
 ## Installation
+
+> NOTE. Provide updated description for 3.3+ python.
 
 Using [virtualenv](https://www.pythoncentral.io/how-to-install-virtualenv-python/).
 Create virtual environment, suppose `my_env`, and activate it as follows:
