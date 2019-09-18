@@ -28,6 +28,8 @@ class InputSample(object):
     I_POS_INDS = "pos_inds"
     I_TERM_TYPE = "term_type"
     I_POSITION_IN_TEXT = "pos_in_text"
+    # TODO. Adding frames task
+    # I_FRAME_INDS = 'frame_inds'
 
     def __init__(self, X,
                  subj_ind,
@@ -36,6 +38,8 @@ class InputSample(object):
                  dist_from_obj,
                  pos_indices,
                  term_type,
+                 # TODO. Adding frames task
+                 # frame_inds,
                  text_opinion_id):
         """
             X: np.ndarray
@@ -95,6 +99,10 @@ class InputSample(object):
         subj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Source)
         obj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Target)
 
+        # TODO. Adding frames task
+        # TODO. utilize ParsedNews.iter_sentence_terms
+        frame_inds = []
+
         pos_indices = calculate_pos_indices_for_terms(
             terms=terms,
             pos_tagger=config.PosTagger)
@@ -119,6 +127,8 @@ class InputSample(object):
             cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=pad_value)
             cls.__pad_right_inplace(term_type, pad_size=pad_size, filler=pad_value)
         else:
+            # TODO. Adding frames task
+            # TODO. modify frames_inds
             b, e, subj_ind, obj_ind = cls.__crop_bounds(
                 sentence_len=sentence_len,
                 window_size=config.TermsPerContext,
@@ -141,6 +151,8 @@ class InputSample(object):
                    dist_from_obj=dist_from_obj,
                    pos_indices=np.array(pos_indices),
                    term_type=np.array(term_type),
+                   # TODO. Adding frames task
+                   # frame_inds=np.array(frame_inds),
                    text_opinion_id=text_opinion.TextOpinionID)
 
     @staticmethod
@@ -177,6 +189,7 @@ class InputSample(object):
 
     @staticmethod
     def __crop_bounds(sentence_len, window_size, e1, e2):
+        # TODO. Support and modify frames_inds
         assert(isinstance(sentence_len, int))
         assert(isinstance(window_size, int) and window_size > 0)
         assert(isinstance(e1, int) and isinstance(e2, int))

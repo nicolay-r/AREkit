@@ -11,9 +11,9 @@ class LabelCalculationMode:
 
 class DefaultNetworkConfig(object):
 
-    __gpu_memory_fraction = 0.25
+    # region private settings
 
-    # private settings
+    __gpu_memory_fraction = 0.25
     __test_on_epoch = range(0, 30000, 50)
     __use_class_weights = True
     __dropout_keep = 0.5
@@ -23,6 +23,7 @@ class DefaultNetworkConfig(object):
     __default_stemmer = MystemWrapper()
     __default_pos_tagger = POSMystemWrapper(__default_stemmer.MystemInstance)
     __terms_per_context = 50
+    __frames_per_context = 3
     __bags_per_minibatch = 6
     __bag_size = 1
     __learning_rate = 0.1
@@ -43,6 +44,8 @@ class DefaultNetworkConfig(object):
     __pos_emb_size = 5
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
+
+    # endregion
 
     def __init__(self):
         self.__embedding_dropout_keep = 1.0 - 1.0 / self.TermsPerContext
@@ -78,6 +81,8 @@ class DefaultNetworkConfig(object):
         return self.__gpu_memory_fraction
 
     # endregion
+
+    # region public methods
 
     def modify_test_on_epochs(self, value):
         assert(isinstance(value, list))
@@ -236,6 +241,10 @@ class DefaultNetworkConfig(object):
     def UseEmbeddingDropout(self):
         return self.__use_embedding_dropout
 
+    @property
+    def FramesPerContext(self):
+        return self.__frames_per_context
+
     def _internal_get_parameters(self):
         return [
             ("base:use_class_weights", self.UseClassWeights),
@@ -261,3 +270,5 @@ class DefaultNetworkConfig(object):
 
     def get_parameters(self):
         return [list(p) for p in zip(*self._internal_get_parameters())]
+
+    # endregion

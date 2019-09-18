@@ -5,6 +5,10 @@ from core.common.parsed_news.term_position import TermPosition
 from core.processing.text.parsed import ParsedText
 
 
+# TODO: Adding frames task
+# TODO: Provide api that allows to obtain frames (directly or
+# TODO: via another way using iterators by a contents of news sentences)
+# TODO: iter_sentence_term
 class ParsedNews(object):
     """
     Extracted News lexemes, such as:
@@ -27,9 +31,13 @@ class ParsedNews(object):
         self.__parsed_sentences = list(parsed_sentences)
         self.__entity_positions = self.__init_positions()
 
+    # region properties
+
     @property
     def RelatedNewsID(self):
         return self.__news_id
+
+    # endregion
 
     # region private methods
 
@@ -49,6 +57,8 @@ class ParsedNews(object):
         return positions
 
     # endregion
+
+    # region public methods
 
     def get_entity_sentence_level_term_index(self, id_in_document):
         position = self.__entity_positions[id_in_document]
@@ -98,3 +108,4 @@ class ParsedNews(object):
         for sentence in self.__parsed_sentences:
             yield sentence
 
+    # endregion

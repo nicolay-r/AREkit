@@ -52,15 +52,25 @@ class AttentionCNN(VanillaCNN):
         assert(isinstance(att, MultiLayerPerceptronAttention))
 
         # TODO. Update it with frames.
+        # TODO. Create different attention.
         # TODO. att_frames_cnn.
         # TODO. att_frames_pcnn.
         entities = tf.stack([self.get_input_parameter(InputSample.I_SUBJ_IND),
                              self.get_input_parameter(InputSample.I_OBJ_IND)],
                             axis=-1)
 
+        # TODO. Create another model att_cnn_dists.py
+        # TODO. Create another model att_cnn_dists.py
+        # TODO. How to: pass obj_dists
+        # TODO. How to: pass subj_dists
+        # TODO. How to: pass dist_emb in init_body
         att.set_input(x=self.get_input_parameter(InputSample.I_X_INDS),
                       entities=entities)
 
+        # TODO. Here would be interesting to catch also distances.
+        # TODO. The latter might give more information when we crossing frames with words.
+        # TODO. Better: frames+dist with words+dists.
+        # TODO. And globally to catch other context specific info.
         att_e, self.__att_weights = att.init_body(self.TermEmbedding)
         return att_e
 
