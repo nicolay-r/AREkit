@@ -52,12 +52,18 @@ class MultiLayerPerceptronAttention(object):
         self.__hidden[self.H_b_a] = tf.Variable(tf.random_normal([1]),
                                                 dtype=tf.float32)
 
+    def create_embedding(self, term_embedding):
+        """
+        embedded_terms: [batch_size, terms_per_context, embedding_size]
+        """
+        return tf.nn.embedding_lookup(params=term_embedding,
+                                      ids=self.__input[self.I_x])
+
+    # TODO. Use dictionary of params instead of just term_embedding
     def init_body(self, term_embedding):
         assert(isinstance(term_embedding, tf.Tensor))
 
-        # embedded_terms: [batch_size, terms_per_context, embedding_size]
-        embedded_terms = tf.nn.embedding_lookup(params=term_embedding,
-                                                ids=self.__input[self.I_x])
+        embedded_terms = self.create_embedding(term_embedding)
 
         with tf.name_scope("attention"):
 
