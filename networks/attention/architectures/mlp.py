@@ -15,15 +15,21 @@ class MultiLayerPerceptronAttention(object):
     H_b_a = "H_b_a"
 
     I_x = "I_x"
+    I_pos = "I_pos"
+    I_dist_obj = "I_dist_obj"
+    I_dist_subj = "I_dist_subj"
     I_entities = "I_e"
 
-    def __init__(self, cfg, batch_size, terms_per_context, term_embedding_size):
+    def __init__(self, cfg, batch_size, terms_per_context,
+                 term_embedding_size,
+                 pos_embedding_size,
+                 dist_embedding_size):
         assert(isinstance(cfg, MultiLayerPerceptronAttentionConfig))
         self.__cfg = cfg
 
         self.__batch_size = batch_size
         self.__terms_per_context = terms_per_context
-        self.__term_embedding_size = term_embedding_size
+        self.__term_embedding_size = term_embedding_size + pos_embedding_size + dist_embedding_size
 
         self.__input = {}
         self.__hidden = {}
@@ -32,13 +38,22 @@ class MultiLayerPerceptronAttention(object):
     def AttentionEmbeddingSize(self):
         return self.__cfg.EntitiesPerContext * self.__term_embedding_size
 
-    def set_input(self, x, entities):
+    def set_input(self, x, pos, dist_obj, dist_subj, keys):
         self.__input[self.I_x] = x
-        self.__input[self.I_entities] = entities
+        self.__input[self.I_pos] = pos
+        self.__input[self.I_dist_subj] = dist_subj
+        self.__input[self.I_dist_obj] = dist_obj
+        self.__input[self.I_entities] = keys
 
     def init_input(self):
         self.__input[self.I_x] = tf.placeholder(dtype=tf.int32,
                                                 shape=[self.__batch_size, self.__terms_per_context])
+        self.__input[self.I_pos] = tf.placeholder(dtype=tf.int32,
+                                                  shape=[self.__batch_size, self.__terms_per_context])
+        self.__input[self.I_dist_obj] = tf.placeholder(dtype=tf.int32,
+                                                       shape=[self.__batch_size, self.__terms_per_context])
+        self.__input[self.I_dist_subj] = tf.placeholder(dtype=tf.int32,
+                                                        shape=[self.__batch_size, self.__terms_per_context])
         self.__input[self.I_entities] = tf.placeholder(dtype=tf.int32,
                                                        shape=[self.__batch_size, self.__cfg.EntitiesPerContext])
 
@@ -52,18 +67,16 @@ class MultiLayerPerceptronAttention(object):
         self.__hidden[self.H_b_a] = tf.Variable(tf.random_normal([1]),
                                                 dtype=tf.float32)
 
-    def create_embedding(self, term_embedding):
-        """
-        embedded_terms: [batch_size, terms_per_context, embedding_size]
-        """
-        return tf.nn.embedding_lookup(params=term_embedding,
-                                      ids=self.__input[self.I_x])
-
-    # TODO. Use dictionary of params instead of just term_embedding
-    def init_body(self, term_embedding):
+    def init_body(self, term_embedding, pos_embedding, dist_embedding):
         assert(isinstance(term_embedding, tf.Tensor))
+        assert(isinstance(pos_embedding, tf.Tensor))
+        assert(isinstance(dist_embedding, tf.Tensor))
 
-        embedded_terms = self.create_embedding(term_embedding)
+        embedded_terms = tf.concat(
+            [tf.nn.embedding_lookup(params=pos_embedding, ids=self.__input[self.I_x]),
+             tf.nn.embedding_lookup(params=dist_embedding, ids=self.__input[self.I_dist_subj]),
+             tf.nn.embedding_lookup(params=dist_embedding, ids=self.__input[self.I_dist_obj])],
+            axis=-1)
 
         with tf.name_scope("attention"):
 

@@ -59,18 +59,16 @@ class AttentionCNN(VanillaCNN):
                              self.get_input_parameter(InputSample.I_OBJ_IND)],
                             axis=-1)
 
-        # TODO. Create another model att_cnn_dists.py
-        # TODO. Create another model att_cnn_dists.py
-        # TODO. How to: pass obj_dists
-        # TODO. How to: pass subj_dists
-        # TODO. How to: pass dist_emb in init_body
         att.set_input(x=self.get_input_parameter(InputSample.I_X_INDS),
-                      entities=entities)
+                      pos=self.get_input_parameter(InputSample.I_POS_INDS),
+                      dist_obj=self.get_input_parameter(InputSample.I_OBJ_DISTS),
+                      dist_subj=self.get_input_parameter(InputSample.I_SUBJ_DISTS),
+                      keys=entities)
 
-        # TODO. Here would be interesting to catch also distances.
-        # TODO. The latter might give more information when we crossing frames with words.
-        # TODO. Better: frames+dist with words+dists.
-        # TODO. And globally to catch other context specific info.
-        att_e, self.__att_weights = att.init_body(self.TermEmbedding)
+        att_e, self.__att_weights = att.init_body(
+            term_embedding=self.TermEmbedding,
+            pos_embedding=self.POSEmbedding,
+            dist_embedding=self.DistanceEmbedding)
+
         return att_e
 

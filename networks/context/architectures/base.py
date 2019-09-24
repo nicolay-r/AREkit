@@ -71,6 +71,14 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def TermEmbedding(self):
         return self.__term_emb
 
+    @property
+    def DistanceEmbedding(self):
+        return self.__dist_emb
+
+    @property
+    def POSEmbedding(self):
+        return self.__pos_emb
+
     # endregion
 
     def get_input_parameter(self, param):
