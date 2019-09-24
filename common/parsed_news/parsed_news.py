@@ -9,6 +9,9 @@ from core.processing.text.parsed import ParsedText
 # TODO: Provide api that allows to obtain frames (directly or
 # TODO: via another way using iterators by a contents of news sentences)
 # TODO: iter_sentence_term
+from core.source.rusentiframes.variants.text_variant import TextFrameVariant
+
+
 class ParsedNews(object):
     """
     Extracted News lexemes, such as:
@@ -96,6 +99,14 @@ class ParsedNews(object):
             assert(isinstance(sentence, ParsedText))
             for term in sentence.iter_raw_terms():
                 yield term
+
+    def iter_sentence_frame_indices(self, sentence_index):
+        assert(isinstance(sentence_index, int))
+        sentence = self.__parsed_sentences[sentence_index]
+        assert(isinstance(sentence, ParsedText))
+        for index, term in enumerate(sentence.iter_raw_terms()):
+            if isinstance(term, TextFrameVariant):
+                yield index
 
     def iter_sentence_terms(self, sentence_index):
         assert(isinstance(sentence_index, int))

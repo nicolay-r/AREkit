@@ -38,6 +38,12 @@ class TextOpinionHelper(object):
         return parsed_news.get_entity_sentence_level_term_index(id)
 
     @staticmethod
+    def IterateFrameIndices(text_opinion):
+        parsed_news, t_id = TextOpinionHelper.__get(text_opinion, EntityEndType.Target)
+        s_index = TextOpinionHelper.EntitySentenceIndex(text_opinion, EntityEndType.Source)
+        return parsed_news.iter_sentence_frame_indices(sentence_index=s_index)
+
+    @staticmethod
     def DistanceBetweenEntitiesInTerms(text_opinion):
         return abs(TextOpinionHelper.__entity_document_level_term_index(text_opinion, EntityEndType.Source) -
                    TextOpinionHelper.__entity_document_level_term_index(text_opinion, EntityEndType.Target))

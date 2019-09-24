@@ -28,8 +28,7 @@ class InputSample(object):
     I_POS_INDS = "pos_inds"
     I_TERM_TYPE = "term_type"
     I_POSITION_IN_TEXT = "pos_in_text"
-    # TODO. Adding frames task
-    # I_FRAME_INDS = 'frame_inds'
+    I_FRAME_INDS = 'frame_inds'
 
     def __init__(self, X,
                  subj_ind,
@@ -38,8 +37,7 @@ class InputSample(object):
                  dist_from_obj,
                  pos_indices,
                  term_type,
-                 # TODO. Adding frames task
-                 # frame_inds,
+                 frame_indices,
                  text_opinion_id):
         """
             X: np.ndarray
@@ -71,6 +69,7 @@ class InputSample(object):
              (InputSample.I_SUBJ_DISTS, dist_from_subj),
              (InputSample.I_OBJ_DISTS, dist_from_obj),
              (InputSample.I_POS_INDS, pos_indices),
+             (InputSample.I_FRAME_INDS, frame_indices),
              (InputSample.I_TERM_TYPE, term_type)])
 
     @property
@@ -88,6 +87,7 @@ class InputSample(object):
                    dist_from_obj=blank,
                    pos_indices=blank,
                    term_type=blank,
+                   frame_indices=blank,
                    text_opinion_id=-1)
 
     @classmethod
@@ -98,10 +98,7 @@ class InputSample(object):
 
         subj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Source)
         obj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Target)
-
-        # TODO. Adding frames task
-        # TODO. utilize ParsedNews.iter_sentence_terms
-        frame_inds = []
+        frame_inds = [TextOpinionHelper.IterateFrameIndices(text_opinion)]
 
         pos_indices = calculate_pos_indices_for_terms(
             terms=terms,
@@ -127,13 +124,14 @@ class InputSample(object):
             cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=pad_value)
             cls.__pad_right_inplace(term_type, pad_size=pad_size, filler=pad_value)
         else:
-            # TODO. Adding frames task
-            # TODO. modify frames_inds
             b, e, subj_ind, obj_ind = cls.__crop_bounds(
                 sentence_len=sentence_len,
                 window_size=config.TermsPerContext,
                 e1=subj_ind,
                 e2=obj_ind)
+
+            frame_inds = map(lambda index: index - b, frame_inds)
+
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
 
         assert(len(pos_indices) ==
@@ -151,8 +149,7 @@ class InputSample(object):
                    dist_from_obj=dist_from_obj,
                    pos_indices=np.array(pos_indices),
                    term_type=np.array(term_type),
-                   # TODO. Adding frames task
-                   # frame_inds=np.array(frame_inds),
+                   frame_indices=np.array(frame_inds),
                    text_opinion_id=text_opinion.TextOpinionID)
 
     @staticmethod
@@ -189,7 +186,6 @@ class InputSample(object):
 
     @staticmethod
     def __crop_bounds(sentence_len, window_size, e1, e2):
-        # TODO. Support and modify frames_inds
         assert(isinstance(sentence_len, int))
         assert(isinstance(window_size, int) and window_size > 0)
         assert(isinstance(e1, int) and isinstance(e2, int))
