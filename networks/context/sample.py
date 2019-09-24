@@ -98,7 +98,7 @@ class InputSample(object):
 
         subj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Source)
         obj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Target)
-        frame_inds = [TextOpinionHelper.IterateFrameIndices(text_opinion)]
+        frame_inds = list(TextOpinionHelper.IterateFrameIndices(text_opinion))
 
         pos_indices = calculate_pos_indices_for_terms(
             terms=terms,
