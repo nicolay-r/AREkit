@@ -29,7 +29,7 @@ class MultiLayerPerceptronAttention(object):
 
         self.__batch_size = batch_size
         self.__terms_per_context = terms_per_context
-        self.__term_embedding_size = term_embedding_size + pos_embedding_size + dist_embedding_size
+        self.__term_embedding_size = term_embedding_size + pos_embedding_size + 2 * dist_embedding_size
 
         self.__input = {}
         self.__hidden = {}
@@ -73,13 +73,17 @@ class MultiLayerPerceptronAttention(object):
         assert(isinstance(dist_embedding, tf.Tensor))
 
         embedded_terms = tf.concat(
-            [tf.nn.embedding_lookup(params=pos_embedding, ids=self.__input[self.I_x]),
+            [tf.nn.embedding_lookup(params=term_embedding, ids=self.__input[self.I_x]),
+             tf.nn.embedding_lookup(params=pos_embedding, ids=self.__input[self.I_pos]),
              tf.nn.embedding_lookup(params=dist_embedding, ids=self.__input[self.I_dist_subj]),
              tf.nn.embedding_lookup(params=dist_embedding, ids=self.__input[self.I_dist_obj])],
             axis=-1)
 
         with tf.name_scope("attention"):
 
+            # TODO. Rename entities_inds
+            # TODO. Add entities_pos
+            # TODO. Add entities_dists
             def iter_by_entities(entities, handler):
                 # entities: [batch_size, entities]
 
@@ -105,12 +109,22 @@ class MultiLayerPerceptronAttention(object):
                 return att_sum.stack(), \
                        att_weights.stack()
 
+            # TODO. provide:
+            # TODO. entity_pos,
+            # TODO. entity_dist_obj,
+            # TODO. entity_dist_subj
             def process_entity(i, entities, att_sum, att_weights):
                 # entities: [batch_size, entities_per_context]
 
                 e = tf.gather(entities, [i], axis=1)                       # [batch_size, 1] -- term positions
                 e = tf.tile(e, [1, self.__terms_per_context])              # [batch_size, terms_per_context]
                 e = tf.nn.embedding_lookup(term_embedding, e)              # [batch_size, terms_per_context, embedding_size]
+
+                # TODO. Fix the dimention:
+                # TODO. Extract embedded_terms
+                # TODO. Extract dist_obj
+                # TODO. Extract dist_subj
+                # TODO. Extract pos
 
                 merged = tf.concat([embedded_terms, e], axis=-1)
                 merged = tf.reshape(merged, [self.__batch_size * self.__terms_per_context, 2 * self.__term_embedding_size])
@@ -138,6 +152,7 @@ class MultiLayerPerceptronAttention(object):
                         att_sum.write(i, w_sum),
                         att_weights.write(i, tf.reshape(alphas, [self.__batch_size, self.__terms_per_context])))
 
+            # TODO. Provide parameters
             att_sum, att_weights = iter_by_entities(self.__input[self.I_entities], process_entity)
 
             # att_sum: [entity_per_context, batch_size, term_embedding_size]
