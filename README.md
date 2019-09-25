@@ -29,6 +29,18 @@ Structuraly, the fundamental task representation could be departed into followin
 2. **Relation Extraction** -- to extract Subject->Object sentiment relation type
 [[domain review](https://github.com/roomylee/awesome-relation-extraction)];
 
+## Neural Networks
+
+### Architectures
+
+### Training Approaches
+    
+1. Single Sentence Training
+
+2. Multiple Sentence Training
+
+### Attention Architectures
+
 ## Source
 
 ### Datasets
@@ -59,7 +71,6 @@ Provides wrappers for:
 Provides wrappers for:
 1. INemo SyntaxNet
 2. Texterra syntax parser
-
 
 ## Installation
 
