@@ -6,13 +6,12 @@ class IANConfig(DefaultNetworkConfig):
 
     __l2_reg = 0.001
     __hidden_size = 128
-    # TODO. Should depends on a amount of frames which will be presented in DefaultNetworkConfig.
-    # TODO. Find most optimal value for parameter below.
-    __aspect_len = 2
+    __aspect_len = None
     __aspect_embedding_matrix = None
 
     def __init__(self):
         super(IANConfig, self).__init__()
+        self.__aspect_len = self.FramesPerContext
 
     # region Properties
 
@@ -50,6 +49,8 @@ class IANConfig(DefaultNetworkConfig):
 
     # endregion
 
+    # region public methods
+
     def notify_initialization_completed(self):
         self.__aspect_embedding_matrix = self.TermEmbeddingMatrix
 
@@ -64,3 +65,5 @@ class IANConfig(DefaultNetworkConfig):
         ]
 
         return parameters
+
+    # endregion

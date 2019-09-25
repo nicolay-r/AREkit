@@ -36,7 +36,7 @@ def get_k_layer_logits(g, W, b, dropout_keep_prob=None, activations=None):
 
     r = g
 
-    for i in range(len(W)):
+    for i in xrange(len(W)):
         # print "LOG: r", r.shape
         # print "LOG: i", i
         # print "LOG: W[i]", W[i].shape

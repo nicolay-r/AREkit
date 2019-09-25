@@ -49,7 +49,7 @@ class DocumentCompareTable:
     def iter_opinions(self, str_to_label_func):
         assert(callable(str_to_label_func))
 
-        for i in range(len(self.__cmp_table)):
+        for i in xrange(len(self.__cmp_table)):
 
             res = self.__cmp_table.iloc[i][self.C_RES]
             if not isinstance(res, str):

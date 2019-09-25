@@ -46,7 +46,7 @@ class RuSentRelIOUtils(BaseIOUtils):
     @staticmethod
     def iter_test_indices():
         missed = [70]
-        for i in range(RuSentRelIOUtils.__sep_doc_id, 76):
+        for i in xrange(RuSentRelIOUtils.__sep_doc_id, 76):
             if i in missed:
                 continue
             yield i
@@ -54,7 +54,7 @@ class RuSentRelIOUtils(BaseIOUtils):
     @staticmethod
     def iter_train_indices():
         missed = [9, 22, 26]
-        for i in range(1, RuSentRelIOUtils.__sep_doc_id):
+        for i in xrange(1, RuSentRelIOUtils.__sep_doc_id):
             if i in missed:
                 continue
             yield i

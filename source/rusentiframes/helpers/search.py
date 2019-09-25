@@ -54,7 +54,7 @@ class RuSentiFramesSearchHelper(object):
 
     @staticmethod
     def __check_all_words_within(terms, start_index, last_index):
-        for i in range(start_index, last_index + 1):
+        for i in xrange(start_index, last_index + 1):
             if not isinstance(terms[i], unicode):
                 return False
         return True

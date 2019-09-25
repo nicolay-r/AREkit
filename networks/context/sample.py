@@ -134,6 +134,11 @@ class InputSample(object):
 
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
 
+        if len(frame_inds) < config.FramesPerContext:
+            cls.__pad_right_inplace(lst=frame_inds, pad_size=config.FramesPerContext, filler=pad_value)
+        else:
+            del frame_inds[config.FramesPerContext:]
+
         assert(len(pos_indices) ==
                len(x_indices) ==
                len(term_type) ==
@@ -155,7 +160,7 @@ class InputSample(object):
     @staticmethod
     def __dist(pos, size):
         result = np.zeros(size)
-        for i in range(len(result)):
+        for i in xrange(len(result)):
             result[i] = i-pos if i-pos >= 0 else i-pos+size
         return result
 

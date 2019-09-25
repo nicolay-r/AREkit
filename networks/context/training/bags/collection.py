@@ -64,7 +64,7 @@ class BagsCollection:
 
         groups_count = len(self.__bags) / bags_per_group
         end = 0
-        for index in range(groups_count):
+        for index in xrange(groups_count):
             begin = index * bags_per_group
             end = begin + bags_per_group
             yield self.__bags[begin:end]

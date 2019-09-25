@@ -154,7 +154,7 @@ class TensorflowModel(object):
         minibatches = list(self.get_bags_collection(DataType.Train).iter_by_groups(self.Config.BagsPerMinibatch))
         print "Minibatches passing per epoch count: {}".format(len(minibatches))
 
-        for epoch_index in range(self.Config.Epochs):
+        for epoch_index in xrange(self.Config.Epochs):
 
             if operation_cancel.IsCancelled:
                 break

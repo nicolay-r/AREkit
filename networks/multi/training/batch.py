@@ -17,7 +17,7 @@ class MultiInstanceBatch(MiniBatch):
             for sample_index, sample in enumerate(bag):
                 for arg, value in sample:
                     if arg not in result:
-                        result[arg] = [[None] * len(bag) for _ in range(len(self.bags))]
+                        result[arg] = [[None] * len(bag) for _ in xrange(len(self.bags))]
                     result[arg][bag_index][sample_index] = value
 
         for bag in self.iter_by_bags():

@@ -124,8 +124,8 @@ class LabelPair(Label):
 
     @staticmethod
     def from_uint(value):
-        for i in range(3):
-            for j in range(3):
+        for i in xrange(3):
+            for j in xrange(3):
                 if value == LabelPair._pair_to_int(i, j):
                     return LabelPair(Label.from_uint(i), Label.from_uint(j))
 
