@@ -7,7 +7,6 @@ from core.networks.context.sample import InputSample
 import utils
 
 
-
 class IAN(BaseContextNeuralNetwork):
     """
     Paper: https://arxiv.org/pdf/1709.00893.pdf
@@ -37,7 +36,9 @@ class IAN(BaseContextNeuralNetwork):
     def init_input(self):
         super(IAN, self).init_input()
         assert(isinstance(self.Config, IANConfig))
-        self.__aspects = tf.placeholder(tf.int32, shape=[self.Config.BatchSize, self.Config.MaxAspectLength])
+        self.__aspects = tf.placeholder(dtype=tf.int32,
+                                        shape=[self.Config.BatchSize, self.Config.MaxAspectLength],
+                                        name="aspects")
         self.__E_aspects = tf.get_variable(name="E_aspects",
                                            dtype=tf.float32,
                                            initializer=tf.random_normal_initializer,
@@ -132,7 +133,7 @@ class IAN(BaseContextNeuralNetwork):
             aspect_outputs_iter = aspect_outputs_iter.unstack(aspect_outputs)
             context_avg_iter = tf.TensorArray(tf.float32, 1, dynamic_size=True, infer_shape=False)
             context_avg_iter = context_avg_iter.unstack(context_avg)
-            aspect_lens_iter = tf.TensorArray(tf.int64, 1, dynamic_size=True, infer_shape=False)
+            aspect_lens_iter = tf.TensorArray(tf.int32, 1, dynamic_size=True, infer_shape=False)
             aspect_lens_iter = aspect_lens_iter.unstack(aspect_lens)
             aspect_rep = tf.TensorArray(size=self.Config.BatchSize, dtype=tf.float32)
             aspect_att = tf.TensorArray(size=self.Config.BatchSize, dtype=tf.float32)
@@ -169,7 +170,7 @@ class IAN(BaseContextNeuralNetwork):
             context_outputs_iter = context_outputs_iter.unstack(context_outputs)
             aspect_avg_iter = tf.TensorArray(tf.float32, 1, dynamic_size=True, infer_shape=False)
             aspect_avg_iter = aspect_avg_iter.unstack(aspect_avg)
-            context_lens_iter = tf.TensorArray(tf.int64, 1, dynamic_size=True, infer_shape=False)
+            context_lens_iter = tf.TensorArray(tf.int32, 1, dynamic_size=True, infer_shape=False)
             context_lens_iter = context_lens_iter.unstack(context_lens)
             context_rep = tf.TensorArray(size=self.Config.BatchSize, dtype=tf.float32)
             context_att = tf.TensorArray(size=self.Config.BatchSize, dtype=tf.float32)

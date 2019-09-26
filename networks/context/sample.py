@@ -58,6 +58,7 @@ class InputSample(object):
         assert(isinstance(dist_from_obj, np.ndarray))
         assert(isinstance(pos_indices, np.ndarray))
         assert(isinstance(term_type, np.ndarray))
+        assert(isinstance(frame_indices, np.ndarray))
         assert(isinstance(text_opinion_id, int))
 
         self.__text_opinion_id = text_opinion_id
@@ -79,15 +80,16 @@ class InputSample(object):
     @classmethod
     def create_empty(cls, config):
         assert(isinstance(config, DefaultNetworkConfig))
-        blank = np.zeros(config.TermsPerContext)
-        return cls(X=blank,
+        blank_terms = np.zeros(config.TermsPerContext)
+        blank_frames = np.zeros(config.FramesPerContext)
+        return cls(X=blank_terms,
                    subj_ind=0,
                    obj_ind=1,
-                   dist_from_subj=blank,
-                   dist_from_obj=blank,
-                   pos_indices=blank,
-                   term_type=blank,
-                   frame_indices=blank,
+                   dist_from_subj=blank_terms,
+                   dist_from_obj=blank_terms,
+                   pos_indices=blank_terms,
+                   term_type=blank_terms,
+                   frame_indices=blank_frames,
                    text_opinion_id=-1)
 
     @classmethod
