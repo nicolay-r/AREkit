@@ -51,6 +51,10 @@ class IANConfig(DefaultNetworkConfig):
 
     # region public methods
 
+    def modify_hidden_size(self, hidden_size):
+        assert(isinstance(hidden_size, int))
+        self.__hidden_size = hidden_size
+
     def notify_initialization_completed(self):
         self.__aspect_embedding_matrix = self.TermEmbeddingMatrix
 
