@@ -1,5 +1,6 @@
 import tensorflow as tf
-from ..configurations.mlp import MultiLayerPerceptronAttentionConfig
+
+from core.networks.attention.configurations.mlp import MultiLayerPerceptronAttentionConfig
 from core.networks.context.architectures.utils import get_k_layer_logits
 
 
@@ -29,10 +30,16 @@ class MultiLayerPerceptronAttention(object):
 
         self.__batch_size = batch_size
         self.__terms_per_context = terms_per_context
-        self.__term_embedding_size = term_embedding_size + pos_embedding_size + 2 * dist_embedding_size
+        self.__term_embedding_size = term_embedding_size + \
+                                     pos_embedding_size + \
+                                     2 * dist_embedding_size
 
         self.__input = {}
         self.__hidden = {}
+
+    @property
+    def Input(self):
+        return self.__input
 
     @property
     def AttentionEmbeddingSize(self):
@@ -69,8 +76,6 @@ class MultiLayerPerceptronAttention(object):
 
     def init_body(self, term_embedding, pos_embedding, dist_embedding):
         assert(isinstance(term_embedding, tf.Tensor))
-        assert(isinstance(pos_embedding, tf.Tensor))
-        assert(isinstance(dist_embedding, tf.Tensor))
 
         embedded_terms = tf.concat(
             [tf.nn.embedding_lookup(params=term_embedding, ids=self.__input[self.I_x]),
@@ -81,11 +86,48 @@ class MultiLayerPerceptronAttention(object):
 
         with tf.name_scope("attention"):
 
-            # TODO. Rename entities_inds
-            # TODO. Add entities_pos
-            # TODO. Add entities_dists
-            def iter_by_entities(entities, handler):
-                # entities: [batch_size, entities]
+            def filter_batch_elements(elements, inds, handler):
+                """
+                elements:  [batch_size, terms_per_context]
+                """
+                batch_size = elements.shape[0]
+
+                filtered = tf.TensorArray(
+                    dtype=tf.int32,
+                    name="context_iter",
+                    size=batch_size,
+                    infer_shape=False,
+                    dynamic_size=True)
+
+                _, _, _, filtered = tf.while_loop(
+                    lambda i, *_: tf.less(i, batch_size),
+                    handler,
+                    (0, elements, inds, filtered))
+
+                return filtered.stack()
+
+            def select_entity_related_elements(i, elements, inds, filtered):
+                """
+                elements: [batch, terms_per_context]
+                inds: [batch, terms_per_context]
+                """
+
+                row_elements = tf.squeeze(tf.gather(elements, [i], axis=0))
+                row_inds = tf.squeeze(tf.gather(inds, [i], axis=0))
+
+                result = tf.gather(row_elements, row_inds)   # row: [entities_per_context]
+
+                return (i + 1,
+                        elements,
+                        inds,
+                        filtered.write(i, tf.squeeze(result)))
+
+            def iter_by_entities(entities, e_pos, e_dist_obj, e_dist_subj, handler):
+                """
+                entities:  [batch_size, entities]
+                e_pos:     [batch_size, terms_per_context]
+                e_dists:   [batch_size, terms_per_context]
+                """
 
                 att_sum_array = tf.TensorArray(
                     dtype=tf.float32,
@@ -101,33 +143,46 @@ class MultiLayerPerceptronAttention(object):
                     infer_shape=False,
                     dynamic_size=True)
 
-                _, _, att_sum, att_weights = tf.while_loop(
+                _, _, _, _, _, att_sum, att_weights = tf.while_loop(
                     lambda i, *_: tf.less(i, self.__cfg.EntitiesPerContext),
                     handler,
-                    (0, entities, att_sum_array, att_weights_array))
+                    (0, entities, e_pos, e_dist_obj, e_dist_subj, att_sum_array, att_weights_array))
 
-                return att_sum.stack(), \
-                       att_weights.stack()
+                return att_sum.stack(), att_weights.stack()
 
-            # TODO. provide:
-            # TODO. entity_pos,
-            # TODO. entity_dist_obj,
-            # TODO. entity_dist_subj
-            def process_entity(i, entities, att_sum, att_weights):
-                # entities: [batch_size, entities_per_context]
+            def process_entity(i, entities, e_pos, e_dist_obj, e_dist_subj, att_sum, att_weights):
+                """
+                entities: [batch_size, entities_per_context]
+                """
 
-                e = tf.gather(entities, [i], axis=1)                       # [batch_size, 1] -- term positions
-                e = tf.tile(e, [1, self.__terms_per_context])              # [batch_size, terms_per_context]
-                e = tf.nn.embedding_lookup(term_embedding, e)              # [batch_size, terms_per_context, embedding_size]
+                e_term_index = tf.gather(entities, [i], axis=1)                         # [batch_size, 1] -- term positions
+                e_term_indices = tf.tile(e_term_index, [1, self.__terms_per_context])   # [batch_size, terms_per_context]
 
-                # TODO. Fix the dimention:
-                # TODO. Extract embedded_terms
-                # TODO. Extract dist_obj
-                # TODO. Extract dist_subj
-                # TODO. Extract pos
+                e_pos_indices = filter_batch_elements(
+                    elements=e_pos,
+                    inds=e_term_indices,
+                    handler=select_entity_related_elements)
+
+                e_dist_obj_indices = filter_batch_elements(
+                    elements=e_dist_obj,
+                    inds=e_term_indices,
+                    handler=select_entity_related_elements)
+
+                e_dist_subj_indices = filter_batch_elements(
+                    elements=e_dist_subj,
+                    inds=e_term_indices,
+                    handler=select_entity_related_elements)
+
+                e = tf.concat(
+                    [tf.nn.embedding_lookup(term_embedding, e_term_indices),            # [batch_size, terms_per_context, embedding_size]
+                     tf.nn.embedding_lookup(pos_embedding, e_pos_indices),
+                     tf.nn.embedding_lookup(dist_embedding, e_dist_obj_indices),
+                     tf.nn.embedding_lookup(dist_embedding, e_dist_subj_indices)],
+                    axis=-1)                                                            # [batch_size, terms_per_context, embedding_size]
 
                 merged = tf.concat([embedded_terms, e], axis=-1)
-                merged = tf.reshape(merged, [self.__batch_size * self.__terms_per_context, 2 * self.__term_embedding_size])
+                merged = tf.reshape(merged, [self.__batch_size * self.__terms_per_context,
+                                             2 * self.__term_embedding_size])
 
                 u = get_k_layer_logits(g=merged,
                                        W=[self.__hidden[self.H_W_we], self.__hidden[self.H_W_a]],
@@ -148,12 +203,16 @@ class MultiLayerPerceptronAttention(object):
                 w_sum = tf.reduce_sum(w_embedding, axis=1)             # [batch_size, embedding_size]
 
                 return (i + 1,
-                        entities,
+                        entities, e_pos, e_dist_obj, e_dist_subj,
                         att_sum.write(i, w_sum),
                         att_weights.write(i, tf.reshape(alphas, [self.__batch_size, self.__terms_per_context])))
 
-            # TODO. Provide parameters
-            att_sum, att_weights = iter_by_entities(self.__input[self.I_entities], process_entity)
+            att_sum, att_weights = iter_by_entities(
+                entities=self.__input[self.I_entities],
+                e_pos=self.__input[self.I_pos],
+                e_dist_obj=self.__input[self.I_dist_obj],
+                e_dist_subj=self.__input[self.I_dist_subj],
+                handler=process_entity)
 
             # att_sum: [entity_per_context, batch_size, term_embedding_size]
             # att_weights: [entity_per_context, batch_size, terms_per_context]

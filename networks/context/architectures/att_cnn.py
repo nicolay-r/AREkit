@@ -27,6 +27,9 @@ class AttentionCNN(VanillaCNN):
         super(AttentionCNN, self).init_input()
         with tf.variable_scope(self.__attention_var_scope_name):
             self.Config.AttentionModel.init_input()
+        # ADD POS + DISTS of entities.
+
+    # TODO. Add custom 'create_feed_dict'
 
     def init_hidden_states(self):
         super(AttentionCNN, self).init_hidden_states()
@@ -51,10 +54,6 @@ class AttentionCNN(VanillaCNN):
 
         assert(isinstance(att, MultiLayerPerceptronAttention))
 
-        # TODO. Update it with frames.
-        # TODO. Create different attention.
-        # TODO. att_frames_cnn.
-        # TODO. att_frames_pcnn.
         entities = tf.stack([self.get_input_parameter(InputSample.I_SUBJ_IND),
                              self.get_input_parameter(InputSample.I_OBJ_IND)],
                             axis=-1)
