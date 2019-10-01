@@ -31,7 +31,11 @@ Structuraly, the fundamental task representation could be departed into followin
 
 ## Neural Networks
 
-### Architectures
+### Convolutional Neural Networks
+
+### Recurrent Neural Networks (Sequence-Based Text Presentation)
+
+### Attention Architectures
 
 ### Training Approaches
     
@@ -39,7 +43,14 @@ Structuraly, the fundamental task representation could be departed into followin
 
 2. Multiple Sentence Training
 
-### Attention Architectures
+#### Layers Regularization
+
+We utilize 'L2'-regularization for layers and then combine with the ordinary loss 
+([stack-overflow-post](https://stackoverflow.com/questions/37107223/how-to-add-regularizations-in-tensorflow#37143333)):
+```
+tf.get_variable('a', regularizer=tf.contrib.layers.l2_regularizer(0.001))
+loss = ordinary_loss + tf.losses.get_regularization_loss()
+```
 
 ## Source
 
