@@ -21,6 +21,8 @@ class BiLSTMConfig(DefaultNetworkConfig):
         assert(isinstance(value, int) and value > 0)
         self.__hidden_size = value
 
+    # TODO. Add cell type parameter.
+
     def _internal_get_parameters(self):
         parameters = super(BiLSTMConfig, self)._internal_get_parameters()
 

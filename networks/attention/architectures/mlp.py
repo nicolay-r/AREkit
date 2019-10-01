@@ -65,8 +65,10 @@ class MultiLayerPerceptronAttention(object):
                                                        shape=[self.__batch_size, self.__cfg.EntitiesPerContext])
 
     def init_hidden(self):
+        # TODO. Log this parameter
         self.__hidden[self.H_W_we] = tf.Variable(tf.random_normal([2 * self.__term_embedding_size, self.__cfg.HiddenSize]),
                                                  dtype=tf.float32)
+        # TODO. Log this parameter
         self.__hidden[self.H_b_we] = tf.Variable(tf.random_normal([self.__cfg.HiddenSize]),
                                                  dtype=tf.float32)
         self.__hidden[self.H_W_a] = tf.Variable(tf.random_normal([self.__cfg.HiddenSize, 1]),

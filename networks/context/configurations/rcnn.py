@@ -20,6 +20,8 @@ class RCNNConfig(DefaultNetworkConfig):
     def HiddenSize(self):
         return self.__hidden_size
 
+    # TODO. Add l2reg lambda
+
     def _internal_get_parameters(self):
         parameters = super(RCNNConfig, self)._internal_get_parameters()
 

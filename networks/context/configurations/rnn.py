@@ -3,8 +3,10 @@ from base import DefaultNetworkConfig
 
 class CellTypes:
     RNN = u'vanilla'
-    LSTM = u'lstm'
     GRU = u'gru'
+    # TODO. Modify existed as BasicLSTM
+    LSTM = u'lstm'
+    # TODO. Add LSTM
 
 
 class RNNConfig(DefaultNetworkConfig):
@@ -15,6 +17,8 @@ class RNNConfig(DefaultNetworkConfig):
 
     @property
     def L2RegLambda(self):
+        # TODO. Utilize l2reg in hidden layers.
+        # TODO. Utilize l2reg in code.
         return self.__l2_reg_lambda
 
     @property

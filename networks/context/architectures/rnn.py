@@ -61,6 +61,7 @@ class RNN(BaseContextNeuralNetwork):
         return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
     def init_hidden_states(self):
+        # TODO. HiddenW initializer to config.
         self.__hidden[self.H_W] = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
                                                   initializer=tf.contrib.layers.xavier_initializer(),
                                                   name=self.H_W)

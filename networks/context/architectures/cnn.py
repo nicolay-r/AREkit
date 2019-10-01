@@ -75,16 +75,27 @@ class VanillaCNN(BaseContextNeuralNetwork):
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
+        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
+        # TODO. Refactor with get_variable.
+        # TODO. Initializer to config.
         self.__hidden[self.H_W] = tf.Variable(initial_value=tf.random_normal([self.ContextEmbeddingSize,
                                                                               self.Config.HiddenSize]),
                                               dtype=tf.float32)
+        # TODO. Refactor with get_variable.
+        # TODO. Initializer to config.
         self.__hidden[self.H_b] = tf.Variable(initial_value=tf.random_normal([self.Config.HiddenSize]),
                                               dtype=tf.float32)
+
+        # TODO. Refactor with get_variable.
+        # TODO. Initializer to config.
         self.__hidden[self.H_W2] = tf.Variable(initial_value=tf.random_normal([self.Config.HiddenSize,
                                                                                self.Config.ClassesCount]),
                                                dtype=tf.float32)
+        # TODO. Refactor with get_variable.
+        # TODO. Initializer to config.
         self.__hidden[self.H_b2] = tf.Variable(initial_value=tf.random_normal([self.Config.ClassesCount]),
                                                dtype=tf.float32)
+        # TODO. Refactor with get_variable.
         self.__hidden[self.H_conv_filter] = tf.Variable(
             initial_value=tf.random_normal([self.Config.WindowSize * self.TermEmbeddingSize,
                                             1,

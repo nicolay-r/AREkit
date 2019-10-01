@@ -54,18 +54,21 @@ class IAN(BaseContextNeuralNetwork):
                 'aspect_score': tf.get_variable(
                     name='W_a',
                     shape=[self.Config.HiddenSize, self.Config.HiddenSize],
+                    # TODO. Initializer to config.
                     initializer=tf.random_uniform_initializer(-0.1, 0.1),
                     regularizer=tf.contrib.layers.l2_regularizer(self.Config.L2Reg)
                 ),
                 'context_score': tf.get_variable(
                     name='W_c',
                     shape=[self.Config.HiddenSize, self.Config.HiddenSize],
+                    # TODO. Initializer to config.
                     initializer=tf.random_uniform_initializer(-0.1, 0.1),
                     regularizer=tf.contrib.layers.l2_regularizer(self.Config.L2Reg)
                 ),
                 'softmax': tf.get_variable(
                     name='W_l',
                     shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+                    # TODO. Initializer to config.
                     initializer=tf.random_uniform_initializer(-0.1, 0.1),
                     regularizer=tf.contrib.layers.l2_regularizer(self.Config.L2Reg)
                 ),
@@ -77,18 +80,21 @@ class IAN(BaseContextNeuralNetwork):
                 'aspect_score': tf.get_variable(
                     name='B_a',
                     shape=[self.Config.MaxAspectLength, 1],
+                    # TODO. Initializer to config.
                     initializer=tf.zeros_initializer(),
                     regularizer=tf.contrib.layers.l2_regularizer(self.Config.L2Reg)
                 ),
                 'context_score': tf.get_variable(
                     name='B_c',
                     shape=[self.Config.MaxContextLength, 1],
+                    # TODO. Initializer to config.
                     initializer=tf.zeros_initializer(),
                     regularizer=tf.contrib.layers.l2_regularizer(self.Config.L2Reg)
                 ),
                 'softmax': tf.get_variable(
                     name='B_l',
                     shape=[self.Config.ClassesCount],
+                    # TODO. Initializer to config.
                     initializer=tf.zeros_initializer(),
                     regularizer=tf.contrib.layers.l2_regularizer(self.Config.L2Reg)
                 ),

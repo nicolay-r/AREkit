@@ -69,8 +69,12 @@ class BiLSTM(BaseContextNeuralNetwork):
                                              activations=activations)
 
     def init_hidden_states(self):
+        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
+        # TODO. Refactor with get_variable.
         self.__hidden[self.H_W] = tf.Variable(
             initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]))
+        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
+        # TODO. Refactor with get_variable.
         self.__hidden[self.H_b] = tf.Variable(
             initial_value=tf.random_normal([self.Config.ClassesCount]))
 
@@ -80,4 +84,6 @@ class BiLSTM(BaseContextNeuralNetwork):
 
     @staticmethod
     def __get_cell(hidden_size):
+        # TODO. Refactor this.
+        # TODO. Use LSTM, or maybe that is the reason why it trains slowly.
         return tf.nn.rnn_cell.BasicLSTMCell(hidden_size)

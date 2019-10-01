@@ -59,8 +59,12 @@ class RCNN(BaseContextNeuralNetwork):
 
     def init_logits_unscaled(self, context_embedding):
 
+        # TODO. Use this parameter in config.
+        # TODO. Use this parameter in layer.
         l2_loss = tf.constant(0.0)
         with tf.name_scope("output"):
+            # TODO. Refactor this into utils.
+            # TODO. Use this parameter in layer.
             l2_loss += tf.nn.l2_loss(self.__hidden[self.H_W2])
             l2_loss += tf.nn.l2_loss(self.__hidden[self.H_b2])
             logits = tf.nn.xw_plus_b(context_embedding,
@@ -72,13 +76,18 @@ class RCNN(BaseContextNeuralNetwork):
     def init_hidden_states(self):
         assert(isinstance(self.Config, RCNNConfig))
 
+        # TODO. Hidden W initializer to config.
         self.__hidden[self.H_W] = tf.Variable(initial_value=tf.random_uniform([self.__text_embedding_size(),
                                                                                self.Config.HiddenSize],
                                                                               -1.0, 1.0))
+        # TODO. Hidden b initializer to config.
         self.__hidden[self.H_b] = tf.Variable(initial_value=tf.constant(0.1, shape=[self.Config.HiddenSize]))
+
+        # TODO. Hidden W initializer to config.
         self.__hidden[self.H_W2] = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
                                                    initializer=tf.contrib.layers.xavier_initializer(),
                                                    name=self.H_W2)
+        # TODO. Hidden b initializer to config.
         self.__hidden[self.H_b2] = tf.get_variable(shape=[self.Config.ClassesCount],
                                                    initializer=tf.contrib.layers.xavier_initializer(),
                                                    name=self.H_b2)

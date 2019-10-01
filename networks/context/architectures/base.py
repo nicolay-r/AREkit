@@ -225,7 +225,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         feed_dict[self.__y] = input[MiniBatch.I_LABELS]
         feed_dict[self.__dropout_keep_prob] = self.__cfg.DropoutKeepProb if data_type == DataType.Train else 1.0
-        feed_dict[self.__embedding_dropout_keep_prob] = self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0,
+        feed_dict[self.__embedding_dropout_keep_prob] = self.__cfg.EmbeddingDropoutKeepProb if data_type == DataType.Train else 1.0
 
         return feed_dict
 

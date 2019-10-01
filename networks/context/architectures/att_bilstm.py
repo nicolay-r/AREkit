@@ -33,6 +33,7 @@ class AttBiLSTM(BaseContextNeuralNetwork):
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, AttBiLSTMConfig))
 
+        # TODO. Move in configuration
         initializer = tf.keras.initializers.glorot_normal
 
         # Bidirectional LSTM
@@ -84,8 +85,12 @@ class AttBiLSTM(BaseContextNeuralNetwork):
                                              activations=activations)
 
     def init_hidden_states(self):
+        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
+        # TODO. Refactor it
         self.__hidden[self.H_W] = tf.Variable(
             initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]))
+        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
+        # TODO. Refactor it
         self.__hidden[self.H_b] = tf.Variable(
             initial_value=tf.random_normal([self.Config.ClassesCount]))
 

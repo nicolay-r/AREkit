@@ -59,6 +59,7 @@ class PiecewiseCNN(VanillaCNN):
         assert(isinstance(self.Config, CNNConfig))
         super(PiecewiseCNN, self).init_hidden_states()
 
+        # TODO. Add initializer W
         self.Hidden[self.H_W] = tf.Variable(
             initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.HiddenSize]),
             dtype=tf.float32)
