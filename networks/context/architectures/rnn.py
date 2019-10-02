@@ -1,5 +1,7 @@
 import tensorflow as tf
 from collections import OrderedDict
+
+from core.networks.context.architectures.sequence import get_cell
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.rnn import RNNConfig, CellTypes
@@ -33,7 +35,7 @@ class RNN(BaseContextNeuralNetwork):
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward cell
-            cell = self.get_cell(self.Config.HiddenSize, self.Config.CellType)
+            cell = get_cell(self.Config.HiddenSize, self.Config.CellType)
             cell = tf.nn.rnn_cell.DropoutWrapper(cell=cell,
                                                  output_keep_prob=self.DropoutKeepProb)
 
@@ -61,25 +63,17 @@ class RNN(BaseContextNeuralNetwork):
         return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
     def init_hidden_states(self):
-        # TODO. HiddenW initializer to config.
-        self.__hidden[self.H_W] = tf.get_variable(shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-                                                  initializer=tf.contrib.layers.xavier_initializer(),
-                                                  name=self.H_W)
-        self.__hidden[self.H_b] = tf.Variable(initial_value=tf.constant(0.1, shape=[self.Config.ClassesCount]))
+
+        self.__hidden[self.H_W] = tf.get_variable(
+            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+            initializer=self.Config.WeightInitializer,
+            name=self.H_W)
+
+        self.__hidden[self.H_b] = tf.get_variable(
+            name=self.H_b,
+            shape=[self.Config.ClassesCount],
+            initializer=self.Config.BiasInitializer)
 
     def iter_hidden_parameters(self):
         for key, value in self.__hidden.iteritems():
             yield key, value
-
-    @staticmethod
-    def get_cell(hidden_size, cell_type):
-        assert(isinstance(cell_type, unicode))
-        if cell_type == CellTypes.RNN:
-            return tf.nn.rnn_cell.BasicRNNCell(hidden_size)
-        elif cell_type == CellTypes.LSTM:
-            return tf.nn.rnn_cell.BasicLSTMCell(hidden_size)
-        elif cell_type == CellTypes.GRU:
-            return tf.nn.rnn_cell.GRUCell(hidden_size)
-        else:
-            Exception("Incorrect cell_type={}".format(cell_type))
-            return None

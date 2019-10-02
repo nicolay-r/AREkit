@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+from core.networks.context.architectures.sequence import get_cell
 from core.networks.context.sample import InputSample
 from ..configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 from base import BaseContextNeuralNetwork
@@ -15,8 +16,6 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(SelfAttentionBiLSTM, self).__init__()
-        self.__att_alphas = None
-        self.__initializer = tf.contrib.layers.xavier_initializer()
 
         # hidden
         self.__A = None
@@ -40,8 +39,10 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
-            fw_cell = tf.nn.rnn_cell.BasicLSTMCell(self.Config.HiddenSize)
-            bw_cell = tf.nn.rnn_cell.BasicLSTMCell(self.Config.HiddenSize)
+            fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                               cell_type=self.Config.CellType)
+            bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                               cell_type=self.Config.CellType)
 
             (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
                                                                                        cell_bw=bw_cell,
@@ -66,17 +67,30 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
-        self.__W_s1 = tf.get_variable("W_s1",
-                                      shape=[2 * self.Config.HiddenSize, self.Config.DASize],
-                                      initializer=self.__initializer)
-        self.__W_s2 = tf.get_variable("W_s2",
-                                      shape=[self.Config.DASize, self.Config.RSize],
-                                      initializer=self.__initializer)
-        self.__W_output = tf.get_variable("W_output",
-                                          shape=[self.Config.FullyConnectionSize, self.Config.ClassesCount],
-                                          initializer=self.__initializer)
-        self.__b_output = tf.Variable(tf.constant(0.1, shape=[self.Config.ClassesCount]),
-                                      name="b_output")
+
+        self.__W_s1 = tf.get_variable(
+            name="W_s1",
+            shape=[2 * self.Config.HiddenSize, self.Config.DASize],
+            regularizer=self.Config.LayerRegularizer,
+            initializer=self.Config.WeightInitializer)
+
+        self.__W_s2 = tf.get_variable(
+            name="W_s2",
+            shape=[self.Config.DASize, self.Config.RSize],
+            regularizer=self.Config.LayerRegularizer,
+            initializer=self.Config.WeightInitializer)
+
+        self.__W_output = tf.get_variable(
+            name="W_output",
+            shape=[self.Config.FullyConnectionSize, self.Config.ClassesCount],
+            regularizer=self.Config.LayerRegularizer,
+            initializer=self.Config.WeightInitializer)
+
+        self.__b_output = tf.get_variable(
+            name="b_output",
+            shape=[self.Config.ClassesCount],
+            regularizer=self.Config.LayerRegularizer,
+            initializer=self.Config.BiasInitializer)
 
     def iter_hidden_parameters(self):
         yield ("W_s1", self.__W_s1)
@@ -93,23 +107,31 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             M_flat = tf.reshape(context_embedding,
                                 shape=[-1, 2 * self.Config.HiddenSize * self.Config.RSize])
 
-            W_fc = tf.get_variable("W_fc",
-                                   shape=[2 * self.Config.HiddenSize * self.Config.RSize,
-                                          self.Config.FullyConnectionSize],
-                                   initializer=self.__initializer)
+            W_fc = tf.get_variable(
+                name="W_fc",
+                shape=[2 * self.Config.HiddenSize * self.Config.RSize, self.Config.FullyConnectionSize],
+                regularizer=self.Config.LayerRegularizer,
+                initializer=self.Config.WeightInitializer)
 
-            b_fc = tf.Variable(tf.constant(0.1, shape=[self.Config.FullyConnectionSize]), name="b_fc")
+            b_fc = tf.get_variable(
+                name="b_fc",
+                shape=[self.Config.FullyConnectionSize],
+                regularizer=self.Config.LayerRegularizer,
+                initializer=tf.constant_initializer(0.1))
+
             fc = tf.nn.relu(tf.nn.xw_plus_b(M_flat, W_fc, b_fc), name="fc")
 
         with tf.name_scope("output"):
-            logits = tf.nn.xw_plus_b(x=fc,
-                                     weights=self.__W_output,
-                                     biases=self.__b_output,
-                                     name="logits")
+            logits = tf.nn.xw_plus_b(
+                x=fc,
+                weights=self.__W_output,
+                biases=self.__b_output,
+                name="logits")
 
         return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
     def init_cost(self, logits_unscaled_dropped):
+
         with tf.name_scope("penalization"):
             AA_T = tf.matmul(self.__A, tf.transpose(self.__A, [0, 2, 1]))
             I = tf.reshape(tensor=tf.tile(tf.eye(self.Config.RSize), [tf.shape(self.__A)[0], 1]),

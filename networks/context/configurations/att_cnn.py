@@ -10,9 +10,15 @@ class AttentionCNNConfig(CNNConfig):
         self.__attention = None
         self.__attention_config = MultiLayerPerceptronAttentionConfig()
 
+    # region properties
+
     @property
     def AttentionModel(self):
         return self.__attention
+
+    # endregion
+
+    # region public methods
 
     def notify_initialization_completed(self):
         assert(self.__attention is None)
@@ -29,3 +35,5 @@ class AttentionCNNConfig(CNNConfig):
         parameters = super(AttentionCNNConfig, self)._internal_get_parameters()
         parameters += self.__attention_config.get_parameters()
         return parameters
+
+    # endregion

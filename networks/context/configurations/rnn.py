@@ -1,25 +1,20 @@
+import tensorflow as tf
 from base import DefaultNetworkConfig
 
 
 class CellTypes:
     RNN = u'vanilla'
     GRU = u'gru'
-    # TODO. Modify existed as BasicLSTM
     LSTM = u'lstm'
-    # TODO. Add LSTM
+    BasicLSTM = u'basic-lstm'
 
 
 class RNNConfig(DefaultNetworkConfig):
 
     __hidden_size = 300
-    __cell_type = CellTypes.LSTM
-    __l2_reg_lambda = 0.0
+    __cell_type = CellTypes.BasicLSTM
 
-    @property
-    def L2RegLambda(self):
-        # TODO. Utilize l2reg in hidden layers.
-        # TODO. Utilize l2reg in code.
-        return self.__l2_reg_lambda
+    # region properties
 
     @property
     def CellType(self):
@@ -32,6 +27,18 @@ class RNNConfig(DefaultNetworkConfig):
     @property
     def LearningRate(self):
         return 0.01
+
+    @property
+    def BiasInitializer(self):
+        return tf.constant_initializer(0.1)
+
+    @property
+    def WeightInitializer(self):
+        return tf.contrib.layers.xavier_initializer()
+
+    # endregion
+
+    # region public methods
 
     def set_cell_type(self, cell_type):
         assert(isinstance(cell_type, unicode))
@@ -47,7 +54,8 @@ class RNNConfig(DefaultNetworkConfig):
         parameters += [
             ("rnn:hidden_size", self.HiddenSize),
             ("rnn:cell_type", self.CellType),
-            ("rnn:l2_reg_lambda", self.L2RegLambda)
         ]
 
         return parameters
+
+    # endregion

@@ -1,3 +1,4 @@
+import tensorflow as tf
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 
 
@@ -10,20 +11,23 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
 
     def __init__(self):
         """
-        d_a_size: 350
+        d_a_size: int
             Size of W_s1 embedding
-        r_size: 30
+        r_size: int
             Size of W_s2 embedding
-        fc_size: 2000
+        fc_size: int
             Size of fully connected laye
-        p_coef: 1.0
+        p_coef: int
             Coefficient for penalty
         """
         super(SelfAttentionBiLSTMConfig, self).__init__()
-        self.__fc_size = 2000
+
+        self.__fc_size = 200
         self.__r_size = 30
         self.__d_a_size = 350
         self.__p_coef = 1.0
+
+    # region public methods
 
     @property
     def FullyConnectionSize(self):
@@ -40,3 +44,25 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
     @property
     def DASize(self):
         return self.__d_a_size
+
+    @property
+    def WeightInitializer(self):
+        return tf.contrib.layers.xavier_initializer()
+
+    @property
+    def BiasInitializer(self):
+        return tf.constant_initializer(0.1)
+
+    # endregion
+
+    def _internal_get_parameters(self):
+        parameters = super(SelfAttentionBiLSTMConfig, self)._internal_get_parameters()
+
+        parameters += [
+            ("sa-bilstm:fully_connection_size", self.FullyConnectionSize),
+            ("sa-bilstm:r_size", self.RSize),
+            ("sa-bilstm:p_coef", self.PCoef),
+            ("sa-bilstm:da_size", self.DASize)
+        ]
+
+        return parameters

@@ -1,13 +1,25 @@
 from base import DefaultNetworkConfig
+from core.networks.context.configurations.rnn import CellTypes
 
 
 class BiLSTMConfig(DefaultNetworkConfig):
 
     __hidden_size = 128
+    __cell_type = CellTypes.BasicLSTM
+
+    # region properties
+
+    @property
+    def L2Reg(self):
+        return 0.001
 
     @property
     def HiddenSize(self):
         return self.__hidden_size
+
+    @property
+    def CellType(self):
+        return self.__cell_type
 
     @property
     def LearningRate(self):
@@ -17,18 +29,26 @@ class BiLSTMConfig(DefaultNetworkConfig):
     def DropoutRNNKeepProb(self):
         return 0.8
 
+    # endregion
+
+    # region public methods
+
     def modify_hidden_size(self, value):
         assert(isinstance(value, int) and value > 0)
         self.__hidden_size = value
 
-    # TODO. Add cell type parameter.
+    def modify_cell_type(self, value):
+        assert(isinstance(value, unicode))
+        self.__cell_type = value
 
     def _internal_get_parameters(self):
         parameters = super(BiLSTMConfig, self)._internal_get_parameters()
 
         parameters += [
+            ("bi-lstm:cell_type", self.CellType),
             ("bi-lstm:hidden_size", self.HiddenSize)
         ]
 
         return parameters
 
+    # endregion

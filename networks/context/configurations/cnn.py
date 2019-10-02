@@ -7,6 +7,8 @@ class CNNConfig(DefaultNetworkConfig):
     __filters_count = 300
     __hidden_size = 300
 
+    # region properties
+
     @property
     def WindowSize(self):
         return self.__window_size
@@ -19,6 +21,10 @@ class CNNConfig(DefaultNetworkConfig):
     def HiddenSize(self):
         return self.__hidden_size
 
+    # endregion
+
+    # region public methods
+
     def _internal_get_parameters(self):
         parameters = super(CNNConfig, self)._internal_get_parameters()
 
@@ -29,3 +35,5 @@ class CNNConfig(DefaultNetworkConfig):
         ]
 
         return parameters
+
+    # endregion

@@ -4,7 +4,6 @@ from base import DefaultNetworkConfig
 
 class IANConfig(DefaultNetworkConfig):
 
-    __l2_reg = 0.001
     __hidden_size = 128
     __aspect_len = None
     __aspect_embedding_matrix = None
@@ -17,7 +16,7 @@ class IANConfig(DefaultNetworkConfig):
 
     @property
     def L2Reg(self):
-        return self.__l2_reg
+        return 0.001
 
     @property
     def LearningRate(self):
@@ -40,12 +39,24 @@ class IANConfig(DefaultNetworkConfig):
         return self.__aspect_embedding_matrix
 
     @property
+    def BiasInitializer(self):
+        return tf.zeros_initializer()
+
+    @property
+    def WeightInitializer(self):
+        return tf.random_uniform_initializer(-0.1, 0.1)
+
+    @property
     def AspectsEmbeddingShape(self):
         return self.__aspect_embedding_matrix.shape
 
     @property
     def Optimiser(self):
         return tf.train.AdamOptimizer(learning_rate=self.LearningRate)
+
+    @property
+    def LayerRegularizer(self):
+        return tf.contrib.layers.l2_regularizer(self.L2Reg)
 
     # endregion
 
@@ -62,7 +73,6 @@ class IANConfig(DefaultNetworkConfig):
         parameters = super(IANConfig, self)._internal_get_parameters()
 
         parameters += [
-            ("ian:l2_reg", self.L2Reg),
             ("ian:hidden_size", self.HiddenSize),
             ("ian:max_aspect_len", self.MaxAspectLength),
             ("ian:max_context_len", self.MaxContextLength),

@@ -4,6 +4,7 @@ import tensorflow as tf
 
 from core.networks.attention.architectures.peng_zhou import attention_by_peng_zhou
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.context.architectures.sequence import get_cell
 from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
 from core.networks.context.sample import InputSample
 import utils
@@ -33,9 +34,6 @@ class AttBiLSTM(BaseContextNeuralNetwork):
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, AttBiLSTMConfig))
 
-        # TODO. Move in configuration
-        initializer = tf.keras.initializers.glorot_normal
-
         # Bidirectional LSTM
         with tf.variable_scope("bi-lstm"):
 
@@ -44,14 +42,22 @@ class AttBiLSTM(BaseContextNeuralNetwork):
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward
-            _fw_cell = tf.nn.rnn_cell.LSTMCell(self.Config.HiddenSize, initializer=initializer())
-            fw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=_fw_cell,
-                                                    output_keep_prob=self.Config.DropoutRNNKeepProb)
+            _fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                                cell_type=self.Config.CellType,
+                                lstm_initializer=self.Config.LSTMCellInitializer)
+
+            fw_cell = tf.nn.rnn_cell.DropoutWrapper(
+                cell=_fw_cell,
+                output_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Backward
-            _bw_cell = tf.nn.rnn_cell.LSTMCell(self.Config.HiddenSize, initializer=initializer())
-            bw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=_bw_cell,
-                                                    output_keep_prob=self.Config.DropoutRNNKeepProb)
+            _bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                                cell_type=self.Config.CellType,
+                                lstm_initializer=self.Config.LSTMCellInitializer)
+
+            bw_cell = tf.nn.rnn_cell.DropoutWrapper(
+                cell=_bw_cell,
+                output_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Output
             rnn_outputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
@@ -85,14 +91,19 @@ class AttBiLSTM(BaseContextNeuralNetwork):
                                              activations=activations)
 
     def init_hidden_states(self):
-        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
-        # TODO. Refactor it
-        self.__hidden[self.H_W] = tf.Variable(
-            initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]))
-        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
-        # TODO. Refactor it
-        self.__hidden[self.H_b] = tf.Variable(
-            initial_value=tf.random_normal([self.Config.ClassesCount]))
+        self.__hidden[self.H_W] = tf.get_variable(
+            name=self.H_W,
+            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            dtype=tf.float32)
+
+        self.__hidden[self.H_b] = tf.get_variable(
+            name=self.H_b,
+            shape=[self.Config.ClassesCount],
+            initializer=self.Config.BiasInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            dtype=tf.float32)
 
     def iter_hidden_parameters(self):
         for key, value in self.__hidden.iteritems():

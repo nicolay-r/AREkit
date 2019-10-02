@@ -1,3 +1,4 @@
+import tensorflow as tf
 from base import DefaultNetworkConfig
 from core.networks.context.configurations.rnn import CellTypes
 
@@ -6,7 +7,9 @@ class RCNNConfig(DefaultNetworkConfig):
 
     __hidden_size = 128
     __context_embedding_size = 300
-    __cell_type = CellTypes.LSTM
+    __cell_type = CellTypes.BasicLSTM
+
+    # region properties
 
     @property
     def CellType(self):
@@ -20,7 +23,15 @@ class RCNNConfig(DefaultNetworkConfig):
     def HiddenSize(self):
         return self.__hidden_size
 
-    # TODO. Add l2reg lambda
+    @property
+    def WeightInitializer(self):
+        return tf.contrib.layers.xavier_initializer()
+
+    @property
+    def BiasInitializer(self):
+        return tf.constant_initializer(0.1)
+
+    # endregion
 
     def _internal_get_parameters(self):
         parameters = super(RCNNConfig, self)._internal_get_parameters()

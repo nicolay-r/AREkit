@@ -8,6 +8,7 @@ import tensorflow as tf
 from tensorflow.contrib import rnn
 from collections import OrderedDict
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.context.architectures.sequence import get_cell
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 from core.networks.context.sample import InputSample
 
@@ -36,14 +37,20 @@ class BiLSTM(BaseContextNeuralNetwork):
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward
-            _fw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
-            fw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=_fw_cell,
-                                                    output_keep_prob=self.Config.DropoutRNNKeepProb)
+            _fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                                cell_type=self.Config.CellType)
+
+            fw_cell = tf.nn.rnn_cell.DropoutWrapper(
+                cell=_fw_cell,
+                output_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Backward
-            _bw_cell = BiLSTM.__get_cell(self.Config.HiddenSize)
-            bw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=_bw_cell,
-                                                    output_keep_prob=self.Config.DropoutRNNKeepProb)
+            _bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                                cell_type=self.Config.CellType)
+
+            bw_cell = tf.nn.rnn_cell.DropoutWrapper(
+                cell=_bw_cell,
+                output_keep_prob=self.Config.DropoutRNNKeepProb)
 
             h_output_list, _, _ = rnn.static_bidirectional_rnn(cell_fw=fw_cell,
                                                                cell_bw=bw_cell,
@@ -69,21 +76,20 @@ class BiLSTM(BaseContextNeuralNetwork):
                                              activations=activations)
 
     def init_hidden_states(self):
-        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
-        # TODO. Refactor with get_variable.
-        self.__hidden[self.H_W] = tf.Variable(
-            initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.ClassesCount]))
-        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
-        # TODO. Refactor with get_variable.
-        self.__hidden[self.H_b] = tf.Variable(
-            initial_value=tf.random_normal([self.Config.ClassesCount]))
+        self.__hidden[self.H_W] = tf.get_variable(
+            name=self.H_W,
+            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            dtype=tf.float32)
+
+        self.__hidden[self.H_b] = tf.get_variable(
+            name=self.H_b,
+            shape=[self.Config.ClassesCount],
+            initializer=self.Config.BiasInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            dtype=tf.float32)
 
     def iter_hidden_parameters(self):
         for key, value in self.__hidden.iteritems():
             yield key, value
-
-    @staticmethod
-    def __get_cell(hidden_size):
-        # TODO. Refactor this.
-        # TODO. Use LSTM, or maybe that is the reason why it trains slowly.
-        return tf.nn.rnn_cell.BasicLSTMCell(hidden_size)

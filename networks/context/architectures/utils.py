@@ -73,6 +73,8 @@ def init_weighted_cost(logits_unscaled_dropout, true_labels, config):
         logits=logits_unscaled_dropout,
         labels=true_labels)
 
+    cost += tf.losses.get_regularization_loss()
+
     weights = tf.reduce_sum(
         config.ClassWeights * tf.one_hot(indices=true_labels, depth=config.ClassesCount),
         axis=1)

@@ -27,6 +27,11 @@ class DefaultNetworkConfig(object):
     __bags_per_minibatch = 6
     __bag_size = 1
     __learning_rate = 0.1
+
+    __default_weight_initializer = tf.random_normal_initializer(mean=0, stddev=1.0)
+    __default_bias_initializer = tf.zeros_initializer(dtype=tf.float32)
+    __default_regularizer = None
+
     __optimiser = tf.train.AdadeltaOptimizer(
         learning_rate=__learning_rate,
         epsilon=10e-6,
@@ -49,8 +54,13 @@ class DefaultNetworkConfig(object):
 
     def __init__(self):
         self.__embedding_dropout_keep = 1.0 - 1.0 / self.TermsPerContext
+        self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
 
     # region properties
+
+    @property
+    def L2Reg(self):
+        return 0.0
 
     @property
     def DistanceEmbeddingSize(self):
@@ -77,12 +87,33 @@ class DefaultNetworkConfig(object):
         return self.TermEmbeddingShape(0)
 
     @property
+    def BiasInitializer(self):
+        return self.__default_bias_initializer
+
+    @property
+    def WeightInitializer(self):
+        return self.__default_weight_initializer
+
+    @property
     def GPUMemoryFraction(self):
         return self.__gpu_memory_fraction
+
+    @property
+    def LayerRegularizer(self):
+        return self.__default_regularizer
 
     # endregion
 
     # region public methods
+
+    def modify_weight_initializer(self, value):
+        self.__default_weight_initializer = value
+
+    def modify_bias_initializer(self, value):
+        self.__default_bias_initializer = value
+
+    def modify_regularizer(self, value):
+        self.__default_regularizer = value
 
     def modify_test_on_epochs(self, value):
         assert(isinstance(value, list))
@@ -266,6 +297,10 @@ class DefaultNetworkConfig(object):
             ("base:embedding dropout (keep prob)", self.EmbeddingDropoutKeepProb),
             ("base:optimizer", self.Optimiser),
             ("base:learning_rate", self.LearningRate),
+            ("base:l2_reg", self.L2Reg),
+            ("base:layer_regularizer", self.LayerRegularizer),
+            ("base:weight_initializer", self.WeightInitializer),
+            ("base:bias_initializer", self.BiasInitializer),
         ]
 
     def get_parameters(self):
