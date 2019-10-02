@@ -33,6 +33,9 @@ class RCNNConfig(DefaultNetworkConfig):
 
     # endregion
 
+    def modify_cell_type(self, value):
+        self.__cell_type = value
+
     def _internal_get_parameters(self):
         parameters = super(RCNNConfig, self)._internal_get_parameters()
 

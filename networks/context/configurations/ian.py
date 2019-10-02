@@ -1,5 +1,6 @@
 import tensorflow as tf
 from base import DefaultNetworkConfig
+from core.networks.context.configurations.rnn import CellTypes
 
 
 class IANConfig(DefaultNetworkConfig):
@@ -7,6 +8,7 @@ class IANConfig(DefaultNetworkConfig):
     __hidden_size = 128
     __aspect_len = None
     __aspect_embedding_matrix = None
+    __cell_type = CellTypes.LSTM
 
     def __init__(self):
         super(IANConfig, self).__init__()
@@ -21,6 +23,10 @@ class IANConfig(DefaultNetworkConfig):
     @property
     def LearningRate(self):
         return 0.01
+
+    @property
+    def CellType(self):
+        return self.__cell_type
 
     @property
     def HiddenSize(self):
@@ -66,6 +72,9 @@ class IANConfig(DefaultNetworkConfig):
         assert(isinstance(hidden_size, int))
         self.__hidden_size = hidden_size
 
+    def modify_cell_type(self, cell_type):
+        self.__cell_type = cell_type
+
     def notify_initialization_completed(self):
         self.__aspect_embedding_matrix = self.TermEmbeddingMatrix
 
@@ -73,6 +82,7 @@ class IANConfig(DefaultNetworkConfig):
         parameters = super(IANConfig, self)._internal_get_parameters()
 
         parameters += [
+            ("ian:cell_type", self.CellType),
             ("ian:hidden_size", self.HiddenSize),
             ("ian:max_aspect_len", self.MaxAspectLength),
             ("ian:max_context_len", self.MaxContextLength),

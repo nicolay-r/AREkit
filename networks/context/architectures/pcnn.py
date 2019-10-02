@@ -7,8 +7,9 @@ from core.networks.context.sample import InputSample
 
 class PiecewiseCNN(VanillaCNN):
     """
-    Author:
-    paper: TODO.
+    Author: Daojian Zeng, Kang Liu, Yubo Chen, Jun Zhao
+    Paper: https://www.aclweb.org/anthology/D15-1203/
+    Code (unofficial repo): https://github.com/nicolay-r/sentiment-pcnn
     """
 
     @property
@@ -59,9 +60,11 @@ class PiecewiseCNN(VanillaCNN):
         assert(isinstance(self.Config, CNNConfig))
         super(PiecewiseCNN, self).init_hidden_states()
 
-        # TODO. Add initializer W
-        self.Hidden[self.H_W] = tf.Variable(
-            initial_value=tf.random_normal([self.ContextEmbeddingSize, self.Config.HiddenSize]),
+        self.Hidden[self.H_W] = tf.get_variable(
+            name='PCNN_{}'.format(self.H_W),
+            shape=[self.ContextEmbeddingSize, self.Config.HiddenSize],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32)
 
     @staticmethod

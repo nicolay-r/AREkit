@@ -1,3 +1,4 @@
+import tensorflow as tf
 from core.networks.context.configurations.base import DefaultNetworkConfig, LabelCalculationMode
 
 
@@ -12,6 +13,12 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
         super(BaseMultiInstanceConfig, self).__init__()
         self.__context_config = context_config
         self.__context_parameters_fix()
+
+    # region properties
+
+    @property
+    def L2Reg(self):
+        return 0.0
 
     @property
     def LearningRate(self):
@@ -44,6 +51,16 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
     @property
     def HiddenSize(self):
         return self.__hidden_size
+
+    @property
+    def WeightInitializer(self):
+        return tf.random_normal_initializer()
+
+    @property
+    def BaseInitializer(self):
+        return tf.random_normal_initializer()
+
+    # endregion
 
     def set_contexts_per_opinion(self, value):
         self.__contexts_per_opinion = value

@@ -52,9 +52,6 @@ class RNN(BaseContextNeuralNetwork):
     def init_logits_unscaled(self, context_embedding):
 
         with tf.name_scope("output"):
-            l2_loss = tf.constant(0.0)
-            l2_loss += tf.nn.l2_loss(self.__hidden[self.H_W])
-            l2_loss += tf.nn.l2_loss(self.__hidden[self.H_b])
             logits = tf.nn.xw_plus_b(context_embedding,
                                      self.__hidden[self.H_W],
                                      self.__hidden[self.H_b],
@@ -65,13 +62,15 @@ class RNN(BaseContextNeuralNetwork):
     def init_hidden_states(self):
 
         self.__hidden[self.H_W] = tf.get_variable(
+            name=self.H_W,
             shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
             initializer=self.Config.WeightInitializer,
-            name=self.H_W)
+            regularizer=self.Config.LayerRegularizer)
 
         self.__hidden[self.H_b] = tf.get_variable(
             name=self.H_b,
             shape=[self.Config.ClassesCount],
+            regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
 
     def iter_hidden_parameters(self):

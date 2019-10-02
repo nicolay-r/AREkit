@@ -26,20 +26,28 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
                                            contexts_per_opinion=self.ContextsPerOpinion)  # [batches, max_pooling]
 
     def init_hidden_states(self):
-        self.__hidden[self.H_W1] = tf.Variable(
-            initial_value=tf.random_normal([self.ContextNetwork.ContextEmbeddingSize, self.Config.HiddenSize]),
+        self.__hidden[self.H_W1] = tf.get_variable(
+            shape=[self.ContextNetwork.ContextEmbeddingSize, self.Config.HiddenSize],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32,
             name=self.H_W1)
-        self.__hidden[self.H_W2] = tf.Variable(
-            initial_value=tf.random_normal([self.Config.HiddenSize, self.Config.ClassesCount]),
+        self.__hidden[self.H_W2] = tf.get_variable(
+            shape=[self.Config.HiddenSize, self.Config.ClassesCount],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32,
             name=self.H_W2)
-        self.__hidden[self.H_b1] = tf.Variable(
-            initial_value=tf.random_normal([self.Config.HiddenSize]),
+        self.__hidden[self.H_b1] = tf.get_variable(
+            shape=[self.Config.HiddenSize],
+            initializer=self.Config.BaseInitializer,
+            regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32,
             name=self.H_b1)
-        self.__hidden[self.H_b2] = tf.Variable(
-            initial_value=tf.random_normal([self.Config.ClassesCount]),
+        self.__hidden[self.H_b2] = tf.get_variable(
+            shape=[self.Config.ClassesCount],
+            initializer=self.Config.BaseInitializer,
+            regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32,
             name=self.H_b2)
 

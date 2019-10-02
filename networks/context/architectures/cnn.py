@@ -75,7 +75,6 @@ class VanillaCNN(BaseContextNeuralNetwork):
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
-        # TODO. https://stackoverflow.com/questions/37098546/difference-between-variable-and-get-variable-in-tensorflow
 
         self.__hidden[self.H_W] = tf.get_variable(
             name=self.H_W,

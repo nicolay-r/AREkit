@@ -65,16 +65,30 @@ class MultiLayerPerceptronAttention(object):
                                                        shape=[self.__batch_size, self.__cfg.EntitiesPerContext])
 
     def init_hidden(self):
-        # TODO. Log this parameter
-        self.__hidden[self.H_W_we] = tf.Variable(tf.random_normal([2 * self.__term_embedding_size, self.__cfg.HiddenSize]),
-                                                 dtype=tf.float32)
-        # TODO. Log this parameter
-        self.__hidden[self.H_b_we] = tf.Variable(tf.random_normal([self.__cfg.HiddenSize]),
-                                                 dtype=tf.float32)
-        self.__hidden[self.H_W_a] = tf.Variable(tf.random_normal([self.__cfg.HiddenSize, 1]),
-                                                dtype=tf.float32)
-        self.__hidden[self.H_b_a] = tf.Variable(tf.random_normal([1]),
-                                                dtype=tf.float32)
+
+        self.__hidden[self.H_W_we] = tf.get_variable(
+            name=self.H_W_we,
+            shape=[2 * self.__term_embedding_size, self.__cfg.HiddenSize],
+            initializer=self.__cfg.LayerInitializer,
+            dtype=tf.float32)
+
+        self.__hidden[self.H_b_we] = tf.get_variable(
+            name=self.H_b_we,
+            shape=[self.__cfg.HiddenSize],
+            initializer=self.__cfg.LayerInitializer,
+            dtype=tf.float32)
+
+        self.__hidden[self.H_W_a] = tf.get_variable(
+            name=self.H_W_a,
+            shape=[self.__cfg.HiddenSize, 1],
+            initializer=self.__cfg.LayerInitializer,
+            dtype=tf.float32)
+
+        self.__hidden[self.H_b_a] = tf.get_variable(
+            name=self.H_b_a,
+            shape=[1],
+            initializer=self.__cfg.LayerInitializer,
+            dtype=tf.float32)
 
     def init_body(self, term_embedding, pos_embedding, dist_embedding):
         assert(isinstance(term_embedding, tf.Tensor))

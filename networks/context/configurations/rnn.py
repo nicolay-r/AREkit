@@ -17,6 +17,10 @@ class RNNConfig(DefaultNetworkConfig):
     # region properties
 
     @property
+    def L2Reg(self):
+        return 0.0
+
+    @property
     def CellType(self):
         return self.__cell_type
 
@@ -40,7 +44,7 @@ class RNNConfig(DefaultNetworkConfig):
 
     # region public methods
 
-    def set_cell_type(self, cell_type):
+    def modify_cell_type(self, cell_type):
         assert(isinstance(cell_type, unicode))
         self.__cell_type = cell_type
 
