@@ -230,7 +230,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         return feed_dict
 
     def iter_input_dependent_hidden_parameters(self):
-        for name, value in self.iter_input_dependent_hidden_parameters():
+        for name, value in super(BaseContextNeuralNetwork, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
         yield 'x', self.__input[InputSample.I_X_INDS]
