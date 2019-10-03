@@ -233,8 +233,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         for name, value in super(BaseContextNeuralNetwork, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
-        yield 'x', self.__input[InputSample.I_X_INDS]
-        yield 'y_labels', self.__y
+        yield u'x', self.__input[InputSample.I_X_INDS]
+        yield u'y_labels', self.__y
 
     # region static methods
 
