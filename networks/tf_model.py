@@ -151,7 +151,7 @@ class TensorflowModel(object):
     def iter_inner_input_vocabulary(self):
         word_iter = TermsEmbeddingOffsets.iter_words_vocabulary(
             words_embedding=self.Config.WordEmbedding,
-            missed_words_embedding=self.Config.MissedWordsEmbedding,
+            missed_words_embedding=self.Config.MissedWordEmbedding,
             tokens_embedding=self.Config.TokensEmbedding,
             frames_embedding=self.Config.FramesEmbedding)
 
