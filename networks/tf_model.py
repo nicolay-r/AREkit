@@ -152,8 +152,8 @@ class TensorflowModel(object):
         word_iter = TermsEmbeddingOffsets.iter_words_vocabulary(
             words_embedding=self.Config.WordEmbedding,
             missed_words_embedding=self.Config.MissedWordEmbedding,
-            tokens_embedding=self.Config.TokensEmbedding,
-            frames_embedding=self.Config.FramesEmbedding)
+            tokens_embedding=self.Config.TokenEmbedding,
+            frames_embedding=self.Config.FrameEmbedding)
 
         for word in word_iter:
             yield word
