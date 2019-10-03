@@ -7,6 +7,8 @@ class NetworkInputDependentVariables:
         self.__text_opinion_ids = OrderedDict()
         self.__by_param_names = OrderedDict()
 
+    # region public methods
+
     def has_variable(self, var_name):
         return var_name in self.__by_param_names
 
@@ -33,3 +35,5 @@ class NetworkInputDependentVariables:
 
     def iter_var_names(self):
         return self.__by_param_names.iterkeys()
+
+    # endregion

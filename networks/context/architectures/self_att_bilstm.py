@@ -149,4 +149,8 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         return loss
 
     def iter_input_dependent_hidden_parameters(self):
+
+        for name, value in super(SelfAttentionBiLSTM, self).iter_input_dependent_hidden_parameters():
+            yield name, value
+
         yield "ATT_Weights", self.__A

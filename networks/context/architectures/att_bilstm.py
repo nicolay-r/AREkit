@@ -31,6 +31,8 @@ class AttBiLSTM(BaseContextNeuralNetwork):
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize
 
+    # region init methods
+
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, AttBiLSTMConfig))
 
@@ -105,9 +107,18 @@ class AttBiLSTM(BaseContextNeuralNetwork):
             regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32)
 
+    # endregion
+
+    # region iter methods
+
     def iter_hidden_parameters(self):
         for key, value in self.__hidden.iteritems():
             yield key, value
 
     def iter_input_dependent_hidden_parameters(self):
+        for name, value in super(AttBiLSTM, self).iter_input_dependent_hidden_parameters():
+            yield name, value
+
         yield "ATT_Weights", self.__att_alphas
+
+    # endregion

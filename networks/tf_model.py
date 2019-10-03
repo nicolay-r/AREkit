@@ -8,6 +8,7 @@ from core.networks.callback import Callback
 from core.networks.cancellation import OperationCancellation
 from core.networks.context.debug import DebugKeys
 from core.networks.context.training.batch import MiniBatch
+from core.networks.context.training.embedding.offsets import TermsEmbeddingOffsets
 from core.networks.network_io import NetworkIO
 from core.networks.network import NeuralNetwork
 from core.networks.context.training.data_type import DataType
@@ -67,6 +68,8 @@ class TensorflowModel(object):
         return self.__io
 
     # endregion
+
+    # region public methods
 
     @staticmethod
     def display_log(log_names, log_values):
@@ -144,6 +147,18 @@ class TensorflowModel(object):
         text_opinions.reset_labels()
 
         return eval_result, predict_log
+
+    def iter_inner_input_vocabulary(self):
+        word_iter = TermsEmbeddingOffsets.iter_words_vocabulary(
+            words_embedding=self.Config.WordEmbedding,
+            missed_words_embedding=self.Config.MissedWordsEmbedding,
+            tokens_embedding=self.Config.TokensEmbedding,
+            frames_embedding=self.Config.FramesEmbedding)
+
+        for word in word_iter:
+            yield word
+
+    # endregion
 
     # region Abstract
 

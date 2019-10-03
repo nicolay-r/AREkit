@@ -1,5 +1,6 @@
 # Description
 ![](https://img.shields.io/badge/Python-2.7-brightgreen.svg)
+![](https://img.shields.io/badge/Tensorflow-1.14.0-yellowgreen.svg)
 
 **arekit** -- is a python toolkit (library) for sentiment **attitudes relation extraction** (ARE) task.
 Large news and analytical articles shares a large amount of opinions conveyed as by author towards 
@@ -69,7 +70,13 @@ This core provides an additional wrappers for:
 
 ### Lemmatization
 
-1. Yandex Mystem wrapper
+Available wrappers:
+1. Yandex Mystem;
+
+### Part-Of-Speech Tagger (POS)
+
+Available wrappers:
+1. Yandex Mystem;
 
 ### Named entities recognition (NER)
 

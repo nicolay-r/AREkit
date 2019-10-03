@@ -41,6 +41,9 @@ class AttentionCNN(VanillaCNN):
         return tf.concat([g, self.__init_attention_embedding()], axis=-1)
 
     def iter_input_dependent_hidden_parameters(self):
+        for name, value in super(AttentionCNN, self).iter_input_dependent_hidden_parameters():
+            yield name, value
+
         yield u"ATT_Weights", self.__att_weights
 
     def iter_hidden_parameters(self):
