@@ -53,16 +53,20 @@ class TermsEmbeddingOffsets(object):
 
         all_words = []
 
-        for index, w in words_embedding.iter_vocabulary():
+        for w, index in words_embedding.iter_vocabulary():
+            assert(isinstance(w, unicode))
             all_words.append((offsets.get_word_index(index), w))
 
-        for index, m_w in missed_words_embedding.iter_vocabulary():
+        for m_w, index in missed_words_embedding.iter_vocabulary():
+            assert(isinstance(m_w, unicode))
             all_words.append((offsets.get_word_index(index), m_w))
 
-        for index, token in tokens_embedding.iter_vocabulary():
+        for token, index in tokens_embedding.iter_vocabulary():
+            assert(isinstance(token, unicode))
             all_words.append((offsets.get_word_index(index), token))
 
-        for index, frame in frames_embedding.iter_vocabulary():
+        for frame, index in frames_embedding.iter_vocabulary():
+            assert(isinstance(frame, unicode))
             all_words.append((offsets.get_word_index(index), frame))
 
         for key, word in sorted(all_words, key=lambda item: item[0]):
