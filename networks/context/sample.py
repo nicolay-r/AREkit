@@ -132,9 +132,10 @@ class InputSample(object):
         pad_value = offsets.get_token_index(config.TokenEmbedding.find_index_by_word(Tokens.PLACEHOLDER))
 
         if sentence_len < pad_size:
-            cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=pad_value)
+            cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=0)
             cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=pad_value)
-            cls.__pad_right_inplace(term_type, pad_size=pad_size, filler=pad_value)
+            # TODO. Provide it correct.
+            cls.__pad_right_inplace(term_type, pad_size=pad_size, filler=-1)
         else:
             b, e, subj_ind, obj_ind = cls.__crop_bounds(
                 sentence_len=sentence_len,
