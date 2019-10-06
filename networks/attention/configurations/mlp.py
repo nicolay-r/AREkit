@@ -8,7 +8,7 @@ class MultiLayerPerceptronAttentionConfig(object):
 
     @property
     def LayerInitializer(self):
-        return tf.random_normal_initializer()
+        return tf.contrib.layers.xavier_initializer()
 
     @property
     def EntitiesPerContext(self):
