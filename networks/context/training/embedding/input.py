@@ -55,7 +55,4 @@ def create_term_embedding_matrix(word_embedding,
         print "Term matrix shape: {}".format(matrix.shape)
         embedding_offsets.debug_print()
 
-    # used as a placeholder
-    matrix[0] = 0
-
     return matrix

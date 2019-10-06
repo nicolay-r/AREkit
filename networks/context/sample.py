@@ -10,6 +10,8 @@ from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
 from core.common.text_opinions.text_opinion import TextOpinion
 from core.networks.context.configurations.base import DefaultNetworkConfig
+from core.networks.context.training.embedding.offsets import TermsEmbeddingOffsets
+from core.processing.text.tokens import Tokens
 
 
 class InputSample(object):
@@ -119,7 +121,15 @@ class InputSample(object):
         sentence_len = len(x_indices)
 
         pad_size = config.TermsPerContext
-        pad_value = 0
+
+        # TODO. This offsets used only to obtain pad_value.
+        # TODO. Maybe this should be moved from here to simplify the code.
+        offsets = TermsEmbeddingOffsets(
+            words_count=config.WordEmbedding.VocabularySize,
+            missed_word_embedding=config.MissedWordEmbedding.VocabularySize,
+            tokens_count=config.TokenEmbedding.VocabularySize,
+            frames_count=config.FrameEmbedding.VocabularySize)
+        pad_value = offsets.get_token_index(config.TokenEmbedding.find_index_by_word(Tokens.PLACEHOLDER))
 
         if sentence_len < pad_size:
             cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=pad_value)

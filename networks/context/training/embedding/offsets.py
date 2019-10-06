@@ -20,12 +20,18 @@ class TermsEmbeddingOffsets(object):
         self.__tokens_count = tokens_count
         self.__frames_count = frames_count
 
+    # region properties
+
     @property
     def TotalCount(self):
         return self.__missed_words_count + \
                self.__words_count + \
                self.__tokens_count + \
                self.__frames_count
+
+    # endregion
+
+    # region 'get' methods
 
     def get_word_index(self, index):
         return index
@@ -38,6 +44,8 @@ class TermsEmbeddingOffsets(object):
 
     def get_frame_index(self, index):
         return self.__words_count + self.__missed_words_count + self.__tokens_count + index
+
+    # endregion
 
     @staticmethod
     def iter_words_vocabulary(words_embedding, missed_words_embedding, tokens_embedding, frames_embedding):
@@ -59,15 +67,15 @@ class TermsEmbeddingOffsets(object):
 
         for m_w, index in missed_words_embedding.iter_vocabulary():
             assert(isinstance(m_w, unicode))
-            all_words.append((offsets.get_word_index(index), m_w))
+            all_words.append((offsets.get_static_word_index(index), m_w))
 
         for token, index in tokens_embedding.iter_vocabulary():
             assert(isinstance(token, unicode))
-            all_words.append((offsets.get_word_index(index), token))
+            all_words.append((offsets.get_token_index(index), token))
 
         for frame, index in frames_embedding.iter_vocabulary():
             assert(isinstance(frame, unicode))
-            all_words.append((offsets.get_word_index(index), frame))
+            all_words.append((offsets.get_frame_index(index), frame))
 
         for key, word in sorted(all_words, key=lambda item: item[0]):
             yield word

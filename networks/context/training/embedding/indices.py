@@ -13,7 +13,7 @@ from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 from core.networks.context.debug import DebugKeys
 
 
-ENTITY_MASK = u"entity"
+ENTITY_MASK = u"<entity>"
 
 
 def calculate_embedding_indices_for_terms(terms,

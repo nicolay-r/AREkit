@@ -26,6 +26,7 @@ class Tokens:
     NEW_LINE = _wrapper.format(u"NEW_LINE")
     UNKNOWN_CHAR = _wrapper.format(u'UNKNOWN_CHAR')
     UNKNOWN_WORD = _wrapper.format(u'UNKNOWN_WORD')
+    PLACEHOLDER = _wrapper.format(u'PLACEHOLDER')
     URL = _wrapper.format(u"URL")
 
     __token_mapping = {
@@ -67,7 +68,8 @@ class Tokens:
         URL,
         NEW_LINE,
         UNKNOWN_CHAR,
-        UNKNOWN_WORD}
+        UNKNOWN_WORD,
+        PLACEHOLDER}
 
     @staticmethod
     def try_create(subterm):
