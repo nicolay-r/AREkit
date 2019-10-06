@@ -1,7 +1,6 @@
 import tensorflow as tf
 from collections import OrderedDict
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.architectures.rnn import RNN
 from core.networks.context.architectures.sequence import get_cell
 from core.networks.context.configurations.rcnn import RCNNConfig
 from core.networks.context.sample import InputSample

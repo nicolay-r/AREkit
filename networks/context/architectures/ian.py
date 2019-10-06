@@ -55,19 +55,19 @@ class IAN(BaseContextNeuralNetwork):
                 'aspect_score': tf.get_variable(
                     name='W_a',
                     shape=[self.Config.HiddenSize, self.Config.HiddenSize],
-                    initializer=self.Config.WeigthInitializer,
+                    initializer=self.Config.WeightInitializer,
                     regularizer=self.Config.LayerRegularizer
                 ),
                 'context_score': tf.get_variable(
                     name='W_c',
                     shape=[self.Config.HiddenSize, self.Config.HiddenSize],
-                    initializer=self.Config.WeigthInitializer,
+                    initializer=self.Config.WeightInitializer,
                     regularizer=self.Config.LayerRegularizer
                 ),
                 'softmax': tf.get_variable(
                     name='W_l',
                     shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-                    initializer=self.Config.WeigthInitializer,
+                    initializer=self.Config.WeightInitializer,
                     regularizer=self.Config.LayerRegularizer
                 ),
             }

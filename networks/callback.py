@@ -8,3 +8,6 @@ class Callback(object):
 
     def on_fit_finished(self):
         pass
+
+    def set_test_on_epochs(self, value):
+        raise NotImplementedError()
