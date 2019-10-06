@@ -278,6 +278,7 @@ class DefaultNetworkConfig(object):
 
     def _internal_get_parameters(self):
         return [
+            ("base:memory_fraction", self.GPUMemoryFraction),
             ("base:use_class_weights", self.UseClassWeights),
             ("base:dropout (keep prob)", self.DropoutKeepProb),
             ("base:classes_count", self.ClassesCount),
