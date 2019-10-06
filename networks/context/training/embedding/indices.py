@@ -54,7 +54,7 @@ def calculate_embedding_indices_for_terms(terms,
         elif isinstance(term, TextFrameVariant):
             index = embedding_offsets.get_frame_index(frames_embedding.find_index_by_word(term.Variant.get_value()))
         elif isinstance(term, Entity):
-            index = embedding_offsets.get_word_index(missed_word_embedding.find_index_by_word(ENTITY_MASK))
+            index = embedding_offsets.get_static_word_index(missed_word_embedding.find_index_by_word(ENTITY_MASK))
         else:
             raise Exception("Unsuported type {}".format(term))
 
