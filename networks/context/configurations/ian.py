@@ -9,6 +9,7 @@ class IANConfig(DefaultNetworkConfig):
     __aspect_len = None
     __aspect_embedding_matrix = None
     __cell_type = CellTypes.LSTM
+    __l2_reg = 0.001
 
     def __init__(self):
         super(IANConfig, self).__init__()
@@ -18,7 +19,7 @@ class IANConfig(DefaultNetworkConfig):
 
     @property
     def L2Reg(self):
-        return 0.001
+        return self.__l2_reg
 
     @property
     def LearningRate(self):
@@ -71,6 +72,9 @@ class IANConfig(DefaultNetworkConfig):
     def modify_hidden_size(self, hidden_size):
         assert(isinstance(hidden_size, int))
         self.__hidden_size = hidden_size
+
+    def modify_l2_reg(self, value):
+        self.__l2_reg = value
 
     def modify_cell_type(self, cell_type):
         self.__cell_type = cell_type
