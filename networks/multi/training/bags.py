@@ -38,7 +38,7 @@ class MultiInstanceBagsCollection(BagsCollection):
                 bag.add_sample(create_empty_sample_func())
 
         def is_empty_last_bag():
-            return len(last_bag())
+            return len(last_bag()) == 0
 
         def is_context_continued(c_rel, p_rel):
             end_type = EntityEndType.Source
