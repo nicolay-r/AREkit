@@ -6,6 +6,8 @@ class MultiLayerPerceptronAttentionConfig(object):
     __entities_per_context = 2
     __hidden_size = 10
 
+    # region properties
+
     @property
     def LayerInitializer(self):
         return tf.contrib.layers.xavier_initializer()
@@ -18,6 +20,10 @@ class MultiLayerPerceptronAttentionConfig(object):
     def HiddenSize(self):
         return self.__hidden_size
 
+    # endregion
+
+    # region public methods
+
     def get_parameters(self):
         parameters = [
             ("mlp-attention-2016:layer_initializer", self.LayerInitializer),
@@ -26,3 +32,5 @@ class MultiLayerPerceptronAttentionConfig(object):
         ]
 
         return parameters
+
+    # endregion

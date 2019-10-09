@@ -28,4 +28,12 @@ class AttBiLSTMConfig(BiLSTMConfig):
     def LSTMCellInitializer(self):
         return self.__lstm_cell_initializer
 
+    @property
+    def BiasInitializer(self):
+        return tf.constant_initializer(0.1)
+
+    @property
+    def WeightInitializer(self):
+        return tf.contrib.layers.xavier_initializer()
+
     # endregion
