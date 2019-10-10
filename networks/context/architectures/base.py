@@ -117,11 +117,12 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         # Get output for each sample
         output = tf.nn.softmax(logits_unscaled)
-        # Create labeling only for whole bags
-        self.__labels = tf.cast(tf.argmax(self.__to_mean_of_bag(output), axis=1), tf.int32)
+        mean_output = tf.argmax(self.__to_mean_of_bag(output), axis=1)
 
-        mean_logits_unscaled_dropped = self.__to_mean_of_bag(logits_unscaled_dropped)
-        self.__cost = self.init_cost(mean_logits_unscaled_dropped)
+        # Create labeling only for whole bags
+        self.__labels = tf.cast(mean_output, tf.int32)
+
+        self.__cost = self.init_cost(logits_unscaled_dropped)
 
         self.__accuracy = self.init_accuracy()
 

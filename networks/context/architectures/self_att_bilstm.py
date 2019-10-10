@@ -50,7 +50,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                                                                                        sequence_length=s_length,
                                                                                        dtype=tf.float32)
             H = tf.concat([self.output_fw, self.output_bw], axis=2)
-            H_reshape = tf.reshape(H, [-1, 2 * self.Config.HiddenSize])
+            H_reshape = tf.reshape(H, [-1, self.ContextEmbeddingSize])
 
         with tf.name_scope("self-attention"):
             _H_s1 = tf.nn.tanh(tf.matmul(H_reshape, self.__W_s1))
@@ -105,7 +105,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
         with tf.name_scope("fully-connected"):
             M_flat = tf.reshape(context_embedding,
-                                shape=[-1, 2 * self.Config.HiddenSize * self.Config.RSize])
+                                shape=[-1, self.ContextEmbeddingSize * self.Config.RSize])
 
             W_fc = tf.get_variable(
                 name="W_fc",
@@ -117,7 +117,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                 name="b_fc",
                 shape=[self.Config.FullyConnectionSize],
                 regularizer=self.Config.LayerRegularizer,
-                initializer=tf.constant_initializer(0.1))
+                initializer=self.Config.BiasInitializer)
 
             fc = tf.nn.relu(tf.nn.xw_plus_b(M_flat, W_fc, b_fc), name="fc")
 
@@ -131,6 +131,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
     def init_cost(self, logits_unscaled_dropped):
+        loss = super(SelfAttentionBiLSTM, self).init_cost(logits_unscaled_dropped)
 
         with tf.name_scope("penalization"):
             AA_T = tf.matmul(self.__A, tf.transpose(self.__A, [0, 2, 1]))
@@ -138,15 +139,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                            shape=[-1, self.Config.RSize, self.Config.RSize])
             P = tf.square(tf.norm(AA_T - I, axis=[-2, -1], ord="fro"))
 
-        # Calculate mean cross-entropy loss
-        with tf.name_scope("loss"):
-            y = self.get_input_labels()
-            losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits_unscaled_dropped,
-                                                                    labels=y)
-            loss_P = tf.reduce_mean(P * self.Config.PenaltizationTermCoef)
-            loss = tf.reduce_mean(losses) + loss_P
-
-        return loss
+        return loss + tf.reduce_mean(P * self.Config.PenaltizationTermCoef)
 
     def iter_input_dependent_hidden_parameters(self):
 

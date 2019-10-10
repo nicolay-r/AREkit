@@ -30,6 +30,10 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
     # region public methods
 
     @property
+    def LearningRate(self):
+        return 1e-3
+
+    @property
     def FullyConnectionSize(self):
         return self.__fc_size
 
