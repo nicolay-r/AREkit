@@ -36,7 +36,9 @@ class RNN(BaseContextNeuralNetwork):
 
             # Forward cell
             cell = get_cell(self.Config.HiddenSize, self.Config.CellType)
+            # TODO. Make a part of config.
             cell = tf.nn.rnn_cell.DropoutWrapper(cell=cell,
+                                                 # TODO. INCORRECT PARAMETER PASSED.
                                                  output_keep_prob=self.DropoutKeepProb)
 
             # Output

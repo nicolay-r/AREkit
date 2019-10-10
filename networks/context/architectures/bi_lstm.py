@@ -40,6 +40,7 @@ class BiLSTM(BaseContextNeuralNetwork):
             _fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
                                 cell_type=self.Config.CellType)
 
+            # TODO. Make a part of config.
             fw_cell = tf.nn.rnn_cell.DropoutWrapper(
                 cell=_fw_cell,
                 output_keep_prob=self.Config.DropoutRNNKeepProb)
@@ -48,6 +49,7 @@ class BiLSTM(BaseContextNeuralNetwork):
             _bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
                                 cell_type=self.Config.CellType)
 
+            # TODO. Make a part of config.
             bw_cell = tf.nn.rnn_cell.DropoutWrapper(
                 cell=_bw_cell,
                 output_keep_prob=self.Config.DropoutRNNKeepProb)

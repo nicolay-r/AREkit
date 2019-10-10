@@ -48,6 +48,7 @@ class AttBiLSTM(BaseContextNeuralNetwork):
                                 cell_type=self.Config.CellType,
                                 lstm_initializer=self.Config.LSTMCellInitializer)
 
+            # TODO. Make a part of config. and move into method above.
             fw_cell = tf.nn.rnn_cell.DropoutWrapper(
                 cell=_fw_cell,
                 output_keep_prob=self.Config.DropoutRNNKeepProb)
@@ -57,6 +58,7 @@ class AttBiLSTM(BaseContextNeuralNetwork):
                                 cell_type=self.Config.CellType,
                                 lstm_initializer=self.Config.LSTMCellInitializer)
 
+            # TODO. Make a part of config. and move into method above.
             bw_cell = tf.nn.rnn_cell.DropoutWrapper(
                 cell=_bw_cell,
                 output_keep_prob=self.Config.DropoutRNNKeepProb)
@@ -119,6 +121,6 @@ class AttBiLSTM(BaseContextNeuralNetwork):
         for name, value in super(AttBiLSTM, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
-        yield "ATT_Weights", self.__att_alphas
+        yield u"ATT_Weights", self.__att_alphas
 
     # endregion

@@ -34,11 +34,13 @@ class RCNN(BaseContextNeuralNetwork):
 
             fw_cell = get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
                                cell_type=self.Config.CellType)
+            # TODO. Make a part of config.
             fw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=fw_cell,
                                                     output_keep_prob=self.DropoutKeepProb)
 
             bw_cell = get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
                                cell_type=self.Config.CellType)
+            # TODO. Make a part of config.
             bw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=bw_cell,
                                                     output_keep_prob=self.DropoutKeepProb)
 
