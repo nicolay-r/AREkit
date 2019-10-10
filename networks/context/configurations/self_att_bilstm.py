@@ -31,7 +31,7 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
 
     @property
     def LearningRate(self):
-        return 1e-3
+        return 0.1
 
     @property
     def FullyConnectionSize(self):
