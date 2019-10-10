@@ -216,10 +216,10 @@ class IAN(BaseContextNeuralNetwork):
         assert(isinstance(self.__biases, dict))
 
         for key, value in self.__weights.iteritems():
-            yield 'w_{}'.format(key), value
+            yield u'w_{}'.format(key), value
 
         for key, value in self.__biases.iteritems():
-            yield 'b_{}'.format(key), value
+            yield u'b_{}'.format(key), value
 
     def create_feed_dict(self, input, data_type):
         feed_dict = super(IAN, self).create_feed_dict(input, data_type)

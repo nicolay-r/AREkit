@@ -54,11 +54,11 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     @property
     def WeightInitializer(self):
-        return tf.random_normal_initializer()
+        return tf.contrib.layers.xavier_initializer()()
 
     @property
     def BaseInitializer(self):
-        return tf.random_normal_initializer()
+        return tf.random_uniform_initializer(-0.1, 0.1)
 
     # endregion
 
@@ -100,6 +100,9 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
     def notify_initialization_completed(self):
         super(BaseMultiInstanceConfig, self).notify_initialization_completed()
         self.__context_config.notify_initialization_completed()
+
+    def fix_context_parameters(self):
+        self.__context_parameters_fix()
 
     def __context_parameters_fix(self):
         self.__context_config.modify_bag_size(1)
