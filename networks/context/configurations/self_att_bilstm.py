@@ -38,7 +38,7 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
         return self.__r_size
 
     @property
-    def PCoef(self):
+    def PenaltizationTermCoef(self):
         return self.__p_coef
 
     @property
@@ -55,13 +55,16 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
 
     # endregion
 
+    def modify_penaltization_term_coef(self, value):
+        self.__p_coef = value
+
     def _internal_get_parameters(self):
         parameters = super(SelfAttentionBiLSTMConfig, self)._internal_get_parameters()
 
         parameters += [
             ("sa-bilstm:fully_connection_size", self.FullyConnectionSize),
             ("sa-bilstm:r_size", self.RSize),
-            ("sa-bilstm:p_coef", self.PCoef),
+            ("sa-bilstm:p_coef", self.PenaltizationTermCoef),
             ("sa-bilstm:da_size", self.DASize)
         ]
 

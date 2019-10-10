@@ -143,7 +143,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             y = self.get_input_labels()
             losses = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits_unscaled_dropped,
                                                                     labels=y)
-            loss_P = tf.reduce_mean(P * self.Config.PCoef)
+            loss_P = tf.reduce_mean(P * self.Config.PenaltizationTermCoef)
             loss = tf.reduce_mean(losses) + loss_P
 
         return loss

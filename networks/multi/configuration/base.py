@@ -54,7 +54,7 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     @property
     def WeightInitializer(self):
-        return tf.contrib.layers.xavier_initializer()()
+        return tf.contrib.layers.xavier_initializer()
 
     @property
     def BaseInitializer(self):
