@@ -3,7 +3,7 @@ import tensorflow as tf
 
 def calculate_sequence_length(sequence):
     assert(isinstance(sequence, tf.Tensor))
-
+    # TODO. Update as we have a non zero PLACEHOLER.
     relevant = tf.sign(tf.abs(sequence))
     length = tf.reduce_sum(relevant, reduction_indices=1)
     length = tf.cast(length, tf.int32)

@@ -23,10 +23,6 @@ class IANConfig(DefaultNetworkConfig):
         return self.__l2_reg
 
     @property
-    def LearningRate(self):
-        return 0.01
-
-    @property
     def CellType(self):
         return self.__cell_type
 

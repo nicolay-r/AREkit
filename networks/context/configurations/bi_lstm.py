@@ -8,12 +8,13 @@ class BiLSTMConfig(DefaultNetworkConfig):
     __hidden_size = 128
     __cell_type = CellTypes.BasicLSTM
     __dropout_rnn_keep_prob = 1.0
+    __l2_reg = 0.001
 
     # region properties
 
     @property
     def L2Reg(self):
-        return 0.001
+        return self.__l2_reg
 
     @property
     def HiddenSize(self):
@@ -22,10 +23,6 @@ class BiLSTMConfig(DefaultNetworkConfig):
     @property
     def CellType(self):
         return self.__cell_type
-
-    @property
-    def LearningRate(self):
-        return 0.1
 
     @property
     def BiasInitializer(self):
@@ -54,6 +51,9 @@ class BiLSTMConfig(DefaultNetworkConfig):
     def modify_dropout_rnn_keep_prob(self, value):
         assert(isinstance(value, float))
         self.__dropout_rnn_keep_prob = value
+
+    def modify_l2_reg(self, value):
+        self.__l2_reg = value
 
     def _internal_get_parameters(self):
         parameters = super(BiLSTMConfig, self)._internal_get_parameters()

@@ -18,20 +18,12 @@ class RNNConfig(DefaultNetworkConfig):
     # region properties
 
     @property
-    def L2Reg(self):
-        return 0.0
-
-    @property
     def CellType(self):
         return self.__cell_type
 
     @property
     def HiddenSize(self):
         return self.__hidden_size
-
-    @property
-    def LearningRate(self):
-        return 0.01
 
     @property
     def BiasInitializer(self):
