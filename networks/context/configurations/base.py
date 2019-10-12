@@ -16,8 +16,10 @@ class DefaultNetworkConfig(object):
     __gpu_memory_fraction = 0.25
     __test_on_epoch = range(0, 30000, 50)
     __use_class_weights = True
-    __dropout_keep = 0.5
-    __embedding_dropout_keep = None
+
+    __dropout_keep_prob = 0.5
+    __embedding_dropout_keep_prob = 1.0
+
     __classes_count = 9
     __keep_tokens = True
     __default_stemmer = MystemWrapper()
@@ -45,7 +47,6 @@ class DefaultNetworkConfig(object):
     __term_embedding_matrix = None   # Includes embeddings of: words, entities, tokens.
     __class_weights = None
     __use_pos_emb = True
-    __use_embedding_dropout = False
     __pos_emb_size = 5
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
@@ -53,7 +54,6 @@ class DefaultNetworkConfig(object):
     # endregion
 
     def __init__(self):
-        self.__embedding_dropout_keep = 1.0 - 1.0 / self.TermsPerContext
         self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
 
     # region properties
@@ -134,7 +134,12 @@ class DefaultNetworkConfig(object):
     def modify_dropout_keep_prob(self, value):
         assert(isinstance(value, float))
         assert(0 < value <= 1.0)
-        self.__dropout_keep = value
+        self.__dropout_keep_prob = value
+
+    def modify_embedding_dropout_keep_prob(self, value):
+        assert(isinstance(value, float))
+        assert(0 < value <= 1.0)
+        self.__embedding_dropout_keep_prob = value
 
     def modify_bags_per_minibatch(self, value):
         assert(isinstance(value, int))
@@ -218,7 +223,7 @@ class DefaultNetworkConfig(object):
 
     @property
     def DropoutKeepProb(self):
-        return self.__dropout_keep
+        return self.__dropout_keep_prob
 
     @property
     def KeepTokens(self):
@@ -266,11 +271,7 @@ class DefaultNetworkConfig(object):
 
     @property
     def EmbeddingDropoutKeepProb(self):
-        return self.__embedding_dropout_keep
-
-    @property
-    def UseEmbeddingDropout(self):
-        return self.__use_embedding_dropout
+        return self.__embedding_dropout_keep_prob
 
     @property
     def FramesPerContext(self):
@@ -294,7 +295,6 @@ class DefaultNetworkConfig(object):
             ("base:pos_emb_size", self.PosEmbeddingSize),
             ("base:dist_embedding_size", self.DistanceEmbeddingSize),
             ("base:text_opinion_label_calc_mode", self.TextOpinionLabelCalculationMode),
-            ("base:use_embedding_dropout", self.UseEmbeddingDropout),
             ("base:embedding dropout (keep prob)", self.EmbeddingDropoutKeepProb),
             ("base:optimizer", self.Optimiser),
             ("base:learning_rate", self.LearningRate),

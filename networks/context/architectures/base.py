@@ -140,9 +140,9 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         raise NotImplementedError()
 
     def init_embedded_input(self):
-        return self.optional_process_embedded_data(self.__cfg,
-                                                   self.__init_embedded_terms(),
-                                                   self.__embedding_dropout_keep_prob)
+        return self.process_embedded_data(
+            embedded=self.__init_embedded_terms(),
+            dropout_keep_prob=self.__embedding_dropout_keep_prob)
 
     def init_input(self):
         """
@@ -242,13 +242,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     # region static methods
 
     @staticmethod
-    def optional_process_embedded_data(config, embedded, dropout_keep_prob):
-        assert(isinstance(config, DefaultNetworkConfig))
-
-        if config.UseEmbeddingDropout:
-            return tf.nn.dropout(embedded, keep_prob=dropout_keep_prob)
-
-        return embedded
+    def process_embedded_data(embedded, dropout_keep_prob):
+        return tf.nn.dropout(embedded, keep_prob=dropout_keep_prob)
 
     # endregion
 

@@ -96,10 +96,10 @@ class IAN(BaseContextNeuralNetwork):
         aspect_inputs = tf.cast(x=tf.nn.embedding_lookup(params=self.__E_aspects,
                                                          ids=self.__aspects),
                                 dtype=tf.float32)
-        self.__aspect_inputs = self.optional_process_embedded_data(
-            self.Config,
-            aspect_inputs,
-            self.EmbeddingDropoutKeepProb)
+
+        self.__aspect_inputs = self.process_embedded_data(
+            embedded=aspect_inputs,
+            dropout_keep_prob=self.EmbeddingDropoutKeepProb)
 
         return super(IAN, self).init_embedded_input()
 
@@ -173,7 +173,8 @@ class IAN(BaseContextNeuralNetwork):
 
     def create_feed_dict(self, input, data_type):
         feed_dict = super(IAN, self).create_feed_dict(input, data_type)
-
+        # TODO. Implement a different model with frame_inds.
+        # TODO. But original could be based on atitute ends.
         feed_dict[self.__aspects] = input[InputSample.I_FRAME_INDS]
 
         return feed_dict
