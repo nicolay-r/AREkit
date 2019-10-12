@@ -44,24 +44,16 @@ class AttBiLSTM(BaseContextNeuralNetwork):
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward
-            _fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                                cell_type=self.Config.CellType,
-                                lstm_initializer=self.Config.LSTMCellInitializer)
-
-            # TODO. Make a part of config. and move into method above.
-            fw_cell = tf.nn.rnn_cell.DropoutWrapper(
-                cell=_fw_cell,
-                output_keep_prob=self.Config.DropoutRNNKeepProb)
+            fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                               cell_type=self.Config.CellType,
+                               lstm_initializer=self.Config.LSTMCellInitializer,
+                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Backward
-            _bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                                cell_type=self.Config.CellType,
-                                lstm_initializer=self.Config.LSTMCellInitializer)
-
-            # TODO. Make a part of config. and move into method above.
-            bw_cell = tf.nn.rnn_cell.DropoutWrapper(
-                cell=_bw_cell,
-                output_keep_prob=self.Config.DropoutRNNKeepProb)
+            bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                               cell_type=self.Config.CellType,
+                               lstm_initializer=self.Config.LSTMCellInitializer,
+                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Output
             rnn_outputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,

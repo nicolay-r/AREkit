@@ -10,6 +10,7 @@ class IANConfig(DefaultNetworkConfig):
     __aspect_embedding_matrix = None
     __cell_type = CellTypes.LSTM
     __l2_reg = 0.001
+    __dropout_rnn_keep_prob = 1.0
 
     def __init__(self):
         super(IANConfig, self).__init__()
@@ -65,6 +66,10 @@ class IANConfig(DefaultNetworkConfig):
     def LayerRegularizer(self):
         return tf.contrib.layers.l2_regularizer(self.L2Reg)
 
+    @property
+    def DropoutRNNKeepProb(self):
+        return self.__dropout_rnn_keep_prob
+
     # endregion
 
     # region public methods
@@ -82,6 +87,10 @@ class IANConfig(DefaultNetworkConfig):
     def notify_initialization_completed(self):
         self.__aspect_embedding_matrix = self.TermEmbeddingMatrix
 
+    def modify_dropout_rnn_keep_prob(self, value):
+        assert(isinstance(value, float))
+        self.__dropout_rnn_keep_prob = value
+
     def _internal_get_parameters(self):
         parameters = super(IANConfig, self)._internal_get_parameters()
 
@@ -90,6 +99,7 @@ class IANConfig(DefaultNetworkConfig):
             ("ian:hidden_size", self.HiddenSize),
             ("ian:max_aspect_len", self.MaxAspectLength),
             ("ian:max_context_len", self.MaxContextLength),
+            ("ian:dropout_keep_prob", self.DropoutRNNKeepProb),
         ]
 
         return parameters

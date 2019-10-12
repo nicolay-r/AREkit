@@ -36,23 +36,15 @@ class BiLSTM(BaseContextNeuralNetwork):
             x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
-            # Forward
-            _fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                                cell_type=self.Config.CellType)
+            # Forward cell
+            fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                               cell_type=self.Config.CellType,
+                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
-            # TODO. Make a part of config.
-            fw_cell = tf.nn.rnn_cell.DropoutWrapper(
-                cell=_fw_cell,
-                output_keep_prob=self.Config.DropoutRNNKeepProb)
-
-            # Backward
-            _bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                                cell_type=self.Config.CellType)
-
-            # TODO. Make a part of config.
-            bw_cell = tf.nn.rnn_cell.DropoutWrapper(
-                cell=_bw_cell,
-                output_keep_prob=self.Config.DropoutRNNKeepProb)
+            # Backward cell
+            bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+                               cell_type=self.Config.CellType,
+                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             h_output_list, _, _ = rnn.static_bidirectional_rnn(cell_fw=fw_cell,
                                                                cell_bw=bw_cell,

@@ -40,9 +40,12 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                               cell_type=self.Config.CellType)
+                               cell_type=self.Config.CellType,
+                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+
             bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                               cell_type=self.Config.CellType)
+                               cell_type=self.Config.CellType,
+                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
                                                                                        cell_bw=bw_cell,

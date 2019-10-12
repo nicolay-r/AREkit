@@ -8,6 +8,7 @@ class RCNNConfig(DefaultNetworkConfig):
     __hidden_size = 128
     __context_embedding_size = 300
     __cell_type = CellTypes.BasicLSTM
+    __dropout_rnn_keep_prob = 1.0
 
     # region properties
 
@@ -31,15 +32,24 @@ class RCNNConfig(DefaultNetworkConfig):
     def BiasInitializer(self):
         return tf.constant_initializer(0.1)
 
+    @property
+    def DropoutRNNKeepProb(self):
+        return self.__dropout_rnn_keep_prob
+
     # endregion
 
     def modify_cell_type(self, value):
         self.__cell_type = value
 
+    def modify_dropout_rnn_keep_prob(self, value):
+        assert(isinstance(value, float))
+        self.__dropout_rnn_keep_prob = value
+
     def _internal_get_parameters(self):
         parameters = super(RCNNConfig, self)._internal_get_parameters()
 
         parameters += [
+            ("rcnn:dropout_rnn_keep_prob", self.DropoutRNNKeepProb),
             ("rcnn:cell_type", self.CellType),
             ("rcnn:hidden_size", self.HiddenSize),
             ("rcnn:context_size (one side)", self.SurroundingOneSideContextEmbeddingSize),

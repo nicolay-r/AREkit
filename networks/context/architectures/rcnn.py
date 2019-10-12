@@ -33,16 +33,12 @@ class RCNN(BaseContextNeuralNetwork):
         with tf.name_scope("bi-rnn"):
 
             fw_cell = get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
-                               cell_type=self.Config.CellType)
-            # TODO. Make a part of config.
-            fw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=fw_cell,
-                                                    output_keep_prob=self.DropoutKeepProb)
+                               cell_type=self.Config.CellType,
+                               dropout_rnn_keep_prob=self.Config.DrooutRNNKeepProb)
 
             bw_cell = get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
-                               cell_type=self.Config.CellType)
-            # TODO. Make a part of config.
-            bw_cell = tf.nn.rnn_cell.DropoutWrapper(cell=bw_cell,
-                                                    output_keep_prob=self.DropoutKeepProb)
+                               cell_type=self.Config.CellType,
+                               dropout_rnn_keep_prob=self.Config.DrooutRNNKeepProb)
 
             (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(
                 cell_fw=fw_cell,

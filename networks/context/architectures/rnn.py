@@ -35,11 +35,9 @@ class RNN(BaseContextNeuralNetwork):
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward cell
-            cell = get_cell(self.Config.HiddenSize, self.Config.CellType)
-            # TODO. Make a part of config.
-            cell = tf.nn.rnn_cell.DropoutWrapper(cell=cell,
-                                                 # TODO. INCORRECT PARAMETER PASSED.
-                                                 output_keep_prob=self.DropoutKeepProb)
+            cell = get_cell(hidden_size=self.Config.HiddenSize,
+                            cell_type=self.Config.CellType,
+                            dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Output
             all_outputs, _ = tf.nn.dynamic_rnn(cell=cell,

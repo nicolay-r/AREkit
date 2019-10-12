@@ -30,7 +30,7 @@ def init_config(config):
 
 
 def contexts_supported():
-    return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
+    return [# (SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
             (AttBiLSTMConfig(), AttBiLSTM()),
             (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),

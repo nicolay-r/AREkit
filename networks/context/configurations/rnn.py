@@ -13,6 +13,7 @@ class RNNConfig(DefaultNetworkConfig):
 
     __hidden_size = 300
     __cell_type = CellTypes.BasicLSTM
+    __dropout_rnn_keep_prob = 1.0
 
     # region properties
 
@@ -40,6 +41,10 @@ class RNNConfig(DefaultNetworkConfig):
     def WeightInitializer(self):
         return tf.contrib.layers.xavier_initializer()
 
+    @property
+    def DropoutRNNKeepProb(self):
+        return self.__dropout_rnn_keep_prob
+
     # endregion
 
     # region public methods
@@ -52,10 +57,15 @@ class RNNConfig(DefaultNetworkConfig):
         assert(isinstance(value, int) and value > 0)
         self.__hidden_size = value
 
+    def modify_dropout_rnn_keep_prob(self, value):
+        assert(isinstance(value, float))
+        self.__dropout_rnn_keep_prob = value
+
     def _internal_get_parameters(self):
         parameters = super(RNNConfig, self)._internal_get_parameters()
 
         parameters += [
+            ("rnn:dropout_rnn_keep_prob", self.DropoutRNNKeepProb),
             ("rnn:hidden_size", self.HiddenSize),
             ("rnn:cell_type", self.CellType),
         ]

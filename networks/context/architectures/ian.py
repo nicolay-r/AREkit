@@ -4,7 +4,6 @@ from tensorflow.python.ops import math_ops
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.architectures.sequence import get_cell
 from core.networks.context.configurations.ian import IANConfig
-from core.networks.context.configurations.rnn import CellTypes
 from core.networks.context.sample import InputSample
 import utils
 
@@ -112,7 +111,9 @@ class IAN(BaseContextNeuralNetwork):
             aspect_lens = utils.calculate_sequence_length(self.__aspects)
 
             aspect_outputs, aspect_state = tf.nn.dynamic_rnn(
-                cell=get_cell(hidden_size=self.Config.HiddenSize, cell_type=self.Config.CellType),
+                cell=get_cell(hidden_size=self.Config.HiddenSize,
+                              cell_type=self.Config.CellType,
+                              dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb),
                 inputs=aspect_inputs,
                 sequence_length=aspect_lens,
                 dtype=tf.float32,
@@ -124,7 +125,9 @@ class IAN(BaseContextNeuralNetwork):
             context_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
 
             context_outputs, context_state = tf.nn.dynamic_rnn(
-                cell=get_cell(hidden_size=self.Config.HiddenSize, cell_type=self.Config.CellType),
+                cell=get_cell(hidden_size=self.Config.HiddenSize,
+                              cell_type=self.Config.CellType,
+                              dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb),
                 inputs=context_inputs,
                 sequence_length=context_lens,
                 dtype=tf.float32,
