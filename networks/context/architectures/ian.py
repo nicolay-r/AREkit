@@ -14,14 +14,18 @@ class IAN(BaseContextNeuralNetwork):
     Code: https://github.com/lpq29743/IAN/blob/master/model.py
     """
 
+    ASPECT_W = 'W_a'
+    CONTEXT_W = 'W_c'
+    SOFTMAX_W = 'W_l'
+
+    ASPECT_B = 'B_a'
+    CONTEXT_B = 'B_c'
+    SOFTMAX_B = 'B_l'
+
     def __init__(self):
         super(IAN, self).__init__()
         self.__aspects = None
         self.__E_aspects = None
-        # TODO. May use {} instead on None at init.
-        self.__weights = None
-        # TODO. May use {} instead on None at init.
-        self.__biases = None
         self.__aspect_inputs = None
 
         self.__aspect_atts = None
@@ -51,55 +55,47 @@ class IAN(BaseContextNeuralNetwork):
     def init_hidden_states(self):
         assert(isinstance(self.Config, IANConfig))
 
-        with tf.name_scope('weights'):
-            self.__weights = {
-                'aspect_score': tf.get_variable(
-                    name='W_a',
-                    shape=[self.Config.HiddenSize, self.Config.HiddenSize],
-                    initializer=self.Config.WeightInitializer,
-                    regularizer=self.Config.LayerRegularizer,
-                    trainable=True
-                ),
-                'context_score': tf.get_variable(
-                    name='W_c',
-                    shape=[self.Config.HiddenSize, self.Config.HiddenSize],
-                    initializer=self.Config.WeightInitializer,
-                    regularizer=self.Config.LayerRegularizer,
-                    trainable=True
-                ),
-                'softmax': tf.get_variable(
-                    name='W_l',
-                    shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-                    initializer=self.Config.WeightInitializer,
-                    regularizer=self.Config.LayerRegularizer,
-                    trainable=True
-                ),
-            }
+        self.w_a = tf.get_variable(
+            name=self.ASPECT_W,
+            shape=[self.Config.HiddenSize, self.Config.HiddenSize],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            trainable=True)
 
-        with tf.name_scope('biases'):
-            self.__biases = {
-                'aspect_score': tf.get_variable(
-                    name='B_a',
-                    shape=[self.Config.MaxAspectLength, 1],
-                    initializer=self.Config.BiasInitializer,
-                    regularizer=self.Config.LayerRegularizer,
-                    trainable=True
-                ),
-                'context_score': tf.get_variable(
-                    name='B_c',
-                    shape=[self.Config.MaxContextLength, 1],
-                    initializer=self.Config.BiasInitializer,
-                    regularizer=self.Config.LayerRegularizer,
-                    trainable=True
-                ),
-                'softmax': tf.get_variable(
-                    name='B_l',
-                    shape=[self.Config.ClassesCount],
-                    initializer=self.Config.BiasInitializer,
-                    regularizer=self.Config.LayerRegularizer,
-                    trainable=True
-                ),
-            }
+        self.w_c = tf.get_variable(
+            name=self.CONTEXT_W,
+            shape=[self.Config.HiddenSize, self.Config.HiddenSize],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            trainable=True)
+
+        self.w_l = tf.get_variable(
+            name=self.SOFTMAX_W,
+            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            trainable=True)
+
+        self.b_a = tf.get_variable(
+            name=self.ASPECT_B,
+            shape=[self.Config.MaxAspectLength, 1],
+            initializer=self.Config.BiasInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            trainable=True)
+
+        self.b_c = tf.get_variable(
+            name=self.CONTEXT_B,
+            shape=[self.Config.MaxContextLength, 1],
+            initializer=self.Config.BiasInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            trainable=True)
+
+        self.b_l = tf.get_variable(
+            name=self.SOFTMAX_B,
+            shape=[self.Config.ClassesCount],
+            initializer=self.Config.BiasInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            trainable=True)
 
     def init_embedded_input(self):
 
@@ -178,20 +174,15 @@ class IAN(BaseContextNeuralNetwork):
 
     def init_logits_unscaled(self, context_embedding):
         return utils.get_k_layer_pair_logits(g=context_embedding,
-                                             W=[self.__weights['softmax']],
-                                             b=[self.__biases['softmax']],
+                                             W=[self.w_l],
+                                             b=[self.b_l],
                                              dropout_keep_prob=self.DropoutKeepProb,
                                              activations=[tf.tanh, None])
 
     def iter_hidden_parameters(self):
-        assert(isinstance(self.__weights, dict))
-        assert(isinstance(self.__biases, dict))
-
-        for key, value in self.__weights.iteritems():
-            yield u'w_{}'.format(key), value
-
-        for key, value in self.__biases.iteritems():
-            yield u'b_{}'.format(key), value
+        yield self.ASPECT_W, self.w_a
+        yield self.CONTEXT_W, self.w_c
+        yield self.SOFTMAX_W, self.w_l
 
     def create_feed_dict(self, input, data_type):
         feed_dict = super(IAN, self).create_feed_dict(input, data_type)
