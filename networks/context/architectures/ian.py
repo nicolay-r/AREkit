@@ -31,7 +31,8 @@ class IAN(BaseContextNeuralNetwork):
 
     @property
     def ContextEmbeddingSize(self):
-        return self.Config.HiddenSize * 2
+        # return self.Config.HiddenSize * 2
+        return self.Config.HiddenSize
 
     def init_input(self):
         super(IAN, self).init_input()
@@ -123,31 +124,31 @@ class IAN(BaseContextNeuralNetwork):
         with tf.name_scope('dynamic_rnn'):
 
             # Prepare cells
-            aspect_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                                   cell_type=self.Config.CellType,
-                                   dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+            # aspect_cell = get_cell(hidden_size=self.Config.HiddenSize,
+            #                        cell_type=self.Config.CellType,
+            #                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             context_cell = get_cell(hidden_size=self.Config.HiddenSize,
                                     cell_type=self.Config.CellType,
                                     dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Calculate input lengths
-            aspect_lens = utils.calculate_sequence_length(self.__aspects)
-            aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
+            # aspect_lens = utils.calculate_sequence_length(self.__aspects)
+            # aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
 
             context_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             context_lens_casted = tf.cast(x=tf.maximum(context_lens, 1), dtype=tf.int32)
 
             # Receive aspect output
-            aspect_outputs, _ = tf.nn.dynamic_rnn(cell=aspect_cell,
-                                                  inputs=aspect_inputs,
-                                                  sequence_length=aspect_lens_casted,
-                                                  dtype=tf.float32,
-                                                  scope='aspect_outputs')
+            # aspect_outputs, _ = tf.nn.dynamic_rnn(cell=aspect_cell,
+            #                                       inputs=aspect_inputs,
+            #                                       sequence_length=aspect_lens_casted,
+            #                                       dtype=tf.float32,
+            #                                       scope='aspect_outputs')
             # TODO. Select last instead.
             # TODO. But also keep original (add in config)
             # aspect_avg = tf.reduce_mean(aspect_outputs, 1)
-            aspect_avg = utils.select_last_relevant_in_sequence(aspect_outputs, aspect_lens_casted)
+            # aspect_avg = utils.select_last_relevant_in_sequence(aspect_outputs, aspect_lens_casted)
 
             # Receive context output
             context_outputs, _ = tf.nn.dynamic_rnn(cell=context_cell,
@@ -172,7 +173,8 @@ class IAN(BaseContextNeuralNetwork):
             #                          tf.expand_dims(aspect_avg, -1)) + self.__biases['context_score']))
             # context_rep = tf.reduce_sum(context_att * context_outputs, 1)
 
-            return tf.concat([aspect_avg, context_avg], 1)
+            # return tf.concat([context_avg, context_avg], 1)
+            return context_avg
 
     def init_logits_unscaled(self, context_embedding):
         return utils.get_k_layer_pair_logits(g=context_embedding,
