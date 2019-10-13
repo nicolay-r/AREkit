@@ -62,6 +62,10 @@ class AttBiLSTM(BaseContextNeuralNetwork):
                                                              sequence_length=s_length,
                                                              dtype=tf.float32)
 
+            # TODO. Implement the latter.
+            # TODO. Implement the latter.
+            # TODO. Implement the latter.
+
             # TODO. Here we can make an extraction of frames.
             # TODO. As a part of separated model
             # TODO. att_frames_bilstm.

@@ -47,6 +47,9 @@ class RCNN(BaseContextNeuralNetwork):
                 sequence_length=text_length,
                 dtype=tf.float32)
 
+            # TODO. Select last relevant!
+            # TODO. Implement the latter.
+
         with tf.name_scope("ctx"):
             shape = [tf.shape(self.output_fw)[0], 1, tf.shape(self.output_fw)[2]]
             c_left = tf.concat([tf.zeros(shape), self.output_fw[:, :-1]], axis=1, name="context_left")

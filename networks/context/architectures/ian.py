@@ -141,6 +141,8 @@ class IAN(BaseContextNeuralNetwork):
                                                   sequence_length=aspect_lens,
                                                   dtype=tf.float32,
                                                   scope='aspect_outputs')
+            # TODO. Select last instead.
+            # TODO. But also keep original (add in config)
             aspect_avg = tf.reduce_mean(aspect_outputs, 1)
 
             # Receive context output
@@ -149,6 +151,8 @@ class IAN(BaseContextNeuralNetwork):
                                                    sequence_length=context_lens,
                                                    dtype=tf.float32,
                                                    scope='context_outputs')
+            # TODO. Select last instead.
+            # TODO. But also keep original (add in config)
             context_avg = tf.reduce_mean(context_outputs, 1)
 
             # Attention for aspects
@@ -187,6 +191,4 @@ class IAN(BaseContextNeuralNetwork):
         # TODO. Implement a different model with frame_inds.
         # TODO. But original could be based on atitute ends.
         feed_dict[self.__aspects] = input[InputSample.I_FRAME_INDS]
-
-
         return feed_dict
