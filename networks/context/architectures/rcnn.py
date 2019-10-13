@@ -10,7 +10,8 @@ import utils
 class RCNN(BaseContextNeuralNetwork):
     """
     Copyright (c) Joohong Lee
-    page: https://github.com/roomylee
+    page: https://github.com/roomylee/rcnn-text-classification
+    paper: https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/view/9745
     """
 
     H_W = "W"
