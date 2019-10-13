@@ -156,18 +156,18 @@ class IAN(BaseContextNeuralNetwork):
             context_avg = tf.reduce_mean(context_outputs, 1)
 
             # Attention for aspects
-            aspect_att = tf.nn.softmax(
-                tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', aspect_outputs, self.__weights['aspect_score'],
-                                     tf.expand_dims(context_avg, -1)) + self.__biases['aspect_score']))
-            aspect_rep = tf.reduce_sum(aspect_att * aspect_outputs, 1)
+            # aspect_att = tf.nn.softmax(
+            #     tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', aspect_outputs, self.__weights['aspect_score'],
+            #                          tf.expand_dims(context_avg, -1)) + self.__biases['aspect_score']))
+            # aspect_rep = tf.reduce_sum(aspect_att * aspect_outputs, 1)
 
-            # Attention for context
-            context_att = tf.nn.softmax(
-                tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', context_outputs, self.__weights['context_score'],
-                                     tf.expand_dims(aspect_avg, -1)) + self.__biases['context_score']))
-            context_rep = tf.reduce_sum(context_att * context_outputs, 1)
+            # # Attention for context
+            # context_att = tf.nn.softmax(
+            #     tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', context_outputs, self.__weights['context_score'],
+            #                          tf.expand_dims(aspect_avg, -1)) + self.__biases['context_score']))
+            # context_rep = tf.reduce_sum(context_att * context_outputs, 1)
 
-            return tf.concat([aspect_rep, context_rep], 1)
+            return tf.concat([aspect_avg, context_avg], 1)
 
     def init_logits_unscaled(self, context_embedding):
         return utils.get_k_layer_pair_logits(g=context_embedding,
