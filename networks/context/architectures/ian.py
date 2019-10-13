@@ -39,11 +39,13 @@ class IAN(BaseContextNeuralNetwork):
         self.__aspects = tf.placeholder(dtype=tf.int32,
                                         shape=[self.Config.BatchSize, self.Config.MaxAspectLength],
                                         name="aspects")
+
+        # TODO. Remove it and utilize existed term_embedding instead.
         self.__E_aspects = tf.get_variable(name="E_aspects",
                                            dtype=tf.float32,
-                                           initializer=tf.random_normal_initializer,
+                                           initializer=tf.contrib.layers.xavier_initializer(),
                                            shape=self.Config.AspectsEmbeddingShape,
-                                           trainable=True)
+                                           trainable=False)
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, IANConfig))
@@ -54,19 +56,22 @@ class IAN(BaseContextNeuralNetwork):
                     name='W_a',
                     shape=[self.Config.HiddenSize, self.Config.HiddenSize],
                     initializer=self.Config.WeightInitializer,
-                    regularizer=self.Config.LayerRegularizer
+                    regularizer=self.Config.LayerRegularizer,
+                    trainable=True
                 ),
                 'context_score': tf.get_variable(
                     name='W_c',
                     shape=[self.Config.HiddenSize, self.Config.HiddenSize],
                     initializer=self.Config.WeightInitializer,
-                    regularizer=self.Config.LayerRegularizer
+                    regularizer=self.Config.LayerRegularizer,
+                    trainable=True
                 ),
                 'softmax': tf.get_variable(
                     name='W_l',
                     shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
                     initializer=self.Config.WeightInitializer,
-                    regularizer=self.Config.LayerRegularizer
+                    regularizer=self.Config.LayerRegularizer,
+                    trainable=True
                 ),
             }
 
@@ -76,38 +81,44 @@ class IAN(BaseContextNeuralNetwork):
                     name='B_a',
                     shape=[self.Config.MaxAspectLength, 1],
                     initializer=self.Config.BiasInitializer,
-                    regularizer=self.Config.LayerRegularizer
+                    regularizer=self.Config.LayerRegularizer,
+                    trainable=True
                 ),
                 'context_score': tf.get_variable(
                     name='B_c',
                     shape=[self.Config.MaxContextLength, 1],
                     initializer=self.Config.BiasInitializer,
-                    regularizer=self.Config.LayerRegularizer
+                    regularizer=self.Config.LayerRegularizer,
+                    trainable=True
                 ),
                 'softmax': tf.get_variable(
                     name='B_l',
                     shape=[self.Config.ClassesCount],
                     initializer=self.Config.BiasInitializer,
-                    regularizer=self.Config.LayerRegularizer
+                    regularizer=self.Config.LayerRegularizer,
+                    trainable=True
                 ),
             }
 
     def init_embedded_input(self):
-        aspect_inputs = tf.cast(x=tf.nn.embedding_lookup(params=self.__E_aspects,
-                                                         ids=self.__aspects),
-                                dtype=tf.float32)
 
-        self.__aspect_inputs = self.process_embedded_data(
-            embedded=aspect_inputs,
+        context_inputs = super(IAN, self).init_embedded_input()
+
+        # TODO. Fix this, to provide correct embedding.
+        # TODO. Remove e_aspects usage.
+        __aspect_inputs = tf.cast(x=tf.nn.embedding_lookup(params=self.__E_aspects, ids=self.__aspects),
+                                  dtype=tf.float32)
+
+        aspect_inputs = self.process_embedded_data(
+            embedded=__aspect_inputs,
             dropout_keep_prob=self.EmbeddingDropoutKeepProb)
 
-        return super(IAN, self).init_embedded_input()
+        return [context_inputs, aspect_inputs]
 
     def init_context_embedding(self, embedded_terms):
+        assert(isinstance(embedded_terms, list))
 
-        with tf.name_scope('inputs'):
-            context_inputs = embedded_terms
-            aspect_inputs = self.__aspect_inputs
+        context_inputs, aspect_inputs = embedded_terms
 
         with tf.name_scope('dynamic_rnn'):
 
@@ -176,5 +187,6 @@ class IAN(BaseContextNeuralNetwork):
         # TODO. Implement a different model with frame_inds.
         # TODO. But original could be based on atitute ends.
         feed_dict[self.__aspects] = input[InputSample.I_FRAME_INDS]
+
 
         return feed_dict
