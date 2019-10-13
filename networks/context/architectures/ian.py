@@ -133,27 +133,32 @@ class IAN(BaseContextNeuralNetwork):
 
             # Calculate input lengths
             aspect_lens = utils.calculate_sequence_length(self.__aspects)
+            aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
+
             context_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            context_lens_casted = tf.cast(x=tf.maximum(context_lens, 1), dtype=tf.int32)
 
             # Receive aspect output
             aspect_outputs, _ = tf.nn.dynamic_rnn(cell=aspect_cell,
                                                   inputs=aspect_inputs,
-                                                  sequence_length=aspect_lens,
+                                                  sequence_length=aspect_lens_casted,
                                                   dtype=tf.float32,
                                                   scope='aspect_outputs')
             # TODO. Select last instead.
             # TODO. But also keep original (add in config)
-            aspect_avg = tf.reduce_mean(aspect_outputs, 1)
+            # aspect_avg = tf.reduce_mean(aspect_outputs, 1)
+            aspect_avg = utils.select_last_relevant_in_sequence(aspect_outputs, aspect_lens_casted)
 
             # Receive context output
             context_outputs, _ = tf.nn.dynamic_rnn(cell=context_cell,
                                                    inputs=context_inputs,
-                                                   sequence_length=context_lens,
+                                                   sequence_length=context_lens_casted,
                                                    dtype=tf.float32,
                                                    scope='context_outputs')
             # TODO. Select last instead.
             # TODO. But also keep original (add in config)
-            context_avg = tf.reduce_mean(context_outputs, 1)
+            # context_avg = tf.reduce_mean(context_outputs, 1)
+            context_avg = utils.select_last_relevant_in_sequence(context_outputs, context_lens_casted)
 
             # Attention for aspects
             # aspect_att = tf.nn.softmax(
