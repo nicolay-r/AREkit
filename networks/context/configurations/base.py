@@ -51,6 +51,8 @@ class DefaultNetworkConfig(object):
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
 
+    __l2_reg = 0.0
+
     # endregion
 
     def __init__(self):
@@ -60,7 +62,7 @@ class DefaultNetworkConfig(object):
 
     @property
     def L2Reg(self):
-        return 0.0
+        return self.__l2_reg
 
     @property
     def DistanceEmbeddingSize(self):
@@ -105,6 +107,13 @@ class DefaultNetworkConfig(object):
     # endregion
 
     # region public methods
+
+    def modify_l2_reg(self, value):
+        assert(isinstance(value, float))
+        self.__l2_reg = value
+
+    def modify_optimizer(self, value):
+        self.__optimiser = value
 
     def modify_weight_initializer(self, value):
         self.__default_weight_initializer = value

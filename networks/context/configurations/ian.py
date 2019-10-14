@@ -3,24 +3,33 @@ from base import DefaultNetworkConfig
 from core.networks.context.configurations.rnn import CellTypes
 
 
+class StatesAggregationModes:
+    AVERAGE = u'avg'
+    LAST_IN_SEQUENCE = u'last'
+
+
 class IANConfig(DefaultNetworkConfig):
 
     __hidden_size = 128
     __aspect_len = None
-    __aspect_embedding_matrix = None
     __cell_type = CellTypes.LSTM
-    __l2_reg = 0.001
     __dropout_rnn_keep_prob = 1.0
+    __states_aggregation_mode = None
 
     def __init__(self):
         super(IANConfig, self).__init__()
+
+        # Reinitialize default parameters.
+        super(IANConfig, self).modify_bias_initializer(tf.zeros_initializer())
+        super(IANConfig, self).modify_weight_initializer(tf.random_uniform_initializer(-0.1, 0.1))
+        super(IANConfig, self).modify_optimizer(tf.train.AdamOptimizer(learning_rate=self.LearningRate))
+        super(IANConfig, self).modify_regularizer(tf.contrib.layers.l2_regularizer(self.L2Reg))
+        super(IANConfig, self).modify_l2_reg(0.001)
+
         self.__aspect_len = self.FramesPerContext
+        self.__states_aggregation_mode = StatesAggregationModes.AVERAGE
 
     # region Properties
-
-    @property
-    def L2Reg(self):
-        return self.__l2_reg
 
     @property
     def CellType(self):
@@ -39,32 +48,12 @@ class IANConfig(DefaultNetworkConfig):
         return self.TermsPerContext
 
     @property
-    def AspectsEmbedding(self):
-        return self.__aspect_embedding_matrix
-
-    @property
-    def BiasInitializer(self):
-        return tf.zeros_initializer()
-
-    @property
-    def WeightInitializer(self):
-        return tf.random_uniform_initializer(-0.1, 0.1)
-
-    @property
-    def AspectsEmbeddingShape(self):
-        return self.__aspect_embedding_matrix.shape
-
-    @property
-    def Optimiser(self):
-        return tf.train.AdamOptimizer(learning_rate=self.LearningRate)
-
-    @property
-    def LayerRegularizer(self):
-        return tf.contrib.layers.l2_regularizer(self.L2Reg)
-
-    @property
     def DropoutRNNKeepProb(self):
         return self.__dropout_rnn_keep_prob
+
+    @property
+    def StatesAggregationMode(self):
+        return self.__states_aggregation_mode
 
     # endregion
 
@@ -74,18 +63,16 @@ class IANConfig(DefaultNetworkConfig):
         assert(isinstance(hidden_size, int))
         self.__hidden_size = hidden_size
 
-    def modify_l2_reg(self, value):
-        self.__l2_reg = value
-
     def modify_cell_type(self, cell_type):
         self.__cell_type = cell_type
-
-    def notify_initialization_completed(self):
-        self.__aspect_embedding_matrix = self.TermEmbeddingMatrix
 
     def modify_dropout_rnn_keep_prob(self, value):
         assert(isinstance(value, float))
         self.__dropout_rnn_keep_prob = value
+
+    def modify_states_aggregation_mode(self, value):
+        assert(isinstance(value, unicode))
+        self.__states_aggregation_mode = value
 
     def _internal_get_parameters(self):
         parameters = super(IANConfig, self)._internal_get_parameters()
@@ -96,6 +83,7 @@ class IANConfig(DefaultNetworkConfig):
             ("ian:max_aspect_len", self.MaxAspectLength),
             ("ian:max_context_len", self.MaxContextLength),
             ("ian:dropout_keep_prob", self.DropoutRNNKeepProb),
+            ("ian:aggregation_mode", self.StatesAggregationMode)
         ]
 
         return parameters
