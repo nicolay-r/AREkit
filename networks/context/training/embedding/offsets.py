@@ -4,6 +4,8 @@ from core.common.embedding import Embedding
 class TermsEmbeddingOffsets(object):
     """
     Describes indices distribution within a further TermsEmbedding.
+
+    All parameters shifted by 1 because of a empty placeholder.
     """
 
     def __init__(self,
@@ -27,23 +29,23 @@ class TermsEmbeddingOffsets(object):
         return self.__missed_words_count + \
                self.__words_count + \
                self.__tokens_count + \
-               self.__frames_count
+               self.__frames_count + 1
 
     # endregion
 
     # region 'get' methods
 
     def get_word_index(self, index):
-        return index
+        return 1 + index
 
     def get_static_word_index(self, index):
-        return self.__words_count + index
+        return 1 + self.__words_count + index
 
     def get_token_index(self, index):
-        return self.__words_count + self.__missed_words_count + index
+        return 1 + self.__words_count + self.__missed_words_count + index
 
     def get_frame_index(self, index):
-        return self.__words_count + self.__missed_words_count + self.__tokens_count + index
+        return 1 + self.__words_count + self.__missed_words_count + self.__tokens_count + index
 
     # endregion
 

@@ -121,17 +121,10 @@ class InputSample(object):
 
         pad_size = config.TermsPerContext
 
-        # TODO. This offsets used only to obtain pad_value.
-        # TODO. Maybe this should be moved from here to simplify the code.
-        offsets = TermsEmbeddingOffsets(
-            words_count=config.WordEmbedding.VocabularySize,
-            missed_word_embedding=config.MissedWordEmbedding.VocabularySize,
-            tokens_count=config.TokenEmbedding.VocabularySize,
-            frames_count=config.FrameEmbedding.VocabularySize)
-        pad_value = offsets.get_token_index(config.TokenEmbedding.find_index_by_word(Tokens.PLACEHOLDER))
+        pad_value = 0
 
         if sentence_len < pad_size:
-            cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=0)
+            cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=pad_value)
             cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=pad_value)
             # TODO. Provide it correct.
             cls.__pad_right_inplace(term_type, pad_size=pad_size, filler=-1)
