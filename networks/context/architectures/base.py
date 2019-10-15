@@ -1,5 +1,5 @@
 import tensorflow as tf
-from core.networks.context.architectures.utils import init_weighted_cost, init_accuracy
+from core.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.training.batch import MiniBatch
 from core.networks.context.sample import InputSample

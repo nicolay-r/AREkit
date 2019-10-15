@@ -1,12 +1,6 @@
 import tensorflow as tf
 from base import DefaultNetworkConfig
-
-
-class CellTypes:
-    RNN = u'vanilla'
-    GRU = u'gru'
-    LSTM = u'lstm'
-    BasicLSTM = u'basic-lstm'
+from core.networks.tf_helpers.sequence import CellTypes
 
 
 class RNNConfig(DefaultNetworkConfig):

@@ -1,6 +1,6 @@
 import tensorflow as tf
 from collections import OrderedDict
-from core.networks.context.architectures.utils import get_k_layer_pair_logits
+from core.networks.tf_helpers.layers import get_k_layer_pair_logits
 from core.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
 
 

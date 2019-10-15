@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.architectures.utils import init_weighted_cost, init_accuracy
+from core.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
 from core.networks.context.sample import InputSample
 from core.networks.context.training.data_type import DataType
 from core.networks.multi.configuration.base import BaseMultiInstanceConfig

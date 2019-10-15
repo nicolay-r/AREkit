@@ -1,10 +1,12 @@
 import tensorflow as tf
 from collections import OrderedDict
+
+import core.networks.tf_helpers.initialization
+import core.networks.tf_helpers.sequence
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.architectures.sequence import get_cell
+from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.rcnn import RCNNConfig
 from core.networks.context.sample import InputSample
-import utils
 
 
 class RCNN(BaseContextNeuralNetwork):
@@ -29,7 +31,7 @@ class RCNN(BaseContextNeuralNetwork):
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, RCNNConfig))
-        text_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+        text_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
 
         with tf.name_scope("bi-rnn"):
 

@@ -2,12 +2,14 @@ from collections import OrderedDict
 
 import tensorflow as tf
 
+import core.networks.tf_helpers.initialization
+import core.networks.tf_helpers.sequence
 from core.networks.attention.architectures.peng_zhou import attention_by_peng_zhou
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.architectures.sequence import get_cell
+from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
 from core.networks.context.sample import InputSample
-import utils
+from core.networks.tf_helpers import layers
 
 
 class AttBiLSTM(BaseContextNeuralNetwork):
@@ -40,7 +42,7 @@ class AttBiLSTM(BaseContextNeuralNetwork):
         with tf.variable_scope("bi-lstm"):
 
             # Length Calculation
-            x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            x_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward
@@ -76,11 +78,11 @@ class AttBiLSTM(BaseContextNeuralNetwork):
         b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
         activations = [tf.tanh] * len(W)
         activations.append(None)
-        return utils.get_k_layer_pair_logits(g=context_embedding,
-                                             W=W,
-                                             b=b,
-                                             dropout_keep_prob=self.DropoutKeepProb,
-                                             activations=activations)
+        return layers.get_k_layer_pair_logits(g=context_embedding,
+                                              W=W,
+                                              b=b,
+                                              dropout_keep_prob=self.DropoutKeepProb,
+                                              activations=activations)
 
     def init_hidden_states(self):
         self.__hidden[self.H_W] = tf.get_variable(

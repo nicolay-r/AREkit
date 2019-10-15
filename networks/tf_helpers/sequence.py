@@ -1,5 +1,11 @@
 import tensorflow as tf
-from core.networks.context.configurations.rnn import CellTypes
+
+
+class CellTypes:
+    RNN = u'vanilla'
+    GRU = u'gru'
+    LSTM = u'lstm'
+    BasicLSTM = u'basic-lstm'
 
 
 def get_cell(hidden_size, cell_type, lstm_initializer=None, dropout_rnn_keep_prob=1.0):
@@ -32,3 +38,24 @@ def get_cell(hidden_size, cell_type, lstm_initializer=None, dropout_rnn_keep_pro
         output_keep_prob=dropout_rnn_keep_prob)
 
     return dropped_cell
+
+
+def select_last_relevant_in_sequence(sequence, length):
+    assert(isinstance(sequence, tf.Tensor))
+    assert(isinstance(length, tf.Tensor))
+
+    batch_size = tf.shape(sequence)[0]
+    max_length = int(sequence.get_shape()[1])
+    input_size = int(sequence.get_shape()[2])
+    index = tf.range(0, batch_size) * max_length + (length - 1)
+    flat = tf.reshape(sequence, [-1, input_size])
+    return tf.gather(flat, index)
+
+
+def calculate_sequence_length(sequence):
+    assert(isinstance(sequence, tf.Tensor))
+    # TODO. Update as we have a non zero PLACEHOLER.
+    relevant = tf.sign(tf.abs(sequence))
+    length = tf.reduce_sum(relevant, reduction_indices=1)
+    length = tf.cast(length, tf.int32)
+    return length

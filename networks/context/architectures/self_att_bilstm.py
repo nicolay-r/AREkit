@@ -1,10 +1,11 @@
 import tensorflow as tf
 
-from core.networks.context.architectures.sequence import get_cell
+import core.networks.tf_helpers.initialization
+import core.networks.tf_helpers.sequence
+from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.sample import InputSample
 from ..configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 from base import BaseContextNeuralNetwork
-import utils
 
 
 class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
@@ -37,7 +38,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
         # Bidirectional(Left&Right) Recurrent Structure
         with tf.name_scope("bi-lstm"):
-            x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            x_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             fw_cell = get_cell(hidden_size=self.Config.HiddenSize,

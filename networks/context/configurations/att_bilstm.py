@@ -1,6 +1,6 @@
 import tensorflow as tf
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
-from core.networks.context.configurations.rnn import CellTypes
+from core.networks.tf_helpers.sequence import CellTypes
 
 
 class AttBiLSTMConfig(BiLSTMConfig):

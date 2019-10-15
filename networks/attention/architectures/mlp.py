@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from core.networks.attention.configurations.mlp import MultiLayerPerceptronAttentionConfig
-from core.networks.context.architectures.utils import get_k_layer_logits
+from core.networks.tf_helpers.layers import get_k_layer_logits
 from core.networks.tf_helpers.filtering import \
     filter_batch_elements, \
     select_entity_related_elements

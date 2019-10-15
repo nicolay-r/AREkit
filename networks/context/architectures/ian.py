@@ -1,10 +1,12 @@
 import tensorflow as tf
 
+import core.networks.tf_helpers.initialization
+import core.networks.tf_helpers.sequence
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.architectures.sequence import get_cell
+from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.ian import IANConfig, StatesAggregationModes
 from core.networks.context.sample import InputSample
-import utils
+from core.networks.tf_helpers import layers
 from core.networks.tf_helpers.filtering import filter_batch_elements, select_entity_related_elements
 
 
@@ -114,10 +116,10 @@ class IAN(BaseContextNeuralNetwork):
                                     dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Calculate input lengths
-            aspect_lens = utils.calculate_sequence_length(self.AspectInput)
+            aspect_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(self.AspectInput)
             aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
 
-            context_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            context_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             context_lens_casted = tf.cast(x=tf.maximum(context_lens, 1), dtype=tf.int32)
 
             # Receive aspect output
@@ -160,7 +162,7 @@ class IAN(BaseContextNeuralNetwork):
         if config.StatesAggregationMode == StatesAggregationModes.AVERAGE:
             return tf.reduce_mean(outputs, 1)
         if config.StatesAggregationMode == StatesAggregationModes.LAST_IN_SEQUENCE:
-            return utils.select_last_relevant_in_sequence(outputs, length)
+            return core.networks.tf_helpers.sequence.select_last_relevant_in_sequence(outputs, length)
         else:
             raise Exception('"{}" type does not supported'.format(config.StatesAggregationMode))
 
@@ -205,11 +207,11 @@ class IAN(BaseContextNeuralNetwork):
         return aspect_embedded
 
     def init_logits_unscaled(self, context_embedding):
-        return utils.get_k_layer_pair_logits(g=context_embedding,
-                                             W=[self.__w_l],
-                                             b=[self.__b_l],
-                                             dropout_keep_prob=self.DropoutKeepProb,
-                                             activations=[tf.tanh, None])
+        return layers.get_k_layer_pair_logits(g=context_embedding,
+                                              W=[self.__w_l],
+                                              b=[self.__b_l],
+                                              dropout_keep_prob=self.DropoutKeepProb,
+                                              activations=[tf.tanh, None])
 
     def iter_hidden_parameters(self):
         yield self.ASPECT_W, self.__w_a

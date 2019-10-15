@@ -1,11 +1,13 @@
 import tensorflow as tf
 from collections import OrderedDict
 
-from core.networks.context.architectures.sequence import get_cell
+import core.networks.tf_helpers.initialization
+import core.networks.tf_helpers.sequence
+from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations.rnn import RNNConfig, CellTypes
-import utils
+from core.networks.context.configurations.rnn import RNNConfig
+
 
 # Copyright (c) Joohong Lee
 # page: https://github.com/roomylee
@@ -31,7 +33,7 @@ class RNN(BaseContextNeuralNetwork):
         with tf.name_scope("rnn"):
 
             # Length Calculation
-            x_length = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            x_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward cell
@@ -45,7 +47,7 @@ class RNN(BaseContextNeuralNetwork):
                                                sequence_length=s_length,
                                                dtype=tf.float32)
 
-            h_outputs = utils.select_last_relevant_in_sequence(all_outputs, s_length)
+            h_outputs = core.networks.tf_helpers.sequence.select_last_relevant_in_sequence(all_outputs, s_length)
 
         return h_outputs
 

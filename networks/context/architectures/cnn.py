@@ -2,7 +2,7 @@ import tensorflow as tf
 from collections import OrderedDict
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.cnn import CNNConfig
-import utils
+from core.networks.tf_helpers import layers
 
 
 class VanillaCNN(BaseContextNeuralNetwork):
@@ -66,11 +66,11 @@ class VanillaCNN(BaseContextNeuralNetwork):
         b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
         activations = [tf.tanh] * len(W)
         activations.append(None)
-        result, result_dropout = utils.get_k_layer_pair_logits(g=context_embedding,
-                                                               W=W,
-                                                               b=b,
-                                                               dropout_keep_prob=self.DropoutKeepProb,
-                                                               activations=activations)
+        result, result_dropout = layers.get_k_layer_pair_logits(g=context_embedding,
+                                                                W=W,
+                                                                b=b,
+                                                                dropout_keep_prob=self.DropoutKeepProb,
+                                                                activations=activations)
         return result, result_dropout
 
     def init_hidden_states(self):
