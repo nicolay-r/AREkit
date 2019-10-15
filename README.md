@@ -34,9 +34,23 @@ Structuraly, the fundamental task representation could be departed into followin
 
 ### Convolutional Neural Networks
 
+#### CNN
+
+#### Piecewise CNN
+
 ### Recurrent Neural Networks (Sequence-Based Text Presentation)
 
 ### Attention Architectures
+
+#### IAN
+
+Includes:
+* Frame aspect based implementation [[code]](networks/context/architectures/ian.py);
+* Attitude ends aspect based implementation;
+> NOTE: Experiments with RuSentRel results in an application of base Optimizer instead of 
+`tf.train.AdamOptimizer(learning_rate=learning_rate)` oprimizer. The latter stucks training process.
+
+#### Att-BiLSTM
 
 ### Training Approaches
     

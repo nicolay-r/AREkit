@@ -20,6 +20,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
         # hidden
         self.__A = None
+        self.__avg_by_r_A = None
         self.__W_s1 = None
         self.__W_s2 = None
         self.__W_output = None
@@ -64,6 +65,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                                          perm=[0, 2, 1])
 
             self.__A = tf.nn.softmax(_H_s2_reshape, name="attention")
+            self.__avg_by_r_A = tf.reduce_mean(self.__A, axis=-2)
 
         with tf.name_scope("sentence-embedding"):
             # M shape (r, 2u)
@@ -99,6 +101,18 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
 
+        self.__W_fc = tf.get_variable(
+            name="W_fc",
+            shape=[2 * self.Config.HiddenSize * self.Config.RSize, self.Config.FullyConnectionSize],
+            regularizer=self.Config.LayerRegularizer,
+            initializer=self.Config.WeightInitializer)
+
+        self.__b_fc = tf.get_variable(
+            name="b_fc",
+            shape=[self.Config.FullyConnectionSize],
+            regularizer=self.Config.LayerRegularizer,
+            initializer=self.Config.BiasInitializer)
+
     def iter_hidden_parameters(self):
         yield ("W_s1", self.__W_s1)
         yield ("W_s2", self.__W_s2)
@@ -113,19 +127,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
         with tf.name_scope("fully-connected"):
 
-            W_fc = tf.get_variable(
-                name="W_fc",
-                shape=[2 * self.Config.HiddenSize * self.Config.RSize, self.Config.FullyConnectionSize],
-                regularizer=self.Config.LayerRegularizer,
-                initializer=self.Config.WeightInitializer)
-
-            b_fc = tf.get_variable(
-                name="b_fc",
-                shape=[self.Config.FullyConnectionSize],
-                regularizer=self.Config.LayerRegularizer,
-                initializer=self.Config.BiasInitializer)
-
-            fc = tf.nn.relu(tf.nn.xw_plus_b(context_embedding, W_fc, b_fc), name="fc")
+            fc = tf.nn.relu(tf.nn.xw_plus_b(context_embedding, self.__W_fc, self.__b_fc), name="fc")
 
         with tf.name_scope("output"):
             logits = tf.nn.xw_plus_b(
@@ -152,4 +154,4 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         for name, value in super(SelfAttentionBiLSTM, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
-        yield u"ATT_Weights", self.__A
+        yield u"ATT_Weights", self.__avg_by_r_A
