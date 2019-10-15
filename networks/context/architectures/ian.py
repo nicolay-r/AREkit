@@ -24,12 +24,18 @@ class IAN(BaseContextNeuralNetwork):
     def __init__(self):
         super(IAN, self).__init__()
         self.__aspects = None
-        self.__aspect_inputs = None
 
-        self.__aspect_atts = None
-        self.__aspect_reps = None
-        self.__context_atts = None
-        self.__context_reps = None
+        # Hidden states
+        self.__w_a = None
+        self.__w_c = None
+        self.__w_l = None
+        self.__b_a = None
+        self.__b_c = None
+        self.__b_l = None
+
+        # Input dependent parameters
+        self.__aspect_att = None
+        self.__context_att = None
 
     @property
     def ContextEmbeddingSize(self):
@@ -45,42 +51,42 @@ class IAN(BaseContextNeuralNetwork):
     def init_hidden_states(self):
         assert(isinstance(self.Config, IANConfig))
 
-        self.w_a = tf.get_variable(
+        self.__w_a = tf.get_variable(
             name=self.ASPECT_W,
             shape=[self.Config.HiddenSize, self.Config.HiddenSize],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.w_c = tf.get_variable(
+        self.__w_c = tf.get_variable(
             name=self.CONTEXT_W,
             shape=[self.Config.HiddenSize, self.Config.HiddenSize],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.w_l = tf.get_variable(
+        self.__w_l = tf.get_variable(
             name=self.SOFTMAX_W,
             shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.b_a = tf.get_variable(
+        self.__b_a = tf.get_variable(
             name=self.ASPECT_B,
             shape=[self.Config.MaxAspectLength, 1],
             initializer=self.Config.BiasInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.b_c = tf.get_variable(
+        self.__b_c = tf.get_variable(
             name=self.CONTEXT_B,
             shape=[self.Config.MaxContextLength, 1],
             initializer=self.Config.BiasInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.b_l = tf.get_variable(
+        self.__b_l = tf.get_variable(
             name=self.SOFTMAX_B,
             shape=[self.Config.ClassesCount],
             initializer=self.Config.BiasInitializer,
@@ -89,18 +95,19 @@ class IAN(BaseContextNeuralNetwork):
 
     def init_embedded_input(self):
 
-         context_inputs = super(IAN, self).init_embedded_input()
+         context_embedded = super(IAN, self).init_embedded_input()
 
          # TODO. Provide pos_embedding.
          # TODO. Provide dist_embedding.
-         __aspect_inputs = tf.cast(x=tf.nn.embedding_lookup(params=self.TermEmbedding, ids=self.__aspects),
-                                   dtype=tf.float32)
+         aspect_inputs = tf.cast(
+             x=tf.nn.embedding_lookup(params=self.TermEmbedding, ids=self.__aspects),
+             dtype=tf.float32)
 
-         aspect_inputs = self.process_embedded_data(
-             embedded=__aspect_inputs,
+         aspect_embedded = self.process_embedded_data(
+             embedded=aspect_inputs,
              dropout_keep_prob=self.EmbeddingDropoutKeepProb)
 
-         return [context_inputs, aspect_inputs]
+         return [context_embedded, aspect_embedded]
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(embedded_terms, list))
@@ -146,16 +153,16 @@ class IAN(BaseContextNeuralNetwork):
                                             length=context_lens_casted)
 
             # Attention for aspects
-            aspect_att = tf.nn.softmax(
-                tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', aspect_outputs, self.w_a,
-                                     tf.expand_dims(context_avg, -1)) + self.b_a))
-            aspect_rep = tf.reduce_sum(aspect_att * aspect_outputs, 1)
+            self.__aspect_att = tf.nn.softmax(
+                tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', aspect_outputs, self.__w_a,
+                                     tf.expand_dims(context_avg, -1)) + self.__b_a))
+            aspect_rep = tf.reduce_sum(self.__aspect_att * aspect_outputs, 1)
 
             # Attention for context
-            context_att = tf.nn.softmax(
-                tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', context_outputs, self.w_c,
-                                     tf.expand_dims(aspect_avg, -1)) + self.b_c))
-            context_rep = tf.reduce_sum(context_att * context_outputs, 1)
+            self.__context_att = tf.nn.softmax(
+                tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', context_outputs, self.__w_c,
+                                     tf.expand_dims(aspect_avg, -1)) + self.__b_c))
+            context_rep = tf.reduce_sum(self.__context_att * context_outputs, 1)
 
             return tf.concat([context_rep, aspect_rep], 1)
 
@@ -171,18 +178,22 @@ class IAN(BaseContextNeuralNetwork):
 
     def init_logits_unscaled(self, context_embedding):
         return utils.get_k_layer_pair_logits(g=context_embedding,
-                                             W=[self.w_l],
-                                             b=[self.b_l],
+                                             W=[self.__w_l],
+                                             b=[self.__b_l],
                                              dropout_keep_prob=self.DropoutKeepProb,
                                              activations=[tf.tanh, None])
 
     def iter_hidden_parameters(self):
-        yield self.ASPECT_W, self.w_a
-        yield self.CONTEXT_W, self.w_c
-        yield self.SOFTMAX_W, self.w_l
-        yield self.ASPECT_B, self.b_a
-        yield self.CONTEXT_B, self.b_c
-        yield self.SOFTMAX_B, self.b_l
+        yield self.ASPECT_W, self.__w_a
+        yield self.CONTEXT_W, self.__w_c
+        yield self.SOFTMAX_W, self.__w_l
+        yield self.ASPECT_B, self.__b_a
+        yield self.CONTEXT_B, self.__b_c
+        yield self.SOFTMAX_B, self.__b_l
+
+    def iter_input_dependent_hidden_parameters(self):
+        yield u'aspect_att', self.__aspect_att
+        yield u'context_att', self.__context_att
 
     def create_feed_dict(self, input, data_type):
         feed_dict = super(IAN, self).create_feed_dict(input, data_type)
