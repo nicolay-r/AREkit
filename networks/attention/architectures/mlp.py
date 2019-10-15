@@ -2,6 +2,9 @@ import tensorflow as tf
 
 from core.networks.attention.configurations.mlp import MultiLayerPerceptronAttentionConfig
 from core.networks.context.architectures.utils import get_k_layer_logits
+from core.networks.tf_helpers.filtering import \
+    filter_batch_elements, \
+    select_entity_related_elements
 
 
 class MultiLayerPerceptronAttention(object):
@@ -101,42 +104,6 @@ class MultiLayerPerceptronAttention(object):
             axis=-1)
 
         with tf.name_scope("attention"):
-
-            def filter_batch_elements(elements, inds, handler):
-                """
-                elements:  [batch_size, terms_per_context]
-                """
-                batch_size = elements.shape[0]
-
-                filtered = tf.TensorArray(
-                    dtype=tf.int32,
-                    name="context_iter",
-                    size=batch_size,
-                    infer_shape=False,
-                    dynamic_size=True)
-
-                _, _, _, filtered = tf.while_loop(
-                    lambda i, *_: tf.less(i, batch_size),
-                    handler,
-                    (0, elements, inds, filtered))
-
-                return filtered.stack()
-
-            def select_entity_related_elements(i, elements, inds, filtered):
-                """
-                elements: [batch, terms_per_context]
-                inds: [batch, terms_per_context]
-                """
-
-                row_elements = tf.squeeze(tf.gather(elements, [i], axis=0))
-                row_inds = tf.squeeze(tf.gather(inds, [i], axis=0))
-
-                result = tf.gather(row_elements, row_inds)   # row: [entities_per_context]
-
-                return (i + 1,
-                        elements,
-                        inds,
-                        filtered.write(i, tf.squeeze(result)))
 
             def iter_by_entities(entities, e_pos, e_dist_obj, e_dist_subj, handler):
                 """

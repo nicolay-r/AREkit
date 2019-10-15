@@ -48,12 +48,18 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     @property
     def TermEmbeddingSize(self):
-        size = self.__cfg.TermEmbeddingShape[1] + 2 * self.__cfg.DistanceEmbeddingSize + 1
+        size = self.__cfg.TermEmbeddingShape[1] + \
+               2 * self.__cfg.DistanceEmbeddingSize + \
+               self.TermTypeEmbeddingSize
 
         if self.__cfg.UsePOSEmbedding:
             size += self.__cfg.PosEmbeddingSize
 
         return size
+
+    @property
+    def TermTypeEmbeddingSize(self):
+        return 1
 
     @property
     def EmbeddingDropoutKeepProb(self):
@@ -257,11 +263,15 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         return tf.reduce_mean(loss, axis=1)
 
     def __init_embedded_terms(self):
+
+        term_types = tf.reshape(
+            tensor=self.__input[InputSample.I_TERM_TYPE],
+            shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext, self.TermTypeEmbeddingSize])
+
         embedded_terms = tf.concat([tf.nn.embedding_lookup(self.__term_emb, self.__input[InputSample.I_X_INDS]),
                                     tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_SUBJ_DISTS]),
                                     tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_OBJ_DISTS]),
-                                    tf.reshape(self.__input[InputSample.I_TERM_TYPE],
-                                               [self.__cfg.BatchSize, self.__cfg.TermsPerContext, 1])],
+                                    term_types],
                                    axis=-1)
 
         if self.__cfg.UsePOSEmbedding:

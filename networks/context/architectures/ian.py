@@ -5,6 +5,7 @@ from core.networks.context.architectures.sequence import get_cell
 from core.networks.context.configurations.ian import IANConfig, StatesAggregationModes
 from core.networks.context.sample import InputSample
 import utils
+from core.networks.tf_helpers.filtering import filter_batch_elements, select_entity_related_elements
 
 
 class IAN(BaseContextNeuralNetwork):
@@ -39,6 +40,10 @@ class IAN(BaseContextNeuralNetwork):
     @property
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize * 2
+
+    @property
+    def AspectInput(self):
+        return self.get_input_parameter(InputSample.I_FRAME_INDS)
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, IANConfig))
@@ -88,17 +93,7 @@ class IAN(BaseContextNeuralNetwork):
     def init_embedded_input(self):
 
          context_embedded = super(IAN, self).init_embedded_input()
-
-         # TODO. Provide pos_embedding.
-         # TODO. Provide dist_embedding.
-         aspect_inputs = tf.cast(
-             x=tf.nn.embedding_lookup(params=self.TermEmbedding,
-                                      ids=self.get_input_parameter(InputSample.I_FRAME_INDS)),
-             dtype=tf.float32)
-
-         aspect_embedded = self.process_embedded_data(
-             embedded=aspect_inputs,
-             dropout_keep_prob=self.EmbeddingDropoutKeepProb)
+         aspect_embedded = self.__combine_aspect_embedding_with_pos_dists_ttype()
 
          return [context_embedded, aspect_embedded]
 
@@ -119,7 +114,7 @@ class IAN(BaseContextNeuralNetwork):
                                     dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Calculate input lengths
-            aspect_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_FRAME_INDS))
+            aspect_lens = utils.calculate_sequence_length(self.AspectInput)
             aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
 
             context_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
@@ -168,6 +163,46 @@ class IAN(BaseContextNeuralNetwork):
             return utils.select_last_relevant_in_sequence(outputs, length)
         else:
             raise Exception('"{}" type does not supported'.format(config.StatesAggregationMode))
+
+    def __combine_aspect_embedding_with_pos_dists_ttype(self):
+
+        e_pos_indices = filter_batch_elements(
+            elements=self.get_input_parameter(InputSample.I_POS_INDS),
+            inds=self.AspectInput,
+            handler=select_entity_related_elements)
+
+        e_dist_obj_indices = filter_batch_elements(
+            elements=self.get_input_parameter(InputSample.I_OBJ_DISTS),
+            inds=self.AspectInput,
+            handler=select_entity_related_elements)
+
+        e_dist_subj_indices = filter_batch_elements(
+            elements=self.get_input_parameter(InputSample.I_SUBJ_DISTS),
+            inds=self.AspectInput,
+            handler=select_entity_related_elements)
+
+        e_term_type_indices = tf.constant(value=1.0,
+                                          shape=[self.Config.BatchSize,
+                                                 self.Config.MaxAspectLength,
+                                                 self.TermTypeEmbeddingSize])
+
+        aspect_input = tf.concat(
+            [tf.nn.embedding_lookup(self.TermEmbedding, self.AspectInput),
+             tf.nn.embedding_lookup(self.POSEmbedding, e_pos_indices),
+             tf.nn.embedding_lookup(self.DistanceEmbedding, e_dist_obj_indices),
+             tf.nn.embedding_lookup(self.DistanceEmbedding, e_dist_subj_indices),
+             e_term_type_indices],
+            axis=-1)
+
+        aspect_embedded = self.process_embedded_data(
+            embedded=aspect_input,
+            dropout_keep_prob=self.EmbeddingDropoutKeepProb)
+
+        aspect_embedded = tf.reshape(aspect_embedded, [self.Config.BagsPerMinibatch,
+                                                       self.Config.MaxAspectLength,
+                                                       self.TermEmbeddingSize])
+
+        return aspect_embedded
 
     def init_logits_unscaled(self, context_embedding):
         return utils.get_k_layer_pair_logits(g=context_embedding,
