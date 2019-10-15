@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from core.networks.context.debug import DebugKeys
+from core.networks.context.sample import InputSample
 from core.networks.context.training.bags.bag import Bag
 from core.networks.context.training.batch import MiniBatch
 
@@ -15,6 +16,7 @@ class MultiInstanceBatch(MiniBatch):
         for bag_index, bag in enumerate(self.iter_by_bags()):
             assert(isinstance(bag, Bag))
             for sample_index, sample in enumerate(bag):
+                assert(isinstance(sample, InputSample))
                 for arg, value in sample:
                     if arg not in result:
                         result[arg] = [[None] * len(bag) for _ in xrange(len(self.bags))]

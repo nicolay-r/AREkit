@@ -21,6 +21,9 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
             Coefficient for penalty
         """
         super(SelfAttentionBiLSTMConfig, self).__init__()
+        super(SelfAttentionBiLSTMConfig, self).modify_weight_initializer(tf.contrib.layers.xavier_initializer())
+        super(SelfAttentionBiLSTMConfig, self).modify_bias_initializer(tf.constant_initializer(0.1))
+        super(SelfAttentionBiLSTMConfig, self).modify_learning_rate(0.1)
 
         self.__fc_size = 200
         self.__r_size = 30
@@ -28,10 +31,6 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
         self.__p_coef = 1.0
 
     # region public methods
-
-    @property
-    def LearningRate(self):
-        return 0.1
 
     @property
     def FullyConnectionSize(self):
@@ -49,14 +48,6 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
     def DASize(self):
         return self.__d_a_size
 
-    @property
-    def WeightInitializer(self):
-        return tf.contrib.layers.xavier_initializer()
-
-    @property
-    def BiasInitializer(self):
-        return tf.constant_initializer(0.1)
-
     # endregion
 
     def modify_penaltization_term_coef(self, value):
@@ -67,9 +58,9 @@ class SelfAttentionBiLSTMConfig(BiLSTMConfig):
 
         parameters += [
             ("sa-bilstm:fully_connection_size", self.FullyConnectionSize),
-            ("sa-bilstm:r_size", self.RSize),
-            ("sa-bilstm:p_coef", self.PenaltizationTermCoef),
-            ("sa-bilstm:da_size", self.DASize)
+            ("sa-bilstm:penalty_term_coef", self.PenaltizationTermCoef),
+            ("sa-bilstm:da_size (size of ws_1)", self.DASize),
+            ("sa-bilstm:r_size (size of ws_2)", self.RSize)
         ]
 
         return parameters

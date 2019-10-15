@@ -23,7 +23,6 @@ class IAN(BaseContextNeuralNetwork):
 
     def __init__(self):
         super(IAN, self).__init__()
-        self.__aspects = None
 
         # Hidden states
         self.__w_a = None
@@ -40,13 +39,6 @@ class IAN(BaseContextNeuralNetwork):
     @property
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize * 2
-
-    def init_input(self):
-        super(IAN, self).init_input()
-        assert(isinstance(self.Config, IANConfig))
-        self.__aspects = tf.placeholder(dtype=tf.int32,
-                                        shape=[self.Config.BatchSize, self.Config.MaxAspectLength],
-                                        name="aspects")
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, IANConfig))
@@ -100,7 +92,8 @@ class IAN(BaseContextNeuralNetwork):
          # TODO. Provide pos_embedding.
          # TODO. Provide dist_embedding.
          aspect_inputs = tf.cast(
-             x=tf.nn.embedding_lookup(params=self.TermEmbedding, ids=self.__aspects),
+             x=tf.nn.embedding_lookup(params=self.TermEmbedding,
+                                      ids=self.get_input_parameter(InputSample.I_FRAME_INDS)),
              dtype=tf.float32)
 
          aspect_embedded = self.process_embedded_data(
@@ -112,7 +105,7 @@ class IAN(BaseContextNeuralNetwork):
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(embedded_terms, list))
 
-        context_inputs, aspect_inputs = embedded_terms
+        context_embedded, aspects_embedded = embedded_terms
 
         with tf.name_scope('dynamic_rnn'):
 
@@ -126,7 +119,7 @@ class IAN(BaseContextNeuralNetwork):
                                     dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Calculate input lengths
-            aspect_lens = utils.calculate_sequence_length(self.__aspects)
+            aspect_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_FRAME_INDS))
             aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
 
             context_lens = utils.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
@@ -134,7 +127,7 @@ class IAN(BaseContextNeuralNetwork):
 
             # Receive aspect output
             aspect_outputs, _ = tf.nn.dynamic_rnn(cell=aspect_cell,
-                                                  inputs=aspect_inputs,
+                                                  inputs=aspects_embedded,
                                                   sequence_length=aspect_lens_casted,
                                                   dtype=tf.float32,
                                                   scope='aspect_outputs')
@@ -144,7 +137,7 @@ class IAN(BaseContextNeuralNetwork):
 
             # Receive context output
             context_outputs, _ = tf.nn.dynamic_rnn(cell=context_cell,
-                                                   inputs=context_inputs,
+                                                   inputs=context_embedded,
                                                    sequence_length=context_lens_casted,
                                                    dtype=tf.float32,
                                                    scope='context_outputs')
@@ -192,12 +185,8 @@ class IAN(BaseContextNeuralNetwork):
         yield self.SOFTMAX_B, self.__b_l
 
     def iter_input_dependent_hidden_parameters(self):
+        for name, value in super(IAN, self).iter_input_dependent_hidden_parameters():
+            yield name, value
+
         yield u'aspect_att', self.__aspect_att
         yield u'context_att', self.__context_att
-
-    def create_feed_dict(self, input, data_type):
-        feed_dict = super(IAN, self).create_feed_dict(input, data_type)
-
-        feed_dict[self.__aspects] = input[InputSample.I_FRAME_INDS]
-
-        return feed_dict

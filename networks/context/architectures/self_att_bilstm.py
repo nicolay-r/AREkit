@@ -27,9 +27,10 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
     @property
     def ContextEmbeddingSize(self):
         """
-        return 2u, where u is an output of a single direction in bilstm.
+        Returns: flattened M
+            return r * 2u, where u is an output of a single direction in bilstm.
         """
-        return 2 * self.Config.HiddenSize
+        return self.Config.RSize * 2 * self.Config.HiddenSize
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
@@ -53,7 +54,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                                                                                        sequence_length=s_length,
                                                                                        dtype=tf.float32)
             H = tf.concat([self.output_fw, self.output_bw], axis=2)
-            H_reshape = tf.reshape(H, [-1, self.ContextEmbeddingSize])
+            H_reshape = tf.reshape(H, [-1, 2 * self.Config.HiddenSize])
 
         with tf.name_scope("self-attention"):
             _H_s1 = tf.nn.tanh(tf.matmul(H_reshape, self.__W_s1))
@@ -64,9 +65,11 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             self.__A = tf.nn.softmax(_H_s2_reshape, name="attention")
 
         with tf.name_scope("sentence-embedding"):
+            # M shape (r, 2u)
             M = tf.matmul(self.__A, H)
 
-        return M
+        # M_flat (batch_size, r * 2u)
+        return tf.reshape(M, shape=[-1, self.ContextEmbeddingSize])
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
@@ -103,12 +106,11 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
     def init_logits_unscaled(self, context_embedding):
         """
-        context_embedding: M parameter of init_context_embedding.
+        context_embedding: M_flat parameter of init_context_embedding
+            M_flat shape (r * 2u)
         """
 
         with tf.name_scope("fully-connected"):
-            M_flat = tf.reshape(context_embedding,
-                                shape=[-1, self.ContextEmbeddingSize * self.Config.RSize])
 
             W_fc = tf.get_variable(
                 name="W_fc",
@@ -122,7 +124,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
                 regularizer=self.Config.LayerRegularizer,
                 initializer=self.Config.BiasInitializer)
 
-            fc = tf.nn.relu(tf.nn.xw_plus_b(M_flat, W_fc, b_fc), name="fc")
+            fc = tf.nn.relu(tf.nn.xw_plus_b(context_embedding, W_fc, b_fc), name="fc")
 
         with tf.name_scope("output"):
             logits = tf.nn.xw_plus_b(

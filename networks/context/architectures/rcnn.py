@@ -35,11 +35,11 @@ class RCNN(BaseContextNeuralNetwork):
 
             fw_cell = get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
                                cell_type=self.Config.CellType,
-                               dropout_rnn_keep_prob=self.Config.DrooutRNNKeepProb)
+                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             bw_cell = get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
                                cell_type=self.Config.CellType,
-                               dropout_rnn_keep_prob=self.Config.DrooutRNNKeepProb)
+                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(
                 cell_fw=fw_cell,
@@ -47,9 +47,6 @@ class RCNN(BaseContextNeuralNetwork):
                 inputs=embedded_terms,
                 sequence_length=text_length,
                 dtype=tf.float32)
-
-            # TODO. Select last relevant!
-            # TODO. Implement the latter.
 
         with tf.name_scope("ctx"):
             shape = [tf.shape(self.output_fw)[0], 1, tf.shape(self.output_fw)[2]]

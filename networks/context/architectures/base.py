@@ -134,6 +134,9 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         raise NotImplementedError()
 
     def init_context_embedding(self, embedded_terms):
+        """
+        Important: output considered as vector, i.e. flattened embedding presentation.
+        """
         raise NotImplementedError()
 
     def init_logits_unscaled(self, context_embedding):

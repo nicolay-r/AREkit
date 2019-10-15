@@ -56,22 +56,14 @@ class AttBiLSTM(BaseContextNeuralNetwork):
                                dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Output
-            rnn_outputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
-                                                             cell_bw=bw_cell,
-                                                             inputs=embedded_terms,
-                                                             sequence_length=s_length,
-                                                             dtype=tf.float32)
+            (output_fw, output_bw), _ = tf.nn.bidirectional_dynamic_rnn(
+                cell_fw=fw_cell,
+                cell_bw=bw_cell,
+                inputs=embedded_terms,
+                sequence_length=s_length,
+                dtype=tf.float32)
 
-            # TODO. Implement the latter.
-            # TODO. Implement the latter.
-            # TODO. Implement the latter.
-
-            # TODO. Here we can make an extraction of frames.
-            # TODO. As a part of separated model
-            # TODO. att_frames_bilstm.
-            # TODO. ----------------------------------------
-            rnn_outputs = tf.add(rnn_outputs[0], rnn_outputs[1])
-            # TODO. ----------------------------------------
+            rnn_outputs = tf.add(output_fw, output_bw)
 
         # Attention
         with tf.variable_scope('attention'):

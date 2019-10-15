@@ -29,7 +29,6 @@ class InputSample(object):
     I_OBJ_DISTS = "obj_dist"
     I_POS_INDS = "pos_inds"
     I_TERM_TYPE = "term_type"
-    I_POSITION_IN_TEXT = "pos_in_text"
     I_FRAME_INDS = 'frame_inds'
 
     def __init__(self, X,

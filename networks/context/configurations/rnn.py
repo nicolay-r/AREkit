@@ -13,9 +13,12 @@ class RNNConfig(DefaultNetworkConfig):
 
     __hidden_size = 300
     __cell_type = CellTypes.BasicLSTM
-    __dropout_rnn_keep_prob = 1.0
+    __dropout_rnn_keep_prob = 0.8
 
-    # region properties
+    def __init__(self):
+        super(RNNConfig, self).__init__()
+        super(RNNConfig, self).modify_bias_initializer(tf.constant_initializer(0.1))
+        super(RNNConfig, self).modify_weight_initializer(tf.contrib.layers.xavier_initializer())
 
     @property
     def CellType(self):
@@ -26,18 +29,8 @@ class RNNConfig(DefaultNetworkConfig):
         return self.__hidden_size
 
     @property
-    def BiasInitializer(self):
-        return tf.constant_initializer(0.1)
-
-    @property
-    def WeightInitializer(self):
-        return tf.contrib.layers.xavier_initializer()
-
-    @property
     def DropoutRNNKeepProb(self):
         return self.__dropout_rnn_keep_prob
-
-    # endregion
 
     # region public methods
 

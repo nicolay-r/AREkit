@@ -263,6 +263,12 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
             shape=[batch_size, contexts_count],
             name=prefix + InputSample.I_OBJ_IND)
 
+        self.__input[InputSample.I_FRAME_INDS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count, self.__cfg.FramesPerContext],
+            name=prefix + InputSample.I_FRAME_INDS
+        )
+
         self.__y = tf.placeholder(dtype=tf.int32,
                                   shape=[batch_size],
                                   name=prefix + 'Y')
@@ -280,7 +286,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
 
         for param in InputSample.iter_parameters():
             if param not in self.__input:
-                continue
+                raise Exception('parameter "{}" was not found in __input. Check the presence of related parameter in "mi" initialization.'.format(param))
             feed_dict[self.__input[param]] = input[param]
 
         feed_dict[self.__y] = input[MultiInstanceBatch.I_LABELS]
