@@ -11,3 +11,6 @@ class Callback(object):
 
     def set_test_on_epochs(self, value):
         raise NotImplementedError()
+
+    def reset_experiment_dependent_parameters(self):
+        raise NotImplementedError()
