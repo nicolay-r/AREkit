@@ -133,10 +133,10 @@ class InputSample(object):
                 e1=subj_ind,
                 e2=obj_ind)
 
-            _frame_inds = map(lambda frame_index: cls.__shift_frame_index(w_b=b, w_e=e,
-                                                                          frame_index=frame_index,
-                                                                          placeholder=pad_value),
-                              frame_inds)
+            frame_inds = map(lambda frame_index: cls.__shift_frame_index(w_b=b, w_e=e,
+                                                                         frame_index=frame_index,
+                                                                         placeholder=pad_value),
+                             frame_inds)
 
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
 
