@@ -235,7 +235,7 @@ class InputSample(object):
     @staticmethod
     def __shift_frame_index(w_b, w_e, frame_index, placeholder):
         shifted = frame_index - w_b
-        return placeholder if not InputSample.__in_window(w_b=w_b, w_e=w_e, i=shifted) else shifted
+        return placeholder if not InputSample.__in_window(w_b=w_b, w_e=w_e, i=frame_index) else shifted
 
     def save(self, filepath):
         pass
