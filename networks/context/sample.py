@@ -10,8 +10,6 @@ from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
 from core.common.text_opinions.text_opinion import TextOpinion
 from core.networks.context.configurations.base import DefaultNetworkConfig
-from core.networks.context.training.embedding.offsets import TermsEmbeddingOffsets
-from core.processing.text.tokens import Tokens
 
 
 class InputSample(object):
@@ -135,7 +133,10 @@ class InputSample(object):
                 e1=subj_ind,
                 e2=obj_ind)
 
-            frame_inds = map(lambda index: index - b, frame_inds)
+            _frame_inds = map(lambda frame_index: cls.__shift_frame_index(w_b=b, w_e=e,
+                                                                          frame_index=frame_index,
+                                                                          placeholder=pad_value),
+                              frame_inds)
 
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
 
@@ -143,6 +144,8 @@ class InputSample(object):
             cls.__pad_right_inplace(lst=frame_inds, pad_size=config.FramesPerContext, filler=pad_value)
         else:
             del frame_inds[config.FramesPerContext:]
+
+        frame_inds = list(reversed(sorted(frame_inds)))
 
         assert(len(pos_indices) ==
                len(x_indices) ==
@@ -228,6 +231,11 @@ class InputSample(object):
         """
         assert(pad_size - len(lst) > 0)
         lst.extend([filler] * (pad_size - len(lst)))
+
+    @staticmethod
+    def __shift_frame_index(w_b, w_e, frame_index, placeholder):
+        shifted = frame_index - w_b
+        return placeholder if not InputSample.__in_window(w_b=w_b, w_e=w_e, i=shifted) else shifted
 
     def save(self, filepath):
         pass
