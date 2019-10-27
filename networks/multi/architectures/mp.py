@@ -10,6 +10,7 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
     Authors: Xiaotian Jiang, Quan Wang, Peng Li, Bin Wang
     Paper: https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf
     """
+    # TODO. Check existance of related parameters in ctx models while saving output.
     H_W1 = u"W"
     H_W2 = u"W2"
     H_b1 = u"b"

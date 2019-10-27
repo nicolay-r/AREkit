@@ -18,6 +18,8 @@ from core.networks.context.configurations.att_cnn import AttentionCNNConfig
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 from core.networks.context.configurations.cnn import CNNConfig
+from core.networks.context.configurations.contrib.att_pcnn import AttentionPCNNConfig
+from core.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
 from core.networks.context.configurations.ian import IANConfig
 from core.networks.context.configurations.rcnn import RCNNConfig
 from core.networks.context.configurations.rnn import RNNConfig
@@ -40,9 +42,9 @@ def contexts_supported():
             (BiLSTMConfig(), BiLSTM()),
             (RCNNConfig(), RCNN()),
             (IANConfig(), IAN()),
-            (IANConfig(), IANAttituteEndsBased()),
+            (IANAttitudeEndsBasedConfig(), IANAttituteEndsBased()),
             (AttentionCNNConfig(), AttentionCNN()),
-            (AttentionCNNConfig(), AttentionPCNN())]
+            (AttentionPCNNConfig(), AttentionPCNN())]
 
 
 if __name__ == "__main__":

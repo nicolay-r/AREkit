@@ -29,8 +29,8 @@ class AttentionPCNN(PiecewiseCNN):
         with tf.variable_scope(self.__attention_var_scope_name):
             self.Config.AttentionModel.init_hidden()
 
-    def init_context_embedding_core(self, embedded_terms):
-        g = super(AttentionPCNN, self).init_context_embedding_core(embedded_terms)
+    def init_context_embedding(self, embedded_terms):
+        g = super(AttentionPCNN, self).init_context_embedding(embedded_terms)
         return tf.concat([g, self.__init_attention_embedding()], axis=-1)
 
     def iter_input_dependent_hidden_parameters(self):
