@@ -4,6 +4,7 @@ import tensorflow as tf
 def attention_by_peng_zhou(inputs):
     """
     Attention method proposed by:
+    Title: Attention-Based Bidirectional Long Short-Term Memory Networks for Relation Classification
     Authors: Peng Zhou, Wei Shi, Jun Tian, Zhenyu Qi, Bingchen Li, Hongwei Hao, Bo Xu
     Paper: https://www.aclweb.org/anthology/P16-2034
     Code author: SeoSangwoo (c), https://github.com/SeoSangwoo

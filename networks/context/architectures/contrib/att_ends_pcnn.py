@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from core.networks.attention.architectures.mlp import MultiLayerPerceptronAttention
+from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
 from core.networks.context.architectures.pcnn import PiecewiseCNN
 from core.networks.context.configurations.contrib.att_pcnn import AttentionPCNNConfig
 from core.networks.context.sample import InputSample

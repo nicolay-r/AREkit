@@ -4,7 +4,7 @@ import tensorflow as tf
 
 import core.networks.tf_helpers.initialization
 import core.networks.tf_helpers.sequence
-from core.networks.attention.architectures.peng_zhou import attention_by_peng_zhou
+from core.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
@@ -69,6 +69,7 @@ class AttBiLSTM(BaseContextNeuralNetwork):
 
         # Attention
         with tf.variable_scope('attention'):
+            # TODO. Utilize another attention here.
             attn, self.__att_alphas = attention_by_peng_zhou(rnn_outputs)
 
         return attn

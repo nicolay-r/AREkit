@@ -9,12 +9,12 @@ from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.rnn import RNNConfig
 
 
-# Copyright (c) Joohong Lee
-# page: https://github.com/roomylee
-# source project: https://github.com/roomylee/rnn-text-classification-tf
-
-
 class RNN(BaseContextNeuralNetwork):
+    """
+    Copyright (c) Joohong Lee
+    page: https://github.com/roomylee
+    code: https://github.com/roomylee/rnn-text-classification-tf
+    """
 
     H_W = "W"
     H_b = "b"

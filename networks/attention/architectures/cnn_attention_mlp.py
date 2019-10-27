@@ -9,6 +9,7 @@ from core.networks.tf_helpers.filtering import \
 
 class MultiLayerPerceptronAttention(object):
     """
+    Title: Attention-Based Convolutional Neural Network for Semantic Relation Extraction
     Authors: Yatian Shen, Xuanjing Huang
     Paper: https://www.aclweb.org/anthology/C16-1238
     """
@@ -125,6 +126,9 @@ class MultiLayerPerceptronAttention(object):
                     size=self.__cfg.EntitiesPerContext,
                     infer_shape=False,
                     dynamic_size=True)
+
+                # TODO. Utilize sequence length calculation and provide related flag,
+                # TODO. which says that we should utilize interactive mode.
 
                 _, _, _, _, _, att_sum, att_weights = tf.while_loop(
                     lambda i, *_: tf.less(i, self.__cfg.EntitiesPerContext),

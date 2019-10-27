@@ -1,4 +1,4 @@
-from core.networks.attention.architectures.mlp import MultiLayerPerceptronAttention
+from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
 from core.networks.attention.configurations.mlp import MultiLayerPerceptronAttentionConfig
 from core.networks.context.configurations.cnn import CNNConfig
 

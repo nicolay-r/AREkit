@@ -3,12 +3,12 @@ Bi-directional Recurrent Neural Network.
 Modified version of Original Author: Aymeric Damien
 Project: https://github.com/aymericdamien/TensorFlow-Examples/
 """
+from collections import OrderedDict
+import tensorflow as tf
+from tensorflow.contrib import rnn
 import core.networks.tf_helpers.initialization
 import core.networks.tf_helpers.sequence
 from core.networks.tf_helpers import layers
-import tensorflow as tf
-from tensorflow.contrib import rnn
-from collections import OrderedDict
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
@@ -16,6 +16,11 @@ from core.networks.context.sample import InputSample
 
 
 class BiLSTM(BaseContextNeuralNetwork):
+    """
+    Copyright (c) Joohong Lee
+    page: https://github.com/roomylee
+    code: https://github.com/roomylee/rnn-text-classification-tf
+    """
 
     H_W = "W"
     H_b = "b"

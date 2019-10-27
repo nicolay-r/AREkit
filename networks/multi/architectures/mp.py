@@ -9,10 +9,10 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
     Paper: https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf
     Authors: Xiaotian Jiang, Quan Wang, Peng Li, Bin Wang
     """
-    H_W1 = "W"
-    H_W2 = "W2"
-    H_b1 = "b"
-    H_b2 = "b2"
+    H_W1 = u"W"
+    H_W2 = u"W2"
+    H_b1 = u"b"
+    H_b2 = u"b2"
 
     def __init__(self, context_network):
         super(MaxPoolingMultiInstanceNetwork, self).__init__(context_network)

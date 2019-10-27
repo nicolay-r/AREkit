@@ -146,13 +146,13 @@ class IAN(BaseContextNeuralNetwork):
             self.__aspect_att = tf.nn.softmax(
                 tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', aspect_outputs, self.__w_a,
                                      tf.expand_dims(context_avg, -1)) + self.__b_a))
-            aspect_rep = tf.reduce_sum(self.__aspect_att * aspect_outputs, 1)
+            aspect_rep = tf.reduce_sum(self.__aspect_att * aspect_outputs, axis=1)
 
             # Attention for context
             self.__context_att = tf.nn.softmax(
                 tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', context_outputs, self.__w_c,
                                      tf.expand_dims(aspect_avg, -1)) + self.__b_c))
-            context_rep = tf.reduce_sum(self.__context_att * context_outputs, 1)
+            context_rep = tf.reduce_sum(self.__context_att * context_outputs, axis=1)
 
             return tf.concat([context_rep, aspect_rep], 1)
 
@@ -210,8 +210,7 @@ class IAN(BaseContextNeuralNetwork):
         return layers.get_k_layer_pair_logits(g=context_embedding,
                                               W=[self.__w_l],
                                               b=[self.__b_l],
-                                              dropout_keep_prob=self.DropoutKeepProb,
-                                              activations=[tf.tanh, None])
+                                              dropout_keep_prob=self.DropoutKeepProb)
 
     def iter_hidden_parameters(self):
         yield self.ASPECT_W, self.__w_a
@@ -227,3 +226,4 @@ class IAN(BaseContextNeuralNetwork):
 
         yield u'aspect_att', self.__aspect_att
         yield u'context_att', self.__context_att
+        yield u'aspects', self.AspectInput

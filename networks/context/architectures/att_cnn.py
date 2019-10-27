@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from core.networks.attention.architectures.mlp import MultiLayerPerceptronAttention
+from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
 from core.networks.context.configurations.att_cnn import AttentionCNNConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.cnn import VanillaCNN
