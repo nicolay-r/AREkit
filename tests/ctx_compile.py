@@ -6,6 +6,8 @@ from core.networks.context.architectures.att_bilstm import AttBiLSTM
 from core.networks.context.architectures.att_cnn import AttentionCNN
 from core.networks.context.architectures.bi_lstm import BiLSTM
 from core.networks.context.architectures.cnn import VanillaCNN
+from core.networks.context.architectures.contrib.att_ends_pcnn import AttentionPCNN
+from core.networks.context.architectures.contrib.ian_ends import IANAttituteEndsBased
 from core.networks.context.architectures.ian import IAN
 from core.networks.context.architectures.pcnn import PiecewiseCNN
 from core.networks.context.architectures.rcnn import RCNN
@@ -38,7 +40,9 @@ def contexts_supported():
             (BiLSTMConfig(), BiLSTM()),
             (RCNNConfig(), RCNN()),
             (IANConfig(), IAN()),
-            (AttentionCNNConfig(), AttentionCNN())]
+            (IANConfig(), IANAttituteEndsBased()),
+            (AttentionCNNConfig(), AttentionCNN()),
+            (AttentionCNNConfig(), AttentionPCNN())]
 
 
 if __name__ == "__main__":

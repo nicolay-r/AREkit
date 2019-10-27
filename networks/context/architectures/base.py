@@ -142,6 +142,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def init_context_embedding(self, embedded_terms):
         """
         Important: output considered as vector, i.e. flattened embedding presentation.
+        embedded_terms: Tensor
+            tensor shape of ()
         """
         raise NotImplementedError()
 

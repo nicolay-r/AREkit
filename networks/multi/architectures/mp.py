@@ -6,8 +6,9 @@ from core.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwor
 
 class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
     """
-    Paper: https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf
+    Title: Relation Extraction with Multi-instance Multi-label Convolutional Neural Networks
     Authors: Xiaotian Jiang, Quan Wang, Peng Li, Bin Wang
+    Paper: https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf
     """
     H_W1 = u"W"
     H_W2 = u"W2"
@@ -26,6 +27,8 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
                                            contexts_per_opinion=self.ContextsPerOpinion)  # [batches, max_pooling]
 
     def init_hidden_states(self):
+        # TODO. Remove two layers
+
         self.__hidden[self.H_W1] = tf.get_variable(
             shape=[self.ContextNetwork.ContextEmbeddingSize, self.Config.HiddenSize],
             initializer=self.Config.WeightInitializer,

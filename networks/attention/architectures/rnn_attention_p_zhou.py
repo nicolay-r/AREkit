@@ -9,6 +9,9 @@ def attention_by_peng_zhou(inputs):
     Paper: https://www.aclweb.org/anthology/P16-2034
     Code author: SeoSangwoo (c), https://github.com/SeoSangwoo
     Code: https://github.com/SeoSangwoo/Attention-Based-BiLSTM-relation-extraction
+
+    inputs: Tensor
+        tensor of shape
     """
     assert(isinstance(inputs, tf.Tensor))
 

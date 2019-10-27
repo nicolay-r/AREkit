@@ -70,9 +70,9 @@ class AttBiLSTM(BaseContextNeuralNetwork):
         # Attention
         with tf.variable_scope('attention'):
             # TODO. Utilize another attention here.
-            attn, self.__att_alphas = attention_by_peng_zhou(rnn_outputs)
+            att_output, self.__att_alphas = attention_by_peng_zhou(rnn_outputs)
 
-        return attn
+        return att_output
 
     def init_logits_unscaled(self, context_embedding):
         W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]

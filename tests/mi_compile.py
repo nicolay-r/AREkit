@@ -8,6 +8,7 @@ from core.tests.ctx_feed import contexts_supported
 def test_mpmi(context_config, context_network):
     print "TEST: {}".format(context_network)
     config = BaseMultiInstanceConfig(context_config)
+    # TODO. Provide other examples.
     network = MaxPoolingMultiInstanceNetwork(context_network=context_network)
     init_config(config)
     network.compile(config, reset_graph=True)
