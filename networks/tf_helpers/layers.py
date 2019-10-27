@@ -4,14 +4,15 @@ import tensorflow as tf
 def get_k_layer_logits(g, W, b, dropout_keep_prob=None, activations=None):
     assert(isinstance(W, list))
     assert(isinstance(b, list))
-    assert(isinstance(activations, list))
+    assert(isinstance(activations, list) or activations is None)
+
+    if activations is None:
+        activations = [None] * (len(W) + 1)
+
     assert(len(W) == len(b) == len(activations) - 1)
 
     def __activate(tensor, activation):
         return activation(tensor) if activation is not None else tensor
-
-    if activations is None:
-        activations = [None] * (len(W) + 1)
 
     r = g
 
@@ -31,7 +32,7 @@ def get_k_layer_logits(g, W, b, dropout_keep_prob=None, activations=None):
     return __activate(r, activations[-1])
 
 
-def get_k_layer_pair_logits(g, W, b, dropout_keep_prob, activations):
+def get_k_layer_pair_logits(g, W, b, dropout_keep_prob, activations=None):
     assert(dropout_keep_prob is not None)
 
     result = get_k_layer_logits(g, W, b, activations=activations)

@@ -21,8 +21,8 @@ class IANAttituteEndsBased(IAN):
     def init_input(self):
         super(IANAttituteEndsBased, self).init_input()
         self.__ends = tf.placeholder(dtype=tf.int32,
-                                     shape=[self.__cfg.BatchSize, 2],
-                                     name=u'ctx' + InputSample.I_SUBJ_IND)
+                                     shape=[self.Config.BatchSize, 2],
+                                     name=u'ctx_' + u'_ends')
 
     def create_feed_dict(self, input, data_type):
         feed_dict = super(IANAttituteEndsBased, self).create_feed_dict(input=input,
