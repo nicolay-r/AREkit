@@ -200,6 +200,10 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
 
             return sliced_contexts
 
+    def iter_hidden_parameters(self):
+        for name, value in self.ContextNetwork.iter_hidden_parameters():
+            yield u'ctx_{}'.join(name), value
+
     # endregion
 
     # region static methods

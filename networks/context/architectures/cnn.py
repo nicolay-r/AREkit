@@ -6,6 +6,14 @@ from core.networks.tf_helpers import layers
 
 
 class VanillaCNN(BaseContextNeuralNetwork):
+    """
+    Title: Relation Classification via Convolutional Deep Neural Network
+    Authors: Daojian Zeng, Kang Liu, Siwei Lai, Guangyou Zhou and Jun Zhao
+    Paper: https://www.aclweb.org/anthology/C14-1220/
+    Source: https://github.com/roomylee/cnn-relation-extraction
+
+    NOTE: This class is an unofficial implementation of CNN with distance features.
+    """
 
     H_W = "W"
     H_b = "b"

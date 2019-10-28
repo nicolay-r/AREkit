@@ -7,17 +7,20 @@ import core.networks.tf_helpers.sequence
 from core.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.tf_helpers.sequence import get_cell
-from core.networks.context.configurations.att_bilstm import AttBiLSTMConfig
+from core.networks.context.configurations.att_bilstm import AttentionHiddenBiLSTMConfig
 from core.networks.context.sample import InputSample
 from core.networks.tf_helpers import layers
 
 
-class AttBiLSTM(BaseContextNeuralNetwork):
+class AttentionHiddenBiLSTM(BaseContextNeuralNetwork):
     """
     Authors: Peng Zhou, Wei Shi, Jun Tian, Zhenyu Qi, Bingchen Li, Hongwei Hao, Bo Xu
     Paper: https://www.aclweb.org/anthology/P16-2034
     Code author: SeoSangwoo (c), https://github.com/SeoSangwoo
     Code: https://github.com/SeoSangwoo/Attention-Based-BiLSTM-relation-extraction
+
+    NOTE: We consider 'hidden' since attention utilize a hidden states as keys towards
+    embedded context.
     """
 
     H_W = "W"
@@ -25,7 +28,7 @@ class AttBiLSTM(BaseContextNeuralNetwork):
     __attention_scope = "attention"
 
     def __init__(self):
-        super(AttBiLSTM, self).__init__()
+        super(AttentionHiddenBiLSTM, self).__init__()
         self.__att_alphas = None
         self.__hidden = OrderedDict()
 
@@ -36,7 +39,7 @@ class AttBiLSTM(BaseContextNeuralNetwork):
     # region init methods
 
     def init_context_embedding(self, embedded_terms):
-        assert(isinstance(self.Config, AttBiLSTMConfig))
+        assert(isinstance(self.Config, AttentionHiddenBiLSTMConfig))
 
         # Bidirectional LSTM
         with tf.variable_scope("bi-lstm"):
@@ -109,7 +112,7 @@ class AttBiLSTM(BaseContextNeuralNetwork):
             yield key, value
 
     def iter_input_dependent_hidden_parameters(self):
-        for name, value in super(AttBiLSTM, self).iter_input_dependent_hidden_parameters():
+        for name, value in super(AttentionHiddenBiLSTM, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
         yield u"ATT_Weights", self.__att_alphas

@@ -3,7 +3,7 @@ from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 from core.networks.tf_helpers.sequence import CellTypes
 
 
-class AttBiLSTMConfig(BiLSTMConfig):
+class AttentionHiddenBiLSTMConfig(BiLSTMConfig):
     """
     Authors: SeoSangwoo
     Paper: https://www.aclweb.org/anthology/P16-2034
@@ -16,7 +16,7 @@ class AttBiLSTMConfig(BiLSTMConfig):
     __lstm_cell_initializer = tf.keras.initializers.glorot_normal()
 
     def __init__(self):
-        super(AttBiLSTMConfig, self).__init__()
+        super(AttentionHiddenBiLSTMConfig, self).__init__()
 
     # region properties
 

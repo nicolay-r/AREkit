@@ -2,7 +2,7 @@ from core.evaluation.labels import PositiveLabel
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.training.bags.bag import Bag
-from core.networks.multi.architectures.mp import MaxPoolingMultiInstanceNetwork
+from core.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 from core.networks.multi.configuration.base import BaseMultiInstanceConfig
 from core.networks.multi.training.batch import MultiInstanceBatch
 from ctx_feed import test_ctx_feed, contexts_supported
@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     for ctx_config, ctx_network in contexts_supported():
         config = BaseMultiInstanceConfig(ctx_config)
-        network = MaxPoolingMultiInstanceNetwork(ctx_network)
+        network = MaxPoolingOverSentences(ctx_network)
         print type(ctx_network)
         test_ctx_feed(network=network,
                       network_config=config,

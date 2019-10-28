@@ -1,5 +1,4 @@
-import tensorflow as tf
-from networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.context.architectures.base import BaseContextNeuralNetwork
 
 
 class HierarchyRNN(BaseContextNeuralNetwork):

@@ -4,7 +4,7 @@ from core.networks.tf_helpers.layers import get_k_layer_pair_logits
 from core.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
 
 
-class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
+class MaxPoolingOverSentences(BaseMultiInstanceNeuralNetwork):
     """
     Title: Relation Extraction with Multi-instance Multi-label Convolutional Neural Networks
     Authors: Xiaotian Jiang, Quan Wang, Peng Li, Bin Wang
@@ -12,12 +12,10 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
     """
     # TODO. Check existance of related parameters in ctx models while saving output.
     H_W1 = u"W"
-    H_W2 = u"W2"
     H_b1 = u"b"
-    H_b2 = u"b2"
 
     def __init__(self, context_network):
-        super(MaxPoolingMultiInstanceNetwork, self).__init__(context_network)
+        super(MaxPoolingOverSentences, self).__init__(context_network)
         self.__hidden = OrderedDict()
 
     def init_multiinstance_embedding(self, context_outputs):
@@ -28,32 +26,19 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
                                            contexts_per_opinion=self.ContextsPerOpinion)  # [batches, max_pooling]
 
     def init_hidden_states(self):
-        # TODO. Remove two layers
 
         self.__hidden[self.H_W1] = tf.get_variable(
-            shape=[self.ContextNetwork.ContextEmbeddingSize, self.Config.HiddenSize],
+            shape=[self.ContextNetwork.ContextEmbeddingSize, self.Config.ClassesCount],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32,
             name=self.H_W1)
-        self.__hidden[self.H_W2] = tf.get_variable(
-            shape=[self.Config.HiddenSize, self.Config.ClassesCount],
-            initializer=self.Config.WeightInitializer,
-            regularizer=self.Config.LayerRegularizer,
-            dtype=tf.float32,
-            name=self.H_W2)
         self.__hidden[self.H_b1] = tf.get_variable(
-            shape=[self.Config.HiddenSize],
-            initializer=self.Config.BaseInitializer,
-            regularizer=self.Config.LayerRegularizer,
-            dtype=tf.float32,
-            name=self.H_b1)
-        self.__hidden[self.H_b2] = tf.get_variable(
             shape=[self.Config.ClassesCount],
             initializer=self.Config.BaseInitializer,
             regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32,
-            name=self.H_b2)
+            name=self.H_b1)
 
     def init_logits_unscaled(self, encoded_contexts):
         W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
@@ -77,6 +62,9 @@ class MaxPoolingMultiInstanceNetwork(BaseMultiInstanceNeuralNetwork):
         return tf.squeeze(context_outputs)                       # [batches, max_pooling]
 
     def iter_hidden_parameters(self):
+        for name, value in super(MaxPoolingOverSentences, self).iter_hidden_parameters():
+            yield name, value
+
         for name, value in self.__hidden.iteritems():
             yield name, value
 

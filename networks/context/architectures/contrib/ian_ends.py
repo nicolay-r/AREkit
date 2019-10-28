@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from core.networks.context.architectures.ian import IAN
+from core.networks.context.architectures.ian_frames import IAN
 from core.networks.context.sample import InputSample
 
 

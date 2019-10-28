@@ -12,8 +12,9 @@ from core.networks.context.sample import InputSample
 class RCNN(BaseContextNeuralNetwork):
     """
     Copyright (c) Joohong Lee
-    page: https://github.com/roomylee/rcnn-text-classification
-    paper: https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/view/9745
+    Title: Recurrent Convolutional Neural Networks for Text Classification
+    Paper: https://www.aaai.org/ocs/index.php/AAAI/AAAI15/paper/view/9745
+    Source: https://github.com/roomylee/rcnn-text-classification
     """
 
     H_W = "W"

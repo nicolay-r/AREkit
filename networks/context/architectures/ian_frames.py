@@ -12,6 +12,7 @@ from core.networks.tf_helpers.filtering import filter_batch_elements, select_ent
 
 class IAN(BaseContextNeuralNetwork):
     """
+    Title: Interactive Attention Networks for Aspect-Level Sentiment Classification
     Paper: https://arxiv.org/pdf/1709.00893.pdf
     Author: Peiqin Lin
     Code: https://github.com/lpq29743/IAN/blob/master/model.py

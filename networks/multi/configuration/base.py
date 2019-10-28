@@ -4,7 +4,6 @@ from core.networks.context.configurations.base import DefaultNetworkConfig, Labe
 
 class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
-    __hidden_size = 300
     __contexts_per_opinion = 3
     __context_config = None
 
@@ -47,10 +46,6 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
     @property
     def ContextConfig(self):
         return self.__context_config
-
-    @property
-    def HiddenSize(self):
-        return self.__hidden_size
 
     @property
     def WeightInitializer(self):
@@ -113,7 +108,6 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
         parameters = [
             ("mi:Batch (BagsPerMinibatch)", self.BagsPerMinibatch),
             ("mi:BagSize (ContextsPerOpinion)", self.BagSize),
-            ("mi:HiddenSize", self.HiddenSize),
             ("mi:LearningRate", self.LearningRate),
             ("mi:DropoutKeepProb", self.DropoutKeepProb),
             ("mi:RelationLabelCalculationMode", self.TextOpinionLabelCalculationMode),
