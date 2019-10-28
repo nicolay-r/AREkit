@@ -52,9 +52,21 @@ def select_last_relevant_in_sequence(sequence, length):
     return tf.gather(flat, index)
 
 
-def calculate_sequence_length(sequence):
+def calculate_sequence_length(sequence, is_neg_placeholder=False):
+    """
+    By default, considering that '0' (zeros) are placeholder in sequences.
+
+    Considering that '-1' or negative values are
+    placeholder in sequences.
+    """
     assert(isinstance(sequence, tf.Tensor))
+
     relevant = tf.sign(tf.abs(sequence))
+
+    if is_neg_placeholder:
+        relevant = tf.add(relevant, tf.constant(value=1, shape=sequence.shape))
+
     length = tf.reduce_sum(relevant, reduction_indices=1)
     length = tf.cast(length, tf.int32)
+
     return length

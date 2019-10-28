@@ -120,6 +120,7 @@ class InputSample(object):
         pad_size = config.TermsPerContext
 
         pad_value = 0
+        frames_pad_value = -1
 
         if sentence_len < pad_size:
             cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=pad_value)
@@ -135,13 +136,13 @@ class InputSample(object):
 
             frame_inds = map(lambda frame_index: cls.__shift_frame_index(w_b=b, w_e=e,
                                                                          frame_index=frame_index,
-                                                                         placeholder=pad_value),
+                                                                         placeholder=frames_pad_value),
                              frame_inds)
 
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
 
         if len(frame_inds) < config.FramesPerContext:
-            cls.__pad_right_inplace(lst=frame_inds, pad_size=config.FramesPerContext, filler=pad_value)
+            cls.__pad_right_inplace(lst=frame_inds, pad_size=config.FramesPerContext, filler=frames_pad_value)
         else:
             del frame_inds[config.FramesPerContext:]
 

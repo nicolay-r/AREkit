@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from core.networks.attention.configurations.mlp import MultiLayerPerceptronAttentionConfig
+from core.networks.attention.configurations.cnn_attention_mlp import MultiLayerPerceptronAttentionConfig
 from core.networks.tf_helpers.layers import get_k_layer_logits
 from core.networks.tf_helpers.filtering import \
     filter_batch_elements, \
@@ -41,6 +41,16 @@ class MultiLayerPerceptronAttention(object):
         self.__input = {}
         self.__hidden = {}
 
+    # region properties
+
+    @property
+    def BatchSize(self):
+        return self.__batch_size
+
+    @property
+    def TermsPerContext(self):
+        return self.__terms_per_context
+
     @property
     def Input(self):
         return self.__input
@@ -48,6 +58,10 @@ class MultiLayerPerceptronAttention(object):
     @property
     def AttentionEmbeddingSize(self):
         return self.__cfg.EntitiesPerContext * self.__term_embedding_size
+
+    # endregion
+
+    # region public methods
 
     def set_input(self, x, pos, dist_obj, dist_subj, keys):
         self.__input[self.I_x] = x
@@ -106,32 +120,35 @@ class MultiLayerPerceptronAttention(object):
 
         with tf.name_scope("attention"):
 
-            def iter_by_entities(entities, e_pos, e_dist_obj, e_dist_subj, handler):
+            def iter_by_entities(entities,
+                                 e_pos,
+                                 e_dist_obj,
+                                 e_dist_subj,
+                                 handler):
                 """
-                entities:  [batch_size, entities]
+                entities:  [batch_size, entities_per_context]
                 e_pos:     [batch_size, terms_per_context]
                 e_dists:   [batch_size, terms_per_context]
                 """
 
+                e_len = self.calculate_entities_length_func(entities)
+
                 att_sum_array = tf.TensorArray(
                     dtype=tf.float32,
                     name="context_iter",
-                    size=self.__cfg.EntitiesPerContext,
+                    size=e_len,
                     infer_shape=False,
                     dynamic_size=True)
 
                 att_weights_array = tf.TensorArray(
                     dtype=tf.float32,
                     name="context_iter",
-                    size=self.__cfg.EntitiesPerContext,
+                    size=e_len,
                     infer_shape=False,
                     dynamic_size=True)
 
-                # TODO. Utilize sequence length calculation and provide related flag,
-                # TODO. which says that we should utilize interactive mode.
-
                 _, _, _, _, _, att_sum, att_weights = tf.while_loop(
-                    lambda i, *_: tf.less(i, self.__cfg.EntitiesPerContext),
+                    lambda i, *_: tf.less(i, e_len),
                     handler,
                     (0, entities, e_pos, e_dist_obj, e_dist_subj, att_sum_array, att_weights_array))
 
@@ -203,10 +220,29 @@ class MultiLayerPerceptronAttention(object):
 
             # att_sum: [entity_per_context, batch_size, term_embedding_size]
             # att_weights: [entity_per_context, batch_size, terms_per_context]
-
-            att_sum = tf.transpose(att_sum, perm=[1, 0, 2])  # [batch_size, entity_per_context, term_embedding_size]
-            att_sum = tf.reshape(att_sum, shape=[self.__batch_size, self.AttentionEmbeddingSize])
-
             att_weights = tf.transpose(att_weights, perm=[1, 0, 2])  # [batch_size, entity_per_context, terms_per_context]
+            att_sum = tf.transpose(att_sum, perm=[1, 0, 2])  # [batch_size, entity_per_context, term_embedding_size]
 
-        return att_sum, att_weights
+        return self.reshape_att_sum(att_sum), \
+               self.reshape_att_weights(att_weights)
+
+    def reshape_att_sum(self, att_sum):
+        """
+        att_sum: [batch_size, entity_per_context, term_embedding_size]
+        """
+        att_sum = tf.reshape(att_sum, shape=[self.__batch_size, self.AttentionEmbeddingSize])
+        return att_sum
+
+    def reshape_att_weights(self, att_weights):
+        """
+        att_sum: [batch_size, entity_per_context, terms_per_context]
+        """
+        return att_weights
+
+    def calculate_entities_length_func(self, entities):
+        """
+        In this case we consider that the length is fixed to EntitiesPerContextParameter
+        """
+        return self.__cfg.EntitiesPerContext
+
+    # endregion
