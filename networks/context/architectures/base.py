@@ -93,6 +93,11 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def get_input_labels(self):
         return self.__y
 
+    def get_input_entity_pairs(self):
+        return tf.stack([self.get_input_parameter(InputSample.I_SUBJ_IND),
+                         self.get_input_parameter(InputSample.I_OBJ_IND)],
+                        axis=-1)
+
     def set_input_parameter(self, param, value):
         self.__input[param] = value
 

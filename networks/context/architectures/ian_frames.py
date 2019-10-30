@@ -4,13 +4,13 @@ import core.networks.tf_helpers.initialization
 import core.networks.tf_helpers.sequence
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.tf_helpers.sequence import get_cell
-from core.networks.context.configurations.ian import IANConfig, StatesAggregationModes
+from core.networks.context.configurations.ian_frames import IANFramesConfig, StatesAggregationModes
 from core.networks.context.sample import InputSample
 from core.networks.tf_helpers import layers
 from core.networks.tf_helpers.filtering import filter_batch_elements, select_entity_related_elements
 
 
-class IAN(BaseContextNeuralNetwork):
+class IANFrames(BaseContextNeuralNetwork):
     """
     Title: Interactive Attention Networks for Aspect-Level Sentiment Classification
     Paper: https://arxiv.org/pdf/1709.00893.pdf
@@ -26,7 +26,7 @@ class IAN(BaseContextNeuralNetwork):
     SOFTMAX_B = 'B_l'
 
     def __init__(self):
-        super(IAN, self).__init__()
+        super(IANFrames, self).__init__()
 
         # Hidden states
         self.__w_a = None
@@ -49,7 +49,7 @@ class IAN(BaseContextNeuralNetwork):
         return self.get_input_parameter(InputSample.I_FRAME_INDS)
 
     def init_hidden_states(self):
-        assert(isinstance(self.Config, IANConfig))
+        assert(isinstance(self.Config, IANFramesConfig))
 
         self.__w_a = tf.get_variable(
             name=self.ASPECT_W,
@@ -95,7 +95,7 @@ class IAN(BaseContextNeuralNetwork):
 
     def init_embedded_input(self):
 
-         context_embedded = super(IAN, self).init_embedded_input()
+         context_embedded = super(IANFrames, self).init_embedded_input()
          aspect_embedded = self.__combine_aspect_embedding_with_pos_dists_ttype()
 
          return [context_embedded, aspect_embedded]
@@ -159,7 +159,7 @@ class IAN(BaseContextNeuralNetwork):
 
     @staticmethod
     def __aggreagate(config, outputs, length):
-        assert(isinstance(config, IANConfig))
+        assert(isinstance(config, IANFramesConfig))
         if config.StatesAggregationMode == StatesAggregationModes.AVERAGE:
             return tf.reduce_mean(outputs, 1)
         if config.StatesAggregationMode == StatesAggregationModes.LAST_IN_SEQUENCE:
@@ -222,7 +222,7 @@ class IAN(BaseContextNeuralNetwork):
         yield self.SOFTMAX_B, self.__b_l
 
     def iter_input_dependent_hidden_parameters(self):
-        for name, value in super(IAN, self).iter_input_dependent_hidden_parameters():
+        for name, value in super(IANFrames, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
         yield u'aspect_att', self.__aspect_att

@@ -1,7 +1,7 @@
-from core.networks.context.configurations.ian import IANConfig
+from core.networks.context.configurations.ian_frames import IANFramesConfig
 
 
-class IANAttitudeEndsBasedConfig(IANConfig):
+class IANAttitudeEndsBasedConfig(IANFramesConfig):
 
     @property
     def MaxAspectLength(self):

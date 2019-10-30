@@ -1,14 +1,14 @@
-from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
-from core.networks.attention.configurations.cnn_attention_mlp import MultiLayerPerceptronAttentionConfig
+from core.networks.attention.architectures.cnn_attention_mlp_dynamic import MultiLayerPerceptronAttentionDynamic
+from core.networks.attention.configurations.cnn_attention_mlp_dynamic import MultiLayerPerceptronAttentionDynamicConfig
 from core.networks.context.configurations.cnn import CNNConfig
 
 
-class AttentionPCNNConfig(CNNConfig):
+class AttentionFramesCNNConfig(CNNConfig):
 
     def __init__(self):
-        super(AttentionPCNNConfig, self).__init__()
+        super(AttentionFramesCNNConfig, self).__init__()
         self.__attention = None
-        self.__attention_config = MultiLayerPerceptronAttentionConfig()
+        self.__attention_config = MultiLayerPerceptronAttentionDynamicConfig()
 
     # region properties
 
@@ -23,7 +23,7 @@ class AttentionPCNNConfig(CNNConfig):
     def notify_initialization_completed(self):
         assert(self.__attention is None)
 
-        self.__attention = MultiLayerPerceptronAttention(
+        self.__attention = MultiLayerPerceptronAttentionDynamic(
             cfg=self.__attention_config,
             batch_size=self.BatchSize,
             terms_per_context=self.TermsPerContext,
@@ -32,7 +32,7 @@ class AttentionPCNNConfig(CNNConfig):
             dist_embedding_size=self.DistanceEmbeddingSize)
 
     def _internal_get_parameters(self):
-        parameters = super(AttentionPCNNConfig, self)._internal_get_parameters()
+        parameters = super(AttentionFramesCNNConfig, self)._internal_get_parameters()
         parameters += self.__attention_config.get_parameters()
         return parameters
 

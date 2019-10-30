@@ -13,9 +13,11 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
         """
         Considered single entity as an average of the result
         """
-        return 1 * self.__term_embedding_size
+        return 1 * self.TermEmbeddingSize
 
     def calculate_entities_length_func(self, entities):
+        # TODO. This should be scalar
+        # TODO. Refactor and fix the bug.
         return calculate_sequence_length(
             sequence=entities,
             is_neg_placeholder=True)

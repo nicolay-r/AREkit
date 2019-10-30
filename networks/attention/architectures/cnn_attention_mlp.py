@@ -52,6 +52,10 @@ class MultiLayerPerceptronAttention(object):
         return self.__terms_per_context
 
     @property
+    def TermEmbeddingSize(self):
+        return self.__term_embedding_size
+
+    @property
     def Input(self):
         return self.__input
 

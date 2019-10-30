@@ -6,21 +6,25 @@ from core.networks.context.architectures.att_hidden_bilstm import AttentionHidde
 from core.networks.context.architectures.att_ends_cnn import AttentionCNN
 from core.networks.context.architectures.bilstm import BiLSTM
 from core.networks.context.architectures.cnn import VanillaCNN
-from core.networks.context.architectures.contrib.att_ends_pcnn import AttentionPCNN
-from core.networks.context.architectures.contrib.ian_ends import IANAttituteEndsBased
-from core.networks.context.architectures.ian_frames import IAN
+from core.networks.context.architectures.att_ends_pcnn import AttentionAttitudeEndsPCNN
+from core.networks.context.architectures.contrib.att_frames_cnn import AttentionFramesCNN
+from core.networks.context.architectures.contrib.att_frames_pcnn import AttentionFramesPCNN
+from core.networks.context.architectures.contrib.ian_ends import IANAttitudeEndsBased
+from core.networks.context.architectures.ian_frames import IANFrames
 from core.networks.context.architectures.pcnn import PiecewiseCNN
 from core.networks.context.architectures.rcnn import RCNN
 from core.networks.context.architectures.rnn import RNN
 from core.networks.context.architectures.self_att_bilstm import SelfAttentionBiLSTM
 from core.networks.context.configurations.att_bilstm import AttentionHiddenBiLSTMConfig
-from core.networks.context.configurations.att_cnn import AttentionCNNConfig
+from core.networks.context.configurations.att_ends_cnn import AttentionAttitudeEndsCNNConfig
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 from core.networks.context.configurations.cnn import CNNConfig
-from core.networks.context.configurations.contrib.att_pcnn import AttentionPCNNConfig
+from core.networks.context.configurations.att_ends_pcnn import AttentionAttitudeEndsPCNNConfig
+from core.networks.context.configurations.contrib.att_frames_cnn import AttentionFramesCNNConfig
+from core.networks.context.configurations.contrib.att_frames_pcnn import AttentionFramesPCNNConfig
 from core.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
-from core.networks.context.configurations.ian import IANConfig
+from core.networks.context.configurations.ian_frames import IANFramesConfig
 from core.networks.context.configurations.rcnn import RCNNConfig
 from core.networks.context.configurations.rnn import RNNConfig
 from core.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
@@ -41,10 +45,16 @@ def contexts_supported():
             (RNNConfig(), RNN()),
             (BiLSTMConfig(), BiLSTM()),
             (RCNNConfig(), RCNN()),
-            (IANConfig(), IAN()),
-            (IANAttitudeEndsBasedConfig(), IANAttituteEndsBased()),
-            (AttentionCNNConfig(), AttentionCNN()),
-            (AttentionPCNNConfig(), AttentionPCNN())]
+            (IANFramesConfig(), IANFrames()),
+
+            (IANAttitudeEndsBasedConfig(), IANAttitudeEndsBased()),
+
+            (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
+            (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),
+
+            # (AttentionFramesCNNConfig(), AttentionFramesCNN()),
+            # (AttentionFramesPCNNConfig(), AttentionFramesPCNN())
+            ]
 
 
 if __name__ == "__main__":

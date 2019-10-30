@@ -1,7 +1,8 @@
 import tensorflow as tf
 
 from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
-from core.networks.context.configurations.att_cnn import AttentionCNNConfig
+from core.networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.context.configurations.att_ends_cnn import AttentionAttitudeEndsCNNConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.cnn import VanillaCNN
 
@@ -18,10 +19,17 @@ class AttentionCNN(VanillaCNN):
         super(AttentionCNN, self).__init__()
         self.__att_weights = None
 
+    # region properties
+
     @property
     def ContextEmbeddingSize(self):
         return super(AttentionCNN, self).ContextEmbeddingSize + \
                self.Config.AttentionModel.AttentionEmbeddingSize
+
+    # endregion
+
+    def set_att_weights(self, weights):
+        self.__att_weights = weights
 
     def init_input(self):
         super(AttentionCNN, self).init_input()
@@ -35,7 +43,17 @@ class AttentionCNN(VanillaCNN):
 
     def init_context_embedding_core(self, embedded_terms):
         g = super(AttentionCNN, self).init_context_embedding_core(embedded_terms)
-        return tf.concat([g, self.__init_attention_embedding()], axis=-1)
+
+        att_e, att_weights = AttentionCNN.init_attention_embedding(
+            ctx_network=self,
+            att=self.Config.AttentionModel,
+            keys=self.get_input_entity_pairs())
+
+        self.set_att_weights(att_weights)
+
+        return tf.concat([g, att_e], axis=-1)
+
+    # region iter methods
 
     def iter_input_dependent_hidden_parameters(self):
         for name, value in super(AttentionCNN, self).iter_input_dependent_hidden_parameters():
@@ -47,27 +65,23 @@ class AttentionCNN(VanillaCNN):
         for key, value in super(AttentionCNN, self).iter_hidden_parameters():
             yield key, value
 
-    def __init_attention_embedding(self):
-        assert(isinstance(self.Config, AttentionCNNConfig))
+    # endregion
 
-        att = self.Config.AttentionModel
-
+    @staticmethod
+    def init_attention_embedding(ctx_network, att, keys):
+        assert(isinstance(ctx_network, BaseContextNeuralNetwork))
         assert(isinstance(att, MultiLayerPerceptronAttention))
 
-        entities = tf.stack([self.get_input_parameter(InputSample.I_SUBJ_IND),
-                             self.get_input_parameter(InputSample.I_OBJ_IND)],
-                            axis=-1)
+        att.set_input(x=ctx_network.get_input_parameter(InputSample.I_X_INDS),
+                      pos=ctx_network.get_input_parameter(InputSample.I_POS_INDS),
+                      dist_obj=ctx_network.get_input_parameter(InputSample.I_OBJ_DISTS),
+                      dist_subj=ctx_network.get_input_parameter(InputSample.I_SUBJ_DISTS),
+                      keys=keys)
 
-        att.set_input(x=self.get_input_parameter(InputSample.I_X_INDS),
-                      pos=self.get_input_parameter(InputSample.I_POS_INDS),
-                      dist_obj=self.get_input_parameter(InputSample.I_OBJ_DISTS),
-                      dist_subj=self.get_input_parameter(InputSample.I_SUBJ_DISTS),
-                      keys=entities)
+        att_e, att_w = att.init_body(
+            term_embedding=ctx_network.TermEmbedding,
+            pos_embedding=ctx_network.POSEmbedding,
+            dist_embedding=ctx_network.DistanceEmbedding)
 
-        att_e, self.__att_weights = att.init_body(
-            term_embedding=self.TermEmbedding,
-            pos_embedding=self.POSEmbedding,
-            dist_embedding=self.DistanceEmbedding)
-
-        return att_e
+        return att_e, att_w
 

@@ -3,10 +3,10 @@ from core.networks.attention.configurations.cnn_attention_mlp import MultiLayerP
 from core.networks.context.configurations.cnn import CNNConfig
 
 
-class AttentionCNNConfig(CNNConfig):
+class AttentionAttitudeEndsCNNConfig(CNNConfig):
 
     def __init__(self):
-        super(AttentionCNNConfig, self).__init__()
+        super(AttentionAttitudeEndsCNNConfig, self).__init__()
         self.__attention = None
         self.__attention_config = MultiLayerPerceptronAttentionConfig()
 
@@ -32,7 +32,7 @@ class AttentionCNNConfig(CNNConfig):
             dist_embedding_size=self.DistanceEmbeddingSize)
 
     def _internal_get_parameters(self):
-        parameters = super(AttentionCNNConfig, self)._internal_get_parameters()
+        parameters = super(AttentionAttitudeEndsCNNConfig, self)._internal_get_parameters()
         parameters += self.__attention_config.get_parameters()
         return parameters
 
