@@ -108,6 +108,10 @@ class DefaultNetworkConfig(object):
 
     # region public methods
 
+    def modify_terms_per_context(self, value):
+        assert(isinstance(value, int) and value > 0)
+        self.__terms_per_context = value
+
     def modify_l2_reg(self, value):
         assert(isinstance(value, float))
         self.__l2_reg = value
