@@ -6,8 +6,6 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     __contexts_per_opinion = 3
     __context_config = None
-    __weight_initializer = tf.contrib.layers.xavier_initializer()
-    __bias_initializer = tf.random_uniform_initializer(-0.1, 0.1)
 
     def __init__(self, context_config):
         assert(isinstance(context_config, DefaultNetworkConfig))
@@ -40,11 +38,11 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     @property
     def WeightInitializer(self):
-        return self.__weight_initializer
+        return tf.contrib.layers.xavier_initializer()
 
     @property
-    def BiasInitializer(self):
-        return self.__bias_initializer
+    def BaseInitializer(self):
+        return tf.random_uniform_initializer(-0.1, 0.1)
 
     @property
     def ClassesCount(self):
