@@ -6,26 +6,17 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     __contexts_per_opinion = 3
     __context_config = None
+    __weight_initializer = tf.contrib.layers.xavier_initializer()
+    __bias_initializer = tf.random_uniform_initializer(-0.1, 0.1)
 
     def __init__(self, context_config):
         assert(isinstance(context_config, DefaultNetworkConfig))
         super(BaseMultiInstanceConfig, self).__init__()
         self.__context_config = context_config
+
         self.__context_parameters_fix()
 
     # region properties
-
-    @property
-    def L2Reg(self):
-        return 0.0
-
-    @property
-    def LearningRate(self):
-        return 0.2
-
-    @property
-    def DropoutKeepProb(self):
-        return 0.85
 
     @property
     def TextOpinionLabelCalculationMode(self):
@@ -49,11 +40,27 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     @property
     def WeightInitializer(self):
-        return tf.contrib.layers.xavier_initializer()
+        return self.__weight_initializer
 
     @property
-    def BaseInitializer(self):
-        return tf.random_uniform_initializer(-0.1, 0.1)
+    def BiasInitializer(self):
+        return self.__bias_initializer
+
+    @property
+    def ClassesCount(self):
+        return self.__context_config.ClassesCount
+
+    @property
+    def LearningRate(self):
+        return self.__context_config.LearningRate
+
+    @property
+    def TermsPerContext(self):
+        return self.__context_config.TermsPerContext
+
+    @property
+    def EmbeddingDropoutKeepProb(self):
+        return self.__context_config.EmbeddingDropoutKeepProb
 
     # endregion
 
