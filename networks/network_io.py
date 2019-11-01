@@ -8,6 +8,12 @@ class NetworkIO(object):
     def SynonymsCollection(self):
         raise NotImplementedError()
 
+    def get_model_root(self):
+        """
+        Considering a root with all the results and hidden states.
+        """
+        raise NotImplementedError()
+
     def get_model_filepath(self):
         raise NotImplementedError()
 
