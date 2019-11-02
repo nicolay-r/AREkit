@@ -1,12 +1,13 @@
 import numpy as np
 import tensorflow as tf
 from core.networks.context.architectures.ian_frames import IANFrames
+from core.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
 from core.networks.context.sample import InputSample
 
 
 class IANAttitudeEndsBased(IANFrames):
     """
-    But original could be based on attitute ends.
+    But original could be based on attitude ends.
     """
 
     I_ENDS = u'ends'
@@ -21,9 +22,10 @@ class IANAttitudeEndsBased(IANFrames):
         return self.__ends
 
     def init_input(self):
+        assert(isinstance(self.Config, IANAttitudeEndsBasedConfig))
         super(IANAttitudeEndsBased, self).init_input()
         self.__ends = tf.placeholder(dtype=tf.int32,
-                                     shape=[self.Config.BatchSize, 2],
+                                     shape=[self.Config.BatchSize, self.Config.MaxAspectLength],
                                      name=u'ctx_' + self.I_ENDS)
 
     def create_feed_dict(self, input, data_type):

@@ -2,7 +2,6 @@ import tensorflow as tf
 
 from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations.att_ends_cnn import AttentionAttitudeEndsCNNConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.cnn import VanillaCNN
 
@@ -31,6 +30,8 @@ class AttentionCNN(VanillaCNN):
     def set_att_weights(self, weights):
         self.__att_weights = weights
 
+    # region 'init' methods
+
     def init_input(self):
         super(AttentionCNN, self).init_input()
         with tf.variable_scope(self.__attention_var_scope_name):
@@ -52,6 +53,8 @@ class AttentionCNN(VanillaCNN):
         self.set_att_weights(att_weights)
 
         return tf.concat([g, att_e], axis=-1)
+
+    # endregion
 
     # region iter methods
 
