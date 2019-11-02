@@ -231,14 +231,6 @@ class MultiLayerPerceptronAttention(object):
             att_weights = tf.transpose(att_weights, perm=[1, 0, 2])  # [batch_size, entity_per_context, terms_per_context]
             att_sum = tf.transpose(att_sum, perm=[1, 0, 2])  # [batch_size, entity_per_context, term_embedding_size]
 
-            att_sum = tf.reshape(att_sum, shape=[self.__batch_size,
-                                                 self.__cfg.EntitiesPerContext,
-                                                 self.__term_embedding_size])
-
-            att_weights = tf.reshape(att_weights, shape=[self.__batch_size,
-                                                         self.__cfg.EntitiesPerContext,
-                                                         self.__term_embedding_size])
-
         return self.reshape_att_sum(att_sum), \
                self.reshape_att_weights(att_weights)
 
@@ -251,9 +243,8 @@ class MultiLayerPerceptronAttention(object):
 
     def reshape_att_weights(self, att_weights):
         """
-        att_sum: [batch_size, entity_per_context, terms_per_context]
+        att_sum: [batch_size, entity_per_context, term_embedding_size]
         """
-        print att_weights.shape
         return att_weights
 
     def calculate_entities_length_func(self, entities):

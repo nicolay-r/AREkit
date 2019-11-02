@@ -47,9 +47,13 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
         """
         att_sum: [batch_size, entity_per_context, term_embedding_size]
         """
+        _att_sum = tf.reshape(att_sum, shape=[self.BatchSize,
+                                              self.Config.EntitiesPerContext,
+                                              self.TermEmbeddingSize])
+
         mean_sum = filtering.filter_batch_elements(
             elements_type=tf.float32,
-            elements=att_sum,
+            elements=_att_sum,
             inds=self.__dynamic_lens,
             handler=self.crop_elements_by_lengths_and_reduce_mean)
 
@@ -59,13 +63,17 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
         """
         att_sum: [batch_size, entity_per_context, terms_per_context]
         """
+        _att_weights = tf.reshape(att_weights, shape=[self.BatchSize,
+                                                      self.Config.EntitiesPerContext,
+                                                      self.TermEmbeddingSize])
+
         mean_sum = filtering.filter_batch_elements(
             elements_type=tf.float32,
-            elements=att_weights,
+            elements=_att_weights,
             inds=self.__dynamic_lens,
             handler=self.crop_elements_by_lengths_and_reduce_mean)
 
-        return tf.reshape(mean_sum, shape=[self.BatchSize, self.TermsPerContext])
+        return tf.reshape(mean_sum, shape=[self.BatchSize, self.TermEmbeddingSize])
 
     @staticmethod
     def crop_elements_by_lengths_and_reduce_mean(i, elements, lens, filtered):
