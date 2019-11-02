@@ -3,4 +3,8 @@ from core.networks.attention.configurations.cnn_attention_mlp import MultiLayerP
 
 class MultiLayerPerceptronAttentionDynamicConfig(MultiLayerPerceptronAttentionConfig):
 
-    pass
+    __frames_per_context = 3
+
+    @property
+    def EntitiesPerContext(self):
+        return self.__frames_per_context

@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-def filter_batch_elements(elements, inds, handler):
+def filter_batch_elements(elements, inds, handler, elements_type=tf.int32):
     """
     Process each element in batch (filter) by handler function
     elements:  [batch_size, terms_per_context]
@@ -9,7 +9,7 @@ def filter_batch_elements(elements, inds, handler):
     batch_size = elements.shape[0]
 
     filtered = tf.TensorArray(
-        dtype=tf.int32,
+        dtype=elements_type,
         name="context_iter",
         size=batch_size,
         infer_shape=False,
@@ -38,3 +38,5 @@ def select_entity_related_elements(i, elements, inds, filtered):
             elements,
             inds,
             filtered.write(i, tf.squeeze(result)))
+
+

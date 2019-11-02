@@ -29,6 +29,9 @@ class InputSample(object):
     I_TERM_TYPE = "term_type"
     I_FRAME_INDS = 'frame_inds'
 
+    # TODO: Should be -1, but now it is not supported
+    FRAMES_PAD_VALUE = 0
+
     def __init__(self, X,
                  subj_ind,
                  obj_ind,
@@ -80,7 +83,8 @@ class InputSample(object):
     def create_empty(cls, config):
         assert(isinstance(config, DefaultNetworkConfig))
         blank_terms = np.zeros(config.TermsPerContext)
-        blank_frames = np.zeros(config.FramesPerContext)
+        blank_frames = np.full(shape=config.FramesPerContext,
+                               fill_value=cls.FRAMES_PAD_VALUE)
         return cls(X=blank_terms,
                    subj_ind=0,
                    obj_ind=1,
@@ -120,7 +124,6 @@ class InputSample(object):
         pad_size = config.TermsPerContext
 
         pad_value = 0
-        frames_pad_value = -1
 
         if sentence_len < pad_size:
             cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=pad_value)
@@ -136,13 +139,13 @@ class InputSample(object):
 
             frame_inds = map(lambda frame_index: cls.__shift_frame_index(w_b=b, w_e=e,
                                                                          frame_index=frame_index,
-                                                                         placeholder=frames_pad_value),
+                                                                         placeholder=cls.FRAMES_PAD_VALUE),
                              frame_inds)
 
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
 
         if len(frame_inds) < config.FramesPerContext:
-            cls.__pad_right_inplace(lst=frame_inds, pad_size=config.FramesPerContext, filler=frames_pad_value)
+            cls.__pad_right_inplace(lst=frame_inds, pad_size=config.FramesPerContext, filler=cls.FRAMES_PAD_VALUE)
         else:
             del frame_inds[config.FramesPerContext:]
 

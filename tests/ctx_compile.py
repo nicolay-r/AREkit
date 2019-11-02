@@ -52,8 +52,8 @@ def contexts_supported():
             (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
             (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),
 
-            # (AttentionFramesCNNConfig(), AttentionFramesCNN()),
-            # (AttentionFramesPCNNConfig(), AttentionFramesPCNN())
+            (AttentionFramesCNNConfig(), AttentionFramesCNN()),
+            (AttentionFramesPCNNConfig(), AttentionFramesPCNN())
             ]
 
 

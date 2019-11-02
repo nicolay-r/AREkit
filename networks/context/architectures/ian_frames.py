@@ -117,10 +117,15 @@ class IANFrames(BaseContextNeuralNetwork):
                                     dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Calculate input lengths
-            aspect_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(self.AspectInput)
+            aspect_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(
+                sequence=self.AspectInput,
+                is_neg_placeholder=InputSample.FRAMES_PAD_VALUE < 0)
+
             aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
 
-            context_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            context_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(
+                sequence=self.get_input_parameter(InputSample.I_X_INDS))
+
             context_lens_casted = tf.cast(x=tf.maximum(context_lens, 1), dtype=tf.int32)
 
             # Receive aspect output
