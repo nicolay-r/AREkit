@@ -85,10 +85,14 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
         """
         row_elements = tf.squeeze(tf.gather(elements, [i], axis=0))  # [entity_per_context, term_embedding_size]
         term_embedding_size = row_elements.shape[-1]
-        row_len = tf.reshape(tf.gather(lens, [i], axis=0), [])  # scalar
-        row_frames = tf.slice(row_elements, begin=[0, 0], size=[row_len, term_embedding_size])
+        row_len_original = tf.reshape(tf.gather(lens, [i], axis=0), [])  # scalar
+        row_len_non_zero = tf.maximum(row_len_original, 1)
+        row_frames = tf.slice(row_elements, begin=[0, 0], size=[row_len_non_zero, term_embedding_size])
+        is_not_empty = tf.sign(row_len_original)
 
-        result = tf.reduce_mean(row_frames, axis=0)   # result: [terms_embedding_size]
+        mean = tf.reduce_mean(row_frames, axis=0)   # result: [terms_embedding_size]
+        result = tf.multiply(is_not_empty, mean)    # 0 -- in case of empty sequence original, otherwize the same
+
         result = tf.reshape(result, shape=[term_embedding_size])
 
         return (i + 1,

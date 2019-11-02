@@ -38,16 +38,16 @@ def init_config(config):
 
 
 def contexts_supported():
-    return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
-            (AttentionHiddenBiLSTMConfig(), AttentionHiddenBiLSTM()),
-            (CNNConfig(), VanillaCNN()),
-            (CNNConfig(), PiecewiseCNN()),
-            (RNNConfig(), RNN()),
-            (BiLSTMConfig(), BiLSTM()),
-            (RCNNConfig(), RCNN()),
-            (IANFramesConfig(), IANFrames()),
+    return [# (SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
+            # (AttentionHiddenBiLSTMConfig(), AttentionHiddenBiLSTM()),
+            # (CNNConfig(), VanillaCNN()),
+            # (CNNConfig(), PiecewiseCNN()),
+            # (RNNConfig(), RNN()),
+            # (BiLSTMConfig(), BiLSTM()),
+            # (RCNNConfig(), RCNN()),
+            # (IANFramesConfig(), IANFrames()),
 
-            (IANAttitudeEndsBasedConfig(), IANAttitudeEndsBased()),
+            # (IANAttitudeEndsBasedConfig(), IANAttitudeEndsBased()),
 
             (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
             (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),
