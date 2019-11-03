@@ -6,7 +6,7 @@ from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.ian_frames import IANFramesConfig, StatesAggregationModes
 from core.networks.context.sample import InputSample
-from core.networks.tf_helpers import layers
+from core.networks.tf_helpers import layers, sequence
 from core.networks.tf_helpers.filtering import filter_batch_elements, select_entity_related_elements
 
 
@@ -129,21 +129,21 @@ class IANFrames(BaseContextNeuralNetwork):
             context_lens_casted = tf.cast(x=tf.maximum(context_lens, 1), dtype=tf.int32)
 
             # Receive aspect output
-            aspect_outputs, _ = tf.nn.dynamic_rnn(cell=aspect_cell,
-                                                  inputs=aspects_embedded,
-                                                  sequence_length=aspect_lens_casted,
-                                                  dtype=tf.float32,
-                                                  scope='aspect_outputs')
+            aspect_outputs, _ = sequence.rnn(cell=aspect_cell,
+                                             inputs=aspects_embedded,
+                                             sequence_length=aspect_lens_casted,
+                                             dtype=tf.float32,
+                                             scope='aspect_outputs')
             aspect_avg = self.__aggreagate(self.Config,
                                            outputs=aspect_outputs,
                                            length=aspect_lens_casted)
 
             # Receive context output
-            context_outputs, _ = tf.nn.dynamic_rnn(cell=context_cell,
-                                                   inputs=context_embedded,
-                                                   sequence_length=context_lens_casted,
-                                                   dtype=tf.float32,
-                                                   scope='context_outputs')
+            context_outputs, _ = sequence.rnn(cell=context_cell,
+                                              inputs=context_embedded,
+                                              sequence_length=context_lens_casted,
+                                              dtype=tf.float32,
+                                              scope='context_outputs')
             context_avg = self.__aggreagate(self.Config,
                                             outputs=context_outputs,
                                             length=context_lens_casted)

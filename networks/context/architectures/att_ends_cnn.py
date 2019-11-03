@@ -30,6 +30,9 @@ class AttentionCNN(VanillaCNN):
     def set_att_weights(self, weights):
         self.__att_weights = weights
 
+    def get_att_input(self):
+        return self.get_input_entity_pairs()
+
     # region 'init' methods
 
     def init_input(self):
@@ -48,7 +51,7 @@ class AttentionCNN(VanillaCNN):
         att_e, att_weights = AttentionCNN.init_attention_embedding(
             ctx_network=self,
             att=self.Config.AttentionModel,
-            keys=self.get_input_entity_pairs())
+            keys=self.get_att_input())
 
         self.set_att_weights(att_weights)
 

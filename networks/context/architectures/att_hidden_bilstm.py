@@ -2,14 +2,11 @@ from collections import OrderedDict
 
 import tensorflow as tf
 
-import core.networks.tf_helpers.initialization
-import core.networks.tf_helpers.sequence
 from core.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.tf_helpers.sequence import get_cell
-from core.networks.context.configurations.att_bilstm import AttentionHiddenBiLSTMConfig
+from core.networks.context.configurations.att_hidden_bilstm import AttentionHiddenBiLSTMConfig
 from core.networks.context.sample import InputSample
-from core.networks.tf_helpers import layers
+from core.networks.tf_helpers import layers, sequence
 
 
 class AttentionHiddenBiLSTM(BaseContextNeuralNetwork):
@@ -32,9 +29,16 @@ class AttentionHiddenBiLSTM(BaseContextNeuralNetwork):
         self.__att_alphas = None
         self.__hidden = OrderedDict()
 
+    # region properties
+
     @property
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize
+
+    # endregion
+
+    def get_attention_output_with_alphas(self, rnn_outputs):
+        return attention_by_peng_zhou(rnn_outputs)
 
     # region init methods
 
@@ -45,23 +49,23 @@ class AttentionHiddenBiLSTM(BaseContextNeuralNetwork):
         with tf.variable_scope("bi-lstm"):
 
             # Length Calculation
-            x_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            x_length = sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward
-            fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+            fw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
                                cell_type=self.Config.CellType,
                                lstm_initializer=self.Config.LSTMCellInitializer,
                                dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Backward
-            bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
+            bw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
                                cell_type=self.Config.CellType,
                                lstm_initializer=self.Config.LSTMCellInitializer,
                                dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Output
-            (output_fw, output_bw), _ = tf.nn.bidirectional_dynamic_rnn(
+            (output_fw, output_bw), _ = sequence.bidirectional_rnn(
                 cell_fw=fw_cell,
                 cell_bw=bw_cell,
                 inputs=embedded_terms,
@@ -71,9 +75,8 @@ class AttentionHiddenBiLSTM(BaseContextNeuralNetwork):
             rnn_outputs = tf.add(output_fw, output_bw)
 
         # Attention
-        with tf.variable_scope('attention'):
-            # TODO. Utilize another attention here.
-            att_output, self.__att_alphas = attention_by_peng_zhou(rnn_outputs)
+        with tf.variable_scope(self.__attention_scope):
+            att_output, self.__att_alphas = self.get_attention_output_with_alphas(rnn_outputs)
 
         return att_output
 

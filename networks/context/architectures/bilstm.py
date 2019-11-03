@@ -5,12 +5,9 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 """
 from collections import OrderedDict
 import tensorflow as tf
-from tensorflow.contrib import rnn
-import core.networks.tf_helpers.initialization
-import core.networks.tf_helpers.sequence
 from core.networks.tf_helpers import layers
+from core.networks.tf_helpers import sequence
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 from core.networks.context.sample import InputSample
 
@@ -31,39 +28,36 @@ class BiLSTM(BaseContextNeuralNetwork):
 
     @property
     def ContextEmbeddingSize(self):
-        return 2 * self.Config.HiddenSize
+        return self.Config.HiddenSize
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, BiLSTMConfig))
 
         with tf.name_scope("bi-lstm"):
-            x = tf.unstack(embedded_terms, axis=1)
 
             # Length Calculation
-            x_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            x_length = sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward cell
-            fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                               cell_type=self.Config.CellType,
-                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+            fw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
+                                        cell_type=self.Config.CellType,
+                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Backward cell
-            bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                               cell_type=self.Config.CellType,
-                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+            bw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
+                                        cell_type=self.Config.CellType,
+                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
-            h_output_list, _, _ = rnn.static_bidirectional_rnn(cell_fw=fw_cell,
-                                                               cell_bw=bw_cell,
-                                                               inputs=x,
-                                                               sequence_length=s_length,
-                                                               dtype=tf.float32)
-            # [terms_per_ctx, batch, emb_size]
-            h_output_tensor = tf.convert_to_tensor(h_output_list, dtype=tf.float32)
-            # [batch, terms_per_ctx, emb_size]
-            h_output_tensor = tf.transpose(h_output_tensor, perm=[1, 0, 2])
+            (output_fw, output_bw), _ = sequence.bidirectional_rnn(cell_fw=fw_cell,
+                                                                   cell_bw=bw_cell,
+                                                                   inputs=embedded_terms,
+                                                                   sequence_length=s_length,
+                                                                   dtype=tf.float32)
 
-        return core.networks.tf_helpers.sequence.select_last_relevant_in_sequence(h_output_tensor, s_length)
+            rnn_outputs = tf.add(output_fw, output_bw)
+
+        return sequence.select_last_relevant_in_sequence(rnn_outputs, s_length)
 
     def init_logits_unscaled(self, context_embedding):
         W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]

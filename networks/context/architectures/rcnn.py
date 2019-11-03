@@ -1,12 +1,10 @@
 import tensorflow as tf
 from collections import OrderedDict
 
-import core.networks.tf_helpers.initialization
-import core.networks.tf_helpers.sequence
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.rcnn import RCNNConfig
 from core.networks.context.sample import InputSample
+from core.networks.tf_helpers import sequence
 
 
 class RCNN(BaseContextNeuralNetwork):
@@ -32,19 +30,19 @@ class RCNN(BaseContextNeuralNetwork):
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, RCNNConfig))
-        text_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+        text_length = sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
 
         with tf.name_scope("bi-rnn"):
 
-            fw_cell = get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
-                               cell_type=self.Config.CellType,
-                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+            fw_cell = sequence.get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
+                                        cell_type=self.Config.CellType,
+                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
-            bw_cell = get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
-                               cell_type=self.Config.CellType,
-                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+            bw_cell = sequence.get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
+                                        cell_type=self.Config.CellType,
+                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
-            (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(
+            (self.output_fw, self.output_bw), states = sequence.bidirectional_rnn(
                 cell_fw=fw_cell,
                 cell_bw=bw_cell,
                 inputs=embedded_terms,

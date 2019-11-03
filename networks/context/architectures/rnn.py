@@ -1,9 +1,7 @@
 import tensorflow as tf
 from collections import OrderedDict
 
-import core.networks.tf_helpers.initialization
-import core.networks.tf_helpers.sequence
-from core.networks.tf_helpers.sequence import get_cell
+from core.networks.tf_helpers import sequence
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.rnn import RNNConfig
@@ -33,21 +31,21 @@ class RNN(BaseContextNeuralNetwork):
         with tf.name_scope("rnn"):
 
             # Length Calculation
-            x_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            x_length = sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
             # Forward cell
-            cell = get_cell(hidden_size=self.Config.HiddenSize,
-                            cell_type=self.Config.CellType,
-                            dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+            cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
+                                     cell_type=self.Config.CellType,
+                                     dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Output
-            all_outputs, _ = tf.nn.dynamic_rnn(cell=cell,
-                                               inputs=embedded_terms,
-                                               sequence_length=s_length,
-                                               dtype=tf.float32)
+            all_outputs, _ = sequence.rnn(cell=cell,
+                                          inputs=embedded_terms,
+                                          sequence_length=s_length,
+                                          dtype=tf.float32)
 
-            h_outputs = core.networks.tf_helpers.sequence.select_last_relevant_in_sequence(all_outputs, s_length)
+            h_outputs = sequence.select_last_relevant_in_sequence(all_outputs, s_length)
 
         return h_outputs
 

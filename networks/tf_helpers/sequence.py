@@ -40,6 +40,30 @@ def get_cell(hidden_size, cell_type, lstm_initializer=None, dropout_rnn_keep_pro
     return dropped_cell
 
 
+def rnn(cell, inputs, sequence_length, dtype, scope=None):
+    """
+    Difference between static and dynamic rnn's
+    https://stackoverflow.com/questions/51425803/what-is-the-difference-between-static-rnn-and-dynamic-rnn
+    """
+    return tf.nn.dynamic_rnn(cell=cell,
+                             inputs=inputs,
+                             sequence_length=sequence_length,
+                             dtype=dtype,
+                             scope=scope)
+
+
+def bidirectional_rnn(cell_fw, cell_bw, inputs, sequence_length, dtype):
+    """
+    Difference between static and dynamic rnn's
+    https://stackoverflow.com/questions/51425803/what-is-the-difference-between-static-rnn-and-dynamic-rnn
+    """
+    return tf.nn.bidirectional_dynamic_rnn(cell_fw=cell_fw,
+                                           cell_bw=cell_bw,
+                                           inputs=inputs,
+                                           sequence_length=sequence_length,
+                                           dtype=dtype)
+
+
 def select_last_relevant_in_sequence(sequence, length):
     assert(isinstance(sequence, tf.Tensor))
     assert(isinstance(length, tf.Tensor))

@@ -1,10 +1,8 @@
 import tensorflow as tf
 
-import core.networks.tf_helpers.initialization
-import core.networks.tf_helpers.sequence
-from core.networks.tf_helpers.sequence import get_cell
+from core.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 from core.networks.context.sample import InputSample
-from ..configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
+from core.networks.tf_helpers import sequence
 from base import BaseContextNeuralNetwork
 
 
@@ -39,22 +37,22 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
         # Bidirectional(Left&Right) Recurrent Structure
         with tf.name_scope("bi-lstm"):
-            x_length = core.networks.tf_helpers.sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
+            x_length = sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
             s_length = tf.cast(x=tf.maximum(x_length, 1), dtype=tf.int32)
 
-            fw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                               cell_type=self.Config.CellType,
-                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+            fw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
+                                        cell_type=self.Config.CellType,
+                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
-            bw_cell = get_cell(hidden_size=self.Config.HiddenSize,
-                               cell_type=self.Config.CellType,
-                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+            bw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
+                                        cell_type=self.Config.CellType,
+                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
-            (self.output_fw, self.output_bw), states = tf.nn.bidirectional_dynamic_rnn(cell_fw=fw_cell,
-                                                                                       cell_bw=bw_cell,
-                                                                                       inputs=embedded_terms,
-                                                                                       sequence_length=s_length,
-                                                                                       dtype=tf.float32)
+            (self.output_fw, self.output_bw), states = sequence.bidirectional_rnn(cell_fw=fw_cell,
+                                                                                  cell_bw=bw_cell,
+                                                                                  inputs=embedded_terms,
+                                                                                  sequence_length=s_length,
+                                                                                  dtype=tf.float32)
             H = tf.concat([self.output_fw, self.output_bw], axis=2)
             H_reshape = tf.reshape(H, [-1, 2 * self.Config.HiddenSize])
 

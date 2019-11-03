@@ -9,13 +9,14 @@ from core.networks.context.architectures.cnn import VanillaCNN
 from core.networks.context.architectures.att_ends_pcnn import AttentionAttitudeEndsPCNN
 from core.networks.context.architectures.contrib.att_frames_cnn import AttentionFramesCNN
 from core.networks.context.architectures.contrib.att_frames_pcnn import AttentionFramesPCNN
+from core.networks.context.architectures.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTM
 from core.networks.context.architectures.contrib.ian_ends import IANAttitudeEndsBased
 from core.networks.context.architectures.ian_frames import IANFrames
 from core.networks.context.architectures.pcnn import PiecewiseCNN
 from core.networks.context.architectures.rcnn import RCNN
 from core.networks.context.architectures.rnn import RNN
 from core.networks.context.architectures.self_att_bilstm import SelfAttentionBiLSTM
-from core.networks.context.configurations.att_bilstm import AttentionHiddenBiLSTMConfig
+from core.networks.context.configurations.att_hidden_bilstm import AttentionHiddenBiLSTMConfig
 from core.networks.context.configurations.att_ends_cnn import AttentionAttitudeEndsCNNConfig
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
@@ -23,6 +24,7 @@ from core.networks.context.configurations.cnn import CNNConfig
 from core.networks.context.configurations.att_ends_pcnn import AttentionAttitudeEndsPCNNConfig
 from core.networks.context.configurations.contrib.att_frames_cnn import AttentionFramesCNNConfig
 from core.networks.context.configurations.contrib.att_frames_pcnn import AttentionFramesPCNNConfig
+from core.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
 from core.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
 from core.networks.context.configurations.ian_frames import IANFramesConfig
 from core.networks.context.configurations.rcnn import RCNNConfig
@@ -38,23 +40,24 @@ def init_config(config):
 
 
 def contexts_supported():
-    return [# (SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
-            # (AttentionHiddenBiLSTMConfig(), AttentionHiddenBiLSTM()),
-            # (CNNConfig(), VanillaCNN()),
-            # (CNNConfig(), PiecewiseCNN()),
-            # (RNNConfig(), RNN()),
-            # (BiLSTMConfig(), BiLSTM()),
-            # (RCNNConfig(), RCNN()),
-            # (IANFramesConfig(), IANFrames()),
+    return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
+            (AttentionHiddenBiLSTMConfig(), AttentionHiddenBiLSTM()),
+            (CNNConfig(), VanillaCNN()),
+            (CNNConfig(), PiecewiseCNN()),
+            (RNNConfig(), RNN()),
+            (BiLSTMConfig(), BiLSTM()),
+            (RCNNConfig(), RCNN()),
+            (IANFramesConfig(), IANFrames()),
 
-            # (IANAttitudeEndsBasedConfig(), IANAttitudeEndsBased()),
+            (IANAttitudeEndsBasedConfig(), IANAttitudeEndsBased()),
 
             (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
             (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),
 
             (AttentionFramesCNNConfig(), AttentionFramesCNN()),
-            (AttentionFramesPCNNConfig(), AttentionFramesPCNN())
-            ]
+            (AttentionFramesPCNNConfig(), AttentionFramesPCNN()),
+
+            (AttentionHiddenZYangBiLSTMConfig(), AttentionHiddenZYangBiLSTM())]
 
 
 if __name__ == "__main__":
