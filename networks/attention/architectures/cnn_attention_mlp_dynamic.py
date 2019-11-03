@@ -73,7 +73,7 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
             inds=self.__dynamic_lens,
             handler=self.crop_elements_by_lengths_and_reduce_mean)
 
-        return tf.reshape(mean_sum, shape=[self.BatchSize, self.TermEmbeddingSize])
+        return tf.reshape(mean_sum, shape=[self.BatchSize, self.TermsPerContext])
 
     @staticmethod
     def crop_elements_by_lengths_and_reduce_mean(i, elements, lens, filtered):
