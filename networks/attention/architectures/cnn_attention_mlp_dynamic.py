@@ -91,8 +91,9 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
         is_not_empty = tf.sign(row_len_original)
 
         mean = tf.reduce_mean(row_frames, axis=0)   # result: [terms_embedding_size]
-        result = tf.multiply(x=tf.cast(is_not_empty, dtype=tf.float32),
-                             y=mean)   # 0 -- in case of empty sequence original, otherwize the same
+        result = mean
+        # result = tf.multiply(x=tf.cast(is_not_empty, dtype=tf.float32),
+        #                      y=mean)   # 0 -- in case of empty sequence original, otherwize the same
 
         result = tf.reshape(result, shape=[term_embedding_size])
 
