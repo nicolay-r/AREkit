@@ -2,8 +2,10 @@ from core.evaluation.labels import PositiveLabel
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.training.bags.bag import Bag
+from core.networks.multi.architectures.att_hidden import AttHiddenOverSentences
 from core.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-from core.networks.multi.configuration.base import BaseMultiInstanceConfig
+from core.networks.multi.configuration.att_hidden import AttHiddenOverSentencesConfig
+from core.networks.multi.configuration.max_pooling import MaxPoolingOverSentencesConfig
 from core.networks.multi.training.batch import MultiInstanceBatch
 from ctx_feed import test_ctx_feed, contexts_supported
 
@@ -22,12 +24,20 @@ def create_minibatch(config):
     return MultiInstanceBatch(bags=bags, batch_id=None)
 
 
+def multiinstances_supported(ctx_config, ctx_network):
+    return [
+        (MaxPoolingOverSentencesConfig(ctx_config), MaxPoolingOverSentences(ctx_network)),
+        # (AttHiddenOverSentencesConfig(ctx_config), AttHiddenOverSentences(ctx_network))
+    ]
+
+
 if __name__ == "__main__":
 
     for ctx_config, ctx_network in contexts_supported():
-        config = BaseMultiInstanceConfig(ctx_config)
-        network = MaxPoolingOverSentences(ctx_network)
-        print type(ctx_network)
-        test_ctx_feed(network=network,
-                      network_config=config,
-                      create_minibatch_func=create_minibatch)
+        for config, network in multiinstances_supported(ctx_config, ctx_network):
+            print type(network)
+            print u'\t-> {}'.format(type(ctx_network))
+            test_ctx_feed(network=network,
+                          network_config=config,
+                          create_minibatch_func=create_minibatch,
+                          display_values=False)

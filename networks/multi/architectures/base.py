@@ -319,6 +319,9 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         raise NotImplementedError()
 
     def init_multiinstance_embedding(self, context_outputs):
+        """
+        context_outputs: [batches, sentences, embedding]
+        """
         raise NotImplementedError()
 
     # endregion

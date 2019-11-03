@@ -41,7 +41,7 @@ def create_minibatch(config):
     return MiniBatch(bags=bags, batch_id=None)
 
 
-def test_ctx_feed(network, network_config, create_minibatch_func):
+def test_ctx_feed(network, network_config, create_minibatch_func, display_values=True):
     assert(isinstance(network, NeuralNetwork))
     assert(isinstance(network_config, DefaultNetworkConfig))
     assert(callable(create_minibatch_func))
@@ -69,8 +69,10 @@ def test_ctx_feed(network, network_config, create_minibatch_func):
         # Show hidden parameters
         hidden_values = result[len(fetches_default):]
         for i, value in enumerate(hidden_values):
-            print 'Value type: {}'.format(type(value))
-            print 'Hidden parameter "{}": {}'.format(hidden_names[i], value)
+            if display_values:
+                print 'Value type: {}'.format(type(value))
+            if display_values:
+                print 'Hidden parameter "{}": {}'.format(hidden_names[i], value)
 
 
 if __name__ == "__main__":

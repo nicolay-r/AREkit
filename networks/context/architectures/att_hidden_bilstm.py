@@ -54,15 +54,15 @@ class AttentionHiddenBiLSTM(BaseContextNeuralNetwork):
 
             # Forward
             fw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
-                               cell_type=self.Config.CellType,
-                               lstm_initializer=self.Config.LSTMCellInitializer,
-                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                        cell_type=self.Config.CellType,
+                                        lstm_initializer=self.Config.LSTMCellInitializer,
+                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Backward
             bw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
-                               cell_type=self.Config.CellType,
-                               lstm_initializer=self.Config.LSTMCellInitializer,
-                               dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                        cell_type=self.Config.CellType,
+                                        lstm_initializer=self.Config.LSTMCellInitializer,
+                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Output
             (output_fw, output_bw), _ = sequence.bidirectional_rnn(
