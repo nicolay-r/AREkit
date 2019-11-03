@@ -65,7 +65,7 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
         """
         _att_weights = tf.reshape(att_weights, shape=[self.BatchSize,
                                                       self.Config.EntitiesPerContext,
-                                                      self.TermEmbeddingSize])
+                                                      self.TermsPerContext])
 
         mean_sum = filtering.filter_batch_elements(
             elements_type=tf.float32,
