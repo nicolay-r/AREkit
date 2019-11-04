@@ -10,15 +10,15 @@ class TermsEmbeddingOffsets(object):
 
     def __init__(self,
                  words_count,
-                 missed_word_embedding,
+                 missed_words_count,
                  tokens_count,
                  frames_count):
         assert(isinstance(words_count, int))
-        assert(isinstance(missed_word_embedding, int))
+        assert(isinstance(missed_words_count, int))
         assert(isinstance(tokens_count, int))
         assert(isinstance(frames_count, int))
         self.__words_count = words_count
-        self.__missed_words_count = missed_word_embedding
+        self.__missed_words_count = missed_words_count
         self.__tokens_count = tokens_count
         self.__frames_count = frames_count
 
@@ -26,10 +26,11 @@ class TermsEmbeddingOffsets(object):
 
     @property
     def TotalCount(self):
-        return self.__missed_words_count + \
+        return 1 + \
+               self.__missed_words_count + \
                self.__words_count + \
                self.__tokens_count + \
-               self.__frames_count + 1
+               self.__frames_count
 
     # endregion
 
@@ -38,7 +39,7 @@ class TermsEmbeddingOffsets(object):
     def get_word_index(self, index):
         return 1 + index
 
-    def get_static_word_index(self, index):
+    def get_missed_word_index(self, index):
         return 1 + self.__words_count + index
 
     def get_token_index(self, index):
@@ -57,19 +58,19 @@ class TermsEmbeddingOffsets(object):
         assert(isinstance(frames_embedding, Embedding))
 
         offsets = TermsEmbeddingOffsets(words_count=words_embedding.VocabularySize,
-                                        missed_word_embedding=missed_words_embedding.VocabularySize,
+                                        missed_words_count=missed_words_embedding.VocabularySize,
                                         tokens_count=tokens_embedding.VocabularySize,
                                         frames_count=frames_embedding.VocabularySize)
 
-        all_words = []
+        all_words = [(0, u'PADDING')]
 
-        for w, index in words_embedding.iter_vocabulary():
-            assert(isinstance(w, unicode))
-            all_words.append((offsets.get_word_index(index), w))
+        for word, index in words_embedding.iter_vocabulary():
+            assert(isinstance(word, unicode))
+            all_words.append((offsets.get_word_index(index), word))
 
-        for m_w, index in missed_words_embedding.iter_vocabulary():
-            assert(isinstance(m_w, unicode))
-            all_words.append((offsets.get_static_word_index(index), m_w))
+        for missed_word, index in missed_words_embedding.iter_vocabulary():
+            assert(isinstance(missed_word, unicode))
+            all_words.append((offsets.get_missed_word_index(index), missed_word))
 
         for token, index in tokens_embedding.iter_vocabulary():
             assert(isinstance(token, unicode))
@@ -78,6 +79,8 @@ class TermsEmbeddingOffsets(object):
         for frame, index in frames_embedding.iter_vocabulary():
             assert(isinstance(frame, unicode))
             all_words.append((offsets.get_frame_index(index), frame))
+
+        assert(len(all_words) == offsets.TotalCount)
 
         for key, word in sorted(all_words, key=lambda item: item[0]):
             yield word

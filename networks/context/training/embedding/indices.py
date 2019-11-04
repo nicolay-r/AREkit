@@ -31,7 +31,7 @@ def calculate_embedding_indices_for_terms(terms,
 
     indices = []
     embedding_offsets = TermsEmbeddingOffsets(words_count=word_embedding.VocabularySize,
-                                              missed_word_embedding=missed_word_embedding.VocabularySize,
+                                              missed_words_count=missed_word_embedding.VocabularySize,
                                               tokens_count=token_embedding.VocabularySize,
                                               frames_count=frames_embedding.VocabularySize)
 
@@ -46,7 +46,7 @@ def calculate_embedding_indices_for_terms(terms,
             if term in word_embedding:
                 index = embedding_offsets.get_word_index(word_embedding.find_index_by_word(term))
             elif term in missed_word_embedding:
-                index = embedding_offsets.get_word_index(missed_word_embedding.find_index_by_word(term))
+                index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(term))
                 debug_words_found += int(term in word_embedding)
                 debug_words_count += 1
         elif isinstance(term, Token):
@@ -54,7 +54,7 @@ def calculate_embedding_indices_for_terms(terms,
         elif isinstance(term, TextFrameVariant):
             index = embedding_offsets.get_frame_index(frames_embedding.find_index_by_word(term.Variant.get_value()))
         elif isinstance(term, Entity):
-            index = embedding_offsets.get_static_word_index(missed_word_embedding.find_index_by_word(ENTITY_MASK))
+            index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(ENTITY_MASK))
         else:
             raise Exception("Unsuported type {}".format(term))
 

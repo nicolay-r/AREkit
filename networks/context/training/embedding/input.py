@@ -30,7 +30,7 @@ def create_term_embedding_matrix(word_embedding,
     assert(isinstance(frame_embedding, Embedding))
 
     embedding_offsets = TermsEmbeddingOffsets(words_count=word_embedding.VocabularySize,
-                                              missed_word_embedding=missed_embedding.VocabularySize,
+                                              missed_words_count=missed_embedding.VocabularySize,
                                               tokens_count=token_embedding.VocabularySize,
                                               frames_count=frame_embedding.VocabularySize)
     matrix = np.zeros((embedding_offsets.TotalCount, word_embedding.VectorSize))
@@ -41,7 +41,7 @@ def create_term_embedding_matrix(word_embedding,
 
     # missed words.
     for word, index in missed_embedding.iter_vocabulary():
-        matrix[embedding_offsets.get_static_word_index(index)] = missed_embedding.get_vector_by_index(index)
+        matrix[embedding_offsets.get_missed_word_index(index)] = missed_embedding.get_vector_by_index(index)
 
     # tokens.
     for token_value, index in token_embedding.iter_vocabulary():
