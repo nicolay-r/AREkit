@@ -50,7 +50,7 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
             e_value = " ".join([arg.strip().replace(',', '') for arg in args[4:]])
 
             entity = RuSentRelEntity(id_in_doc=e_id,
-                                     str_type=e_str_type,
+                                     e_type=e_str_type,
                                      char_index_begin=e_begin,
                                      char_index_end=e_end,
                                      value=e_value)

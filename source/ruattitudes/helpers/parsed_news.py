@@ -8,6 +8,9 @@ from core.source.ruattitudes.sentence import RuAttitudesSentence
 
 class RuAttitudesParsedNewsHelper:
 
+    def __init__(self):
+        pass
+
     @classmethod
     def create_parsed_news(cls, doc_id, news):
         assert(isinstance(doc_id, int))
@@ -64,6 +67,7 @@ class RuAttitudesParsedNewsHelper:
             value = _value if len(_value) > 0 else u'[empty]'
 
             entity = Entity(value=value,
+                            e_type=obj.Type,
                             id_in_doc=s_to_doc_id(s_level_id))
 
             yield entity, obj.get_bound()

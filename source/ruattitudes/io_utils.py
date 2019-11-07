@@ -8,7 +8,7 @@ class RuAttitudesIOUtils(BaseIOUtils):
 
     @staticmethod
     def get_archive_filepath():
-        return path.join(RuAttitudesIOUtils.get_data_root(), u"ruattitudes-v1_0.zip")
+        return path.join(RuAttitudesIOUtils.get_data_root(), u"ruattitudes-v1_1.zip")
 
     @staticmethod
     def get_collection_filepath():

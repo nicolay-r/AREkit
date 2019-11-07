@@ -47,8 +47,9 @@ for doc_id in RuSentRelIOUtils.iter_collection_indices():
         for entity, bound in sentence.iter_entity_with_local_bounds():
             assert(isinstance(entity, RuSentRelEntity))
             assert(isinstance(bound, Bound))
-            print u"\tEntity: {}, text position: ({}-{}), IdInDocument: {}".format(
+            print u"\tEntity: {} ({}), text position: ({}-{}), IdInDocument: {}".format(
                 entity.Value,
+                entity.Type,
                 bound.Position,
                 bound.Position + bound.Length,
                 entity.IdInDocument).encode('utf-8')

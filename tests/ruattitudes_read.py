@@ -17,7 +17,9 @@ for news in reader.iter_news(stemmer):
         # attitudes
         for ref_opinion in sentence.iter_ref_opinions():
             src, target = sentence.get_objects(ref_opinion)
-            s = u"{}->{} ({})".format(src.get_value(),
-                                      target.get_value(),
-                                      str(ref_opinion.Sentiment.to_int())).encode('utf-8')
+            s = u"{}->{} ({}) (t:[{},{}])".format(src.get_value(),
+                                                  target.get_value(),
+                                                  str(ref_opinion.Sentiment.to_int()),
+                                                  src.Type,
+                                                  target.Type).encode('utf-8')
             print(s)

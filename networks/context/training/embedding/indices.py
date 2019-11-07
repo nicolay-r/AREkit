@@ -14,6 +14,7 @@ from core.networks.context.debug import DebugKeys
 
 
 ENTITY_MASK = u"<entity>"
+ENTITY_TYPES = [u'PER', u'LOC', u'ORG', u'GEO']
 
 
 def calculate_embedding_indices_for_terms(terms,
@@ -54,6 +55,7 @@ def calculate_embedding_indices_for_terms(terms,
         elif isinstance(term, TextFrameVariant):
             index = embedding_offsets.get_frame_index(frames_embedding.find_index_by_word(term.Variant.get_value()))
         elif isinstance(term, Entity):
+            # TODO: Calculate as '{}_{}'.format(ENTITY_MASK, term.TYPE)
             index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(ENTITY_MASK))
         else:
             raise Exception("Unsuported type {}".format(term))

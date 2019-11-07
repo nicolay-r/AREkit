@@ -3,12 +3,6 @@ import collections
 from core.common.entities.entity import Entity
 from core.common.parsed_news.term_position import TermPosition
 from core.processing.text.parsed import ParsedText
-
-
-# TODO: Adding frames task
-# TODO: Provide api that allows to obtain frames (directly or
-# TODO: via another way using iterators by a contents of news sentences)
-# TODO: iter_sentence_term
 from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 
 
@@ -59,6 +53,12 @@ class ParsedNews(object):
 
         return positions
 
+    def __iter_all_entities(self):
+        for sentence in self.__parsed_sentences:
+            for term in sentence.iter_raw_terms():
+                if isinstance(term, Entity):
+                    yield term
+
     # endregion
 
     # region public methods
@@ -93,6 +93,12 @@ class ParsedNews(object):
             self.__parsed_sentences[s_index] = updated
 
         self.__entity_positions = self.__init_positions()
+
+    # TODO. Utilize to update entity types
+    def modify_entity_types(self, value_to_type_func):
+        assert(callable(value_to_type_func))
+        for e in self.__iter_all_entities():
+            e.modify_type(value_to_type_func(e.Value))
 
     def iter_terms(self):
         for sentence in self.__parsed_sentences:
