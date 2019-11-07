@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
+from core.networks.attention.architectures.cnn_attention_mlp import MLPAttention
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.sample import InputSample
 from core.networks.context.architectures.cnn import VanillaCNN
@@ -76,7 +76,7 @@ class AttentionCNN(VanillaCNN):
     @staticmethod
     def init_attention_embedding(ctx_network, att, keys):
         assert(isinstance(ctx_network, BaseContextNeuralNetwork))
-        assert(isinstance(att, MultiLayerPerceptronAttention))
+        assert(isinstance(att, MLPAttention))
 
         att.set_input(x=ctx_network.get_input_parameter(InputSample.I_X_INDS),
                       pos=ctx_network.get_input_parameter(InputSample.I_POS_INDS),

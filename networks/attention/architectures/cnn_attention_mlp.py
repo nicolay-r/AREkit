@@ -7,7 +7,7 @@ from core.networks.tf_helpers.filtering import \
     select_entity_related_elements
 
 
-class MultiLayerPerceptronAttention(object):
+class MLPAttention(object):
     """
     Title: Attention-Based Convolutional Neural Network for Semantic Relation Extraction
     Authors: Yatian Shen, Xuanjing Huang

@@ -1,11 +1,11 @@
 import tensorflow as tf
-from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
+from core.networks.attention.architectures.cnn_attention_mlp import MLPAttention
 from core.networks.context.sample import InputSample
 from core.networks.tf_helpers import filtering
 from core.networks.tf_helpers import sequence
 
 
-class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
+class InteractiveMLPAttention(MLPAttention):
     """
     Averaging result attention of MultiLayerPerceptronAttention
     """
@@ -17,7 +17,7 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
                  pos_embedding_size,
                  dist_embedding_size):
 
-        super(MultiLayerPerceptronAttentionDynamic, self).__init__(
+        super(InteractiveMLPAttention, self).__init__(
             cfg,
             batch_size,
             terms_per_context,
@@ -35,7 +35,7 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
         return 1 * self.TermEmbeddingSize
 
     def calculate_entities_length_func(self, entities):
-        scalar_length = super(MultiLayerPerceptronAttentionDynamic, self).calculate_entities_length_func(entities)
+        scalar_length = super(InteractiveMLPAttention, self).calculate_entities_length_func(entities)
 
         self.__dynamic_lens = sequence.calculate_sequence_length(
             sequence=entities,
@@ -57,7 +57,7 @@ class MultiLayerPerceptronAttentionDynamic(MultiLayerPerceptronAttention):
             inds=self.__dynamic_lens,
             handler=self.crop_elements_by_lengths_and_reduce_mean)
 
-        return super(MultiLayerPerceptronAttentionDynamic, self).reshape_att_sum(mean_sum)
+        return super(InteractiveMLPAttention, self).reshape_att_sum(mean_sum)
 
     def reshape_att_weights(self, att_weights):
         """

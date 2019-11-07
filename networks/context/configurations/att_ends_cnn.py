@@ -1,4 +1,4 @@
-from core.networks.attention.architectures.cnn_attention_mlp import MultiLayerPerceptronAttention
+from core.networks.attention.architectures.cnn_attention_mlp import MLPAttention
 from core.networks.attention.configurations.cnn_attention_mlp import MultiLayerPerceptronAttentionConfig
 from core.networks.context.configurations.cnn import CNNConfig
 
@@ -23,7 +23,7 @@ class AttentionAttitudeEndsCNNConfig(CNNConfig):
     def notify_initialization_completed(self):
         assert(self.__attention is None)
 
-        self.__attention = MultiLayerPerceptronAttention(
+        self.__attention = MLPAttention(
             cfg=self.__attention_config,
             batch_size=self.BatchSize,
             terms_per_context=self.TermsPerContext,

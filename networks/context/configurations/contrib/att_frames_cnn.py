@@ -1,4 +1,4 @@
-from core.networks.attention.architectures.cnn_attention_mlp_dynamic import MultiLayerPerceptronAttentionDynamic
+from core.networks.attention.architectures.cnn_attention_mlp_interactive import InteractiveMLPAttention
 from core.networks.attention.configurations.cnn_attention_mlp_dynamic import MultiLayerPerceptronAttentionDynamicConfig
 from core.networks.context.configurations.cnn import CNNConfig
 
@@ -23,7 +23,7 @@ class AttentionFramesCNNConfig(CNNConfig):
     def notify_initialization_completed(self):
         assert(self.__attention is None)
 
-        self.__attention = MultiLayerPerceptronAttentionDynamic(
+        self.__attention = InteractiveMLPAttention(
             cfg=self.__attention_config,
             batch_size=self.BatchSize,
             terms_per_context=self.TermsPerContext,
