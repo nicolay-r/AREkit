@@ -6,6 +6,7 @@ from core.source.rusentrel.io_utils import RuSentRelIOUtils
 from core.source.rusentrel.sentence import RuSentRelSentence
 
 
+# TODO. Add NewsID
 class RuSentRelNews(object):
 
     def __init__(self, sentences, entities):
