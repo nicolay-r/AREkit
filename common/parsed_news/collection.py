@@ -7,6 +7,10 @@ class ParsedNewsCollection(object):
     def __init__(self):
         self.__by_id = {}
 
+    def contains_id(self, news_id):
+        assert(isinstance(news_id, int))
+        return news_id in self.__by_id
+
     def get_by_news_id(self, news_id):
         assert(isinstance(news_id, int))
         return self.__by_id[news_id]
