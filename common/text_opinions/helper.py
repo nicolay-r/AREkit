@@ -6,47 +6,70 @@ from core.common.text_opinions.end_type import EntityEndType
 
 class TextOpinionHelper(object):
     """
-    This class provides a helper functions for those text_opinions,
-    which become a part of collection.
-    The latter is important becase of the dependecy from Owner.
+    This class provides a helper functions for TextOpinions, which become a part of TextOpinionCollection.
+    The latter is important because of the dependency from Owner.
+    We utilize 'extract' prefix in methods to emphasize that these are mehthods of helper.
     """
 
+    # region public 'extract' methods
+
     @staticmethod
-    def EntityValue(text_opinion, end_type):
+    def extract_entity_value(text_opinion, end_type):
         parsed_news, id = TextOpinionHelper.__get(text_opinion, end_type)
         return parsed_news.get_entity_value(id)
 
     @staticmethod
-    def EntitySentenceIndex(text_opinion, end_type):
+    def extract_entity_sentence_index(text_opinion, end_type):
         parsed_news, id = TextOpinionHelper.__get(text_opinion, end_type)
         return parsed_news.get_entity_sentence_index(id)
 
     @staticmethod
-    def CheckEndsHasSameSentenceIndex(text_opinion):
-        _, s_id = TextOpinionHelper.__get(text_opinion, EntityEndType.Source)
-        parsed_news, t_id = TextOpinionHelper.__get(text_opinion, EntityEndType.Target)
-        return parsed_news.get_entity_sentence_index(s_id) ==\
-               parsed_news.get_entity_sentence_index(t_id)
-
-    @staticmethod
-    def EntityDocumentLevelTermIndex(text_opinion, end_type):
+    def extract_entity_doc_level_term_index(text_opinion, end_type):
         return TextOpinionHelper.__entity_document_level_term_index(text_opinion, end_type)
 
     @staticmethod
-    def EntitySentenceLevelTermIndex(text_opinion, end_type):
+    def extract_entity_sentence_level_term_index(text_opinion, end_type):
         parsed_news, id = TextOpinionHelper.__get(text_opinion, end_type)
         return parsed_news.get_entity_sentence_level_term_index(id)
 
     @staticmethod
-    def IterateFrameIndices(text_opinion):
-        parsed_news, t_id = TextOpinionHelper.__get(text_opinion, EntityEndType.Target)
-        s_index = TextOpinionHelper.EntitySentenceIndex(text_opinion, EntityEndType.Source)
-        return parsed_news.iter_sentence_frame_indices(sentence_index=s_index)
+    def extract_entity_sentence_level_synonyms(text_opinion, end_type):
+        # TODO. Extract indices of synonyms within sentence.
+        raise NotImplementedError()
+
+    # endregion
+
+    # region public 'calculate' methods
 
     @staticmethod
-    def DistanceBetweenEntitiesInTerms(text_opinion):
+    def calculate_distance_between_entities_in_terms(text_opinion):
         return abs(TextOpinionHelper.__entity_document_level_term_index(text_opinion, EntityEndType.Source) -
                    TextOpinionHelper.__entity_document_level_term_index(text_opinion, EntityEndType.Target))
+
+    # endregion
+
+    # region public 'check' methods
+
+    @staticmethod
+    def check_ends_has_same_sentence_index(text_opinion):
+        _, s_id = TextOpinionHelper.__get(text_opinion, EntityEndType.Source)
+        parsed_news, t_id = TextOpinionHelper.__get(text_opinion, EntityEndType.Target)
+        return parsed_news.get_entity_sentence_index(s_id) == \
+               parsed_news.get_entity_sentence_index(t_id)
+
+    # endregion
+
+    # region public 'iter' methods
+
+    @staticmethod
+    def iter_frame_indices(text_opinion):
+        parsed_news, t_id = TextOpinionHelper.__get(text_opinion, EntityEndType.Target)
+        s_index = TextOpinionHelper.extract_entity_sentence_index(text_opinion, EntityEndType.Source)
+        return parsed_news.iter_sentence_frame_indices(sentence_index=s_index)
+
+    # endregion
+
+    # region private methods
 
     @staticmethod
     def __entity_document_level_term_index(text_opinion, end_type):
@@ -68,3 +91,5 @@ class TextOpinionHelper(object):
         assert(isinstance(text_opinion, TextOpinion))
         assert(end_type == EntityEndType.Source or end_type == EntityEndType.Target)
         return text_opinion.SourceId if end_type == EntityEndType.Source else text_opinion.TargetId
+
+    # endregion

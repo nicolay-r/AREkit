@@ -58,6 +58,10 @@ class InputSample(object):
         assert(isinstance(obj_ind, int))
         assert(isinstance(dist_from_subj, np.ndarray))
         assert(isinstance(dist_from_obj, np.ndarray))
+        # TODO. Provide syn_objs (OPTIONAL)
+        # TODO. Provide syn_subjs (OPTIONAL)
+        # TODO. Provide dist_from_near_obj
+        # TODO. Provide dist_from_near_subj
         assert(isinstance(pos_indices, np.ndarray))
         assert(isinstance(term_type, np.ndarray))
         assert(isinstance(frame_indices, np.ndarray))
@@ -75,9 +79,15 @@ class InputSample(object):
              (InputSample.I_FRAME_INDS, frame_indices),
              (InputSample.I_TERM_TYPE, term_type)])
 
+    # region properties
+
     @property
     def TextOpinionID(self):
         return self.__text_opinion_id
+
+    # endregion
+
+    # region class methods
 
     @classmethod
     def create_empty(cls, config):
@@ -101,9 +111,9 @@ class InputSample(object):
         assert(isinstance(terms, list))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        subj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Source)
-        obj_ind = TextOpinionHelper.EntitySentenceLevelTermIndex(text_opinion, EntityEndType.Target)
-        frame_inds = list(TextOpinionHelper.IterateFrameIndices(text_opinion))
+        subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Source)
+        obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Target)
+        frame_inds = list(TextOpinionHelper.iter_frame_indices(text_opinion))
 
         pos_indices = calculate_pos_indices_for_terms(
             terms=terms,
@@ -169,6 +179,10 @@ class InputSample(object):
                    frame_indices=np.array(frame_inds),
                    text_opinion_id=text_opinion.TextOpinionID)
 
+    # endregion
+
+    # region private methods
+
     @staticmethod
     def __dist(pos, size):
         result = np.zeros(size)
@@ -199,7 +213,7 @@ class InputSample(object):
 
     @staticmethod
     def check_ability_to_create_sample(window_size, text_opinion):
-        return abs(TextOpinionHelper.DistanceBetweenEntitiesInTerms(text_opinion)) < window_size
+        return abs(TextOpinionHelper.calculate_distance_between_entities_in_terms(text_opinion)) < window_size
 
     @staticmethod
     def __crop_bounds(sentence_len, window_size, e1, e2):
@@ -241,12 +255,6 @@ class InputSample(object):
         shifted = frame_index - w_b
         return placeholder if not InputSample.__in_window(w_b=w_b, w_e=w_e, i=frame_index) else shifted
 
-    def save(self, filepath):
-        pass
-
-    def load(self, filepath):
-        pass
-
     @staticmethod
     def iter_parameters():
         for var_name in dir(InputSample):
@@ -257,3 +265,15 @@ class InputSample(object):
     def __iter__(self):
         for key, value in self.values.iteritems():
             yield key, value
+
+    # endregion
+
+    # region public methods
+
+    def save(self, filepath):
+        raise NotImplementedError()
+
+    def load(self, filepath):
+        raise NotImplementedError()
+
+    # endregion

@@ -56,8 +56,8 @@ class PairedLabelsHelper(LabelsHelper):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(label, LabelPair))
 
-        source = TextOpinionHelper.EntityValue(text_opinion, EntityEndType.Source)
-        target = TextOpinionHelper.EntityValue(text_opinion, EntityEndType.Target)
+        source = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Source)
+        target = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Target)
 
         forward_opinion = Opinion(source_value=source,
                                   target_value=target,

@@ -8,12 +8,16 @@ from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 
 class ParsedNews(object):
     """
-    Extracted News lexemes, such as:
+    This class represents an information of the processed news in following directions:
         - news words
         - tokens
         - entities (positions).
-    Allow to expand parsed sentences with other objects:
-        modify_parsed_sentences(func)
+        - frames (FrameVariants)
+    It allows:
+        - Expand parsed sentences with other objects:
+            modify_parsed_sentences(func)
+        - Modify entity type values as follows:
+            modify_entity_types(func)
     """
 
     def __init__(self, news_id, parsed_sentences):
@@ -61,7 +65,7 @@ class ParsedNews(object):
 
     # endregion
 
-    # region public methods
+    # region public 'get' methods
 
     def get_entity_sentence_level_term_index(self, id_in_document):
         position = self.__entity_positions[id_in_document]
@@ -84,6 +88,10 @@ class ParsedNews(object):
         assert(isinstance(entity, Entity))
         return entity.Value
 
+    # endregion
+
+    # region public 'modify' methods
+
     def modify_parsed_sentences(self, sentence_upd_func):
         assert(callable(sentence_upd_func))
 
@@ -104,6 +112,10 @@ class ParsedNews(object):
                 continue
 
             e.modify_type(value)
+
+    # endregion
+
+    # region public 'iter' methods
 
     def iter_terms(self):
         for sentence in self.__parsed_sentences:

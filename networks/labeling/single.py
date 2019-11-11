@@ -45,8 +45,8 @@ class SingleLabelsHelper(LabelsHelper):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(label, Label))
 
-        source = TextOpinionHelper.EntityValue(text_opinion, EntityEndType.Source)
-        target = TextOpinionHelper.EntityValue(text_opinion, EntityEndType.Target)
+        source = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Source)
+        target = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Target)
 
         opinion = Opinion(source_value=source,
                           target_value=target,

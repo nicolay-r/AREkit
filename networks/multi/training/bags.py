@@ -42,8 +42,8 @@ class MultiInstanceBagsCollection(BagsCollection):
 
         def is_context_continued(c_rel, p_rel):
             end_type = EntityEndType.Source
-            return TextOpinionHelper.EntitySentenceIndex(p_rel, end_type=end_type) + 1 ==\
-                   TextOpinionHelper.EntitySentenceIndex(c_rel, end_type=end_type)
+            return TextOpinionHelper.extract_entity_sentence_index(p_rel, end_type=end_type) + 1 == \
+                   TextOpinionHelper.extract_entity_sentence_index(c_rel, end_type=end_type)
 
         bags = []
 

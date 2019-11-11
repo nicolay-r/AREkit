@@ -1,3 +1,5 @@
+import datetime
+
 import tensorflow as tf
 from core.common.embedding import Embedding
 from core.processing.lemmatization.mystem import MystemWrapper
@@ -292,6 +294,7 @@ class DefaultNetworkConfig(object):
 
     def _internal_get_parameters(self):
         return [
+            ("base:current_time", datetime.datetime.now()),
             ("base:memory_fraction", self.GPUMemoryFraction),
             ("base:use_class_weights", self.UseClassWeights),
             ("base:dropout (keep prob)", self.DropoutKeepProb),

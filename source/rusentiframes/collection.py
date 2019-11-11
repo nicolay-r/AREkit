@@ -16,6 +16,8 @@ class RuSentiFramesCollection:
         assert(isinstance(data, dict))
         self.__data = data
 
+    # region classmethods
+
     @classmethod
     def read_collection(cls):
         return RuSentiFramesIOUtils.read_from_zip(
@@ -26,6 +28,26 @@ class RuSentiFramesCollection:
     def __from_json(cls, input_file):
         data = json.load(input_file)
         return cls(data)
+
+    # endregion
+
+    # region public 'try get' methods
+
+    def try_get_frame_polarity(self, frame_id, role_src, role_dest):
+        assert(isinstance(role_src, unicode))
+        assert(isinstance(role_dest, unicode))
+
+        if not self.__check_has_frame_polarity_key(frame_id):
+            return None
+
+        for args in self.__data[frame_id][self.__frames_key][self.__polarity_key]:
+            if args[0] == role_src and args[1] == role_dest:
+                return self.__frame_polarity_from_args(args)
+        return None
+
+    # endregion
+
+    # region public 'get' methods
 
     def get_frame_roles(self, frame_id):
         assert(isinstance(frame_id, unicode))
@@ -40,18 +62,6 @@ class RuSentiFramesCollection:
 
         return [self.__frame_polarity_from_args(args)
                 for args in self.__data[frame_id][self.__frames_key][self.__polarity_key]]
-
-    def try_get_frame_polarity(self, frame_id, role_src, role_dest):
-        assert(isinstance(role_src, unicode))
-        assert(isinstance(role_dest, unicode))
-
-        if not self.__check_has_frame_polarity_key(frame_id):
-            return None
-
-        for args in self.__data[frame_id][self.__frames_key][self.__polarity_key]:
-            if args[0] == role_src and args[1] == role_dest:
-                return self.__frame_polarity_from_args(args)
-        return None
 
     def get_frame_states(self, frame_id):
         assert(isinstance(frame_id, unicode))
@@ -79,9 +89,22 @@ class RuSentiFramesCollection:
         # TODO. Not implemented yet.
         pass
 
+    # endregion
+
+    # region public 'iter' methods
+
     def iter_frames_ids(self):
         for frame_id in self.__data.iterkeys():
             yield frame_id
+
+    def iter_frame_id_and_variants(self):
+        for id, frame in self.__data.iteritems():
+            for variant in frame["variants"]:
+                yield id, variant
+
+    # endregion
+
+    # region private methods
 
     def __check_has_frame_polarity_key(self, frame_id):
         return self.__polarity_key in self.__data[frame_id][self.__frames_key]
@@ -90,7 +113,4 @@ class RuSentiFramesCollection:
     def __frame_polarity_from_args(args):
         return FramePolarity(src=args[0], dest=args[1], label=Label.from_str(args[2]), prob=args[3])
 
-    def iter_frame_id_and_variants(self):
-        for id, frame in self.__data.iteritems():
-            for variant in frame["variants"]:
-                yield id, variant
+    # endregion

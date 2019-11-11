@@ -28,3 +28,7 @@ class NetworkIO(object):
 
     def create_model_state_filepath(self):
         raise NotImplementedError()
+
+    def write_log(self, log_names, log_values):
+        raise NotImplementedError()
+
