@@ -40,6 +40,8 @@ class IANFrames(BaseContextNeuralNetwork):
         self.__aspect_att = None
         self.__context_att = None
 
+    # region properties
+
     @property
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize * 2
@@ -47,6 +49,10 @@ class IANFrames(BaseContextNeuralNetwork):
     @property
     def AspectInput(self):
         return self.get_input_parameter(InputSample.I_FRAME_INDS)
+
+    # endregion
+
+    # region public 'init' methods
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, IANFramesConfig))
@@ -162,6 +168,36 @@ class IANFrames(BaseContextNeuralNetwork):
 
             return tf.concat([context_rep, aspect_rep], 1)
 
+    def init_logits_unscaled(self, context_embedding):
+        return layers.get_k_layer_pair_logits(g=context_embedding,
+                                              W=[self.__w_l],
+                                              b=[self.__b_l],
+                                              dropout_keep_prob=self.DropoutKeepProb)
+
+    # endregion
+
+    # region public 'iter' methods
+
+    def iter_hidden_parameters(self):
+        yield self.ASPECT_W, self.__w_a
+        yield self.CONTEXT_W, self.__w_c
+        yield self.SOFTMAX_W, self.__w_l
+        yield self.ASPECT_B, self.__b_a
+        yield self.CONTEXT_B, self.__b_c
+        yield self.SOFTMAX_B, self.__b_l
+
+    def iter_input_dependent_hidden_parameters(self):
+        for name, value in super(IANFrames, self).iter_input_dependent_hidden_parameters():
+            yield name, value
+
+        yield u'aspect_att', self.__aspect_att
+        yield u'context_att', self.__context_att
+        yield u'aspects', self.AspectInput
+
+    # endregion
+
+    # region private methods
+
     @staticmethod
     def __aggreagate(config, outputs, length):
         assert(isinstance(config, IANFramesConfig))
@@ -194,8 +230,6 @@ class IANFrames(BaseContextNeuralNetwork):
                                                  self.Config.MaxAspectLength,
                                                  self.TermTypeEmbeddingSize])
 
-        # TODO. Provide role_sent here
-
         aspect_input = tf.concat(
             [tf.nn.embedding_lookup(self.TermEmbedding, self.AspectInput),
              tf.nn.embedding_lookup(self.POSEmbedding, e_pos_indices),
@@ -214,24 +248,4 @@ class IANFrames(BaseContextNeuralNetwork):
 
         return aspect_embedded
 
-    def init_logits_unscaled(self, context_embedding):
-        return layers.get_k_layer_pair_logits(g=context_embedding,
-                                              W=[self.__w_l],
-                                              b=[self.__b_l],
-                                              dropout_keep_prob=self.DropoutKeepProb)
-
-    def iter_hidden_parameters(self):
-        yield self.ASPECT_W, self.__w_a
-        yield self.CONTEXT_W, self.__w_c
-        yield self.SOFTMAX_W, self.__w_l
-        yield self.ASPECT_B, self.__b_a
-        yield self.CONTEXT_B, self.__b_c
-        yield self.SOFTMAX_B, self.__b_l
-
-    def iter_input_dependent_hidden_parameters(self):
-        for name, value in super(IANFrames, self).iter_input_dependent_hidden_parameters():
-            yield name, value
-
-        yield u'aspect_att', self.__aspect_att
-        yield u'context_att', self.__context_att
-        yield u'aspects', self.AspectInput
+    # endregion
