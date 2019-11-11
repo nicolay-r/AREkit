@@ -194,6 +194,8 @@ class IANFrames(BaseContextNeuralNetwork):
                                                  self.Config.MaxAspectLength,
                                                  self.TermTypeEmbeddingSize])
 
+        # TODO. Provide role_sent here
+
         aspect_input = tf.concat(
             [tf.nn.embedding_lookup(self.TermEmbedding, self.AspectInput),
              tf.nn.embedding_lookup(self.POSEmbedding, e_pos_indices),

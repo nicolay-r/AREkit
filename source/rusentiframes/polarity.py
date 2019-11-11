@@ -1,25 +1,30 @@
+from core.common.frames.polarity import FramePolarity
 from core.evaluation.labels import Label
 
 
-class FramePolarity(object):
+class RuSentiFramesFramePolarity(FramePolarity):
+    """
+    Polarity description between source (Agent) towards dest (Theme)
+    The latter are related to roles of frame polarity.
+    """
 
-    def __init__(self, src, dest, label, prob):
-        assert(isinstance(src, unicode))
-        assert(isinstance(dest, unicode))
+    def __init__(self, role_src, role_dest, label, prob):
+        assert(isinstance(role_src, unicode))
+        assert(isinstance(role_dest, unicode))
         assert(isinstance(label, Label))
         assert(isinstance(prob, float))
-        self.__src = src
-        self.__dest = dest
+        self.__role_src = role_src
+        self.__role_dest = role_dest
         self.__label = label
         self.__prob = prob
 
     @property
     def Source(self):
-        return self.__src
+        return self.__role_src
 
     @property
     def Destination(self):
-        return self.__dest
+        return self.__role_dest
 
     @property
     def Label(self):

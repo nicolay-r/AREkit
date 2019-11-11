@@ -2,6 +2,8 @@ import collections
 import numpy as np
 from collections import OrderedDict
 
+from core.common.frames.collection import FramesCollection
+from core.common.frames.polarity import FramePolarity
 from core.networks.context.training.embedding import indices
 from core.networks.context.configurations.base import DefaultNetworkConfig
 
@@ -10,8 +12,6 @@ from core.common.entities.entity import Entity
 from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
 from core.common.text_opinions.text_opinion import TextOpinion
-
-from core.source.rusentiframes.collection import RuSentiFramesCollection
 
 
 class InputSample(object):
@@ -30,6 +30,7 @@ class InputSample(object):
     I_POS_INDS = "pos_inds"
     I_TERM_TYPE = "term_type"
     I_FRAME_INDS = 'frame_inds'
+    I_FRAME_SENT_ROLES = 'frame_roles_inds'
 
     # TODO: Should be -1, but now it is not supported
     FRAMES_PAD_VALUE = 0
@@ -45,6 +46,7 @@ class InputSample(object):
                  pos_indices,
                  term_type,
                  frame_indices,
+                 frame_sent_roles,
                  text_opinion_id):
         """
             X: np.ndarray
@@ -70,6 +72,7 @@ class InputSample(object):
         assert(isinstance(pos_indices, np.ndarray))
         assert(isinstance(term_type, np.ndarray))
         assert(isinstance(frame_indices, np.ndarray))
+        assert(isinstance(frame_sent_roles, np.ndarray))
         assert(isinstance(text_opinion_id, int))
 
         self.__text_opinion_id = text_opinion_id
@@ -82,6 +85,7 @@ class InputSample(object):
              (InputSample.I_OBJ_DISTS, dist_from_obj),
              (InputSample.I_POS_INDS, pos_indices),
              (InputSample.I_FRAME_INDS, frame_indices),
+             (InputSample.I_FRAME_SENT_ROLES, frame_sent_roles),
              (InputSample.I_TERM_TYPE, term_type)])
 
     # region properties
@@ -108,13 +112,15 @@ class InputSample(object):
                    pos_indices=blank_terms,
                    term_type=blank_terms,
                    frame_indices=blank_frames,
+                   frame_sent_roles=blank_frames,
                    text_opinion_id=-1)
 
     @classmethod
-    def from_text_opinion(cls, text_opinion, terms, config):
+    def from_text_opinion(cls, text_opinion, terms, frames_collection, config):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(terms, list))
         assert(isinstance(config, DefaultNetworkConfig))
+        assert(isinstance(frames_collection, FramesCollection))
 
         subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Source)
         obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Target)
@@ -122,7 +128,7 @@ class InputSample(object):
         frame_roles = [
             InputSample.__extract_frame_variant_sentiment_role(
                 text_frame_variant=variant,
-                frames_collection=config.RuSentiFramesCollectionInstance)
+                frames_collection=frames_collection)
             for _, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion)]
 
         pos_indices = indices.calculate_pos_indices_for_terms(
@@ -185,6 +191,7 @@ class InputSample(object):
                    pos_indices=np.array(pos_indices),
                    term_type=np.array(term_type),
                    frame_indices=np.array(frame_inds),
+                   frame_sent_roles=np.array(frame_roles),
                    text_opinion_id=text_opinion.TextOpinionID)
 
     # endregion
@@ -208,15 +215,13 @@ class InputSample(object):
                    inds)
 
     @staticmethod
-    # TODO. Fix dependency from source.
-    # TODO. Implement in different file.
     def __extract_frame_variant_sentiment_role(text_frame_variant, frames_collection):
         assert(isinstance(text_frame_variant, TextFrameVariant))
-        assert(isinstance(frames_collection, RuSentiFramesCollection))
+        assert(isinstance(frames_collection, FramesCollection))
         frame_id = text_frame_variant.Variant.FrameID
-        return frames_collection.try_get_frame_polarity(frame_id=frame_id,
-                                                        role_src=u'a0',
-                                                        role_dest=u'a1')
+        polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)
+        assert(isinstance(polarity, FramePolarity))
+        return polarity.Label.to_uint()
 
     @staticmethod
     def __dist(pos, size):

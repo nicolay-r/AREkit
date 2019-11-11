@@ -206,6 +206,11 @@ class BaseContextNeuralNetwork(NeuralNetwork):
             shape=[self.__cfg.BatchSize, self.__cfg.FramesPerContext],
             name=prefix + InputSample.I_FRAME_INDS)
 
+        self.__input[InputSample.I_FRAME_SENT_ROLES] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[self.__cfg.BatchSize, self.__cfg.FramesPerContext],
+            name=prefix + InputSample.I_FRAME_SENT_ROLES)
+
         self.__y = tf.placeholder(dtype=tf.int32,
                                   shape=[self.__cfg.BagsPerMinibatch],
                                   name=prefix + MiniBatch.I_LABELS)

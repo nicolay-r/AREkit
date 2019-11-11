@@ -28,7 +28,9 @@ class MLPAttention(object):
     def __init__(self, cfg, batch_size, terms_per_context,
                  term_embedding_size,
                  pos_embedding_size,
-                 dist_embedding_size):
+                 dist_embedding_size,
+                 # TODO. Provide the latter
+                 sent_embedding_size=0):
         assert(isinstance(cfg, MultiLayerPerceptronAttentionConfig))
         self.__cfg = cfg
 

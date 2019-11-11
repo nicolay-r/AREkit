@@ -3,7 +3,7 @@ import json
 from core.evaluation.labels import Label
 from core.common.frames.collection import FramesCollection
 from core.source.rusentiframes.io_utils import RuSentiFramesIOUtils
-from core.source.rusentiframes.polarity import FramePolarity
+from core.source.rusentiframes.polarity import RuSentiFramesFramePolarity
 from core.source.rusentiframes.role import FrameRole
 from core.source.rusentiframes.state import FrameState
 
@@ -34,6 +34,11 @@ class RuSentiFramesCollection(FramesCollection):
     # endregion
 
     # region public 'try get' methods
+
+    def try_get_frame_sentiment_polarity(self, frame_id):
+        return self.try_get_frame_polarity(frame_id=frame_id,
+                                           role_src=u'a0',
+                                           role_dest=u'a1')
 
     def try_get_frame_polarity(self, frame_id, role_src, role_dest):
         assert(isinstance(role_src, unicode))
@@ -113,6 +118,9 @@ class RuSentiFramesCollection(FramesCollection):
 
     @staticmethod
     def __frame_polarity_from_args(args):
-        return FramePolarity(src=args[0], dest=args[1], label=Label.from_str(args[2]), prob=args[3])
+        return RuSentiFramesFramePolarity(role_src=args[0],
+                                          role_dest=args[1],
+                                          label=Label.from_str(args[2]),
+                                          prob=args[3])
 
     # endregion

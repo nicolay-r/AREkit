@@ -54,8 +54,6 @@ class DefaultNetworkConfig(object):
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
 
-    __frames_collection = None
-
     __l2_reg = 0.0
 
     # endregion
@@ -64,7 +62,6 @@ class DefaultNetworkConfig(object):
         self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
         # TODO. This should not be there, as it is relaed to specific source.
         # TODO. Move into init of experiments. maybe
-        self.__frames_collection = RuSentiFramesCollection.read_collection()
 
     # region properties
 
@@ -111,10 +108,6 @@ class DefaultNetworkConfig(object):
     @property
     def LayerRegularizer(self):
         return self.__default_regularizer
-
-    @property
-    def RuSentiFramesCollectionInstance(self):
-        return self.__frames_collection
 
     # endregion
 
