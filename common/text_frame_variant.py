@@ -1,5 +1,5 @@
 from core.common.bound import Bound
-from core.source.rusentiframes.variants.variant import FrameVariant
+from core.common.frame_variants.variant import FrameVariant
 
 
 class TextFrameVariant(object):

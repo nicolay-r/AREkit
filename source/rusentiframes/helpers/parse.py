@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import collections
 
+from core.common.frame_variants.collection import FrameVariantsCollection
+from core.common.text_frame_variant import TextFrameVariant
 from core.languages.mods import BaseLanguageMods
 from core.languages.ru.mods import RussianLanguageMods
 from core.processing.text.parsed import ParsedText
 from core.source.rusentiframes.helpers.search import RuSentiFramesSearchHelper
-from core.source.rusentiframes.variants.collection import FrameVariantsCollection
-from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 
 
 class RuSentiFramesParseHelper:

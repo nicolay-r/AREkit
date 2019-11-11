@@ -2,9 +2,8 @@ import collections
 
 from core.common.entities.entity import Entity
 from core.common.parsed_news.term_position import TermPosition
+from core.common.text_frame_variant import TextFrameVariant
 from core.processing.text.parsed import ParsedText
-# TODO. Fix dependency from source
-from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 
 
 class ParsedNews(object):
@@ -129,7 +128,6 @@ class ParsedNews(object):
         sentence = self.__parsed_sentences[sentence_index]
         assert(isinstance(sentence, ParsedText))
         for index, term in enumerate(sentence.iter_raw_terms()):
-            # TODO. Fix dependency from source.
             if isinstance(term, TextFrameVariant):
                 yield index, term
 

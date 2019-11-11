@@ -1,4 +1,3 @@
-import io
 from core.common.synonyms import SynonymsCollection
 from core.processing.lemmatization.base import Stemmer
 from core.source.rusentrel.io_utils import RuSentRelIOUtils

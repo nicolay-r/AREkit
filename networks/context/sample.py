@@ -5,13 +5,13 @@ from collections import OrderedDict
 from core.networks.context.training.embedding import indices
 from core.networks.context.configurations.base import DefaultNetworkConfig
 
+from core.common.text_frame_variant import TextFrameVariant
 from core.common.entities.entity import Entity
 from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
 from core.common.text_opinions.text_opinion import TextOpinion
 
 from core.source.rusentiframes.collection import RuSentiFramesCollection
-from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 
 
 class InputSample(object):

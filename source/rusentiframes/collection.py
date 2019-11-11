@@ -1,13 +1,14 @@
 import json
+
 from core.evaluation.labels import Label
+from core.common.frames.collection import FramesCollection
 from core.source.rusentiframes.io_utils import RuSentiFramesIOUtils
 from core.source.rusentiframes.polarity import FramePolarity
 from core.source.rusentiframes.role import FrameRole
 from core.source.rusentiframes.state import FrameState
 
 
-# TODO. Implement as nested from FramesCollection in 'common'
-class RuSentiFramesCollection:
+class RuSentiFramesCollection(FramesCollection):
 
     __frames_key = u"frames"
     __polarity_key = u"polarity"

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import collections
+
+from core.common.frame_variants.variant import FrameVariant
 from core.processing.lemmatization.base import Stemmer
-from core.source.rusentiframes.variants.variant import FrameVariant
 
 
 class FrameVariantsCollection:
