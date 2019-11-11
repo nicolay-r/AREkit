@@ -1,4 +1,4 @@
-# AREkit
+# AEkit
 
 > Note: Nowadays it utilize `core` directory instead of `arekit`. 
 
@@ -70,11 +70,13 @@ This toolset includes the following instruments and domain-related datasets:
     * Text parser;
 * **Neural Networks** [[README]](networks/README.md);
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
-    * RuAttitudes
-    * RuSentiFrames
-    * RuSentRel
+    * RuAttitudes [[github-repo]]();
+    * RuSentiFrames [[github-repo]]();
+    * RuSentRel [[github-repo]]();
 * **Evaluation** -- tools that allows to perform models quality assessment. 
-
+    * Label [[API]](evaluation/labels.py) -- sentiment label;
+    * CmpOpinion [[API]](evaluation/cmp_opinions.py) -- structure describes pairs of opinions to compare;
+    * BaseEvaluator [[API]](evaluation/evaluators/base.py);
 
 ## Installation
 
