@@ -56,10 +56,23 @@ List of the toolset dependencies are as follows:
 This toolset includes the following instruments and domain-related datasets:
 
 * **Common** [[DIR]](networks) -- fundamential structures and types utilized in Sentiment Attitudes Extraction Task;
-    * Embedding [[API]](common/embedding.py);
+    * Bound [[API]](common/bound.py) -- range in text;
+    * TextObject [[API]](common/text_object.py) -- any entry in text with related *Bound*;
+    * Entity [[API]](common/entities/entity.py) -- same as TextObject but related to specific text entries;
+    * Embedding [[API]](common/embedding.py) -- base class for Word2Vec-like embeddings;
+    * Synonyms [[API]](common/synonyms.py) -- storage for synonymous entries (words and phrases);
+    * Opinion [[API]](common/opinions/opinion.py) -- actually text attitudes with 'source' and 'destination' ('X' -> 'Y');
 * **Processing** [[README]](processing/README.md);
+    * Lemmatization;
+    * Named Entity Recognition (NER):
+    * Part Of Speech Tagging (POS);
+    * Syntax Parser;
+    * Text parser;
 * **Neural Networks** [[README]](networks/README.md);
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
+    * RuAttitudes
+    * RuSentiFrames
+    * RuSentRel
 * **Evaluation** -- tools that allows to perform models quality assessment. 
 
 
