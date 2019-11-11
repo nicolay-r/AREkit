@@ -2,14 +2,16 @@ import collections
 import numpy as np
 from collections import OrderedDict
 
-from core.networks.context.training.embedding.indices import \
-    calculate_embedding_indices_for_terms, \
-    calculate_pos_indices_for_terms
+from core.networks.context.training.embedding import indices
+from core.networks.context.configurations.base import DefaultNetworkConfig
+
 from core.common.entities.entity import Entity
 from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
 from core.common.text_opinions.text_opinion import TextOpinion
-from core.networks.context.configurations.base import DefaultNetworkConfig
+
+from core.source.rusentiframes.collection import RuSentiFramesCollection
+from core.source.rusentiframes.variants.text_variant import TextFrameVariant
 
 
 class InputSample(object):
@@ -113,13 +115,18 @@ class InputSample(object):
 
         subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Source)
         obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Target)
-        frame_inds = list(TextOpinionHelper.iter_frame_indices(text_opinion))
+        frame_inds = [index for index, _ in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion)]
+        frame_roles = [
+            InputSample.__extract_frame_variant_sentiment_role(
+                text_frame_variant=variant,
+                frames_collection=config.RuSentiFramesCollectionInstance)
+            for _, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion)]
 
-        pos_indices = calculate_pos_indices_for_terms(
+        pos_indices = indices.calculate_pos_indices_for_terms(
             terms=terms,
             pos_tagger=config.PosTagger)
 
-        x_indices = calculate_embedding_indices_for_terms(
+        x_indices = indices.calculate_embedding_indices_for_terms(
             terms=terms,
             term_embedding_matrix=config.TermEmbeddingMatrix,
             word_embedding=config.WordEmbedding,
@@ -147,6 +154,8 @@ class InputSample(object):
                 e1=subj_ind,
                 e2=obj_ind)
 
+            # TODO. Below the same for ROLES. Refactor
+
             frame_inds = map(lambda frame_index: cls.__shift_frame_index(w_b=b, w_e=e,
                                                                          frame_index=frame_index,
                                                                          placeholder=cls.FRAMES_PAD_VALUE),
@@ -154,12 +163,11 @@ class InputSample(object):
 
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
 
+        # TODO. Below the same for ROLES. Refactor
         if len(frame_inds) < config.FramesPerContext:
             cls.__pad_right_inplace(lst=frame_inds, pad_size=config.FramesPerContext, filler=cls.FRAMES_PAD_VALUE)
         else:
             del frame_inds[config.FramesPerContext:]
-
-        frame_inds = list(reversed(sorted(frame_inds)))
 
         assert(len(pos_indices) ==
                len(x_indices) ==
@@ -182,6 +190,17 @@ class InputSample(object):
     # endregion
 
     # region private methods
+
+    @staticmethod
+    # TODO. Fix dependency from source.
+    # TODO. Implement in different file.
+    def __extract_frame_variant_sentiment_role(text_frame_variant, frames_collection):
+        assert(isinstance(text_frame_variant, TextFrameVariant))
+        assert(isinstance(frames_collection, RuSentiFramesCollection))
+        frame_id = text_frame_variant.Variant.FrameID
+        return frames_collection.try_get_frame_polarity(frame_id=frame_id,
+                                                        role_src=u'a0',
+                                                        role_dest=u'a1')
 
     @staticmethod
     def __dist(pos, size):

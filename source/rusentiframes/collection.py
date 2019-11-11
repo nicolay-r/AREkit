@@ -6,6 +6,7 @@ from core.source.rusentiframes.role import FrameRole
 from core.source.rusentiframes.state import FrameState
 
 
+# TODO. Implement as nested from FramesCollection in 'common'
 class RuSentiFramesCollection:
 
     __frames_key = u"frames"

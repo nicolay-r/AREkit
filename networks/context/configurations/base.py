@@ -4,6 +4,7 @@ import tensorflow as tf
 from core.common.embedding import Embedding
 from core.processing.lemmatization.mystem import MystemWrapper
 from core.processing.pos.mystem_wrap import POSMystemWrapper
+from core.source.rusentiframes.collection import RuSentiFramesCollection
 
 
 class LabelCalculationMode:
@@ -53,12 +54,17 @@ class DefaultNetworkConfig(object):
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
 
+    __frames_collection = None
+
     __l2_reg = 0.0
 
     # endregion
 
     def __init__(self):
         self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
+        # TODO. This should not be there, as it is relaed to specific source.
+        # TODO. Move into init of experiments. maybe
+        self.__frames_collection = RuSentiFramesCollection.read_collection()
 
     # region properties
 
@@ -105,6 +111,10 @@ class DefaultNetworkConfig(object):
     @property
     def LayerRegularizer(self):
         return self.__default_regularizer
+
+    @property
+    def RuSentiFramesCollectionInstance(self):
+        return self.__frames_collection
 
     # endregion
 

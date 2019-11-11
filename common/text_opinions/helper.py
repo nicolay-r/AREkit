@@ -62,10 +62,10 @@ class TextOpinionHelper(object):
     # region public 'iter' methods
 
     @staticmethod
-    def iter_frame_indices(text_opinion):
+    def iter_frame_variants_with_indices_in_sentence(text_opinion):
         parsed_news, t_id = TextOpinionHelper.__get(text_opinion, EntityEndType.Target)
         s_index = TextOpinionHelper.extract_entity_sentence_index(text_opinion, EntityEndType.Source)
-        return parsed_news.iter_sentence_frame_indices(sentence_index=s_index)
+        return parsed_news.iter_sentence_frame_variants_with_indices(sentence_index=s_index)
 
     # endregion
 
