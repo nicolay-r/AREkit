@@ -33,6 +33,9 @@ class InputSample(object):
 
     # TODO: Should be -1, but now it is not supported
     FRAMES_PAD_VALUE = 0
+    POS_PAD_VALUE = 0
+    X_PAD_VALUE = 0
+    TERM_TYPE_PAD_VALUE = -1
 
     def __init__(self, X,
                  subj_ind,
@@ -140,13 +143,11 @@ class InputSample(object):
 
         pad_size = config.TermsPerContext
 
-        pad_value = 0
-
         if sentence_len < pad_size:
-            cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=pad_value)
-            cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=pad_value)
+            cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=cls.POS_PAD_VALUE)
+            cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=cls.X_PAD_VALUE)
             # TODO. Provide it correct.
-            cls.__pad_right_inplace(term_type, pad_size=pad_size, filler=-1)
+            cls.__pad_right_inplace(term_type, pad_size=pad_size, filler=cls.TERM_TYPE_PAD_VALUE)
         else:
             b, e, subj_ind, obj_ind = cls.__crop_bounds(
                 sentence_len=sentence_len,
@@ -154,20 +155,19 @@ class InputSample(object):
                 e1=subj_ind,
                 e2=obj_ind)
 
-            # TODO. Below the same for ROLES. Refactor
-
             frame_inds = map(lambda frame_index: cls.__shift_frame_index(w_b=b, w_e=e,
                                                                          frame_index=frame_index,
                                                                          placeholder=cls.FRAMES_PAD_VALUE),
                              frame_inds)
 
+            frame_inds = cls.__shift_position_indices(begin=b, end=e,
+                                                      inds=frame_inds,
+                                                      pad_value=cls.FRAMES_PAD_VALUE)
+
             cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
 
-        # TODO. Below the same for ROLES. Refactor
-        if len(frame_inds) < config.FramesPerContext:
-            cls.__pad_right_inplace(lst=frame_inds, pad_size=config.FramesPerContext, filler=cls.FRAMES_PAD_VALUE)
-        else:
-            del frame_inds[config.FramesPerContext:]
+        cls.__fit_frames_dependent_indices_inplace(inds=frame_inds, frames_per_context=config.FramesPerContext)
+        cls.__fit_frames_dependent_indices_inplace(inds=frame_roles, frames_per_context=config.FramesPerContext)
 
         assert(len(pos_indices) ==
                len(x_indices) ==
@@ -190,6 +190,22 @@ class InputSample(object):
     # endregion
 
     # region private methods
+
+    @staticmethod
+    def __fit_frames_dependent_indices_inplace(inds, frames_per_context):
+        if len(inds) < frames_per_context:
+            InputSample.__pad_right_inplace(lst=inds,
+                                            pad_size=frames_per_context,
+                                            filler=InputSample.FRAMES_PAD_VALUE)
+        else:
+            del inds[frames_per_context:]
+
+    @staticmethod
+    def __shift_position_indices(inds, begin, end, pad_value):
+        return map(lambda frame_index: InputSample.__shift_frame_index(w_b=begin, w_e=end,
+                                                                       frame_index=frame_index,
+                                                                       placeholder=pad_value),
+                   inds)
 
     @staticmethod
     # TODO. Fix dependency from source.
