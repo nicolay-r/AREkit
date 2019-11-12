@@ -299,13 +299,13 @@ class BaseContextNeuralNetwork(NeuralNetwork):
                                       shape=self.__cfg.TermEmbeddingShape)
 
         self.__dist_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=tf.random_normal_initializer,
+                                          initializer=self.__cfg.EmbeddingInitializer,
                                           shape=[self.__cfg.TermsPerContext, self.__cfg.DistanceEmbeddingSize],
                                           trainable=True,
                                           name="dist_emb")
 
         self.__pos_emb = tf.get_variable(dtype=tf.float32,
-                                         initializer=tf.random_normal_initializer,
+                                         initializer=self.__cfg.EmbeddingInitializer,
                                          shape=[len(self.__cfg.PosTagger.pos_names), self.__cfg.PosEmbeddingSize],
                                          trainable=True,
                                          name="pos_emb")

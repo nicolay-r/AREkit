@@ -4,7 +4,6 @@ import tensorflow as tf
 from core.common.embedding import Embedding
 from core.processing.lemmatization.mystem import MystemWrapper
 from core.processing.pos.mystem_wrap import POSMystemWrapper
-from core.source.rusentiframes.collection import RuSentiFramesCollection
 
 
 class LabelCalculationMode:
@@ -108,6 +107,10 @@ class DefaultNetworkConfig(object):
     @property
     def LayerRegularizer(self):
         return self.__default_regularizer
+
+    @property
+    def EmbeddingInitializer(self):
+        return tf.contrib.layers.xavier_initializer()
 
     # endregion
 
