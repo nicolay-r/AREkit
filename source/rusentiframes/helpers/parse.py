@@ -9,27 +9,7 @@ from core.processing.text.parsed import ParsedText
 from core.source.rusentiframes.helpers.search import RuSentiFramesSearchHelper
 
 
-class RuSentiFramesParseHelper:
-
-    @staticmethod
-    def parse_frames_in_parsed_text(frame_variants_collection, parsed_text, locale_mods=RussianLanguageMods):
-        assert(isinstance(frame_variants_collection, FrameVariantsCollection))
-        assert(isinstance(parsed_text, ParsedText))
-        assert(issubclass(locale_mods, BaseLanguageMods))
-
-        frame_variants_iter = RuSentiFramesSearchHelper.iter_frames_from_parsed_text(
-            frame_variants=frame_variants_collection,
-            parsed_text=parsed_text,
-            locale_mods=locale_mods)
-
-        if frame_variants_iter is None:
-            return parsed_text
-
-        updated_terms = RuSentiFramesParseHelper.__insert_frame_variants_into_raw_terms_list(
-            raw_terms_list=list(parsed_text.iter_raw_terms()),
-            frame_variants_iter=frame_variants_iter)
-
-        return parsed_text.copy_modified(terms=updated_terms)
+class RuSentiFramesParseHelper(object):
 
     # region private methods
 
@@ -54,3 +34,23 @@ class RuSentiFramesParseHelper:
         return raw_terms_list
 
     # endregion
+
+    @staticmethod
+    def parse_frames_in_parsed_text(frame_variants_collection, parsed_text, locale_mods=RussianLanguageMods):
+        assert(isinstance(frame_variants_collection, FrameVariantsCollection))
+        assert(isinstance(parsed_text, ParsedText))
+        assert(issubclass(locale_mods, BaseLanguageMods))
+
+        frame_variants_iter = RuSentiFramesSearchHelper.iter_frames_from_parsed_text(
+            frame_variants=frame_variants_collection,
+            parsed_text=parsed_text,
+            locale_mods=locale_mods)
+
+        if frame_variants_iter is None:
+            return parsed_text
+
+        updated_terms = RuSentiFramesParseHelper.__insert_frame_variants_into_raw_terms_list(
+            raw_terms_list=list(parsed_text.iter_raw_terms()),
+            frame_variants_iter=frame_variants_iter)
+
+        return parsed_text.copy_modified(terms=updated_terms)

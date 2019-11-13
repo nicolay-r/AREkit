@@ -29,6 +29,8 @@ class RuSentRelTextOpinion(RefOpinion):
         self.__entity_target_ID = e_target_doc_level_id
         self.__entity_by_id_func = doc_entities.get_entity_by_id
 
+    # region properties
+
     @property
     def RuSentRelNewsId(self):
         return self.__news_id
@@ -40,3 +42,5 @@ class RuSentRelTextOpinion(RefOpinion):
     @property
     def TargetEntity(self):
         return self.__entity_by_id_func(self.__entity_target_ID)
+
+    #endregion

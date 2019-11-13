@@ -12,6 +12,8 @@ class SynonymsCollection(object):
         self.__stemmer = stemmer
         self.__is_read_only = is_read_only
 
+    # region properties
+
     @property
     def IsReadOnly(self):
         return self.__is_read_only
@@ -20,18 +22,30 @@ class SynonymsCollection(object):
     def Stemmer(self):
         return self.__stemmer
 
+    # endregion
+
+    # region public 'add' methods
+
     def add_synonym(self, s):
         assert(isinstance(s, unicode))
-        assert(not self.has_synonym(s))
+        assert(not self.contains_synonym(s))
         assert(not self.__is_read_only)
         id = self.create_synonym_id(self.__stemmer, s)
-        self.__by_synonym[id] = self._get_groups_count()
+        self.__by_synonym[id] = self.__get_groups_count()
         self.__by_index.append([s])
 
-    def has_synonym(self, s):
+    # endregion
+
+    # region public 'contains' methods
+
+    def contains_synonym(self, s):
         assert(isinstance(s, unicode))
         id = self.create_synonym_id(self.__stemmer, s)
         return id in self.__by_synonym
+
+    # endregion
+
+    # region public 'get' methods
 
     def get_synonyms_list(self, s):
         assert(isinstance(s, unicode))
@@ -41,23 +55,19 @@ class SynonymsCollection(object):
 
     def get_synonym_group_index(self, s):
         assert(isinstance(s, unicode))
-        return self._get_group_index(s)
+        return self.__get_group_index(s)
 
-    def _get_groups_count(self):
-        return len(self.__by_index)
+    # endregion
 
-    def _get_group_index(self, s):
-        id = self.create_synonym_id(self.__stemmer, s)
-        return self.__by_synonym[id]
-
-    #TODO: Deprecated. Use iter instead
-    def get_group_by_index(self, index):
-        assert(isinstance(index, int))
-        return self.__by_index[index]
+    # region public 'create' methods
 
     @staticmethod
     def create_synonym_id(stemmer, s):
         return stemmer.lemmatize_to_str(s)
+
+    # endregion
+
+    # region public 'iter' methods
 
     def iter_by_index(self):
         for item in self.__by_index:
@@ -68,5 +78,23 @@ class SynonymsCollection(object):
         for item in self.__by_index[group_index]:
             yield item
 
+    # endregion
+
+    # region overriden methods
+
     def __len__(self):
         return len(self.__by_index)
+
+    # endregion
+
+    # region private methods
+
+    def __get_groups_count(self):
+        return len(self.__by_index)
+
+    def __get_group_index(self, s):
+        id = self.create_synonym_id(self.__stemmer, s)
+        return self.__by_synonym[id]
+
+    # endregion
+

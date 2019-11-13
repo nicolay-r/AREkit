@@ -16,6 +16,8 @@ class RefOpinion(object):
         self.__owner = owner
         self.__tag = None
 
+    # region properties
+
     @property
     def SourceId(self):
         return self.__source_id
@@ -35,6 +37,8 @@ class RefOpinion(object):
     @property
     def Tag(self):
         return self.__tag
+
+    # endregion
 
     def set_tag(self, value):
         self.__tag = value

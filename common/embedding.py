@@ -16,6 +16,8 @@ class Embedding(object):
         self.__words = words
         self.__index_by_word = self.__create_index(words)
 
+    # region properties
+
     @property
     def VectorSize(self):
         return self.__matrix.shape[1]
@@ -23,6 +25,10 @@ class Embedding(object):
     @property
     def VocabularySize(self):
         return self.__matrix.shape[0]
+
+    # endregion
+
+    # region classmethods
 
     @classmethod
     def from_word2vec_format(cls, filepath, binary):
@@ -55,11 +61,17 @@ class Embedding(object):
         return cls(matrix=np.array(matrix),
                    words=words)
 
+    # endregion
+
+    # region private methods
+
     def __create_index(self, words):
         index = {}
         for i, word in enumerate(words):
             index[word] = i
         return index
+
+    # endregion
 
     def iter_vocabulary(self):
         for word in self.__words:
@@ -77,6 +89,8 @@ class Embedding(object):
         assert(isinstance(word, unicode))
         return self.__index_by_word[word]
 
+    # region overriden methods
+
     def __contains__(self, word):
         assert(isinstance(word, unicode))
         return word in self.__index_by_word
@@ -86,3 +100,4 @@ class Embedding(object):
         index = self.__index_by_word[word]
         return self.__matrix[index]
 
+    # endregion

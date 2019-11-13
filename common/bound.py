@@ -6,6 +6,8 @@ class Bound:
         self.__pos = pos
         self.__length = length
 
+    # region properties
+
     @property
     def Position(self):
         return self.__pos
@@ -13,3 +15,5 @@ class Bound:
     @property
     def Length(self):
         return self.__length
+
+    # endregion

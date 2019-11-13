@@ -7,6 +7,21 @@ from core.processing.text.parsed import ParsedText
 
 class RuSentiFramesSearchHelper(object):
 
+    # region private methods
+
+    @staticmethod
+    def __check_all_words_within(terms, start_index, last_index):
+        for i in xrange(start_index, last_index + 1):
+            if not isinstance(terms[i], unicode):
+                return False
+        return True
+
+    @staticmethod
+    def __get_preposition(terms, index):
+        return terms[index-1] if index > 0 else None
+
+    # endregion
+
     @staticmethod
     def iter_frames_from_parsed_text(frame_variants, parsed_text, locale_mods=RussianLanguageMods):
         assert(isinstance(frame_variants, FrameVariantsCollection))
@@ -51,14 +66,3 @@ class RuSentiFramesSearchHelper(object):
                 break
 
             start_ind = last_ind + 1
-
-    @staticmethod
-    def __check_all_words_within(terms, start_index, last_index):
-        for i in xrange(start_index, last_index + 1):
-            if not isinstance(terms[i], unicode):
-                return False
-        return True
-
-    @staticmethod
-    def __get_preposition(terms, index):
-        return terms[index-1] if index > 0 else None

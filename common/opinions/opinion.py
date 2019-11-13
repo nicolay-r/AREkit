@@ -42,8 +42,8 @@ class Opinion(object):
 
     def has_synonym_for_source(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return synonyms.has_synonym(self.__source_value)
+        return synonyms.contains_synonym(self.__source_value)
 
     def has_synonym_for_target(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return synonyms.has_synonym(self.__target_value)
+        return synonyms.contains_synonym(self.__target_value)

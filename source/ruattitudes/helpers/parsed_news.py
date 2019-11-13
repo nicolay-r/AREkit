@@ -6,20 +6,7 @@ from core.source.ruattitudes.news import RuAttitudesNews
 from core.source.ruattitudes.sentence import RuAttitudesSentence
 
 
-class RuAttitudesParsedNewsHelper:
-
-    def __init__(self):
-        pass
-
-    @classmethod
-    def create_parsed_news(cls, doc_id, news):
-        assert(isinstance(doc_id, int))
-        assert(isinstance(news, RuAttitudesNews))
-
-        parsed_sentences_iter = cls.__iter_parsed_sentences(news)
-
-        return ParsedNews(news_id=doc_id,
-                          parsed_sentences=parsed_sentences_iter)
+class RuAttitudesParsedNewsHelper(object):
 
     # region private methods
 
@@ -73,3 +60,13 @@ class RuAttitudesParsedNewsHelper:
             yield entity, obj.get_bound()
 
     # endregion
+
+    @classmethod
+    def create_parsed_news(cls, doc_id, news):
+        assert(isinstance(doc_id, int))
+        assert(isinstance(news, RuAttitudesNews))
+
+        parsed_sentences_iter = cls.__iter_parsed_sentences(news)
+
+        return ParsedNews(news_id=doc_id,
+                          parsed_sentences=parsed_sentences_iter)
