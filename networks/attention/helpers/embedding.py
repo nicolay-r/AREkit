@@ -14,6 +14,8 @@ def __get_NEVS_list(ctx_network):
     i_pos = "I_pos"
     i_dist_obj = "I_dist_obj"
     i_dist_subj = "I_dist_subj"
+    i_nearest_dist_obj = "I_nearest_dist_obj"
+    i_nearest_dist_subj = "I_nearest_dist_subj"
     i_sent_role_frames = "I_sent_role_frames"
 
     return [(i_x,
@@ -36,6 +38,16 @@ def __get_NEVS_list(ctx_network):
              ctx_network.get_input_parameter(InputSample.I_SUBJ_DISTS),
              ctx_network.Config.DistanceEmbeddingSize),
 
+            (i_nearest_dist_obj,
+             ctx_network.DistanceEmbedding,
+             ctx_network.get_input_parameter(InputSample.I_NEAREST_OBJ_DISTS),
+             ctx_network.Config.DistanceEmbeddingSize),
+
+            (i_nearest_dist_subj,
+             ctx_network.DistanceEmbedding,
+             ctx_network.get_input_parameter(InputSample.I_NEAREST_SUBJ_DISTS),
+             ctx_network.Config.DistanceEmbeddingSize),
+
             (i_sent_role_frames,
              ctx_network.SentimentEmbedding,
              ctx_network.get_input_parameter(InputSample.I_FRAME_SENT_ROLES),
@@ -45,6 +57,10 @@ def __get_NEVS_list(ctx_network):
 
 def get_nv(ctx_network):
     return [(n, v) for n, _, v, _ in __get_NEVS_list(ctx_network)]
+
+
+def get_ev(ctx_network):
+    return [(e, v) for _, e, v, _ in __get_NEVS_list(ctx_network)]
 
 
 def get_ne(ctx_network):

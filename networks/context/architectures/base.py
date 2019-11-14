@@ -50,7 +50,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     @property
     def TermEmbeddingSize(self):
         size = self.__cfg.TermEmbeddingShape[1] + \
-               2 * self.__cfg.DistanceEmbeddingSize + \
+               4 * self.__cfg.DistanceEmbeddingSize + \
                self.__cfg.SentimentEmbeddingSize + \
                self.TermTypeEmbeddingSize
 
@@ -300,6 +300,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
             [tf.nn.embedding_lookup(self.__term_emb, self.__input[InputSample.I_X_INDS]),
              tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_SUBJ_DISTS]),
              tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_OBJ_DISTS]),
+             tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_NEAREST_SUBJ_DISTS]),
+             tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_NEAREST_OBJ_DISTS]),
              tf.nn.embedding_lookup(self.__sent_emb, self.__input[InputSample.I_FRAME_SENT_ROLES]),
              term_types],
             axis=-1)

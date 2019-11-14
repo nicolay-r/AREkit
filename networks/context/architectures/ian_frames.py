@@ -2,6 +2,7 @@ import tensorflow as tf
 
 import core.networks.tf_helpers.initialization
 import core.networks.tf_helpers.sequence
+from core.networks.attention.helpers import embedding
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.ian_frames import IANFramesConfig, StatesAggregationModes
@@ -102,7 +103,7 @@ class IANFrames(BaseContextNeuralNetwork):
     def init_embedded_input(self):
 
          context_embedded = super(IANFrames, self).init_embedded_input()
-         aspect_embedded = self.__combine_aspect_embedding_with_pos_dists_ttype()
+         aspect_embedded = self.__compose_all_parameters()
 
          return [context_embedded, aspect_embedded]
 
@@ -208,41 +209,14 @@ class IANFrames(BaseContextNeuralNetwork):
         else:
             raise Exception('"{}" type does not supported'.format(config.StatesAggregationMode))
 
-    def __combine_aspect_embedding_with_pos_dists_ttype(self):
-
-        e_pos_indices = filter_batch_elements(
-            elements=self.get_input_parameter(InputSample.I_POS_INDS),
-            inds=self.AspectInput,
-            handler=select_entity_related_elements)
-
-        e_dist_obj_indices = filter_batch_elements(
-            elements=self.get_input_parameter(InputSample.I_OBJ_DISTS),
-            inds=self.AspectInput,
-            handler=select_entity_related_elements)
-
-        e_dist_subj_indices = filter_batch_elements(
-            elements=self.get_input_parameter(InputSample.I_SUBJ_DISTS),
-            inds=self.AspectInput,
-            handler=select_entity_related_elements)
-
-        e_frame_sent_roles_indices = filter_batch_elements(
-            elements=self.get_input_parameter(InputSample.I_FRAME_SENT_ROLES),
-            inds=self.AspectInput,
-            handler=select_entity_related_elements)
-
+    def __compose_all_parameters(self):
         e_term_type_indices = tf.constant(value=1.0,
                                           shape=[self.Config.BatchSize,
                                                  self.Config.MaxAspectLength,
                                                  self.TermTypeEmbeddingSize])
 
-        aspect_input = tf.concat(
-            [tf.nn.embedding_lookup(self.TermEmbedding, self.AspectInput),
-             tf.nn.embedding_lookup(self.POSEmbedding, e_pos_indices),
-             tf.nn.embedding_lookup(self.DistanceEmbedding, e_dist_obj_indices),
-             tf.nn.embedding_lookup(self.DistanceEmbedding, e_dist_subj_indices),
-             tf.nn.embedding_lookup(self.SentimentEmbedding, e_frame_sent_roles_indices),
-             e_term_type_indices],
-            axis=-1)
+        aspect_input = tf.concat(values=self.__get_embedded_parameters() + [e_term_type_indices],
+                                 axis=-1)
 
         aspect_embedded = self.process_embedded_data(
             embedded=aspect_input,
@@ -253,5 +227,16 @@ class IANFrames(BaseContextNeuralNetwork):
                                                        self.TermEmbeddingSize])
 
         return aspect_embedded
+
+    def __get_embedded_parameters(self):
+        embedded_params = []
+        for e, v in embedding.get_ev(self):
+            param_inds = filter_batch_elements(elements=v,
+                                               inds=self.AspectInput,
+                                               handler=select_entity_related_elements)
+            emb_param = tf.nn.embedding_lookup(e, param_inds)
+            embedded_params.append(emb_param)
+
+        return embedded_params
 
     # endregion

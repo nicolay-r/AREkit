@@ -4,6 +4,7 @@ import numpy as np
 
 from core.common.entities.entity import Entity
 from core.common.text_frame_variant import TextFrameVariant
+from core.networks.context.training.embedding import entity
 from core.networks.context.training.embedding.offsets import TermsEmbeddingOffsets
 from core.processing.pos.base import POSTagger
 from core.processing.text.token import Token
@@ -11,24 +12,6 @@ from core.processing.text.tokens import Tokens
 from core.common.embeddings.embedding import Embedding
 from core.common.embeddings.tokens import TokenEmbedding
 from core.networks.context.debug import DebugKeys
-
-
-__supported_entity_types = [u'PER', u'LOC', u'ORG', u'GEOPOLIT']
-ENTITY_TYPE_SEPARATOR = u'_'
-ENTITY_MASK = u"ENTITY"
-
-
-def iter_entity_types():
-    for entity_type in __supported_entity_types:
-        yield entity_type
-
-
-def compose_entity_mask(e_type):
-    # TODO. entity_types: OBJ, SUBJ, ENTITY, different masks
-    # TODO. Provide <obj>, <subj>
-    # TODO. Provide parameter which denotes whether synonym or not.
-    assert(isinstance(e_type, unicode))
-    return u'{}{}{}'.format(ENTITY_MASK, ENTITY_TYPE_SEPARATOR, e_type)
 
 
 def calculate_embedding_indices_for_terms(terms,
@@ -73,10 +56,12 @@ def calculate_embedding_indices_for_terms(terms,
         elif isinstance(term, TextFrameVariant):
             index = embedding_offsets.get_frame_index(frames_embedding.find_index_by_word(term.Variant.get_value()))
         elif isinstance(term, Entity):
-            # TODO: Implement
-            # TODO: Search for synonym in set by 'i'
-            e_mask = compose_entity_mask(term.Type)
-            index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(e_mask))
+            e_mask = __select_enity_mask(index=i,
+                                         subjs_set=syn_subj_indices,
+                                         objs_set=syn_obj_indices)
+            e_value = entity.compose_entity_mask(e_mask=e_mask,
+                                                 e_type=term.Type)
+            index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(e_value))
         else:
             raise Exception("Unsuported type {}".format(term))
 
@@ -89,6 +74,14 @@ def calculate_embedding_indices_for_terms(terms,
                                               100.0 * (debug_words_count - debug_words_found) / debug_words_count)
 
     return indices
+
+
+def __select_enity_mask(index, subjs_set, objs_set):
+    if index in objs_set:
+        return entity.OBJ_ENTITY_MASK
+    elif index in subjs_set:
+        return entity.SUBJ_ENTITY_MASK
+    return entity.ANY_ENTITY_MASK
 
 
 def calculate_pos_indices_for_terms(terms, pos_tagger):

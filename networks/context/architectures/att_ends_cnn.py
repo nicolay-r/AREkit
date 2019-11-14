@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from core.networks.attention.helpers import mlp_embedding
+from core.networks.attention.helpers import embedding
 from core.networks.context.architectures.cnn import VanillaCNN
 
 
@@ -37,7 +37,7 @@ class AttentionCNN(VanillaCNN):
         super(AttentionCNN, self).init_input()
 
         with tf.variable_scope(self.__attention_var_scope_name):
-            self.Config.AttentionModel.init_input(p_names_with_sizes=mlp_embedding.get_ns(self))
+            self.Config.AttentionModel.init_input(p_names_with_sizes=embedding.get_ns(self))
 
     def init_hidden_states(self):
         super(AttentionCNN, self).init_hidden_states()
@@ -47,7 +47,7 @@ class AttentionCNN(VanillaCNN):
     def init_context_embedding_core(self, embedded_terms):
         g = super(AttentionCNN, self).init_context_embedding_core(embedded_terms)
 
-        att_e, att_weights = mlp_embedding.init_attention_embedding(
+        att_e, att_weights = embedding.init_attention_embedding(
             ctx_network=self,
             att=self.Config.AttentionModel,
             keys=self.get_att_input())
