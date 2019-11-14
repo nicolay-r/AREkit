@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from core.networks.context.architectures.att_ends_cnn import AttentionCNN
+from core.networks.attention.helpers import mlp_embedding
 from core.networks.context.architectures.pcnn import PiecewiseCNN
 
 
@@ -32,7 +32,7 @@ class AttentionAttitudeEndsPCNN(PiecewiseCNN):
     def init_input(self):
         super(AttentionAttitudeEndsPCNN, self).init_input()
         with tf.variable_scope(self.__attention_var_scope_name):
-            self.Config.AttentionModel.init_input()
+            self.Config.AttentionModel.init_input(p_names_with_sizes=mlp_embedding.get_ns(self))
 
     def init_hidden_states(self):
         super(AttentionAttitudeEndsPCNN, self).init_hidden_states()
@@ -42,7 +42,7 @@ class AttentionAttitudeEndsPCNN(PiecewiseCNN):
     def init_context_embedding(self, embedded_terms):
         g = super(AttentionAttitudeEndsPCNN, self).init_context_embedding(embedded_terms)
 
-        att_e, att_weights = AttentionCNN.init_attention_embedding(
+        att_e, att_weights = mlp_embedding.init_attention_embedding(
             ctx_network=self,
             att=self.Config.AttentionModel,
             keys=self.get_att_input())

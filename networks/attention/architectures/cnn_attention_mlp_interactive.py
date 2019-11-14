@@ -12,18 +12,9 @@ class InteractiveMLPAttention(MLPAttention):
 
     def __init__(self, cfg,
                  batch_size,
-                 terms_per_context,
-                 term_embedding_size,
-                 pos_embedding_size,
-                 dist_embedding_size):
+                 terms_per_context):
 
-        super(InteractiveMLPAttention, self).__init__(
-            cfg,
-            batch_size,
-            terms_per_context,
-            term_embedding_size,
-            pos_embedding_size,
-            dist_embedding_size)
+        super(InteractiveMLPAttention, self).__init__(cfg, batch_size, terms_per_context)
 
         self.__dynamic_lens = None
 

@@ -26,10 +26,7 @@ class AttentionFramesCNNConfig(CNNConfig):
         self.__attention = InteractiveMLPAttention(
             cfg=self.__attention_config,
             batch_size=self.BatchSize,
-            terms_per_context=self.TermsPerContext,
-            term_embedding_size=self.TermEmbeddingShape[1],
-            pos_embedding_size=self.PosEmbeddingSize,
-            dist_embedding_size=self.DistanceEmbeddingSize)
+            terms_per_context=self.TermsPerContext)
 
     def _internal_get_parameters(self):
         parameters = super(AttentionFramesCNNConfig, self)._internal_get_parameters()

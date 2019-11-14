@@ -19,26 +19,15 @@ class MLPAttention(object):
     H_b_we = "H_b_we"
     H_b_a = "H_b_a"
 
-    I_x = "I_x"
-    I_pos = "I_pos"
-    I_dist_obj = "I_dist_obj"
-    I_dist_subj = "I_dist_subj"
-    I_entities = "I_e"
+    I_keys = "I_keys"
 
-    def __init__(self, cfg, batch_size, terms_per_context,
-                 term_embedding_size,
-                 pos_embedding_size,
-                 dist_embedding_size,
-                 # TODO. Provide the latter
-                 sent_embedding_size=0):
+    def __init__(self, cfg, batch_size, terms_per_context):
         assert(isinstance(cfg, MultiLayerPerceptronAttentionConfig))
         self.__cfg = cfg
 
         self.__batch_size = batch_size
         self.__terms_per_context = terms_per_context
-        self.__term_embedding_size = term_embedding_size + \
-                                     pos_embedding_size + \
-                                     2 * dist_embedding_size
+        self.__term_embedding_size = None
 
         self.__input = {}
         self.__hidden = {}
@@ -73,24 +62,33 @@ class MLPAttention(object):
 
     # region public methods
 
-    def set_input(self, x, pos, dist_obj, dist_subj, keys):
-        self.__input[self.I_x] = x
-        self.__input[self.I_pos] = pos
-        self.__input[self.I_dist_subj] = dist_subj
-        self.__input[self.I_dist_obj] = dist_obj
-        self.__input[self.I_entities] = keys
+    def set_input(self, param_names_with_values, keys):
+        """
+        param_names_with_values: list
+            list of pairs <name, input>
+        """
+        assert(isinstance(param_names_with_values, list))
 
-    def init_input(self):
-        self.__input[self.I_x] = tf.placeholder(dtype=tf.int32,
-                                                shape=[self.__batch_size, self.__terms_per_context])
-        self.__input[self.I_pos] = tf.placeholder(dtype=tf.int32,
+        self.__input[self.I_keys] = keys
+
+        for p_name, value in param_names_with_values:
+            self.__input[p_name] = value
+
+    def init_input(self, p_names_with_sizes):
+        """
+        p_names_with_sizes: list
+            list of pairs <name, size>
+        """
+        assert(isinstance(p_names_with_sizes, list))
+
+        self.__term_embedding_size = sum([size for _, size in p_names_with_sizes])
+
+        for p_name, _ in p_names_with_sizes:
+            self.__input[p_name] = tf.placeholder(dtype=tf.int32,
                                                   shape=[self.__batch_size, self.__terms_per_context])
-        self.__input[self.I_dist_obj] = tf.placeholder(dtype=tf.int32,
-                                                       shape=[self.__batch_size, self.__terms_per_context])
-        self.__input[self.I_dist_subj] = tf.placeholder(dtype=tf.int32,
-                                                        shape=[self.__batch_size, self.__terms_per_context])
-        self.__input[self.I_entities] = tf.placeholder(dtype=tf.int32,
-                                                       shape=[self.__batch_size, self.__cfg.EntitiesPerContext])
+
+        self.__input[self.I_keys] = tf.placeholder(dtype=tf.int32,
+                                                   shape=[self.__batch_size, self.__cfg.EntitiesPerContext])
 
     def init_hidden(self):
 
@@ -118,27 +116,26 @@ class MLPAttention(object):
             initializer=self.__cfg.LayerInitializer,
             dtype=tf.float32)
 
-    def init_body(self, term_embedding, pos_embedding, dist_embedding):
-        assert(isinstance(term_embedding, tf.Tensor))
+    def init_body(self, params_embeddings):
+        """
+        params_embedding: list
+            list of pairs <name, embedding>
+        """
+        assert(isinstance(params_embeddings, list))
 
         embedded_terms = tf.concat(
-            [tf.nn.embedding_lookup(params=term_embedding, ids=self.__input[self.I_x]),
-             tf.nn.embedding_lookup(params=pos_embedding, ids=self.__input[self.I_pos]),
-             tf.nn.embedding_lookup(params=dist_embedding, ids=self.__input[self.I_dist_subj]),
-             tf.nn.embedding_lookup(params=dist_embedding, ids=self.__input[self.I_dist_obj])],
+            values=[tf.nn.embedding_lookup(params=p_emb, ids=self.__input[p_name])
+                    for p_name, p_emb in params_embeddings],
             axis=-1)
+
+        # Parameters([(self.__input[p_name], p_emb) for p_name, p_emb in params_embeddings])
 
         with tf.name_scope("attention"):
 
-            def iter_by_entities(entities,
-                                 e_pos,
-                                 e_dist_obj,
-                                 e_dist_subj,
-                                 handler):
+            def iter_by_entities(entities, handler):
                 """
                 entities:  [batch_size, entities_per_context]
-                e_pos:     [batch_size, terms_per_context]
-                e_dists:   [batch_size, terms_per_context]
+                handler: func
                 """
 
                 e_len = self.calculate_entities_length_func(entities)
@@ -157,42 +154,30 @@ class MLPAttention(object):
                     infer_shape=False,
                     dynamic_size=True)
 
-                _, _, _, _, _, att_sum, att_weights = tf.while_loop(
+                _, _, att_sum, att_weights = tf.while_loop(
                     lambda i, *_: tf.less(i, e_len),
                     handler,
-                    (0, entities, e_pos, e_dist_obj, e_dist_subj, att_sum_array, att_weights_array))
+                    (0, entities, att_sum_array, att_weights_array))
 
                 return att_sum.stack(), att_weights.stack()
 
-            def process_entity(i, entities, e_pos, e_dist_obj, e_dist_subj, att_sum, att_weights):
+            def process_entity(i, entities, att_sum, att_weights):
                 """
                 entities: [batch_size, entities_per_context]
+                params_with_embedding: list
+                    list of pairs <input, embedding>
                 """
-
                 e_term_index = tf.gather(entities, [i], axis=1)                         # [batch_size, 1] -- term positions
                 e_term_indices = tf.tile(e_term_index, [1, self.__terms_per_context])   # [batch_size, terms_per_context]
 
-                e_pos_indices = filter_batch_elements(
-                    elements=e_pos,
-                    inds=e_term_indices,
-                    handler=select_entity_related_elements)
+                embedded_params = []
+                for param_name, param_embedding in params_embeddings:
+                    ids = filter_batch_elements(elements=self.__input[param_name],
+                                                inds=e_term_indices,
+                                                handler=select_entity_related_elements)
+                    embedded_params.append(tf.nn.embedding_lookup(params=param_embedding, ids=ids))
 
-                e_dist_obj_indices = filter_batch_elements(
-                    elements=e_dist_obj,
-                    inds=e_term_indices,
-                    handler=select_entity_related_elements)
-
-                e_dist_subj_indices = filter_batch_elements(
-                    elements=e_dist_subj,
-                    inds=e_term_indices,
-                    handler=select_entity_related_elements)
-
-                e = tf.concat(
-                    [tf.nn.embedding_lookup(term_embedding, e_term_indices),            # [batch_size, terms_per_context, embedding_size]
-                     tf.nn.embedding_lookup(pos_embedding, e_pos_indices),
-                     tf.nn.embedding_lookup(dist_embedding, e_dist_obj_indices),
-                     tf.nn.embedding_lookup(dist_embedding, e_dist_subj_indices)],
-                    axis=-1)                                                            # [batch_size, terms_per_context, embedding_size]
+                e = tf.concat(embedded_params, axis=-1)  # [batch_size, terms_per_context, embedding_size]
 
                 merged = tf.concat([embedded_terms, e], axis=-1)
                 merged = tf.reshape(merged, [self.__batch_size * self.__terms_per_context,
@@ -217,15 +202,12 @@ class MLPAttention(object):
                 w_sum = tf.reduce_sum(w_embedding, axis=1)             # [batch_size, embedding_size]
 
                 return (i + 1,
-                        entities, e_pos, e_dist_obj, e_dist_subj,
+                        entities,
                         att_sum.write(i, w_sum),
                         att_weights.write(i, tf.reshape(alphas, [self.__batch_size, self.__terms_per_context])))
 
             att_sum, att_weights = iter_by_entities(
-                entities=self.__input[self.I_entities],
-                e_pos=self.__input[self.I_pos],
-                e_dist_obj=self.__input[self.I_dist_obj],
-                e_dist_subj=self.__input[self.I_dist_subj],
+                entities=self.__input[self.I_keys],
                 handler=process_entity)
 
             # att_sum: [entity_per_context, batch_size, term_embedding_size]
@@ -256,3 +238,14 @@ class MLPAttention(object):
         return self.__cfg.EntitiesPerContext
 
     # endregion
+
+
+class Parameters:
+
+    def __init__(self, args):
+        assert(isinstance(args, list))
+        self.__args = args
+
+    def iterate_pairs(self):
+        for x, y in self.__args:
+            yield x, y
