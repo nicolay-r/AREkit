@@ -225,6 +225,11 @@ class IANFrames(BaseContextNeuralNetwork):
             inds=self.AspectInput,
             handler=select_entity_related_elements)
 
+        e_frame_sent_roles_indices = filter_batch_elements(
+            elements=self.get_input_parameter(InputSample.I_FRAME_SENT_ROLES),
+            inds=self.AspectInput,
+            handler=select_entity_related_elements)
+
         e_term_type_indices = tf.constant(value=1.0,
                                           shape=[self.Config.BatchSize,
                                                  self.Config.MaxAspectLength,
@@ -235,6 +240,7 @@ class IANFrames(BaseContextNeuralNetwork):
              tf.nn.embedding_lookup(self.POSEmbedding, e_pos_indices),
              tf.nn.embedding_lookup(self.DistanceEmbedding, e_dist_obj_indices),
              tf.nn.embedding_lookup(self.DistanceEmbedding, e_dist_subj_indices),
+             tf.nn.embedding_lookup(self.SentimentEmbedding, e_frame_sent_roles_indices),
              e_term_type_indices],
             axis=-1)
 

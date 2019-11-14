@@ -33,6 +33,7 @@ class InputSample(object):
     I_FRAME_SENT_ROLES = 'frame_roles_inds'
 
     # TODO: Should be -1, but now it is not supported
+    FRAME_ROLES_PAD_VALUE = 0
     FRAMES_PAD_VALUE = 0
     POS_PAD_VALUE = 0
     X_PAD_VALUE = 0
@@ -111,8 +112,8 @@ class InputSample(object):
                    dist_from_obj=blank_terms,
                    pos_indices=blank_terms,
                    term_type=blank_terms,
+                   frame_sent_roles=blank_terms,
                    frame_indices=blank_frames,
-                   frame_sent_roles=blank_frames,
                    text_opinion_id=-1)
 
     @classmethod
@@ -125,11 +126,11 @@ class InputSample(object):
         subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Source)
         obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Target)
         frame_inds = [index for index, _ in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion)]
-        frame_roles = [
-            InputSample.__extract_frame_variant_sentiment_role(
-                text_frame_variant=variant,
-                frames_collection=frames_collection)
-            for _, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion)]
+
+        frame_sent_roles = cls.__compose_frame_roles(
+            text_opinion=text_opinion,
+            terms_per_context=config.TermsPerContext,
+            frames_collection=frames_collection)
 
         pos_indices = indices.calculate_pos_indices_for_terms(
             terms=terms,
@@ -150,6 +151,7 @@ class InputSample(object):
         pad_size = config.TermsPerContext
 
         if sentence_len < pad_size:
+            cls.__pad_right_inplace(frame_sent_roles, pad_size=pad_size, filler=cls.POS_PAD_VALUE)
             cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=cls.POS_PAD_VALUE)
             cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=cls.X_PAD_VALUE)
             # TODO. Provide it correct.
@@ -170,12 +172,12 @@ class InputSample(object):
                                                       inds=frame_inds,
                                                       pad_value=cls.FRAMES_PAD_VALUE)
 
-            cls.__crop_inplace([x_indices, pos_indices, term_type], begin=b, end=e)
+            cls.__crop_inplace([x_indices, frame_sent_roles, pos_indices, term_type], begin=b, end=e)
 
         cls.__fit_frames_dependent_indices_inplace(inds=frame_inds, frames_per_context=config.FramesPerContext)
-        cls.__fit_frames_dependent_indices_inplace(inds=frame_roles, frames_per_context=config.FramesPerContext)
 
-        assert(len(pos_indices) ==
+        assert(len(frame_sent_roles) ==
+               len(pos_indices) ==
                len(x_indices) ==
                len(term_type) ==
                config.TermsPerContext)
@@ -191,12 +193,27 @@ class InputSample(object):
                    pos_indices=np.array(pos_indices),
                    term_type=np.array(term_type),
                    frame_indices=np.array(frame_inds),
-                   frame_sent_roles=np.array(frame_roles),
+                   frame_sent_roles=np.array(frame_sent_roles),
                    text_opinion_id=text_opinion.TextOpinionID)
 
     # endregion
 
     # region private methods
+
+    @staticmethod
+    def __compose_frame_roles(text_opinion, terms_per_context, frames_collection):
+
+        result = [InputSample.FRAME_ROLES_PAD_VALUE] * terms_per_context
+
+        for index, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion):
+
+            value = InputSample.__extract_uint_frame_variant_sentiment_role(
+                text_frame_variant=variant,
+                frames_collection=frames_collection)
+
+            result[index] = value
+
+        return result
 
     @staticmethod
     def __fit_frames_dependent_indices_inplace(inds, frames_per_context):
@@ -215,7 +232,7 @@ class InputSample(object):
                    inds)
 
     @staticmethod
-    def __extract_frame_variant_sentiment_role(text_frame_variant, frames_collection):
+    def __extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_collection):
         assert(isinstance(text_frame_variant, TextFrameVariant))
         assert(isinstance(frames_collection, FramesCollection))
         frame_id = text_frame_variant.Variant.FrameID
@@ -250,10 +267,6 @@ class InputSample(object):
             if end < len(lst):
                 del lst[end:]
             del lst[:begin]
-
-    @staticmethod
-    def check_ability_to_create_sample(window_size, text_opinion):
-        return abs(TextOpinionHelper.calculate_distance_between_entities_in_terms(text_opinion)) < window_size
 
     @staticmethod
     def __crop_bounds(sentence_len, window_size, e1, e2):
@@ -295,6 +308,12 @@ class InputSample(object):
         shifted = frame_index - w_b
         return placeholder if not InputSample.__in_window(w_b=w_b, w_e=w_e, i=frame_index) else shifted
 
+    # endregion
+
+    @staticmethod
+    def check_ability_to_create_sample(window_size, text_opinion):
+        return abs(TextOpinionHelper.calculate_distance_between_entities_in_terms(text_opinion)) < window_size
+
     @staticmethod
     def iter_parameters():
         for var_name in dir(InputSample):
@@ -305,8 +324,6 @@ class InputSample(object):
     def __iter__(self):
         for key, value in self.values.iteritems():
             yield key, value
-
-    # endregion
 
     # region public methods
 

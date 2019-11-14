@@ -10,32 +10,36 @@ def __get_NEVS_list(ctx_network):
     """
     assert(isinstance(ctx_network, BaseContextNeuralNetwork))
 
-    I_x = "I_x"
-    I_pos = "I_pos"
-    I_dist_obj = "I_dist_obj"
-    I_dist_subj = "I_dist_subj"
-    # TODO. provide
-    # I_sent_role_frames = "I_sent_role_frames"
+    i_x = "I_x"
+    i_pos = "I_pos"
+    i_dist_obj = "I_dist_obj"
+    i_dist_subj = "I_dist_subj"
+    i_sent_role_frames = "I_sent_role_frames"
 
-    return [(I_x,
+    return [(i_x,
              ctx_network.TermEmbedding,
              ctx_network.get_input_parameter(InputSample.I_X_INDS),
              ctx_network.Config.TermEmbeddingShape[1]),
 
-            (I_pos,
+            (i_pos,
              ctx_network.POSEmbedding,
              ctx_network.get_input_parameter(InputSample.I_POS_INDS),
              ctx_network.Config.PosEmbeddingSize),
 
-            (I_dist_obj,
+            (i_dist_obj,
              ctx_network.DistanceEmbedding,
              ctx_network.get_input_parameter(InputSample.I_OBJ_DISTS),
              ctx_network.Config.DistanceEmbeddingSize),
 
-            (I_dist_subj,
+            (i_dist_subj,
              ctx_network.DistanceEmbedding,
              ctx_network.get_input_parameter(InputSample.I_SUBJ_DISTS),
-             ctx_network.Config.DistanceEmbeddingSize)
+             ctx_network.Config.DistanceEmbeddingSize),
+
+            (i_sent_role_frames,
+             ctx_network.SentimentEmbedding,
+             ctx_network.get_input_parameter(InputSample.I_FRAME_SENT_ROLES),
+             ctx_network.Config.SentimentEmbeddingSize)
             ]
 
 

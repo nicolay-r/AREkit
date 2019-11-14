@@ -50,6 +50,7 @@ class DefaultNetworkConfig(object):
     __class_weights = None
     __use_pos_emb = True
     __pos_emb_size = 5
+    __sent_emb_size = 5
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
 
@@ -283,6 +284,10 @@ class DefaultNetworkConfig(object):
         return self.__pos_emb_size
 
     @property
+    def SentimentEmbeddingSize(self):
+        return self.__sent_emb_size
+
+    @property
     def LearningRate(self):
         return self.__learning_rate
 
@@ -315,6 +320,7 @@ class DefaultNetworkConfig(object):
             ("base:batch_size", self.BatchSize),
             ("base:use_pos_emb", self.UsePOSEmbedding),
             ("base:pos_emb_size", self.PosEmbeddingSize),
+            ("base:sentiment_emb_size", self.SentimentEmbeddingSize),
             ("base:dist_embedding_size", self.DistanceEmbeddingSize),
             ("base:text_opinion_label_calc_mode", self.TextOpinionLabelCalculationMode),
             ("base:embedding dropout (keep prob)", self.EmbeddingDropoutKeepProb),

@@ -267,16 +267,16 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
             shape=[batch_size, contexts_count],
             name=prefix + InputSample.I_OBJ_IND)
 
+        self.__input[InputSample.I_FRAME_SENT_ROLES] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_FRAME_SENT_ROLES
+        )
+
         self.__input[InputSample.I_FRAME_INDS] = tf.placeholder(
             dtype=tf.int32,
             shape=[batch_size, contexts_count, self.__cfg.FramesPerContext],
             name=prefix + InputSample.I_FRAME_INDS
-        )
-
-        self.__input[InputSample.I_FRAME_SENT_ROLES] = tf.placeholder(
-            dtype=tf.int32,
-            shape=[batch_size, contexts_count, self.__cfg.FramesPerContext],
-            name=prefix + InputSample.I_FRAME_SENT_ROLES
         )
 
         self.__y = tf.placeholder(dtype=tf.int32,

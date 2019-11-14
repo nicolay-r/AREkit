@@ -18,6 +18,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         self.__term_emb = None
         self.__dist_emb = None
         self.__pos_emb = None
+        self.__sent_emb = None
 
         self.__cost = None
         self.__accuracy = None
@@ -50,6 +51,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def TermEmbeddingSize(self):
         size = self.__cfg.TermEmbeddingShape[1] + \
                2 * self.__cfg.DistanceEmbeddingSize + \
+               self.__cfg.SentimentEmbeddingSize + \
                self.TermTypeEmbeddingSize
 
         if self.__cfg.UsePOSEmbedding:
@@ -84,6 +86,10 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     @property
     def POSEmbedding(self):
         return self.__pos_emb
+
+    @property
+    def SentimentEmbedding(self):
+        return self.__sent_emb
 
     # endregion
 
@@ -201,15 +207,15 @@ class BaseContextNeuralNetwork(NeuralNetwork):
             shape=[self.__cfg.BatchSize],
             name=prefix + InputSample.I_OBJ_IND)
 
+        self.__input[InputSample.I_FRAME_SENT_ROLES] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_FRAME_SENT_ROLES)
+
         self.__input[InputSample.I_FRAME_INDS] = tf.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.FramesPerContext],
             name=prefix + InputSample.I_FRAME_INDS)
-
-        self.__input[InputSample.I_FRAME_SENT_ROLES] = tf.placeholder(
-            dtype=tf.int32,
-            shape=[self.__cfg.BatchSize, self.__cfg.FramesPerContext],
-            name=prefix + InputSample.I_FRAME_SENT_ROLES)
 
         self.__y = tf.placeholder(dtype=tf.int32,
                                   shape=[self.__cfg.BagsPerMinibatch],
@@ -280,11 +286,13 @@ class BaseContextNeuralNetwork(NeuralNetwork):
             tensor=self.__input[InputSample.I_TERM_TYPE],
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext, self.TermTypeEmbeddingSize])
 
-        embedded_terms = tf.concat([tf.nn.embedding_lookup(self.__term_emb, self.__input[InputSample.I_X_INDS]),
-                                    tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_SUBJ_DISTS]),
-                                    tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_OBJ_DISTS]),
-                                    term_types],
-                                   axis=-1)
+        embedded_terms = tf.concat(
+            [tf.nn.embedding_lookup(self.__term_emb, self.__input[InputSample.I_X_INDS]),
+             tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_SUBJ_DISTS]),
+             tf.nn.embedding_lookup(self.__dist_emb, self.__input[InputSample.I_OBJ_DISTS]),
+             tf.nn.embedding_lookup(self.__sent_emb, self.__input[InputSample.I_FRAME_SENT_ROLES]),
+             term_types],
+            axis=-1)
 
         if self.__cfg.UsePOSEmbedding:
             embedded_terms = tf.concat([embedded_terms,
@@ -309,5 +317,11 @@ class BaseContextNeuralNetwork(NeuralNetwork):
                                          shape=[len(self.__cfg.PosTagger.pos_names), self.__cfg.PosEmbeddingSize],
                                          trainable=True,
                                          name="pos_emb")
+
+        self.__sent_emb = tf.get_variable(dtype=tf.float32,
+                                          initializer=self.__cfg.EmbeddingInitializer,
+                                          shape=[3, self.__cfg.SentimentEmbeddingSize],
+                                          trainable=True,
+                                          name="sent_emb")
 
     # endregion
