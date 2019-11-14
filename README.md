@@ -1,5 +1,7 @@
 # SAEkit
 
+![](_images/logo_sae_kit.png)
+
 > Note: Nowadays it utilize `core` directory instead of `saekit`.
 
 **SAEkit** -- is a python toolkit (library) for **sentiment attitudes extraction** task.
