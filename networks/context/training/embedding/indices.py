@@ -8,8 +8,8 @@ from core.networks.context.training.embedding.offsets import TermsEmbeddingOffse
 from core.processing.pos.base import POSTagger
 from core.processing.text.token import Token
 from core.processing.text.tokens import Tokens
-from core.common.embedding import Embedding
-from core.source.embeddings.tokens import TokenEmbedding
+from core.common.embeddings.embedding import Embedding
+from core.common.embeddings.tokens import TokenEmbedding
 from core.networks.context.debug import DebugKeys
 
 
