@@ -30,10 +30,12 @@ class BiLSTM(BaseContextNeuralNetwork):
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize
 
+    # region init methods
+
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, BiLSTMConfig))
 
-        with tf.name_scope("bi-lstm"):
+        with tf.variable_scope("bi-lstm"):
 
             # Length Calculation
             x_length = sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
@@ -42,21 +44,27 @@ class BiLSTM(BaseContextNeuralNetwork):
             # Forward cell
             fw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
                                         cell_type=self.Config.CellType,
+                                        lstm_initializer=self.Config.LSTMCellInitializer,
                                         dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
             # Backward cell
             bw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
                                         cell_type=self.Config.CellType,
+                                        lstm_initializer=self.Config.LSTMCellInitializer,
                                         dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
 
-            (output_fw, output_bw), _ = sequence.bidirectional_rnn(cell_fw=fw_cell,
-                                                                   cell_bw=bw_cell,
-                                                                   inputs=embedded_terms,
-                                                                   sequence_length=s_length,
-                                                                   dtype=tf.float32)
+            (output_fw, output_bw), _ = sequence.bidirectional_rnn(
+                cell_fw=fw_cell,
+                cell_bw=bw_cell,
+                inputs=embedded_terms,
+                sequence_length=s_length,
+                dtype=tf.float32)
 
             rnn_outputs = tf.add(output_fw, output_bw)
 
+        return self.customize_rnn_output(rnn_outputs, s_length)
+
+    def customize_rnn_output(self, rnn_outputs, s_length):
         return sequence.select_last_relevant_in_sequence(rnn_outputs, s_length)
 
     def init_logits_unscaled(self, context_embedding):
@@ -85,6 +93,12 @@ class BiLSTM(BaseContextNeuralNetwork):
             regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32)
 
+    # endregion
+
+    # region iter methods
+
     def iter_hidden_parameters(self):
         for key, value in self.__hidden.iteritems():
             yield key, value
+
+    # endregion

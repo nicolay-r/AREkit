@@ -13,7 +13,6 @@ class AttentionHiddenBiLSTMConfig(BiLSTMConfig):
         Authors used LSTM cell by default.
     """
     __cell_type = CellTypes.LSTM
-    __lstm_cell_initializer = tf.keras.initializers.glorot_normal()
 
     def __init__(self):
         super(AttentionHiddenBiLSTMConfig, self).__init__()
@@ -23,10 +22,6 @@ class AttentionHiddenBiLSTMConfig(BiLSTMConfig):
     @property
     def CellType(self):
         return self.__cell_type
-
-    @property
-    def LSTMCellInitializer(self):
-        return self.__lstm_cell_initializer
 
     @property
     def BiasInitializer(self):
