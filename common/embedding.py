@@ -4,6 +4,7 @@ import numpy as np
 from gensim.models.word2vec import Word2Vec
 
 
+# TODO: Move to ./embeddings/embedding.py
 class Embedding(object):
     """
     Represents default wrapper over W2V API.

@@ -5,6 +5,7 @@ from core.common.utils import get_random_vector
 from core.common.embedding import Embedding
 
 
+# TODO: Move to ./embeddings/token.py
 class TokenEmbedding(Embedding):
     """
     Embedding vectors for text punctuation, based on Tokens in parsed text

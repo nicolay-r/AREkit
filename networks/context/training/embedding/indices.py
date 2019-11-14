@@ -24,6 +24,9 @@ def iter_entity_types():
 
 
 def compose_entity_mask(e_type):
+    # TODO. entity_types: OBJ, SUBJ, ENTITY, different masks
+    # TODO. Provide <obj>, <subj>
+    # TODO. Provide parameter which denotes whether synonym or not.
     assert(isinstance(e_type, unicode))
     return u'{}{}{}'.format(ENTITY_MASK, ENTITY_TYPE_SEPARATOR, e_type)
 
@@ -34,6 +37,8 @@ def calculate_embedding_indices_for_terms(terms,
                                           missed_word_embedding,
                                           token_embedding,
                                           frames_embedding):
+    # TODO. Provide synonymous objects SET
+    # TODO. Provide synonymous subjects SET
     assert(isinstance(terms, collections.Iterable))
     assert(isinstance(term_embedding_matrix, np.ndarray))
     assert(isinstance(word_embedding, Embedding))
@@ -66,6 +71,7 @@ def calculate_embedding_indices_for_terms(terms,
         elif isinstance(term, TextFrameVariant):
             index = embedding_offsets.get_frame_index(frames_embedding.find_index_by_word(term.Variant.get_value()))
         elif isinstance(term, Entity):
+            # TODO: Search for synonym in set by 'i'
             e_mask = compose_entity_mask(term.Type)
             index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(e_mask))
         else:
