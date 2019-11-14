@@ -131,6 +131,14 @@ class ParsedNews(object):
             if isinstance(term, TextFrameVariant):
                 yield index, term
 
+    def iter_sentence_entities_with_indices(self, sentence_index):
+        assert(isinstance(sentence_index, int))
+        sentence = self.__parsed_sentences[sentence_index]
+        assert(isinstance(sentence, ParsedText))
+        for index, term in enumerate(sentence.iter_raw_terms()):
+            if isinstance(term, Entity):
+                yield index, term
+
     def iter_sentence_terms(self, sentence_index):
         assert(isinstance(sentence_index, int))
         sentence = self.__parsed_sentences[sentence_index]

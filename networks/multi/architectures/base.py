@@ -242,10 +242,20 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
             shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_SUBJ_DISTS)
 
+        self.__input[InputSample.I_NEAREST_SUBJ_DISTS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_NEAREST_SUBJ_DISTS)
+
         self.__input[InputSample.I_OBJ_DISTS] = tf.placeholder(
             dtype=tf.int32,
             shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_OBJ_DISTS)
+
+        self.__input[InputSample.I_NEAREST_OBJ_DISTS] = tf.placeholder(
+            dtype=tf.int32,
+            shape=[batch_size, contexts_count, self.__cfg.TermsPerContext],
+            name=prefix + InputSample.I_NEAREST_OBJ_DISTS)
 
         self.__input[InputSample.I_TERM_TYPE] = tf.placeholder(
             dtype=tf.float32,

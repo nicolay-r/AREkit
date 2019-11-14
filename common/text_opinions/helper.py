@@ -1,4 +1,5 @@
 from core.common.parsed_news.collection import ParsedNewsCollection
+from core.common.synonyms import SynonymsCollection
 from core.common.text_opinions.collection import TextOpinionCollection
 from core.common.text_opinions.text_opinion import TextOpinion
 from core.common.text_opinions.end_type import EntityEndType
@@ -33,9 +34,16 @@ class TextOpinionHelper(object):
         return parsed_news.get_entity_sentence_level_term_index(id)
 
     @staticmethod
-    def extract_entity_sentence_level_synonyms(text_opinion, end_type):
-        # TODO. Extract indices of synonyms within sentence.
-        raise NotImplementedError()
+    def extract_entity_sentence_level_synonym_indices(text_opinion, end_type, synonyms):
+        assert(isinstance(synonyms, SynonymsCollection))
+        parsed_news, id = TextOpinionHelper.__get(text_opinion, end_type)
+        s_index = parsed_news.get_entity_sentence_index(id)
+        e_value = parsed_news.get_entity_value(id)
+        e_group = synonyms.get_synonym_group_index(e_value)
+
+        for e_index, e in parsed_news.iter_sentence_entities_with_indices(s_index):
+            if e_group == synonyms.get_synonym_group_index(e.Value):
+                yield e_index
 
     # endregion
 

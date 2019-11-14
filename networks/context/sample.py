@@ -4,6 +4,8 @@ from collections import OrderedDict
 
 from core.common.frames.collection import FramesCollection
 from core.common.frames.polarity import FramePolarity
+from core.common.parsed_news.parsed_news import ParsedNews
+from core.common.synonyms import SynonymsCollection
 from core.networks.context.training.embedding import indices
 from core.networks.context.configurations.base import DefaultNetworkConfig
 
@@ -26,6 +28,8 @@ class InputSample(object):
     I_SUBJ_IND = "subj_inds"
     I_OBJ_IND = "obj_inds"
     I_SUBJ_DISTS = "subj_dist"
+    I_NEAREST_SUBJ_DISTS = "nearest_subj_dist"
+    I_NEAREST_OBJ_DISTS = "nearest_obj_dist"
     I_OBJ_DISTS = "obj_dist"
     I_POS_INDS = "pos_inds"
     I_TERM_TYPE = "term_type"
@@ -44,32 +48,20 @@ class InputSample(object):
                  obj_ind,
                  dist_from_subj,
                  dist_from_obj,
+                 dist_nearest_subj,
+                 dist_nearest_obj,
                  pos_indices,
                  term_type,
                  frame_indices,
                  frame_sent_roles,
                  text_opinion_id):
-        """
-            X: np.ndarray
-                x indices for embedding
-            y: int
-            subj_ind: int
-                subject index positions
-            obj_ind: int
-                object index positions
-            dist_from_subj: np.ndarray
-            dist_from_obj: np.ndarray
-            pos_indices: np.ndarray
-        """
         assert(isinstance(X, np.ndarray))
         assert(isinstance(subj_ind, int))
         assert(isinstance(obj_ind, int))
         assert(isinstance(dist_from_subj, np.ndarray))
         assert(isinstance(dist_from_obj, np.ndarray))
-        # TODO. Provide syn_objs (OPTIONAL)
-        # TODO. Provide syn_subjs (OPTIONAL)
-        # TODO. Provide dist_from_near_obj
-        # TODO. Provide dist_from_near_subj
+        assert(isinstance(dist_nearest_subj, np.ndarray))
+        assert(isinstance(dist_nearest_obj, np.ndarray))
         assert(isinstance(pos_indices, np.ndarray))
         assert(isinstance(term_type, np.ndarray))
         assert(isinstance(frame_indices, np.ndarray))
@@ -84,6 +76,8 @@ class InputSample(object):
              (InputSample.I_OBJ_IND, obj_ind),
              (InputSample.I_SUBJ_DISTS, dist_from_subj),
              (InputSample.I_OBJ_DISTS, dist_from_obj),
+             (InputSample.I_NEAREST_SUBJ_DISTS, dist_nearest_subj),
+             (InputSample.I_NEAREST_OBJ_DISTS, dist_nearest_obj),
              (InputSample.I_POS_INDS, pos_indices),
              (InputSample.I_FRAME_INDS, frame_indices),
              (InputSample.I_FRAME_SENT_ROLES, frame_sent_roles),
@@ -112,19 +106,39 @@ class InputSample(object):
                    dist_from_obj=blank_terms,
                    pos_indices=blank_terms,
                    term_type=blank_terms,
+                   dist_nearest_subj=blank_terms,
+                   dist_nearest_obj=blank_terms,
                    frame_sent_roles=blank_terms,
                    frame_indices=blank_frames,
                    text_opinion_id=-1)
 
     @classmethod
-    def from_text_opinion(cls, text_opinion, terms, frames_collection, config):
+    def from_text_opinion(cls, text_opinion, parsed_news, frames_collection, synonyms_collection, config):
         assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(terms, list))
+        assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(frames_collection, FramesCollection))
+        assert(isinstance(synonyms_collection, SynonymsCollection))
 
-        subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Source)
-        obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion, EntityEndType.Target)
+        sentence_index = TextOpinionHelper.extract_entity_sentence_index(text_opinion=text_opinion,
+                                                                         end_type=EntityEndType.Source)
+
+        terms = list(parsed_news.iter_sentence_terms(sentence_index))
+
+        subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion=text_opinion,
+                                                                              end_type=EntityEndType.Source)
+
+        obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion=text_opinion,
+                                                                             end_type=EntityEndType.Target)
+
+        syn_subj_inds = TextOpinionHelper.extract_entity_sentence_level_synonym_indices(text_opinion=text_opinion,
+                                                                                        end_type=EntityEndType.Source,
+                                                                                        synonyms=synonyms_collection)
+
+        syn_obj_inds = TextOpinionHelper.extract_entity_sentence_level_synonym_indices(text_opinion=text_opinion,
+                                                                                       end_type=EntityEndType.Target,
+                                                                                       synonyms=synonyms_collection)
+
         frame_inds = [index for index, _ in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion)]
 
         frame_sent_roles = cls.__compose_frame_roles(
@@ -138,6 +152,8 @@ class InputSample(object):
 
         x_indices = indices.calculate_embedding_indices_for_terms(
             terms=terms,
+            syn_subj_indices=set(syn_subj_inds),
+            syn_obj_indices=set(syn_obj_inds),
             term_embedding_matrix=config.TermEmbeddingMatrix,
             word_embedding=config.WordEmbedding,
             missed_word_embedding=config.MissedWordEmbedding,
@@ -163,14 +179,9 @@ class InputSample(object):
                 e1=subj_ind,
                 e2=obj_ind)
 
-            frame_inds = map(lambda frame_index: cls.__shift_frame_index(w_b=b, w_e=e,
-                                                                         frame_index=frame_index,
-                                                                         placeholder=cls.FRAMES_PAD_VALUE),
-                             frame_inds)
-
-            frame_inds = cls.__shift_position_indices(begin=b, end=e,
-                                                      inds=frame_inds,
-                                                      pad_value=cls.FRAMES_PAD_VALUE)
+            frame_inds = cls.__shift_text_pointers(begin=b, end=e, inds=frame_inds, pad_value=cls.FRAMES_PAD_VALUE)
+            syn_subj_inds = cls.__shift_text_pointers(begin=b, end=e, inds=syn_subj_inds, pad_value=0)
+            syn_obj_inds = cls.__shift_text_pointers(begin=b, end=e, inds=syn_obj_inds, pad_value=0)
 
             cls.__crop_inplace([x_indices, frame_sent_roles, pos_indices, term_type], begin=b, end=e)
 
@@ -182,14 +193,18 @@ class InputSample(object):
                len(term_type) ==
                config.TermsPerContext)
 
-        dist_from_subj = InputSample.__dist(subj_ind, config.TermsPerContext)
-        dist_from_obj = InputSample.__dist(obj_ind, config.TermsPerContext)
+        dist_from_subj = InputSample.__dist(pos=subj_ind, size=config.TermsPerContext)
+        dist_from_obj = InputSample.__dist(pos=obj_ind, size=config.TermsPerContext)
+        dist_nearest_subj = InputSample.__dist_abs_nearest(positions=syn_subj_inds, size=config.TermsPerContext)
+        dist_nearest_obj = InputSample.__dist_abs_nearest(positions=syn_obj_inds, size=config.TermsPerContext)
 
         return cls(X=np.array(x_indices),
                    subj_ind=subj_ind,
                    obj_ind=obj_ind,
                    dist_from_subj=dist_from_subj,
                    dist_from_obj=dist_from_obj,
+                   dist_nearest_subj=dist_nearest_subj,
+                   dist_nearest_obj=dist_nearest_obj,
                    pos_indices=np.array(pos_indices),
                    term_type=np.array(term_type),
                    frame_indices=np.array(frame_inds),
@@ -225,10 +240,10 @@ class InputSample(object):
             del inds[frames_per_context:]
 
     @staticmethod
-    def __shift_position_indices(inds, begin, end, pad_value):
-        return map(lambda frame_index: InputSample.__shift_frame_index(w_b=begin, w_e=end,
-                                                                       frame_index=frame_index,
-                                                                       placeholder=pad_value),
+    def __shift_text_pointers(inds, begin, end, pad_value):
+        return map(lambda frame_index: InputSample.__shift_index(w_b=begin, w_e=end,
+                                                                 frame_index=frame_index,
+                                                                 placeholder=pad_value),
                    inds)
 
     @staticmethod
@@ -245,6 +260,13 @@ class InputSample(object):
         result = np.zeros(size)
         for i in xrange(len(result)):
             result[i] = i-pos if i-pos >= 0 else i-pos+size
+        return result
+
+    @staticmethod
+    def __dist_abs_nearest(positions, size):
+        result = np.zeros(size)
+        for i in xrange(len(result)):
+            result[i] = min([abs(i - p) for p in positions])
         return result
 
     @staticmethod
@@ -304,7 +326,7 @@ class InputSample(object):
         lst.extend([filler] * (pad_size - len(lst)))
 
     @staticmethod
-    def __shift_frame_index(w_b, w_e, frame_index, placeholder):
+    def __shift_index(w_b, w_e, frame_index, placeholder):
         shifted = frame_index - w_b
         return placeholder if not InputSample.__in_window(w_b=w_b, w_e=w_e, i=frame_index) else shifted
 

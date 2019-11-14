@@ -34,14 +34,16 @@ def compose_entity_mask(e_type):
 def calculate_embedding_indices_for_terms(terms,
                                           term_embedding_matrix,
                                           word_embedding,
+                                          syn_subj_indices,
+                                          syn_obj_indices,
                                           missed_word_embedding,
                                           token_embedding,
                                           frames_embedding):
-    # TODO. Provide synonymous objects SET
-    # TODO. Provide synonymous subjects SET
     assert(isinstance(terms, collections.Iterable))
     assert(isinstance(term_embedding_matrix, np.ndarray))
     assert(isinstance(word_embedding, Embedding))
+    assert(isinstance(syn_obj_indices, set))
+    assert(isinstance(syn_subj_indices, set))
     assert(isinstance(missed_word_embedding, Embedding))
     assert(isinstance(token_embedding, TokenEmbedding))
     assert(isinstance(frames_embedding, Embedding))
@@ -71,6 +73,7 @@ def calculate_embedding_indices_for_terms(terms,
         elif isinstance(term, TextFrameVariant):
             index = embedding_offsets.get_frame_index(frames_embedding.find_index_by_word(term.Variant.get_value()))
         elif isinstance(term, Entity):
+            # TODO: Implement
             # TODO: Search for synonym in set by 'i'
             e_mask = compose_entity_mask(term.Type)
             index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(e_mask))
