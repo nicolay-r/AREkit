@@ -1,17 +1,17 @@
 # SAEkit
 
-![](_images/logo_sae_kit.png)
+![](logo.png)
 
 > Note: Nowadays it utilize `core` directory instead of `saekit`.
 
 **SAEkit** -- is a python toolkit (library) for **sentiment attitudes extraction** task.
 
-#### Table of Contents
-1. Description.
-2. Dependencies.
-3. Manual.
-4. Installation.
-5. How to use examples.
+# Contents
+* [Description](#description)
+* [Dependencies](#dependencies)
+* [Manual](#manual-update-in-progress)
+* [Installation](#installation)
+* [How to use examples](#usage-update-in-progress)
 
 ## Description
 
@@ -57,6 +57,13 @@ List of the toolset dependencies are as follows:
 
 * tensorflow==1.4.1
 
+### Optional Service Dependencies
+* Named Entity Recognition 
+    [[flask-python-server]](https://github.com/nicolay-r/ner-flask-wrapper);
+* SyntaxNet docker container 
+    [[github-repo]]() /
+    [[sh-script]]();
+
 ## Manual [Update in Progress]
 
 This toolset includes the following instruments and domain-related datasets:
@@ -66,21 +73,35 @@ This toolset includes the following instruments and domain-related datasets:
     * TextObject [[base-class]](common/text_object.py) -- any entry in text with related *Bound*;
     * Entity [[base-class]](common/entities/entity.py) -- same as TextObject but related to specific text entries;
     * Opinion [[base-class]](common/opinions/opinion.py) -- actually text attitudes with 'source' and 'destination' ('X' -> 'Y');
+    * Frame;
+    * FrameVariant [[base-class]](common/frame_variants/variant.py);
     * Embedding [[base-class]](common/embeddings/embedding.py) -- base class for Word2Vec-like embeddings;
     * Synonyms [[base-class]](common/synonyms.py) -- storage for synonymous entries (words and phrases);
 * **Processing** [[README]](processing/README.md);
-    * Lemmatization [[API]]();
-    * Named Entity Recognition (NER) [[API]]():
-    * Part Of Speech Tagging (POS) [[API]]();
-    * Syntax Parser [[API]]();
-    * Text parser [[API]]();
+    * Lemmatization [[API]](processing/lemmatization/base.py);
+        - Mystem [[wrapper]](processing/lemmatization/mystem.py) -- Yandex Mystem wrapper 
+            [[github-repo]](https://github.com/dmitry/yandex_mystem);
+        - Texterra [[wrapper]](processing/lemmatization/texterra_wrap.py) -- not supported/utilized in this project; 
+    * Named Entity Recognition (NER) [[API]](processing/ner/base.py):
+        - DeepNER [[wrapper]](processing/ner/deepner_wrap.py) -- is a wrapper of IPavlov CRF-BiLSTM model 
+            [[service]](https://github.com/nicolay-r/ner-flask-wrapper) /
+            [[original]](https://github.com/deepmipt/ner);
+    * Part-Of-Speech Tagging (POS) [[API]](processing/pos/base.py);
+        - Mystem [[wrapper]](processing/pos/mystem_wrap.py) -- Yandex Mystem wrapper;
+    * Syntax Parser [[API]](processing/syntax/base.py);
+        - SyntaxNet [[wrapper]](processing/syntax/syntaxnet_wrap.py);
+        - Texterra [[wrapper]](processing/syntax/texterra_wrap.py);
+    * Text Processing
+        - Parser [[base-class]](processing/text/parser.py) -- text parser;
+        - ParsedText [[base-class]](processing/text/parsed.py) -- processed text;
+        - Tokens [[base-class]](processing/text/tokens.py) -- specific text terms, such as: punctuation signs, numbers, URL-links etc.;
 * **Neural Networks** [[README]](networks/README.md);
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
-    * RuAttitudes [[github-repo]]();
-    * RuSentiFrames [[github-repo]]();
-    * RuSentRel [[github-repo]]();
+    * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
+    * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);
+    * RuSentRel [[github-repo]](https://github.com/nicolay-r/RuSentRel);
 * **Evaluation** -- tools that allows to perform models quality assessment.
-    * Label [[API]](evaluation/labels.py) -- sentiment label;
+    * ~~Label [[API]](evaluation/labels.py) -- sentiment label;~~ (will be in common)
     * CmpOpinion [[API]](evaluation/cmp_opinions.py) -- structure describes pairs of opinions to compare;
     * BaseEvaluator [[API]](evaluation/evaluators/base.py);
 
