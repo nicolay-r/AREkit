@@ -167,7 +167,6 @@ class InputSample(object):
         pad_size = config.TermsPerContext
 
         if sentence_len < pad_size:
-            cls.__pad_right_inplace(frame_sent_roles, pad_size=pad_size, filler=cls.POS_PAD_VALUE)
             cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=cls.POS_PAD_VALUE)
             cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=cls.X_PAD_VALUE)
             # TODO. Provide it correct.
