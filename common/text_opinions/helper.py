@@ -41,9 +41,12 @@ class TextOpinionHelper(object):
         e_value = parsed_news.get_entity_value(id)
         e_group = synonyms.get_synonym_group_index(e_value)
 
+        inds = []
         for e_index, e in parsed_news.iter_sentence_entities_with_indices(s_index):
             if e_group == synonyms.get_synonym_group_index(e.Value):
-                yield e_index
+                inds.append(e_index)
+
+        return inds
 
     # endregion
 
