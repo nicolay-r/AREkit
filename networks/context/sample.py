@@ -6,6 +6,7 @@ from core.common.frames.collection import FramesCollection
 from core.common.frames.polarity import FramePolarity
 from core.common.parsed_news.parsed_news import ParsedNews
 from core.common.synonyms import SynonymsCollection
+from core.evaluation.labels import NeutralLabel
 from core.networks.context.training.embedding import indices
 from core.networks.context.configurations.base import DefaultNetworkConfig
 
@@ -251,7 +252,11 @@ class InputSample(object):
         assert(isinstance(frames_collection, FramesCollection))
         frame_id = text_frame_variant.Variant.FrameID
         polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)
+        if polarity is None:
+            return NeutralLabel().to_uint()
+
         assert(isinstance(polarity, FramePolarity))
+
         return polarity.Label.to_uint()
 
     @staticmethod
