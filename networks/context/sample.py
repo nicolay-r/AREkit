@@ -222,6 +222,9 @@ class InputSample(object):
 
         for index, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion):
 
+            if index >= len(result):
+                continue
+
             value = InputSample.__extract_uint_frame_variant_sentiment_role(
                 text_frame_variant=variant,
                 frames_collection=frames_collection)
