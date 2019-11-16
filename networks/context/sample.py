@@ -142,11 +142,6 @@ class InputSample(object):
 
         frame_inds = [index for index, _ in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion)]
 
-        frame_sent_roles = cls.__compose_frame_roles(
-            text_opinion=text_opinion,
-            terms_per_context=config.TermsPerContext,
-            frames_collection=frames_collection)
-
         pos_indices = indices.calculate_pos_indices_for_terms(
             terms=terms,
             pos_tagger=config.PosTagger)
@@ -161,13 +156,19 @@ class InputSample(object):
             token_embedding=config.TokenEmbedding,
             frames_embedding=config.FrameEmbedding)
 
-        term_type = InputSample.__create_term_types(terms)
-
         sentence_len = len(x_indices)
+
+        frame_sent_roles = cls.__compose_frame_roles(
+            text_opinion=text_opinion,
+            size=sentence_len,
+            frames_collection=frames_collection)
+
+        term_type = InputSample.__create_term_types(terms)
 
         pad_size = config.TermsPerContext
 
         if sentence_len < pad_size:
+            cls.__pad_right_inplace(frame_sent_roles, pad_size=pad_size, filler=cls.FRAME_ROLES_PAD_VALUE)
             cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=cls.POS_PAD_VALUE)
             cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=cls.X_PAD_VALUE)
             # TODO. Provide it correct.
@@ -216,9 +217,9 @@ class InputSample(object):
     # region private methods
 
     @staticmethod
-    def __compose_frame_roles(text_opinion, terms_per_context, frames_collection):
+    def __compose_frame_roles(text_opinion, size, frames_collection):
 
-        result = [InputSample.FRAME_ROLES_PAD_VALUE] * terms_per_context
+        result = [InputSample.FRAME_ROLES_PAD_VALUE] * size
 
         for index, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion):
 
