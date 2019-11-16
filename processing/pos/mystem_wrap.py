@@ -8,48 +8,36 @@ class POSMystemWrapper(POSTagger):
     PosNoun = u"S"
     PosVerb = u"V"
 
-    pos_names = [PosNoun,
-                 u"ADV",
-                 u"ADVPRO",
-                 u"ANUM",
-                 u"APRO",
-                 u"COM",
-                 u"CONJ",
-                 u"INTJ",
-                 u"NUM",
-                 u"PART",
-                 u"PR",
-                 PosAdjective,
-                 u"SPRO",
-                 PosVerb,
-                 POSTagger.Unknown,
-                 POSTagger.Empty]
+    __pos_names = [PosNoun,
+                   u"ADV",
+                   u"ADVPRO",
+                   u"ANUM",
+                   u"APRO",
+                   u"COM",
+                   u"CONJ",
+                   u"INTJ",
+                   u"NUM",
+                   u"PART",
+                   u"PR",
+                   PosAdjective,
+                   u"SPRO",
+                   PosVerb,
+                   POSTagger.Unknown,
+                   POSTagger.Empty]
 
     def __init__(self, mystem):
         assert(isinstance(mystem, Mystem))
         self.__mystem = mystem
 
-    def get_terms_pos(self, terms):
-        """ list of part of speech according to the certain word in text
-        """
-        assert(isinstance(terms, list))
-        pos_list = []
-        for term in terms:
-            analyzed = self.__mystem.analyze(term)
-            pos = self.__get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
-            pos_list.append(pos)
+    # region properties
 
-        return pos_list
+    @property
+    def POSCount(self):
+        return len(self.__pos_names)
 
-    def get_term_pos(self, term):
-        assert(isinstance(term, unicode))
-        analyzed = self.__mystem.analyze(term)
-        return self.__get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
+    # endregion
 
-    def pos_to_int(self, pos):
-        assert(isinstance(pos, unicode))
-        pos = pos.upper()
-        return self.pos_names.index(pos)
+    # region private methods
 
     def __get_term_pos(self, analysis):
         """
@@ -73,6 +61,30 @@ class POSMystemWrapper(POSTagger):
             pos = pos.split('=')[0]
         return pos
 
+    # endregion
+
+    def get_terms_pos(self, terms):
+        """ list of part of speech according to the certain word in text
+        """
+        assert(isinstance(terms, list))
+        pos_list = []
+        for term in terms:
+            analyzed = self.__mystem.analyze(term)
+            pos = self.__get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
+            pos_list.append(pos)
+
+        return pos_list
+
+    def get_term_pos(self, term):
+        assert(isinstance(term, unicode))
+        analyzed = self.__mystem.analyze(term)
+        return self.__get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
+
+    def pos_to_int(self, pos):
+        assert(isinstance(pos, unicode))
+        pos = pos.upper()
+        return self.__pos_names.index(pos)
+
     def is_adjective(self, pos_type):
         assert(isinstance(pos_type, unicode))
         return pos_type.lower() == self.PosAdjective
@@ -84,4 +96,3 @@ class POSMystemWrapper(POSTagger):
     def is_verb(self, pos_type):
         assert(isinstance(pos_type, unicode))
         return pos_type.lower() == self.PosNoun
-

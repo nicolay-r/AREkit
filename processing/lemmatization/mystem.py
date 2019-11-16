@@ -17,9 +17,15 @@ class MystemWrapper(Stemmer):
         """
         self.__mystem = Mystem(entire_input=entire_input)
 
+    # region properties
+
     @property
     def MystemInstance(self):
         return self.__mystem
+
+    # endregion
+
+    # region public methods
 
     def lemmatize_to_list(self, text):
         return self.__lemmatize_core(text)
@@ -27,6 +33,10 @@ class MystemWrapper(Stemmer):
     def lemmatize_to_str(self, text):
         result = u" ".join(self.__lemmatize_core(text))
         return result if len(result) != 0 else self.__process_original_text(text)
+
+    # endregion
+
+    # region private methods
 
     def __lemmatize_core(self, text):
         assert(isinstance(text, unicode))
@@ -40,3 +50,5 @@ class MystemWrapper(Stemmer):
     @staticmethod
     def __filter_whitespaces(terms):
         return [term.strip() for term in terms if term.strip()]
+
+    # endregion

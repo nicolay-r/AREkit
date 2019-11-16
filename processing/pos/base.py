@@ -3,11 +3,15 @@ class POSTagger:
     Unknown = u"UNKNOWN"
     Empty = u"EMPTY"
 
+    @property
+    def POSCount(self):
+        raise NotImplementedError()
+
     def get_term_pos(self, term):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def get_terms_pos(self, terms):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def pos_to_int(self, pos):
-        raise Exception("Not implemented")
+        raise NotImplementedError()

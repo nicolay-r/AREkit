@@ -326,7 +326,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         self.__pos_emb = tf.get_variable(dtype=tf.float32,
                                          initializer=self.__cfg.EmbeddingInitializer,
-                                         shape=[len(self.__cfg.PosTagger.pos_names), self.__cfg.PosEmbeddingSize],
+                                         shape=[self.__cfg.PosTagger.POSCount, self.__cfg.PosEmbeddingSize],
                                          trainable=True,
                                          name="pos_emb")
 

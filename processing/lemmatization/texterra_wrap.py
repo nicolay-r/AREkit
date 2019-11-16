@@ -19,12 +19,18 @@ class TexterraLemmatizationWrap(Stemmer):
 
         self.__t = texterra.API(host=url)
 
+    # region public methods
+
     def lemmatize_to_list(self, text):
         return self.__lemmatize(text)
 
     def lemmatize_to_str(self, text, remove_new_lines=True):
         lemmas = self.__lemmatize(text)
         return " ".join(lemmas)
+
+    # endregion
+
+    # region private methods
 
     def __lemmatize(self, text):
         results = self.__t.lemmatization(text)
@@ -36,3 +42,5 @@ class TexterraLemmatizationWrap(Stemmer):
                 lemmas.append(result_lemma if len(result_lemma) > 0 else original)
                 print '"{}"'.format(lemma.encode('utf-8'))
         return lemmas
+
+    # endregion
