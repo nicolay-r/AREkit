@@ -157,7 +157,7 @@ class InputSample(object):
             syn_obj_indices=set(syn_obj_inds),
             term_embedding_matrix=config.TermEmbeddingMatrix,
             word_embedding=config.WordEmbedding,
-            missed_word_embedding=config.MissedWordEmbedding,
+            custom_word_embedding=config.CustomWordEmbedding,
             token_embedding=config.TokenEmbedding,
             frames_embedding=config.FrameEmbedding)
 

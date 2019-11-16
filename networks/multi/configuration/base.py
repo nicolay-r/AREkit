@@ -69,9 +69,9 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
         super(BaseMultiInstanceConfig, self).set_term_embedding(embedding_matrix)
         self.__context_config.set_term_embedding(embedding_matrix)
 
-    def set_missed_words_embedding(self, embedding):
-        super(BaseMultiInstanceConfig, self).set_missed_words_embedding(embedding)
-        self.__context_config.set_missed_words_embedding(embedding)
+    def set_custom_words_embedding(self, embedding):
+        super(BaseMultiInstanceConfig, self).set_custom_words_embedding(embedding)
+        self.__context_config.set_custom_words_embedding(embedding)
 
     def set_class_weights(self, class_weights):
         super(BaseMultiInstanceConfig, self).set_class_weights(class_weights)

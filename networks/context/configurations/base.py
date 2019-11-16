@@ -42,7 +42,7 @@ class DefaultNetworkConfig(object):
         rho=0.95)
 
     __word_embedding = None
-    __missed_word_embedding = None   # Includes not found words.
+    __custom_word_embedding = None   # Includes not found words.
     __token_embedding = None
     __frames_embedding = None
 
@@ -175,10 +175,10 @@ class DefaultNetworkConfig(object):
         assert(isinstance(value, int))
         self.__bag_size = value
 
-    def set_missed_words_embedding(self, embedding):
+    def set_custom_words_embedding(self, embedding):
         assert(isinstance(embedding, Embedding))
-        assert(self.__missed_word_embedding is None)
-        self.__missed_word_embedding = embedding
+        assert(self.__custom_word_embedding is None)
+        self.__custom_word_embedding = embedding
 
     def set_term_embedding(self, embedding_matrix):
         assert(self.__term_embedding_matrix is None)
@@ -264,8 +264,8 @@ class DefaultNetworkConfig(object):
         return self.__word_embedding
 
     @property
-    def MissedWordEmbedding(self):
-        return self.__missed_word_embedding
+    def CustomWordEmbedding(self):
+        return self.__custom_word_embedding
 
     @property
     def TokenEmbedding(self):

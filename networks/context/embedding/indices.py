@@ -19,7 +19,7 @@ def calculate_embedding_indices_for_terms(terms,
                                           word_embedding,
                                           syn_subj_indices,
                                           syn_obj_indices,
-                                          missed_word_embedding,
+                                          custom_word_embedding,
                                           token_embedding,
                                           frames_embedding):
     assert(isinstance(terms, collections.Iterable))
@@ -27,13 +27,13 @@ def calculate_embedding_indices_for_terms(terms,
     assert(isinstance(word_embedding, Embedding))
     assert(isinstance(syn_obj_indices, set))
     assert(isinstance(syn_subj_indices, set))
-    assert(isinstance(missed_word_embedding, Embedding))
+    assert(isinstance(custom_word_embedding, Embedding))
     assert(isinstance(token_embedding, TokenEmbedding))
     assert(isinstance(frames_embedding, Embedding))
 
     indices = []
     embedding_offsets = TermsEmbeddingOffsets(words_count=word_embedding.VocabularySize,
-                                              missed_words_count=missed_word_embedding.VocabularySize,
+                                              custom_words_count=custom_word_embedding.VocabularySize,
                                               tokens_count=token_embedding.VocabularySize,
                                               frames_count=frames_embedding.VocabularySize)
 
@@ -47,8 +47,8 @@ def calculate_embedding_indices_for_terms(terms,
             index = unknown_word_embedding_index
             if term in word_embedding:
                 index = embedding_offsets.get_word_index(word_embedding.find_index_by_word(term))
-            elif term in missed_word_embedding:
-                index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(term))
+            elif term in custom_word_embedding:
+                index = embedding_offsets.get_custom_word_index(custom_word_embedding.find_index_by_word(term))
                 debug_words_found += int(term in word_embedding)
                 debug_words_count += 1
         elif isinstance(term, Token):
@@ -61,7 +61,7 @@ def calculate_embedding_indices_for_terms(terms,
                                          objs_set=syn_obj_indices)
             e_value = entity.compose_entity_mask(e_mask=e_mask,
                                                  e_type=term.Type)
-            index = embedding_offsets.get_missed_word_index(missed_word_embedding.find_index_by_word(e_value))
+            index = embedding_offsets.get_custom_word_index(custom_word_embedding.find_index_by_word(e_value))
         else:
             raise Exception("Unsuported type {}".format(term))
 
@@ -70,7 +70,7 @@ def calculate_embedding_indices_for_terms(terms,
     if DebugKeys.EmbeddingIndicesPercentWordsFound:
         print "Words found: {} ({}%)".format(debug_words_found,
                                              100.0 * debug_words_found / debug_words_count)
-        print "Words missed: {} ({}%)".format(debug_words_count - debug_words_found,
+        print "Words custom: {} ({}%)".format(debug_words_count - debug_words_found,
                                               100.0 * (debug_words_count - debug_words_found) / debug_words_count)
 
     return indices

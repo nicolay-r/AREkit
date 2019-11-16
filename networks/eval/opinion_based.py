@@ -1,7 +1,6 @@
 import collections
 
 from core.evaluation.evaluators.base import BaseEvaluator
-from core.common.synonyms import SynonymsCollection
 from core.networks.eval.base import EvaluationHelper
 from core.networks.network_io import NetworkIO
 
