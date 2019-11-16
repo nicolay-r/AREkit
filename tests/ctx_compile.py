@@ -7,6 +7,7 @@ from core.networks.context.architectures.att_ends_cnn import AttentionCNN
 from core.networks.context.architectures.bilstm import BiLSTM
 from core.networks.context.architectures.cnn import VanillaCNN
 from core.networks.context.architectures.att_ends_pcnn import AttentionAttitudeEndsPCNN
+from core.networks.context.architectures.contrib.att_frames_bilstm import AttentionFramesBiLSTM
 from core.networks.context.architectures.contrib.att_frames_cnn import AttentionFramesCNN
 from core.networks.context.architectures.contrib.att_frames_pcnn import AttentionFramesPCNN
 from core.networks.context.architectures.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTM
@@ -22,6 +23,7 @@ from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.configurations.bi_lstm import BiLSTMConfig
 from core.networks.context.configurations.cnn import CNNConfig
 from core.networks.context.configurations.att_ends_pcnn import AttentionAttitudeEndsPCNNConfig
+from core.networks.context.configurations.contrib.att_frames_bilstm import AttentionFramesBiLSTMConfig
 from core.networks.context.configurations.contrib.att_frames_cnn import AttentionFramesCNNConfig
 from core.networks.context.configurations.contrib.att_frames_pcnn import AttentionFramesPCNNConfig
 from core.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
@@ -41,6 +43,7 @@ def init_config(config):
 
 def contexts_supported():
     return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
+            (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
             (AttentionHiddenBiLSTMConfig(), AttentionHiddenBiLSTM()),
             (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),

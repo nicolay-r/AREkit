@@ -5,7 +5,6 @@ from core.networks.context.architectures.pcnn import PiecewiseCNN
 
 
 class AttentionAttitudeEndsPCNN(PiecewiseCNN):
-
     __attention_var_scope_name = 'attention-model'
 
     def __init__(self):
@@ -42,9 +41,9 @@ class AttentionAttitudeEndsPCNN(PiecewiseCNN):
     def init_context_embedding(self, embedded_terms):
         g = super(AttentionAttitudeEndsPCNN, self).init_context_embedding(embedded_terms)
 
-        att_e, att_weights = embedding.init_attention_embedding(
+        att_e, att_weights = embedding.init_mlp_attention_embedding(
             ctx_network=self,
-            att=self.Config.AttentionModel,
+            mlp_att=self.Config.AttentionModel,
             keys=self.get_att_input())
 
         self.set_att_weights(att_weights)

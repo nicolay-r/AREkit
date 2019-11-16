@@ -47,9 +47,9 @@ class AttentionCNN(VanillaCNN):
     def init_context_embedding_core(self, embedded_terms):
         g = super(AttentionCNN, self).init_context_embedding_core(embedded_terms)
 
-        att_e, att_weights = embedding.init_attention_embedding(
+        att_e, att_weights = embedding.init_mlp_attention_embedding(
             ctx_network=self,
-            att=self.Config.AttentionModel,
+            mlp_att=self.Config.AttentionModel,
             keys=self.get_att_input())
 
         self.set_att_weights(att_weights)

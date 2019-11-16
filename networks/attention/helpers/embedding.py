@@ -71,14 +71,14 @@ def get_ns(ctx_network):
     return [(n, s) for n, _, _, s in __get_NEVS_list(ctx_network)]
 
 
-def init_attention_embedding(ctx_network, att, keys):
+def init_mlp_attention_embedding(ctx_network, mlp_att, keys):
     assert(isinstance(ctx_network, BaseContextNeuralNetwork))
-    assert(isinstance(att, MLPAttention))
+    assert(isinstance(mlp_att, MLPAttention))
 
-    att.set_input(param_names_with_values=get_nv(ctx_network),
-                  keys=keys)
+    mlp_att.set_input(param_names_with_values=get_nv(ctx_network),
+                      keys=keys)
 
-    att_e, att_w = att.init_body(params_embeddings=get_ne(ctx_network))
+    att_e, att_w = mlp_att.init_body(params_embeddings=get_ne(ctx_network))
 
     return att_e, att_w
 
