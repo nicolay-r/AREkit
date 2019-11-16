@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import collections
 
-from core.common.frame_variants.variant import FrameVariant
+from core.common.frame_variants.base import FrameVariant
 from core.processing.lemmatization.base import Stemmer
 
 

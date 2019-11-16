@@ -1,7 +1,7 @@
 import datetime
 
 import tensorflow as tf
-from core.common.embeddings.embedding import Embedding
+from core.common.embeddings.base import Embedding
 from core.processing.lemmatization.mystem import MystemWrapper
 from core.processing.pos.mystem_wrap import POSMystemWrapper
 

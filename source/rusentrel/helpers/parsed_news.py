@@ -1,5 +1,5 @@
 from core.common import utils
-from core.common.parsed_news.parsed_news import ParsedNews
+from core.common.parsed_news.base import ParsedNews
 from core.processing.lemmatization.base import Stemmer
 from core.processing.text.parser import TextParser
 from core.source.rusentrel.news import RuSentRelNews

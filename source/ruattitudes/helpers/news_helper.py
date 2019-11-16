@@ -2,7 +2,7 @@ import collections
 
 from core.common.text_object import TextObject
 from core.common.ref_opinon import RefOpinion
-from core.common.opinions.opinion import Opinion
+from core.common.opinions.base import Opinion
 from core.source.ruattitudes.news import RuAttitudesNews
 from core.source.ruattitudes.sentence import RuAttitudesSentence
 

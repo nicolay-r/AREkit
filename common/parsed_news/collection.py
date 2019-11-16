@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from core.common.parsed_news.parsed_news import ParsedNews
+from core.common.parsed_news.base import ParsedNews
 
 
 class ParsedNewsCollection(object):

@@ -1,7 +1,7 @@
 import numpy as np
 from core.common.text_opinions.helper import TextOpinionHelper
-from core.common.text_opinions.text_opinion import TextOpinion
-from core.common.opinions.opinion import Opinion
+from core.common.text_opinions.base import TextOpinion
+from core.common.opinions.base import Opinion
 from core.common.text_opinions.end_type import EntityEndType
 
 from core.common.labels.base import Label

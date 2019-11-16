@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import io
 from core.common.opinions.collection import OpinionCollection
-from core.common.opinions.opinion import Opinion
+from core.common.opinions.base import Opinion
 from core.common.utils import create_dir_if_not_exists
 from core.common.labels.base import Label
 from core.common.synonyms import SynonymsCollection

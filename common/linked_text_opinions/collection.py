@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import cPickle as pickle
 import collections
-from core.common.text_opinions.text_opinion import TextOpinion
+from core.common.text_opinions.base import TextOpinion
 from core.common.parsed_news.collection import ParsedNewsCollection
 from core.common.text_opinions.collection import TextOpinionCollection
 

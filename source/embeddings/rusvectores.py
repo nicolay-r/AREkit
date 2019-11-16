@@ -1,6 +1,6 @@
 import numpy as np
 from core.processing.lemmatization.base import Stemmer
-from core.common.embeddings.embedding import Embedding
+from core.common.embeddings.base import Embedding
 
 
 class RusvectoresEmbedding(Embedding):

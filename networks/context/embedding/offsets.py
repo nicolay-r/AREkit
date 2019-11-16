@@ -1,4 +1,4 @@
-from core.common.embeddings.embedding import Embedding
+from core.common.embeddings.base import Embedding
 
 
 class TermsEmbeddingOffsets(object):

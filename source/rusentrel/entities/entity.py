@@ -1,4 +1,4 @@
-from core.common.entities.entity import Entity
+from core.common.entities.base import Entity
 
 
 class RuSentRelEntity(Entity):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from core.common.labels.base import Label
-from core.common.opinions.opinion import Opinion
+from core.common.opinions.base import Opinion
 from core.common.synonyms import SynonymsCollection
 
 

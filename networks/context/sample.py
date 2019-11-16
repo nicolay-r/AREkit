@@ -4,17 +4,17 @@ from collections import OrderedDict
 
 from core.common.frames.collection import FramesCollection
 from core.common.frames.polarity import FramePolarity
-from core.common.parsed_news.parsed_news import ParsedNews
+from core.common.parsed_news.base import ParsedNews
 from core.common.synonyms import SynonymsCollection
 from core.common.labels.base import NeutralLabel
 from core.networks.context.embedding import indices
 from core.networks.context.configurations.base import DefaultNetworkConfig
 
 from core.common.text_frame_variant import TextFrameVariant
-from core.common.entities.entity import Entity
+from core.common.entities.base import Entity
 from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
-from core.common.text_opinions.text_opinion import TextOpinion
+from core.common.text_opinions.base import TextOpinion
 
 
 class InputSample(object):

@@ -1,6 +1,6 @@
 from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from core.common.ref_opinon import RefOpinion
-from core.common.text_opinions.text_opinion import TextOpinion
+from core.common.text_opinions.base import TextOpinion
 from core.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from core.source.ruattitudes.news import RuAttitudesNews
 from core.source.ruattitudes.sentence import RuAttitudesSentence

@@ -2,7 +2,7 @@ import collections
 
 from core.common.labels.base import Label
 from core.common.opinions.collection import OpinionCollection
-from core.common.opinions.opinion import Opinion
+from core.common.opinions.base import Opinion
 from core.evaluation.cmp_opinions import OpinionCollectionsToCompare
 from core.evaluation.evaluators import metrics
 from core.evaluation.evaluators.base import BaseEvaluator

@@ -2,14 +2,14 @@ import collections
 
 import numpy as np
 
-from core.common.entities.entity import Entity
+from core.common.entities.base import Entity
 from core.common.text_frame_variant import TextFrameVariant
 from core.networks.context.embedding import entity
 from core.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from core.processing.pos.base import POSTagger
 from core.processing.text.token import Token
 from core.processing.text.tokens import Tokens
-from core.common.embeddings.embedding import Embedding
+from core.common.embeddings.base import Embedding
 from core.common.embeddings.tokens import TokenEmbedding
 from core.networks.context.debug import DebugKeys
 

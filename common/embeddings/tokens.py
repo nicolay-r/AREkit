@@ -2,7 +2,7 @@ import numpy as np
 
 from core.processing.text.tokens import Tokens
 from core.common.utils import get_random_vector
-from core.common.embeddings.embedding import Embedding
+from core.common.embeddings.base import Embedding
 
 
 class TokenEmbedding(Embedding):

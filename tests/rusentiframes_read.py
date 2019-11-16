@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/python
 from core.common.frame_variants.collection import FrameVariantsCollection
-from core.common.frame_variants.variant import FrameVariant
+from core.common.frame_variants.base import FrameVariant
 from core.processing.lemmatization.mystem import MystemWrapper
 from core.source.rusentiframes.collection import RuSentiFramesCollection
 

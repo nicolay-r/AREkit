@@ -1,6 +1,6 @@
 import numpy as np
 
-from core.common.text_opinions.text_opinion import TextOpinion
+from core.common.text_opinions.base import TextOpinion
 from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from core.networks.context.training.bags.bag import Bag
 

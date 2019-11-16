@@ -1,7 +1,7 @@
 from core.common.parsed_news.collection import ParsedNewsCollection
 from core.common.synonyms import SynonymsCollection
 from core.common.text_opinions.collection import TextOpinionCollection
-from core.common.text_opinions.text_opinion import TextOpinion
+from core.common.text_opinions.base import TextOpinion
 from core.common.text_opinions.end_type import EntityEndType
 
 
