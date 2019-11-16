@@ -299,14 +299,14 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
             dtype=tf.float32,
             name=prefix + 'dropout_emb_keep_prob')
 
-    def iter_input_dependent_hidden_parameters(self):
-        for name, value in super(BaseMultiInstanceNeuralNetwork, self).iter_input_dependent_hidden_parameters():
-            yield name, value
+    # def iter_input_dependent_hidden_parameters(self):
+    #     for name, value in super(BaseMultiInstanceNeuralNetwork, self).iter_input_dependent_hidden_parameters():
+    #         yield name, value
 
-        yield u'x', self.__input[InputSample.I_X_INDS]
-        yield u'obj_ind', self.__input[InputSample.I_OBJ_IND]
-        yield u'subj_ind', self.__input[InputSample.I_SUBJ_IND]
-        yield u'y_labels', self.__y
+    #     yield u'x', self.__input[InputSample.I_X_INDS]
+    #     yield u'obj_ind', self.__input[InputSample.I_OBJ_IND]
+    #     yield u'subj_ind', self.__input[InputSample.I_SUBJ_IND]
+    #     yield u'y_labels', self.__y
 
     def create_feed_dict(self, input, data_type):
         assert(isinstance(input, dict))

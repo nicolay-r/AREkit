@@ -88,7 +88,9 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         assert(isinstance(text_opinion, TextOpinion))
 
         if self.__labels_defined[text_opinion_id] is not False:
-            assert(text_opinion.Sentiment == label)
+            # assert(text_opinion.Sentiment == label)
+            if text_opinion.Sentiment != label:
+                print "[Warning]: labels collision detected!"
             return
 
         text_opinion.set_label(label)
