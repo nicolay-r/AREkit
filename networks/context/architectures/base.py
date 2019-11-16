@@ -3,7 +3,7 @@ from core.networks.tf_helpers.initialization import init_weighted_cost, init_acc
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.training.batch import MiniBatch
 from core.networks.context.sample import InputSample
-from core.networks.context.training.data_type import DataType
+from core.networks.data_type import DataType
 from core.networks.network import NeuralNetwork
 
 

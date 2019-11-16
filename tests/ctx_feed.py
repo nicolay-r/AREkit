@@ -1,12 +1,12 @@
 import tensorflow as tf
 import numpy as np
 
-from core.evaluation.labels import PositiveLabel
+from core.common.labels.base import PositiveLabel
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.training.bags.bag import Bag
 from core.networks.context.training.batch import MiniBatch
-from core.networks.context.training.data_type import DataType
+from core.networks.data_type import DataType
 from core.networks.network import NeuralNetwork
 from core.tests.ctx_compile import contexts_supported
 

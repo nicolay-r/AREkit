@@ -6,8 +6,8 @@ from core.common.frames.collection import FramesCollection
 from core.common.frames.polarity import FramePolarity
 from core.common.parsed_news.parsed_news import ParsedNews
 from core.common.synonyms import SynonymsCollection
-from core.evaluation.labels import NeutralLabel
-from core.networks.context.training.embedding import indices
+from core.common.labels.base import NeutralLabel
+from core.networks.context.embedding import indices
 from core.networks.context.configurations.base import DefaultNetworkConfig
 
 from core.common.text_frame_variant import TextFrameVariant

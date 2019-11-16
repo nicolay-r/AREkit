@@ -13,6 +13,8 @@ class BagsCollection:
         assert(isinstance(bags, list))
         self.__bags = bags
 
+    # region classmethods
+
     @classmethod
     def from_linked_text_opinions(
             cls,
@@ -53,11 +55,19 @@ class BagsCollection:
 
         return cls(bags)
 
+    # endregion
+
+    # region private methods
+
     @staticmethod
     def __complete_last_bag(bags, bag_size):
         last_bag = bags[-1]
         while len(last_bag) < bag_size:
             last_bag.add_sample(last_bag.Samples[-1])
+
+    # endregion
+
+    # region public methods
 
     def iter_by_groups(self, bags_per_group):
         assert(type(bags_per_group) == int and bags_per_group > 0)
@@ -77,9 +87,15 @@ class BagsCollection:
             end += 1
         yield last_group
 
+    # endregion
+
+    # region overriden methods
+
     def __iter__(self):
         for bag in self.__bags:
             yield bag
 
     def __len__(self):
         return len(self.__bags)
+
+    # endregion

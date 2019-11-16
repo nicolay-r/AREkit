@@ -16,6 +16,8 @@ class MiniBatch(object):
         self._batch_id = batch_id
         self.bags = bags
 
+    # region public methods
+
     def to_network_input(self):
         result = OrderedDict()
 
@@ -38,12 +40,20 @@ class MiniBatch(object):
 
         return result
 
+    # endregion
+
+    # region public 'debug' methods
+
     @staticmethod
     def debug_output(result):
         print "-------------------"
         for key, value in result.iteritems():
             print "{}: {}".format(key, value)
         print "-------------------"
+
+    # endregion
+
+    # region public 'iter' methods
 
     def iter_by_samples(self):
         for bag in self.bags:
@@ -53,3 +63,5 @@ class MiniBatch(object):
     def iter_by_bags(self):
         for bag in self.bags:
             yield bag
+
+    # endregion

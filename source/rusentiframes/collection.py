@@ -1,6 +1,6 @@
 import json
 
-from core.evaluation.labels import Label
+from core.common.labels.base import Label
 from core.common.frames.collection import FramesCollection
 from core.source.rusentiframes.io_utils import RuSentiFramesIOUtils
 from core.source.rusentiframes.polarity import RuSentiFramesFramePolarity

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from core.evaluation.labels import Label
+from core.common.labels.base import Label
 from core.common.opinions.opinion import Opinion
 from core.common.synonyms import SynonymsCollection
 
@@ -18,7 +18,7 @@ class OpinionCollection(object):
     def __add_synonym(self, value):
         if self.__synonyms.IsReadOnly:
             raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
-        self.__synonyms.add_synonym(value)
+        self.__synonyms.add_synonym_value(value)
 
     def __create_index(self):
         index = {}

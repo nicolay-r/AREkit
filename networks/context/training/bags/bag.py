@@ -1,4 +1,5 @@
-from core.evaluation.labels import LabelPair, Label
+from core.common.labels.base import Label
+from core.common.labels.pair import LabelPair
 from core.networks.context.sample import InputSample
 
 
@@ -14,9 +15,7 @@ class Bag:
         self.__samples = []
         self.__label = label
 
-    def add_sample(self, sample):
-        assert(isinstance(sample, InputSample))
-        self.__samples.append(sample)
+    # region properties
 
     @property
     def BagLabel(self):
@@ -26,9 +25,23 @@ class Bag:
     def Samples(self):
         return self.__samples
 
+    # endregion
+
+    # region public methods
+
+    def add_sample(self, sample):
+        assert(isinstance(sample, InputSample))
+        self.__samples.append(sample)
+
+    # endregion
+
+    # region overriden methods
+
     def __len__(self):
         return len(self.__samples)
 
     def __iter__(self):
         for sample in self.__samples:
             yield sample
+
+    # endregion

@@ -8,10 +8,10 @@ from core.networks.callback import Callback
 from core.networks.cancellation import OperationCancellation
 from core.networks.context.debug import DebugKeys
 from core.networks.context.training.batch import MiniBatch
-from core.networks.context.training.embedding.offsets import TermsEmbeddingOffsets
+from core.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from core.networks.network_io import NetworkIO
 from core.networks.network import NeuralNetwork
-from core.networks.context.training.data_type import DataType
+from core.networks.data_type import DataType
 from core.networks.predict_log import NetworkInputDependentVariables
 
 

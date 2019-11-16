@@ -4,7 +4,8 @@ from core.common.text_opinions.text_opinion import TextOpinion
 from core.common.opinions.opinion import Opinion
 from core.common.text_opinions.end_type import EntityEndType
 
-from core.evaluation.labels import Label, LabelPair
+from core.common.labels.base import Label
+from core.common.labels.pair import LabelPair
 
 from core.networks.context.configurations.base import LabelCalculationMode
 from core.networks.context.debug import DebugKeys

@@ -1,5 +1,5 @@
 from core.common.ref_opinon import RefOpinion
-from core.evaluation.labels import Label
+from core.common.labels.base import Label
 
 
 class TextOpinion(RefOpinion):

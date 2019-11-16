@@ -17,7 +17,3 @@ class OpinionCollectionsToCompareUtils:
             yield OpinionCollectionsToCompare(doc_id=doc_id,
                                               read_result_collection_func=read_result_collection_func,
                                               read_etalon_collection_func=read_etalon_collection_func)
-
-
-
-

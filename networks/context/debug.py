@@ -9,12 +9,6 @@ class DebugKeys:
     PredictLabel = False
     PredictBatchDisplayLog = False
 
-    # Logger
-    LoggerEvaluationF1 = True
-    LoggerEvaluationF1Train = True
-    LoggerEvaluationAvgCost = True
-    LoggerEvaluationAvgAcc = True
-
     # Composing TermEmbedding
     DisplayTermEmbeddingParameters = True
 
@@ -27,5 +21,3 @@ class DebugKeys:
     FeedDictShow = False
 
     EmbeddingIndicesPercentWordsFound = False
-
-    EntityIndicesExtractedInfo = True

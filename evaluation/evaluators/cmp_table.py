@@ -1,5 +1,5 @@
 import pandas as pd
-from core.evaluation.labels import Label
+from core.common.labels.base import Label
 from core.common.opinions.opinion import Opinion
 
 

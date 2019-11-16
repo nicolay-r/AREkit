@@ -73,6 +73,7 @@ This toolset includes the following instruments and domain-related datasets:
     * TextObject [[base-class]](common/text_object.py) -- any entry in text with related *Bound*;
     * Entity [[base-class]](common/entities/entity.py) -- same as TextObject but related to specific text entries;
     * Opinion [[base-class]](common/opinions/opinion.py) -- actually text attitudes with 'source' and 'destination' ('X' -> 'Y');
+    * Label [[base-classes]](common/labels/base.py) -- sentiment label;
     * Frame;
     * FrameVariant [[base-class]](common/frame_variants/variant.py);
     * Embedding [[base-class]](common/embeddings/embedding.py) -- base class for Word2Vec-like embeddings;
@@ -101,7 +102,6 @@ This toolset includes the following instruments and domain-related datasets:
     * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);
     * RuSentRel [[github-repo]](https://github.com/nicolay-r/RuSentRel);
 * **Evaluation** -- tools that allows to perform models quality assessment.
-    * ~~Label [[API]](evaluation/labels.py) -- sentiment label;~~ (will be in common)
     * CmpOpinion [[API]](evaluation/cmp_opinions.py) -- structure describes pairs of opinions to compare;
     * BaseEvaluator [[API]](evaluation/evaluators/base.py);
 

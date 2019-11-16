@@ -5,4 +5,5 @@ class DataType:
     """
 
     Train = u"train"
+
     Test = u"test"

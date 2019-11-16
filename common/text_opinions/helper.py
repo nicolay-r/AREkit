@@ -9,7 +9,7 @@ class TextOpinionHelper(object):
     """
     This class provides a helper functions for TextOpinions, which become a part of TextOpinionCollection.
     The latter is important because of the dependency from Owner.
-    We utilize 'extract' prefix in methods to emphasize that these are mehthods of helper.
+    We utilize 'extract' prefix in methods to emphasize that these are methods of helper.
     """
 
     # region public 'extract' methods
@@ -42,9 +42,16 @@ class TextOpinionHelper(object):
         e_group = synonyms.get_synonym_group_index(e_value)
 
         inds = []
+
         for e_index, e in parsed_news.iter_sentence_entities_with_indices(s_index):
-            if e_group == synonyms.get_synonym_group_index(e.Value):
-                inds.append(e_index)
+
+            if not synonyms.contains_synonym_value(e.Value):
+                if e_value != e.Value:
+                    continue
+            elif e_group != synonyms.get_synonym_group_index(e.Value):
+                continue
+
+            inds.append(e_index)
 
         return inds
 

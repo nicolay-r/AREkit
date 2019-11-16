@@ -1,4 +1,4 @@
-from core.evaluation.labels import Label
+from core.common.labels.base import Label
 
 
 class FrameState(object):

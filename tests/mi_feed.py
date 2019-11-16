@@ -1,10 +1,8 @@
-from core.evaluation.labels import PositiveLabel
+from core.common.labels.base import PositiveLabel
 from core.networks.context.configurations.base import DefaultNetworkConfig
 from core.networks.context.sample import InputSample
 from core.networks.context.training.bags.bag import Bag
-from core.networks.multi.architectures.att_hidden import AttHiddenOverSentences
 from core.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-from core.networks.multi.configuration.att_hidden import AttHiddenOverSentencesConfig
 from core.networks.multi.configuration.max_pooling import MaxPoolingOverSentencesConfig
 from core.networks.multi.training.batch import MultiInstanceBatch
 from ctx_feed import test_ctx_feed, contexts_supported

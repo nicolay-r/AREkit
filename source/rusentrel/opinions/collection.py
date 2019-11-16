@@ -3,7 +3,7 @@ import io
 from core.common.opinions.collection import OpinionCollection
 from core.common.opinions.opinion import Opinion
 from core.common.utils import create_dir_if_not_exists
-from core.evaluation.labels import Label
+from core.common.labels.base import Label
 from core.common.synonyms import SynonymsCollection
 from core.source.rusentrel.io_utils import RuSentRelIOUtils
 from core.source.rusentrel.opinions.opinion import RuSentRelOpinion
