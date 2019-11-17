@@ -21,7 +21,7 @@ class PointersFeature:
                               size=expected_size,
                               filler=filler)
 
-        cls(vector_value=modified_value)
+        return cls(vector_value=modified_value)
 
     @property
     def ValueVector(self):
