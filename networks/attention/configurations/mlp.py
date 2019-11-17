@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-class MultiLayerPerceptronAttentionConfig(object):
+class MLPAttentionConfig(object):
 
     __entities_per_context = 2
     __hidden_size = 10

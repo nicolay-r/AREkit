@@ -1,5 +1,5 @@
-from core.networks.attention.architectures.cnn_attention_mlp_interactive import InteractiveMLPAttention
-from core.networks.attention.configurations.cnn_attention_mlp_dynamic import MultiLayerPerceptronAttentionDynamicConfig
+from core.networks.attention.architectures.mlp_interactive import InteractiveMLPAttention
+from core.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
 from core.networks.context.configurations.cnn import CNNConfig
 
 
@@ -8,7 +8,7 @@ class AttentionFramesCNNConfig(CNNConfig):
     def __init__(self):
         super(AttentionFramesCNNConfig, self).__init__()
         self.__attention = None
-        self.__attention_config = MultiLayerPerceptronAttentionDynamicConfig()
+        self.__attention_config = InteractiveMLPAttentionConfig(self.FramesPerContext)
 
     # region properties
 

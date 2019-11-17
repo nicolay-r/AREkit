@@ -1,4 +1,4 @@
-from core.networks.attention.architectures.cnn_attention_mlp import MLPAttention
+from core.networks.attention.architectures.mlp import MLPAttention
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.sample import InputSample
 

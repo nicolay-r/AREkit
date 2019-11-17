@@ -1,5 +1,5 @@
-from core.networks.attention.architectures.cnn_attention_mlp import MLPAttention
-from core.networks.attention.configurations.cnn_attention_mlp import MultiLayerPerceptronAttentionConfig
+from core.networks.attention.architectures.mlp import MLPAttention
+from core.networks.attention.configurations.mlp import MLPAttentionConfig
 from core.networks.context.configurations.cnn import CNNConfig
 
 
@@ -8,7 +8,7 @@ class AttentionAttitudeEndsCNNConfig(CNNConfig):
     def __init__(self):
         super(AttentionAttitudeEndsCNNConfig, self).__init__()
         self.__attention = None
-        self.__attention_config = MultiLayerPerceptronAttentionConfig()
+        self.__attention_config = MLPAttentionConfig()
 
     # region properties
 

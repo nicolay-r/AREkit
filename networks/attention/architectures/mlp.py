@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from core.networks.attention.configurations.cnn_attention_mlp import MultiLayerPerceptronAttentionConfig
+from core.networks.attention.configurations.mlp import MLPAttentionConfig
 from core.networks.tf_helpers.layers import get_k_layer_logits
 from core.networks.tf_helpers.filtering import \
     filter_batch_elements, \
@@ -22,7 +22,7 @@ class MLPAttention(object):
     I_keys = "I_keys"
 
     def __init__(self, cfg, batch_size, terms_per_context):
-        assert(isinstance(cfg, MultiLayerPerceptronAttentionConfig))
+        assert(isinstance(cfg, MLPAttentionConfig))
         self.__cfg = cfg
 
         self.__batch_size = batch_size

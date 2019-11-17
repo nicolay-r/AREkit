@@ -1,5 +1,5 @@
 import tensorflow as tf
-from core.networks.attention.architectures.cnn_attention_mlp import MLPAttention
+from core.networks.attention.architectures.mlp import MLPAttention
 from core.networks.context.sample import InputSample
 from core.networks.tf_helpers import filtering
 from core.networks.tf_helpers import sequence
