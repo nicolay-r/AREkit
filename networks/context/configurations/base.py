@@ -27,7 +27,7 @@ class DefaultNetworkConfig(object):
     __default_stemmer = MystemWrapper()
     __default_pos_tagger = POSMystemWrapper(__default_stemmer.MystemInstance)
     __terms_per_context = 50
-    __frames_per_context = 3
+    __frames_per_context = 5
     __bags_per_minibatch = 6
     __bag_size = 1
     __learning_rate = 0.1

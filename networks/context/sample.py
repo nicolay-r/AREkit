@@ -3,18 +3,19 @@ import numpy as np
 from collections import OrderedDict
 
 from core.common.frames.collection import FramesCollection
-from core.common.frames.polarity import FramePolarity
 from core.common.parsed_news.base import ParsedNews
 from core.common.synonyms import SynonymsCollection
-from core.common.labels.base import NeutralLabel
 from core.networks.context.embedding import indices
 from core.networks.context.configurations.base import DefaultNetworkConfig
 
-from core.common.text_frame_variant import TextFrameVariant
 from core.common.entities.base import Entity
 from core.common.text_opinions.end_type import EntityEndType
 from core.common.text_opinions.helper import TextOpinionHelper
 from core.common.text_opinions.base import TextOpinion
+from core.networks.context.features.dist import dist_abs_nearest_feature, distance_feature
+from core.networks.context.features.frames import compose_frame_roles, compose_frames
+from core.networks.context.features.inds import IndicesFeature
+from core.networks.context.features.pointers import PointersFeature
 
 
 class InputSample(object):
@@ -38,7 +39,7 @@ class InputSample(object):
     I_FRAME_SENT_ROLES = 'frame_roles_inds'
 
     # TODO: Should be -1, but now it is not supported
-    FRAME_ROLES_PAD_VALUE = 0
+    FRAME_SENT_ROLES_PAD_VALUE = 0
     FRAMES_PAD_VALUE = 0
     POS_PAD_VALUE = 0
     X_PAD_VALUE = 0
@@ -121,32 +122,31 @@ class InputSample(object):
         assert(isinstance(frames_collection, FramesCollection))
         assert(isinstance(synonyms_collection, SynonymsCollection))
 
-        sentence_index = TextOpinionHelper.extract_entity_sentence_index(text_opinion=text_opinion,
-                                                                         end_type=EntityEndType.Source)
+        sentence_index = TextOpinionHelper.extract_entity_sentence_index(
+            text_opinion=text_opinion,
+            end_type=EntityEndType.Source)
 
         terms = list(parsed_news.iter_sentence_terms(sentence_index))
 
-        subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion=text_opinion,
-                                                                              end_type=EntityEndType.Source)
+        subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(
+            text_opinion=text_opinion,
+            end_type=EntityEndType.Source)
 
-        obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(text_opinion=text_opinion,
-                                                                             end_type=EntityEndType.Target)
+        obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(
+            text_opinion=text_opinion,
+            end_type=EntityEndType.Target)
 
-        syn_subj_inds = TextOpinionHelper.extract_entity_sentence_level_synonym_indices(text_opinion=text_opinion,
-                                                                                        end_type=EntityEndType.Source,
-                                                                                        synonyms=synonyms_collection)
+        syn_subj_inds = TextOpinionHelper.extract_entity_sentence_level_synonym_indices(
+            text_opinion=text_opinion,
+            end_type=EntityEndType.Source,
+            synonyms=synonyms_collection)
 
-        syn_obj_inds = TextOpinionHelper.extract_entity_sentence_level_synonym_indices(text_opinion=text_opinion,
-                                                                                       end_type=EntityEndType.Target,
-                                                                                       synonyms=synonyms_collection)
+        syn_obj_inds = TextOpinionHelper.extract_entity_sentence_level_synonym_indices(
+            text_opinion=text_opinion,
+            end_type=EntityEndType.Target,
+            synonyms=synonyms_collection)
 
-        frame_inds = [index for index, _ in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion)]
-
-        pos_indices = indices.calculate_pos_indices_for_terms(
-            terms=terms,
-            pos_tagger=config.PosTagger)
-
-        x_indices = indices.calculate_embedding_indices_for_terms(
+        x_indices = indices.iter_embedding_indices_for_terms(
             terms=terms,
             syn_subj_indices=set(syn_subj_inds),
             syn_obj_indices=set(syn_obj_inds),
@@ -156,126 +156,90 @@ class InputSample(object):
             token_embedding=config.TokenEmbedding,
             frames_embedding=config.FrameEmbedding)
 
-        sentence_len = len(x_indices)
-
-        frame_sent_roles = cls.__compose_frame_roles(
+        frame_sent_roles = compose_frame_roles(
             text_opinion=text_opinion,
-            size=sentence_len,
-            frames_collection=frames_collection)
+            size=len(x_indices),
+            frames_collection=frames_collection,
+            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
-        term_type = InputSample.__create_term_types(terms)
+        x_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=x_indices,
+            e1_in=subj_ind,
+            e2_in=obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.X_PAD_VALUE)
 
-        pad_size = config.TermsPerContext
+        pos_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=indices.iter_pos_indices_for_terms(terms=terms, pos_tagger=config.PosTagger),
+            e1_in=subj_ind,
+            e2_in=obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.POS_PAD_VALUE)
 
-        if sentence_len < pad_size:
-            cls.__pad_right_inplace(frame_sent_roles, pad_size=pad_size, filler=cls.FRAME_ROLES_PAD_VALUE)
-            cls.__pad_right_inplace(pos_indices, pad_size=pad_size, filler=cls.POS_PAD_VALUE)
-            cls.__pad_right_inplace(x_indices, pad_size=pad_size, filler=cls.X_PAD_VALUE)
-            # TODO. Provide it correct.
-            cls.__pad_right_inplace(term_type, pad_size=pad_size, filler=cls.TERM_TYPE_PAD_VALUE)
-        else:
-            b, e, subj_ind, obj_ind = cls.__crop_bounds(
-                sentence_len=sentence_len,
-                window_size=config.TermsPerContext,
-                e1=subj_ind,
-                e2=obj_ind)
+        frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=frame_sent_roles,
+            e1_in=subj_ind,
+            e2_in=obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
-            frame_inds = cls.__shift_text_pointers(begin=b, end=e, inds=frame_inds, pad_value=cls.FRAMES_PAD_VALUE)
-            syn_subj_inds = cls.__shift_text_pointers(begin=b, end=e, inds=syn_subj_inds, pad_value=0)
-            syn_obj_inds = cls.__shift_text_pointers(begin=b, end=e, inds=syn_obj_inds, pad_value=0)
+        term_type_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=InputSample.__create_term_types(terms),
+            e1_in=subj_ind,
+            e2_in=obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.TERM_TYPE_PAD_VALUE)
 
-            cls.__crop_inplace([x_indices, frame_sent_roles, pos_indices, term_type], begin=b, end=e)
+        frames_feature = PointersFeature.create_shifted_and_fit(
+            original_value=compose_frames(text_opinion),
+            start_offset=x_feature.StartIndex,
+            end_offset=x_feature.EndIndex,
+            filler=cls.FRAMES_PAD_VALUE,
+            expected_size=config.FramesPerContext)
 
-        cls.__fit_frames_dependent_indices_inplace(inds=frame_inds, frames_per_context=config.FramesPerContext)
+        syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
+            original_value=syn_subj_inds,
+            start_offset=x_feature.StartIndex,
+            end_offset=x_feature.EndIndex,
+            filler=0)
 
-        assert(len(frame_sent_roles) ==
-               len(pos_indices) ==
-               len(x_indices) ==
-               len(term_type) ==
-               config.TermsPerContext)
+        syn_obj_inds_feature = PointersFeature.create_shifted_and_fit(
+            original_value=syn_obj_inds,
+            start_offset=x_feature.StartIndex,
+            end_offset=x_feature.EndIndex,
+            filler=0)
 
-        dist_from_subj = InputSample.__dist(pos=subj_ind, size=config.TermsPerContext)
-        dist_from_obj = InputSample.__dist(pos=obj_ind, size=config.TermsPerContext)
-        dist_nearest_subj = InputSample.__dist_abs_nearest(positions=syn_subj_inds, size=config.TermsPerContext)
-        dist_nearest_obj = InputSample.__dist_abs_nearest(positions=syn_obj_inds, size=config.TermsPerContext)
+        subj_ind = subj_ind - x_feature.StartIndex
+        obj_ind = obj_ind - x_feature.StartIndex
 
-        return cls(X=np.array(x_indices),
+        dist_from_subj = distance_feature(position=subj_ind,
+                                          size=config.TermsPerContext)
+
+        dist_from_obj = distance_feature(position=obj_ind,
+                                         size=config.TermsPerContext)
+
+        dist_nearest_subj = dist_abs_nearest_feature(positions=syn_subj_inds_feature.ValueVector,
+                                                     size=config.TermsPerContext)
+
+        dist_nearest_obj = dist_abs_nearest_feature(positions=syn_obj_inds_feature.ValueVector,
+                                                    size=config.TermsPerContext)
+
+        return cls(X=np.array(x_feature.ValueVector),
                    subj_ind=subj_ind,
                    obj_ind=obj_ind,
                    dist_from_subj=dist_from_subj,
                    dist_from_obj=dist_from_obj,
                    dist_nearest_subj=dist_nearest_subj,
                    dist_nearest_obj=dist_nearest_obj,
-                   pos_indices=np.array(pos_indices),
-                   term_type=np.array(term_type),
-                   frame_indices=np.array(frame_inds),
-                   frame_sent_roles=np.array(frame_sent_roles),
+                   pos_indices=np.array(pos_feature.ValueVector),
+                   term_type=np.array(term_type_feature.ValueVector),
+                   frame_indices=np.array(frames_feature.ValueVector),
+                   frame_sent_roles=np.array(frame_sent_roles_feature.ValueVector),
                    text_opinion_id=text_opinion.TextOpinionID)
 
     # endregion
 
     # region private methods
-
-    @staticmethod
-    def __compose_frame_roles(text_opinion, size, frames_collection):
-
-        result = [InputSample.FRAME_ROLES_PAD_VALUE] * size
-
-        for index, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion):
-
-            if index >= len(result):
-                continue
-
-            value = InputSample.__extract_uint_frame_variant_sentiment_role(
-                text_frame_variant=variant,
-                frames_collection=frames_collection)
-
-            result[index] = value
-
-        return result
-
-    @staticmethod
-    def __fit_frames_dependent_indices_inplace(inds, frames_per_context):
-        if len(inds) < frames_per_context:
-            InputSample.__pad_right_inplace(lst=inds,
-                                            pad_size=frames_per_context,
-                                            filler=InputSample.FRAMES_PAD_VALUE)
-        else:
-            del inds[frames_per_context:]
-
-    @staticmethod
-    def __shift_text_pointers(inds, begin, end, pad_value):
-        return map(lambda frame_index: InputSample.__shift_index(w_b=begin, w_e=end,
-                                                                 frame_index=frame_index,
-                                                                 placeholder=pad_value),
-                   inds)
-
-    @staticmethod
-    def __extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_collection):
-        assert(isinstance(text_frame_variant, TextFrameVariant))
-        assert(isinstance(frames_collection, FramesCollection))
-        frame_id = text_frame_variant.Variant.FrameID
-        polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)
-        if polarity is None:
-            return NeutralLabel().to_uint()
-
-        assert(isinstance(polarity, FramePolarity))
-
-        return polarity.Label.to_uint()
-
-    @staticmethod
-    def __dist(pos, size):
-        result = np.zeros(size)
-        for i in xrange(len(result)):
-            result[i] = i-pos if i-pos >= 0 else i-pos+size
-        return result
-
-    @staticmethod
-    def __dist_abs_nearest(positions, size):
-        result = np.zeros(size)
-        for i in xrange(len(result)):
-            result[i] = min([abs(i - p) for p in positions])
-        return result
 
     @staticmethod
     def __create_term_types(terms):
@@ -290,53 +254,6 @@ class InputSample(object):
                 feature.append(-1)
 
         return feature
-
-    @staticmethod
-    def __crop_inplace(lists, begin, end):
-        for i, lst in enumerate(lists):
-            if end < len(lst):
-                del lst[end:]
-            del lst[:begin]
-
-    @staticmethod
-    def __crop_bounds(sentence_len, window_size, e1, e2):
-        assert(isinstance(sentence_len, int))
-        assert(isinstance(window_size, int) and window_size > 0)
-        assert(isinstance(e1, int) and isinstance(e2, int))
-        assert(e1 >= 0 and e2 >= 0)
-        assert(e1 < sentence_len and e2 < sentence_len)
-        w_begin = 0
-        w_end = window_size
-        while not (InputSample.__in_window(w_b=w_begin, w_e=w_end, i=e1) and
-                   InputSample.__in_window(w_b=w_begin, w_e=w_end, i=e2)):
-            w_begin += 1
-            w_end += 1
-
-        return w_begin, w_end, e1 - w_begin, e2 - w_begin
-
-    @staticmethod
-    def __in_window(w_b, w_e, i):
-        return i >= w_b and i < w_e
-
-    @staticmethod
-    def __pad_right_inplace(lst, pad_size, filler):
-        """
-        Pad list ('lst') with additional elements (filler)
-
-        lst: list
-        pad_size: int
-            result size
-        filler: int
-        returns: None
-            inplace
-        """
-        assert(pad_size - len(lst) > 0)
-        lst.extend([filler] * (pad_size - len(lst)))
-
-    @staticmethod
-    def __shift_index(w_b, w_e, frame_index, placeholder):
-        shifted = frame_index - w_b
-        return placeholder if not InputSample.__in_window(w_b=w_b, w_e=w_e, i=frame_index) else shifted
 
     # endregion
 

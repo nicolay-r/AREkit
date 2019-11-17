@@ -14,14 +14,26 @@ from core.common.embeddings.tokens import TokenEmbedding
 from core.networks.context.debug import DebugKeys
 
 
-def calculate_embedding_indices_for_terms(terms,
-                                          term_embedding_matrix,
-                                          word_embedding,
-                                          syn_subj_indices,
-                                          syn_obj_indices,
-                                          custom_word_embedding,
-                                          token_embedding,
-                                          frames_embedding):
+# region private functions
+
+def __select_enity_mask(index, subjs_set, objs_set):
+    if index in objs_set:
+        return entity.OBJ_ENTITY_MASK
+    elif index in subjs_set:
+        return entity.SUBJ_ENTITY_MASK
+    return entity.ANY_ENTITY_MASK
+
+# endregion
+
+
+def iter_embedding_indices_for_terms(terms,
+                                     term_embedding_matrix,
+                                     word_embedding,
+                                     syn_subj_indices,
+                                     syn_obj_indices,
+                                     custom_word_embedding,
+                                     token_embedding,
+                                     frames_embedding):
     assert(isinstance(terms, collections.Iterable))
     assert(isinstance(term_embedding_matrix, np.ndarray))
     assert(isinstance(word_embedding, Embedding))
@@ -31,7 +43,6 @@ def calculate_embedding_indices_for_terms(terms,
     assert(isinstance(token_embedding, TokenEmbedding))
     assert(isinstance(frames_embedding, Embedding))
 
-    indices = []
     embedding_offsets = TermsEmbeddingOffsets(words_count=word_embedding.VocabularySize,
                                               custom_words_count=custom_word_embedding.VocabularySize,
                                               tokens_count=token_embedding.VocabularySize,
@@ -65,7 +76,7 @@ def calculate_embedding_indices_for_terms(terms,
         else:
             raise Exception("Unsuported type {}".format(term))
 
-        indices.append(index)
+        yield index
 
     if DebugKeys.EmbeddingIndicesPercentWordsFound:
         print "Words found: {} ({}%)".format(debug_words_found,
@@ -73,22 +84,10 @@ def calculate_embedding_indices_for_terms(terms,
         print "Words custom: {} ({}%)".format(debug_words_count - debug_words_found,
                                               100.0 * (debug_words_count - debug_words_found) / debug_words_count)
 
-    return indices
 
-
-def __select_enity_mask(index, subjs_set, objs_set):
-    if index in objs_set:
-        return entity.OBJ_ENTITY_MASK
-    elif index in subjs_set:
-        return entity.SUBJ_ENTITY_MASK
-    return entity.ANY_ENTITY_MASK
-
-
-def calculate_pos_indices_for_terms(terms, pos_tagger):
+def iter_pos_indices_for_terms(terms, pos_tagger):
     assert(isinstance(terms, collections.Iterable))
     assert(isinstance(pos_tagger, POSTagger))
-
-    indices = []
 
     for index, term in enumerate(terms):
         if isinstance(term, Token):
@@ -98,6 +97,4 @@ def calculate_pos_indices_for_terms(terms, pos_tagger):
         else:
             pos = pos_tagger.Unknown
 
-        indices.append(pos_tagger.pos_to_int(pos))
-
-    return indices
+        yield pos_tagger.pos_to_int(pos)
