@@ -13,11 +13,11 @@ class IndicesFeature:
     def from_vector_to_be_fitted(cls, value_vector, e1_in, e2_in, expected_size, filler):
         assert(isinstance(value_vector, collections.Iterable))
         assert(isinstance(expected_size, int))
-        assert(0 <= e1_in < expected_size)
-        assert(0 <= e2_in < expected_size)
-
         start_index = 0
         value_modified = list(value_vector)
+
+        assert(0 <= e1_in < len(value_modified))
+        assert(0 <= e2_in < len(value_modified))
 
         if len(value_modified) < expected_size:
             utils.pad_right_inplace(value_modified,
