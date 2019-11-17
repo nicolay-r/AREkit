@@ -275,7 +275,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         yield u'obj_ind', self.__input[InputSample.I_OBJ_IND]
         yield u'subj_ind', self.__input[InputSample.I_SUBJ_IND]
         yield u'frame_inds', self.__input[InputSample.I_FRAME_INDS]
-        yield u'y_labels', self.__y
+        yield u'y_labels', self.Labels
+        yield u'y_etalon_labels', self.__y
 
     # region static methods
 
