@@ -1,5 +1,6 @@
 import utils
 
+
 class PointersFeature:
 
     def __init__(self, vector_value):

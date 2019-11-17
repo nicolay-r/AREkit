@@ -9,8 +9,8 @@ def compose_frames(text_opinion):
     frames = []
     indices = list(TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion))
     # NOTE: We utilize in reverse mode to prevent a case of zero-based frame by the beginning.
-    for index, frame in reversed(indices):
-        frames.append(frame)
+    for index, _ in reversed(indices):
+        frames.append(index)
     return frames
 
 
