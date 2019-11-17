@@ -156,6 +156,8 @@ class InputSample(object):
             token_embedding=config.TokenEmbedding,
             frames_embedding=config.FrameEmbedding)
 
+        x_indices = list(x_indices)
+
         frame_sent_roles = compose_frame_roles(
             text_opinion=text_opinion,
             size=len(x_indices),
