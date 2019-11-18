@@ -4,6 +4,7 @@ import core.networks.tf_helpers.initialization
 import core.networks.tf_helpers.sequence
 from core.networks.attention.helpers import embedding
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
+from core.networks.data_type import DataType
 from core.networks.tf_helpers.sequence import get_cell
 from core.networks.context.configurations.ian_frames import IANFramesConfig, StatesAggregationModes
 from core.networks.context.sample import InputSample
@@ -41,6 +42,8 @@ class IANFrames(BaseContextNeuralNetwork):
         self.__aspect_att = None
         self.__context_att = None
 
+        self.__dropout_rnn_keep_prob = None
+
     # region properties
 
     @property
@@ -54,6 +57,11 @@ class IANFrames(BaseContextNeuralNetwork):
     # endregion
 
     # region public 'init' methods
+
+    def init_input(self):
+        super(IANFrames, self).init_input()
+        self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
+                                                      name="ctx_dropout_rnn_keep_prob")
 
     def init_hidden_states(self):
         assert(isinstance(self.Config, IANFramesConfig))
@@ -117,11 +125,11 @@ class IANFrames(BaseContextNeuralNetwork):
             # Prepare cells
             aspect_cell = get_cell(hidden_size=self.Config.HiddenSize,
                                    cell_type=self.Config.CellType,
-                                   dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                   dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             context_cell = get_cell(hidden_size=self.Config.HiddenSize,
                                     cell_type=self.Config.CellType,
-                                    dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                    dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             # Calculate input lengths
             aspect_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(
@@ -194,6 +202,15 @@ class IANFrames(BaseContextNeuralNetwork):
         yield u'aspect_att', self.__aspect_att
         yield u'context_att', self.__context_att
         yield u'aspects', self.AspectInput
+
+    # endregion
+
+    # region public 'create' methods
+
+    def create_feed_dict(self, input, data_type):
+        feed_dict = super(IANFrames, self).create_feed_dict(input=input, data_type=data_type)
+        feed_dict[self.__dropout_rnn_keep_prob] = self.Config.DropoutRNNKeepProb if data_type == DataType.Train else 1.0
+        return feed_dict
 
     # endregion
 

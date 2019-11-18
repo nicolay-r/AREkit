@@ -4,6 +4,7 @@ from collections import OrderedDict
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
 from core.networks.context.configurations.rcnn import RCNNConfig
 from core.networks.context.sample import InputSample
+from core.networks.data_type import DataType
 from core.networks.tf_helpers import sequence
 
 
@@ -23,10 +24,22 @@ class RCNN(BaseContextNeuralNetwork):
     def __init__(self):
         super(RCNN, self).__init__()
         self.__hidden = OrderedDict()
+        self.__dropout_rnn_keep_prob = None
+
+    # region properties
 
     @property
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize
+
+    # endregion
+
+    # region public 'init' methods
+
+    def init_input(self):
+        super(RCNN, self).init_input()
+        self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
+                                                      name="ctx_dropout_rnn_keep_prob")
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, RCNNConfig))
@@ -36,11 +49,11 @@ class RCNN(BaseContextNeuralNetwork):
 
             fw_cell = sequence.get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
                                         cell_type=self.Config.CellType,
-                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                        dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             bw_cell = sequence.get_cell(hidden_size=self.Config.SurroundingOneSideContextEmbeddingSize,
                                         cell_type=self.Config.CellType,
-                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                        dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             (self.output_fw, self.output_bw), states = sequence.bidirectional_rnn(
                 cell_fw=fw_cell,
@@ -100,11 +113,29 @@ class RCNN(BaseContextNeuralNetwork):
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
 
+    # endregion
+
+    # region public 'iter' methods
+
     def iter_hidden_parameters(self):
         for key, value in self.__hidden.iteritems():
             yield key, value
+
+    # endregion
+
+    # region public 'create' methods
+
+    def create_feed_dict(self, input, data_type):
+        feed_dict = super(RCNN, self).create_feed_dict(input=input, data_type=data_type)
+        feed_dict[self.__dropout_rnn_keep_prob] = self.Config.DropoutRNNKeepProb if data_type == DataType.Train else 1.0
+        return feed_dict
+
+    # endregion
+
+    # region private methods
 
     def __text_embedding_size(self):
         return self.TermEmbeddingSize + \
                2 * self.Config.SurroundingOneSideContextEmbeddingSize
 
+    # endregion

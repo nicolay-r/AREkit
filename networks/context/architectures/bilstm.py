@@ -5,10 +5,12 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 """
 from collections import OrderedDict
 import tensorflow as tf
+
+from core.networks.data_type import DataType
 from core.networks.tf_helpers import layers
 from core.networks.tf_helpers import sequence
 from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations.bi_lstm import BiLSTMConfig
+from core.networks.context.configurations.bilstm import BiLSTMConfig
 from core.networks.context.sample import InputSample
 
 
@@ -25,12 +27,22 @@ class BiLSTM(BaseContextNeuralNetwork):
     def __init__(self):
         super(BiLSTM, self).__init__()
         self.__hidden = OrderedDict()
+        self.__dropout_rnn_keep_prob = None
+
+    # region properties
 
     @property
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize
 
-    # region init methods
+    # endregion
+
+    # region public 'init' methods
+
+    def init_input(self):
+        super(BiLSTM, self).init_input()
+        self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
+                                                      name="ctx_dropout_rnn_keep_prob")
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, BiLSTMConfig))
@@ -45,13 +57,13 @@ class BiLSTM(BaseContextNeuralNetwork):
             fw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
                                         cell_type=self.Config.CellType,
                                         lstm_initializer=self.Config.LSTMCellInitializer,
-                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                        dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             # Backward cell
             bw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
                                         cell_type=self.Config.CellType,
                                         lstm_initializer=self.Config.LSTMCellInitializer,
-                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                        dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             (output_fw, output_bw), _ = sequence.bidirectional_rnn(
                 cell_fw=fw_cell,
@@ -95,7 +107,16 @@ class BiLSTM(BaseContextNeuralNetwork):
 
     # endregion
 
-    # region iter methods
+    # region public 'create' methods
+
+    def create_feed_dict(self, input, data_type):
+        feed_dict = super(BiLSTM, self).create_feed_dict(input=input, data_type=data_type)
+        feed_dict[self.__dropout_rnn_keep_prob] = self.Config.DropoutRNNKeepProb if data_type == DataType.Train else 1.0
+        return feed_dict
+
+    # endregion
+
+    # region public 'iter' methods
 
     def iter_hidden_parameters(self):
         for key, value in self.__hidden.iteritems():

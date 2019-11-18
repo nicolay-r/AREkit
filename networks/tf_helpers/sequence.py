@@ -10,7 +10,6 @@ class CellTypes:
 
 def get_cell(hidden_size, cell_type, lstm_initializer=None, dropout_rnn_keep_prob=1.0):
     assert(isinstance(cell_type, unicode))
-    assert(isinstance(dropout_rnn_keep_prob, float))
 
     cell = None
 

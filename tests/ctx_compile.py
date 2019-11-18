@@ -20,7 +20,7 @@ from core.networks.context.architectures.self_att_bilstm import SelfAttentionBiL
 from core.networks.context.configurations.att_hidden_bilstm import AttentionHiddenBiLSTMConfig
 from core.networks.context.configurations.att_ends_cnn import AttentionAttitudeEndsCNNConfig
 from core.networks.context.configurations.base import DefaultNetworkConfig
-from core.networks.context.configurations.bi_lstm import BiLSTMConfig
+from core.networks.context.configurations.bilstm import BiLSTMConfig
 from core.networks.context.configurations.cnn import CNNConfig
 from core.networks.context.configurations.att_ends_pcnn import AttentionAttitudeEndsPCNNConfig
 from core.networks.context.configurations.contrib.att_frames_bilstm import AttentionFramesBiLSTMConfig

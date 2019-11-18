@@ -2,6 +2,7 @@ import tensorflow as tf
 
 from core.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 from core.networks.context.sample import InputSample
+from core.networks.data_type import DataType
 from core.networks.tf_helpers import sequence
 from base import BaseContextNeuralNetwork
 
@@ -23,6 +24,9 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         self.__W_s2 = None
         self.__W_output = None
         self.__b_output = None
+        self.__dropout_rnn_keep_prob = None
+
+    # region properties
 
     @property
     def ContextEmbeddingSize(self):
@@ -31,6 +35,15 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             return r * 2u, where u is an output of a single direction in bilstm.
         """
         return self.Config.RSize * 2 * self.Config.HiddenSize
+
+    # endregion
+
+    # region public 'init' methods
+
+    def init_input(self):
+        super(SelfAttentionBiLSTM, self).init_input()
+        self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
+                                                      name="ctx_dropout_rnn_keep_prob")
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
@@ -42,11 +55,11 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
             fw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
                                         cell_type=self.Config.CellType,
-                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                        dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             bw_cell = sequence.get_cell(hidden_size=self.Config.HiddenSize,
                                         cell_type=self.Config.CellType,
-                                        dropout_rnn_keep_prob=self.Config.DropoutRNNKeepProb)
+                                        dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             (self.output_fw, self.output_bw), states = sequence.bidirectional_rnn(cell_fw=fw_cell,
                                                                                   cell_bw=bw_cell,
@@ -111,12 +124,6 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
 
-    def iter_hidden_parameters(self):
-        yield ("W_s1", self.__W_s1)
-        yield ("W_s2", self.__W_s2)
-        yield ("W_output", self.__W_output)
-        yield ("b_output", self.__b_output)
-
     def init_logits_unscaled(self, context_embedding):
         """
         context_embedding: M_flat parameter of init_context_embedding
@@ -147,9 +154,30 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
 
         return loss + tf.reduce_mean(P * self.Config.PenaltizationTermCoef)
 
+    # endregion
+
+    # region public 'create' methods
+
+    def create_feed_dict(self, input, data_type):
+        feed_dict = super(SelfAttentionBiLSTM, self).create_feed_dict(input=input, data_type=data_type)
+        feed_dict[self.__dropout_rnn_keep_prob] = self.Config.DropoutRNNKeepProb if data_type == DataType.Train else 1.0
+        return feed_dict
+
+    # endregion
+
+    # region public 'iter' methods
+
     def iter_input_dependent_hidden_parameters(self):
 
         for name, value in super(SelfAttentionBiLSTM, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
         yield u"ATT_Weights", self.__avg_by_r_A
+
+    def iter_hidden_parameters(self):
+        yield ("W_s1", self.__W_s1)
+        yield ("W_s2", self.__W_s2)
+        yield ("W_output", self.__W_output)
+        yield ("b_output", self.__b_output)
+
+    # endregion

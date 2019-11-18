@@ -1,5 +1,5 @@
 import tensorflow as tf
-from core.networks.context.configurations.bi_lstm import BiLSTMConfig
+from core.networks.context.configurations.bilstm import BiLSTMConfig
 
 
 class SelfAttentionBiLSTMConfig(BiLSTMConfig):
