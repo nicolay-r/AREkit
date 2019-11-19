@@ -9,24 +9,35 @@ class NetworkInputDependentVariables:
 
     # region public methods
 
-    def has_variable(self, var_name):
-        return var_name in self.__by_param_names
-
-    def add(self, names, tensor_values, text_opinion_ids):
-        assert(isinstance(names, list) and len(names) > 0)
-        assert(isinstance(tensor_values, list) and len(tensor_values) > 0)
+    def add_input_dependent_values(self, names_list, tensor_values_list, text_opinion_ids):
+        """
+        names: list
+            list of string names of related 'tensor_values'
+        tensor_values: list
+            list of values with shape [len(text_opinion_ids)]
+        text_opinion_ids: list
+            list of ids
+        """
+        assert(isinstance(names_list, list) and len(names_list) > 0)
+        assert(isinstance(tensor_values_list, list) and len(tensor_values_list) > 0)
         assert(isinstance(text_opinion_ids, list))
-        assert(len(tensor_values) == len(names))
+        assert(len(tensor_values_list) == len(names_list))
 
-        for i, name in enumerate(names):
+        for name_ind, name in enumerate(names_list):
             assert(isinstance(name, unicode))
 
             if name not in self.__by_param_names:
                 self.__by_param_names[name] = []
                 self.__text_opinion_ids[name] = []
 
-            for j, id in enumerate(text_opinion_ids):
-                self.__by_param_names[name].append(tensor_values[i][j])
+            values_list = tensor_values_list[name_ind]
+
+            if len(values_list) != len(text_opinion_ids):
+                raise Exception("values_list of '{}' has size {} != {} (text_opinion_inds length)".format(
+                    name, len(values_list), len(text_opinion_ids)))
+
+            for text_opinion_ind, id in enumerate(text_opinion_ids):
+                self.__by_param_names[name].append([text_opinion_ind])
                 self.__text_opinion_ids[name].append(id)
 
     def iter_by_parameter_values(self, param_name):

@@ -71,10 +71,6 @@ class TensorflowModel(object):
 
     # region public methods
 
-    @staticmethod
-    def display_log(log_names, log_values):
-        pass
-
     def set_optimiser_value(self, value):
         self.__optimiser = value
 
@@ -264,9 +260,6 @@ class TensorflowModel(object):
                                       feed_dict=feed_dict)
             cost = result[1]
 
-            if DebugKeys.FitBatchDisplayLog:
-                self.display_log(hidden_names, result[len(fetches_default):])
-
             total_cost += np.mean(cost)
             total_acc += result[2]
             groups_count += 1
@@ -297,28 +290,25 @@ class TensorflowModel(object):
 
         predict_log = NetworkInputDependentVariables()
         var_names = []
-        var_tensors = []
+        idh_tensors = []
         for name, tensor in self.Network.iter_input_dependent_hidden_parameters():
             var_names.append(name)
-            var_tensors.append(tensor)
+            idh_tensors.append(tensor)
 
         for bags_group in self.get_bags_collection(dest_data_type).iter_by_groups(self.Config.BagsPerMinibatch):
 
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch, data_type=dest_data_type)
 
-            result = self.Session.run([self.Network.Labels] + var_tensors, feed_dict=feed_dict)
+            result = self.Session.run([self.Network.Labels] + idh_tensors, feed_dict=feed_dict)
             uint_labels = result[0]
 
-            tensor_values = result[1:]
-            if len(var_names) > 0 and len(tensor_values) > 0:
-                predict_log.add(names=var_names,
-                                tensor_values=tensor_values,
-                                text_opinion_ids=[sample.TextOpinionID for sample in
-                                                  minibatch.iter_by_samples()])
-
-            if DebugKeys.PredictBatchDisplayLog:
-                self.display_log(var_names, result[1:])
+            idh_tensor_values = result[1:]
+            if len(var_names) > 0 and len(idh_tensor_values) > 0:
+                predict_log.add_input_dependent_values(names_list=var_names,
+                                                       tensor_values_list=idh_tensor_values,
+                                                       text_opinion_ids=[sample.TextOpinionID for sample in
+                                                                         minibatch.iter_by_samples()])
 
             # apply labeling
             for bag_index, bag in enumerate(minibatch.iter_by_bags()):
