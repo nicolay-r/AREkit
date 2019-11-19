@@ -289,10 +289,10 @@ class TensorflowModel(object):
         assert(isinstance(dest_data_type, unicode))
 
         predict_log = NetworkInputDependentVariables()
-        var_names = []
+        idh_names = []
         idh_tensors = []
         for name, tensor in self.Network.iter_input_dependent_hidden_parameters():
-            var_names.append(name)
+            idh_names.append(name)
             idh_tensors.append(tensor)
 
         for bags_group in self.get_bags_collection(dest_data_type).iter_by_groups(self.Config.BagsPerMinibatch):
@@ -302,11 +302,11 @@ class TensorflowModel(object):
 
             result = self.Session.run([self.Network.Labels] + idh_tensors, feed_dict=feed_dict)
             uint_labels = result[0]
+            idh_values = result[1:]
 
-            idh_tensor_values = result[1:]
-            if len(var_names) > 0 and len(idh_tensor_values) > 0:
-                predict_log.add_input_dependent_values(names_list=var_names,
-                                                       tensor_values_list=idh_tensor_values,
+            if len(idh_names) > 0 and len(idh_values) > 0:
+                predict_log.add_input_dependent_values(names_list=idh_names,
+                                                       tensor_values_list=idh_values,
                                                        text_opinion_ids=[sample.TextOpinionID for sample in
                                                                          minibatch.iter_by_samples()])
 
