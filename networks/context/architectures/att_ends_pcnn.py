@@ -26,7 +26,7 @@ class AttentionAttitudeEndsPCNN(PiecewiseCNN):
     def get_att_input(self):
         return self.get_input_entity_pairs()
 
-    # region init methods
+    # region public 'init' methods
 
     def init_input(self):
         super(AttentionAttitudeEndsPCNN, self).init_input()
@@ -52,7 +52,7 @@ class AttentionAttitudeEndsPCNN(PiecewiseCNN):
 
     # endregion
 
-    # region iter methods
+    # region public 'iter' methods
 
     def iter_input_dependent_hidden_parameters(self):
         for name, value in super(AttentionAttitudeEndsPCNN, self).iter_input_dependent_hidden_parameters():

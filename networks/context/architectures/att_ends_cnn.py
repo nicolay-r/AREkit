@@ -31,7 +31,7 @@ class AttentionCNN(VanillaCNN):
     def get_att_input(self):
         return self.get_input_entity_pairs()
 
-    # region 'init' methods
+    # region public 'init' methods
 
     def init_input(self):
         super(AttentionCNN, self).init_input()
@@ -58,7 +58,7 @@ class AttentionCNN(VanillaCNN):
 
     # endregion
 
-    # region iter methods
+    # region public 'iter' methods
 
     def iter_input_dependent_hidden_parameters(self):
         for name, value in super(AttentionCNN, self).iter_input_dependent_hidden_parameters():
