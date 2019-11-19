@@ -1,6 +1,6 @@
 from core.common.frames.collection import FramesCollection
 from core.common.frames.polarity import FramePolarity
-from core.common.labels.base import NeutralLabel
+from core.common.labels.base import NeutralLabel, PositiveLabel, NegativeLabel
 from core.common.text_frame_variant import TextFrameVariant
 from core.common.text_opinions.helper import TextOpinionHelper
 
@@ -37,9 +37,24 @@ def __extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_colle
     assert(isinstance(frames_collection, FramesCollection))
     frame_id = text_frame_variant.Variant.FrameID
     polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)
+
     if polarity is None:
         return NeutralLabel().to_uint()
 
     assert(isinstance(polarity, FramePolarity))
 
+    if text_frame_variant.IsInverted:
+        return __create_inverted_label(polarity.Label).to_uint()
+
     return polarity.Label.to_uint()
+
+
+def __create_inverted_label(label):
+    if isinstance(label, NeutralLabel):
+        return label
+    if isinstance(label, NegativeLabel):
+        return PositiveLabel()
+    if isinstance(label, PositiveLabel):
+        return NegativeLabel()
+
+    return None
