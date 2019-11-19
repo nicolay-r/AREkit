@@ -40,6 +40,8 @@ class RefOpinion(object):
 
     # endregion
 
+    # region public methods
+
     def set_tag(self, value):
         self.__tag = value
 
@@ -47,3 +49,5 @@ class RefOpinion(object):
         assert(owner is not None)
         assert(self.__owner is None)
         self.__owner = owner
+
+    # endregion

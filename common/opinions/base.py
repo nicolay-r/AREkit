@@ -15,6 +15,8 @@ class Opinion(object):
         self.__sentiment = sentiment
         self.__tag = None
 
+    # region properties
+
     @property
     def SourceValue(self):
         return self.__source_value
@@ -30,6 +32,10 @@ class Opinion(object):
     @property
     def Tag(self):
         return self.__tag
+
+    # endregion
+
+    # region public methods
 
     def set_tag(self, value):
         self.__tag = value
@@ -47,3 +53,5 @@ class Opinion(object):
     def has_synonym_for_target(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
         return synonyms.contains_synonym_value(self.__target_value)
+
+    # endregion

@@ -15,6 +15,8 @@ class TextFrameVariant(object):
         self.__start_index = start_index
         self.__is_inverted = is_inverted
 
+    # region properties
+
     @property
     def Variant(self):
         return self.__variant
@@ -27,6 +29,10 @@ class TextFrameVariant(object):
     def IsInverted(self):
         return self.__is_inverted
 
+    # endregion
+
+    # region public methods
+
     def get_bound(self):
         return Bound(pos=self.__start_index, length=len(self))
 
@@ -34,5 +40,11 @@ class TextFrameVariant(object):
         for term in self.__variant.iter_terms():
             yield term
 
+    # endregion
+
+    # region overriden
+
     def __len__(self):
         return len(self.__variant)
+
+    # endregion

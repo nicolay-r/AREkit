@@ -19,18 +19,6 @@ class FrameVariantsCollection:
         self.__lemma_variants = self.__create_lemmatized_variants(stemmer)
         self.__frames_list = frames_list
 
-    def __create_lemmatized_variants(self, stemmer):
-        assert(isinstance(stemmer, Stemmer))
-
-        lemma_variants = {}
-        for variant, frame_variant in self.__variants.iteritems():
-            key = stemmer.lemmatize_to_str(variant)
-            if key in lemma_variants:
-                continue
-            lemma_variants[key] = frame_variant
-
-        return lemma_variants
-
     @classmethod
     def from_iterable(cls, variants_with_id, stemmer):
         assert(isinstance(variants_with_id, collections.Iterable))
@@ -45,6 +33,8 @@ class FrameVariantsCollection:
 
         return cls(variants=variants, frames_list=frames_list, stemmer=stemmer)
 
+    # region private methods
+
     @staticmethod
     def __register_frame(frames_dict, frames_list, id):
         assert(isinstance(id, unicode))
@@ -52,6 +42,22 @@ class FrameVariantsCollection:
             frames_dict[id] = len(frames_list)
             frames_list.append(id)
         return frames_dict[id]
+
+    def __create_lemmatized_variants(self, stemmer):
+        assert(isinstance(stemmer, Stemmer))
+
+        lemma_variants = {}
+        for variant, frame_variant in self.__variants.iteritems():
+            key = stemmer.lemmatize_to_str(variant)
+            if key in lemma_variants:
+                continue
+            lemma_variants[key] = frame_variant
+
+        return lemma_variants
+
+    # endregion
+
+    # region public methods
 
     def get_frame_by_index(self, index):
         return self.__frames_list[index]
@@ -70,3 +76,4 @@ class FrameVariantsCollection:
         for value, variant in self.__variants.iteritems():
             yield value, variant
 
+    # endregion

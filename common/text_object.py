@@ -16,6 +16,8 @@ class TextObject(object):
         self.__type = obj_type
         self.__tag = None
 
+    # region properties
+
     @property
     def Position(self):
         return self.__position
@@ -27,6 +29,10 @@ class TextObject(object):
     @property
     def Type(self):
         return self.__type
+
+    # endregion
+
+    # region public methods
 
     def set_tag(self, value):
         self.__tag = value
@@ -41,5 +47,11 @@ class TextObject(object):
         for term in self.__terms:
             yield term
 
+    # endregion
+
+    # region overriden
+
     def __len__(self):
         return len(self.__terms)
+
+    # endregion
