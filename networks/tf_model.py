@@ -308,7 +308,9 @@ class TensorflowModel(object):
                 predict_log.add_input_dependent_values(names_list=idh_names,
                                                        tensor_values_list=idh_values,
                                                        text_opinion_ids=[sample.TextOpinionID for sample in
-                                                                         minibatch.iter_by_samples()])
+                                                                         minibatch.iter_by_samples()],
+                                                       bags_per_minibatch=self.Config.BagsPerMinibatch,
+                                                       bag_size=self.Config.BagSize)
 
             # apply labeling
             for bag_index, bag in enumerate(minibatch.iter_by_bags()):
