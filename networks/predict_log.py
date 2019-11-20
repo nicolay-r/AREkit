@@ -44,7 +44,9 @@ class NetworkInputDependentVariables:
                     name, bags_per_minibatch * bag_size, len(text_opinion_ids)))
 
             values_list = np.array(tensor_values_list[name_ind])
-            values_list = values_list.reshape([bags_per_minibatch, bag_size])
+            values_list = values_list.reshape([bags_per_minibatch,
+                                               bag_size,
+                                               len(values_list.flatten()) / (bags_per_minibatch * bag_size)])
 
             # Save only first sentence ref.
             t_ind = 0
