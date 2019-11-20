@@ -19,7 +19,9 @@ class NetworkInputDependentVariables:
         names: list
             list of string names of related 'tensor_values'
         tensor_values: list
-            list of values with shape [len(names), bags_per_minibatch, bag_size]
+            list of values with shape:
+              * Sample based: [len(names), bags_per_minibatch, bag_size, vector_size]
+              * Bags based (labels): [len(names), bags_per_minibatch, 1, 1]
         text_opinion_ids: list
             list of ids
         """
@@ -38,24 +40,29 @@ class NetworkInputDependentVariables:
                 self.__text_opinion_ids[name] = []
 
             if bags_per_minibatch * bag_size != len(text_opinion_ids):
-                print bags_per_minibatch
-                print bag_size
                 raise Exception("values_list of '{}' has size {} != {} (text_opinion_inds length)".format(
                     name, bags_per_minibatch * bag_size, len(text_opinion_ids)))
 
             values_list = np.array(tensor_values_list[name_ind])
-            values_list = values_list.reshape([bags_per_minibatch,
-                                               bag_size,
-                                               len(values_list.flatten()) / (bags_per_minibatch * bag_size)])
+            values_list = values_list.flatten()
+            if len(values_list) > bags_per_minibatch:
+		values_list = values_list.reshape([bags_per_minibatch,
+						   bag_size,
+						   len(values_list) / (bags_per_minibatch * bag_size)])
+            else:
+                # labels.
+	        values_list = values_list.reshape([bags_per_minibatch, 1, 1])
 
             # Save only first sentence ref.
             t_ind = 0
             for b_ind in xrange(bags_per_minibatch):
 
+                v = values_list[b_ind]
+
                 value = []
                 names = []
-                for s_index in xrange(bag_size):
-                    value.append(values_list[b_ind][s_index])
+                for s_index in xrange(len(v)):
+                    value.append(v[s_index])
                     names.append(str(text_opinion_ids[t_ind]))
                     t_ind += 1
 
