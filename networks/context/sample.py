@@ -146,9 +146,6 @@ class InputSample(object):
             end_type=EntityEndType.Target,
             synonyms=synonyms_collection)
 
-        # TODO. Pass flag use entity types.
-        # TODO. Add entity types flag in config.
-        # TODO. Save the latter in result model log.
         x_indices = indices.iter_embedding_indices_for_terms(
             terms=terms,
             syn_subj_indices=set(syn_subj_inds),
@@ -157,7 +154,8 @@ class InputSample(object):
             word_embedding=config.WordEmbedding,
             custom_word_embedding=config.CustomWordEmbedding,
             token_embedding=config.TokenEmbedding,
-            frames_embedding=config.FrameEmbedding)
+            frames_embedding=config.FrameEmbedding,
+            use_entity_types=config.UseEntityTypes)
 
         x_indices = list(x_indices)
 

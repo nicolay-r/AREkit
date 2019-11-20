@@ -26,7 +26,6 @@ def __select_enity_mask(index, subjs_set, objs_set):
 # endregion
 
 
-# TODO. Create flag -- use entity_types.
 def iter_embedding_indices_for_terms(terms,
                                      term_embedding_matrix,
                                      word_embedding,
@@ -34,7 +33,8 @@ def iter_embedding_indices_for_terms(terms,
                                      syn_obj_indices,
                                      custom_word_embedding,
                                      token_embedding,
-                                     frames_embedding):
+                                     frames_embedding,
+                                     use_entity_types):
     assert(isinstance(terms, collections.Iterable))
     assert(isinstance(term_embedding_matrix, np.ndarray))
     assert(isinstance(word_embedding, Embedding))
@@ -72,7 +72,7 @@ def iter_embedding_indices_for_terms(terms,
                                          subjs_set=syn_subj_indices,
                                          objs_set=syn_obj_indices)
             e_value = entity.compose_entity_mask(e_mask=e_mask,
-                                                 e_type=term.Type)
+                                                 e_type=term.Type if use_entity_types else None)
             index = embedding_offsets.get_custom_word_index(custom_word_embedding.find_index_by_word(e_value))
         else:
             raise Exception("Unsuported type {}".format(term))

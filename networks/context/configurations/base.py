@@ -54,6 +54,8 @@ class DefaultNetworkConfig(object):
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
 
+    __use_entity_types = True
+
     __l2_reg = 0.0
 
     # endregion
@@ -116,6 +118,10 @@ class DefaultNetworkConfig(object):
     # endregion
 
     # region public methods
+
+    def modify_use_entity_types(self, value):
+        assert(isinstance(value, bool))
+        self.__use_entity_types = value
 
     def modify_terms_per_context(self, value):
         assert(isinstance(value, int) and value > 0)
@@ -303,6 +309,10 @@ class DefaultNetworkConfig(object):
     def FramesPerContext(self):
         return self.__frames_per_context
 
+    @property
+    def UseEntityTypes(self):
+        return self.__use_entity_types
+
     def _internal_get_parameters(self):
         return [
             ("base:current_time", datetime.datetime.now()),
@@ -323,6 +333,7 @@ class DefaultNetworkConfig(object):
             ("base:sentiment_emb_size", self.SentimentEmbeddingSize),
             ("base:dist_embedding_size", self.DistanceEmbeddingSize),
             ("base:text_opinion_label_calc_mode", self.TextOpinionLabelCalculationMode),
+            ("base:use_entity_types", self.UseEntityTypes),
             ("base:embedding dropout (keep prob)", self.EmbeddingDropoutKeepProb),
             ("base:optimizer", self.Optimiser),
             ("base:learning_rate", self.LearningRate),
