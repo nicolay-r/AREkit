@@ -26,6 +26,7 @@ def __select_enity_mask(index, subjs_set, objs_set):
 # endregion
 
 
+# TODO. Create flag -- use entity_types.
 def iter_embedding_indices_for_terms(terms,
                                      term_embedding_matrix,
                                      word_embedding,
