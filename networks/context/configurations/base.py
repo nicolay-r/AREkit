@@ -113,7 +113,7 @@ class DefaultNetworkConfig(object):
 
     @property
     def EmbeddingInitializer(self):
-        return tf.contrib.layers.xavier_initializer()
+        return tf.random_uniform_initializer(-1, 1)
 
     # endregion
 
