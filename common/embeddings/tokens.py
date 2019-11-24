@@ -11,12 +11,23 @@ class TokenEmbedding(Embedding):
     """
 
     @classmethod
-    def from_supported_tokens(cls, vector_size):
+    def from_supported_tokens(cls, vector_size, random_vector_func):
+        """
+        random_vector_func: func
+            function with parameters (vector_size, seed)
+        """
+        assert(isinstance(vector_size, int))
+        assert(callable(random_vector_func))
+
         matrix = []
         tokens_list = list(Tokens.iter_supported_tokens())
 
         for token_index, _ in enumerate(tokens_list):
-            matrix.append(get_random_uniform_with_fixed_seed(vector_size, seed=token_index))
+
+            vector = random_vector_func(vector_size=vector_size,
+                                        token_index=token_index)
+
+            matrix.append(vector)
 
         return cls(matrix=np.array(matrix),
                    words=tokens_list)
