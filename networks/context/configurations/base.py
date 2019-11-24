@@ -62,7 +62,7 @@ class DefaultNetworkConfig(object):
 
     def __init__(self):
         self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
-        # TODO. This should not be there, as it is relaed to specific source.
+        # TODO. This should not be there, as it is related to specific source.
         # TODO. Move into init of experiments. maybe
 
     # region properties
@@ -113,7 +113,7 @@ class DefaultNetworkConfig(object):
 
     @property
     def EmbeddingInitializer(self):
-        return tf.random_uniform_initializer(-1, 1)
+        return tf.contrib.layers.xavier_initializer()
 
     # endregion
 
@@ -212,6 +212,10 @@ class DefaultNetworkConfig(object):
 
     def notify_initialization_completed(self):
         pass
+
+    # endregion
+
+    # region properties
 
     @property
     def ClassesCount(self):
@@ -313,6 +317,8 @@ class DefaultNetworkConfig(object):
     def UseEntityTypes(self):
         return self.__use_entity_types
 
+    # endregion
+
     def _internal_get_parameters(self):
         return [
             ("base:current_time", datetime.datetime.now()),
@@ -345,5 +351,3 @@ class DefaultNetworkConfig(object):
 
     def get_parameters(self):
         return [list(p) for p in zip(*self._internal_get_parameters())]
-
-    # endregion
