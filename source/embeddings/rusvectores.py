@@ -50,8 +50,8 @@ class RusvectoresEmbedding(Embedding):
                 continue
 
             right_b = min(len(word), c_i + c_l)
-            s_i = self.__find_index(term=word[c_i:right_b],
-                                    lemmatize=False)
+            s_i = self.__try_find_index(term=word[c_i:right_b],
+                                        lemmatize=False)
 
             if s_i is None:
                 c_l -= 1
@@ -65,15 +65,18 @@ class RusvectoresEmbedding(Embedding):
 
         return vector, count
 
-    def find_index_by_word(self, word, lemmatize=True):
+    def try_find_index_by_word(self, word, lemmatize=True):
         assert(isinstance(word, unicode))
-        return self.__find_index(word, lemmatize)
+        return self.__try_find_index(term=word,
+                                     lemmatize=lemmatize)
 
-    def __find_index(self, term, lemmatize=True):
+    def __try_find_index(self, term, lemmatize=True):
         assert(isinstance(term, unicode))
         assert(isinstance(lemmatize, bool))
+
         if lemmatize:
             term = self.__stemmer.lemmatize_to_str(term)
+
         return self.__index_without_pos[term] \
             if term in self.__index_without_pos else None
 
@@ -90,9 +93,9 @@ class RusvectoresEmbedding(Embedding):
 
     def __contains__(self, term):
         assert(isinstance(term, unicode))
-        return self.__find_index(term) is not None
+        return self.__try_find_index(term) is not None
 
     def __getitem__(self, term):
         assert(isinstance(term, unicode))
-        index = self.__find_index(term)
+        index = self.__try_find_index(term)
         return self.get_vector_by_index(index)

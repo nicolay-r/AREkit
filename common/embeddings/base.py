@@ -84,7 +84,7 @@ class Embedding(object):
         assert(isinstance(index, int))
         return self.__words[index]
 
-    def find_index_by_word(self, word):
+    def try_find_index_by_word(self, word):
         assert(isinstance(word, unicode))
         return self.__index_by_word[word]
 

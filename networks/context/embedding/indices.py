@@ -50,7 +50,7 @@ def iter_embedding_indices_for_terms(terms,
                                               frames_count=frames_embedding.VocabularySize)
 
     unknown_word_embedding_index = embedding_offsets.get_token_index(
-        token_embedding.find_index_by_word(Tokens.UNKNOWN_WORD))
+        token_embedding.try_find_index_by_word(Tokens.UNKNOWN_WORD))
 
     debug_words_found = 0
     debug_words_count = 0
@@ -58,22 +58,22 @@ def iter_embedding_indices_for_terms(terms,
         if isinstance(term, unicode):
             index = unknown_word_embedding_index
             if term in word_embedding:
-                index = embedding_offsets.get_word_index(word_embedding.find_index_by_word(term))
+                index = embedding_offsets.get_word_index(word_embedding.try_find_index_by_word(term))
             elif term in custom_word_embedding:
-                index = embedding_offsets.get_custom_word_index(custom_word_embedding.find_index_by_word(term))
+                index = embedding_offsets.get_custom_word_index(custom_word_embedding.try_find_index_by_word(term))
                 debug_words_found += int(term in word_embedding)
                 debug_words_count += 1
         elif isinstance(term, Token):
-            index = embedding_offsets.get_token_index(token_embedding.find_index_by_word(term.get_token_value()))
+            index = embedding_offsets.get_token_index(token_embedding.try_find_index_by_word(term.get_token_value()))
         elif isinstance(term, TextFrameVariant):
-            index = embedding_offsets.get_frame_index(frames_embedding.find_index_by_word(term.Variant.get_value()))
+            index = embedding_offsets.get_frame_index(frames_embedding.try_find_index_by_word(term.Variant.get_value()))
         elif isinstance(term, Entity):
             e_mask = __select_enity_mask(index=i,
                                          subjs_set=syn_subj_indices,
                                          objs_set=syn_obj_indices)
             e_value = entity.compose_entity_mask(e_mask=e_mask,
                                                  e_type=term.Type if use_entity_types else None)
-            index = embedding_offsets.get_custom_word_index(custom_word_embedding.find_index_by_word(e_value))
+            index = embedding_offsets.get_custom_word_index(custom_word_embedding.try_find_index_by_word(e_value))
         else:
             raise Exception("Unsuported type {}".format(term))
 
