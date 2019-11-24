@@ -65,9 +65,9 @@ class RusvectoresEmbedding(Embedding):
 
         return vector, count
 
-    def find_index_by_word(self, word):
+    def find_index_by_word(self, word, lemmatize=True):
         assert(isinstance(word, unicode))
-        return self.__find_index(word)
+        return self.__find_index(word, lemmatize)
 
     def __find_index(self, term, lemmatize=True):
         assert(isinstance(term, unicode))
