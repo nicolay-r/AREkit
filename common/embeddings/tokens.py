@@ -24,8 +24,7 @@ class TokenEmbedding(Embedding):
 
         for token_index, _ in enumerate(tokens_list):
 
-            vector = random_vector_func(vector_size=vector_size,
-                                        token_index=token_index)
+            vector = random_vector_func(vector_size, token_index)
 
             matrix.append(vector)
 
