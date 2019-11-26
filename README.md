@@ -96,7 +96,62 @@ This toolset includes the following instruments and domain-related datasets:
         - Parser [[base-class]](processing/text/parser.py) -- text parser;
         - ParsedText [[base-class]](processing/text/parsed.py) -- processed text;
         - Tokens [[base-class]](processing/text/tokens.py) -- specific text terms, such as: punctuation signs, numbers, URL-links etc.;
-* **Neural Networks** [[README]](networks/README.md);
+* **Neural Networks** [[README]](networks/README.md) 
+    ![](https://img.shields.io/badge/Tensorflow-1.14.0-yellowgreen.svg)
+    * Network [[base-class]]();
+    * Model [[base-class]]();
+    * IO [[base-class]]();
+    * Callback [[base-class]]();
+    * **Attention Architectures**:
+        - Multilayer Perceptron (MLP)
+            [[code]]() /
+            [[github]]();
+        - P. Zhou, RNN-output based
+            [[code]]() /
+            [[github]]();
+        - Z. Yang, RNN-output based 
+            [[code]]() /
+            [[github]]();
+    * **Single Sentence Based Architectures** [[base]]();
+        - CNN
+            [[code]]() /
+            [[github]]();
+        - PCNN
+            [[code]]() /
+            [[github]]();
+        - Attention-CNN
+            [[code]]() /
+            [[github]]();
+        - Attention-PCNN
+            [[code]]();
+        - RNN (LSTM/GRU/RNN)
+            [[code]]() /
+            [[github]]();
+        - IAN
+            [[code]]() /
+            [[github]]();
+        - RCNN (RCNN)
+            [[code]]() /
+            [[github]]();
+        - BiLSTM
+            [[code]]() /
+            [[github]]();
+        - Self Attention Bi-LSTM
+            [[code]]() /
+            [[github]]();
+    * **Multi Sentence Based Architectures** [[base]]();
+        - Attention Hidden
+            [[code]]() /
+            [[github]]();
+        - Attention MLP Frames
+            [[code]]() /
+            [[github]]();
+        - Max Pooling
+            [[code]]() /
+            [[github]]();
+        - Single MLP
+            [[code]]() /
+            [[github]]();
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
     * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
     * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);

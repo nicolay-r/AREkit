@@ -15,6 +15,11 @@ from core.networks.data_type import DataType
 from core.networks.predict_log import NetworkInputDependentVariables
 
 
+# TODO. Implement and apply method, which is assumes to receive a text from
+# which we should first:
+# 1) extract entities (NER);
+# 2) extract sentiment attitudes;
+# Finally: Plot graph.
 class TensorflowModel(object):
     """
     Base model class, which provides api for
