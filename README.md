@@ -2,9 +2,9 @@
 
 ![](logo.png)
 
-> Note: Nowadays it utilize `core` directory instead of `saekit`.
+> Note: Nowadays it utilize `core` directory instead of `arekit`.
 
-**SAEkit** -- is a python toolkit (library) for **sentiment attitudes extraction** task.
+**AREkit** -- is a python toolkit (library) for **sentiment attitudes extraction** (specific relation extraction) task.
 
 # Contents
 * [Description](#description)
