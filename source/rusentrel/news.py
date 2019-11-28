@@ -16,6 +16,8 @@ class RuSentRelNews(object):
         self.__entities = entities
         self.__helper = RuSentRelNewsHelper(self)
 
+    # region properties
+
     @property
     def DocEntities(self):
         return self.__entities
@@ -24,11 +26,15 @@ class RuSentRelNews(object):
     def Helper(self):
         return self.__helper
 
+    # endregion
+
     @classmethod
     def read_document(cls, doc_id, entities):
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_news_innerpath(doc_id),
             process_func=lambda input_file: cls.__from_file(input_file, entities))
+
+    # region private methods
 
     @classmethod
     def __from_file(cls, input_file, entities):
@@ -94,6 +100,10 @@ class RuSentRelNews(object):
 
         return sentences
 
+    # endregion
+
+    # region public methods
+
     def sentences_count(self):
         return len(self.__sentences)
 
@@ -103,3 +113,5 @@ class RuSentRelNews(object):
     def iter_sentences(self):
         for sentence in self.__sentences:
             yield sentence
+
+    # endregion

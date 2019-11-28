@@ -36,6 +36,8 @@ class RuAttitudesFormatReader(object):
         for news in it:
             yield news
 
+    # region private methods
+
     @staticmethod
     def __iter_news(input_file, stemmer=None):
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
@@ -220,3 +222,5 @@ class RuAttitudesFormatReader(object):
         t_from = line.index(template)
         t_to = line.index(u']', t_from)
         return line[t_from + len(template):t_to]
+
+    # endregion

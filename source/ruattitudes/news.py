@@ -12,6 +12,8 @@ class RuAttitudesNews(object):
         self.__set_owners()
         self.__objects_before_sentence = self.__cache_objects_declared_before()
 
+    # region properties
+
     @property
     def Title(self):
         return self.__sentences[0]
@@ -19,6 +21,8 @@ class RuAttitudesNews(object):
     @property
     def NewsIndex(self):
         return self.__news_index
+
+    # endregion
 
     # region private methods
 
@@ -40,6 +44,8 @@ class RuAttitudesNews(object):
 
     # endregion
 
+    # region public methods
+
     def get_sentence(self, index):
         return self.__sentences[index]
 
@@ -49,3 +55,5 @@ class RuAttitudesNews(object):
     def iter_sentences(self):
         for sentence in self.__sentences:
             yield sentence
+
+    # endregion

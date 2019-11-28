@@ -18,9 +18,15 @@ class RuSentRelSentence(object):
         self.__end = char_ind_end
         self.__entities = []
 
+    # region properties
+
     @property
     def Text(self):
         return self.__text
+
+    # endregion
+
+    # region public methods
 
     def add_local_entity(self, entity):
         assert(isinstance(entity, RuSentRelEntity))
@@ -44,6 +50,12 @@ class RuSentRelSentence(object):
         assert(isinstance(entity, RuSentRelEntity))
         return entity.CharIndexBegin > self.__end
 
+    # endregion
+
+    # region overriden methods
+
     def __contains__(self, entity):
         assert(isinstance(entity, RuSentRelEntity))
         return entity.CharIndexBegin >= self.__begin and entity.CharIndexEnd <= self.__end
+
+    # endregion
