@@ -28,6 +28,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         self.__y = None
         self.__dropout_keep_prob = None
         self.__dropout_emb_keep_prob = None
+        self.__dropout_rnn_keep_prob = None
 
     # region properties
 
@@ -145,6 +146,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
 
                 self.__context_network.set_input_dropout_keep_prob(self.__dropout_keep_prob)
                 self.__context_network.set_input_embedding_dropout_keep_prob(self.__dropout_emb_keep_prob)
+                self.__context_network.set_input_rnn_keep_prob(self.__dropout_rnn_keep_prob)
 
                 embedded_terms = self.__context_network.init_embedded_input()
                 context_embedding = self.__context_network.init_context_embedding(embedded_terms)
@@ -298,6 +300,9 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         self.__dropout_emb_keep_prob = tf.placeholder(
             dtype=tf.float32,
             name=prefix + 'dropout_emb_keep_prob')
+        self.__dropout_rnn_keep_prob = tf.placeholder(
+            dtype=tf.float32,
+            name=prefix + 'dropout_rnn_keep_prob')
 
     def iter_input_dependent_hidden_parameters(self):
         for name, value in super(BaseMultiInstanceNeuralNetwork, self).iter_input_dependent_hidden_parameters():
@@ -325,6 +330,9 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         feed_dict[self.__dropout_keep_prob] = self.__cfg.DropoutKeepProb \
             if data_type == DataType.Train else 1.0
         feed_dict[self.__dropout_emb_keep_prob] = self.__cfg.EmbeddingDropoutKeepProb \
+            if data_type == DataType.Train else 1.0
+        # TODO. Utilize correct dropout value in config.
+        feed_dict[self.__dropout_rnn_keep_prob] = 0.9 \
             if data_type == DataType.Train else 1.0
 
         return feed_dict

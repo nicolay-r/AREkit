@@ -37,6 +37,13 @@ class BiLSTM(BaseContextNeuralNetwork):
 
     # endregion
 
+    # region public 'set' methods
+
+    def set_input_rnn_keep_prob(self, value):
+        self.__dropout_rnn_keep_prob = value
+
+    # endregion
+
     # region public 'init' methods
 
     def init_input(self):

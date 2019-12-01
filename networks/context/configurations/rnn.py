@@ -14,6 +14,8 @@ class RNNConfig(DefaultNetworkConfig):
         super(RNNConfig, self).modify_bias_initializer(tf.constant_initializer(0.1))
         super(RNNConfig, self).modify_weight_initializer(tf.contrib.layers.xavier_initializer())
 
+    # region properties
+
     @property
     def CellType(self):
         return self.__cell_type
@@ -25,6 +27,8 @@ class RNNConfig(DefaultNetworkConfig):
     @property
     def DropoutRNNKeepProb(self):
         return self.__dropout_rnn_keep_prob
+
+    # endregion
 
     # region public methods
 

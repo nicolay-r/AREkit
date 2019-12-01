@@ -113,6 +113,13 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     def set_input_embedding_dropout_keep_prob(self, value):
         self.__embedding_dropout_keep_prob = value
 
+    def set_input_rnn_keep_prob(self, value):
+        """
+        Specific dropout only recurrent neural networks
+        """
+        pass
+
+
     # region body
 
     def compile(self, config, reset_graph):
