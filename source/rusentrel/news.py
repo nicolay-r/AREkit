@@ -6,12 +6,13 @@ from core.source.rusentrel.io_utils import RuSentRelIOUtils
 from core.source.rusentrel.sentence import RuSentRelSentence
 
 
-# TODO. Add NewsID
 class RuSentRelNews(object):
 
-    def __init__(self, sentences, entities):
+    def __init__(self, doc_id, sentences, entities):
+        assert(isinstance(doc_id, int))
         assert(isinstance(sentences, list))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
+        self.__doc_id = doc_id
         self.__sentences = sentences
         self.__entities = entities
         self.__helper = RuSentRelNewsHelper(self)
@@ -26,18 +27,23 @@ class RuSentRelNews(object):
     def Helper(self):
         return self.__helper
 
+    @property
+    def DocumentID(self):
+        return self.__doc_id
+
     # endregion
 
     @classmethod
     def read_document(cls, doc_id, entities):
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_news_innerpath(doc_id),
-            process_func=lambda input_file: cls.__from_file(input_file, entities))
-
-    # region private methods
+            process_func=lambda input_file: cls.__from_file(doc_id=doc_id,
+                                                            input_file=input_file,
+                                                            entities=entities))
 
     @classmethod
-    def __from_file(cls, input_file, entities):
+    def __from_file(cls, doc_id, input_file, entities):
+        assert(isinstance(doc_id, int))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
         sentences = RuSentRelNews.__read_sentences(input_file)
@@ -71,7 +77,11 @@ class RuSentRelNews(object):
 
         assert(e_ind == len(entities))
 
-        return cls(sentences, entities)
+        return cls(doc_id=doc_id,
+                   sentences=sentences,
+                   entities=entities)
+
+    # region private methods
 
     @staticmethod
     def __read_sentences(input_file):

@@ -30,15 +30,21 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         # labeling defined
         self.__labels_defined = []
 
-    def try_add_text_opinions(self,
-                              text_opinions,
-                              check_opinion_correctness):
-        assert(isinstance(text_opinions, collections.Iterable))
+    def try_add_linked_text_opinions(self,
+                                     linked_text_opinions,
+                                     check_opinion_correctness):
+        """
+        linked_text_opinions: iterable
+            enumeration of text_opinions which is considered to be related to a certain opinion
+            (in terms of Obj, Subj).
+        check_opinion_correctness: bool
+        """
+        assert(isinstance(linked_text_opinions, collections.Iterable))
         assert(callable(check_opinion_correctness))
 
         discarded = 0
         registered_at_least_one = False
-        for index, text_opinion in enumerate(text_opinions):
+        for index, text_opinion in enumerate(linked_text_opinions):
             assert(isinstance(text_opinion, TextOpinion))
             assert(text_opinion.TextOpinionID is None)
             assert(text_opinion.Owner is None)

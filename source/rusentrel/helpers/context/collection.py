@@ -8,8 +8,52 @@ from core.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 
 class RuSentRelTextOpinionCollection(TextOpinionCollection):
     """
-    Collection of a text-level opinions.
+    Collection of a text-level opinions for RuSentRel dataset.
     """
+
+    # region constructors
+
+    def __init__(self, text_opinions):
+        super(RuSentRelTextOpinionCollection, self).__init__(
+            parsed_news_collection=None,
+            text_opinions=text_opinions)
+
+    @classmethod
+    def from_opinions(cls,
+                      rusentrel_news_id,
+                      doc_entities,
+                      opinions,
+                      check_text_opinion_correctness,
+                      debug=False):
+        assert(isinstance(rusentrel_news_id, int))
+        assert(isinstance(opinions, OpinionCollection))
+        text_opinions = []
+        for opinion in opinions:
+            text_opinions.extend(
+                cls.__from_opinion(
+                    rusentrel_news_id=rusentrel_news_id,
+                    doc_entities=doc_entities,
+                    opinion=opinion,
+                    check_text_opinion_correctness=check_text_opinion_correctness,
+                    debug=debug))
+
+        return cls(text_opinions)
+
+    @classmethod
+    def from_opinion(cls,
+                     rusentrel_news_id,
+                     doc_entities,
+                     opinion,
+                     check_text_opinion_correctness,
+                     debug=False):
+        return cls(RuSentRelTextOpinionCollection.__from_opinion(
+            rusentrel_news_id=rusentrel_news_id,
+            doc_entities=doc_entities,
+            opinion=opinion,
+            check_text_opinion_correctness=check_text_opinion_correctness,
+            debug=debug))
+
+    # endregion
 
     # region private methods
 
@@ -65,43 +109,3 @@ class RuSentRelTextOpinionCollection(TextOpinionCollection):
         return text_opinions
 
     #endregion
-
-    def __init__(self, text_opinions):
-        super(RuSentRelTextOpinionCollection, self).__init__(
-            parsed_news_collection=None,
-            text_opinions=text_opinions)
-
-    @classmethod
-    def from_opinions(cls,
-                      rusentrel_news_id,
-                      doc_entities,
-                      opinions,
-                      check_text_opinion_correctness,
-                      debug=False):
-        assert(isinstance(rusentrel_news_id, int))
-        assert(isinstance(opinions, OpinionCollection))
-        text_opinions = []
-        for opinion in opinions:
-            text_opinions.extend(
-                cls.__from_opinion(
-                    rusentrel_news_id=rusentrel_news_id,
-                    doc_entities=doc_entities,
-                    opinion=opinion,
-                    check_text_opinion_correctness=check_text_opinion_correctness,
-                    debug=debug))
-
-        return cls(text_opinions)
-
-    @classmethod
-    def from_opinion(cls,
-                     rusentrel_news_id,
-                     doc_entities,
-                     opinion,
-                     check_text_opinion_correctness,
-                     debug=False):
-        return cls(cls.__from_opinion(
-            rusentrel_news_id=rusentrel_news_id,
-            doc_entities=doc_entities,
-            opinion=opinion,
-            check_text_opinion_correctness=check_text_opinion_correctness,
-            debug=debug))

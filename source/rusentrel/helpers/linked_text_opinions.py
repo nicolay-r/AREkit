@@ -14,20 +14,15 @@ class RuSentRelNewsTextOpinionExtractorHelper:
 
     @staticmethod
     def add_entries(text_opinion_collection,
-                    # TODO. Remove NewsID
-                    rusentrel_news_id,
                     news,
                     opinions,
                     check_text_opinion_is_correct):
         assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
-        # TODO. Remove NewsID
-        assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinions, OpinionCollection))
         assert(callable(check_text_opinion_is_correct))
 
         it_entries = RuSentRelNewsTextOpinionExtractorHelper.__iter_rusentrel_text_opinion_entries(
-            rusentrel_news_id=rusentrel_news_id,
             news=news,
             opinions=opinions)
 
@@ -37,8 +32,8 @@ class RuSentRelNewsTextOpinionExtractorHelper:
 
             text_opinions = RuSentRelNewsTextOpinionExtractorHelper.__iter_text_opinions(entries=entries)
 
-            discarded += text_opinion_collection.try_add_text_opinions(
-                text_opinions=text_opinions,
+            discarded += text_opinion_collection.try_add_linked_text_opinions(
+                linked_text_opinions=text_opinions,
                 check_opinion_correctness=check_text_opinion_is_correct)
 
         return discarded
@@ -65,14 +60,11 @@ class RuSentRelNewsTextOpinionExtractorHelper:
             owner=None,
             text_opinion_id=None)
 
-    # TODO. Remove NewsID
     @staticmethod
-    def __iter_rusentrel_text_opinion_entries(rusentrel_news_id, news, opinions):
+    def __iter_rusentrel_text_opinion_entries(news, opinions):
         """
         Document Level Opinions -> Linked Text Level Opinions
         """
-        # TODO. Remove NewsID
-        assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinions, OpinionCollection))
 
@@ -83,7 +75,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
         for opinion in opinions:
 
             yield RuSentRelTextOpinionCollection.from_opinion(
-                rusentrel_news_id=rusentrel_news_id,
+                rusentrel_news_id=news.DocumentID,
                 doc_entities=news.DocEntities,
                 opinion=opinion,
                 check_text_opinion_correctness=same_sentence_text_opinions)

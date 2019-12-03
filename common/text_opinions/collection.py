@@ -12,9 +12,13 @@ class TextOpinionCollection(object):
         self.__parsed_news_collection = parsed_news_collection
         self.__text_opinions = text_opinions
 
+    # region property
+
     @property
     def RelatedParsedNewsCollection(self):
         return self.__parsed_news_collection
+
+    # endregion
 
     def register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
@@ -33,6 +37,8 @@ class TextOpinionCollection(object):
                 unique_news_ids.add(id)
                 yield id
 
+    # region base methods
+
     def __iter__(self):
         for text_opinion in self.__text_opinions:
             yield text_opinion
@@ -43,3 +49,5 @@ class TextOpinionCollection(object):
     def __getitem__(self, item):
         assert(isinstance(item,  int))
         return self.__text_opinions[item]
+
+    # endregion

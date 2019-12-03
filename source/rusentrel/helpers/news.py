@@ -17,6 +17,8 @@ class RuSentRelNewsHelper:
         assert(isinstance(entity, RuSentRelEntity))
         return self.__sentence_index_by_entity[entity.IdInDocument]
 
+    # region private methods
+
     @staticmethod
     def __index_sentence_by_entity(news):
         index = {}
@@ -27,3 +29,5 @@ class RuSentRelNewsHelper:
                 index[e_ID] = sentence_index
 
         return index
+
+    # endregion
