@@ -15,7 +15,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
     Therefore it is supposed not so large amount of linked_text_opinions.
     """
 
-    NO_NEXT_RELATION = None
+    NO_NEXT_OPINION = None
 
     def __init__(self, parsed_news_collection):
         assert(isinstance(parsed_news_collection, ParsedNewsCollection))
@@ -37,6 +37,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         assert(callable(check_opinion_correctness))
 
         discarded = 0
+        registered_at_least_one = False
         for index, text_opinion in enumerate(text_opinions):
             assert(isinstance(text_opinion, TextOpinion))
             assert(text_opinion.TextOpinionID is None)
@@ -52,12 +53,16 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
                 discarded += 1
                 self.remove_last_registered_text_opinion()
                 del registered
+            else:
+                registered_at_least_one = True
 
-        self.set_none_for_last_text_opinion()
+        if registered_at_least_one:
+            self.set_none_for_last_text_opinion()
+
         return discarded
 
     def set_none_for_last_text_opinion(self):
-        self.__next_opinion_id[-1] = self.NO_NEXT_RELATION
+        self.__next_opinion_id[-1] = self.NO_NEXT_OPINION
 
     def register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
@@ -131,7 +136,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         linked_opinions = []
         for index, text_opinion in enumerate(self):
             linked_opinions.append(text_opinion)
-            if self.__next_opinion_id[index] == self.NO_NEXT_RELATION:
+            if self.__next_opinion_id[index] == self.NO_NEXT_OPINION:
                 yield linked_opinions
                 linked_opinions = []
 
