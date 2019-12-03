@@ -1,10 +1,8 @@
-# SAEkit
+# AREkit
 
-![](logo.png)
+> Note: Nowadays it utilize `core` directory instead of `arekit`.
 
-> Note: Nowadays it utilize `core` directory instead of `saekit`.
-
-**SAEkit** -- is a python toolkit (library) for **sentiment attitudes extraction** task.
+**AREkit** -- is a python toolkit (library) for **sentiment attitudes extraction** task.
 
 # Contents
 * [Description](#description)
@@ -58,9 +56,9 @@ List of the toolset dependencies are as follows:
 * tensorflow==1.4.1
 
 ### Optional Service Dependencies
-* Named Entity Recognition 
+* Named Entity Recognition
     [[flask-python-server]](https://github.com/nicolay-r/ner-flask-wrapper);
-* SyntaxNet docker container 
+* SyntaxNet docker container
     [[github-repo]]() /
     [[sh-script]]();
 
@@ -80,11 +78,11 @@ This toolset includes the following instruments and domain-related datasets:
     * Synonyms [[base-class]](common/synonyms.py) -- storage for synonymous entries (words and phrases);
 * **Processing** [[README]](processing/README.md);
     * Lemmatization [[API]](processing/lemmatization/base.py);
-        - Mystem [[wrapper]](processing/lemmatization/mystem.py) -- Yandex Mystem wrapper 
+        - Mystem [[wrapper]](processing/lemmatization/mystem.py) -- Yandex Mystem wrapper
             [[github-repo]](https://github.com/dmitry/yandex_mystem);
-        - Texterra [[wrapper]](processing/lemmatization/texterra_wrap.py) -- not supported/utilized in this project; 
+        - Texterra [[wrapper]](processing/lemmatization/texterra_wrap.py) -- not supported/utilized in this project;
     * Named Entity Recognition (NER) [[API]](processing/ner/base.py):
-        - DeepNER [[wrapper]](processing/ner/deepner_wrap.py) -- is a wrapper of IPavlov CRF-BiLSTM model 
+        - DeepNER [[wrapper]](processing/ner/deepner_wrap.py) -- is a wrapper of IPavlov CRF-BiLSTM model
             [[service]](https://github.com/nicolay-r/ner-flask-wrapper) /
             [[original]](https://github.com/deepmipt/ner);
     * Part-Of-Speech Tagging (POS) [[API]](processing/pos/base.py);
@@ -120,8 +118,3 @@ Then install dependencies as follows:
 ```
 pip install -r dependencies.txt
 ```
-
-## Usage [Update in Progress]
-
-> TODO: Provide list of related projects.
-
