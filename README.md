@@ -1,4 +1,4 @@
-# AREkit
+# AREkit [LREC-2020 release]
 
 > Note: Nowadays it utilize `core` directory instead of `arekit`.
 
