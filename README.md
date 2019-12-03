@@ -1,4 +1,4 @@
-# SAEkit
+# AREkit
 
 ![](logo.png)
 
@@ -58,9 +58,9 @@ List of the toolset dependencies are as follows:
 * tensorflow==1.4.1
 
 ### Optional Service Dependencies
-* Named Entity Recognition 
+* Named Entity Recognition
     [[flask-python-server]](https://github.com/nicolay-r/ner-flask-wrapper);
-* SyntaxNet docker container 
+* SyntaxNet docker container
     [[github-repo]]() /
     [[sh-script]]();
 
@@ -80,11 +80,11 @@ This toolset includes the following instruments and domain-related datasets:
     * Synonyms [[base-class]](common/synonyms.py) -- storage for synonymous entries (words and phrases);
 * **Processing** [[README]](processing/README.md);
     * Lemmatization [[API]](processing/lemmatization/base.py);
-        - Mystem [[wrapper]](processing/lemmatization/mystem.py) -- Yandex Mystem wrapper 
+        - Mystem [[wrapper]](processing/lemmatization/mystem.py) -- Yandex Mystem wrapper
             [[github-repo]](https://github.com/dmitry/yandex_mystem);
-        - Texterra [[wrapper]](processing/lemmatization/texterra_wrap.py) -- not supported/utilized in this project; 
+        - Texterra [[wrapper]](processing/lemmatization/texterra_wrap.py) -- not supported/utilized in this project;
     * Named Entity Recognition (NER) [[API]](processing/ner/base.py):
-        - DeepNER [[wrapper]](processing/ner/deepner_wrap.py) -- is a wrapper of IPavlov CRF-BiLSTM model 
+        - DeepNER [[wrapper]](processing/ner/deepner_wrap.py) -- is a wrapper of IPavlov CRF-BiLSTM model
             [[service]](https://github.com/nicolay-r/ner-flask-wrapper) /
             [[original]](https://github.com/deepmipt/ner);
     * Part-Of-Speech Tagging (POS) [[API]](processing/pos/base.py);
@@ -96,7 +96,7 @@ This toolset includes the following instruments and domain-related datasets:
         - Parser [[base-class]](processing/text/parser.py) -- text parser;
         - ParsedText [[base-class]](processing/text/parsed.py) -- processed text;
         - Tokens [[base-class]](processing/text/tokens.py) -- specific text terms, such as: punctuation signs, numbers, URL-links etc.;
-* **Neural Networks** [[README]](networks/README.md) 
+* **Neural Networks** [[README]](networks/README.md)
     ![](https://img.shields.io/badge/Tensorflow-1.14.0-yellowgreen.svg)
     * Network [[base-class]]();
     * Model [[base-class]]();
@@ -109,7 +109,7 @@ This toolset includes the following instruments and domain-related datasets:
         - P. Zhou, RNN-output based
             [[code]]() /
             [[github]]();
-        - Z. Yang, RNN-output based 
+        - Z. Yang, RNN-output based
             [[code]]() /
             [[github]]();
     * **Single Sentence Based Architectures** [[base]]();
