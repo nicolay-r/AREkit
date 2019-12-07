@@ -102,54 +102,50 @@ This toolset includes the following instruments and domain-related datasets:
     * Callback [[base-class]]();
     * **Attention Architectures**:
         - Multilayer Perceptron (MLP)
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/attention/architectures/mlp.py) /
+            [[github:nicolay-r]](https://github.com/nicolay-r/mlp-attention);
         - P. Zhou, RNN-output based
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/attention/architectures/rnn_attention_p_zhou.py) /
+            [[github:SeoSangwoo]](https://github.com/SeoSangwoo/Attention-Based-BiLSTM-relation-extraction);
         - Z. Yang, RNN-output based
-            [[code]]() /
-            [[github]]();
-    * **Single Sentence Based Architectures** [[base]]();
+            [[code]](networks/attention/architectures/rnn_attention_z_yang.py) /
+            [[github:ilivans]](https://github.com/ilivans/tf-rnn-attention);
+    * **Single Sentence Based Architectures**:
         - CNN
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/context/architectures/cnn.py) /
+            [[github:roomylee]](https://github.com/roomylee/cnn-relation-extraction);
         - PCNN
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/context/architectures/pcnn.py) /
+            [[github:nicolay-r]](https://github.com/nicolay-r/sentiment-pcnn);
         - Attention-CNN
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/context/architectures/att_ends_cnn.py);
         - Attention-PCNN
-            [[code]]();
+            [[code]](networks/context/architectures/att_ends_pcnn.py);
         - RNN (LSTM/GRU/RNN)
-            [[code]]() /
-            [[github]]();
-        - IAN
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/context/architectures/rnn.py) /
+            [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
+        - IAN (frames based)
+            [[code]](networks/context/architectures/ian_frames.py) /
+            [[github:lpq29743]](https://github.com/lpq29743/IAN);
         - RCNN (RCNN)
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/context/architectures/rcnn.py) /
+            [[github:roomylee]](https://github.com/roomylee/rcnn-text-classification);
         - BiLSTM
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/context/architectures/bilstm.py) /
+            [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
         - Self Attention Bi-LSTM
-            [[code]]() /
-            [[github]]();
-    * **Multi Sentence Based Architectures** [[base]]();
+            [[code]](networks/context/architectures/self_att_bilstm.py) /
+            [[github:roomylee]](https://github.com/roomylee/self-attentive-emb-tf);
+    * **Multi Sentence Based Architectures**:
         - Attention Hidden
-            [[code]]() /
-            [[github]]();
-        - Attention MLP Frames
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/multi/architectures/att_hidden.py);
+        - ~~Attention MLP Frames~~
+            [[code]](networks/multi/architectures/att_mlp_frames.py);
         - Max Pooling
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/multi/architectures/max_pooling.py) /
+            [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
         - Single MLP
-            [[code]]() /
-            [[github]]();
+            [[code]](networks/multi/architectures/base_single_mlp.py);
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
     * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
     * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);
