@@ -1,4 +1,4 @@
-from core.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
+from arekit.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
 
 
 class AttFramesOverSentences(BaseMultiInstanceNeuralNetwork):

@@ -1,4 +1,4 @@
-from core.common.bound import Bound
+from arekit.common.bound import Bound
 
 
 class TextObject(object):

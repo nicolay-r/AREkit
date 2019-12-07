@@ -1,15 +1,15 @@
 import numpy as np
-from core.common.text_opinions.helper import TextOpinionHelper
-from core.common.text_opinions.base import TextOpinion
-from core.common.opinions.base import Opinion
-from core.common.text_opinions.end_type import EntityEndType
+from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.opinions.base import Opinion
+from arekit.common.text_opinions.end_type import EntityEndType
 
-from core.common.labels.base import Label
-from core.common.labels.pair import LabelPair
+from arekit.common.labels.base import Label
+from arekit.common.labels.pair import LabelPair
 
-from core.networks.context.configurations.base import LabelCalculationMode
-from core.networks.context.debug import DebugKeys
-from core.networks.labeling.base import LabelsHelper
+from arekit.networks.context.configurations.base import LabelCalculationMode
+from arekit.networks.context.debug import DebugKeys
+from arekit.networks.labeling.base import LabelsHelper
 
 
 class PairedLabelsHelper(LabelsHelper):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from urlparse import urlparse
-from core.processing.text.token import Token
+from arekit.processing.text.token import Token
 
 
 class Tokens:

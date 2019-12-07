@@ -1,8 +1,8 @@
 import numpy as np
 import tensorflow as tf
-from core.networks.context.architectures.ian_frames import IANFrames
-from core.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
-from core.networks.context.sample import InputSample
+from arekit.networks.context.architectures.ian_frames import IANFrames
+from arekit.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
+from arekit.networks.context.sample import InputSample
 
 
 class IANAttitudeEndsBased(IANFrames):

@@ -1,6 +1,6 @@
-from core.networks.attention.architectures.mlp import MLPAttention
-from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.sample import InputSample
+from arekit.networks.attention.architectures.mlp import MLPAttention
+from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.sample import InputSample
 
 
 def __get_NEVS_list(ctx_network):

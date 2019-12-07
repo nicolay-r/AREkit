@@ -1,4 +1,4 @@
-from core.processing.ner.base import NamedEntityRecognition
+from arekit.processing.ner.base import NamedEntityRecognition
 import requests
 import json
 

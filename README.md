@@ -2,8 +2,6 @@
 
 ![](logo.png)
 
-> Note: Nowadays it utilize `core` directory instead of `arekit`.
-
 **AREkit** -- is a python toolkit (library) for **sentiment attitudes extraction** (specific relation extraction) task.
 
 # Contents

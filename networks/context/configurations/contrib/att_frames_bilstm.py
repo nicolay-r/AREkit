@@ -1,6 +1,6 @@
-from core.networks.attention.architectures.mlp_interactive import InteractiveMLPAttention
-from core.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
-from core.networks.context.configurations.bilstm import BiLSTMConfig
+from arekit.networks.attention.architectures.mlp_interactive import InteractiveMLPAttention
+from arekit.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
+from arekit.networks.context.configurations.bilstm import BiLSTMConfig
 
 
 class AttentionFramesBiLSTMConfig(BiLSTMConfig):

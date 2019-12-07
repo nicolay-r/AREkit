@@ -1,6 +1,6 @@
 from collections import OrderedDict
-from core.networks.context.debug import DebugKeys
-from core.networks.context.sample import InputSample
+from arekit.networks.context.debug import DebugKeys
+from arekit.networks.context.sample import InputSample
 
 
 class MiniBatch(object):

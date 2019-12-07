@@ -1,6 +1,6 @@
 #!/usr/bin/python
-from core.processing.lemmatization.mystem import MystemWrapper
-from core.source.ruattitudes.reader import RuAttitudesFormatReader
+from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.source.ruattitudes.reader import RuAttitudesFormatReader
 
 
 stemmer = MystemWrapper()

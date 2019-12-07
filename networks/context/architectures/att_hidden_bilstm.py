@@ -1,6 +1,6 @@
 import tensorflow as tf
-from core.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
-from core.networks.context.architectures.bilstm import BiLSTM
+from arekit.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
+from arekit.networks.context.architectures.bilstm import BiLSTM
 
 
 class AttentionHiddenBiLSTM(BiLSTM):

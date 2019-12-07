@@ -1,5 +1,5 @@
 from os import path
-from core.source.base import BaseIOUtils
+from arekit.source.base import BaseIOUtils
 
 
 class RuSentiFramesIOUtils(BaseIOUtils):

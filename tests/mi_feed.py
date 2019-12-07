@@ -1,10 +1,10 @@
-from core.common.labels.base import PositiveLabel
-from core.networks.context.configurations.base import DefaultNetworkConfig
-from core.networks.context.sample import InputSample
-from core.networks.context.training.bags.bag import Bag
-from core.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-from core.networks.multi.configuration.max_pooling import MaxPoolingOverSentencesConfig
-from core.networks.multi.training.batch import MultiInstanceBatch
+from arekit.common.labels.base import PositiveLabel
+from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.networks.context.sample import InputSample
+from arekit.networks.context.training.bags.bag import Bag
+from arekit.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
+from arekit.networks.multi.configuration.max_pooling import MaxPoolingOverSentencesConfig
+from arekit.networks.multi.training.batch import MultiInstanceBatch
 from ctx_feed import test_ctx_feed, contexts_supported
 
 

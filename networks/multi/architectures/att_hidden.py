@@ -1,6 +1,6 @@
 import tensorflow as tf
-from core.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
-from core.networks.multi.architectures.base_single_mlp import BaseMultiInstanceSingleMLP
+from arekit.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
+from arekit.networks.multi.architectures.base_single_mlp import BaseMultiInstanceSingleMLP
 
 
 class AttHiddenOverSentences(BaseMultiInstanceSingleMLP):

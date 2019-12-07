@@ -1,10 +1,9 @@
 import numpy as np
 
-from core.common.text_opinions.base import TextOpinion
-from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from core.networks.context.training.bags.bag import Bag
-
-from core.networks.context.sample import InputSample
+from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.networks.context.training.bags.bag import Bag
+from arekit.networks.context.sample import InputSample
 
 
 class BagsCollection:

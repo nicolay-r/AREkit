@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from core.common.parsed_news.base import ParsedNews
+from arekit.common.parsed_news.base import ParsedNews
 
 
 class ParsedNewsCollection(object):

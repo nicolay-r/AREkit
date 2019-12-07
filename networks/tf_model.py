@@ -3,16 +3,16 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.training.saver import Saver
 
-from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from core.networks.callback import Callback
-from core.networks.cancellation import OperationCancellation
-from core.networks.context.debug import DebugKeys
-from core.networks.context.training.batch import MiniBatch
-from core.networks.context.embedding.offsets import TermsEmbeddingOffsets
-from core.networks.network_io import NetworkIO
-from core.networks.network import NeuralNetwork
-from core.networks.data_type import DataType
-from core.networks.predict_log import NetworkInputDependentVariables
+from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.networks.callback import Callback
+from arekit.networks.cancellation import OperationCancellation
+from arekit.networks.context.debug import DebugKeys
+from arekit.networks.context.training.batch import MiniBatch
+from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
+from arekit.networks.network_io import NetworkIO
+from arekit.networks.network import NeuralNetwork
+from arekit.networks.data_type import DataType
+from arekit.networks.predict_log import NetworkInputDependentVariables
 
 
 # TODO. Implement and apply method, which is assumes to receive a text from

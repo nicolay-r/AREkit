@@ -1,9 +1,9 @@
-from core.common import utils
-from core.common.entities.base import Entity
-from core.common.parsed_news.base import ParsedNews
-from core.common.text_object import TextObject
-from core.source.ruattitudes.news import RuAttitudesNews
-from core.source.ruattitudes.sentence import RuAttitudesSentence
+from arekit.common import utils
+from arekit.common.entities.base import Entity
+from arekit.common.parsed_news.base import ParsedNews
+from arekit.common.text_object import TextObject
+from arekit.source.ruattitudes.news import RuAttitudesNews
+from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class RuAttitudesParsedNewsHelper(object):

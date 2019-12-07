@@ -1,8 +1,8 @@
-from core.common.frame_variants.collection import FrameVariantsCollection
-from core.common.text_frame_variant import TextFrameVariant
-from core.languages.mods import BaseLanguageMods
-from core.languages.ru.mods import RussianLanguageMods
-from core.processing.text.parsed import ParsedText
+from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.languages.mods import BaseLanguageMods
+from arekit.languages.ru.mods import RussianLanguageMods
+from arekit.processing.text.parsed import ParsedText
 
 
 class RuSentiFramesSearchHelper(object):

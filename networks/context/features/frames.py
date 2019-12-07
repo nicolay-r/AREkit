@@ -1,8 +1,8 @@
-from core.common.frames.collection import FramesCollection
-from core.common.frames.polarity import FramePolarity
-from core.common.labels.base import NeutralLabel, PositiveLabel, NegativeLabel
-from core.common.text_frame_variant import TextFrameVariant
-from core.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.frames.collection import FramesCollection
+from arekit.common.frames.polarity import FramePolarity
+from arekit.common.labels.base import NeutralLabel, PositiveLabel, NegativeLabel
+from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.common.text_opinions.helper import TextOpinionHelper
 
 
 def compose_frames(text_opinion):

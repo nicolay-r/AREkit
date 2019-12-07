@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from core.common.labels.base import Label
-from core.common.opinions.base import Opinion
-from core.common.synonyms import SynonymsCollection
+from arekit.common.labels.base import Label
+from arekit.common.opinions.base import Opinion
+from arekit.common.synonyms import SynonymsCollection
 
 
 class OpinionCollection(object):

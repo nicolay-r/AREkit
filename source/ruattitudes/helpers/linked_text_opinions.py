@@ -1,9 +1,9 @@
-from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from core.common.ref_opinon import RefOpinion
-from core.common.text_opinions.base import TextOpinion
-from core.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
-from core.source.ruattitudes.news import RuAttitudesNews
-from core.source.ruattitudes.sentence import RuAttitudesSentence
+from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.ref_opinon import RefOpinion
+from arekit.common.text_opinions.base import TextOpinion
+from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
+from arekit.source.ruattitudes.news import RuAttitudesNews
+from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class RuAttitudesNewsTextOpinionExtractorHelper:

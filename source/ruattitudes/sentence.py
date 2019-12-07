@@ -1,5 +1,5 @@
-from core.processing.text.parsed import ParsedText
-from core.common.ref_opinon import RefOpinion
+from arekit.processing.text.parsed import ParsedText
+from arekit.common.ref_opinon import RefOpinion
 
 
 class RuAttitudesSentence(object):

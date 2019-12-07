@@ -1,5 +1,5 @@
-from core.common.labels.base import Label
-from core.evaluation.evaluators.cmp_table import DocumentCompareTable
+from arekit.common.labels.base import Label
+from arekit.evaluation.evaluators.cmp_table import DocumentCompareTable
 
 
 def calc_recall(cmp_table,

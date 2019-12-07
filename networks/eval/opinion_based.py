@@ -1,8 +1,8 @@
 import collections
 
-from core.evaluation.evaluators.base import BaseEvaluator
-from core.networks.eval.base import EvaluationHelper
-from core.networks.network_io import NetworkIO
+from arekit.evaluation.evaluators.base import BaseEvaluator
+from arekit.networks.eval.base import EvaluationHelper
+from arekit.networks.network_io import NetworkIO
 
 
 class OpinionBasedEvaluationHelper(EvaluationHelper):

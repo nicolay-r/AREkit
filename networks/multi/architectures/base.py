@@ -1,12 +1,12 @@
 import tensorflow as tf
 
-from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
-from core.networks.context.sample import InputSample
-from core.networks.data_type import DataType
-from core.networks.multi.configuration.base import BaseMultiInstanceConfig
-from core.networks.multi.training.batch import MultiInstanceBatch
-from core.networks.network import NeuralNetwork
+from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
+from arekit.networks.context.sample import InputSample
+from arekit.networks.data_type import DataType
+from arekit.networks.multi.configuration.base import BaseMultiInstanceConfig
+from arekit.networks.multi.training.batch import MultiInstanceBatch
+from arekit.networks.network import NeuralNetwork
 
 
 class BaseMultiInstanceNeuralNetwork(NeuralNetwork):

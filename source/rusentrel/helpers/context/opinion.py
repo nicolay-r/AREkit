@@ -1,6 +1,6 @@
-from core.common.ref_opinon import RefOpinion
-from core.common.labels.base import Label
-from core.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
+from arekit.common.ref_opinon import RefOpinion
+from arekit.common.labels.base import Label
+from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 
 
 class RuSentRelTextOpinion(RefOpinion):

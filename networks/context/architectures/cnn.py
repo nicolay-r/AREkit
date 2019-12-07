@@ -1,8 +1,8 @@
 import tensorflow as tf
 from collections import OrderedDict
-from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations.cnn import CNNConfig
-from core.networks.tf_helpers import layers
+from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.configurations.cnn import CNNConfig
+from arekit.networks.tf_helpers import layers
 
 
 class VanillaCNN(BaseContextNeuralNetwork):

@@ -1,11 +1,11 @@
 import json
 
-from core.common.labels.base import Label
-from core.common.frames.collection import FramesCollection
-from core.source.rusentiframes.io_utils import RuSentiFramesIOUtils
-from core.source.rusentiframes.polarity import RuSentiFramesFramePolarity
-from core.source.rusentiframes.role import FrameRole
-from core.source.rusentiframes.state import FrameState
+from arekit.common.labels.base import Label
+from arekit.common.frames.collection import FramesCollection
+from arekit.source.rusentiframes.io_utils import RuSentiFramesIOUtils
+from arekit.source.rusentiframes.polarity import RuSentiFramesFramePolarity
+from arekit.source.rusentiframes.role import FrameRole
+from arekit.source.rusentiframes.state import FrameState
 
 
 class RuSentiFramesCollection(FramesCollection):

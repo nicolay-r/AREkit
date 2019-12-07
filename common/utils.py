@@ -2,7 +2,7 @@ import collections
 import os
 import numpy as np
 
-from core.common.bound import Bound
+from arekit.common.bound import Bound
 
 
 def get_random_uniform_with_fixed_seed(vector_size, seed):

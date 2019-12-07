@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from core.networks.attention.helpers import embedding
-from core.networks.context.architectures.pcnn import PiecewiseCNN
+from arekit.networks.attention.helpers import embedding
+from arekit.networks.context.architectures.pcnn import PiecewiseCNN
 
 
 class AttentionAttitudeEndsPCNN(PiecewiseCNN):

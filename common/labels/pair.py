@@ -1,4 +1,4 @@
-from core.common.labels.base import Label
+from arekit.common.labels.base import Label
 
 
 class LabelPair(Label):

@@ -1,6 +1,6 @@
-from core.networks.attention.architectures.rnn_attention_z_yang import attention_by_z_yang
-from core.networks.context.architectures.att_hidden_bilstm import AttentionHiddenBiLSTM
-from core.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
+from arekit.networks.attention.architectures.rnn_attention_z_yang import attention_by_z_yang
+from arekit.networks.context.architectures.att_hidden_bilstm import AttentionHiddenBiLSTM
+from arekit.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
 
 
 class AttentionHiddenZYangBiLSTM(AttentionHiddenBiLSTM):

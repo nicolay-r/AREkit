@@ -1,8 +1,8 @@
 #!/usr/bin/python
 import tensorflow as tf
-from core.networks.context.architectures.cnn import VanillaCNN
-from core.networks.context.configurations.cnn import CNNConfig
-from core.networks.context.sample import InputSample
+from arekit.networks.context.architectures.cnn import VanillaCNN
+from arekit.networks.context.configurations.cnn import CNNConfig
+from arekit.networks.context.sample import InputSample
 
 
 class PiecewiseCNN(VanillaCNN):

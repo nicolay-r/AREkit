@@ -1,10 +1,10 @@
 import collections
 
-from core.common.text_object import TextObject
-from core.common.ref_opinon import RefOpinion
-from core.common.opinions.base import Opinion
-from core.source.ruattitudes.news import RuAttitudesNews
-from core.source.ruattitudes.sentence import RuAttitudesSentence
+from arekit.common.text_object import TextObject
+from arekit.common.ref_opinon import RefOpinion
+from arekit.common.opinions.base import Opinion
+from arekit.source.ruattitudes.news import RuAttitudesNews
+from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class RuAttitudesNewsHelper(object):

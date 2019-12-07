@@ -1,4 +1,4 @@
-from core.source.ruattitudes.sentence import RuAttitudesSentence
+from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class RuAttitudesNews(object):

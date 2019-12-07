@@ -1,4 +1,4 @@
-from core.networks.context.configurations.ian_frames import IANFramesConfig
+from arekit.networks.context.configurations.ian_frames import IANFramesConfig
 
 
 class IANAttitudeEndsBasedConfig(IANFramesConfig):

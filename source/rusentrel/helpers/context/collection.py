@@ -1,9 +1,9 @@
-from core.common.opinions.collection import OpinionCollection
-from core.common.opinions.base import Opinion
-from core.common.text_opinions.collection import TextOpinionCollection
-from core.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
-from core.source.rusentrel.entities.entity import RuSentRelEntity
-from core.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.opinions.base import Opinion
+from arekit.common.text_opinions.collection import TextOpinionCollection
+from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
+from arekit.source.rusentrel.entities.entity import RuSentRelEntity
+from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 
 
 class RuSentRelTextOpinionCollection(TextOpinionCollection):

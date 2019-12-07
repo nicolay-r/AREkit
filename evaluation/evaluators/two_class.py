@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 import collections
 
-from core.common.labels.base import PositiveLabel, NegativeLabel, Label
-from core.common.opinions.collection import OpinionCollection
-from core.evaluation.cmp_opinions import OpinionCollectionsToCompare
-from core.evaluation.evaluators import metrics
-from core.evaluation.evaluators.base import BaseEvaluator
-from core.evaluation.results.two_class import TwoClassEvalResult
+from arekit.common.labels.base import PositiveLabel, NegativeLabel, Label
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.evaluation.cmp_opinions import OpinionCollectionsToCompare
+from arekit.evaluation.evaluators import metrics
+from arekit.evaluation.evaluators.base import BaseEvaluator
+from arekit.evaluation.results.two_class import TwoClassEvalResult
 
 
 class TwoClassEvaluator(BaseEvaluator):

@@ -1,4 +1,4 @@
-from core.processing.lemmatization.base import Stemmer
+from arekit.processing.lemmatization.base import Stemmer
 
 
 class SynonymsCollection(object):

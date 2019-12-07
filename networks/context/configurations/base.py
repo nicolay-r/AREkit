@@ -1,9 +1,9 @@
 import datetime
 
 import tensorflow as tf
-from core.common.embeddings.base import Embedding
-from core.processing.lemmatization.mystem import MystemWrapper
-from core.processing.pos.mystem_wrap import POSMystemWrapper
+from arekit.common.embeddings.base import Embedding
+from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 
 class LabelCalculationMode:

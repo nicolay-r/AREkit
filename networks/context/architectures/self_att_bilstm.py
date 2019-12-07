@@ -1,9 +1,9 @@
 import tensorflow as tf
 
-from core.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
-from core.networks.context.sample import InputSample
-from core.networks.data_type import DataType
-from core.networks.tf_helpers import sequence
+from arekit.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
+from arekit.networks.context.sample import InputSample
+from arekit.networks.data_type import DataType
+from arekit.networks.tf_helpers import sequence
 from base import BaseContextNeuralNetwork
 
 

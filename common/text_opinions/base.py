@@ -1,5 +1,5 @@
-from core.common.ref_opinon import RefOpinion
-from core.common.labels.base import Label
+from arekit.common.ref_opinon import RefOpinion
+from arekit.common.labels.base import Label
 
 
 class TextOpinion(RefOpinion):

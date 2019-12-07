@@ -1,9 +1,9 @@
 import collections
 
-from core.common.entities.base import Entity
-from core.common.parsed_news.term_position import TermPosition
-from core.common.text_frame_variant import TextFrameVariant
-from core.processing.text.parsed import ParsedText
+from arekit.common.entities.base import Entity
+from arekit.common.parsed_news.term_position import TermPosition
+from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.processing.text.parsed import ParsedText
 
 
 class ParsedNews(object):

@@ -1,6 +1,6 @@
 import tensorflow as tf
-from core.networks.context.configurations.bilstm import BiLSTMConfig
-from core.networks.tf_helpers.sequence import CellTypes
+from arekit.networks.context.configurations.bilstm import BiLSTMConfig
+from arekit.networks.tf_helpers.sequence import CellTypes
 
 
 class AttentionHiddenBiLSTMConfig(BiLSTMConfig):

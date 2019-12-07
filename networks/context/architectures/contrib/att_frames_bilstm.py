@@ -1,9 +1,9 @@
 import tensorflow as tf
 
-from core.networks.attention.helpers import embedding
-from core.networks.context.architectures.bilstm import BiLSTM
-from core.networks.context.sample import InputSample
-from core.networks.tf_helpers import sequence
+from arekit.networks.attention.helpers import embedding
+from arekit.networks.context.architectures.bilstm import BiLSTM
+from arekit.networks.context.sample import InputSample
+from arekit.networks.tf_helpers import sequence
 
 
 class AttentionFramesBiLSTM(BiLSTM):

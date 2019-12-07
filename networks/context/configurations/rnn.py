@@ -1,6 +1,6 @@
 import tensorflow as tf
 from base import DefaultNetworkConfig
-from core.networks.tf_helpers.sequence import CellTypes
+from arekit.networks.tf_helpers.sequence import CellTypes
 
 
 class RNNConfig(DefaultNetworkConfig):

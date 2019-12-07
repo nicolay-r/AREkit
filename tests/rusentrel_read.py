@@ -1,15 +1,15 @@
 #!/usr/bin/python
-from core.common.bound import Bound
-from core.common.entities.collection import EntityCollection
-from core.processing.lemmatization.mystem import MystemWrapper
-from core.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
-from core.source.rusentrel.entities.entity import RuSentRelEntity
-from core.source.rusentrel.io_utils import RuSentRelIOUtils
-from core.source.rusentrel.news import RuSentRelNews
-from core.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-from core.source.rusentrel.opinions.opinion import RuSentRelOpinion
-from core.source.rusentrel.sentence import RuSentRelSentence
-from core.source.rusentrel.synonyms import RuSentRelSynonymsCollection
+from arekit.common.bound import Bound
+from arekit.common.entities.collection import EntityCollection
+from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
+from arekit.source.rusentrel.entities.entity import RuSentRelEntity
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.source.rusentrel.news import RuSentRelNews
+from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
+from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
+from arekit.source.rusentrel.sentence import RuSentRelSentence
+from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 # Initializing stemmer
 stemmer = MystemWrapper()

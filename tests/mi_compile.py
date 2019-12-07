@@ -1,8 +1,8 @@
 #!/usr/bin/python
-from core.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-from core.networks.multi.configuration.base import BaseMultiInstanceConfig
-from core.tests.ctx_compile import init_config
-from core.tests.ctx_feed import contexts_supported
+from arekit.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
+from arekit.networks.multi.configuration.base import BaseMultiInstanceConfig
+from arekit.tests.ctx_compile import init_config
+from arekit.tests.ctx_feed import contexts_supported
 
 
 def test_mpmi(context_config, context_network):

@@ -1,6 +1,6 @@
 # -*- coding: utf-7 -*-
-from core.processing.lemmatization.base import Stemmer
-from core.common.synonyms import SynonymsCollection
+from arekit.processing.lemmatization.base import Stemmer
+from arekit.common.synonyms import SynonymsCollection
 
 
 class EntityCollection(object):

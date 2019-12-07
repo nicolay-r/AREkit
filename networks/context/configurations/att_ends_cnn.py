@@ -1,6 +1,6 @@
-from core.networks.attention.architectures.mlp import MLPAttention
-from core.networks.attention.configurations.mlp import MLPAttentionConfig
-from core.networks.context.configurations.cnn import CNNConfig
+from arekit.networks.attention.architectures.mlp import MLPAttention
+from arekit.networks.attention.configurations.mlp import MLPAttentionConfig
+from arekit.networks.context.configurations.cnn import CNNConfig
 
 
 class AttentionAttitudeEndsCNNConfig(CNNConfig):

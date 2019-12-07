@@ -1,8 +1,8 @@
-from core.common import utils
-from core.common.parsed_news.base import ParsedNews
-from core.processing.lemmatization.base import Stemmer
-from core.processing.text.parser import TextParser
-from core.source.rusentrel.news import RuSentRelNews
+from arekit.common import utils
+from arekit.common.parsed_news.base import ParsedNews
+from arekit.processing.lemmatization.base import Stemmer
+from arekit.processing.text.parser import TextParser
+from arekit.source.rusentrel.news import RuSentRelNews
 
 
 class RuSentRelParsedNewsHelper:

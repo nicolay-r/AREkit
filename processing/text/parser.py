@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import collections
 
-from core.processing.text.parsed import ParsedText
-from core.processing.text.tokens import Tokens
-from core.processing.text.token import Token
+from arekit.processing.text.parsed import ParsedText
+from arekit.processing.text.tokens import Tokens
+from arekit.processing.text.token import Token
 
 
 class TextParser:

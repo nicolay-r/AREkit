@@ -1,10 +1,10 @@
 import numpy as np
-from core.common.text_opinions.end_type import EntityEndType
-from core.common.text_opinions.helper import TextOpinionHelper
-from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection, TextOpinion
-from core.networks.context.training.bags.bag import Bag
-from core.networks.context.training.bags.collection import BagsCollection
-from core.networks.context.sample import InputSample
+from arekit.common.text_opinions.end_type import EntityEndType
+from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection, TextOpinion
+from arekit.networks.context.training.bags.bag import Bag
+from arekit.networks.context.training.bags.collection import BagsCollection
+from arekit.networks.context.sample import InputSample
 
 
 class MultiInstanceBagsCollection(BagsCollection):

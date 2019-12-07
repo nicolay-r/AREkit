@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import collections
 
-from core.common.frame_variants.base import FrameVariant
-from core.processing.lemmatization.base import Stemmer
+from arekit.common.frame_variants.base import FrameVariant
+from arekit.processing.lemmatization.base import Stemmer
 
 
 class FrameVariantsCollection:

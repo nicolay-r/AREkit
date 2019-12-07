@@ -1,8 +1,8 @@
 import numpy as np
 
-from core.processing.text.tokens import Tokens
-from core.common.utils import get_random_uniform_with_fixed_seed
-from core.common.embeddings.base import Embedding
+from arekit.processing.text.tokens import Tokens
+from arekit.common.utils import get_random_uniform_with_fixed_seed
+from arekit.common.embeddings.base import Embedding
 
 
 class TokenEmbedding(Embedding):

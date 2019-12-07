@@ -1,4 +1,4 @@
-from core.processing.lemmatization.base import Stemmer
+from arekit.processing.lemmatization.base import Stemmer
 from pymystem3 import Mystem
 
 

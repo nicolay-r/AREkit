@@ -1,4 +1,4 @@
-from core.networks.attention.configurations.mlp import MLPAttentionConfig
+from arekit.networks.attention.configurations.mlp import MLPAttentionConfig
 
 
 class InteractiveMLPAttentionConfig(MLPAttentionConfig):

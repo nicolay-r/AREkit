@@ -2,16 +2,16 @@ import collections
 
 import numpy as np
 
-from core.common.entities.base import Entity
-from core.common.text_frame_variant import TextFrameVariant
-from core.networks.context.embedding import entity
-from core.networks.context.embedding.offsets import TermsEmbeddingOffsets
-from core.processing.pos.base import POSTagger
-from core.processing.text.token import Token
-from core.processing.text.tokens import Tokens
-from core.common.embeddings.base import Embedding
-from core.common.embeddings.tokens import TokenEmbedding
-from core.networks.context.debug import DebugKeys
+from arekit.common.entities.base import Entity
+from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.networks.context.embedding import entity
+from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
+from arekit.processing.pos.base import POSTagger
+from arekit.processing.text.token import Token
+from arekit.processing.text.tokens import Tokens
+from arekit.common.embeddings.base import Embedding
+from arekit.common.embeddings.tokens import TokenEmbedding
+from arekit.networks.context.debug import DebugKeys
 
 
 # region private functions

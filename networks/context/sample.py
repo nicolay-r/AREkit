@@ -2,20 +2,20 @@ import collections
 import numpy as np
 from collections import OrderedDict
 
-from core.common.frames.collection import FramesCollection
-from core.common.parsed_news.base import ParsedNews
-from core.common.synonyms import SynonymsCollection
-from core.networks.context.embedding import indices
-from core.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.common.frames.collection import FramesCollection
+from arekit.common.parsed_news.base import ParsedNews
+from arekit.common.synonyms import SynonymsCollection
+from arekit.networks.context.embedding import indices
+from arekit.networks.context.configurations.base import DefaultNetworkConfig
 
-from core.common.entities.base import Entity
-from core.common.text_opinions.end_type import EntityEndType
-from core.common.text_opinions.helper import TextOpinionHelper
-from core.common.text_opinions.base import TextOpinion
-from core.networks.context.features.dist import dist_abs_nearest_feature, distance_feature
-from core.networks.context.features.frames import compose_frame_roles, compose_frames
-from core.networks.context.features.inds import IndicesFeature
-from core.networks.context.features.pointers import PointersFeature
+from arekit.common.entities.base import Entity
+from arekit.common.text_opinions.end_type import EntityEndType
+from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.text_opinions.base import TextOpinion
+from arekit.networks.context.features.dist import dist_abs_nearest_feature, distance_feature
+from arekit.networks.context.features.frames import compose_frame_roles, compose_frames
+from arekit.networks.context.features.inds import IndicesFeature
+from arekit.networks.context.features.pointers import PointersFeature
 
 
 class InputSample(object):

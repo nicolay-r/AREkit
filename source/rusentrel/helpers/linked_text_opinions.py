@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from core.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from core.common.opinions.collection import OpinionCollection
-from core.common.text_opinions.base import TextOpinion
-from core.source.rusentrel.helpers.context.collection import RuSentRelTextOpinionCollection
-from core.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
-from core.source.rusentrel.news import RuSentRelNews
+from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.text_opinions.base import TextOpinion
+from arekit.source.rusentrel.helpers.context.collection import RuSentRelTextOpinionCollection
+from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
+from arekit.source.rusentrel.news import RuSentRelNews
 
 
 class RuSentRelNewsTextOpinionExtractorHelper:

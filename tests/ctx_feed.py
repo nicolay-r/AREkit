@@ -1,14 +1,14 @@
 import tensorflow as tf
 import numpy as np
 
-from core.common.labels.base import PositiveLabel
-from core.networks.context.configurations.base import DefaultNetworkConfig
-from core.networks.context.sample import InputSample
-from core.networks.context.training.bags.bag import Bag
-from core.networks.context.training.batch import MiniBatch
-from core.networks.data_type import DataType
-from core.networks.network import NeuralNetwork
-from core.tests.ctx_compile import contexts_supported
+from arekit.common.labels.base import PositiveLabel
+from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.networks.context.sample import InputSample
+from arekit.networks.context.training.bags.bag import Bag
+from arekit.networks.context.training.batch import MiniBatch
+from arekit.networks.data_type import DataType
+from arekit.networks.network import NeuralNetwork
+from arekit.tests.ctx_compile import contexts_supported
 
 
 def init_session():

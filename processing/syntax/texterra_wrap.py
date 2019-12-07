@@ -1,6 +1,6 @@
 import texterra
 from texterra.syntaxtree import SyntaxTree
-from core.processing.syntax.base import SyntaxParser, SyntaxAnalysisResult
+from arekit.processing.syntax.base import SyntaxParser, SyntaxAnalysisResult
 
 
 class TexterraSyntaxParser(SyntaxParser):

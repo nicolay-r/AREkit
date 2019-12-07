@@ -6,12 +6,12 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 from collections import OrderedDict
 import tensorflow as tf
 
-from core.networks.data_type import DataType
-from core.networks.tf_helpers import layers
-from core.networks.tf_helpers import sequence
-from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations.bilstm import BiLSTMConfig
-from core.networks.context.sample import InputSample
+from arekit.networks.data_type import DataType
+from arekit.networks.tf_helpers import layers
+from arekit.networks.tf_helpers import sequence
+from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.configurations.bilstm import BiLSTMConfig
+from arekit.networks.context.sample import InputSample
 
 
 class BiLSTM(BaseContextNeuralNetwork):

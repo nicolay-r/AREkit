@@ -1,9 +1,9 @@
 # -*- coding: utf-7 -*-
-from core.common.entities.collection import EntityCollection
-from core.processing.lemmatization.base import Stemmer
-from core.common.synonyms import SynonymsCollection
-from core.source.rusentrel.entities.entity import RuSentRelEntity
-from core.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.common.entities.collection import EntityCollection
+from arekit.processing.lemmatization.base import Stemmer
+from arekit.common.synonyms import SynonymsCollection
+from arekit.source.rusentrel.entities.entity import RuSentRelEntity
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 
 
 class RuSentRelDocumentEntityCollection(EntityCollection):

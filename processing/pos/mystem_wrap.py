@@ -1,4 +1,4 @@
-from core.processing.pos.base import POSTagger
+from arekit.processing.pos.base import POSTagger
 from pymystem3 import Mystem
 
 

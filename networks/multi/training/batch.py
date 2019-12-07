@@ -1,8 +1,8 @@
 from collections import OrderedDict
-from core.networks.context.debug import DebugKeys
-from core.networks.context.sample import InputSample
-from core.networks.context.training.bags.bag import Bag
-from core.networks.context.training.batch import MiniBatch
+from arekit.networks.context.debug import DebugKeys
+from arekit.networks.context.sample import InputSample
+from arekit.networks.context.training.bags.bag import Bag
+from arekit.networks.context.training.batch import MiniBatch
 
 
 class MultiInstanceBatch(MiniBatch):

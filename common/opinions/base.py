@@ -1,5 +1,5 @@
-from core.common.labels.base import Label
-from core.common.synonyms import SynonymsCollection
+from arekit.common.labels.base import Label
+from arekit.common.synonyms import SynonymsCollection
 
 
 class Opinion(object):

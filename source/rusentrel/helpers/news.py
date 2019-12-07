@@ -1,4 +1,4 @@
-from core.source.rusentrel.entities.entity import RuSentRelEntity
+from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 
 
 class RuSentRelNewsHelper:

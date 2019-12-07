@@ -1,5 +1,5 @@
-from core.networks.context.architectures.att_ends_pcnn import AttentionAttitudeEndsPCNN
-from core.networks.context.sample import InputSample
+from arekit.networks.context.architectures.att_ends_pcnn import AttentionAttitudeEndsPCNN
+from arekit.networks.context.sample import InputSample
 
 
 class AttentionFramesPCNN(AttentionAttitudeEndsPCNN):

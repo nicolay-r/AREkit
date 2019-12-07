@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from core.source.rusentrel.entities.entity import RuSentRelEntity
-from core.source.rusentrel.helpers.news import RuSentRelNewsHelper
-from core.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
-from core.source.rusentrel.io_utils import RuSentRelIOUtils
-from core.source.rusentrel.sentence import RuSentRelSentence
+from arekit.source.rusentrel.entities.entity import RuSentRelEntity
+from arekit.source.rusentrel.helpers.news import RuSentRelNewsHelper
+from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.source.rusentrel.sentence import RuSentRelSentence
 
 
 class RuSentRelNews(object):

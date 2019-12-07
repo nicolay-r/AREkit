@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import cPickle as pickle
 import collections
-from core.common.text_opinions.base import TextOpinion
-from core.common.parsed_news.collection import ParsedNewsCollection
-from core.common.text_opinions.collection import TextOpinionCollection
+from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.parsed_news.collection import ParsedNewsCollection
+from arekit.common.text_opinions.collection import TextOpinionCollection
 
 
 class LabeledLinkedTextOpinionCollection(TextOpinionCollection):

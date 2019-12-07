@@ -1,9 +1,9 @@
 import numpy as np
 
-from core.networks.context.embedding.offsets import TermsEmbeddingOffsets
-from core.common.embeddings.base import Embedding
-from core.common.embeddings.tokens import TokenEmbedding
-from core.networks.context.debug import DebugKeys
+from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
+from arekit.common.embeddings.base import Embedding
+from arekit.common.embeddings.tokens import TokenEmbedding
+from arekit.networks.context.debug import DebugKeys
 
 
 def create_term_embedding_matrix(word_embedding,

@@ -1,5 +1,5 @@
-from core.common.bound import Bound
-from core.source.rusentrel.entities.entity import RuSentRelEntity
+from arekit.common.bound import Bound
+from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 
 
 class RuSentRelSentence(object):

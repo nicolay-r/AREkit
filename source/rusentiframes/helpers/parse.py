@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import collections
 
-from core.common.frame_variants.collection import FrameVariantsCollection
-from core.common.text_frame_variant import TextFrameVariant
-from core.languages.mods import BaseLanguageMods
-from core.languages.ru.mods import RussianLanguageMods
-from core.processing.text.parsed import ParsedText
-from core.source.rusentiframes.helpers.search import RuSentiFramesSearchHelper
+from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.languages.mods import BaseLanguageMods
+from arekit.languages.ru.mods import RussianLanguageMods
+from arekit.processing.text.parsed import ParsedText
+from arekit.source.rusentiframes.helpers.search import RuSentiFramesSearchHelper
 
 
 class RuSentiFramesParseHelper(object):

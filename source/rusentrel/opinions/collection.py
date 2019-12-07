@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import io
-from core.common.opinions.collection import OpinionCollection
-from core.common.opinions.base import Opinion
-from core.common.utils import create_dir_if_not_exists
-from core.common.labels.base import Label
-from core.common.synonyms import SynonymsCollection
-from core.source.rusentrel.io_utils import RuSentRelIOUtils
-from core.source.rusentrel.opinions.opinion import RuSentRelOpinion
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.opinions.base import Opinion
+from arekit.common.utils import create_dir_if_not_exists
+from arekit.common.labels.base import Label
+from arekit.common.synonyms import SynonymsCollection
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
 
 
 class RuSentRelOpinionCollection(OpinionCollection):

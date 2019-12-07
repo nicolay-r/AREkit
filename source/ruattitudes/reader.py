@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from core.common.text_object import TextObject
-from core.common.ref_opinon import RefOpinion
-from core.common.labels.base import Label
-from core.processing.lemmatization.base import Stemmer
-from core.processing.text.parser import TextParser
-from core.source.ruattitudes.io_utils import RuAttitudesIOUtils
-from core.source.ruattitudes.news import RuAttitudesNews
-from core.source.ruattitudes.sentence import RuAttitudesSentence
+from arekit.common.text_object import TextObject
+from arekit.common.ref_opinon import RefOpinion
+from arekit.common.labels.base import Label
+from arekit.processing.lemmatization.base import Stemmer
+from arekit.processing.text.parser import TextParser
+from arekit.source.ruattitudes.io_utils import RuAttitudesIOUtils
+from arekit.source.ruattitudes.news import RuAttitudesNews
+from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class RuAttitudesFormatReader(object):

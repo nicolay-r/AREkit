@@ -1,6 +1,6 @@
 import pandas as pd
-from core.common.labels.base import Label
-from core.common.opinions.base import Opinion
+from arekit.common.labels.base import Label
+from arekit.common.opinions.base import Opinion
 
 
 class DocumentCompareTable:

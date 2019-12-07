@@ -1,5 +1,5 @@
-from core.common.frames.polarity import FramePolarity
-from core.common.labels.base import Label
+from arekit.common.frames.polarity import FramePolarity
+from arekit.common.labels.base import Label
 
 
 class RuSentiFramesFramePolarity(FramePolarity):

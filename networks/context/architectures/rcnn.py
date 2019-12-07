@@ -1,11 +1,11 @@
 import tensorflow as tf
 from collections import OrderedDict
 
-from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.context.configurations.rcnn import RCNNConfig
-from core.networks.context.sample import InputSample
-from core.networks.data_type import DataType
-from core.networks.tf_helpers import sequence
+from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.configurations.rcnn import RCNNConfig
+from arekit.networks.context.sample import InputSample
+from arekit.networks.data_type import DataType
+from arekit.networks.tf_helpers import sequence
 
 
 class RCNN(BaseContextNeuralNetwork):

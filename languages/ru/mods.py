@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from core.languages.mods import BaseLanguageMods
+from arekit.languages.mods import BaseLanguageMods
 
 
 class RussianLanguageMods(BaseLanguageMods):

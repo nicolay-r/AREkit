@@ -1,5 +1,5 @@
-from core.common.text_opinions.base import TextOpinion
-from core.common.parsed_news.collection import ParsedNewsCollection
+from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.parsed_news.collection import ParsedNewsCollection
 
 
 class TextOpinionCollection(object):

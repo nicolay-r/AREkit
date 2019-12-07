@@ -1,4 +1,4 @@
-from core.networks.context.configurations.att_hidden_bilstm import AttentionHiddenBiLSTMConfig
+from arekit.networks.context.configurations.att_hidden_bilstm import AttentionHiddenBiLSTMConfig
 
 
 class AttentionHiddenZYangBiLSTMConfig(AttentionHiddenBiLSTMConfig):

@@ -1,7 +1,7 @@
-from core.common.opinions.base import Opinion
-from core.common.opinions.collection import OpinionCollection
-from core.common.synonyms import SynonymsCollection
-from core.evaluation.evaluators.cmp_table import DocumentCompareTable
+from arekit.common.opinions.base import Opinion
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.synonyms import SynonymsCollection
+from arekit.evaluation.evaluators.cmp_table import DocumentCompareTable
 
 
 class BaseEvaluator(object):

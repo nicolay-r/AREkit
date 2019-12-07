@@ -1,8 +1,8 @@
 import tensorflow as tf
 
-from core.networks.attention.configurations.mlp import MLPAttentionConfig
-from core.networks.tf_helpers.layers import get_k_layer_logits
-from core.networks.tf_helpers.filtering import \
+from arekit.networks.attention.configurations.mlp import MLPAttentionConfig
+from arekit.networks.tf_helpers.layers import get_k_layer_logits
+from arekit.networks.tf_helpers.filtering import \
     filter_batch_elements, \
     select_entity_related_elements
 

@@ -1,15 +1,13 @@
 import tensorflow as tf
 
-import core.networks.tf_helpers.initialization
-import core.networks.tf_helpers.sequence
-from core.networks.attention.helpers import embedding
-from core.networks.context.architectures.base import BaseContextNeuralNetwork
-from core.networks.data_type import DataType
-from core.networks.tf_helpers.sequence import get_cell
-from core.networks.context.configurations.ian_frames import IANFramesConfig, StatesAggregationModes
-from core.networks.context.sample import InputSample
-from core.networks.tf_helpers import layers, sequence
-from core.networks.tf_helpers.filtering import filter_batch_elements, select_entity_related_elements
+from arekit.networks.attention.helpers import embedding
+from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.data_type import DataType
+from arekit.networks.tf_helpers.sequence import get_cell
+from arekit.networks.context.configurations.ian_frames import IANFramesConfig, StatesAggregationModes
+from arekit.networks.context.sample import InputSample
+from arekit.networks.tf_helpers import layers, sequence
+from arekit.networks.tf_helpers.filtering import filter_batch_elements, select_entity_related_elements
 
 
 class IANFrames(BaseContextNeuralNetwork):
@@ -139,13 +137,13 @@ class IANFrames(BaseContextNeuralNetwork):
                                     dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
             # Calculate input lengths
-            aspect_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(
+            aspect_lens = sequence.calculate_sequence_length(
                 sequence=self.AspectInput,
                 is_neg_placeholder=InputSample.FRAMES_PAD_VALUE < 0)
 
             aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
 
-            context_lens = core.networks.tf_helpers.sequence.calculate_sequence_length(
+            context_lens = sequence.calculate_sequence_length(
                 sequence=self.get_input_parameter(InputSample.I_X_INDS))
 
             context_lens_casted = tf.cast(x=tf.maximum(context_lens, 1), dtype=tf.int32)
@@ -229,7 +227,7 @@ class IANFrames(BaseContextNeuralNetwork):
         if config.StatesAggregationMode == StatesAggregationModes.AVERAGE:
             return tf.reduce_mean(outputs, 1)
         if config.StatesAggregationMode == StatesAggregationModes.LAST_IN_SEQUENCE:
-            return core.networks.tf_helpers.sequence.select_last_relevant_in_sequence(outputs, length)
+            return sequence.select_last_relevant_in_sequence(outputs, length)
         else:
             raise Exception('"{}" type does not supported'.format(config.StatesAggregationMode))
 

@@ -1,4 +1,4 @@
-from core.common.opinions.base import Opinion
+from arekit.common.opinions.base import Opinion
 
 
 class RuSentRelOpinion(Opinion):
