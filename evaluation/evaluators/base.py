@@ -11,7 +11,7 @@ class BaseEvaluator(object):
         self.__synonyms = synonyms
 
     def evaluate(self, cmp_pairs):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     @property
     def Synonyms(self):

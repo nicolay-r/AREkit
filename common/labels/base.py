@@ -33,13 +33,13 @@ class Label:
         return supported_labels
 
     def to_str(self):
-        raise Exception("Not implemented exception")
+        raise NotImplementedError()
 
     def to_int(self):
-        raise Exception("Not implemented exception")
+        raise NotImplementedError()
 
     def to_uint(self):
-        raise Exception("Not implemented exception")
+        raise NotImplementedError()
 
     def __eq__(self, other):
         assert(isinstance(other, Label))

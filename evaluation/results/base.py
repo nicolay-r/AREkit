@@ -11,7 +11,7 @@ class BaseEvalResult(object):
         return self.__documents[doc_id]
 
     def calculate(self):
-        raise Exception("Not implemented")
+        raise NotImplementedError()
 
     def add_cmp_table(self, doc_id, cmp_table):
         assert(doc_id not in self.__documents)
