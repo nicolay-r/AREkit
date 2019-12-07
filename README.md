@@ -42,18 +42,15 @@ Structuraly, the fundamental task representation could be departed into followin
 
 ## Dependencies
 
-![](https://img.shields.io/badge/Python-2.7-brightgreen.svg)
-![](https://img.shields.io/badge/Tensorflow-1.14.0-yellowgreen.svg)
-
 List of the toolset dependencies are as follows:
 
-* Python 2.7 (No doubts it will be updated to 3.4+)
+* ![](https://img.shields.io/badge/Python-2.7-brightgreen.svg) (No doubts it will be updated to 3.4+)
 
-* pymystem3==0.1.9
+* ![](https://img.shields.io/badge/pymystem3-0.1.9-yellowgreen.svg)
 
-* pandas==0.20.3
+* ![](https://img.shields.io/badge/Pandas-0.20.3-yellowgreen.svg)
 
-* tensorflow==1.4.1
+* ![](https://img.shields.io/badge/Tensorflow-1.14.0-yellowgreen.svg)
 
 ### Optional Service Dependencies
 * Named Entity Recognition
@@ -170,7 +167,16 @@ Then install dependencies as follows:
 pip install -r dependencies.txt
 ```
 
-## Usage [Update in Progress]
+## Research Applications & References
 
-> TODO: Provide list of related projects.
+* Distant Supervision for Sentiment Attitude Extraction
+[[paper-ranlp-proceeding]](http://lml.bas.bg/ranlp2019/proceedings-ranlp-2019.pdf),
+[[poster]](docs/ranlp_2019_poster_portrait.pdf)
+    * Rusnachenko Nikolay, Loukachevitch Natalia, Tutubalina Elena
+    * RANLP-2019
 
+* Neural Network Approach for Extracting Aggregated Opinions from Analytical Articles 
+[[paper]](https://link.springer.com/chapter/10.1007/978-3-030-23584-0_10)
+[[code]](https://github.com/nicolay-r/sentiment-pcnn/tree/ccis-2019)
+    * Nicolay Rusnachenko, Natalia Loukachevitch 
+    * TSD-2018
