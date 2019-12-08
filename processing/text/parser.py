@@ -161,6 +161,6 @@ class TextParser:
                     term.get_original_value(),
                     term.get_token_value()).decode('utf-8'))
             else:
-                logger.debug(u'"WORD: {}" '.format(term).decode('utf-8')
+                logger.debug(u'"WORD: {}" '.format(term).decode('utf-8'))
 
     # endregion
