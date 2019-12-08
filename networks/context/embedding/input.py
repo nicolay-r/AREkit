@@ -1,9 +1,13 @@
 import numpy as np
+from boto.cloudfront import logging
 
 from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from arekit.common.embeddings.base import Embedding
 from arekit.common.embeddings.tokens import TokenEmbedding
 from arekit.networks.context.debug import DebugKeys
+
+
+logger = logging.getLogger(__name__)
 
 
 def create_term_embedding_matrix(word_embedding,
@@ -52,7 +56,7 @@ def create_term_embedding_matrix(word_embedding,
         matrix[embedding_offsets.get_frame_index(index)] = frame_embedding[frame_value]
 
     if DebugKeys.DisplayTermEmbeddingParameters:
-        print "Term matrix shape: {}".format(matrix.shape)
-        embedding_offsets.debug_print()
+        logger.info("Term matrix shape: {}".format(matrix.shape))
+        embedding_offsets.log_info()
 
     return matrix

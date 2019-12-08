@@ -1,4 +1,8 @@
+import logging
 from arekit.common.embeddings.base import Embedding
+
+
+logger = logging.getLogger(__name__)
 
 
 class TermsEmbeddingOffsets(object):
@@ -87,11 +91,11 @@ class TermsEmbeddingOffsets(object):
 
     # region debug methods
 
-    def debug_print(self):
-        print "Term embedding matrix details ..."
-        print "\t\tWords count: {}".format(self.__words_count)
-        print "\t\tMissed words count: {}".format(self.__custom_words_count)
-        print "\t\tTokens count: {}".format(self.__tokens_count)
-        print "\t\tFrames count: {}".format(self.__frames_count)
+    def log_info(self):
+        logger.info("Term embedding matrix details ...")
+        logger.info("\t\tWords count: {}".format(self.__words_count))
+        logger.info("\t\tMissed words count: {}".format(self.__custom_words_count))
+        logger.info("\t\tTokens count: {}".format(self.__tokens_count))
+        logger.info("\t\tFrames count: {}".format(self.__frames_count))
 
     # endregion

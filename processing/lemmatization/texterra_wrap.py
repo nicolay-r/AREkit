@@ -1,5 +1,10 @@
+import logging
+
 import texterra
 from arekit.processing.lemmatization.base import Stemmer
+
+
+logger = logging.getLogger(__name__)
 
 
 class TexterraLemmatizationWrap(Stemmer):
@@ -15,7 +20,7 @@ class TexterraLemmatizationWrap(Stemmer):
         url = default_url if host is None else host
 
         if debug:
-            print "Connecting to Texterra server: {}".format(url)
+            logger.info("Connecting to Texterra server: {}".format(url))
 
         self.__t = texterra.API(host=url)
 
@@ -27,6 +32,12 @@ class TexterraLemmatizationWrap(Stemmer):
     def lemmatize_to_str(self, text, remove_new_lines=True):
         lemmas = self.__lemmatize(text)
         return " ".join(lemmas)
+
+    def is_adjective(self, pos_type):
+        raise NotImplementedError()
+
+    def is_noun(self, pos_type):
+        raise NotImplementedError()
 
     # endregion
 
@@ -40,7 +51,7 @@ class TexterraLemmatizationWrap(Stemmer):
                 i, j, original, lemma = l
                 result_lemma = lemma.strip()
                 lemmas.append(result_lemma if len(result_lemma) > 0 else original)
-                print '"{}"'.format(lemma.encode('utf-8'))
+                logger.info('"{}"'.format(lemma.encode('utf-8')))
         return lemmas
 
     # endregion

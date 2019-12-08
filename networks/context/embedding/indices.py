@@ -1,4 +1,5 @@
 import collections
+import logging
 
 import numpy as np
 
@@ -12,6 +13,9 @@ from arekit.processing.text.tokens import Tokens
 from arekit.common.embeddings.base import Embedding
 from arekit.common.embeddings.tokens import TokenEmbedding
 from arekit.networks.context.debug import DebugKeys
+
+
+logger = logging.getLogger(__name__)
 
 
 # region private functions
@@ -80,10 +84,10 @@ def iter_embedding_indices_for_terms(terms,
         yield index
 
     if DebugKeys.EmbeddingIndicesPercentWordsFound:
-        print "Words found: {} ({}%)".format(debug_words_found,
-                                             100.0 * debug_words_found / debug_words_count)
-        print "Words custom: {} ({}%)".format(debug_words_count - debug_words_found,
-                                              100.0 * (debug_words_count - debug_words_found) / debug_words_count)
+        logger.info("Words found: {} ({}%)".format(debug_words_found,
+                                             100.0 * debug_words_found / debug_words_count))
+        logger.info("Words custom: {} ({}%)".format(debug_words_count - debug_words_found,
+                                              100.0 * (debug_words_count - debug_words_found) / debug_words_count))
 
 
 def iter_pos_indices_for_terms(terms, pos_tagger):

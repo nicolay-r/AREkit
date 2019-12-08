@@ -1,6 +1,8 @@
 import os
+import logging
 import numpy as np
 import tensorflow as tf
+
 from tensorflow.python.training.saver import Saver
 
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
@@ -13,6 +15,9 @@ from arekit.networks.network_io import NetworkIO
 from arekit.networks.network import NeuralNetwork
 from arekit.networks.data_type import DataType
 from arekit.networks.predict_log import NetworkInputDependentVariables
+
+
+logger = logging.getLogger(__name__)
 
 
 # TODO. Implement and apply method, which is assumes to receive a text from
@@ -106,7 +111,7 @@ class TensorflowModel(object):
 
         if load_model:
             save_path = self.__io.create_model_state_filepath()
-            print "Loading model: {}".format(save_path)
+            logger.info("Loading model: {}".format(save_path))
             self.load_model(save_path)
 
         self.fit()
@@ -168,7 +173,7 @@ class TensorflowModel(object):
 
         operation_cancel = OperationCancellation()
         minibatches = list(self.get_bags_collection(DataType.Train).iter_by_groups(self.Config.BagsPerMinibatch))
-        print "Minibatches passing per epoch count: {}".format(len(minibatches))
+        logger.info("Minibatches passing per epoch count: {}".format(len(minibatches)))
 
         for epoch_index in xrange(self.Config.Epochs):
 
@@ -243,8 +248,6 @@ class TensorflowModel(object):
     def __fit_epoch(self, minibatches):
         assert(isinstance(minibatches, list))
 
-        # self.get_bags_collection_helper(DataType.Train).print_log_statistics()
-
         total_cost = 0
         total_acc = 0
         groups_count = 0
@@ -257,7 +260,6 @@ class TensorflowModel(object):
             feed_dict = self.create_feed_dict(minibatch, data_type=DataType.Train)
 
             hidden_list = list(self.Network.iter_hidden_parameters())
-            hidden_names = [name for name, _ in hidden_list]
             fetches_default = [self.Optimiser, self.Network.Cost, self.Network.Accuracy]
             fetches_hidden = [tensor for _, tensor in hidden_list]
 

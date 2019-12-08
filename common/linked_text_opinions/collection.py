@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
-import cPickle as pickle
+import logging
 import collections
+import cPickle as pickle
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.collection import TextOpinionCollection
+
+
+logger = logging.getLogger(__name__)
 
 
 class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
@@ -101,7 +105,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         if self.__labels_defined[text_opinion_id] is not False:
             # assert(text_opinion.Sentiment == label)
             if text_opinion.Sentiment != label:
-                print "[Warning]: labels collision detected!"
+                logger.info("[Warning]: labels collision detected!")
             return
 
         text_opinion.set_label(label)

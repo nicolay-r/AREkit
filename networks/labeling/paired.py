@@ -1,15 +1,17 @@
+import logging
 import numpy as np
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.end_type import EntityEndType
-
 from arekit.common.labels.base import Label
 from arekit.common.labels.pair import LabelPair
-
 from arekit.networks.context.configurations.base import LabelCalculationMode
 from arekit.networks.context.debug import DebugKeys
 from arekit.networks.labeling.base import LabelsHelper
+
+
+logger = logging.getLogger(__name__)
 
 
 class PairedLabelsHelper(LabelsHelper):
@@ -38,8 +40,8 @@ class PairedLabelsHelper(LabelsHelper):
                               backward=Label.from_int(np.sign(sum(backwards))))
 
         if DebugKeys.PredictLabel:
-            print [l.to_int() for l in text_opinion_labels]
-            print "Result: {}".format(label.to_int())
+            logger.info([l.to_int() for l in text_opinion_labels])
+            logger.info("Result: {}".format(label.to_int()))
 
         # TODO: Correct label
 

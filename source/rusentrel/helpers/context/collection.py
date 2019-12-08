@@ -1,9 +1,13 @@
+import logging
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.collection import TextOpinionCollection
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
+
+
+logger = logging.getLogger(__name__)
 
 
 class RuSentRelTextOpinionCollection(TextOpinionCollection):
@@ -77,14 +81,14 @@ class RuSentRelTextOpinionCollection(TextOpinionCollection):
 
         if source_entities is None:
             if debug:
-                print "Appropriate entity for '{}'->'...' has not been found".format(
-                    opinion.SourceValue.encode('utf-8'))
+                logger.info("Appropriate entity for '{}'->'...' has not been found".format(
+                    opinion.SourceValue.encode('utf-8')))
             return []
 
         if target_entities is None:
             if debug:
-                print "Appropriate entity for '...'->'{}' has not been found".format(
-                    opinion.TargetValue.encode('utf-8'))
+                logger.info("Appropriate entity for '...'->'{}' has not been found".format(
+                    opinion.TargetValue.encode('utf-8')))
             return []
 
         text_opinions = []

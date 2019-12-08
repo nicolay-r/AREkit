@@ -1,6 +1,11 @@
+import logging
+
 from arekit.common.synonyms import SynonymsCollection
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
+
+
+logger = logging.getLogger(__name__)
 
 
 class RuSentRelSynonymsCollection(SynonymsCollection):
@@ -41,7 +46,7 @@ class RuSentRelSynonymsCollection(SynonymsCollection):
                 id = SynonymsCollection.create_synonym_id(stemmer, value)
 
                 if id in by_synonym and debug:
-                    print "Collection already has a value '{}'. Skipped".format(value.encode('utf-8'))
+                    logger.info("Collection already has a value '{}'. Skipped".format(value.encode('utf-8')))
                     continue
 
                 synonym_list.append(value)

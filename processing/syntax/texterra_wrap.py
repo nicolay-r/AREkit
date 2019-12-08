@@ -1,6 +1,10 @@
 import texterra
+import logging
 from texterra.syntaxtree import SyntaxTree
 from arekit.processing.syntax.base import SyntaxParser, SyntaxAnalysisResult
+
+
+logger = logging.getLogger(__name__)
 
 
 class TexterraSyntaxParser(SyntaxParser):
@@ -16,7 +20,7 @@ class TexterraSyntaxParser(SyntaxParser):
         url = default_url if host is None else host
 
         if debug:
-            print "Connecting to Texterra server: {}".format(url)
+            logger.info("Connecting to Texterra server: {}".format(url))
 
         self.t = texterra.API(host=url)
 
