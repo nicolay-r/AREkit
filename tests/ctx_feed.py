@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+import logging
 
 from arekit.common.labels.base import PositiveLabel
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
@@ -70,13 +71,16 @@ def test_ctx_feed(network, network_config, create_minibatch_func, display_values
         hidden_values = result[len(fetches_default):]
         for i, value in enumerate(hidden_values):
             if display_values:
-                print 'Value type: {}'.format(type(value))
+                logger.info('Value type: {}'.format(type(value)))
             if display_values:
-                print 'Hidden parameter "{}": {}'.format(hidden_names[i], value)
+                logger.info('Hidden parameter "{}": {}'.format(hidden_names[i], value))
 
 
 if __name__ == "__main__":
 
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.DEBUG)
+
     for cfg, network in contexts_supported():
-        print "Feed to the network: {}".format(type(network))
+        logger.debug("Feed to the network: {}".format(type(network)))
         test_ctx_feed(network, cfg, create_minibatch)

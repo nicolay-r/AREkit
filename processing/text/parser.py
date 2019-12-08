@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 import collections
-
+import logging
 from arekit.processing.text.parsed import ParsedText
 from arekit.processing.text.tokens import Tokens
 from arekit.processing.text.token import Token
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class TextParser:
@@ -18,13 +22,13 @@ class TextParser:
         pass
 
     @staticmethod
-    def parse(text, keep_tokens=False, stemmer=None, debug=False):
+    def parse(text, keep_tokens=False, stemmer=None):
         assert(isinstance(text, unicode))
-        terms = TextParser.__parse_core(text, keep_tokens, debug=debug)
+        terms = TextParser.__parse_core(text, keep_tokens)
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
     @staticmethod
-    def parse_string_list(string_iter, keep_tokens=False, stemmer=None, debug=False):
+    def parse_string_list(string_iter, keep_tokens=False, stemmer=None):
         assert(isinstance(string_iter, collections.Iterable))
 
         terms = []
@@ -32,7 +36,7 @@ class TextParser:
             if not isinstance(text, unicode):
                 terms.append(text)
                 continue
-            new_terms = TextParser.__parse_core(text, keep_tokens, debug=debug)
+            new_terms = TextParser.__parse_core(text, keep_tokens)
             terms.extend(new_terms)
 
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
@@ -49,8 +53,10 @@ class TextParser:
         terms = [__term_or_token(t) for t in terms]
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
+    # region private methods
+
     @staticmethod
-    def __parse_core(text, keep_tokens=False, debug=False):
+    def __parse_core(text, keep_tokens=False):
         """
         Separates sentence into list of parsed_news
 
@@ -65,8 +71,7 @@ class TextParser:
         words = [word.strip(u' ') for word in text.split(u' ')]
         terms = TextParser.__process_words(words, keep_tokens)
 
-        if debug:
-            TextParser.__print(terms)
+        TextParser.__log_debug(terms)
 
         return terms
 
@@ -149,12 +154,13 @@ class TextParser:
         return Tokens.try_create(term)
 
     @staticmethod
-    def __print(terms):
+    def __log_debug(terms):
         for term in terms:
             if isinstance(term, Token):
-                print u'"TOKEN: {}, {}" '.format(
+                logger.debug(u'"TOKEN: {}, {}" '.format(
                     term.get_original_value(),
-                    term.get_token_value()).decode('utf-8')
+                    term.get_token_value()).decode('utf-8'))
             else:
-                print u'"WORD: {}" '.format(term).decode('utf-8')
+                logger.debug(u'"WORD: {}" '.format(term).decode('utf-8')
 
+    # endregion

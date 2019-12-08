@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import logging
+
 import numpy as np
 
 from arekit.networks.context.architectures.att_hidden_bilstm import AttentionHiddenBiLSTM
@@ -65,7 +67,10 @@ def contexts_supported():
 
 if __name__ == "__main__":
 
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.DEBUG)
+
     for config, network in contexts_supported():
-        print "Compile: {}".format(type(network))
+        logger.debug("Compile: {}".format(type(network)))
         init_config(config)
         network.compile(config, reset_graph=True)

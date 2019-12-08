@@ -7,7 +7,6 @@ class RelationLexicon(object):
         assert(isinstance(df, pd.DataFrame))
         self.__check(df)
         self.__lexicon = df
-        print self.__lexicon.index
 
     @classmethod
     def from_csv(cls, filepath, separator=','):

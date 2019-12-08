@@ -1,6 +1,10 @@
+import logging
 import numpy as np
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.common.embeddings.base import Embedding
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class RusvectoresEmbedding(Embedding):
@@ -60,8 +64,9 @@ class RusvectoresEmbedding(Embedding):
             c_i += c_l
             count += 1
 
-        # w = u''.join([u'?' if i in missings else ch for i, ch in enumerate(word)])
-        # print u'Embedded: {}'.format(w).encode('utf-8')
+        w_debug = u''.join([u'?' if i in missings else ch
+                            for i, ch in enumerate(word)])
+        logger.debug(u'Embedded: {}'.format(w_debug).encode('utf-8'))
 
         return vector, count
 

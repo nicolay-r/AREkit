@@ -1,6 +1,11 @@
+import logging
 from collections import OrderedDict
 from arekit.networks.context.debug import DebugKeys
 from arekit.networks.context.sample import InputSample
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class MiniBatch(object):
@@ -46,10 +51,10 @@ class MiniBatch(object):
 
     @staticmethod
     def debug_output(result):
-        print "-------------------"
+        logger.debug("-------------------")
         for key, value in result.iteritems():
-            print "{}: {}".format(key, value)
-        print "-------------------"
+            logger.debug("{}: {}".format(key, value))
+        logger.debug("-------------------")
 
     # endregion
 
