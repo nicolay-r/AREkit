@@ -1,5 +1,5 @@
+import logging
 import numpy as np
-from boto.cloudfront import logging
 
 from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from arekit.common.embeddings.base import Embedding

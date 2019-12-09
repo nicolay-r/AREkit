@@ -159,8 +159,8 @@ class TextParser:
             if isinstance(term, Token):
                 logger.debug(u'"TOKEN: {}, {}" '.format(
                     term.get_original_value(),
-                    term.get_token_value()).decode('utf-8'))
+                    term.get_token_value()))
             else:
-                logger.debug(u'"WORD: {}" '.format(term).decode('utf-8'))
+                logger.debug(u'"WORD: {}" '.format(term))
 
     # endregion
