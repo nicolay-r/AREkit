@@ -28,7 +28,6 @@ class TextOpinionCollection(object):
 
     # region public methods
 
-    # TODO. IN MEMORY implementation.
     def register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
         self.__text_opinions.append(text_opinion)

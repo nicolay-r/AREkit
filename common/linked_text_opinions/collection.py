@@ -34,7 +34,6 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         # labeling defined
         self.__labels_defined = []
 
-    # TODO. Limitation: IN MEMORY implementation.
     def try_add_linked_text_opinions(self,
                                      linked_text_opinions,
                                      check_opinion_correctness):
@@ -75,7 +74,6 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
     def set_none_for_last_text_opinion(self):
         self.__next_opinion_id[-1] = self.NO_NEXT_OPINION
 
-    # TODO. Limitation: IN MEMORY implementation.
     def register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
         super(LabeledLinkedTextOpinionCollection, self).register_text_opinion(text_opinion)
