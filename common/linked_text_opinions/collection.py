@@ -34,6 +34,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         # labeling defined
         self.__labels_defined = []
 
+    # TODO. Limitation: IN MEMORY implementation.
     def try_add_linked_text_opinions(self,
                                      linked_text_opinions,
                                      check_opinion_correctness):
@@ -74,6 +75,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
     def set_none_for_last_text_opinion(self):
         self.__next_opinion_id[-1] = self.NO_NEXT_OPINION
 
+    # TODO. Limitation: IN MEMORY implementation.
     def register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
         super(LabeledLinkedTextOpinionCollection, self).register_text_opinion(text_opinion)
@@ -87,14 +89,15 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         del self.__text_opinion_labels[-1]
         del self.__labels_defined[-1]
 
+    # region public `check` methods
+
     def check_all_text_opinions_has_labels(self):
         return not (False in self.__labels_defined)
 
     def check_all_text_opinions_without_labels(self):
         return not (True in self.__labels_defined)
 
-    def get_labels_defined_count(self):
-        return self.__labels_defined.count(True)
+    # endregion
 
     def apply_label(self, label, text_opinion_id):
         assert(isinstance(text_opinion_id, int))
@@ -111,14 +114,23 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         text_opinion.set_label(label)
         self.__labels_defined[text_opinion_id] = True
 
+    # region public `get` methods
+
+    def get_labels_defined_count(self):
+        return self.__labels_defined.count(True)
+
     def get_original_label(self, text_opinion_id):
         assert(isinstance(text_opinion_id, int))
         return self.__text_opinion_labels[text_opinion_id]
+
+    # endregion
 
     def reset_labels(self):
         for text_opinion in self:
             text_opinion.set_label(self.__text_opinion_labels[text_opinion.TextOpinionID])
         self.__labels_defined = [False] * len(self.__labels_defined)
+
+    # region public serialization methods
 
     def save(self, pickle_filepath):
         pickle.dump(self, open(pickle_filepath, 'wb'))
@@ -126,6 +138,8 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
     @classmethod
     def load(cls, pickle_filepath):
         return pickle.load(open(pickle_filepath, 'rb'))
+
+    # endregion
 
     # region iter methods
 

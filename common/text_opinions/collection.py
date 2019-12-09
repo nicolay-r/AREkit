@@ -3,6 +3,12 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 
 
 class TextOpinionCollection(object):
+    """
+    Collection of text-level opinions
+
+    Limitations:
+        IN MEMORY implemenatation.
+    """
 
     def __init__(self, parsed_news_collection, text_opinions):
         assert(isinstance(parsed_news_collection, ParsedNewsCollection) or
@@ -20,6 +26,9 @@ class TextOpinionCollection(object):
 
     # endregion
 
+    # region public methods
+
+    # TODO. IN MEMORY implementation.
     def register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
         self.__text_opinions.append(text_opinion)
@@ -36,6 +45,8 @@ class TextOpinionCollection(object):
             if id not in unique_news_ids:
                 unique_news_ids.add(id)
                 yield id
+
+    # endregion
 
     # region base methods
 

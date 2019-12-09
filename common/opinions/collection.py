@@ -5,7 +5,8 @@ from arekit.common.synonyms import SynonymsCollection
 
 
 class OpinionCollection(object):
-    """ Collection of sentiment opinions between entities
+    """
+    Document-level Collection of sentiment opinions between entities
     """
 
     def __init__(self, opinions, synonyms):
@@ -15,16 +16,7 @@ class OpinionCollection(object):
         self.__synonyms = synonyms
         self.__by_synonyms = self.__create_index()
 
-    def __add_synonym(self, value):
-        if self.__synonyms.IsReadOnly:
-            raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
-        self.__synonyms.add_synonym_value(value)
-
-    def __create_index(self):
-        index = {}
-        for opinion in self.__opinions:
-            OpinionCollection.__add_opinion(opinion, index, self.__synonyms, check=True)
-        return index
+    # region public methods
 
     def has_synonymous_opinion(self, opinion, sentiment=None):
         assert(isinstance(opinion, Opinion))
@@ -59,6 +51,30 @@ class OpinionCollection(object):
         self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
         self.__opinions.append(opinion)
 
+    def iter_sentiment(self, sentiment):
+        assert(isinstance(sentiment, Label))
+        for o in self.__opinions:
+            if o.sentiment == sentiment:
+                yield o
+
+    def save_to_file(self, filepath):
+        raise NotImplementedError()
+
+    # endregion
+
+    # region private methods
+
+    def __add_synonym(self, value):
+        if self.__synonyms.IsReadOnly:
+            raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
+        self.__synonyms.add_synonym_value(value)
+
+    def __create_index(self):
+        index = {}
+        for opinion in self.__opinions:
+            OpinionCollection.__add_opinion(opinion, index, self.__synonyms, check=True)
+        return index
+
     @staticmethod
     def __add_opinion(opinion, collection, synonyms, check=True):
         key = opinion.create_synonym_id(synonyms)
@@ -73,14 +89,9 @@ class OpinionCollection(object):
         collection[key] = opinion
         return True
 
-    def iter_sentiment(self, sentiment):
-        assert(isinstance(sentiment, Label))
-        for o in self.__opinions:
-            if o.sentiment == sentiment:
-                yield o
+    # endregion
 
-    def save_to_file(self, filepath):
-        raise NotImplementedError()
+    # region base methods
 
     def __len__(self):
         return len(self.__opinions)
@@ -89,3 +100,4 @@ class OpinionCollection(object):
         for o in self.__opinions:
             yield o
 
+    # endregion
