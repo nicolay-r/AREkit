@@ -64,19 +64,53 @@ class BagsCollection:
         while len(last_bag) < bag_size:
             last_bag.add_sample(last_bag.Samples[-1])
 
+    @staticmethod
+    def __is_bag_contains_text_opinion_from_set(bags_list, text_opinion_ids_set):
+        """
+        Check the presence of at least single sample in text_opinion_ids_set
+        text_opinion_ids_set: set or None
+            set of opinion ids.
+            None -- keep all bags.
+        """
+
+        if text_opinion_ids_set is None:
+            return True
+
+        for bag in bags_list:
+            for sample in bag:
+                if sample.TextOpinionID in text_opinion_ids_set:
+                    return True
+
+        return False
+
     # endregion
 
     # region public methods
 
-    def iter_by_groups(self, bags_per_group):
+    def iter_by_groups(self, bags_per_group, text_opinion_ids_set):
+        """
+        text_opinion_ids_set: set or None
+            set of opinion ids.
+            None -- keep all bags.
+        """
         assert(type(bags_per_group) == int and bags_per_group > 0)
+        assert(isinstance(text_opinion_ids_set, set) or text_opinion_ids_set is None)
+
+        def __check(bags_list):
+            return self.__is_bag_contains_text_opinion_from_set(
+                bags_list=bags_list,
+                text_opinion_ids_set=text_opinion_ids_set)
 
         groups_count = len(self.__bags) / bags_per_group
         end = 0
         for index in xrange(groups_count):
+
             begin = index * bags_per_group
             end = begin + bags_per_group
-            yield self.__bags[begin:end]
+            bags = self.__bags[begin:end]
+
+            if __check(bags):
+                yield bags
 
         last_group = []
         while len(last_group) != bags_per_group:
@@ -84,7 +118,9 @@ class BagsCollection:
                 end = 0
             last_group.append(self.__bags[end])
             end += 1
-        yield last_group
+
+        if __check(last_group):
+            yield last_group
 
     # endregion
 

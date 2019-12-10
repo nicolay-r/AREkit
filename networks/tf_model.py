@@ -128,9 +128,11 @@ class TensorflowModel(object):
 
     def predict_core(self,
                      dest_data_type,
-                     labeling_callback):
+                     labeling_callback,
+                     doc_ids_set):
         assert(isinstance(dest_data_type, unicode))
         assert(callable(labeling_callback))
+        assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
         text_opinions = self.get_text_opinions_collection(dest_data_type)
         assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
@@ -139,7 +141,7 @@ class TensorflowModel(object):
 
         # Predict.
         self.before_labeling_func_application(text_opinions)
-        predict_log = labeling_callback(text_opinions, dest_data_type)
+        predict_log = labeling_callback(text_opinions, dest_data_type, doc_ids_set)
         self.after_labeling_func_application(text_opinions)
 
         self.before_evaluation(dest_data_type)
@@ -193,9 +195,19 @@ class TensorflowModel(object):
         if self.Callback is not None:
             self.Callback.on_fit_finished()
 
-    def predict(self, dest_data_type=DataType.Test):
+    def predict(self, dest_data_type=DataType.Test, doc_ids_set=None):
+        """
+        dest_data_type: unicode
+            DataType.Train or DataTypes.Test
+        doc_ids_set: set or None
+            set of documents says which documents and related text opinions should be used in predict process.
+            None -- ignore the related parameter, i.e. utilize all documents in `predict` procedure.
+        """
+        assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
+
         eval_result, predict_log = self.predict_core(dest_data_type=dest_data_type,
-                                                     labeling_callback=self.__text_opinions_labeling)
+                                                     labeling_callback=self.__text_opinions_labeling,
+                                                     doc_ids_set=doc_ids_set)
         return eval_result, predict_log
 
     def get_hidden_parameters(self):
@@ -291,9 +303,10 @@ class TensorflowModel(object):
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess
 
-    def __text_opinions_labeling(self, text_opinions, dest_data_type):
+    def __text_opinions_labeling(self, text_opinions, dest_data_type, doc_ids_set):
         assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
         assert(isinstance(dest_data_type, unicode))
+        assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
         predict_log = NetworkInputDependentVariables()
         idh_names = []
@@ -302,7 +315,17 @@ class TensorflowModel(object):
             idh_names.append(name)
             idh_tensors.append(tensor)
 
-        for bags_group in self.get_bags_collection(dest_data_type).iter_by_groups(self.Config.BagsPerMinibatch):
+        text_opinion_ids_set = None
+        if doc_ids_set is not None:
+            __text_opinion_ids = [text_opinion.TextOpinionID for text_opinion in
+                                  text_opinions.iter_text_opinons_in_doc_ids_set(doc_ids_set)]
+            text_opinion_ids_set = set(__text_opinion_ids)
+
+        bags_group_it = self.get_bags_collection(dest_data_type).iter_by_groups(
+            bags_per_group=self.Config.BagsPerMinibatch,
+            text_opinion_ids_set=text_opinion_ids_set)
+
+        for bags_group in bags_group_it:
 
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch, data_type=dest_data_type)

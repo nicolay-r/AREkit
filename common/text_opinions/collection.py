@@ -45,6 +45,12 @@ class TextOpinionCollection(object):
                 unique_news_ids.add(id)
                 yield id
 
+    def iter_text_opinons_in_doc_ids_set(self, doc_ids_set):
+        assert(isinstance(doc_ids_set, set))
+        for text_opinion in self.__text_opinions:
+            if text_opinion.NewsID in doc_ids_set:
+                yield text_opinion
+
     # endregion
 
     # region base methods
