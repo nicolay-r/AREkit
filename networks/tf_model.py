@@ -180,11 +180,11 @@ class TensorflowModel(object):
             if operation_cancel.IsCancelled:
                 break
 
-            e_cost, e_acc = self.__fit_epoch(minibatches=minibatches)
+            e_fit_cost, e_fit_acc = self.__fit_epoch(minibatches=minibatches)
 
             if self.Callback is not None:
-                self.Callback.on_epoch_finished(avg_cost=e_cost,
-                                                avg_acc=e_acc,
+                self.Callback.on_epoch_finished(avg_fit_cost=e_fit_cost,
+                                                avg_fit_acc=e_fit_acc,
                                                 epoch_index=epoch_index,
                                                 operation_cancel=operation_cancel)
 
@@ -248,8 +248,8 @@ class TensorflowModel(object):
     def __fit_epoch(self, minibatches):
         assert(isinstance(minibatches, list))
 
-        total_cost = 0
-        total_acc = 0
+        fit_total_cost = 0
+        fit_total_acc = 0
         groups_count = 0
 
         np.random.shuffle(minibatches)
@@ -267,14 +267,14 @@ class TensorflowModel(object):
                                       feed_dict=feed_dict)
             cost = result[1]
 
-            total_cost += np.mean(cost)
-            total_acc += result[2]
+            fit_total_cost += np.mean(cost)
+            fit_total_acc += result[2]
             groups_count += 1
 
         if DebugKeys.FitSaveTensorflowModelState:
             self.save_model(save_path=self.IO.get_model_filepath())
 
-        return total_cost / groups_count, total_acc / groups_count
+        return fit_total_cost / groups_count, fit_total_acc / groups_count
 
     def __notify_initialized(self):
         if self.__callback is not None:
