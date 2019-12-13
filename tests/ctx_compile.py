@@ -44,25 +44,25 @@ def init_config(config):
 
 
 def contexts_supported():
-    return [# (SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
-            # (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
-            # (AttentionHiddenBiLSTMConfig(), AttentionHiddenBiLSTM()),
-            # (CNNConfig(), VanillaCNN()),
-            # (CNNConfig(), PiecewiseCNN()),
-            # (RNNConfig(), RNN()),
-            # (BiLSTMConfig(), BiLSTM()),
-            # (RCNNConfig(), RCNN()),
-            # (IANFramesConfig(), IANFrames()),
+    return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
+            (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
+            (AttentionHiddenBiLSTMConfig(), AttentionHiddenBiLSTM()),
+            (CNNConfig(), VanillaCNN()),
+            (CNNConfig(), PiecewiseCNN()),
+            (RNNConfig(), RNN()),
+            (BiLSTMConfig(), BiLSTM()),
+            (RCNNConfig(), RCNN()),
+            (IANFramesConfig(), IANFrames()),
 
             (IANAttitudeEndsBasedConfig(), IANAttitudeEndsBased()),
 
-            # (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
-            # (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),
+            (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
+            (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),
 
-            # (AttentionFramesCNNConfig(), AttentionFramesCNN()),
-            # (AttentionFramesPCNNConfig(), AttentionFramesPCNN()),
+            (AttentionFramesCNNConfig(), AttentionFramesCNN()),
+            (AttentionFramesPCNNConfig(), AttentionFramesPCNN()),
 
-            # (AttentionHiddenZYangBiLSTMConfig(), AttentionHiddenZYangBiLSTM())
+            (AttentionHiddenZYangBiLSTMConfig(), AttentionHiddenZYangBiLSTM())
             ]
 
 
