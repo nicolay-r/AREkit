@@ -87,7 +87,7 @@ class BagsCollection:
 
     # region public methods
 
-    def iter_by_groups(self, bags_per_group, text_opinion_ids_set):
+    def iter_by_groups(self, bags_per_group, text_opinion_ids_set=None):
         """
         text_opinion_ids_set: set or None
             set of opinion ids.
