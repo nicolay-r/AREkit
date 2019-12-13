@@ -28,15 +28,32 @@ class IANAttitudeEndsBased(IANFrames):
                                      shape=[self.Config.BatchSize, self.Config.MaxAspectLength],
                                      name=u'ctx_' + self.I_ENDS)
 
+    @staticmethod
+    def __compose_opinion_ends_from_tensors(obj_ind_input, subj_ind_input):
+        assert(isinstance(obj_ind_input, tf.Tensor))
+        assert(isinstance(subj_ind_input, tf.Tensor))
+        i_obj_ind = tf.expand_dims(obj_ind_input, axis=1)
+        i_subj_ind = tf.expand_dims(subj_ind_input, axis=1)
+        return tf.concat((i_obj_ind, i_subj_ind), axis=1)
+
+    @staticmethod
+    def __compose_opinion_ends_from_arrays(obj_ind_input, subj_ind_input):
+        assert(isinstance(obj_ind_input, list))
+        assert(isinstance(subj_ind_input, list))
+        i_obj_ind = np.expand_dims(obj_ind_input, axis=1)
+        i_subj_ind = np.expand_dims(subj_ind_input, axis=1)
+        return np.concatenate((i_obj_ind, i_subj_ind), axis=1)
+
+    def update_network_specific_parameters(self):
+        self.__ends = self.__compose_opinion_ends_from_tensors(
+            obj_ind_input=self.get_input_parameter(InputSample.I_OBJ_IND),
+            subj_ind_input=self.get_input_parameter(InputSample.I_SUBJ_IND))
+
     def create_feed_dict(self, input, data_type):
         feed_dict = super(IANAttitudeEndsBased, self).create_feed_dict(input=input,
                                                                        data_type=data_type)
-
-        _i_obj_ind = np.expand_dims(input[InputSample.I_OBJ_IND], axis=1)
-        _i_subj_ind = np.expand_dims(input[InputSample.I_SUBJ_IND], axis=1)
-        _ends = np.concatenate((_i_obj_ind, _i_subj_ind), axis=1)
-
-        feed_dict[self.__ends] = _ends
+        feed_dict[self.__ends] = self.__compose_opinion_ends_from_arrays(
+            obj_ind_input=input[InputSample.I_OBJ_IND],
+            subj_ind_input=input[InputSample.I_SUBJ_IND])
 
         return feed_dict
-

@@ -119,6 +119,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         """
         pass
 
+    def update_network_specific_parameters(self):
+        pass
 
     # region body
 

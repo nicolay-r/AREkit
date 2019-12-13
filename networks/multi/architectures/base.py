@@ -148,6 +148,8 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
                 self.__context_network.set_input_embedding_dropout_keep_prob(self.__dropout_emb_keep_prob)
                 self.__context_network.set_input_rnn_keep_prob(self.__dropout_rnn_keep_prob)
 
+                self.__context_network.update_network_specific_parameters()
+
                 embedded_terms = self.__context_network.init_embedded_input()
                 context_embedding = self.__context_network.init_context_embedding(embedded_terms)
 
