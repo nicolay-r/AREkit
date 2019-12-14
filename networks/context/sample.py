@@ -155,7 +155,7 @@ class InputSample(object):
             custom_word_embedding=config.CustomWordEmbedding,
             token_embedding=config.TokenEmbedding,
             frames_embedding=config.FrameEmbedding,
-            use_entity_types=config.UseEntityTypes)
+            use_entity_types=config.UseEntityTypesInEmbedding)
 
         x_indices = list(x_indices)
 

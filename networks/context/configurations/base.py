@@ -54,7 +54,8 @@ class DefaultNetworkConfig(object):
     __dist_emb_size = 5
     __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
 
-    __use_entity_types = True
+    __use_entity_types_in_embedding = True              # Affects on result embedding of related entity: entity + type.
+    __use_entity_types_as_context_feature = False       # TODO. Context based feature, i.e. declared for all terms
 
     __l2_reg = 0.0
 
@@ -119,9 +120,13 @@ class DefaultNetworkConfig(object):
 
     # region public methods
 
-    def modify_use_entity_types(self, value):
+    def modify_use_entity_types_in_embedding(self, value):
         assert(isinstance(value, bool))
-        self.__use_entity_types = value
+        self.__use_entity_types_in_embedding = value
+
+    def modify_use_entity_types_as_context_feature(self, value):
+        assert(isinstance(value, bool))
+        self.__use_entity_types_as_context_feature = value
 
     def modify_terms_per_context(self, value):
         assert(isinstance(value, int) and value > 0)
@@ -314,8 +319,12 @@ class DefaultNetworkConfig(object):
         return self.__frames_per_context
 
     @property
-    def UseEntityTypes(self):
-        return self.__use_entity_types
+    def UseEntityTypesInEmbedding(self):
+        return self.__use_entity_types_in_embedding
+
+    @property
+    def UseEntityTypeAsContextFeature(self):
+        return self.__use_entity_types_as_context_feature
 
     # endregion
 
@@ -339,7 +348,8 @@ class DefaultNetworkConfig(object):
             ("base:sentiment_emb_size", self.SentimentEmbeddingSize),
             ("base:dist_embedding_size", self.DistanceEmbeddingSize),
             ("base:text_opinion_label_calc_mode", self.TextOpinionLabelCalculationMode),
-            ("base:use_entity_types", self.UseEntityTypes),
+            ("base:use_entity_types_in_embedding", self.UseEntityTypesInEmbedding),
+            ("base:use_entity_types_as_context_feature", self.UseEntityTypeAsContextFeature),
             ("base:embedding dropout (keep prob)", self.EmbeddingDropoutKeepProb),
             ("base:optimizer", self.Optimiser),
             ("base:learning_rate", self.LearningRate),
