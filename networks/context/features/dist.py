@@ -1,5 +1,6 @@
 import numpy as np
 
+# TODO. Refactoring as static methods.
 
 def distance_feature(position, size):
     result = np.zeros(size)

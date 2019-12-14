@@ -5,6 +5,9 @@ from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 
+# TODO. Refactoring as static method.
+
+
 def compose_frames(text_opinion):
     frames = []
     indices = list(TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion))

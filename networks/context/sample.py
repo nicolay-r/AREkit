@@ -48,6 +48,8 @@ class InputSample(object):
     def __init__(self, X,
                  subj_ind,
                  obj_ind,
+                 # TODO: add syn obj inds.
+                 # TODO: add syn subj inds.
                  dist_from_subj,
                  dist_from_obj,
                  dist_nearest_subj,
@@ -230,6 +232,9 @@ class InputSample(object):
         return cls(X=np.array(x_feature.ValueVector),
                    subj_ind=subj_ind,
                    obj_ind=obj_ind,
+                   # TODO: add syn obj inds.
+                   # TODO: add syn subj inds.
+                   # TODO. + fixed count per context (in config).
                    dist_from_subj=dist_from_subj,
                    dist_from_obj=dist_from_obj,
                    dist_nearest_subj=dist_nearest_subj,
