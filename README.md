@@ -92,11 +92,10 @@ This toolset includes the following instruments and domain-related datasets:
         - ParsedText [[base-class]](processing/text/parsed.py) -- processed text;
         - Tokens [[base-class]](processing/text/tokens.py) -- specific text terms, such as: punctuation signs, numbers, URL-links etc.;
 * **Neural Networks** [[README]](networks/README.md)
-    ![](https://img.shields.io/badge/Tensorflow-1.14.0-yellowgreen.svg)
-    * Network [[base-class]]();
-    * Model [[base-class]]();
-    * IO [[base-class]]();
-    * Callback [[base-class]]();
+    * Network [[base-class]](networks/network.py);
+    * Model [[base-class]](networks/tf_model.py);
+    * IO [[base-class]](networks/network_io.py);
+    * Callback [[base-class]](networks/callback.py);
     * **Attention Architectures**:
         - Multilayer Perceptron (MLP)
             [[code]](networks/attention/architectures/mlp.py) /
