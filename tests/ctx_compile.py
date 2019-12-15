@@ -14,6 +14,7 @@ from arekit.networks.context.architectures.contrib.att_frames_cnn import Attenti
 from arekit.networks.context.architectures.contrib.att_frames_pcnn import AttentionFramesPCNN
 from arekit.networks.context.architectures.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTM
 from arekit.networks.context.architectures.contrib.ian_ends import IANAttitudeEndsBased
+from arekit.networks.context.architectures.contrib.ian_syn_ends import IANAttitudeSynonymEndsBased
 from arekit.networks.context.architectures.ian_frames import IANFrames
 from arekit.networks.context.architectures.pcnn import PiecewiseCNN
 from arekit.networks.context.architectures.rcnn import RCNN
@@ -30,6 +31,7 @@ from arekit.networks.context.configurations.contrib.att_frames_cnn import Attent
 from arekit.networks.context.configurations.contrib.att_frames_pcnn import AttentionFramesPCNNConfig
 from arekit.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
 from arekit.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
+from arekit.networks.context.configurations.contrib.ian_syn_ends import IANAttitudeSynonymEndsBasedConfig
 from arekit.networks.context.configurations.ian_frames import IANFramesConfig
 from arekit.networks.context.configurations.rcnn import RCNNConfig
 from arekit.networks.context.configurations.rnn import RNNConfig
@@ -55,6 +57,7 @@ def contexts_supported():
             (IANFramesConfig(), IANFrames()),
 
             (IANAttitudeEndsBasedConfig(), IANAttitudeEndsBased()),
+            # (IANAttitudeSynonymEndsBasedConfig(), IANAttitudeSynonymEndsBased()),
 
             (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
             (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),
@@ -69,9 +72,9 @@ def contexts_supported():
 if __name__ == "__main__":
 
     logger = logging.getLogger(__name__)
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     for config, network in contexts_supported():
-        logger.debug("Compile: {}".format(type(network)))
+        logger.info("Compile: {}".format(type(network)))
         init_config(config)
         network.compile(config, reset_graph=True)

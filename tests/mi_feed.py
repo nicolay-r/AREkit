@@ -33,7 +33,7 @@ def multiinstances_supported(ctx_config, ctx_network):
 if __name__ == "__main__":
 
     logger = logging.getLogger(__name__)
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     for ctx_config, ctx_network in ctx_feed.contexts_supported():
         for config, network in multiinstances_supported(ctx_config, ctx_network):

@@ -27,6 +27,7 @@ class DefaultNetworkConfig(object):
     __default_stemmer = MystemWrapper()
     __default_pos_tagger = POSMystemWrapper(__default_stemmer.MystemInstance)
     __terms_per_context = 50
+    __synonyms_per_context = 3
     __frames_per_context = 5
     __bags_per_minibatch = 6
     __bag_size = 1
@@ -131,6 +132,10 @@ class DefaultNetworkConfig(object):
     def modify_terms_per_context(self, value):
         assert(isinstance(value, int) and value > 0)
         self.__terms_per_context = value
+
+    def modify_synonyms_per_context(self, value):
+        assert(isinstance(value, int) and value > 0)
+        self.__synonyms_per_context = value
 
     def modify_l2_reg(self, value):
         assert(isinstance(value, float))
@@ -271,6 +276,10 @@ class DefaultNetworkConfig(object):
         return self.__terms_per_context
 
     @property
+    def SynonymsPerContext(self):
+        return self.__synonyms_per_context
+
+    @property
     def UseClassWeights(self):
         return self.__use_class_weights
 
@@ -340,6 +349,7 @@ class DefaultNetworkConfig(object):
             ("base:default_stemmer",  self.Stemmer),
             ("base:default_pos_tagger", self.PosTagger),
             ("base:terms_per_context", self.TermsPerContext),
+            ("base:synonyms_per_context", self.SynonymsPerContext),
             ("base:bags_per_minibatch", self.BagsPerMinibatch),
             ("base:bag_size", self.BagSize),
             ("base:batch_size", self.BatchSize),

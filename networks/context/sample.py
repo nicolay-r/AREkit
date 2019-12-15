@@ -16,6 +16,7 @@ from arekit.networks.context.features.dist import dist_abs_nearest_feature, dist
 from arekit.networks.context.features.frames import compose_frame_roles, compose_frames
 from arekit.networks.context.features.inds import IndicesFeature
 from arekit.networks.context.features.pointers import PointersFeature
+from arekit.networks.context.features.utils import pad_right_or_crop_inplace
 
 
 class InputSample(object):
@@ -27,6 +28,8 @@ class InputSample(object):
 
     # It is important to name with 'I_' prefix
     I_X_INDS = "x_indices"
+    I_SYN_SUBJ_INDS = "syn_subj_inds"
+    I_SYN_OBJ_INDS = "syn_obj_inds"
     I_SUBJ_IND = "subj_inds"
     I_OBJ_IND = "obj_inds"
     I_SUBJ_DISTS = "subj_dist"
@@ -40,6 +43,7 @@ class InputSample(object):
 
     # TODO: Should be -1, but now it is not supported
     FRAME_SENT_ROLES_PAD_VALUE = 0
+    SYNONYMS_PAD_VALUE = 0
     FRAMES_PAD_VALUE = 0
     POS_PAD_VALUE = 0
     X_PAD_VALUE = 0
@@ -48,8 +52,8 @@ class InputSample(object):
     def __init__(self, X,
                  subj_ind,
                  obj_ind,
-                 # TODO: add syn obj inds.
-                 # TODO: add syn subj inds.
+                 syn_subj_inds,
+                 syn_obj_inds,
                  dist_from_subj,
                  dist_from_obj,
                  dist_nearest_subj,
@@ -62,6 +66,8 @@ class InputSample(object):
         assert(isinstance(X, np.ndarray))
         assert(isinstance(subj_ind, int))
         assert(isinstance(obj_ind, int))
+        assert(isinstance(syn_obj_inds, np.ndarray))
+        assert(isinstance(syn_subj_inds, np.ndarray))
         assert(isinstance(dist_from_subj, np.ndarray))
         assert(isinstance(dist_from_obj, np.ndarray))
         assert(isinstance(dist_nearest_subj, np.ndarray))
@@ -78,6 +84,8 @@ class InputSample(object):
             [(InputSample.I_X_INDS, X),
              (InputSample.I_SUBJ_IND, subj_ind),
              (InputSample.I_OBJ_IND, obj_ind),
+             (InputSample.I_SYN_OBJ_INDS, syn_obj_inds),
+             (InputSample.I_SYN_SUBJ_INDS, syn_subj_inds),
              (InputSample.I_SUBJ_DISTS, dist_from_subj),
              (InputSample.I_OBJ_DISTS, dist_from_obj),
              (InputSample.I_NEAREST_SUBJ_DISTS, dist_nearest_subj),
@@ -100,12 +108,15 @@ class InputSample(object):
     @classmethod
     def create_empty(cls, config):
         assert(isinstance(config, DefaultNetworkConfig))
+        blank_synonyms = np.zeros(config.SynonymsPerContext)
         blank_terms = np.zeros(config.TermsPerContext)
         blank_frames = np.full(shape=config.FramesPerContext,
                                fill_value=cls.FRAMES_PAD_VALUE)
         return cls(X=blank_terms,
                    subj_ind=0,
                    obj_ind=1,
+                   syn_subj_inds=blank_synonyms,
+                   syn_obj_inds=blank_synonyms,
                    dist_from_subj=blank_terms,
                    dist_from_obj=blank_terms,
                    pos_indices=blank_terms,
@@ -232,9 +243,12 @@ class InputSample(object):
         return cls(X=np.array(x_feature.ValueVector),
                    subj_ind=subj_ind,
                    obj_ind=obj_ind,
-                   # TODO: add syn obj inds.
-                   # TODO: add syn subj inds.
-                   # TODO. + fixed count per context (in config).
+                   syn_subj_inds=pad_right_or_crop_inplace(lst=syn_subj_inds,
+                                                           pad_size=config.SynonymsPerContext,
+                                                           filler=cls.SYNONYMS_PAD_VALUE),
+                   syn_obj_inds=pad_right_or_crop_inplace(lst=syn_obj_inds,
+                                                          pad_size=config.SynonymsPerContext,
+                                                          filler=cls.SYNONYMS_PAD_VALUE),
                    dist_from_subj=dist_from_subj,
                    dist_from_obj=dist_from_obj,
                    dist_nearest_subj=dist_nearest_subj,

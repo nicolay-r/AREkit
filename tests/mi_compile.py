@@ -18,7 +18,7 @@ def test_mpmi(context_config, context_network):
 if __name__ == "__main__":
 
     logger = logging.getLogger(__name__)
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     for config, network in contexts_supported():
         test_mpmi(config, network)

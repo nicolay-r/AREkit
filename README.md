@@ -50,7 +50,7 @@ List of the toolset dependencies are as follows:
 
 * ![](https://img.shields.io/badge/Pandas-0.20.3-yellowgreen.svg)
 
-* ![](https://img.shields.io/badge/Tensorflow-1.14.0-yellowgreen.svg)
+* Tensorflow-1.6
 
 ### Optional Service Dependencies
 * Named Entity Recognition
@@ -136,8 +136,6 @@ This toolset includes the following instruments and domain-related datasets:
     * **Multi Sentence Based Architectures**:
         - Attention Hidden
             [[code]](networks/multi/architectures/att_hidden.py);
-        - ~~Attention MLP Frames~~
-            [[code]](networks/multi/architectures/att_mlp_frames.py);
         - Max Pooling
             [[code]](networks/multi/architectures/max_pooling.py) /
             [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
