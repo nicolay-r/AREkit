@@ -60,6 +60,7 @@ class AttentionFramesBiLSTM(BiLSTM):
 
         yield u"ATT_Weights", self.__att_alphas
 
+    # TODO. Could be removed.
     def iter_hidden_parameters(self):
         for key, value in super(AttentionFramesBiLSTM, self).iter_hidden_parameters():
             yield key, value

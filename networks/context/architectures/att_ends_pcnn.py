@@ -4,6 +4,8 @@ from arekit.networks.attention.helpers import embedding
 from arekit.networks.context.architectures.pcnn import PiecewiseCNN
 
 
+# TODO. Make nested from base. (Attention PCNN).
+# TODO. This should be base abstract class for AttPCNN (att_pcnn_base.py)
 class AttentionAttitudeEndsPCNN(PiecewiseCNN):
     __attention_var_scope_name = 'attention-model'
 
@@ -23,6 +25,7 @@ class AttentionAttitudeEndsPCNN(PiecewiseCNN):
     def set_att_weights(self, weights):
         self.__att_weights = weights
 
+    # TODO. Make base class but without implementation of the related method.
     def get_att_input(self):
         return self.get_input_entity_pairs()
 
@@ -60,6 +63,7 @@ class AttentionAttitudeEndsPCNN(PiecewiseCNN):
 
         yield u"ATT_Weights", self.__att_weights
 
+    # TODO. Could be removed
     def iter_hidden_parameters(self):
         for key, value in super(AttentionAttitudeEndsPCNN, self).iter_hidden_parameters():
             yield key, value

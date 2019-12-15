@@ -104,6 +104,8 @@ class BaseContextNeuralNetwork(NeuralNetwork):
                          self.get_input_parameter(InputSample.I_OBJ_IND)],
                         axis=-1)
 
+    # TODO. Implement here an ordered synonyms (obj, subj) input.
+
     def set_input_parameter(self, param, value):
         self.__input[param] = value
 

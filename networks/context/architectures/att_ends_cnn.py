@@ -4,6 +4,8 @@ from arekit.networks.attention.helpers import embedding
 from arekit.networks.context.architectures.cnn import VanillaCNN
 
 
+# TODO. Rename. -> AttentionEndsCNN
+# TODO. This class leave as base. (att_cnn_base.py)
 class AttentionCNN(VanillaCNN):
     """
     Author: Yatian Shen, Xuanjing Huang
@@ -28,6 +30,7 @@ class AttentionCNN(VanillaCNN):
     def set_att_weights(self, weights):
         self.__att_weights = weights
 
+    # TODO. Make base class but without implementation of the related method.
     def get_att_input(self):
         return self.get_input_entity_pairs()
 
@@ -66,6 +69,7 @@ class AttentionCNN(VanillaCNN):
 
         yield u"ATT_Weights", self.__att_weights
 
+    # TODO. Could be removed
     def iter_hidden_parameters(self):
         for key, value in super(AttentionCNN, self).iter_hidden_parameters():
             yield key, value
