@@ -2,7 +2,7 @@
 
 ![](logo.png)
 
-**AREkit** -- is a python toolkit (library) for **sentiment attitudes extraction** (specific relation extraction) task.
+**AREkit** -- is a python toolkit for **sentiment attitude extraction** task.
 
 # Contents
 * [Description](#description)
@@ -32,7 +32,7 @@ Please refer to `processing/` source directory for more details.
 * Provides implemented ML models `networks/` that are intended for automatic sentiment relation extraction (RE)
 on document level.
 
-Structuraly, the fundamental task representation could be departed into following domains:
+Structurally, the fundamental task representation could be departed into following domains:
 
 1. **Named Entity Recognition** -- to extract mentioned named entities;
 3. **Coreference Search**, or Entity Linking -- to match synonymous entities
@@ -59,7 +59,7 @@ List of the toolset dependencies are as follows:
     [[github-repo]]() /
     [[sh-script]]();
 
-## Manual [Update in Progress]
+## Manual
 
 This toolset includes the following instruments and domain-related datasets:
 

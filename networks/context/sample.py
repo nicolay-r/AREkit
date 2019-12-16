@@ -12,8 +12,8 @@ from arekit.common.entities.base import Entity
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.networks.context.features.dist import dist_abs_nearest_feature, distance_feature
-from arekit.networks.context.features.frames import compose_frame_roles, compose_frames
+from arekit.networks.context.features.dist import DistanceFeatures
+from arekit.networks.context.features.frames import FrameFeatures
 from arekit.networks.context.features.inds import IndicesFeature
 from arekit.networks.context.features.pointers import PointersFeature
 from arekit.networks.context.features.utils import pad_right_or_crop_inplace
@@ -172,7 +172,7 @@ class InputSample(object):
 
         x_indices = list(x_indices)
 
-        frame_sent_roles = compose_frame_roles(
+        frame_sent_roles = FrameFeatures.compose_frame_roles(
             text_opinion=text_opinion,
             size=len(x_indices),
             frames_collection=frames_collection,
@@ -207,7 +207,7 @@ class InputSample(object):
             filler=cls.TERM_TYPE_PAD_VALUE)
 
         frames_feature = PointersFeature.create_shifted_and_fit(
-            original_value=compose_frames(text_opinion),
+            original_value=FrameFeatures.compose_frames(text_opinion),
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=cls.FRAMES_PAD_VALUE,
@@ -228,17 +228,17 @@ class InputSample(object):
         subj_ind = subj_ind - x_feature.StartIndex
         obj_ind = obj_ind - x_feature.StartIndex
 
-        dist_from_subj = distance_feature(position=subj_ind,
-                                          size=config.TermsPerContext)
+        dist_from_subj = DistanceFeatures.distance_feature(position=subj_ind, size=config.TermsPerContext)
 
-        dist_from_obj = distance_feature(position=obj_ind,
-                                         size=config.TermsPerContext)
+        dist_from_obj = DistanceFeatures.distance_feature(position=obj_ind, size=config.TermsPerContext)
 
-        dist_nearest_subj = dist_abs_nearest_feature(positions=syn_subj_inds_feature.ValueVector,
-                                                     size=config.TermsPerContext)
+        dist_nearest_subj = DistanceFeatures.distance_abs_nearest_feature(
+            positions=syn_subj_inds_feature.ValueVector,
+            size=config.TermsPerContext)
 
-        dist_nearest_obj = dist_abs_nearest_feature(positions=syn_obj_inds_feature.ValueVector,
-                                                    size=config.TermsPerContext)
+        dist_nearest_obj = DistanceFeatures.distance_abs_nearest_feature(
+            positions=syn_obj_inds_feature.ValueVector,
+            size=config.TermsPerContext)
 
         return cls(X=np.array(x_feature.ValueVector),
                    subj_ind=subj_ind,
