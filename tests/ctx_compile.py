@@ -5,10 +5,10 @@ import logging
 import numpy as np
 
 from arekit.networks.context.architectures.att_hidden_bilstm import AttentionHiddenBiLSTM
-from arekit.networks.context.architectures.att_ends_cnn import AttentionCNN
+from arekit.networks.context.architectures.contrib.att_ends_cnn import AttentionCNN
 from arekit.networks.context.architectures.bilstm import BiLSTM
 from arekit.networks.context.architectures.cnn import VanillaCNN
-from arekit.networks.context.architectures.att_ends_pcnn import AttentionAttitudeEndsPCNN
+from arekit.networks.context.architectures.contrib.att_ends_pcnn import AttentionAttitudeEndsPCNN
 from arekit.networks.context.architectures.contrib.att_frames_bilstm import AttentionFramesBiLSTM
 from arekit.networks.context.architectures.contrib.att_frames_cnn import AttentionFramesCNN
 from arekit.networks.context.architectures.contrib.att_frames_pcnn import AttentionFramesPCNN
@@ -21,11 +21,11 @@ from arekit.networks.context.architectures.rcnn import RCNN
 from arekit.networks.context.architectures.rnn import RNN
 from arekit.networks.context.architectures.self_att_bilstm import SelfAttentionBiLSTM
 from arekit.networks.context.configurations.att_hidden_bilstm import AttentionHiddenBiLSTMConfig
-from arekit.networks.context.configurations.att_ends_cnn import AttentionAttitudeEndsCNNConfig
+from arekit.networks.context.configurations.contrib.att_ends_cnn import AttentionAttitudeEndsCNNConfig
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
 from arekit.networks.context.configurations.bilstm import BiLSTMConfig
 from arekit.networks.context.configurations.cnn import CNNConfig
-from arekit.networks.context.configurations.att_ends_pcnn import AttentionAttitudeEndsPCNNConfig
+from arekit.networks.context.configurations.contrib.att_ends_pcnn import AttentionAttitudeEndsPCNNConfig
 from arekit.networks.context.configurations.contrib.att_frames_bilstm import AttentionFramesBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_frames_cnn import AttentionFramesCNNConfig
 from arekit.networks.context.configurations.contrib.att_frames_pcnn import AttentionFramesPCNNConfig

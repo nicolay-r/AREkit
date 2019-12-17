@@ -1,9 +1,9 @@
 from arekit.networks.attention.architectures.mlp_interactive import InteractiveMLPAttention
 from arekit.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
-from arekit.networks.context.configurations.cnn import CNNConfig
+from arekit.networks.context.configurations.att_cnn_base import AttentionCNNBaseConfig
 
 
-class AttentionFramesCNNConfig(CNNConfig):
+class AttentionFramesCNNConfig(AttentionCNNBaseConfig):
 
     def __init__(self):
         super(AttentionFramesCNNConfig, self).__init__()
@@ -16,6 +16,10 @@ class AttentionFramesCNNConfig(CNNConfig):
     def AttentionModel(self):
         return self.__attention
 
+    @property
+    def MLPAttentionConfig(self):
+        return self.__attention_config
+
     # endregion
 
     # region public methods
@@ -27,10 +31,5 @@ class AttentionFramesCNNConfig(CNNConfig):
             cfg=self.__attention_config,
             batch_size=self.BatchSize,
             terms_per_context=self.TermsPerContext)
-
-    def _internal_get_parameters(self):
-        parameters = super(AttentionFramesCNNConfig, self)._internal_get_parameters()
-        parameters += self.__attention_config.get_parameters()
-        return parameters
 
     # endregion

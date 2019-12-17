@@ -114,9 +114,9 @@ This toolset includes the following instruments and domain-related datasets:
             [[code]](networks/context/architectures/pcnn.py) /
             [[github:nicolay-r]](https://github.com/nicolay-r/sentiment-pcnn);
         - Attention-CNN
-            [[code]](networks/context/architectures/att_ends_cnn.py);
+            [[code]](networks/context/architectures/contrib/att_ends_cnn.py);
         - Attention-PCNN
-            [[code]](networks/context/architectures/att_ends_pcnn.py);
+            [[code]](networks/context/architectures/contrib/att_ends_pcnn.py);
         - RNN (LSTM/GRU/RNN)
             [[code]](networks/context/architectures/rnn.py) /
             [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
