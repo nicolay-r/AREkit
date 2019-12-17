@@ -33,7 +33,7 @@ class PiecewiseCNN(VanillaCNN):
         sliced = tf.TensorArray(dtype=tf.float32, size=self.Config.BatchSize, infer_shape=False, dynamic_size=True)
         _, _, _, _, _, sliced = tf.while_loop(
                 lambda i, *_: tf.less(i, self.Config.BatchSize),
-                self.splitting,
+                self.__splitting,
                 [0,
                  self.get_input_parameter(InputSample.I_SUBJ_IND),
                  self.get_input_parameter(InputSample.I_OBJ_IND),
@@ -68,11 +68,14 @@ class PiecewiseCNN(VanillaCNN):
             dtype=tf.float32)
 
     @staticmethod
-    def splitting(i, p_subj_ind, p_obj_ind, bwc_conv, channels_count, outputs):
+    def __splitting(i, p_subj_ind, p_obj_ind, bwc_conv, channels_count, outputs):
         l_ind = tf.minimum(tf.gather(p_subj_ind, [i]), tf.gather(p_obj_ind, [i]))  # left
         r_ind = tf.maximum(tf.gather(p_subj_ind, [i]), tf.gather(p_obj_ind, [i]))  # right
 
-        w = tf.Variable(bwc_conv.shape[1], dtype=tf.int32) # total width (words count)
+        # total width (words count)
+        w = tf.get_variable(name="words_count",
+                            shape=bwc_conv.shape[1],
+                            dtype=tf.int32)
 
         b_slice_from = [i, 0, 0]
         b_slice_size = tf.concat([[1], l_ind, [channels_count]], 0)

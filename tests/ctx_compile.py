@@ -56,6 +56,9 @@ def contexts_supported():
             (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
             (AttentionSynonymEndsBiLSTMConfig(), AttentionSynonymEndsBiLSTM()),
             (AttentionHiddenPZhouBiLSTMConfig(), AttentionHiddenPZhouBiLSTM()),
+
+            (AttentionHiddenZYangBiLSTMConfig(), AttentionHiddenZYangBiLSTM()),
+
             (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),
             (RNNConfig(), RNN()),
@@ -73,8 +76,6 @@ def contexts_supported():
 
             (AttentionFramesCNNConfig(), AttentionFramesCNN()),
             (AttentionFramesPCNNConfig(), AttentionFramesPCNN()),
-
-            (AttentionHiddenZYangBiLSTMConfig(), AttentionHiddenZYangBiLSTM())
             ]
 
 
