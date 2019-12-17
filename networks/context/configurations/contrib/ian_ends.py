@@ -1,7 +1,7 @@
-from arekit.networks.context.configurations.ian_frames import IANFramesConfig
+from arekit.networks.context.configurations.ian_base import IANBaseConfig
 
 
-class IANAttitudeEndsBasedConfig(IANFramesConfig):
+class IANAttitudeEndsBasedConfig(IANBaseConfig):
 
     @property
     def MaxAspectLength(self):

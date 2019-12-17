@@ -15,7 +15,7 @@ from arekit.networks.context.architectures.contrib.att_frames_pcnn import Attent
 from arekit.networks.context.architectures.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTM
 from arekit.networks.context.architectures.contrib.ian_ends import IANAttitudeEndsBased
 from arekit.networks.context.architectures.contrib.ian_syn_ends import IANAttitudeSynonymEndsBased
-from arekit.networks.context.architectures.ian_frames import IANFrames
+from arekit.networks.context.architectures.contrib.ian_frames import IANFrames
 from arekit.networks.context.architectures.pcnn import PiecewiseCNN
 from arekit.networks.context.architectures.rcnn import RCNN
 from arekit.networks.context.architectures.rnn import RNN
@@ -32,7 +32,7 @@ from arekit.networks.context.configurations.contrib.att_frames_pcnn import Atten
 from arekit.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
 from arekit.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
 from arekit.networks.context.configurations.contrib.ian_syn_ends import IANAttitudeSynonymEndsBasedConfig
-from arekit.networks.context.configurations.ian_frames import IANFramesConfig
+from arekit.networks.context.configurations.contrib.ian_frames import IANFramesConfig
 from arekit.networks.context.configurations.rcnn import RCNNConfig
 from arekit.networks.context.configurations.rnn import RNNConfig
 from arekit.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
@@ -54,10 +54,10 @@ def contexts_supported():
             (RNNConfig(), RNN()),
             (BiLSTMConfig(), BiLSTM()),
             (RCNNConfig(), RCNN()),
-            (IANFramesConfig(), IANFrames()),
 
+            (IANFramesConfig(), IANFrames()),
             (IANAttitudeEndsBasedConfig(), IANAttitudeEndsBased()),
-            # (IANAttitudeSynonymEndsBasedConfig(), IANAttitudeSynonymEndsBased()),
+            (IANAttitudeSynonymEndsBasedConfig(), IANAttitudeSynonymEndsBased()),
 
             (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
             (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),

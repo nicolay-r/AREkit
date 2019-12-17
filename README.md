@@ -121,7 +121,7 @@ This toolset includes the following instruments and domain-related datasets:
             [[code]](networks/context/architectures/rnn.py) /
             [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
         - IAN (frames based)
-            [[code]](networks/context/architectures/ian_frames.py) /
+            [[code]](networks/context/architectures/contrib/ian_frames.py) /
             [[github:lpq29743]](https://github.com/lpq29743/IAN);
         - RCNN (RCNN)
             [[code]](networks/context/architectures/rcnn.py) /

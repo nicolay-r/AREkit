@@ -4,13 +4,12 @@ from arekit.networks.attention.helpers import embedding
 from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers.sequence import get_cell
-from arekit.networks.context.configurations.ian_frames import IANFramesConfig, StatesAggregationModes
+from arekit.networks.context.configurations.ian_base import StatesAggregationModes, IANBaseConfig
 from arekit.networks.context.sample import InputSample
-from arekit.networks.tf_helpers import layers, sequence
-from arekit.networks.tf_helpers.filtering import filter_batch_elements, select_entity_related_elements
+from arekit.networks.tf_helpers import layers, sequence, filtering
 
 
-class IANFrames(BaseContextNeuralNetwork):
+class IANBase(BaseContextNeuralNetwork):
     """
     Title: Interactive Attention Networks for Aspect-Level Sentiment Classification
     Paper: https://arxiv.org/pdf/1709.00893.pdf
@@ -26,7 +25,7 @@ class IANFrames(BaseContextNeuralNetwork):
     SOFTMAX_B = 'B_l'
 
     def __init__(self):
-        super(IANFrames, self).__init__()
+        super(IANBase, self).__init__()
 
         # Hidden states
         self.__w_a = None
@@ -48,8 +47,7 @@ class IANFrames(BaseContextNeuralNetwork):
     def ContextEmbeddingSize(self):
         return self.Config.HiddenSize * 2
 
-    @property
-    def AspectInput(self):
+    def get_aspect_input(self):
         return self.get_input_parameter(InputSample.I_FRAME_INDS)
 
     # endregion
@@ -64,12 +62,12 @@ class IANFrames(BaseContextNeuralNetwork):
     # region public 'init' methods
 
     def init_input(self):
-        super(IANFrames, self).init_input()
+        super(IANBase, self).init_input()
         self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
-                                                      name="ctx_dropout_rnn_keep_prob")
+                                                      name='ctx_' + "dropout_rnn_keep_prob")
 
     def init_hidden_states(self):
-        assert(isinstance(self.Config, IANFramesConfig))
+        assert(isinstance(self.Config, IANBaseConfig))
 
         self.__w_a = tf.get_variable(
             name=self.ASPECT_W,
@@ -114,10 +112,8 @@ class IANFrames(BaseContextNeuralNetwork):
             trainable=True)
 
     def init_embedded_input(self):
-
-         context_embedded = super(IANFrames, self).init_embedded_input()
+         context_embedded = super(IANBase, self).init_embedded_input()
          aspect_embedded = self.__compose_all_parameters()
-
          return [context_embedded, aspect_embedded]
 
     def init_context_embedding(self, embedded_terms):
@@ -138,7 +134,7 @@ class IANFrames(BaseContextNeuralNetwork):
 
             # Calculate input lengths
             aspect_lens = sequence.calculate_sequence_length(
-                sequence=self.AspectInput,
+                sequence=self.get_aspect_input(),
                 is_neg_placeholder=InputSample.FRAMES_PAD_VALUE < 0)
 
             aspect_lens_casted = tf.cast(x=tf.maximum(aspect_lens, 1), dtype=tf.int32)
@@ -201,19 +197,19 @@ class IANFrames(BaseContextNeuralNetwork):
         yield self.SOFTMAX_B, self.__b_l
 
     def iter_input_dependent_hidden_parameters(self):
-        for name, value in super(IANFrames, self).iter_input_dependent_hidden_parameters():
+        for name, value in super(IANBase, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
         yield u'aspect_att', self.__aspect_att
         yield u'context_att', self.__context_att
-        yield u'aspects', self.AspectInput
+        yield u'aspects', self.get_aspect_input()
 
     # endregion
 
     # region public 'create' methods
 
     def create_feed_dict(self, input, data_type):
-        feed_dict = super(IANFrames, self).create_feed_dict(input=input, data_type=data_type)
+        feed_dict = super(IANBase, self).create_feed_dict(input=input, data_type=data_type)
         feed_dict[self.__dropout_rnn_keep_prob] = self.Config.DropoutRNNKeepProb if data_type == DataType.Train else 1.0
         return feed_dict
 
@@ -223,7 +219,7 @@ class IANFrames(BaseContextNeuralNetwork):
 
     @staticmethod
     def __aggreagate(config, outputs, length):
-        assert(isinstance(config, IANFramesConfig))
+        assert(isinstance(config, IANBaseConfig))
         if config.StatesAggregationMode == StatesAggregationModes.AVERAGE:
             return tf.reduce_mean(outputs, 1)
         if config.StatesAggregationMode == StatesAggregationModes.LAST_IN_SEQUENCE:
@@ -253,9 +249,9 @@ class IANFrames(BaseContextNeuralNetwork):
     def __get_embedded_parameters(self):
         embedded_params = []
         for e, v in embedding.get_ev(self):
-            param_inds = filter_batch_elements(elements=v,
-                                               inds=self.AspectInput,
-                                               handler=select_entity_related_elements)
+            param_inds = filtering.filter_batch_elements(elements=v,
+                                                         inds=self.get_aspect_input(),
+                                                         handler=filtering.select_entity_related_elements)
             emb_param = tf.nn.embedding_lookup(e, param_inds)
             embedded_params.append(emb_param)
 
