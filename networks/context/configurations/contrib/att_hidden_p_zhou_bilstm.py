@@ -3,7 +3,7 @@ from arekit.networks.context.configurations.bilstm import BiLSTMConfig
 from arekit.networks.tf_helpers.sequence import CellTypes
 
 
-class AttentionHiddenBiLSTMConfig(BiLSTMConfig):
+class AttentionHiddenPZhouBiLSTMConfig(BiLSTMConfig):
     """
     Authors: SeoSangwoo
     Paper: https://www.aclweb.org/anthology/P16-2034
@@ -15,7 +15,7 @@ class AttentionHiddenBiLSTMConfig(BiLSTMConfig):
     __cell_type = CellTypes.LSTM
 
     def __init__(self):
-        super(AttentionHiddenBiLSTMConfig, self).__init__()
+        super(AttentionHiddenPZhouBiLSTMConfig, self).__init__()
 
     # region properties
 

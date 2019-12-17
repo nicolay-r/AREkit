@@ -4,7 +4,7 @@ import logging
 
 import numpy as np
 
-from arekit.networks.context.architectures.att_hidden_bilstm import AttentionHiddenBiLSTM
+from arekit.networks.context.architectures.contrib.att_hidden_p_zhou_bilstm import AttentionHiddenPZhouBiLSTM
 from arekit.networks.context.architectures.contrib.att_ends_cnn import AttentionCNN
 from arekit.networks.context.architectures.bilstm import BiLSTM
 from arekit.networks.context.architectures.cnn import VanillaCNN
@@ -20,7 +20,7 @@ from arekit.networks.context.architectures.pcnn import PiecewiseCNN
 from arekit.networks.context.architectures.rcnn import RCNN
 from arekit.networks.context.architectures.rnn import RNN
 from arekit.networks.context.architectures.self_att_bilstm import SelfAttentionBiLSTM
-from arekit.networks.context.configurations.att_hidden_bilstm import AttentionHiddenBiLSTMConfig
+from arekit.networks.context.configurations.contrib.att_hidden_p_zhou_bilstm import AttentionHiddenPZhouBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_ends_cnn import AttentionAttitudeEndsCNNConfig
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
 from arekit.networks.context.configurations.bilstm import BiLSTMConfig
@@ -48,7 +48,7 @@ def init_config(config):
 def contexts_supported():
     return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
             (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
-            (AttentionHiddenBiLSTMConfig(), AttentionHiddenBiLSTM()),
+            (AttentionHiddenPZhouBiLSTMConfig(), AttentionHiddenPZhouBiLSTM()),
             (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),
             (RNNConfig(), RNN()),

@@ -1,9 +1,9 @@
 from arekit.networks.attention.architectures.rnn_attention_z_yang import attention_by_z_yang
-from arekit.networks.context.architectures.att_hidden_bilstm import AttentionHiddenBiLSTM
+from arekit.networks.context.architectures.att_hidden_bilstm_base import AttentionHiddenBiLSTMBase
 from arekit.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
 
 
-class AttentionHiddenZYangBiLSTM(AttentionHiddenBiLSTM):
+class AttentionHiddenZYangBiLSTM(AttentionHiddenBiLSTMBase):
 
     def get_attention_output_with_alphas(self, rnn_outputs):
         assert(isinstance(self.Config, AttentionHiddenZYangBiLSTMConfig))
