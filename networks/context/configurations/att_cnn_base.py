@@ -9,17 +9,16 @@ class AttentionCNNBaseConfig(CNNConfig):
     def AttentionModel(self):
         raise NotImplementedError()
 
-    @property
-    def MLPAttentionConfig(self):
-        raise NotImplementedError()
-
     # endregion
+
+    def get_attention_parameters(self):
+        raise NotImplementedError()
 
     # region public methods
 
     def _internal_get_parameters(self):
         parameters = super(AttentionCNNBaseConfig, self)._internal_get_parameters()
-        parameters += self.MLPAttentionConfig.get_parameters()
+        parameters += self.get_attention_parameters()
         return parameters
 
     # endregion

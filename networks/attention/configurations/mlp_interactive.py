@@ -3,11 +3,11 @@ from arekit.networks.attention.configurations.mlp import MLPAttentionConfig
 
 class InteractiveMLPAttentionConfig(MLPAttentionConfig):
 
-    def __init__(self,  frames_count):
-        assert(isinstance(frames_count, int))
-        assert(frames_count >= 0)
-        self.__frames_count = frames_count
+    def __init__(self, keys_count):
+        assert(isinstance(keys_count, int))
+        assert(keys_count >= 0)
+        self.__keys_count = keys_count
 
     @property
     def EntitiesPerContext(self):
-        return self.__frames_count
+        return self.__keys_count

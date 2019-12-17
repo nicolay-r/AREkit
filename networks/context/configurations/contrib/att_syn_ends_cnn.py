@@ -16,13 +16,12 @@ class AttentionAttitudeSynonymEndsCNNConfig(AttentionCNNBaseConfig):
     def AttentionModel(self):
         return self.__attention
 
-    @property
-    def MLPAttentionConfig(self):
-        return self.__attention_config
-
     # endregion
 
     # region public methods
+
+    def get_attention_parameters(self):
+        return self.__attention_config
 
     def notify_initialization_completed(self):
         assert(self.__attention is None)

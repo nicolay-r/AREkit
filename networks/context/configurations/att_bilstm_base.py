@@ -1,14 +1,17 @@
 from arekit.networks.attention.architectures.mlp_interactive import InteractiveMLPAttention
 from arekit.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
-from arekit.networks.context.configurations.att_cnn_base import AttentionCNNBaseConfig
+from arekit.networks.context.configurations.bilstm import BiLSTMConfig
 
 
-class AttentionFramesCNNConfig(AttentionCNNBaseConfig):
+class AttentionBiLSTMBaseConfig(BiLSTMConfig):
+    """
+    Based on Interactive attention model
+    """
 
-    def __init__(self):
-        super(AttentionFramesCNNConfig, self).__init__()
+    def __init__(self, keys_count):
+        super(AttentionBiLSTMBaseConfig, self).__init__()
         self.__attention = None
-        self.__attention_config = InteractiveMLPAttentionConfig(self.FramesPerContext)
+        self.__attention_config = InteractiveMLPAttentionConfig(keys_count=keys_count)
 
     # region properties
 
@@ -20,9 +23,6 @@ class AttentionFramesCNNConfig(AttentionCNNBaseConfig):
 
     # region public methods
 
-    def get_attention_parameters(self):
-        return self.__attention_config.get_parameters()
-
     def notify_initialization_completed(self):
         assert(self.__attention is None)
 
@@ -30,5 +30,10 @@ class AttentionFramesCNNConfig(AttentionCNNBaseConfig):
             cfg=self.__attention_config,
             batch_size=self.BatchSize,
             terms_per_context=self.TermsPerContext)
+
+    def _internal_get_parameters(self):
+        parameters = super(AttentionBiLSTMBaseConfig, self)._internal_get_parameters()
+        parameters += self.__attention_config.get_parameters()
+        return parameters
 
     # endregion
