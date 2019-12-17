@@ -3,10 +3,10 @@ from arekit.networks.attention.configurations.mlp_interactive import Interactive
 from arekit.networks.context.configurations.att_cnn_base import AttentionCNNBaseConfig
 
 
-class AttentionAttitudeSynonymEndsCNNConfig(AttentionCNNBaseConfig):
+class AttentionSynonymEndsCNNConfig(AttentionCNNBaseConfig):
 
     def __init__(self):
-        super(AttentionAttitudeSynonymEndsCNNConfig, self).__init__()
+        super(AttentionSynonymEndsCNNConfig, self).__init__()
         self.__attention = None
         self.__attention_config = InteractiveMLPAttentionConfig(self.SynonymsPerContext * 2)
 

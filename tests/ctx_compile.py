@@ -14,8 +14,8 @@ from arekit.networks.context.architectures.contrib.att_frames_cnn import Attenti
 from arekit.networks.context.architectures.contrib.att_frames_pcnn import AttentionFramesPCNN
 from arekit.networks.context.architectures.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTM
 from arekit.networks.context.architectures.contrib.att_syn_ends_bilstm import AttentionSynonymEndsBiLSTM
-from arekit.networks.context.architectures.contrib.att_syn_ends_cnn import AttentionAttitudeSynonymEndsCNN
-from arekit.networks.context.architectures.contrib.att_syn_ends_pcnn import AttentionAttitudeSynonymEndsPCNN
+from arekit.networks.context.architectures.contrib.att_syn_ends_cnn import AttentionSynonymEndsCNN
+from arekit.networks.context.architectures.contrib.att_syn_ends_pcnn import AttentionSynonymEndsPCNN
 from arekit.networks.context.architectures.contrib.ian_ends import IANAttitudeEndsBased
 from arekit.networks.context.architectures.contrib.ian_syn_ends import IANAttitudeSynonymEndsBased
 from arekit.networks.context.architectures.contrib.ian_frames import IANFrames
@@ -34,8 +34,8 @@ from arekit.networks.context.configurations.contrib.att_frames_cnn import Attent
 from arekit.networks.context.configurations.contrib.att_frames_pcnn import AttentionFramesPCNNConfig
 from arekit.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_syn_ends_bilstm import AttentionSynonymEndsBiLSTMConfig
-from arekit.networks.context.configurations.contrib.att_syn_ends_cnn import AttentionAttitudeSynonymEndsCNNConfig
-from arekit.networks.context.configurations.contrib.att_syn_ends_pcnn import AttentionAttitudeSynonymEndsPCNNConfig
+from arekit.networks.context.configurations.contrib.att_syn_ends_cnn import AttentionSynonymEndsCNNConfig
+from arekit.networks.context.configurations.contrib.att_syn_ends_pcnn import AttentionSynonymEndsPCNNConfig
 from arekit.networks.context.configurations.contrib.ian_ends import IANAttitudeEndsBasedConfig
 from arekit.networks.context.configurations.contrib.ian_syn_ends import IANAttitudeSynonymEndsBasedConfig
 from arekit.networks.context.configurations.contrib.ian_frames import IANFramesConfig
@@ -68,8 +68,8 @@ def contexts_supported():
 
             (AttentionAttitudeEndsCNNConfig(), AttentionCNN()),
             (AttentionAttitudeEndsPCNNConfig(), AttentionAttitudeEndsPCNN()),
-            (AttentionAttitudeSynonymEndsPCNNConfig(), AttentionAttitudeSynonymEndsPCNN()),
-            (AttentionAttitudeSynonymEndsCNNConfig(), AttentionAttitudeSynonymEndsCNN()),
+            (AttentionSynonymEndsPCNNConfig(), AttentionSynonymEndsPCNN()),
+            (AttentionSynonymEndsCNNConfig(), AttentionSynonymEndsCNN()),
 
             (AttentionFramesCNNConfig(), AttentionFramesCNN()),
             (AttentionFramesPCNNConfig(), AttentionFramesPCNN()),
