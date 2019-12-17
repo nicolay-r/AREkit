@@ -178,8 +178,8 @@ class TensorflowModel(object):
             e_cost, e_acc = self.__fit_epoch(minibatches=minibatches)
 
             if self.Callback is not None:
-                self.Callback.on_epoch_finished(avg_cost=e_cost,
-                                                avg_acc=e_acc,
+                self.Callback.on_epoch_finished(avg_fit_cost=e_cost,
+                                                avg_fit_acc=e_acc,
                                                 epoch_index=epoch_index,
                                                 operation_cancel=operation_cancel)
 
