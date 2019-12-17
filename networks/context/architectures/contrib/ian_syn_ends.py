@@ -1,7 +1,5 @@
-import numpy as np
 import tensorflow as tf
 from arekit.networks.context.architectures.contrib.ian_frames import IANFrames
-from arekit.networks.context.configurations.contrib.ian_syn_ends import IANAttitudeSynonymEndsBasedConfig
 from arekit.networks.context.sample import InputSample
 
 
@@ -12,10 +10,8 @@ class IANAttitudeSynonymEndsBased(IANFrames):
     """
 
     def get_aspect_input(self):
-        # TODO. There is a still bug during feed operation.
-        combined = tf.stack([self.get_input_parameter(InputSample.I_SUBJ_IND),
-                             self.get_input_parameter(InputSample.I_OBJ_IND)],
-                            axis=-1)
-
+        combined = tf.concat([self.get_input_parameter(InputSample.I_SYN_SUBJ_INDS),
+                              self.get_input_parameter(InputSample.I_SYN_OBJ_INDS)],
+                             axis=-1)
         return tf.contrib.framework.sort(combined, direction='DESCENDING')
 
