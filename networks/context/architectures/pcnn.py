@@ -73,9 +73,9 @@ class PiecewiseCNN(VanillaCNN):
         r_ind = tf.maximum(tf.gather(p_subj_ind, [i]), tf.gather(p_obj_ind, [i]))  # right
 
         # total width (words count)
-        w = tf.get_variable(name="words_count",
-                            shape=bwc_conv.shape[1],
-                            dtype=tf.int32)
+        # switching to get_variable requires complicated modification.
+        w = tf.Variable(initial_value=bwc_conv.shape[1],
+                        dtype=tf.int32)
 
         b_slice_from = [i, 0, 0]
         b_slice_size = tf.concat([[1], l_ind, [channels_count]], 0)

@@ -3,7 +3,7 @@ from arekit.networks.context.architectures.att_pcnn_base import AttentionPCNNBas
 from arekit.networks.context.sample import InputSample
 
 
-class AttentionAttitudeEndsPCNN(AttentionPCNNBase):
+class AttentionEndsPCNN(AttentionPCNNBase):
     """
     Attention model based on entity pair ends and
     PCNN architecture for sentence encoding.

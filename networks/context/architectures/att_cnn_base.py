@@ -6,6 +6,9 @@ from arekit.networks.context.architectures.cnn import VanillaCNN
 
 class AttentionCNNBase(VanillaCNN):
     """
+    Author: Yatian Shen, Xuanjing Huang
+    Paper: https://www.aclweb.org/anthology/C16-1238
+
     Represents a base (abstract) class with attention scope.
     Usage:
         implement `get_att_input` method in nested class.

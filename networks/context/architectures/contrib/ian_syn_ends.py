@@ -3,7 +3,7 @@ from arekit.networks.context.architectures.contrib.ian_frames import IANFrames
 from arekit.networks.context.sample import InputSample
 
 
-class IANAttitudeSynonymEndsBased(IANFrames):
+class IANSynonymEndsBased(IANFrames):
     """
     But original could be based on a pair of attitude ends:
         <Syn_Object_1, Syn_Object2, ... , Syn_Subject_1, Syn_Subject_2 ...>
