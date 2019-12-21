@@ -146,6 +146,12 @@ This toolset includes the following instruments and domain-related datasets:
     * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
     * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);
     * RuSentRel [[github-repo]](https://github.com/nicolay-r/RuSentRel);
+    * Embeddings
+        * RusVectores 
+            [[code]](source/embeddings/rusvectores.py) /
+            [[news-w2v-download]](http://rusvectores.org/static/models/rusvectores2/news_mystem_skipgram_1000_20_2015.bin.gz);
+    * Lexicons
+        * RuSentiLex [[lab-site]](https://www.labinform.ru/pub/rusentilex/index.htm);
 * **Evaluation** -- tools that allows to perform models quality assessment.
     * CmpOpinion [[API]](evaluation/cmp_opinions.py) -- structure describes pairs of opinions to compare;
     * BaseEvaluator [[API]](evaluation/evaluators/base.py);
