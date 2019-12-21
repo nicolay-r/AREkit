@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+from arekit.networks.attention import common
 from arekit.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType
@@ -179,7 +180,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         for name, value in super(SelfAttentionBiLSTM, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
-        yield u"ATT_Weights", self.__avg_by_r_A
+        yield common.ATTENTION_WEIGHTS_LOG_PARAMETER, self.__avg_by_r_A
 
     def iter_hidden_parameters(self):
         yield ("W_s1", self.__W_s1)

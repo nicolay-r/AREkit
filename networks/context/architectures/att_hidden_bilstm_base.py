@@ -1,4 +1,5 @@
 import tensorflow as tf
+from arekit.networks.attention import common
 from arekit.networks.context.architectures.bilstm import BiLSTM
 
 
@@ -18,7 +19,7 @@ class AttentionHiddenBiLSTMBase(BiLSTM):
     # region public methods
 
     def customize_rnn_output(self, rnn_outputs, s_length):
-        with tf.variable_scope("attention"):
+        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             att_output, self.__att_alphas = self.get_attention_output_with_alphas(rnn_outputs)
 
         return att_output
@@ -27,6 +28,6 @@ class AttentionHiddenBiLSTMBase(BiLSTM):
         for name, value in super(AttentionHiddenBiLSTMBase, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
-        yield u"ATT_Weights", self.__att_alphas
+        yield common.ATTENTION_WEIGHTS_LOG_PARAMETER, self.__att_alphas
 
     # endregion

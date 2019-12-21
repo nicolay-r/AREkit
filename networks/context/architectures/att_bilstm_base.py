@@ -1,14 +1,12 @@
 import tensorflow as tf
 
 from arekit.networks.attention.helpers import embedding
+from arekit.networks.attention import common
 from arekit.networks.context.architectures.bilstm import BiLSTM
 from arekit.networks.tf_helpers import sequence
 
 
 class AttentionBiLSTMBase(BiLSTM):
-
-    __attention_scope = 'mlp-attention-model'
-    __attention_weights_log_parameter = u"ATT_Weights"
 
     def __init__(self):
         super(AttentionBiLSTMBase, self).__init__()
@@ -33,12 +31,12 @@ class AttentionBiLSTMBase(BiLSTM):
 
     def init_hidden_states(self):
         super(AttentionBiLSTMBase, self).init_hidden_states()
-        with tf.variable_scope(self.__attention_scope):
+        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             self.Config.AttentionModel.init_hidden()
 
     def init_input(self):
         super(AttentionBiLSTMBase, self).init_input()
-        with tf.variable_scope(self.__attention_scope):
+        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             self.Config.AttentionModel.init_input(p_names_with_sizes=embedding.get_ns(self))
 
     # endregion
@@ -47,7 +45,7 @@ class AttentionBiLSTMBase(BiLSTM):
 
         g = sequence.select_last_relevant_in_sequence(rnn_outputs, s_length)
 
-        with tf.variable_scope(self.__attention_scope):
+        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             att_e, self.__att_alphas = embedding.init_mlp_attention_embedding(
                 ctx_network=self,
                 mlp_att=self.Config.AttentionModel,
@@ -61,6 +59,6 @@ class AttentionBiLSTMBase(BiLSTM):
         for name, value in super(AttentionBiLSTMBase, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
-        yield self.__attention_weights_log_parameter, self.__att_alphas
+        yield common.ATTENTION_WEIGHTS_LOG_PARAMETER, self.__att_alphas
 
     # endregion

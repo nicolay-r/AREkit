@@ -42,7 +42,7 @@ Structurally, the fundamental task representation could be departed into followi
 
 ## Dependencies
 
-List of the toolset dependencies are as follows:
+List of the toolset dependencies is as follows:
 
 * ![](https://img.shields.io/badge/Python-2.7-brightgreen.svg) (No doubts it will be updated to 3.4+)
 
@@ -110,13 +110,13 @@ This toolset includes the following instruments and domain-related datasets:
         - CNN
             [[code]](networks/context/architectures/cnn.py) /
             [[github:roomylee]](https://github.com/roomylee/cnn-relation-extraction);
+        - CNN + MLP Attention
+            [[code]](networks/context/architectures/att_cnn_base.py);
         - PCNN
             [[code]](networks/context/architectures/pcnn.py) /
             [[github:nicolay-r]](https://github.com/nicolay-r/sentiment-pcnn);
-        - Attention-CNN
-            [[code]](networks/context/architectures/contrib/att_ends_cnn.py);
-        - Attention-PCNN
-            [[code]](networks/context/architectures/contrib/att_ends_pcnn.py);
+        - PCNN + MLP Attention
+            [[code]](networks/context/architectures/att_pcnn_base.py);
         - RNN (LSTM/GRU/RNN)
             [[code]](networks/context/architectures/rnn.py) /
             [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
@@ -129,7 +129,9 @@ This toolset includes the following instruments and domain-related datasets:
         - BiLSTM
             [[code]](networks/context/architectures/bilstm.py) /
             [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
-        - Self Attention Bi-LSTM
+        - Bi-LSTM + MLP Attention 
+            [[code]](networks/context/architectures/att_bilstm_base.py)
+        - Bi-LSTM + Self Attention
             [[code]](networks/context/architectures/self_att_bilstm.py) /
             [[github:roomylee]](https://github.com/roomylee/self-attentive-emb-tf);
     * **Multi Sentence Based Architectures**:

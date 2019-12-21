@@ -1,4 +1,6 @@
 import tensorflow as tf
+
+from arekit.networks.attention import common
 from arekit.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
 from arekit.networks.multi.architectures.base_single_mlp import BaseMultiInstanceSingleMLP
 
@@ -21,7 +23,7 @@ class AttHiddenOverSentences(BaseMultiInstanceSingleMLP):
                                                        self.Config.BagSize,
                                                        self.ContextNetwork.ContextEmbeddingSize])
 
-        with tf.variable_scope('mi_attention'):
+        with tf.variable_scope("mi_{}".format(common.ATTENTION_SCOPE_NAME)):
             att_output, self.__att_alphas = attention_by_peng_zhou(context_outputs)
 
         return att_output
@@ -32,6 +34,6 @@ class AttHiddenOverSentences(BaseMultiInstanceSingleMLP):
         for name, value in super(AttHiddenOverSentences, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
-        yield u"ATT_Weights", self.__att_alphas
+        yield common.ATTENTION_WEIGHTS_LOG_PARAMETER, self.__att_alphas
 
     # endregion

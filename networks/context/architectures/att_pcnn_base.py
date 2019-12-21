@@ -1,4 +1,6 @@
 import tensorflow as tf
+
+from arekit.networks.attention import common
 from arekit.networks.attention.helpers import embedding
 from arekit.networks.context.architectures.pcnn import PiecewiseCNN
 
@@ -10,9 +12,6 @@ class AttentionPCNNBase(PiecewiseCNN):
         implement `get_att_input` method in nested class.
         configuration should include AttentionModel.
     """
-
-    __attention_scope = 'attention-model'
-    __attention_weights_log_parameter = u"ATT_Weights"
 
     def __init__(self):
         super(AttentionPCNNBase, self).__init__()
@@ -40,12 +39,12 @@ class AttentionPCNNBase(PiecewiseCNN):
 
     def init_input(self):
         super(AttentionPCNNBase, self).init_input()
-        with tf.variable_scope(self.__attention_scope):
+        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             self.Config.AttentionModel.init_input(p_names_with_sizes=embedding.get_ns(self))
 
     def init_hidden_states(self):
         super(AttentionPCNNBase, self).init_hidden_states()
-        with tf.variable_scope(self.__attention_scope):
+        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             self.Config.AttentionModel.init_hidden()
 
     def init_context_embedding(self, embedded_terms):
@@ -68,6 +67,6 @@ class AttentionPCNNBase(PiecewiseCNN):
         for name, value in super(AttentionPCNNBase, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
-        yield self.__attention_weights_log_parameter, self.__att_weights
+        yield common.ATTENTION_WEIGHTS_LOG_PARAMETER, self.__att_weights
 
     # endregion
