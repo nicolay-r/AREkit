@@ -17,9 +17,9 @@ class PointersFeature(object):
             pad_value=filler)
 
         if expected_size is not None:
-            return cls.__fit_inplace(value=modified_value,
-                                     size=expected_size,
-                                     filler=filler)
+            cls.__fit_inplace(value=modified_value,
+                              size=expected_size,
+                              filler=filler)
 
         return cls(vector_value=modified_value)
 

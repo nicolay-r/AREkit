@@ -30,9 +30,9 @@ class IndicesFeature:
                 e1=e1_in,
                 e2=e2_in)
 
-            return cls.__crop_inplace(lst=value_modified,
-                                      begin=start_index,
-                                      end=end_index)
+            cls.__crop_inplace(lst=value_modified,
+                               begin=start_index,
+                               end=end_index)
 
         return cls(value_vector=value_modified,
                    start_index=start_index,
