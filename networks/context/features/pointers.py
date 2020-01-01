@@ -1,7 +1,7 @@
 import utils
 
 
-class PointersFeature:
+class PointersFeature(object):
 
     def __init__(self, vector_value):
         self.__vector_value = vector_value
@@ -17,9 +17,9 @@ class PointersFeature:
             pad_value=filler)
 
         if expected_size is not None:
-            cls.__fit_inplace(value=modified_value,
-                              size=expected_size,
-                              filler=filler)
+            return cls.__fit_inplace(value=modified_value,
+                                     size=expected_size,
+                                     filler=filler)
 
         return cls(vector_value=modified_value)
 
