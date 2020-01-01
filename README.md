@@ -50,7 +50,7 @@ List of the toolset dependencies is as follows:
 
 * ![](https://img.shields.io/badge/Pandas-0.20.3-yellowgreen.svg)
 
-* Tensorflow-1.6
+* ![](https://img.shields.io/badge/Tensorflow-1.12.0-yellowgreen.svg) (1.6.0+ since we utilize `tf.sort` call)
 
 ### Optional Service Dependencies
 * Named Entity Recognition
@@ -156,11 +156,8 @@ This toolset includes the following instruments and domain-related datasets:
     * CmpOpinion [[API]](evaluation/cmp_opinions.py) -- structure describes pairs of opinions to compare;
     * BaseEvaluator [[API]](evaluation/evaluators/base.py);
 
-## Installation
-
-> NOTE. Provide updated description for 3.3+ python.
-
-Using [virtualenv](https://www.pythoncentral.io/how-to-install-virtualenv-python/).
+## Installation (Python 2.7)
+Using [virtualenv](https://www.pythoncentral.io/how-to-install-virtualenv-python/). 
 Create virtual environment, suppose `my_env`, and activate it as follows:
 ```
 virtualenv my_env
