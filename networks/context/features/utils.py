@@ -17,5 +17,3 @@ def pad_right_or_crop_inplace(lst, pad_size, filler):
         pad_right_inplace(lst, pad_size, filler)
     else:
         del lst[:pad_size]
-
-    return np.array(lst)
