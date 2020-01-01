@@ -50,14 +50,15 @@ List of the toolset dependencies is as follows:
 
 * ![](https://img.shields.io/badge/Pandas-0.20.3-yellowgreen.svg)
 
-* ![](https://img.shields.io/badge/Tensorflow-1.12.0-yellowgreen.svg) (1.6.0+ since we utilize `tf.sort` call)
+* ![](https://img.shields.io/badge/Tensorflow-1.12.0-yellowgreen.svg) 
+(`1.6.0+` since `tf.sort` call utilized)
 
 ### Optional Service Dependencies
 * Named Entity Recognition
     [[flask-python-server]](https://github.com/nicolay-r/ner-flask-wrapper);
 * SyntaxNet docker container
     [[github-repo]]() /
-    [[sh-script]]();
+    [[sh-script]](syntaxnet_start.sh);
 
 ## Manual
 
