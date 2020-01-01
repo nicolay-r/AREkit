@@ -248,9 +248,6 @@ class InputSample(object):
                                   pad_size=config.SynonymsPerContext,
                                   filler=cls.SYNONYMS_PAD_VALUE)
 
-        assert(len(syn_obj_inds) == config.SynonymsPerContext)
-        assert(len(syn_subj_inds) == config.SynonymsPerContext)
-
         return cls(X=np.array(x_feature.ValueVector),
                    subj_ind=subj_ind,
                    obj_ind=obj_ind,

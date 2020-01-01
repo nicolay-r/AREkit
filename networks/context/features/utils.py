@@ -16,4 +16,4 @@ def pad_right_or_crop_inplace(lst, pad_size, filler):
     if len(lst) < pad_size:
         pad_right_inplace(lst, pad_size, filler)
     else:
-        del lst[:pad_size]
+        del lst[pad_size:]
