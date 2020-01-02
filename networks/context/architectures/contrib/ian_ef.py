@@ -3,7 +3,7 @@ from arekit.networks.context.architectures.ian_base import IANBase
 from arekit.networks.context.sample import InputSample
 
 
-class IANEndsAndFramesBased(IANBase):
+class IANEndsAndFrames(IANBase):
 
     def get_att_input(self):
         combined = tf.concat([

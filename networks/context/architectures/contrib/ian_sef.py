@@ -3,7 +3,7 @@ from arekit.networks.context.architectures.contrib.ian_frames import IANFrames
 from arekit.networks.context.sample import InputSample
 
 
-class IANSynonymEndsAndFramesBased(IANFrames):
+class IANSynonymEndsAndFrames(IANFrames):
 
     def get_aspect_input(self):
         combined = tf.concat([self.get_input_parameter(InputSample.I_SYN_SUBJ_INDS),

@@ -10,7 +10,8 @@ from base import BaseContextNeuralNetwork
 
 class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
     """
-    Paper: https://arxiv.org/abs/1703.03130
+    A Structured Self-attentive Sentence Embedding (ICLR 2017)
+    Paper: https://arxiv.org/pdf/1703.03130.pdf
     Code Author: roomylee, https://github.com/roomylee (C)
     Code: https://github.com/roomylee/self-attentive-emb-tf
     """
