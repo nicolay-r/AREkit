@@ -112,8 +112,8 @@ class InteractiveMLPAttention(MLPAttention):
             elements=elements,
             lens=lens)
 
-        normal_dist = tf.constant(tf.divide(1.0, term_embedding_size.value), shape=[1, term_embedding_size])
-        non_empty_frames = tf.concat(values=[row_frames, normal_dist], axis=0)
+        zeros = tf.zeros(shape=[1, term_embedding_size])
+        non_empty_frames = tf.concat(values=[row_frames, zeros], axis=0)
 
         # This is a correction as we have a following equation:
         # l -- denotes a row_length_original
