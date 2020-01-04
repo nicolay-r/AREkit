@@ -4,4 +4,6 @@ from arekit.networks.context.configurations.att_bilstm_base import AttentionBiLS
 class AttentionSynonymEndsBiLSTMConfig(AttentionBiLSTMBaseConfig):
 
     def __init__(self):
-        super(AttentionSynonymEndsBiLSTMConfig, self).__init__(keys_count=self.SynonymsPerContext * 2)
+        super(AttentionSynonymEndsBiLSTMConfig, self).__init__(
+            keys_count=self.SynonymsPerContext * 2,
+            att_support_zero_length=False)

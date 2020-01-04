@@ -210,8 +210,8 @@ class MLPAttention(object):
                 entities=self.__input[self.I_keys],
                 handler=process_entity)
 
-            # att_sum: [entity_per_context, batch_size, term_embedding_size]
             # att_weights: [entity_per_context, batch_size, terms_per_context]
+            # att_sum: [entity_per_context, batch_size, term_embedding_size]
             att_weights = tf.transpose(att_weights, perm=[1, 0, 2])  # [batch_size, entity_per_context, terms_per_context]
             att_sum = tf.transpose(att_sum, perm=[1, 0, 2])  # [batch_size, entity_per_context, term_embedding_size]
 

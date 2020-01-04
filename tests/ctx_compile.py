@@ -76,7 +76,7 @@ def contexts_supported():
             (RCNNConfig(), RCNN()),
 
             (IANFramesConfig(), IANFrames()),
-            # (IANEndsAndFramesConfig(), IANEndsAndFramesBased()),
+            # (IANEndsAndFramesConfig(), IANEndsAndFrames()),
             (IANEndsBasedConfig(), IANEndsBased()),
             (IANSynonymEndsBasedConfig(), IANSynonymEndsBased()),
 
@@ -88,8 +88,7 @@ def contexts_supported():
             (AttentionSynonymEndsCNNConfig(), AttentionSynonymEndsCNN()),
 
             (AttentionFramesCNNConfig(), AttentionFramesCNN()),
-            (AttentionFramesPCNNConfig(), AttentionFramesPCNN()),
-            ]
+            (AttentionFramesPCNNConfig(), AttentionFramesPCNN())]
 
 
 if __name__ == "__main__":

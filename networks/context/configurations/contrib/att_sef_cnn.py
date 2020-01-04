@@ -30,6 +30,7 @@ class AttentionSynonymEndsAndFramesCNNConfig(AttentionCNNBaseConfig):
         self.__attention = InteractiveMLPAttention(
             cfg=self.__attention_config,
             batch_size=self.BatchSize,
-            terms_per_context=self.TermsPerContext)
+            terms_per_context=self.TermsPerContext,
+            support_zero_length=False)
 
     # endregion
