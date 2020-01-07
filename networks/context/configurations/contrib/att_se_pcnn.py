@@ -1,5 +1,5 @@
-from arekit.networks.context.configurations.contrib.att_ends_cnn import AttentionEndsCNNConfig
+from arekit.networks.context.configurations.contrib.att_se_cnn import AttentionSynonymEndsCNNConfig
 
 
-class AttentionSynonymEndsPCNNConfig(AttentionEndsCNNConfig):
+class AttentionSynonymEndsPCNNConfig(AttentionSynonymEndsCNNConfig):
     pass

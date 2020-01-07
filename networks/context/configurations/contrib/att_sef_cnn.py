@@ -22,7 +22,7 @@ class AttentionSynonymEndsAndFramesCNNConfig(AttentionCNNBaseConfig):
     # region public methods
 
     def get_attention_parameters(self):
-        return self.__attention_config
+        return self.__attention_config.get_parameters()
 
     def notify_initialization_completed(self):
         assert(self.__attention is None)
