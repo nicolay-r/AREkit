@@ -1,8 +1,10 @@
+import random
+
 import tensorflow as tf
 import numpy as np
 import logging
 
-from arekit.common.labels.base import PositiveLabel
+from arekit.common.labels.base import Label
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
 from arekit.networks.context.sample import InputSample
 from arekit.networks.context.training.bags.bag import Bag
@@ -31,18 +33,19 @@ def create_minibatch(config):
     assert(isinstance(config, DefaultNetworkConfig))
 
     bags = []
-    label = PositiveLabel()
-    empty_sample = InputSample.create_empty(config)
     for i in range(config.BagsPerMinibatch):
+        label = Label.from_uint(random.randint(0, 2))
         bag = Bag(label)
         for j in range(config.BagSize):
-            bag.add_sample(empty_sample)
+            bag.add_sample(InputSample._generate_test(config))
         bags.append(bag)
 
     return MiniBatch(bags=bags, batch_id=None)
 
 
-def test_ctx_feed(network, network_config, create_minibatch_func, display_values=True):
+def test_ctx_feed(network, network_config, create_minibatch_func,
+                  display_hidden_values=True,
+                  display_idp_values=True):
     assert(isinstance(network, NeuralNetwork))
     assert(isinstance(network_config, DefaultNetworkConfig))
     assert(callable(create_minibatch_func))
@@ -59,21 +62,35 @@ def test_ctx_feed(network, network_config, create_minibatch_func, display_values
                                              data_type=DataType.Train)
 
         hidden_list = list(network.iter_hidden_parameters())
+        idp_list = list(network.iter_input_dependent_hidden_parameters())
+
         hidden_names = [name for name, _ in hidden_list]
+        idp_names = [name for name, _ in idp_list]
+
         fetches_hidden = [tensor for _, tensor in hidden_list]
+        fetches_idp = [tensor for _, tensor in idp_list]
+
         fetches_default = [network_optimiser, network.Cost, network.Accuracy]
 
         # feed
-        result = sess.run(fetches=fetches_default + fetches_hidden,
+        result = sess.run(fetches=fetches_default + fetches_hidden + fetches_idp,
                           feed_dict=feed_dict)
 
         # Show hidden parameters
-        hidden_values = result[len(fetches_default):]
+        hidden_values = result[len(fetches_default):len(fetches_default) + len(fetches_hidden)]
         for i, value in enumerate(hidden_values):
-            if display_values:
+            if display_hidden_values:
                 logger.info('Value type: {}'.format(type(value)))
-            if display_values:
                 logger.info('Hidden parameter "{}": {}'.format(hidden_names[i], value))
+
+        # Show idp parameters
+        idp = result[len(fetches_default) + len(fetches_hidden):]
+        for i, value in enumerate(idp):
+            if display_idp_values:
+                logger.info('i: {}'.format(i))
+                logger.info('IDP: {}'.format(type(value)))
+                logger.info('IDP shape: {}'.format(value.shape))
+                logger.info('IDP param/value "{}": {}'.format(idp_names[i], value))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,6 @@
 import collections
+import random
+
 import numpy as np
 from collections import OrderedDict
 
@@ -121,6 +123,28 @@ class InputSample(object):
                    dist_from_obj=blank_terms,
                    pos_indices=blank_terms,
                    term_type=blank_terms,
+                   dist_nearest_subj=blank_terms,
+                   dist_nearest_obj=blank_terms,
+                   frame_sent_roles=blank_terms,
+                   frame_indices=blank_frames,
+                   text_opinion_id=-1)
+
+    @classmethod
+    def _generate_test(cls, config):
+        assert(isinstance(config, DefaultNetworkConfig))
+        blank_synonyms = np.zeros(config.SynonymsPerContext)
+        blank_terms = np.random.randint(0, 3, config.TermsPerContext)
+        blank_frames = np.full(shape=config.FramesPerContext,
+                               fill_value=cls.FRAMES_PAD_VALUE)
+        return cls(X=blank_terms,
+                   subj_ind=random.randint(0, 3),
+                   obj_ind=random.randint(0, 3),
+                   syn_subj_inds=blank_synonyms,
+                   syn_obj_inds=blank_synonyms,
+                   dist_from_subj=blank_terms,
+                   dist_from_obj=blank_terms,
+                   pos_indices=np.random.randint(0, 5, config.TermsPerContext),
+                   term_type=np.random.randint(0, 3, config.TermsPerContext),
                    dist_nearest_subj=blank_terms,
                    dist_nearest_obj=blank_terms,
                    frame_sent_roles=blank_terms,

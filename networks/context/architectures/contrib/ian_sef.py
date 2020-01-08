@@ -1,9 +1,9 @@
 import tensorflow as tf
-from arekit.networks.context.architectures.contrib.ian_frames import IANFrames
+from arekit.networks.context.architectures.ian_base import IANBase
 from arekit.networks.context.sample import InputSample
 
 
-class IANSynonymEndsAndFrames(IANFrames):
+class IANSynonymEndsAndFrames(IANBase):
 
     def get_aspect_input(self):
         combined = tf.concat([self.get_input_parameter(InputSample.I_SYN_SUBJ_INDS),
