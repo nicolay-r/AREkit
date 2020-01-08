@@ -167,13 +167,15 @@ class IANBase(BaseContextNeuralNetwork):
             # Attention for aspects
             self.__aspect_att = tf.nn.softmax(
                 tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', aspect_outputs, self.__w_a,
-                                     tf.expand_dims(context_avg, -1)) + self.__b_a))
+                                     tf.expand_dims(context_avg, -1)) + self.__b_a),
+                axis=1)
             aspect_rep = tf.reduce_sum(self.__aspect_att * aspect_outputs, axis=1)
 
             # Attention for context
             self.__context_att = tf.nn.softmax(
                 tf.nn.tanh(tf.einsum('ijk,kl,ilm->ijm', context_outputs, self.__w_c,
-                                     tf.expand_dims(aspect_avg, -1)) + self.__b_c))
+                                     tf.expand_dims(aspect_avg, -1)) + self.__b_c),
+                axis=1)
             context_rep = tf.reduce_sum(self.__context_att * context_outputs, axis=1)
 
             return tf.concat([context_rep, aspect_rep], 1)
