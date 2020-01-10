@@ -5,7 +5,7 @@ from arekit.networks.context.sample import InputSample
 
 class IANEndsAndFrames(IANBase):
 
-    def get_att_input(self):
+    def get_aspect_input(self):
         combined = tf.concat([
             self.get_input_parameter(InputSample.I_FRAME_INDS),
             tf.expand_dims(self.get_input_parameter(InputSample.I_SUBJ_IND), axis=-1),

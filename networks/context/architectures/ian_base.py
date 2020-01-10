@@ -48,7 +48,7 @@ class IANBase(BaseContextNeuralNetwork):
         return self.Config.HiddenSize * 2
 
     def get_aspect_input(self):
-        return self.get_input_parameter(InputSample.I_FRAME_INDS)
+        raise NotImplementedError()
 
     # endregion
 
