@@ -264,19 +264,19 @@ class InputSample(object):
             positions=syn_obj_inds_feature.ValueVector,
             size=config.TermsPerContext)
 
-        pad_right_or_crop_inplace(lst=syn_subj_inds,
+        pad_right_or_crop_inplace(lst=syn_subj_inds_feature.ValueVector,
                                   pad_size=config.SynonymsPerContext,
                                   filler=cls.SYNONYMS_PAD_VALUE)
 
-        pad_right_or_crop_inplace(lst=syn_obj_inds,
+        pad_right_or_crop_inplace(lst=syn_obj_inds_feature.ValueVector,
                                   pad_size=config.SynonymsPerContext,
                                   filler=cls.SYNONYMS_PAD_VALUE)
 
         return cls(X=np.array(x_feature.ValueVector),
                    subj_ind=subj_ind,
                    obj_ind=obj_ind,
-                   syn_subj_inds=np.array(syn_subj_inds),
-                   syn_obj_inds=np.array(syn_obj_inds),
+                   syn_subj_inds=np.array(syn_subj_inds_feature.ValueVector),
+                   syn_obj_inds=np.array(syn_obj_inds_feature.ValueVector),
                    dist_from_subj=dist_from_subj,
                    dist_from_obj=dist_from_obj,
                    dist_nearest_subj=dist_nearest_subj,
