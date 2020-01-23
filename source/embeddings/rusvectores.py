@@ -20,12 +20,12 @@ class RusvectoresEmbedding(Embedding):
         assert(isinstance(stemmer, Stemmer))
         self.__stemmer = stemmer
 
-    def create_term_embedding(self, term, max_part_size=3):
+    def create_term_embedding(self, term, max_part_size=3, word_separator=u' '):
         assert(isinstance(term, unicode))
 
         count = 0
         vector = np.zeros(self.VectorSize)
-        for word in term.split(u' '):
+        for word in term.split(word_separator):
             v, c = self.__create_embedding_for_word(word=word,
                                                     max_part_size=max_part_size)
             count += c
