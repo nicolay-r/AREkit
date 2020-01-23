@@ -102,10 +102,10 @@ This toolset includes the following instruments and domain-related datasets:
             [[code]](networks/attention/architectures/mlp.py) /
             [[github:nicolay-r]](https://github.com/nicolay-r/mlp-attention);
         - P. Zhou, RNN-output based
-            [[code]](networks/attention/architectures/rnn_attention_p_zhou.py) /
+            [[code]](networks/attention/architectures/self_p_zhou.py) /
             [[github:SeoSangwoo]](https://github.com/SeoSangwoo/Attention-Based-BiLSTM-relation-extraction);
         - Z. Yang, RNN-output based
-            [[code]](networks/attention/architectures/rnn_attention_z_yang.py) /
+            [[code]](networks/attention/architectures/self_z_yang.py) /
             [[github:ilivans]](https://github.com/ilivans/tf-rnn-attention);
     * **Single Sentence Based Architectures**:
         - CNN
@@ -137,7 +137,7 @@ This toolset includes the following instruments and domain-related datasets:
             [[github:roomylee]](https://github.com/roomylee/self-attentive-emb-tf);
     * **Multi Sentence Based Architectures**:
         - Attention Hidden
-            [[code]](networks/multi/architectures/att_hidden.py);
+            [[code]](networks/multi/architectures/att_self.py);
         - Max Pooling
             [[code]](networks/multi/architectures/max_pooling.py) /
             [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);

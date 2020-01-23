@@ -7,7 +7,7 @@ import numpy as np
 from arekit.networks.context.architectures.contrib.att_ef_bilstm import AttentionEndsAndFramesBiLSTM
 from arekit.networks.context.architectures.contrib.att_ef_cnn import AttentionEndsAndFramesCNN
 from arekit.networks.context.architectures.contrib.att_ef_pcnn import AttentionEndsAndFramesPCNN
-from arekit.networks.context.architectures.contrib.att_hidden_p_zhou_bilstm import AttentionHiddenPZhouBiLSTM
+from arekit.networks.context.architectures.contrib.att_self_p_zhou_bilstm import AttentionSelfPZhouBiLSTM
 from arekit.networks.context.architectures.contrib.att_ends_cnn import AttentionEndsCNN
 from arekit.networks.context.architectures.bilstm import BiLSTM
 from arekit.networks.context.architectures.cnn import VanillaCNN
@@ -15,7 +15,7 @@ from arekit.networks.context.architectures.contrib.att_ends_pcnn import Attentio
 from arekit.networks.context.architectures.contrib.att_frames_bilstm import AttentionFramesBiLSTM
 from arekit.networks.context.architectures.contrib.att_frames_cnn import AttentionFramesCNN
 from arekit.networks.context.architectures.contrib.att_frames_pcnn import AttentionFramesPCNN
-from arekit.networks.context.architectures.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTM
+from arekit.networks.context.architectures.contrib.att_self_z_yang_bilstm import AttentionSelfZYangBiLSTM
 from arekit.networks.context.architectures.contrib.att_se_bilstm import AttentionSynonymEndsBiLSTM
 from arekit.networks.context.architectures.contrib.att_se_cnn import AttentionSynonymEndsCNN
 from arekit.networks.context.architectures.contrib.att_se_pcnn import AttentionSynonymEndsPCNN
@@ -30,7 +30,7 @@ from arekit.networks.context.architectures.self_att_bilstm import SelfAttentionB
 from arekit.networks.context.configurations.contrib.att_ef_bilstm import AttentionEndsAndFramesBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_ef_cnn import AttentionEndsAndFramesCNNConfig
 from arekit.networks.context.configurations.contrib.att_ef_pcnn import AttentionEndsAndFramesPCNNConfig
-from arekit.networks.context.configurations.contrib.att_hidden_p_zhou_bilstm import AttentionHiddenPZhouBiLSTMConfig
+from arekit.networks.context.configurations.contrib.att_self_p_zhou_bilstm import AttentionSelfPZhouBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_ends_cnn import AttentionEndsCNNConfig
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
 from arekit.networks.context.configurations.bilstm import BiLSTMConfig
@@ -39,7 +39,7 @@ from arekit.networks.context.configurations.contrib.att_ends_pcnn import Attenti
 from arekit.networks.context.configurations.contrib.att_frames_bilstm import AttentionFramesBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_frames_cnn import AttentionFramesCNNConfig
 from arekit.networks.context.configurations.contrib.att_frames_pcnn import AttentionFramesPCNNConfig
-from arekit.networks.context.configurations.contrib.att_hidden_z_yang_bilstm import AttentionHiddenZYangBiLSTMConfig
+from arekit.networks.context.configurations.contrib.att_self_z_yang_bilstm import AttentionSelfZYangBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_se_bilstm import AttentionSynonymEndsBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_se_cnn import AttentionSynonymEndsCNNConfig
 from arekit.networks.context.configurations.contrib.att_se_pcnn import AttentionSynonymEndsPCNNConfig
@@ -66,8 +66,8 @@ def contexts_supported():
             (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
 
             (AttentionSynonymEndsBiLSTMConfig(), AttentionSynonymEndsBiLSTM()),
-            (AttentionHiddenPZhouBiLSTMConfig(), AttentionHiddenPZhouBiLSTM()),
-            (AttentionHiddenZYangBiLSTMConfig(), AttentionHiddenZYangBiLSTM()),
+            (AttentionSelfPZhouBiLSTMConfig(), AttentionSelfPZhouBiLSTM()),
+            (AttentionSelfZYangBiLSTMConfig(), AttentionSelfZYangBiLSTM()),
 
             (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),

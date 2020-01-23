@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 
-def attention_by_peng_zhou(inputs):
+def self_attention_by_peng_zhou(inputs):
     """
     Attention method proposed by:
     Title: Attention-Based Bidirectional Long Short-Term Memory Networks for Relation Classification

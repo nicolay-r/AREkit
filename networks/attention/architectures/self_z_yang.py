@@ -7,7 +7,7 @@ code: https://github.com/ilivans/tf-rnn-attention
 import tensorflow as tf
 
 
-def attention_by_z_yang(inputs, attention_size, time_major=False, return_alphas=False):
+def self_attention_by_z_yang(inputs, attention_size, time_major=False, return_alphas=False):
     """
     Attention mechanism layer which reduces RNN/Bi-RNN outputs with Attention vector.
     The idea was proposed in the article by Z. Yang et al., "Hierarchical Attention Networks

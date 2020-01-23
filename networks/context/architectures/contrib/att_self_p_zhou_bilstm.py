@@ -1,8 +1,8 @@
-from arekit.networks.attention.architectures.rnn_attention_p_zhou import attention_by_peng_zhou
-from arekit.networks.context.architectures.att_hidden_bilstm_base import AttentionHiddenBiLSTMBase
+from arekit.networks.attention.architectures.self_p_zhou import self_attention_by_peng_zhou
+from arekit.networks.context.architectures.att_self_bilstm_base import AttentionSelfBiLSTMBase
 
 
-class AttentionHiddenPZhouBiLSTM(AttentionHiddenBiLSTMBase):
+class AttentionSelfPZhouBiLSTM(AttentionSelfBiLSTMBase):
     """
     Authors: Peng Zhou, Wei Shi, Jun Tian, Zhenyu Qi, Bingchen Li, Hongwei Hao, Bo Xu
     Paper: https://www.aclweb.org/anthology/P16-2034
@@ -11,4 +11,4 @@ class AttentionHiddenPZhouBiLSTM(AttentionHiddenBiLSTMBase):
     """
 
     def get_attention_output_with_alphas(self, rnn_outputs):
-        return attention_by_peng_zhou(rnn_outputs)
+        return self_attention_by_peng_zhou(rnn_outputs)
