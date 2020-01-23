@@ -57,7 +57,7 @@ List of the toolset dependencies is as follows:
 * Named Entity Recognition
     [[flask-python-server]](https://github.com/nicolay-r/ner-flask-wrapper);
 * SyntaxNet docker container
-    [[github-repo]]() /
+    [[github-repo]](ner_start.sh) /
     [[sh-script]](syntaxnet_start.sh);
 
 ## Manual
