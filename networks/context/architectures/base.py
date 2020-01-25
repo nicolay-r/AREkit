@@ -119,6 +119,14 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     # region body
 
+    def compile_hidden_states_only(self, config):
+        """
+        Utilized in multiinstance models.
+        """
+        self.__cfg = config
+        self.__init_embedding_hidden_states()
+        self.init_hidden_states()
+
     def compile(self, config, reset_graph):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(reset_graph, bool))
@@ -134,6 +142,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         embedded_terms = self.init_embedded_input()
         context_embedding = self.init_context_embedding(embedded_terms)
+
         logits_unscaled, logits_unscaled_dropped = self.init_logits_unscaled(context_embedding)
 
         # Get output for each sample

@@ -29,7 +29,7 @@ class InteractiveMLPAttention(MLPAttention):
         """
         Considered single entity as an average of the result
         """
-        return 1 * self.TermEmbeddingSize
+        return self.TermEmbeddingSize
 
     @property
     def Handler(self):

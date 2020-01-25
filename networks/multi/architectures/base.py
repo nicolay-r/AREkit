@@ -11,7 +11,7 @@ from arekit.networks.network import NeuralNetwork
 
 class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
 
-    _context_network_scope_name = "context_network"
+    __ctx_network_scope = "ctx_network"
 
     def __init__(self, context_network):
         assert(isinstance(context_network, BaseContextNeuralNetwork))
@@ -70,8 +70,8 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         self.__cfg = config
         tf.reset_default_graph()
 
-        with tf.variable_scope("ctx-network"):
-            self.__context_network.compile(config=config.ContextConfig, reset_graph=False)
+        with tf.variable_scope(self.__ctx_network_scope):
+            self.__context_network.compile_hidden_states_only(config=config.ContextConfig)
 
         self.init_input()
         self.init_hidden_states()
@@ -150,8 +150,9 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
 
                 self.__context_network.update_network_specific_parameters()
 
-                embedded_terms = self.__context_network.init_embedded_input()
-                context_embedding = self.__context_network.init_context_embedding(embedded_terms)
+                with tf.name_scope(self.__ctx_network_scope):
+                    embedded_terms = self.__context_network.init_embedded_input()
+                    context_embedding = self.__context_network.init_context_embedding(embedded_terms)
 
                 return i + 1, context_embeddings.write(i, context_embedding)
 

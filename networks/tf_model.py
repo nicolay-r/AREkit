@@ -304,6 +304,9 @@ class TensorflowModel(object):
         self.__sess = sess
 
     def __text_opinions_labeling(self, text_opinions, dest_data_type, doc_ids_set):
+        """
+        Provides algorithm of opinions labeling according to model results.
+        """
         assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
         assert(isinstance(dest_data_type, unicode))
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)

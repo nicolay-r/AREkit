@@ -62,10 +62,10 @@ def init_config(config):
 def contexts_supported():
     return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
 
-            (AttentionEndsAndFramesBiLSTMConfig(), AttentionEndsAndFramesBiLSTM()),
-            (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
+            # (AttentionEndsAndFramesBiLSTMConfig(), AttentionEndsAndFramesBiLSTM()),
+            # (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
 
-            (AttentionSynonymEndsBiLSTMConfig(), AttentionSynonymEndsBiLSTM()),
+            # (AttentionSynonymEndsBiLSTMConfig(), AttentionSynonymEndsBiLSTM()),
             (AttentionSelfPZhouBiLSTMConfig(), AttentionSelfPZhouBiLSTM()),
             (AttentionSelfZYangBiLSTMConfig(), AttentionSelfZYangBiLSTM()),
 
@@ -76,19 +76,20 @@ def contexts_supported():
             (RCNNConfig(), RCNN()),
 
             (IANFramesConfig(), IANFrames()),
-            # (IANEndsAndFramesConfig(), IANEndsAndFrames()),
+            (IANEndsAndFramesConfig(), IANEndsAndFrames()),
             (IANEndsBasedConfig(), IANEndsBased()),
             (IANSynonymEndsBasedConfig(), IANSynonymEndsBased()),
 
-            (AttentionEndsAndFramesPCNNConfig(), AttentionEndsAndFramesPCNN()),
-            (AttentionEndsAndFramesCNNConfig(), AttentionEndsAndFramesCNN()),
-            (AttentionEndsCNNConfig(), AttentionEndsCNN()),
-            (AttentionEndsPCNNConfig(), AttentionEndsPCNN()),
-            (AttentionSynonymEndsPCNNConfig(), AttentionSynonymEndsPCNN()),
-            (AttentionSynonymEndsCNNConfig(), AttentionSynonymEndsCNN()),
+            # (AttentionEndsAndFramesPCNNConfig(), AttentionEndsAndFramesPCNN()),
+            # (AttentionEndsAndFramesCNNConfig(), AttentionEndsAndFramesCNN()),
+            # (AttentionEndsCNNConfig(), AttentionEndsCNN()),
+            # (AttentionEndsPCNNConfig(), AttentionEndsPCNN()),
+            # (AttentionSynonymEndsPCNNConfig(), AttentionSynonymEndsPCNN()),
+            # (AttentionSynonymEndsCNNConfig(), AttentionSynonymEndsCNN()),
 
-            (AttentionFramesCNNConfig(), AttentionFramesCNN()),
-            (AttentionFramesPCNNConfig(), AttentionFramesPCNN())]
+            # (AttentionFramesCNNConfig(), AttentionFramesCNN()),
+            # (AttentionFramesPCNNConfig(), AttentionFramesPCNN())
+            ]
 
 
 if __name__ == "__main__":

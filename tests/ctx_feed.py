@@ -57,6 +57,8 @@ def test_ctx_feed(network, network_config, create_minibatch_func, logger,
 
     network_optimiser = config.Optimiser.minimize(network.Cost)
     with init_session() as sess:
+        # Save graph
+        writer = tf.summary.FileWriter("output", sess.graph)
         # Init feed dict
         feed_dict = network.create_feed_dict(input=minibatch.to_network_input(),
                                              data_type=DataType.Train)
@@ -75,6 +77,10 @@ def test_ctx_feed(network, network_config, create_minibatch_func, logger,
         # feed
         result = sess.run(fetches=fetches_default + fetches_hidden + fetches_idp,
                           feed_dict=feed_dict)
+
+        # Printing graph
+        print result
+        writer.close()
 
         # Show hidden parameters
         hidden_values = result[len(fetches_default):len(fetches_default) + len(fetches_hidden)]

@@ -48,7 +48,7 @@ class VanillaCNN(BaseContextNeuralNetwork):
         bwc_conv = tf.nn.conv1d(bwc_line, self.__hidden[self.H_conv_filter], self.TermEmbeddingSize,
                                 "VALID",
                                 data_format="NHWC",
-                                name="conv")
+                                name="C")
 
         bwgc_conv = tf.reshape(bwc_conv, [self.Config.BatchSize,
                                           1,
