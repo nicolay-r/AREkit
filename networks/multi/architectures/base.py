@@ -77,9 +77,9 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         self.init_hidden_states()
 
         context_outputs = self.init_body()
-        max_pooling = self.init_multiinstance_embedding(context_outputs)
+        embedded_contexts = self.init_multiinstance_embedding(context_outputs)
         logits_unscaled, logits_unscaled_dropped = self.init_logits_unscaled(
-            encoded_contexts=max_pooling)
+            encoded_contexts=embedded_contexts)
 
         output = tf.nn.softmax(logits_unscaled)
         self.__labels = tf.cast(tf.argmax(output, axis=1), tf.int32)

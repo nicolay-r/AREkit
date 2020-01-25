@@ -43,7 +43,7 @@ def create_minibatch(config):
     return MiniBatch(bags=bags, batch_id=None)
 
 
-def test_ctx_feed(network, network_config, create_minibatch_func,
+def test_ctx_feed(network, network_config, create_minibatch_func, logger,
                   display_hidden_values=True,
                   display_idp_values=True):
     assert(isinstance(network, NeuralNetwork))
@@ -100,4 +100,7 @@ if __name__ == "__main__":
 
     for cfg, network in contexts_supported():
         logger.debug("Feed to the network: {}".format(type(network)))
-        test_ctx_feed(network, cfg, create_minibatch)
+        test_ctx_feed(network=network,
+                      network_config=cfg,
+                      create_minibatch_func=create_minibatch,
+                      logger=logger)

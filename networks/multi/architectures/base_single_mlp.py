@@ -17,7 +17,7 @@ class BaseMultiInstanceSingleMLP(BaseMultiInstanceNeuralNetwork):
 
     @property
     def EmbeddingSize(self):
-        return self.ContextNetwork.ContextEmbeddingSize
+        raise NotImplementedError()
 
     # region 'init' methods
 

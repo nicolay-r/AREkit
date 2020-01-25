@@ -14,6 +14,10 @@ class MaxPoolingOverSentences(BaseMultiInstanceSingleMLP):
         super(MaxPoolingOverSentences, self).__init__(context_network)
         self.__hidden = OrderedDict()
 
+    @property
+    def EmbeddingSize(self):
+        return self.ContextNetwork.ContextEmbeddingSize
+
     def init_multiinstance_embedding(self, context_outputs):
         """
         context_outputs: [batches, sentences, embedding]

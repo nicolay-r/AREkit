@@ -14,6 +14,10 @@ class AttSelfOverSentences(BaseMultiInstanceSingleMLP):
         super(AttSelfOverSentences, self).__init__(context_network)
         self.__att_alphas = None
 
+    @property
+    def EmbeddingSize(self):
+        return self.ContextNetwork.ContextEmbeddingSize
+
     def init_multiinstance_embedding(self, context_outputs):
         """
         context_outputs: Tensor

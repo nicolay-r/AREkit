@@ -42,4 +42,5 @@ if __name__ == "__main__":
             ctx_feed.test_ctx_feed(network=network,
                                    network_config=config,
                                    create_minibatch_func=create_minibatch,
-                                   display_values=False)
+                                   logger=logger,
+                                   display_idp_values=False)
