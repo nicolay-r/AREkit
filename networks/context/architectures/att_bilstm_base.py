@@ -27,19 +27,8 @@ class AttentionBiLSTMBase(BiLSTM):
         """
         raise NotImplementedError()
 
-    # region public 'init' methods
-
-    def init_input(self):
-        super(AttentionBiLSTMBase, self).init_input()
-        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
-            self.Config.AttentionModel.init_input(p_names_with_sizes=embedding.get_ns(self))
-
-    # endregion
-
     def customize_rnn_output(self, rnn_outputs, s_length):
-
         g = sequence.select_last_relevant_in_sequence(rnn_outputs, s_length)
-
         with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             att_e, self.__att_alphas = embedding.init_mlp_attention_embedding(
                 ctx_network=self,
@@ -53,6 +42,7 @@ class AttentionBiLSTMBase(BiLSTM):
     def init_body_dependent_hidden_states(self):
         super(AttentionBiLSTMBase, self).init_body_dependent_hidden_states()
         with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
+            self.Config.AttentionModel.init_term_embedding_size(p_names_with_sizes=embedding.get_ns(self))
             self.Config.AttentionModel.init_hidden()
 
     # endregion

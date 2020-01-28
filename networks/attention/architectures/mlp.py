@@ -74,22 +74,6 @@ class MLPAttention(object):
         for p_name, value in param_names_with_values:
             self.__input[p_name] = value
 
-    def init_input(self, p_names_with_sizes):
-        """
-        p_names_with_sizes: list
-            list of pairs <name, size>
-        """
-        assert(isinstance(p_names_with_sizes, list))
-
-        self.__term_embedding_size = sum([size for _, size in p_names_with_sizes])
-
-        for p_name, _ in p_names_with_sizes:
-            self.__input[p_name] = tf.placeholder(dtype=tf.int32,
-                                                  shape=[self.__batch_size, self.__terms_per_context])
-
-        self.__input[self.I_keys] = tf.placeholder(dtype=tf.int32,
-                                                   shape=[self.__batch_size, self.__cfg.EntitiesPerContext])
-
     def init_hidden(self):
 
         self.__hidden[self.H_W_we] = tf.get_variable(
@@ -115,6 +99,10 @@ class MLPAttention(object):
             shape=[1],
             initializer=self.__cfg.LayerInitializer,
             dtype=tf.float32)
+
+    def init_term_embedding_size(self, p_names_with_sizes):
+        assert(isinstance(p_names_with_sizes, list))
+        self.__term_embedding_size = sum([size for _, size in p_names_with_sizes])
 
     def init_body(self, params_embeddings):
         """
@@ -171,6 +159,9 @@ class MLPAttention(object):
                 e_term_indices = tf.tile(e_term_index, [1, self.__terms_per_context])   # [batch_size, terms_per_context]
 
                 embedded_params = []
+
+                # p_name: [batch_size, terms_per_context]
+
                 for param_name, param_embedding in params_embeddings:
                     ids = filter_batch_elements(elements=self.__input[param_name],
                                                 inds=e_term_indices,
@@ -206,6 +197,7 @@ class MLPAttention(object):
                         att_sum.write(i, w_sum),
                         att_weights.write(i, tf.reshape(alphas, [self.__batch_size, self.__terms_per_context])))
 
+            # I_keys: [batch_size, EntitiesPerContext]
             att_sum, att_weights = iter_by_entities(
                 entities=self.__input[self.I_keys],
                 handler=process_entity)

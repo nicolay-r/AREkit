@@ -21,6 +21,10 @@ class AttentionPCNNBase(PiecewiseCNN):
 
     @property
     def ContextEmbeddingSize(self):
+
+        if self.Config.AttentionModel.TermEmbeddingSize is None:
+            self.__init_aspect_term_embedding_size()
+
         return super(AttentionPCNNBase, self).ContextEmbeddingSize + \
                self.Config.AttentionModel.AttentionEmbeddingSize
 
@@ -37,14 +41,11 @@ class AttentionPCNNBase(PiecewiseCNN):
 
     # region public `init` methods
 
-    def init_input(self):
-        super(AttentionPCNNBase, self).init_input()
-        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
-            self.Config.AttentionModel.init_input(p_names_with_sizes=embedding.get_ns(self))
-
     def init_body_dependent_hidden_states(self):
         super(AttentionPCNNBase, self).init_body_dependent_hidden_states()
+
         with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
+            self.__init_aspect_term_embedding_size()
             self.Config.AttentionModel.init_hidden()
 
     def init_context_embedding(self, embedded_terms):
@@ -70,3 +71,7 @@ class AttentionPCNNBase(PiecewiseCNN):
         yield common.ATTENTION_WEIGHTS_LOG_PARAMETER, self.__att_weights
 
     # endregion
+
+    def __init_aspect_term_embedding_size(self):
+        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
+            self.Config.AttentionModel.init_term_embedding_size(p_names_with_sizes=embedding.get_ns(self))

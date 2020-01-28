@@ -93,6 +93,9 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     # endregion
 
+    def has_input_parameter(self, param):
+        return param in self.__input
+
     def get_input_parameter(self, param):
         return self.__input[param]
 
@@ -138,6 +141,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         self.init_input()
         self.__init_embedding_hidden_states()
+        self.init_body_dependent_hidden_states()
         self.init_logits_hidden_states()
 
         embedded_terms = self.init_embedded_input()
@@ -161,9 +165,15 @@ class BaseContextNeuralNetwork(NeuralNetwork):
     # region init
 
     def init_body_dependent_hidden_states(self):
+        """
+        States that assumes to be utilized in model body.
+        """
         raise NotImplementedError()
 
     def init_logits_hidden_states(self):
+        """
+        States that assumes to be in final fully connection layer
+        """
         raise NotImplementedError()
 
     def init_context_embedding(self, embedded_terms):

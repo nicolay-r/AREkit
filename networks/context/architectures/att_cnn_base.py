@@ -40,15 +40,10 @@ class AttentionCNNBase(VanillaCNN):
 
     # region public 'init' methods
 
-    def init_input(self):
-        super(AttentionCNNBase, self).init_input()
-
-        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
-            self.Config.AttentionModel.init_input(p_names_with_sizes=embedding.get_ns(self))
-
     def init_body_dependent_hidden_states(self):
         super(AttentionCNNBase, self).init_body_dependent_hidden_states()
         with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
+            self.Config.AttentionModel.init_term_embedding_size(p_names_with_sizes=embedding.get_ns(self))
             self.Config.AttentionModel.init_hidden()
 
     def init_context_embedding_core(self, embedded_terms):

@@ -10,6 +10,10 @@ def __get_NEVS_list(ctx_network):
     """
     assert(isinstance(ctx_network, BaseContextNeuralNetwork))
 
+    def ctx_network_input_or_none(p_name):
+        if ctx_network.has_input_parameter(p_name):
+            return ctx_network.get_input_parameter(p_name)
+
     i_x = "I_x"
     i_pos = "I_pos"
     i_dist_obj = "I_dist_obj"
@@ -20,37 +24,37 @@ def __get_NEVS_list(ctx_network):
 
     return [(i_x,
              ctx_network.TermEmbedding,
-             ctx_network.get_input_parameter(InputSample.I_X_INDS),
+             ctx_network_input_or_none(InputSample.I_X_INDS),
              ctx_network.Config.TermEmbeddingShape[1]),
 
             (i_pos,
              ctx_network.POSEmbedding,
-             ctx_network.get_input_parameter(InputSample.I_POS_INDS),
+             ctx_network_input_or_none(InputSample.I_POS_INDS),
              ctx_network.Config.PosEmbeddingSize),
 
             (i_dist_obj,
              ctx_network.DistanceEmbedding,
-             ctx_network.get_input_parameter(InputSample.I_OBJ_DISTS),
+             ctx_network_input_or_none(InputSample.I_OBJ_DISTS),
              ctx_network.Config.DistanceEmbeddingSize),
 
             (i_dist_subj,
              ctx_network.DistanceEmbedding,
-             ctx_network.get_input_parameter(InputSample.I_SUBJ_DISTS),
+             ctx_network_input_or_none(InputSample.I_SUBJ_DISTS),
              ctx_network.Config.DistanceEmbeddingSize),
 
             (i_nearest_dist_obj,
              ctx_network.DistanceEmbedding,
-             ctx_network.get_input_parameter(InputSample.I_NEAREST_OBJ_DISTS),
+             ctx_network_input_or_none(InputSample.I_NEAREST_OBJ_DISTS),
              ctx_network.Config.DistanceEmbeddingSize),
 
             (i_nearest_dist_subj,
              ctx_network.DistanceEmbedding,
-             ctx_network.get_input_parameter(InputSample.I_NEAREST_SUBJ_DISTS),
+             ctx_network_input_or_none(InputSample.I_NEAREST_SUBJ_DISTS),
              ctx_network.Config.DistanceEmbeddingSize),
 
             (i_sent_role_frames,
              ctx_network.SentimentEmbedding,
-             ctx_network.get_input_parameter(InputSample.I_FRAME_SENT_ROLES),
+             ctx_network_input_or_none(InputSample.I_FRAME_SENT_ROLES),
              ctx_network.Config.SentimentEmbeddingSize)
             ]
 
