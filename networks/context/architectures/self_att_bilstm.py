@@ -94,7 +94,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         # M_flat (batch_size, r * 2u)
         return tf.reshape(M, shape=[-1, self.ContextEmbeddingSize])
 
-    def init_hidden_states(self):
+    def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
 
         self.__W_s1 = tf.get_variable(
@@ -108,6 +108,9 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             shape=[self.Config.DASize, self.Config.RSize],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.WeightInitializer)
+
+    def init_logits_hidden_states(self):
+        assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
 
         self.__W_output = tf.get_variable(
             name="W_output",
@@ -144,11 +147,7 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
             fc = tf.nn.relu(tf.nn.xw_plus_b(context_embedding, self.__W_fc, self.__b_fc), name="fc")
 
         with tf.name_scope("output"):
-            logits = tf.nn.xw_plus_b(
-                x=fc,
-                weights=self.__W_output,
-                biases=self.__b_output,
-                name="logits")
+            logits = tf.nn.xw_plus_b(x=fc, weights=self.__W_output, biases=self.__b_output, name="logits")
 
         return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
@@ -184,9 +183,17 @@ class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
         yield common.ATTENTION_WEIGHTS_LOG_PARAMETER, self.__avg_by_r_A
 
     def iter_hidden_parameters(self):
-        yield ("W_s1", self.__W_s1)
-        yield ("W_s2", self.__W_s2)
-        yield ("W_output", self.__W_output)
-        yield ("b_output", self.__b_output)
+
+        if self.__W_s1 is not None:
+            yield ("W_s1", self.__W_s1)
+
+        if self.__W_s2 is not None:
+            yield ("W_s2", self.__W_s2)
+
+        if self.__W_output is not None:
+            yield ("W_output", self.__W_output)
+
+        if self.__b_output is not None:
+            yield ("b_output", self.__b_output)
 
     # endregion

@@ -79,7 +79,7 @@ class RNN(BaseContextNeuralNetwork):
 
         return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
-    def init_hidden_states(self):
+    def init_logits_hidden_states(self):
 
         self.__hidden[self.H_W] = tf.get_variable(
             name=self.H_W,
@@ -92,6 +92,9 @@ class RNN(BaseContextNeuralNetwork):
             shape=[self.Config.ClassesCount],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
+
+    def init_body_dependent_hidden_states(self):
+        pass
 
     # endregion
 

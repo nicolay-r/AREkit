@@ -56,9 +56,9 @@ class PiecewiseCNN(VanillaCNN):
 
         return tf.concat(g, axis=-1)
 
-    def init_hidden_states(self):
+    def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
-        super(PiecewiseCNN, self).init_hidden_states()
+        super(PiecewiseCNN, self).init_body_dependent_hidden_states()
 
         self.Hidden[self.H_W] = tf.get_variable(
             name='PCNN_{}'.format(self.H_W),

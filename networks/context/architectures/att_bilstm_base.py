@@ -29,11 +29,6 @@ class AttentionBiLSTMBase(BiLSTM):
 
     # region public 'init' methods
 
-    def init_hidden_states(self):
-        super(AttentionBiLSTMBase, self).init_hidden_states()
-        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
-            self.Config.AttentionModel.init_hidden()
-
     def init_input(self):
         super(AttentionBiLSTMBase, self).init_input()
         with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
@@ -52,6 +47,15 @@ class AttentionBiLSTMBase(BiLSTM):
                 keys=self.get_att_input())
 
         return tf.concat([g, att_e], axis=-1)
+
+    # region hidden states
+
+    def init_body_dependent_hidden_states(self):
+        super(AttentionBiLSTMBase, self).init_body_dependent_hidden_states()
+        with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
+            self.Config.AttentionModel.init_hidden()
+
+    # endregion
 
     # region public 'iter' methods
 

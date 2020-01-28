@@ -16,10 +16,10 @@ class RCNN(BaseContextNeuralNetwork):
     Source: https://github.com/roomylee/rcnn-text-classification
     """
 
-    H_W = "W"
-    H_b = "b"
-    H_W2 = "W2"
-    H_b2 = "b2"
+    H_W_text = "W"
+    H_b_text = "b"
+    H_W2_out = "W2"
+    H_b2_out = "b2"
 
     def __init__(self):
         super(RCNN, self).__init__()
@@ -78,7 +78,7 @@ class RCNN(BaseContextNeuralNetwork):
             merged = tf.concat([c_left, embedded_terms, c_right], axis=2, name="merged")
 
         with tf.name_scope("text-representation"):
-            y2 = tf.tanh(tf.einsum('aij,jk->aik', merged, self.__hidden[self.H_W]) + self.__hidden[self.H_b])
+            y2 = tf.tanh(tf.einsum('aij,jk->aik', merged, self.__hidden[self.H_W_text]) + self.__hidden[self.H_b_text])
 
         with tf.name_scope("max-pooling"):
             y3 = tf.reduce_max(y2, axis=1)
@@ -88,34 +88,37 @@ class RCNN(BaseContextNeuralNetwork):
     def init_logits_unscaled(self, context_embedding):
         with tf.name_scope("output"):
             logits = tf.nn.xw_plus_b(context_embedding,
-                                     self.__hidden[self.H_W2],
-                                     self.__hidden[self.H_b2], name="logits")
+                                     self.__hidden[self.H_W2_out],
+                                     self.__hidden[self.H_b2_out], name="logits")
 
         return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
 
-    def init_hidden_states(self):
+    def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, RCNNConfig))
 
-        self.__hidden[self.H_W] = tf.get_variable(
-            name=self.H_W,
+        self.__hidden[self.H_W_text] = tf.get_variable(
+            name=self.H_W_text,
             shape=[self.__text_embedding_size(), self.Config.HiddenSize],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.WeightInitializer)
 
-        self.__hidden[self.H_b] = tf.get_variable(
-            name=self.H_b,
+        self.__hidden[self.H_b_text] = tf.get_variable(
+            name=self.H_b_text,
             shape=[self.Config.HiddenSize],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
 
-        self.__hidden[self.H_W2] = tf.get_variable(
-            name=self.H_W2,
+    def init_logits_hidden_states(self):
+        assert(isinstance(self.Config, RCNNConfig))
+
+        self.__hidden[self.H_W2_out] = tf.get_variable(
+            name=self.H_W2_out,
             shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
 
-        self.__hidden[self.H_b2] = tf.get_variable(
-            name=self.H_b2,
+        self.__hidden[self.H_b2_out] = tf.get_variable(
+            name=self.H_b2_out,
             shape=[self.Config.ClassesCount],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)

@@ -66,7 +66,7 @@ class IANBase(BaseContextNeuralNetwork):
         self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
                                                       name='ctx_' + "dropout_rnn_keep_prob")
 
-    def init_hidden_states(self):
+    def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, IANBaseConfig))
 
         self.__w_a = tf.get_variable(
@@ -83,13 +83,6 @@ class IANBase(BaseContextNeuralNetwork):
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.__w_l = tf.get_variable(
-            name=self.SOFTMAX_W,
-            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-            initializer=self.Config.WeightInitializer,
-            regularizer=self.Config.LayerRegularizer,
-            trainable=True)
-
         self.__b_a = tf.get_variable(
             name=self.ASPECT_B,
             shape=[self.Config.MaxAspectLength, 1],
@@ -101,6 +94,16 @@ class IANBase(BaseContextNeuralNetwork):
             name=self.CONTEXT_B,
             shape=[self.Config.MaxContextLength, 1],
             initializer=self.Config.BiasInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            trainable=True)
+
+    def init_logits_hidden_states(self):
+        assert(isinstance(self.Config, IANBaseConfig))
+
+        self.__w_l = tf.get_variable(
+            name=self.SOFTMAX_W,
+            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
+            initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
@@ -191,12 +194,24 @@ class IANBase(BaseContextNeuralNetwork):
     # region public 'iter' methods
 
     def iter_hidden_parameters(self):
-        yield self.ASPECT_W, self.__w_a
-        yield self.CONTEXT_W, self.__w_c
-        yield self.SOFTMAX_W, self.__w_l
-        yield self.ASPECT_B, self.__b_a
-        yield self.CONTEXT_B, self.__b_c
-        yield self.SOFTMAX_B, self.__b_l
+
+        if self.__w_a is not None:
+            yield self.ASPECT_W, self.__w_a
+
+        if self.__w_c is not None:
+            yield self.CONTEXT_W, self.__w_c
+
+        if self.__w_l is not None:
+            yield self.SOFTMAX_W, self.__w_l
+
+        if self.__b_a is not None:
+            yield self.ASPECT_B, self.__b_a
+
+        if self.__b_c is not None:
+            yield self.CONTEXT_B, self.__b_c
+
+        if self.__b_l is not None:
+            yield self.SOFTMAX_B, self.__b_l
 
     def iter_input_dependent_hidden_parameters(self):
         for name, value in super(IANBase, self).iter_input_dependent_hidden_parameters():

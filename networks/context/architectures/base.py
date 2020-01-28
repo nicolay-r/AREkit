@@ -125,7 +125,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         """
         self.__cfg = config
         self.__init_embedding_hidden_states()
-        self.init_hidden_states()
+        self.init_body_dependent_hidden_states()
 
     def compile(self, config, reset_graph):
         assert(isinstance(config, DefaultNetworkConfig))
@@ -138,7 +138,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
         self.init_input()
         self.__init_embedding_hidden_states()
-        self.init_hidden_states()
+        self.init_logits_hidden_states()
 
         embedded_terms = self.init_embedded_input()
         context_embedding = self.init_context_embedding(embedded_terms)
@@ -160,7 +160,10 @@ class BaseContextNeuralNetwork(NeuralNetwork):
 
     # region init
 
-    def init_hidden_states(self):
+    def init_body_dependent_hidden_states(self):
+        raise NotImplementedError()
+
+    def init_logits_hidden_states(self):
         raise NotImplementedError()
 
     def init_context_embedding(self, embedded_terms):

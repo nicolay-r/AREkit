@@ -81,7 +81,16 @@ class VanillaCNN(BaseContextNeuralNetwork):
                                                                 activations=activations)
         return result, result_dropout
 
-    def init_hidden_states(self):
+    def init_body_dependent_hidden_states(self):
+        assert(isinstance(self.Config, CNNConfig))
+        self.__hidden[self.H_conv_filter] = tf.get_variable(
+            name=self.H_conv_filter,
+            shape=[self.Config.WindowSize * self.TermEmbeddingSize, 1, self.Config.FiltersCount],
+            initializer=self.Config.WeightInitializer,
+            regularizer=self.Config.LayerRegularizer,
+            dtype=tf.float32)
+
+    def init_logits_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
 
         self.__hidden[self.H_W] = tf.get_variable(
@@ -108,13 +117,6 @@ class VanillaCNN(BaseContextNeuralNetwork):
             name=self.H_b2,
             shape=[self.Config.ClassesCount],
             initializer=self.Config.BiasInitializer,
-            regularizer=self.Config.LayerRegularizer,
-            dtype=tf.float32)
-
-        self.__hidden[self.H_conv_filter] = tf.get_variable(
-            name=self.H_conv_filter,
-            shape=[self.Config.WindowSize * self.TermEmbeddingSize, 1, self.Config.FiltersCount],
-            initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32)
 

@@ -46,8 +46,8 @@ class AttentionCNNBase(VanillaCNN):
         with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             self.Config.AttentionModel.init_input(p_names_with_sizes=embedding.get_ns(self))
 
-    def init_hidden_states(self):
-        super(AttentionCNNBase, self).init_hidden_states()
+    def init_body_dependent_hidden_states(self):
+        super(AttentionCNNBase, self).init_body_dependent_hidden_states()
         with tf.variable_scope(common.ATTENTION_SCOPE_NAME):
             self.Config.AttentionModel.init_hidden()
 

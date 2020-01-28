@@ -97,7 +97,10 @@ class BiLSTM(BaseContextNeuralNetwork):
                                               dropout_keep_prob=self.DropoutKeepProb,
                                               activations=activations)
 
-    def init_hidden_states(self):
+    def init_body_dependent_hidden_states(self):
+        pass
+
+    def init_logits_hidden_states(self):
         self.__hidden[self.H_W] = tf.get_variable(
             name=self.H_W,
             shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
