@@ -15,10 +15,12 @@ from arekit.networks.context.architectures.contrib.att_ends_pcnn import Attentio
 from arekit.networks.context.architectures.contrib.att_frames_bilstm import AttentionFramesBiLSTM
 from arekit.networks.context.architectures.contrib.att_frames_cnn import AttentionFramesCNN
 from arekit.networks.context.architectures.contrib.att_frames_pcnn import AttentionFramesPCNN
+from arekit.networks.context.architectures.contrib.att_self_p_zhou_rcnn import AttentionSelfPZhouRCNN
 from arekit.networks.context.architectures.contrib.att_self_z_yang_bilstm import AttentionSelfZYangBiLSTM
 from arekit.networks.context.architectures.contrib.att_se_bilstm import AttentionSynonymEndsBiLSTM
 from arekit.networks.context.architectures.contrib.att_se_cnn import AttentionSynonymEndsCNN
 from arekit.networks.context.architectures.contrib.att_se_pcnn import AttentionSynonymEndsPCNN
+from arekit.networks.context.architectures.contrib.att_self_z_yang_rcnn import AttentionSelfZYangRCNN
 from arekit.networks.context.architectures.contrib.ian_ef import IANEndsAndFrames
 from arekit.networks.context.architectures.contrib.ian_ends import IANEndsBased
 from arekit.networks.context.architectures.contrib.ian_se import IANSynonymEndsBased
@@ -39,10 +41,12 @@ from arekit.networks.context.configurations.contrib.att_ends_pcnn import Attenti
 from arekit.networks.context.configurations.contrib.att_frames_bilstm import AttentionFramesBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_frames_cnn import AttentionFramesCNNConfig
 from arekit.networks.context.configurations.contrib.att_frames_pcnn import AttentionFramesPCNNConfig
+from arekit.networks.context.configurations.contrib.att_self_p_zhou_rcnn import AttentionSelfPZhouRCNNConfig
 from arekit.networks.context.configurations.contrib.att_self_z_yang_bilstm import AttentionSelfZYangBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_se_bilstm import AttentionSynonymEndsBiLSTMConfig
 from arekit.networks.context.configurations.contrib.att_se_cnn import AttentionSynonymEndsCNNConfig
 from arekit.networks.context.configurations.contrib.att_se_pcnn import AttentionSynonymEndsPCNNConfig
+from arekit.networks.context.configurations.contrib.att_self_z_yang_rcnn import AttentionSelfZYangRCNNConfig
 from arekit.networks.context.configurations.contrib.ian_ef import IANEndsAndFramesConfig
 from arekit.networks.context.configurations.contrib.ian_ends import IANEndsBasedConfig
 from arekit.networks.context.configurations.contrib.ian_se import IANSynonymEndsBasedConfig
@@ -73,7 +77,10 @@ def contexts_supported():
             (CNNConfig(), PiecewiseCNN()),
             (RNNConfig(), RNN()),
             (BiLSTMConfig(), BiLSTM()),
+
             (RCNNConfig(), RCNN()),
+            (AttentionSelfPZhouRCNNConfig(), AttentionSelfPZhouRCNN()),
+            (AttentionSelfZYangRCNNConfig(), AttentionSelfZYangRCNN()),
 
             (IANFramesConfig(), IANFrames()),
             (IANEndsAndFramesConfig(), IANEndsAndFrames()),
@@ -88,8 +95,7 @@ def contexts_supported():
             (AttentionSynonymEndsCNNConfig(), AttentionSynonymEndsCNN()),
 
             (AttentionFramesCNNConfig(), AttentionFramesCNN()),
-            (AttentionFramesPCNNConfig(), AttentionFramesPCNN())
-            ]
+            (AttentionFramesPCNNConfig(), AttentionFramesPCNN())]
 
 
 if __name__ == "__main__":

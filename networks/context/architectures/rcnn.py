@@ -48,6 +48,10 @@ class RCNN(BaseContextNeuralNetwork):
         self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
                                                       name="ctx_dropout_rnn_keep_prob")
 
+    def modify_rnn_outputs_optional(self, output_fw, output_bw):
+        # Nothing modifies
+        return output_fw, output_bw
+
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, RCNNConfig))
         text_length = sequence.calculate_sequence_length(self.get_input_parameter(InputSample.I_X_INDS))
@@ -62,17 +66,19 @@ class RCNN(BaseContextNeuralNetwork):
                                         cell_type=self.Config.CellType,
                                         dropout_rnn_keep_prob=self.__dropout_rnn_keep_prob)
 
-            (self.output_fw, self.output_bw), states = sequence.bidirectional_rnn(
+            (output_fw, output_bw), states = sequence.bidirectional_rnn(
                 cell_fw=fw_cell,
                 cell_bw=bw_cell,
                 inputs=embedded_terms,
                 sequence_length=text_length,
                 dtype=tf.float32)
 
+            output_fw, output_bw = self.modify_rnn_outputs_optional(output_fw, output_bw)
+
         with tf.name_scope("ctx"):
-            shape = [tf.shape(self.output_fw)[0], 1, tf.shape(self.output_fw)[2]]
-            c_left = tf.concat([tf.zeros(shape), self.output_fw[:, :-1]], axis=1, name="context_left")
-            c_right = tf.concat([self.output_bw[:, 1:], tf.zeros(shape)], axis=1, name="context_right")
+            shape = [tf.shape(output_fw)[0], 1, tf.shape(output_fw)[2]]
+            c_left = tf.concat([tf.zeros(shape), output_fw[:, :-1]], axis=1, name="context_left")
+            c_right = tf.concat([output_bw[:, 1:], tf.zeros(shape)], axis=1, name="context_right")
 
         with tf.name_scope("word-representation"):
             merged = tf.concat([c_left, embedded_terms, c_right], axis=2, name="merged")
