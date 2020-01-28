@@ -9,5 +9,5 @@ class InteractiveMLPAttentionConfig(MLPAttentionConfig):
         self.__keys_count = keys_count
 
     @property
-    def EntitiesPerContext(self):
+    def KeysPerContext(self):
         return self.__keys_count

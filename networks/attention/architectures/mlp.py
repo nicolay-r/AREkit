@@ -56,7 +56,7 @@ class MLPAttention(object):
 
     @property
     def AttentionEmbeddingSize(self):
-        return self.__cfg.EntitiesPerContext * self.__term_embedding_size
+        return self.__cfg.KeysPerContext * self.__term_embedding_size
 
     # endregion
 
@@ -116,8 +116,6 @@ class MLPAttention(object):
                     for p_name, p_emb in params_embeddings],
             axis=-1)
 
-        # Parameters([(self.__input[p_name], p_emb) for p_name, p_emb in params_embeddings])
-
         with tf.name_scope("attention"):
 
             def iter_by_entities(entities, handler):
@@ -126,7 +124,7 @@ class MLPAttention(object):
                 handler: func
                 """
 
-                e_len = self.calculate_entities_length_func(entities)
+                e_len = self.calculate_keys_length_func(entities)
 
                 att_sum_array = tf.TensorArray(
                     dtype=tf.float32,
@@ -223,21 +221,10 @@ class MLPAttention(object):
         """
         return att_weights
 
-    def calculate_entities_length_func(self, entities):
+    def calculate_keys_length_func(self, keys):
         """
         In this case we consider that the length is fixed to EntitiesPerContextParameter
         """
-        return self.__cfg.EntitiesPerContext
+        return self.__cfg.KeysPerContext
 
     # endregion
-
-
-class Parameters:
-
-    def __init__(self, args):
-        assert(isinstance(args, list))
-        self.__args = args
-
-    def iterate_pairs(self):
-        for x, y in self.__args:
-            yield x, y

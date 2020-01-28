@@ -3,7 +3,7 @@ import tensorflow as tf
 
 class MLPAttentionConfig(object):
 
-    __entities_per_context = 2
+    __keys_per_context = 2
     __hidden_size = 10
 
     # region properties
@@ -13,8 +13,8 @@ class MLPAttentionConfig(object):
         return tf.contrib.layers.xavier_initializer()
 
     @property
-    def EntitiesPerContext(self):
-        return self.__entities_per_context
+    def KeysPerContext(self):
+        return self.__keys_per_context
 
     @property
     def HiddenSize(self):
@@ -27,7 +27,7 @@ class MLPAttentionConfig(object):
     def get_parameters(self):
         parameters = [
             ("mlp-attention-2016:layer_initializer", self.LayerInitializer),
-            ("mlp-attention-2016:entities_per_context", self.EntitiesPerContext),
+            ("mlp-attention-2016:keys_per_context", self.KeysPerContext),
             ("mlp-attention-2016:hidden_size", self.HiddenSize)
         ]
 

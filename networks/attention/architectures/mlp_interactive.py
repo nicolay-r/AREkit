@@ -38,11 +38,11 @@ class InteractiveMLPAttention(MLPAttention):
         else:
             return InteractiveMLPAttention.crop_elements_by_lengths_and_reduce_mean
 
-    def calculate_entities_length_func(self, entities):
-        scalar_length = super(InteractiveMLPAttention, self).calculate_entities_length_func(entities)
+    def calculate_keys_length_func(self, keys):
+        scalar_length = super(InteractiveMLPAttention, self).calculate_keys_length_func(keys)
 
         self.__dynamic_lens = sequence.calculate_sequence_length(
-            sequence=entities,
+            sequence=keys,
             is_neg_placeholder=InputSample.FRAMES_PAD_VALUE < 0)
 
         return scalar_length
@@ -52,7 +52,7 @@ class InteractiveMLPAttention(MLPAttention):
         att_sum: [batch_size, entity_per_context, term_embedding_size]
         """
         _att_sum = tf.reshape(att_sum, shape=[self.BatchSize,
-                                              self.Config.EntitiesPerContext,
+                                              self.Config.KeysPerContext,
                                               self.TermEmbeddingSize])
 
         mean_sum = filtering.filter_batch_elements(
@@ -68,7 +68,7 @@ class InteractiveMLPAttention(MLPAttention):
         att_sum: [batch_size, entity_per_context, terms_per_context]
         """
         _att_weights = tf.reshape(att_weights, shape=[self.BatchSize,
-                                                      self.Config.EntitiesPerContext,
+                                                      self.Config.KeysPerContext,
                                                       self.TermsPerContext])
 
         mean_sum = filtering.filter_batch_elements(
