@@ -138,6 +138,8 @@ This toolset includes the following instruments and domain-related datasets:
         - Bi-LSTM + Self Attention
             [[code]](networks/context/architectures/self_att_bilstm.py) /
             [[github:roomylee]](https://github.com/roomylee/self-attentive-emb-tf);
+        - RCNN + Self Attention
+            [[code]](networks/context/architectures/att_self_rcnn.py);
     * **Multi Sentence Based Encoders Architectures**:
         - Self Attentive 
             [[code]](networks/multi/architectures/att_self.py);
