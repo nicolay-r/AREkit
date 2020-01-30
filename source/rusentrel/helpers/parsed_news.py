@@ -8,10 +8,10 @@ from arekit.source.rusentrel.news import RuSentRelNews
 class RuSentRelParsedNewsHelper:
 
     @staticmethod
-    def create_parsed_news(rusentrel_news_id, rusentrel_news, stemmer, keep_tokens):
+    def create_parsed_news(rusentrel_news_id, rusentrel_news, keep_tokens, stemmer=None):
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(rusentrel_news, RuSentRelNews))
-        assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(stemmer, Stemmer) or isinstance(stemmer, type(None)))
         assert(isinstance(keep_tokens, bool))
 
         parsed_sentences_iter = RuSentRelParsedNewsHelper.__iter_parsed_sentences(
@@ -28,7 +28,7 @@ class RuSentRelParsedNewsHelper:
     def __iter_parsed_sentences(rusentrel_news, keep_tokens, stemmer):
         assert(isinstance(rusentrel_news, RuSentRelNews))
         assert(isinstance(keep_tokens, bool))
-        assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(stemmer, Stemmer) or isinstance(stemmer, type(None)))
 
         for s_index, sentence in enumerate(rusentrel_news.iter_sentences()):
 
