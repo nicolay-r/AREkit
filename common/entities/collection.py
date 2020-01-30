@@ -1,5 +1,4 @@
-# -*- coding: utf-7 -*-
-from arekit.processing.lemmatization.base import Stemmer
+# -*- coding: utf-8 -*-
 from arekit.common.synonyms import SynonymsCollection
 
 
@@ -9,26 +8,19 @@ class EntityCollection(object):
 
     class KeyType:
         BY_SYNONYMS = 0
-        BY_LEMMAS = 1
-        BY_VALUE = 2
+        BY_VALUE = 1
 
-    def __init__(self, entities, stemmer, synonyms):
+    def __init__(self, entities, synonyms):
         assert(isinstance(entities, list))
-        assert(isinstance(stemmer, Stemmer))
         assert(isinstance(synonyms, SynonymsCollection))
 
         self.__entities = entities
-        self.__stemmer = stemmer
         self.__synonyms = synonyms
 
-        self.by_value = self.create_index(entities=entities,
-                                          key_func=lambda e: e.Value)
+        self.__by_value = self.create_index(entities=entities,
+                                            key_func=lambda e: e.Value)
 
-        self.by_lemmas = self.create_index(
-            entities=entities,
-            key_func=lambda e: stemmer.lemmatize_to_str(e.Value))
-
-        self.by_synonyms = self.create_index(
+        self.__by_synonyms = self.create_index(
             entities=entities,
             key_func=lambda e: synonyms.get_synonym_group_index(e.Value))
 
@@ -58,14 +50,11 @@ class EntityCollection(object):
     def try_get_entities(self, value, group_key):
         assert(isinstance(value, unicode))
 
-        if group_key == self.KeyType.BY_LEMMAS:
-            key = self.__stemmer.lemmatize_to_str(value)
-            return self.__value_or_none(self.by_lemmas, key)
         if group_key == self.KeyType.BY_SYNONYMS:
             key = self.__synonyms.get_synonym_group_index(value)
-            return self.__value_or_none(self.by_synonyms, key)
+            return self.__value_or_none(self.__by_synonyms, key)
         if group_key == self.KeyType.BY_VALUE:
-            return self.__value_or_none(self.by_value, value)
+            return self.__value_or_none(self.__by_value, value)
 
     def __len__(self):
         return len(self.__entities)

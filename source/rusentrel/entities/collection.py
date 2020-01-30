@@ -10,9 +10,8 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
     """ Collection of annotated entities
     """
 
-    def __init__(self, entities, stemmer, synonyms):
+    def __init__(self, entities, synonyms):
         super(RuSentRelDocumentEntityCollection, self).__init__(entities=entities,
-                                                                stemmer=stemmer,
                                                                 synonyms=synonyms)
 
         self.sort_entities(key=lambda entity: entity.CharIndexBegin)
@@ -21,21 +20,20 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
                                          key_func=lambda e: e.IdInDocument)
 
     @classmethod
-    def read_collection(cls, doc_id, stemmer, synonyms):
+    def read_collection(cls, doc_id, synonyms):
         assert(isinstance(doc_id, int))
 
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_entity_innerpath(doc_id),
             process_func=lambda input_file: cls.__from_file(
                 input_file=input_file,
-                stemmer=stemmer,
                 synonyms=synonyms))
 
     @classmethod
-    def __from_file(cls, input_file, stemmer, synonyms):
-        """ Read annotation collection from file
+    def __from_file(cls, input_file, synonyms):
         """
-        assert(isinstance(stemmer, Stemmer))
+        Read annotation collection from file
+        """
         assert(isinstance(synonyms, SynonymsCollection))
         entities = []
 
@@ -57,7 +55,7 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
 
             entities.append(entity)
 
-        return cls(entities, stemmer, synonyms)
+        return cls(entities, synonyms)
 
     def get_entity_by_id(self, id):
         assert(isinstance(id, int))
