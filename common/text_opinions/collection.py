@@ -4,13 +4,19 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 
 class TextOpinionCollection(object):
     """
-    Collection of text-level opinions
+    Collection of text-level opinions across many news/documents
 
     Limitations:
         IN MEMORY implemenatation.
     """
 
     def __init__(self, parsed_news_collection, text_opinions):
+        """
+        parsed_news_collection: ParsedNewsCollection
+            utilized as reference only (for Helper)
+        text_opinions: list
+            list of TextOpinion
+        """
         assert(isinstance(parsed_news_collection, ParsedNewsCollection) or
                parsed_news_collection is None)
         assert(isinstance(text_opinions, list))

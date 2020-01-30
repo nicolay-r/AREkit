@@ -22,7 +22,7 @@ class TextOpinion(RefOpinion):
                                           owner=owner)
         self.__news_id = news_id
         self.__text_opinion_id = text_opinion_id
-        self.__label = label
+        self.__modifiable_label = label
 
     @classmethod
     def create_copy(cls, other):
@@ -50,7 +50,7 @@ class TextOpinion(RefOpinion):
 
     @property
     def Sentiment(self):
-        return self.__label
+        return self.__modifiable_label
 
     @property
     def NewsID(self):
@@ -70,6 +70,6 @@ class TextOpinion(RefOpinion):
 
     def set_label(self, label):
         assert(isinstance(label, Label))
-        self.__label = label
+        self.__modifiable_label = label
 
     # endregion
