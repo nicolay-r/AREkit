@@ -25,7 +25,7 @@ class TwoClassEvaluator(BaseEvaluator):
 
         return cmp_table, \
                self.__has_opinions_with_label(cmp_pair.EtalonOpinionCollection, self.__pos_label), \
-               self.__has_opinions_with_label(cmp_pair.TestOpinionCollection, self.__neg_label)
+               self.__has_opinions_with_label(cmp_pair.EtalonOpinionCollection, self.__neg_label)
 
     @staticmethod
     def __has_opinions_with_label(opinions, label):
