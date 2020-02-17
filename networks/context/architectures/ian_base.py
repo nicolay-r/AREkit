@@ -2,14 +2,15 @@ import tensorflow as tf
 
 from arekit.networks.attention.helpers import embedding
 from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.architectures.fc_single import FullyConnectedLayer
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers.sequence import get_cell
 from arekit.networks.context.configurations.ian_base import StatesAggregationModes, IANBaseConfig
 from arekit.networks.context.sample import InputSample
-from arekit.networks.tf_helpers import layers, sequence, filtering
+from arekit.networks.tf_helpers import sequence, filtering
 
 
-class IANBase(BaseContextNeuralNetwork):
+class IANBase(FullyConnectedLayer):
     """
     Title: Interactive Attention Networks for Aspect-Level Sentiment Classification
     Paper: https://arxiv.org/pdf/1709.00893.pdf
