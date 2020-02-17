@@ -3,30 +3,24 @@ Bi-directional Recurrent Neural Network.
 Modified version of Original Author: Aymeric Damien
 Project: https://github.com/aymericdamien/TensorFlow-Examples/
 """
-from collections import OrderedDict
 import tensorflow as tf
 
 from arekit.networks.data_type import DataType
-from arekit.networks.tf_helpers import layers
 from arekit.networks.tf_helpers import sequence
-from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
 from arekit.networks.context.configurations.bilstm import BiLSTMConfig
 from arekit.networks.context.sample import InputSample
+from arekit.networks.context.architectures.fc_single import FullyConnectedLayer
 
 
-class BiLSTM(BaseContextNeuralNetwork):
+class BiLSTM(FullyConnectedLayer):
     """
     Copyright (c) Joohong Lee
     page: https://github.com/roomylee
     code: https://github.com/roomylee/rnn-text-classification-tf
     """
 
-    H_W = "W"
-    H_b = "b"
-
     def __init__(self):
         super(BiLSTM, self).__init__()
-        self.__hidden = OrderedDict()
         self.__dropout_rnn_keep_prob = None
 
     # region properties
@@ -86,34 +80,8 @@ class BiLSTM(BaseContextNeuralNetwork):
     def customize_rnn_output(self, rnn_outputs, s_length):
         return sequence.select_last_relevant_in_sequence(rnn_outputs, s_length)
 
-    def init_logits_unscaled(self, context_embedding):
-        W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
-        b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
-        activations = [tf.tanh] * len(W)
-        activations.append(None)
-        return layers.get_k_layer_pair_logits(g=context_embedding,
-                                              W=W,
-                                              b=b,
-                                              dropout_keep_prob=self.DropoutKeepProb,
-                                              activations=activations)
-
     def init_body_dependent_hidden_states(self):
         pass
-
-    def init_logits_hidden_states(self):
-        self.__hidden[self.H_W] = tf.get_variable(
-            name=self.H_W,
-            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-            initializer=self.Config.WeightInitializer,
-            regularizer=self.Config.LayerRegularizer,
-            dtype=tf.float32)
-
-        self.__hidden[self.H_b] = tf.get_variable(
-            name=self.H_b,
-            shape=[self.Config.ClassesCount],
-            initializer=self.Config.BiasInitializer,
-            regularizer=self.Config.LayerRegularizer,
-            dtype=tf.float32)
 
     # endregion
 
@@ -123,13 +91,5 @@ class BiLSTM(BaseContextNeuralNetwork):
         feed_dict = super(BiLSTM, self).create_feed_dict(input=input, data_type=data_type)
         feed_dict[self.__dropout_rnn_keep_prob] = self.Config.DropoutRNNKeepProb if data_type == DataType.Train else 1.0
         return feed_dict
-
-    # endregion
-
-    # region public 'iter' methods
-
-    def iter_hidden_parameters(self):
-        for key, value in self.__hidden.iteritems():
-            yield key, value
 
     # endregion
