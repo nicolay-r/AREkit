@@ -1,14 +1,14 @@
 import tensorflow as tf
 from collections import OrderedDict
 
-from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.architectures.fc_single import FullyConnectedLayer
 from arekit.networks.context.configurations.rcnn import RCNNConfig
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers import sequence
 
 
-class RCNN(BaseContextNeuralNetwork):
+class RCNN(FullyConnectedLayer):
     """
     Copyright (c) Joohong Lee
     Title: Recurrent Convolutional Neural Networks for Text Classification
@@ -16,10 +16,8 @@ class RCNN(BaseContextNeuralNetwork):
     Source: https://github.com/roomylee/rcnn-text-classification
     """
 
-    H_W_text = "W"
-    H_b_text = "b"
-    H_W2_out = "W2"
-    H_b2_out = "b2"
+    H_W_text = "W_text"
+    H_b_text = "b_text"
 
     def __init__(self):
         super(RCNN, self).__init__()
@@ -91,14 +89,6 @@ class RCNN(BaseContextNeuralNetwork):
 
         return y3
 
-    def init_logits_unscaled(self, context_embedding):
-        with tf.name_scope("output"):
-            logits = tf.nn.xw_plus_b(context_embedding,
-                                     self.__hidden[self.H_W2_out],
-                                     self.__hidden[self.H_b2_out], name="logits")
-
-        return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
-
     def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, RCNNConfig))
 
@@ -114,26 +104,14 @@ class RCNN(BaseContextNeuralNetwork):
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
 
-    def init_logits_hidden_states(self):
-        assert(isinstance(self.Config, RCNNConfig))
-
-        self.__hidden[self.H_W2_out] = tf.get_variable(
-            name=self.H_W2_out,
-            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-            regularizer=self.Config.LayerRegularizer,
-            initializer=self.Config.BiasInitializer)
-
-        self.__hidden[self.H_b2_out] = tf.get_variable(
-            name=self.H_b2_out,
-            shape=[self.Config.ClassesCount],
-            regularizer=self.Config.LayerRegularizer,
-            initializer=self.Config.BiasInitializer)
-
     # endregion
 
     # region public 'iter' methods
 
     def iter_hidden_parameters(self):
+        for key, value in super(RCNN, self).iter_hidden_parameters():
+            yield key, value
+
         for key, value in self.__hidden.iteritems():
             yield key, value
 

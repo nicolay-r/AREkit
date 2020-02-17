@@ -1,26 +1,20 @@
 import tensorflow as tf
-from collections import OrderedDict
-
+from arekit.networks.context.architectures.fc_single import FullyConnectedLayer
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers import sequence
 from arekit.networks.context.sample import InputSample
-from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
 from arekit.networks.context.configurations.rnn import RNNConfig
 
 
-class RNN(BaseContextNeuralNetwork):
+class RNN(FullyConnectedLayer):
     """
     Copyright (c) Joohong Lee
     page: https://github.com/roomylee
     code: https://github.com/roomylee/rnn-text-classification-tf
     """
 
-    H_W = "W"
-    H_b = "b"
-
     def __init__(self):
         super(RNN, self).__init__()
-        self.__hidden = OrderedDict()
         self.__dropout_rnn_keep_prob = None
 
     # region properties
@@ -69,30 +63,6 @@ class RNN(BaseContextNeuralNetwork):
 
         return h_outputs
 
-    def init_logits_unscaled(self, context_embedding):
-
-        with tf.name_scope("output"):
-            logits = tf.nn.xw_plus_b(context_embedding,
-                                     self.__hidden[self.H_W],
-                                     self.__hidden[self.H_b],
-                                     name="logits")
-
-        return logits, tf.nn.dropout(logits, self.DropoutKeepProb)
-
-    def init_logits_hidden_states(self):
-
-        self.__hidden[self.H_W] = tf.get_variable(
-            name=self.H_W,
-            shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
-            initializer=self.Config.WeightInitializer,
-            regularizer=self.Config.LayerRegularizer)
-
-        self.__hidden[self.H_b] = tf.get_variable(
-            name=self.H_b,
-            shape=[self.Config.ClassesCount],
-            regularizer=self.Config.LayerRegularizer,
-            initializer=self.Config.BiasInitializer)
-
     def init_body_dependent_hidden_states(self):
         pass
 
@@ -104,14 +74,6 @@ class RNN(BaseContextNeuralNetwork):
         feed_dict = super(RNN, self).create_feed_dict(input=input, data_type=data_type)
         feed_dict[self.__dropout_rnn_keep_prob] = self.Config.DropoutRNNKeepProb if data_type == DataType.Train else 1.0
         return feed_dict
-
-    # endregion
-
-    # region public 'iter' methods
-
-    def iter_hidden_parameters(self):
-        for key, value in self.__hidden.iteritems():
-            yield key, value
 
     # endregion
 

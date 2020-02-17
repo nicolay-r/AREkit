@@ -175,6 +175,11 @@ Then install dependencies as follows:
 pip install -r dependencies.txt
 ```
 
+## Might be embedded in framework:
+
+* Semantic Relation Classification via Hierarchical Recurrent Neural Network with Attention
+[[paper]](https://www.aclweb.org/anthology/C16-1119)
+
 ## Research Applications & References
 
 * Distant Supervision for Sentiment Attitude Extraction
