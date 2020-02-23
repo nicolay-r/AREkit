@@ -4,9 +4,15 @@ class NetworkIO(object):
     and it is specific towards RuSentiRel collection.
     """
 
+    # region properties
+
     @property
     def SynonymsCollection(self):
         raise NotImplementedError()
+
+    # endregion
+
+    # region public methods
 
     def get_model_root(self):
         """
@@ -32,3 +38,4 @@ class NetworkIO(object):
     def write_log(self, log_names, log_values):
         raise NotImplementedError()
 
+    # endregion
