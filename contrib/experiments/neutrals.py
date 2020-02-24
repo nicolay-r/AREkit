@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+from arekit.common.entities.base import Entity
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.entities.collection import EntityCollection
@@ -10,7 +11,6 @@ from arekit.contrib.experiments.sources.rusentrel_neutrals_io import RuSentRelNe
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
-from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
@@ -73,22 +73,27 @@ class RuSentRelNeutralAnnotationCreator:
 
             neutral_opins.save_to_file(neutral_filepath)
 
+    # TODO. To NeutralAnnotatorAlgorithm
+
     # region private methods
 
+    # TODO. To NeutralAnnotatorAlgorithm
     @staticmethod
     def __is_ignored_entity_value(entity_value):
         assert(isinstance(entity_value, unicode))
         return entity_value in RuSentRelNeutralAnnotationCreator.IGNORED_ENTITY_VALUES
 
+    # TODO. To NeutralAnnotatorAlgorithm
     @staticmethod
     def __create_key_by_entity_pair(e1, e2):
-        assert(isinstance(e1, RuSentRelEntity))
-        assert(isinstance(e2, RuSentRelEntity))
+        assert(isinstance(e1, Entity))
+        assert(isinstance(e2, Entity))
         return u"{}_{}".format(e1.IdInDocument, e2.IdInDocument)
 
+    # TODO. To NeutralAnnotatorAlgorithm
     def __get_distance_in_terms_between_entities(self, n_id, e1, e2):
-        assert(isinstance(e1, RuSentRelEntity))
-        assert(isinstance(e2, RuSentRelEntity))
+        assert(isinstance(e1, Entity))
+        assert(isinstance(e2, Entity))
 
         nt = self.__pnc.get_by_news_id(n_id)
 
@@ -98,9 +103,10 @@ class RuSentRelNeutralAnnotationCreator:
         erp2 = nt.get_entity_document_level_term_index(e2.IdInDocument)
         return abs(erp1 - erp2)
 
+    # TODO. To NeutralAnnotatorAlgorithm
     def __get_distance_in_sentences_between_entities(self, n_id, e1, e2):
-        assert(isinstance(e1, RuSentRelEntity))
-        assert(isinstance(e2, RuSentRelEntity))
+        assert(isinstance(e1, Entity))
+        assert(isinstance(e2, Entity))
 
         nt = self.__pnc.get_by_news_id(n_id)
 
@@ -110,6 +116,7 @@ class RuSentRelNeutralAnnotationCreator:
         e2_ind = nt.get_entity_sentence_index(e2.IdInDocument)
         return abs(e1_ind - e2_ind)
 
+    # TODO. To NeutralAnnotatorAlgorithm
     def __create_opinions_between_entities(self, relevant_pairs, entities_collection):
         assert(isinstance(entities_collection, EntityCollection))
         assert(self.__synonyms.IsReadOnly is True)
@@ -118,10 +125,10 @@ class RuSentRelNeutralAnnotationCreator:
         neutral_opinions = RuSentRelOpinionCollection(opinions=None, synonyms=self.__synonyms)
 
         for e1 in entities_collection:
-            assert(isinstance(e1, RuSentRelEntity))
+            assert(isinstance(e1, Entity))
 
             for e2 in entities_collection:
-                assert(isinstance(e2, RuSentRelEntity))
+                assert(isinstance(e2, Entity))
 
                 key = RuSentRelNeutralAnnotationCreator.__create_key_by_entity_pair(e1=e1, e2=e2)
                 if key not in relevant_pairs:
@@ -139,6 +146,7 @@ class RuSentRelNeutralAnnotationCreator:
 
         return neutral_opinions
 
+    # TODO. To NeutralAnnotatorAlgorithm
     def __make_neutrals(self,
                         n_id,
                         entities_collection,
@@ -149,10 +157,10 @@ class RuSentRelNeutralAnnotationCreator:
         relevant_pairs = {}
 
         for e1 in entities_collection:
-            assert(isinstance(e1, RuSentRelEntity))
+            assert(isinstance(e1, Entity))
 
             for e2 in entities_collection:
-                assert(isinstance(e2, RuSentRelEntity))
+                assert(isinstance(e2, Entity))
 
                 if e1.IdInDocument == e2.IdInDocument:
                     continue

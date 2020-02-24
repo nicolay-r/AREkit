@@ -139,7 +139,8 @@ class RuSentRelNetworkIO(NetworkIO):
 
         filepath = RuSentRelNeutralIOUtils.get_rusentrel_neutral_opin_filepath(
             doc_id=doc_id,
-            is_train=True if data_type == DataType.Train else False)
+            is_train=True if data_type == DataType.Train else False,
+            data_io=self.__data_io)
 
         return RuSentRelOpinionCollection.read_from_file(filepath=filepath,
                                                          synonyms=self.__synonyms)
