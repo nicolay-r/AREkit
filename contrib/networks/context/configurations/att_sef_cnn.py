@@ -1,4 +1,4 @@
-from arekit.contrib.networks.attention import InteractiveMLPAttention
+from arekit.contrib.networks.attention.architectures.mlp_interactive import InteractiveMLPAttention
 from arekit.contrib.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
 from arekit.contrib.networks.context.configurations.base.att_cnn_base import AttentionCNNBaseConfig
 
