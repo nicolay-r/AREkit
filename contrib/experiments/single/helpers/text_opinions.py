@@ -15,9 +15,15 @@ class LabeledLinkedTextOpinionCollectionHelper:
         self.__labels_helper = labels_helper
         self.__name = name
 
+    # region properties
+
     @property
     def Name(self):
         return self.__name
+
+    # endregion
+
+    # region public methods
 
     def iter_opinion_collections(self, create_collection_func, label_calculation_mode):
         assert(callable(create_collection_func))
@@ -57,6 +63,10 @@ class LabeledLinkedTextOpinionCollectionHelper:
         total = sum(stat)
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
         return norm, stat
+
+    # endregion
+
+    # region private methods
 
     def __to_opinion_collection(self, create_collection_func, news_id, label_mode):
         assert(callable(create_collection_func))
@@ -109,4 +119,6 @@ class LabeledLinkedTextOpinionCollectionHelper:
             else:
                 statistic[key] += 1
         return statistic
+
+    # endregion
 

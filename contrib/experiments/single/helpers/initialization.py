@@ -9,9 +9,10 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.labels.base import NeutralLabel
-from arekit.contrib.experiments.context.helpers.bags import BagsCollectionHelper
-from arekit.contrib.experiments.context.helpers.parsed_news import ParsedNewsHelper
-from arekit.contrib.experiments.context.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
+
+from arekit.contrib.experiments.single.helpers.bags import BagsCollectionHelper
+from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
+from arekit.contrib.experiments.single.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelNetworkIO
 from arekit.networks.data_type import DataType
 from arekit.networks.context.debug import DebugKeys
@@ -38,7 +39,7 @@ from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 
 
-class ContextModelInitHelper(object):
+class SingleInstanceModelInitHelper(object):
 
     CAPITAL_ENTITY_TYPE = u"CAPITAL"
     STATE_ENTITY_TYPE = u"STATE"
@@ -73,7 +74,6 @@ class ContextModelInitHelper(object):
             variants_with_id=self.__frames_collection.iter_frame_id_and_variants(),
             stemmer=config.Stemmer)
 
-        # TODO. In arekit library.
         self.__labels_helper = SingleLabelsHelper() if config.ClassesCount == 3 else PairedLabelsHelper()
 
         self.__text_opinion_collections = {
@@ -213,9 +213,9 @@ class ContextModelInitHelper(object):
             return u'person'
         if e_type == entity.GEOPOLIT_ENTITY_TYPE:
             return u'political'
-        if e_type == ContextModelInitHelper.CAPITAL_ENTITY_TYPE:
+        if e_type == SingleInstanceModelInitHelper.CAPITAL_ENTITY_TYPE:
             return u'capital'
-        if e_type == ContextModelInitHelper.STATE_ENTITY_TYPE:
+        if e_type == SingleInstanceModelInitHelper.STATE_ENTITY_TYPE:
             return u'state'
 
     def __generate_entity_embeddings(self, use_types, word_embedding):
@@ -265,10 +265,10 @@ class ContextModelInitHelper(object):
             bag_size=config.BagSize,
             shuffle=True,
             create_empty_sample_func=None,
-            create_sample_func=lambda r: ContextModelInitHelper.create_sample(text_opinion=r,
-                                                                              frames_collection=frames_collection,
-                                                                              synonyms_collection=synonyms_collection,
-                                                                              config=config))
+            create_sample_func=lambda r: SingleInstanceModelInitHelper.create_sample(text_opinion=r,
+                                                                                     frames_collection=frames_collection,
+                                                                                     synonyms_collection=synonyms_collection,
+                                                                                     config=config))
 
         return collection
 

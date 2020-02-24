@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.context.helpers.initialization import ContextModelInitHelper
+from arekit.contrib.experiments.single.helpers.initialization import SingleInstanceModelInitHelper
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelNetworkIO
 
 from arekit.networks.eval.opinion_based import OpinionBasedEvaluationHelper
@@ -11,7 +11,11 @@ from arekit.networks.tf_model import TensorflowModel
 from arekit.networks.network import NeuralNetwork
 
 
-class ContextLevelTensorflowModel(TensorflowModel):
+class SingleInstanceTensorflowModel(TensorflowModel):
+    """
+    This model assumes to perform a classification of a single sentence (instance, or context)
+    with an attitude mentioned in it.
+    """
 
     def __init__(self, io, network, config, evaluator_class, callback):
         assert(isinstance(io, RuSentRelNetworkIO))
@@ -20,7 +24,7 @@ class ContextLevelTensorflowModel(TensorflowModel):
         assert(isinstance(callback, Callback) or callback is None)
         assert(callable(evaluator_class))
 
-        super(ContextLevelTensorflowModel, self).__init__(
+        super(SingleInstanceTensorflowModel, self).__init__(
             io=io, network=network, callback=callback)
 
         self.__config = config
@@ -85,7 +89,7 @@ class ContextLevelTensorflowModel(TensorflowModel):
         return MiniBatch(bags_group)
 
     def create_model_init_helper(self):
-        return ContextModelInitHelper(io=self.IO, config=self.Config)
+        return SingleInstanceModelInitHelper(io=self.IO, config=self.Config)
 
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
@@ -96,4 +100,3 @@ class ContextLevelTensorflowModel(TensorflowModel):
         self.get_text_opinions_collection_helper(DataType.Test).debug_unique_relations_statistic()
         self.get_bags_collection_helper(DataType.Train).print_log_statistics()
         self.get_bags_collection_helper(DataType.Test).print_log_statistics()
-

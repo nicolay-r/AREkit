@@ -1,12 +1,12 @@
-from arekit.contrib.experiments.context.helpers.initialization import ContextModelInitHelper
+from arekit.contrib.experiments.single.helpers.initialization import SingleInstanceModelInitHelper
 from arekit.networks.context.sample import InputSample
 from arekit.networks.multi.training.bags import MultiInstanceBagsCollection
 
 
-class MIMLREModelInitHelper(ContextModelInitHelper):
+class MultiInstanceModelInitHelper(SingleInstanceModelInitHelper):
 
     def __init__(self, io, config):
-        super(MIMLREModelInitHelper, self).__init__(io=io, config=config)
+        super(MultiInstanceModelInitHelper, self).__init__(io=io, config=config)
 
     @staticmethod
     def create_bags_collection(text_opinions_collection, frames_collection, synonyms_collection, data_type, config):
@@ -16,7 +16,7 @@ class MIMLREModelInitHelper(ContextModelInitHelper):
             data_type=data_type,
             shuffle=True,
             create_empty_sample_func=lambda: InputSample.create_empty(config),
-            create_sample_func=lambda opinion: MIMLREModelInitHelper.create_sample(
+            create_sample_func=lambda opinion: MultiInstanceModelInitHelper.create_sample(
                 text_opinion=opinion,
                 frames_collection=frames_collection,
                 synonyms_collection=synonyms_collection,
