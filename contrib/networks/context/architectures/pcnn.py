@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import tensorflow as tf
-from arekit.networks.context.architectures.cnn import VanillaCNN
-from arekit.networks.context.configurations.cnn import CNNConfig
+from arekit.contrib.networks.context.architectures.cnn import VanillaCNN
+from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.networks.context.sample import InputSample
 
 

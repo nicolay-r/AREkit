@@ -110,7 +110,7 @@ This toolset includes the following instruments and domain-related datasets:
             [[github:ilivans]](https://github.com/ilivans/tf-rnn-attention);
     * **Single Sentence Based Architectures**:
         - CNN
-            [[code]](networks/context/architectures/cnn.py) /
+            [[code]](contrib/networks/context/architectures/cnn.py) /
             [[github:roomylee]](https://github.com/roomylee/cnn-relation-extraction);
         - CNN + Aspect-based MLP Attention
             [[code]](contrib/networks/context/architectures/base/att_cnn_base.py);
@@ -120,7 +120,7 @@ This toolset includes the following instruments and domain-related datasets:
         - PCNN + Aspect-based MLP Attention
             [[code]](contrib/networks/context/architectures/base/att_pcnn_base.py);
         - RNN (LSTM/GRU/RNN)
-            [[code]](networks/context/architectures/rnn.py) /
+            [[code]](contrib/networks/context/architectures/rnn.py) /
             [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
         - IAN (frames based)
             [[code]](contrib/networks/context/architectures/ian_frames.py) /

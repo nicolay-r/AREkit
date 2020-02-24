@@ -1,4 +1,4 @@
-from base import DefaultNetworkConfig
+from arekit.networks.context.configurations.base import DefaultNetworkConfig
 
 
 class CNNConfig(DefaultNetworkConfig):

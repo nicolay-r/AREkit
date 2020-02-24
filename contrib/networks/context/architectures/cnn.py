@@ -1,7 +1,7 @@
 import tensorflow as tf
 from collections import OrderedDict
 from arekit.networks.context.architectures.base import SingleInstanceNeuralNetwork
-from arekit.networks.context.configurations.cnn import CNNConfig
+from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.networks.tf_helpers import layers
 
 

@@ -3,7 +3,7 @@ from arekit.networks.context.architectures.fc_single import FullyConnectedLayer
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers import sequence
 from arekit.networks.context.sample import InputSample
-from arekit.networks.context.configurations.rnn import RNNConfig
+from arekit.contrib.networks.context.configurations.rnn import RNNConfig
 
 
 class RNN(FullyConnectedLayer):

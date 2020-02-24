@@ -50,11 +50,11 @@ from arekit.contrib.networks.context.configurations.ian_frames import IANFramesC
 from arekit.contrib.networks.context.configurations.rcnn import RCNNConfig
 from arekit.contrib.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 
-from arekit.networks.context.configurations.cnn import CNNConfig
-from arekit.networks.context.architectures.cnn import VanillaCNN
-from arekit.networks.context.architectures.rnn import RNN
+from arekit.contrib.networks.context.configurations.cnn import CNNConfig
+from arekit.contrib.networks.context.architectures.cnn import VanillaCNN
+from arekit.contrib.networks.context.architectures.rnn import RNN
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
-from arekit.networks.context.configurations.rnn import RNNConfig
+from arekit.contrib.networks.context.configurations.rnn import RNNConfig
 
 
 def init_config(config):

@@ -1,4 +1,4 @@
-from arekit.networks.context.configurations.cnn import CNNConfig
+from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 
 
 class AttentionCNNBaseConfig(CNNConfig):

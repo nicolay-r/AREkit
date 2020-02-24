@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from arekit.contrib.networks.attention import common
 from arekit.contrib.networks.attention.helpers import embedding
-from arekit.networks.context.architectures.cnn import VanillaCNN
+from arekit.contrib.networks.context.architectures.cnn import VanillaCNN
 
 
 class AttentionCNNBase(VanillaCNN):
