@@ -7,9 +7,14 @@ from arekit.contrib.experiments.io_utils_base import IOUtilsBase
 
 # region private methods
 
-def __read_rusentrel_docs_stat(filepath):
+# TODO. Move into separated file
+def __read_docs_stat(stat_filepath):
+    """
+    return:
+        list of the following pairs: (doc_id, sentences_count)
+    """
     docs_info = []
-    with open(filepath, 'r') as f:
+    with open(stat_filepath, 'r') as f:
         for line in f.readlines():
             args = [int(i) for i in line.split(':')]
             doc_id, s_count = args
@@ -66,6 +71,7 @@ def get_path_of_subfolder_in_experiments_dir(subfolder_name, data_io):
     return target_dir
 
 
+# TODO. To base io. Refactoring
 def get_rusentrel_stats_filepath(data_io):
     assert(isinstance(data_io, IOUtilsBase))
     return os.path.join(data_io.get_data_root(), u"rusentrel_docs_stat.txt")
@@ -77,7 +83,7 @@ def iter_by_same_size_parts_cv(cv_count, data_io):
     """
     assert(isinstance(data_io, IOUtilsBase))
 
-    stat = __read_rusentrel_docs_stat(filepath=get_rusentrel_stats_filepath(data_io))
+    stat = __read_docs_stat(stat_filepath=data_io.get_rusentrel_stats_filepath())
     sorted_stat = reversed(sorted(stat, key=lambda pair: pair[1]))
     cv_group_docs = [[] for _ in range(cv_count)]
     cv_group_sizes = [[] for _ in range(cv_count)]

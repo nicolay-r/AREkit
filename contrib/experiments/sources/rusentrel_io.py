@@ -19,6 +19,7 @@ from arekit.contrib.experiments.io_utils_base import IOUtilsBase
 from arekit.contrib.experiments import utils as e_utils
 
 
+# TODO. Nested from AbstractCVBasedIO
 class RuSentRelNetworkIO(NetworkIO):
     """
     Represents Input interface for NeuralNetwork ctx
@@ -31,6 +32,7 @@ class RuSentRelNetworkIO(NetworkIO):
 
         self.__synonyms = None
         self.__cv_count = cv_count
+        # TODO. To base
         self.__current_cv_index = 0
         self.__model_name = model_name
         self.__rusentrel_news_ids_list = list(RuSentRelIOUtils.iter_collection_indices())
@@ -54,6 +56,7 @@ class RuSentRelNetworkIO(NetworkIO):
     def CVCount(self):
         return self.__cv_count
 
+    # TODO. To base
     @property
     def CVCurrentIndex(self):
         return self.__current_cv_index
@@ -68,6 +71,7 @@ class RuSentRelNetworkIO(NetworkIO):
         assert(isinstance(value, bool))
         self.__eval_on_rusentrel_docs_key = value
 
+    # TODO. To base
     def inc_cv_index(self):
         self.__current_cv_index += 1
 
@@ -77,19 +81,24 @@ class RuSentRelNetworkIO(NetworkIO):
 
     # region 'get' public methods
 
+    # TODO. To base
     def get_model_filepath(self):
         return os.path.join(self.__get_model_states_dir(),
                             u'{}'.format(self.__model_name))
 
+    # TODO. To base
     def get_model_root(self):
         return self.__get_model_root()
 
+    # TODO. To base
     def get_word_embedding_filepath(self):
         return self.__data_io.get_rusvectores_news_embedding_filepath()
 
+    # TODO. To base
     def get_capitals_filepath(self):
         return self.__data_io.get_capitals_filepath()
 
+    # TODO. To base
     def get_states_filepath(self):
         return self.__data_io.get_states_filepath()
 
@@ -97,6 +106,7 @@ class RuSentRelNetworkIO(NetworkIO):
 
     # region 'write' methods
 
+    # TODO. To base
     def write_log(self, log_names, log_values):
         assert(isinstance(log_names, list))
         assert(isinstance(log_values, list))
@@ -151,6 +161,7 @@ class RuSentRelNetworkIO(NetworkIO):
         return RuSentRelOpinionCollection.read_collection(doc_id=doc_id,
                                                           synonyms=self.__synonyms)
 
+    # TODO. To base
     @staticmethod
     def read_list_from_lss(filepath):
         """
@@ -180,8 +191,10 @@ class RuSentRelNetworkIO(NetworkIO):
             for doc_id in RuSentRelIOUtils.iter_test_indices():
                 yield doc_id
         else:
+            # TODO. To base
             _, test = get_cv_pair_by_index(cv_count=self.__cv_count,
-                                           cv_index=self.__current_cv_index)
+                                           cv_index=self.__current_cv_index,
+                                           data_io=self.__data_io)
             for doc_id in test:
                 yield doc_id
 
@@ -190,8 +203,10 @@ class RuSentRelNetworkIO(NetworkIO):
             for doc_id in RuSentRelIOUtils.iter_train_indices():
                 yield doc_id
         else:
+            # TODO. To base
             train, _ = get_cv_pair_by_index(cv_count=self.__cv_count,
-                                            cv_index=self.__current_cv_index)
+                                            cv_index=self.__current_cv_index,
+                                            data_io=self.__data_io)
             for doc_id in train:
                 yield doc_id
 
@@ -222,10 +237,12 @@ class RuSentRelNetworkIO(NetworkIO):
     def create_opinion_collection(self):
         return RuSentRelOpinionCollection([], synonyms=self.__synonyms)
 
+    # TODO. To base
     def create_model_state_filepath(self):
         return os.path.join(self.__get_model_states_dir(),
                             u'{}.state'.format(self.__model_name))
 
+    # TODO. To base
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         assert(isinstance(epoch_index, int))
 
@@ -240,11 +257,13 @@ class RuSentRelNetworkIO(NetworkIO):
 
     # region private methods
 
+    # TODO. To base
     def __get_model_root(self):
         return e_utils.get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__model_name,
             data_io=self.__data_io)
 
+    # TODO. To base
     def __get_model_states_dir(self):
 
         result_dir = os.path.join(
@@ -254,6 +273,7 @@ class RuSentRelNetworkIO(NetworkIO):
         create_dir_if_not_exists(result_dir)
         return result_dir
 
+    # TODO. To base
     def __get_eval_root_filepath(self, data_type, epoch_index):
         assert(isinstance(epoch_index, int))
 

@@ -18,3 +18,6 @@ class IOUtilsBase(object):
 
     def get_rusvectores_news_embedding_filepath(self):
         raise NotImplementedError()
+
+    def get_rusentrel_stats_filepath(self):
+        raise NotImplementedError()
