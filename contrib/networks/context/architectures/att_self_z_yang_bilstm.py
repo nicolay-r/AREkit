@@ -1,5 +1,5 @@
 from arekit.contrib.networks.attention.architectures.self_z_yang import self_attention_by_z_yang
-from arekit.networks.context.architectures.att_self_bilstm_base import AttentionSelfBiLSTMBase
+from arekit.contrib.networks.context.architectures.base.att_self_bilstm_base import AttentionSelfBiLSTMBase
 from arekit.contrib.networks.context.configurations.att_self_z_yang_bilstm import AttentionSelfZYangBiLSTMConfig
 
 

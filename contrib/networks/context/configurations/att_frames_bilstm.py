@@ -1,4 +1,4 @@
-from arekit.networks.context.configurations.att_bilstm_base import AttentionBiLSTMBaseConfig
+from arekit.contrib.networks.context.configurations.base.att_bilstm_base import AttentionBiLSTMBaseConfig
 
 
 class AttentionFramesBiLSTMConfig(AttentionBiLSTMBaseConfig):

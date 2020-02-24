@@ -113,12 +113,12 @@ This toolset includes the following instruments and domain-related datasets:
             [[code]](networks/context/architectures/cnn.py) /
             [[github:roomylee]](https://github.com/roomylee/cnn-relation-extraction);
         - CNN + Aspect-based MLP Attention
-            [[code]](networks/context/architectures/att_cnn_base.py);
+            [[code]](contrib/networks/context/architectures/base/att_cnn_base.py);
         - PCNN
             [[code]](contrib/networks/context/architectures/pcnn.py) /
             [[github:nicolay-r]](https://github.com/nicolay-r/sentiment-pcnn);
         - PCNN + Aspect-based MLP Attention
-            [[code]](networks/context/architectures/att_pcnn_base.py);
+            [[code]](contrib/networks/context/architectures/base/att_pcnn_base.py);
         - RNN (LSTM/GRU/RNN)
             [[code]](networks/context/architectures/rnn.py) /
             [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
@@ -134,7 +134,7 @@ This toolset includes the following instruments and domain-related datasets:
             [[code]](contrib/networks/context/architectures/bilstm.py) /
             [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
         - Bi-LSTM + Aspect-based MLP Attention 
-            [[code]](networks/context/architectures/att_bilstm_base.py)
+            [[code]](contrib/networks/context/architectures/base/att_bilstm_base.py)
         - Bi-LSTM + Self Attention
             [[code]](contrib/networks/context/architectures/self_att_bilstm.py) /
             [[github:roomylee]](https://github.com/roomylee/self-attentive-emb-tf);

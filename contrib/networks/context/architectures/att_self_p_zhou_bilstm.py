@@ -1,5 +1,5 @@
 from arekit.contrib.networks.attention.architectures.self_p_zhou import self_attention_by_peng_zhou
-from arekit.networks.context.architectures.att_self_bilstm_base import AttentionSelfBiLSTMBase
+from arekit.contrib.networks.context.architectures.base.att_self_bilstm_base import AttentionSelfBiLSTMBase
 
 
 class AttentionSelfPZhouBiLSTM(AttentionSelfBiLSTMBase):

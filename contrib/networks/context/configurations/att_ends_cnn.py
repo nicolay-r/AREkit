@@ -1,6 +1,6 @@
 from arekit.contrib.networks.attention.architectures.mlp import MLPAttention
 from arekit.contrib.networks.attention.configurations.mlp import MLPAttentionConfig
-from arekit.networks.context.configurations.att_cnn_base import AttentionCNNBaseConfig
+from arekit.contrib.networks.context.configurations.base.att_cnn_base import AttentionCNNBaseConfig
 
 
 class AttentionEndsCNNConfig(AttentionCNNBaseConfig):

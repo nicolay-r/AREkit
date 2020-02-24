@@ -1,4 +1,4 @@
-from arekit.networks.context.architectures.att_cnn_base import AttentionCNNBase
+from arekit.contrib.networks.context.architectures.base.att_cnn_base import AttentionCNNBase
 from arekit.networks.context.sample import InputSample
 
 

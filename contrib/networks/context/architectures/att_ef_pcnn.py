@@ -1,5 +1,5 @@
 import tensorflow as tf
-from arekit.networks.context.architectures.att_pcnn_base import AttentionPCNNBase
+from arekit.contrib.networks.context.architectures.base.att_pcnn_base import AttentionPCNNBase
 from arekit.networks.context.sample import InputSample
 
 

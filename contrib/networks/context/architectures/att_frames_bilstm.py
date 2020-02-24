@@ -1,4 +1,4 @@
-from arekit.networks.context.architectures.att_bilstm_base import AttentionBiLSTMBase
+from arekit.contrib.networks.context.architectures.base.att_bilstm_base import AttentionBiLSTMBase
 from arekit.networks.context.sample import InputSample
 
 

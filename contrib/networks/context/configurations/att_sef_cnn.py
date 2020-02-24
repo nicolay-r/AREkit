@@ -1,6 +1,6 @@
 from arekit.contrib.networks.attention import InteractiveMLPAttention
 from arekit.contrib.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
-from arekit.networks.context.configurations.att_cnn_base import AttentionCNNBaseConfig
+from arekit.contrib.networks.context.configurations.base.att_cnn_base import AttentionCNNBaseConfig
 
 
 class AttentionSynonymEndsAndFramesCNNConfig(AttentionCNNBaseConfig):

@@ -1,4 +1,4 @@
-from arekit.networks.context.configurations.ian_base import IANBaseConfig
+from arekit.contrib.networks.context.configurations.base.ian_base import IANBaseConfig
 
 
 class IANFramesConfig(IANBaseConfig):

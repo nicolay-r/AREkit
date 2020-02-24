@@ -1,4 +1,4 @@
-from arekit.networks.context.architectures.ian_base import IANBase
+from arekit.contrib.networks.context.architectures.base.ian_base import IANBase
 from arekit.networks.context.sample import InputSample
 
 
