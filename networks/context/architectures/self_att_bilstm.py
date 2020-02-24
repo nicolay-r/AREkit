@@ -5,10 +5,10 @@ from arekit.networks.context.configurations.self_att_bilstm import SelfAttention
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers import sequence
-from base import BaseContextNeuralNetwork
+from base import SingleInstanceNeuralNetwork
 
 
-class SelfAttentionBiLSTM(BaseContextNeuralNetwork):
+class SelfAttentionBiLSTM(SingleInstanceNeuralNetwork):
     """
     A Structured Self-attentive Sentence Embedding (ICLR 2017)
     Paper: https://arxiv.org/pdf/1703.03130.pdf

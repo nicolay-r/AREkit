@@ -1,11 +1,11 @@
 import tensorflow as tf
 from collections import OrderedDict
-from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.architectures.base import SingleInstanceNeuralNetwork
 from arekit.networks.context.configurations.cnn import CNNConfig
 from arekit.networks.tf_helpers import layers
 
 
-class VanillaCNN(BaseContextNeuralNetwork):
+class VanillaCNN(SingleInstanceNeuralNetwork):
     """
     Title: Relation Classification via Convolutional Deep Neural Network
     Authors: Daojian Zeng, Kang Liu, Siwei Lai, Guangyou Zhou and Jun Zhao

@@ -7,8 +7,7 @@ from arekit.networks.data_type import DataType
 from arekit.networks.network import NeuralNetwork
 
 
-# TODO. Rename SingleContextNeuralNetwork
-class BaseContextNeuralNetwork(NeuralNetwork):
+class SingleInstanceNeuralNetwork(NeuralNetwork):
 
     def __init__(self):
         self.__cfg = None
@@ -304,7 +303,7 @@ class BaseContextNeuralNetwork(NeuralNetwork):
         return feed_dict
 
     def iter_input_dependent_hidden_parameters(self):
-        for name, value in super(BaseContextNeuralNetwork, self).iter_input_dependent_hidden_parameters():
+        for name, value in super(SingleInstanceNeuralNetwork, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
         yield u'x', self.__input[InputSample.I_X_INDS]

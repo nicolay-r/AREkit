@@ -1,5 +1,5 @@
 from arekit.networks.attention.architectures.mlp import MLPAttention
-from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.architectures.base import SingleInstanceNeuralNetwork
 from arekit.networks.context.sample import InputSample
 
 
@@ -8,7 +8,7 @@ def __get_NEVS_list(ctx_network):
     Helper for additional embeddings.
     Here, NEVS stands for: name, embedding, value, size list
     """
-    assert(isinstance(ctx_network, BaseContextNeuralNetwork))
+    assert(isinstance(ctx_network, SingleInstanceNeuralNetwork))
 
     def ctx_network_input_or_none(p_name):
         if ctx_network.has_input_parameter(p_name):
@@ -76,7 +76,7 @@ def get_ns(ctx_network):
 
 
 def init_mlp_attention_embedding(ctx_network, mlp_att, keys):
-    assert(isinstance(ctx_network, BaseContextNeuralNetwork))
+    assert(isinstance(ctx_network, SingleInstanceNeuralNetwork))
     assert(isinstance(mlp_att, MLPAttention))
 
     mlp_att.set_input(param_names_with_values=get_nv(ctx_network),

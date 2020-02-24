@@ -1,9 +1,9 @@
 import tensorflow as tf
 from collections import OrderedDict
-from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.architectures.base import SingleInstanceNeuralNetwork
 
 
-class FullyConnectedLayer(BaseContextNeuralNetwork):
+class FullyConnectedLayer(SingleInstanceNeuralNetwork):
 
     H_W = "W"
     H_b = "b"

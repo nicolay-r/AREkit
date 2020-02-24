@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from arekit.networks.context.architectures.base import BaseContextNeuralNetwork
+from arekit.networks.context.architectures.base import SingleInstanceNeuralNetwork
 from arekit.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType
@@ -14,7 +14,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
     __ctx_network_scope = "ctx_network"
 
     def __init__(self, context_network):
-        assert(isinstance(context_network, BaseContextNeuralNetwork))
+        assert(isinstance(context_network, SingleInstanceNeuralNetwork))
 
         self.__context_network = context_network
         self.__cfg = None
