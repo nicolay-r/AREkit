@@ -1,4 +1,4 @@
-from arekit.networks.multi.configuration.base import BaseMultiInstanceConfig
+from arekit.networks.multi.configurations.base import BaseMultiInstanceConfig
 
 
 class AttSelfOverSentencesConfig(BaseMultiInstanceConfig):

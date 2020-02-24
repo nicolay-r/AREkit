@@ -1,10 +1,10 @@
 import tensorflow as tf
 
 from arekit.networks.context.architectures.base import SingleInstanceNeuralNetwork
+from arekit.networks.multi.configurations.base import BaseMultiInstanceConfig
 from arekit.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType
-from arekit.networks.multi.configuration.base import BaseMultiInstanceConfig
 from arekit.networks.multi.training.batch import MultiInstanceBatch
 from arekit.networks.network import NeuralNetwork
 

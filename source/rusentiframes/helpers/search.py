@@ -1,7 +1,7 @@
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.text_frame_variant import TextFrameVariant
-from arekit.languages.mods import BaseLanguageMods
-from arekit.languages.ru.mods import RussianLanguageMods
+from arekit.common.languages.mods import BaseLanguageMods
+from arekit.common.languages.ru import RussianLanguageMods
 from arekit.processing.text.parsed import ParsedText
 
 

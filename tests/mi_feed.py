@@ -1,11 +1,11 @@
 import logging
 import ctx_feed
 from arekit.common.labels.base import PositiveLabel
+from arekit.contrib.networks.multi.configurations.max_pooling import MaxPoolingOverSentencesConfig
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
 from arekit.networks.context.sample import InputSample
 from arekit.networks.context.training.bags.bag import Bag
-from arekit.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-from arekit.networks.multi.configuration.max_pooling import MaxPoolingOverSentencesConfig
+from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 from arekit.networks.multi.training.batch import MultiInstanceBatch
 
 
@@ -26,7 +26,7 @@ def create_minibatch(config):
 def multiinstances_supported(ctx_config, ctx_network):
     return [
         (MaxPoolingOverSentencesConfig(ctx_config), MaxPoolingOverSentences(ctx_network)),
-        # (AttHiddenOverSentencesConfig(ctx_config), AttHiddenOverSentences(ctx_network))
+        # (AttSelfOverSentencesConfig(ctx_config), AttSelfOverSentences(ctx_network))
     ]
 
 

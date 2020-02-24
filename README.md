@@ -142,9 +142,9 @@ This toolset includes the following instruments and domain-related datasets:
             [[code]](contrib/networks/context/architectures/att_self_rcnn.py);
     * **Multi Sentence Based Encoders Architectures**:
         - Self Attentive 
-            [[code]](networks/multi/architectures/att_self.py);
+            [[code]](contrib/networks/multi/architectures/att_self.py);
         - Max Pooling
-            [[code]](networks/multi/architectures/max_pooling.py) /
+            [[code]](contrib/networks/multi/architectures/max_pooling.py) /
             [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
         - Single MLP
             [[code]](networks/multi/architectures/base_single_mlp.py);
