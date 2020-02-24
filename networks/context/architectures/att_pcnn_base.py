@@ -1,8 +1,8 @@
 import tensorflow as tf
 
-from arekit.networks.attention import common
-from arekit.networks.attention.helpers import embedding
-from arekit.networks.context.architectures.pcnn import PiecewiseCNN
+from arekit.contrib.networks.attention import common
+from arekit.contrib.networks.attention.helpers import embedding
+from arekit.contrib.networks.context.architectures.pcnn import PiecewiseCNN
 
 
 class AttentionPCNNBase(PiecewiseCNN):

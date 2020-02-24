@@ -1,8 +1,8 @@
 import tensorflow as tf
 
-from arekit.networks.attention.helpers import embedding
-from arekit.networks.attention import common
-from arekit.networks.context.architectures.bilstm import BiLSTM
+from arekit.contrib.networks.attention.helpers import embedding
+from arekit.contrib.networks.attention import common
+from arekit.contrib.networks.context.architectures.bilstm import BiLSTM
 from arekit.networks.tf_helpers import sequence
 
 

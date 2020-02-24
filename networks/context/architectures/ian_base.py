@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from arekit.networks.attention.helpers import embedding
+from arekit.contrib.networks.attention.helpers import embedding
 from arekit.networks.context.architectures.fc_single import FullyConnectedLayer
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers.sequence import get_cell

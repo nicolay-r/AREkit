@@ -1,6 +1,6 @@
 import tensorflow as tf
-from arekit.networks.attention import common
-from arekit.networks.context.architectures.bilstm import BiLSTM
+from arekit.contrib.networks.attention import common
+from arekit.contrib.networks.context.architectures.bilstm import BiLSTM
 
 
 class AttentionSelfBiLSTMBase(BiLSTM):

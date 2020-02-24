@@ -13,7 +13,7 @@
 #### IAN
 
 Includes:
-* Frame aspect based implementation [[code]](context/architectures/contrib/ian_frames.py);
+* Frame aspect based implementation [[code]](../contrib/networks/context/architectures/ian_frames.py);
 * Attitude ends aspect based implementation;
 > NOTE: Experiments with RuSentRel results in an application of base Optimizer instead of 
 `tf.train.AdamOptimizer(learning_rate=learning_rate)` oprimizer. The latter stucks training process.

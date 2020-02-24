@@ -1,6 +1,6 @@
-from arekit.networks.attention.architectures.mlp_interactive import InteractiveMLPAttention
-from arekit.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
-from arekit.networks.context.configurations.bilstm import BiLSTMConfig
+from arekit.contrib.networks.attention.architectures.mlp_interactive import InteractiveMLPAttention
+from arekit.contrib.networks.attention.configurations.mlp_interactive import InteractiveMLPAttentionConfig
+from arekit.contrib.networks.context.configurations.bilstm import BiLSTMConfig
 
 
 class AttentionBiLSTMBaseConfig(BiLSTMConfig):

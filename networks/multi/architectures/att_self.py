@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from arekit.networks.attention import common
-from arekit.networks.attention.architectures.self_p_zhou import self_attention_by_peng_zhou
+from arekit.contrib.networks.attention import common
+from arekit.contrib.networks.attention.architectures.self_p_zhou import self_attention_by_peng_zhou
 from arekit.networks.multi.architectures.base_single_mlp import BaseMultiInstanceSingleMLP
 
 
