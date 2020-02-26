@@ -2,7 +2,7 @@ import collections
 import os
 
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.experiments.sources.rusentrel_neutrals_io import RuSentRelNeutralIOUtils
+from arekit.contrib.experiments.sources.rusentrel_neutral_io import RuSentRelNeutralIOUtils
 from arekit.contrib.experiments.utils import get_cv_pair_by_index
 from arekit.networks.network_io import NetworkIO
 from arekit.networks.data_type import DataType

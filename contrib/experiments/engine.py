@@ -5,10 +5,11 @@ import logging
 import shutil
 from os import path
 
+from arekit.contrib.experiments.io_utils_base import IOUtilsBase
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelNetworkIO
 from arekit.networks.callback import Callback
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
-from arekit.contrib.experiments.neutrals import RuSentRelNeutralAnnotationCreator
+from arekit.contrib.experiments.sources.rusentrel_neutral_annot_io import RuSentRelNeutralAnnotatorIO
 
 from io_utils import IOUtils
 
@@ -71,12 +72,15 @@ def run_testing(full_model_name,
     logger.info("Run: Saving neutral annotations task.")
     logger.info("Initialization: Building parsed_news collection")
 
-    nac = RuSentRelNeutralAnnotationCreator()
-    nac.create(is_train=True)
-    nac.create(is_train=False)
+    data_io = IOUtils()
+
+    na = RuSentRelNeutralAnnotatorIO(data_io=data_io)
+    na.create(is_train=True)
+    na.create(is_train=False)
 
     io, callback = __create_io_and_callback(
         cv_count=cv_count,
+        data_io=data_io,
         create_io_func=create_io,
         create_callback_func=create_callback,
         model_name=full_model_name,
@@ -133,12 +137,14 @@ def run_testing(full_model_name,
 
 def __create_io_and_callback(
         cv_count,
+        data_io,
         create_io_func,
         create_callback_func,
         model_name,
         cancel_training_by_cost,
         clear_model_contents):
     assert(isinstance(cv_count, int))
+    assert(isinstance(data_io, IOUtilsBase))
     assert(callable(create_io_func))
     assert(callable(create_callback_func))
     assert(isinstance(model_name, unicode))
@@ -146,7 +152,7 @@ def __create_io_and_callback(
     assert(isinstance(clear_model_contents, bool))
 
     io = create_io_func(model_name=model_name,
-                        data_io=IOUtils(),
+                        data_io=data_io,
                         cv_count=cv_count)
 
     assert(isinstance(io, RuSentRelNetworkIO))
