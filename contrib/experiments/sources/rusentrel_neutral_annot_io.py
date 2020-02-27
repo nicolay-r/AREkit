@@ -4,7 +4,7 @@ import os
 
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.contrib.experiments.io_utils_base import IOUtilsBase
+from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
 from arekit.contrib.experiments.neutral_annot.default import DefaultNeutralAnnotationAlgorithm
 from arekit.contrib.experiments.sources.rusentrel_neutral_io import RuSentRelNeutralIOUtils
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
@@ -25,7 +25,7 @@ class RuSentRelNeutralAnnotatorIO(object):
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self, data_io):
-        assert(isinstance(data_io, IOUtilsBase))
+        assert(isinstance(data_io, BaseExperimentsIO))
 
         self.__data_io = data_io
         self.__stemmer = MystemWrapper()

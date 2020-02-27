@@ -1,10 +1,6 @@
 import collections
-import os
-
-from arekit.common.utils import create_dir_if_not_exists
+from arekit.contrib.experiments.sources.cv_based_io import CVBasedIO
 from arekit.contrib.experiments.sources.rusentrel_neutral_io import RuSentRelNeutralIOUtils
-from arekit.contrib.experiments.utils import get_cv_pair_by_index
-from arekit.networks.network_io import NetworkIO
 from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.news import RuSentRelNews
@@ -15,29 +11,23 @@ from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 from arekit.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.processing.lemmatization.base import Stemmer
 
-from arekit.contrib.experiments.io_utils_base import IOUtilsBase
-from arekit.contrib.experiments import utils as e_utils
 
-
-# TODO. Nested from AbstractCVBasedIO
-class RuSentRelNetworkIO(NetworkIO):
+class RuSentRelNetworkIO(CVBasedIO):
     """
     Represents Input interface for NeuralNetwork ctx
     Now exploited (treated) as input interface only
     """
 
     def __init__(self, model_name, data_io, cv_count=1):
-        assert(isinstance(cv_count, int))
-        assert(isinstance(data_io, IOUtilsBase))
+        super(RuSentRelNetworkIO, self).__init__(
+            experiments_io=data_io,
+            cv_count=cv_count,
+            model_name=model_name)
 
         self.__synonyms = None
-        self.__cv_count = cv_count
-        # TODO. To base
-        self.__current_cv_index = 0
         self.__model_name = model_name
         self.__rusentrel_news_ids_list = list(RuSentRelIOUtils.iter_collection_indices())
         self.__rusentrel_news_ids = set(self.__rusentrel_news_ids_list)
-        self.__data_io = data_io
 
         # Keys
         self.__eval_on_rusentrel_docs_key = False
@@ -56,11 +46,6 @@ class RuSentRelNetworkIO(NetworkIO):
     def CVCount(self):
         return self.__cv_count
 
-    # TODO. To base
-    @property
-    def CVCurrentIndex(self):
-        return self.__current_cv_index
-
     @property
     def EvalOnRuSentRelDocsOnly(self):
         return self.__eval_on_rusentrel_docs_key
@@ -71,54 +56,9 @@ class RuSentRelNetworkIO(NetworkIO):
         assert(isinstance(value, bool))
         self.__eval_on_rusentrel_docs_key = value
 
-    # TODO. To base
-    def inc_cv_index(self):
-        self.__current_cv_index += 1
-
     def is_rusentrel_news_id(self, news_id):
         assert(isinstance(news_id, int))
         return news_id in self.__rusentrel_news_ids
-
-    # region 'get' public methods
-
-    # TODO. To base
-    def get_model_filepath(self):
-        return os.path.join(self.__get_model_states_dir(),
-                            u'{}'.format(self.__model_name))
-
-    # TODO. To base
-    def get_model_root(self):
-        return self.__get_model_root()
-
-    # TODO. To base
-    def get_word_embedding_filepath(self):
-        return self.__data_io.get_rusvectores_news_embedding_filepath()
-
-    # TODO. To base
-    def get_capitals_filepath(self):
-        return self.__data_io.get_capitals_filepath()
-
-    # TODO. To base
-    def get_states_filepath(self):
-        return self.__data_io.get_states_filepath()
-
-    # endregion
-
-    # region 'write' methods
-
-    # TODO. To base
-    def write_log(self, log_names, log_values):
-        assert(isinstance(log_names, list))
-        assert(isinstance(log_values, list))
-        assert(len(log_names) == len(log_values))
-
-        log_path = os.path.join(self.get_model_root(), u"log.txt")
-
-        with open(log_path, 'w') as f:
-            for index, log_value in enumerate(log_values):
-                f.write("{}: {}\n".format(log_names[index], log_value))
-
-    # endregion
 
     # region 'read' public methods
 
@@ -150,7 +90,7 @@ class RuSentRelNetworkIO(NetworkIO):
         filepath = RuSentRelNeutralIOUtils.get_rusentrel_neutral_opin_filepath(
             doc_id=doc_id,
             is_train=True if data_type == DataType.Train else False,
-            data_io=self.__data_io)
+            data_io=self.__experiments_io)
 
         return RuSentRelOpinionCollection.read_from_file(filepath=filepath,
                                                          synonyms=self.__synonyms)
@@ -160,21 +100,6 @@ class RuSentRelNetworkIO(NetworkIO):
 
         return RuSentRelOpinionCollection.read_collection(doc_id=doc_id,
                                                           synonyms=self.__synonyms)
-
-    # TODO. To base
-    @staticmethod
-    def read_list_from_lss(filepath):
-        """
-        Reading lines in lowercase mode
-        """
-        lines = []
-        with open(filepath) as f:
-            for line in f.readlines():
-                row = line.decode('utf-8')
-                row = row.lower().strip()
-                lines.append(row)
-
-        return lines
 
     # endregion
 
@@ -191,11 +116,7 @@ class RuSentRelNetworkIO(NetworkIO):
             for doc_id in RuSentRelIOUtils.iter_test_indices():
                 yield doc_id
         else:
-            # TODO. To base
-            _, test = get_cv_pair_by_index(cv_count=self.__cv_count,
-                                           cv_index=self.__current_cv_index,
-                                           data_io=self.__data_io)
-            for doc_id in test:
+            for doc_id in super(RuSentRelNetworkIO, self).iter_test_data_indices():
                 yield doc_id
 
     def iter_train_data_indices(self):
@@ -203,11 +124,7 @@ class RuSentRelNetworkIO(NetworkIO):
             for doc_id in RuSentRelIOUtils.iter_train_indices():
                 yield doc_id
         else:
-            # TODO. To base
-            train, _ = get_cv_pair_by_index(cv_count=self.__cv_count,
-                                            cv_index=self.__current_cv_index,
-                                            data_io=self.__data_io)
-            for doc_id in train:
+            for doc_id in super(RuSentRelNetworkIO, self).iter_train_data_indices():
                 yield doc_id
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
@@ -236,54 +153,5 @@ class RuSentRelNetworkIO(NetworkIO):
 
     def create_opinion_collection(self):
         return RuSentRelOpinionCollection([], synonyms=self.__synonyms)
-
-    # TODO. To base
-    def create_model_state_filepath(self):
-        return os.path.join(self.__get_model_states_dir(),
-                            u'{}.state'.format(self.__model_name))
-
-    # TODO. To base
-    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
-        assert(isinstance(epoch_index, int))
-
-        model_eval_root = self.__get_eval_root_filepath(data_type=data_type,
-                                                        epoch_index=epoch_index)
-
-        filepath = os.path.join(model_eval_root, u"{}.opin.txt".format(doc_id))
-        create_dir_if_not_exists(filepath)
-        return filepath
-
-    # endregion
-
-    # region private methods
-
-    # TODO. To base
-    def __get_model_root(self):
-        return e_utils.get_path_of_subfolder_in_experiments_dir(
-            subfolder_name=self.__model_name,
-            data_io=self.__data_io)
-
-    # TODO. To base
-    def __get_model_states_dir(self):
-
-        result_dir = os.path.join(
-            self.__get_model_root(),
-            os.path.join(u'model_states/'))
-
-        create_dir_if_not_exists(result_dir)
-        return result_dir
-
-    # TODO. To base
-    def __get_eval_root_filepath(self, data_type, epoch_index):
-        assert(isinstance(epoch_index, int))
-
-        result_dir = os.path.join(
-            self.__get_model_root(),
-            os.path.join(u"eval/{}/{}/{}".format(data_type,
-                                                 self.__current_cv_index,
-                                                 str(epoch_index))))
-
-        create_dir_if_not_exists(result_dir)
-        return result_dir
 
     # endregion

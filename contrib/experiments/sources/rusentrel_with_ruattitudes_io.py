@@ -60,21 +60,6 @@ class RuSentRelWithRuAttitudesIO(RuSentRelNetworkIO):
 
         pass
 
-    # endregion
-
-    # region private methods
-
-    @staticmethod
-    def __read_ruattitudes_in_memory(stemmer):
-        assert(isinstance(stemmer, Stemmer))
-
-        d = {}
-        for news in RuAttitudesFormatReader.iter_news(stemmer=stemmer):
-            assert(isinstance(news, RuAttitudesNews))
-            d[news.NewsIndex] = news
-
-        return d
-
     def iter_train_data_indices(self):
         for doc_id in super(RuSentRelWithRuAttitudesIO, self).iter_train_data_indices():
             yield doc_id
@@ -82,3 +67,25 @@ class RuSentRelWithRuAttitudesIO(RuSentRelNetworkIO):
             yield doc_id
 
     # endregion
+
+    # region private methods (READER)
+
+    # TODO. Must be general, support indices as a parameter.
+    # TODO. To skip inappropriate
+
+    @staticmethod
+    def __read_ruattitudes_in_memory(stemmer):
+        assert(isinstance(stemmer, Stemmer))
+
+        d = {}
+
+        # TODO. Support indices to skip inappropriate documents.
+        for news in RuAttitudesFormatReader.iter_news(stemmer=stemmer):
+            assert(isinstance(news, RuAttitudesNews))
+            # TODO. .. if index in list or list is None:
+            d[news.NewsIndex] = news
+
+        return d
+
+    # endregion
+

@@ -2,7 +2,7 @@ import os
 import numpy as np
 from os.path import join
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.experiments.io_utils_base import IOUtilsBase
+from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
 
 
 # region private methods
@@ -48,7 +48,7 @@ def __calc_cv_group_delta(cv_group_size, item, g_index_to_add):
 def get_cv_pair_by_index(cv_count, cv_index, data_io):
     assert(isinstance(cv_count, int))
     assert(isinstance(cv_count, int) and cv_index < cv_count)
-    assert(isinstance(data_io, IOUtilsBase))
+    assert(isinstance(data_io, BaseExperimentsIO))
 
     it = iter_by_same_size_parts_cv(cv_count=cv_count,
                                     data_io=data_io)
@@ -64,7 +64,7 @@ def get_path_of_subfolder_in_experiments_dir(subfolder_name, data_io):
     Returns subfolder in experiments directory
     """
     assert(isinstance(subfolder_name, unicode))
-    assert(isinstance(data_io, IOUtilsBase))
+    assert(isinstance(data_io, BaseExperimentsIO))
 
     target_dir = join(data_io.get_experiments_dir(), u"{}/".format(subfolder_name))
     create_dir_if_not_exists(target_dir)
@@ -73,7 +73,7 @@ def get_path_of_subfolder_in_experiments_dir(subfolder_name, data_io):
 
 # TODO. To base io. Refactoring
 def get_rusentrel_stats_filepath(data_io):
-    assert(isinstance(data_io, IOUtilsBase))
+    assert(isinstance(data_io, BaseExperimentsIO))
     return os.path.join(data_io.get_data_root(), u"rusentrel_docs_stat.txt")
 
 
@@ -81,7 +81,7 @@ def iter_by_same_size_parts_cv(cv_count, data_io):
     """
     Separation with the specific separation, in terms of cv-classes size difference.
     """
-    assert(isinstance(data_io, IOUtilsBase))
+    assert(isinstance(data_io, BaseExperimentsIO))
 
     stat = __read_docs_stat(stat_filepath=data_io.get_rusentrel_stats_filepath())
     sorted_stat = reversed(sorted(stat, key=lambda pair: pair[1]))

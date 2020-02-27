@@ -1,6 +1,6 @@
 from os.path import join
 from arekit.contrib.experiments import utils
-from arekit.contrib.experiments.io_utils_base import IOUtilsBase
+from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
 
 
 # TODO. Remove this class
@@ -12,7 +12,7 @@ class RuSentRelNeutralIOUtils(object):
         assert(isinstance(doc_id, int))
         assert(isinstance(is_train, bool))
         assert(isinstance(model_name, unicode))
-        assert(isinstance(data_io, IOUtilsBase))
+        assert(isinstance(data_io, BaseExperimentsIO))
 
         root = utils.get_path_of_subfolder_in_experiments_dir(subfolder_name=model_name,
                                                               data_io=data_io)

@@ -5,7 +5,7 @@ import logging
 import shutil
 from os import path
 
-from arekit.contrib.experiments.io_utils_base import IOUtilsBase
+from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelNetworkIO
 from arekit.networks.callback import Callback
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
@@ -144,7 +144,7 @@ def __create_io_and_callback(
         cancel_training_by_cost,
         clear_model_contents):
     assert(isinstance(cv_count, int))
-    assert(isinstance(data_io, IOUtilsBase))
+    assert(isinstance(data_io, BaseExperimentsIO))
     assert(callable(create_io_func))
     assert(callable(create_callback_func))
     assert(isinstance(model_name, unicode))
