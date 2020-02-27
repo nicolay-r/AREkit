@@ -72,15 +72,16 @@ def run_testing(full_model_name,
     logger.info("Run: Saving neutral annotations task.")
     logger.info("Initialization: Building parsed_news collection")
 
-    data_io = IOUtils()
+    # TODO. External parameter, refactor
+    experiments_io = IOUtils()
 
-    na = RuSentRelNeutralAnnotatorIO(data_io=data_io)
+    na = RuSentRelNeutralAnnotatorIO(experiments_io=experiments_io)
     na.create(is_train=True)
     na.create(is_train=False)
 
     io, callback = __create_io_and_callback(
         cv_count=cv_count,
-        data_io=data_io,
+        experiments_io=experiments_io,
         create_io_func=create_io,
         create_callback_func=create_callback,
         model_name=full_model_name,
@@ -137,14 +138,14 @@ def run_testing(full_model_name,
 
 def __create_io_and_callback(
         cv_count,
-        data_io,
+        experiments_io,
         create_io_func,
         create_callback_func,
         model_name,
         cancel_training_by_cost,
         clear_model_contents):
     assert(isinstance(cv_count, int))
-    assert(isinstance(data_io, BaseExperimentsIO))
+    assert(isinstance(experiments_io, BaseExperimentsIO))
     assert(callable(create_io_func))
     assert(callable(create_callback_func))
     assert(isinstance(model_name, unicode))
@@ -152,7 +153,7 @@ def __create_io_and_callback(
     assert(isinstance(clear_model_contents, bool))
 
     io = create_io_func(model_name=model_name,
-                        data_io=data_io,
+                        experiments_io=experiments_io,
                         cv_count=cv_count)
 
     assert(isinstance(io, RuSentRelNetworkIO))

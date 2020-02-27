@@ -24,10 +24,10 @@ class RuSentRelNeutralAnnotatorIO(object):
 
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
-    def __init__(self, data_io):
-        assert(isinstance(data_io, BaseExperimentsIO))
+    def __init__(self, experiments_io):
+        assert(isinstance(experiments_io, BaseExperimentsIO))
 
-        self.__data_io = data_io
+        self.__experiments_io = experiments_io
         self.__stemmer = MystemWrapper()
         self.__synonyms = RuSentRelSynonymsCollection.read_collection(
             stemmer=self.__stemmer,
@@ -65,7 +65,7 @@ class RuSentRelNeutralAnnotatorIO(object):
 
             neutral_filepath = RuSentRelNeutralIOUtils.get_rusentrel_neutral_opin_filepath(doc_id=doc_id,
                                                                                            is_train=is_train,
-                                                                                           data_io=self.__data_io)
+                                                                                           experiments_io=self.__experiments_io)
 
             # Skip if this file is already exists
             if os.path.isfile(neutral_filepath):

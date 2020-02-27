@@ -71,7 +71,7 @@ class BaseIO(NetworkIO):
     def __get_model_root(self):
         return get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__model_name,
-            data_io=self.__experiments_io)
+            experiments_io=self.__experiments_io)
 
     def __get_model_states_dir(self):
 

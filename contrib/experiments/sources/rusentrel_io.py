@@ -18,9 +18,9 @@ class RuSentRelNetworkIO(CVBasedIO):
     Now exploited (treated) as input interface only
     """
 
-    def __init__(self, model_name, data_io, cv_count=1):
+    def __init__(self, model_name, experiments_io, cv_count=1):
         super(RuSentRelNetworkIO, self).__init__(
-            experiments_io=data_io,
+            experiments_io=experiments_io,
             cv_count=cv_count,
             model_name=model_name)
 
@@ -90,7 +90,7 @@ class RuSentRelNetworkIO(CVBasedIO):
         filepath = RuSentRelNeutralIOUtils.get_rusentrel_neutral_opin_filepath(
             doc_id=doc_id,
             is_train=True if data_type == DataType.Train else False,
-            data_io=self.__experiments_io)
+            experiments_io=self.__experiments_io)
 
         return RuSentRelOpinionCollection.read_from_file(filepath=filepath,
                                                          synonyms=self.__synonyms)

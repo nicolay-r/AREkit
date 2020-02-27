@@ -24,14 +24,14 @@ class CVBasedIO(BaseIO):
     def iter_train_data_indices(self):
         train, _ = get_cv_pair_by_index(cv_count=self.__cv_count,
                                         cv_index=self.__current_cv_index,
-                                        data_io=self.__experiments_io)
+                                        experiments_io=self.__experiments_io)
         for doc_id in train:
             yield doc_id
 
     def iter_test_data_indices(self):
         _, test = get_cv_pair_by_index(cv_count=self.__cv_count,
                                        cv_index=self.__current_cv_index,
-                                       data_io=self.__experiments_io)
+                                       experiments_io=self.__experiments_io)
         for doc_id in test:
             yield doc_id
 

@@ -45,13 +45,13 @@ def __calc_cv_group_delta(cv_group_size, item, g_index_to_add):
 # endregion
 
 
-def get_cv_pair_by_index(cv_count, cv_index, data_io):
+def get_cv_pair_by_index(cv_count, cv_index, experiments_io):
     assert(isinstance(cv_count, int))
     assert(isinstance(cv_count, int) and cv_index < cv_count)
-    assert(isinstance(data_io, BaseExperimentsIO))
+    assert(isinstance(experiments_io, BaseExperimentsIO))
 
     it = iter_by_same_size_parts_cv(cv_count=cv_count,
-                                    data_io=data_io)
+                                    experiments_io=experiments_io)
 
     for index, pair in enumerate(it):
         train, test = pair
@@ -59,31 +59,31 @@ def get_cv_pair_by_index(cv_count, cv_index, data_io):
             return train, test
 
 
-def get_path_of_subfolder_in_experiments_dir(subfolder_name, data_io):
+def get_path_of_subfolder_in_experiments_dir(subfolder_name, experiments_io):
     """
     Returns subfolder in experiments directory
     """
     assert(isinstance(subfolder_name, unicode))
-    assert(isinstance(data_io, BaseExperimentsIO))
+    assert(isinstance(experiments_io, BaseExperimentsIO))
 
-    target_dir = join(data_io.get_experiments_dir(), u"{}/".format(subfolder_name))
+    target_dir = join(experiments_io.get_experiments_dir(), u"{}/".format(subfolder_name))
     create_dir_if_not_exists(target_dir)
     return target_dir
 
 
 # TODO. To base io. Refactoring
-def get_rusentrel_stats_filepath(data_io):
-    assert(isinstance(data_io, BaseExperimentsIO))
-    return os.path.join(data_io.get_data_root(), u"rusentrel_docs_stat.txt")
+def get_rusentrel_stats_filepath(experiments_io):
+    assert(isinstance(experiments_io, BaseExperimentsIO))
+    return os.path.join(experiments_io.get_data_root(), u"rusentrel_docs_stat.txt")
 
 
-def iter_by_same_size_parts_cv(cv_count, data_io):
+def iter_by_same_size_parts_cv(cv_count, experiments_io):
     """
     Separation with the specific separation, in terms of cv-classes size difference.
     """
-    assert(isinstance(data_io, BaseExperimentsIO))
+    assert(isinstance(experiments_io, BaseExperimentsIO))
 
-    stat = __read_docs_stat(stat_filepath=data_io.get_rusentrel_stats_filepath())
+    stat = __read_docs_stat(stat_filepath=experiments_io.get_rusentrel_stats_filepath())
     sorted_stat = reversed(sorted(stat, key=lambda pair: pair[1]))
     cv_group_docs = [[] for _ in range(cv_count)]
     cv_group_sizes = [[] for _ in range(cv_count)]
