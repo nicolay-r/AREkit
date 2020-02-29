@@ -20,6 +20,5 @@ class BaseExperimentsIO(object):
     def get_rusvectores_news_embedding_filepath(self):
         raise NotImplementedError()
 
-    # TODO. Rename.
-    def get_rusentrel_stats_filepath(self):
+    def get_doc_stat_filepath(self):
         raise NotImplementedError()

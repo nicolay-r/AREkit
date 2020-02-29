@@ -2,7 +2,7 @@ import os
 
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.experiments.sources.base_io import BaseIO
-from arekit.contrib.experiments.utils import get_cv_pair_by_index
+from arekit.contrib.experiments.cv.utils import get_cv_pair_by_index
 
 
 class CVBasedIO(BaseIO):

@@ -11,7 +11,7 @@ from arekit.networks.callback import Callback
 from arekit.networks.context.configurations.base import DefaultNetworkConfig
 from arekit.contrib.experiments.sources.rusentrel_neutral_annot_io import RuSentRelNeutralAnnotatorIO
 
-from io_utils import IOUtils
+from io_utils import ExperimentsIOUtils
 
 
 def run_testing(full_model_name,
@@ -73,7 +73,7 @@ def run_testing(full_model_name,
     logger.info("Initialization: Building parsed_news collection")
 
     # TODO. External parameter, refactor
-    experiments_io = IOUtils()
+    experiments_io = ExperimentsIOUtils()
 
     na = RuSentRelNeutralAnnotatorIO(experiments_io=experiments_io)
     na.create(is_train=True)
