@@ -4,6 +4,19 @@ from arekit.source.rusentrel.news import RuSentRelNews
 from tests.test_cv import synonyms, stat_filepath
 
 
+def DocumentStatGeneratorBase(object):
+    """
+    Provides statistic on certain document.
+    Abstract, considered a specific implementation for document processing operation.
+    """
+
+    # TODO. Complete with other methods
+
+    def get_sentences_count(doc_id):
+        raise NotImplementedError()
+
+
+# TODO. Move in Generator as a method
 def read_docs_stat(stat_filepath):
     """
     return:
@@ -20,6 +33,7 @@ def read_docs_stat(stat_filepath):
 
 
 # TODO. Use it in _io.py
+# TODO. Move in Generator as a method
 def write_doc_stat():
 
     with open(stat_filepath, 'w') as f:
@@ -31,6 +45,8 @@ def __iter_rusentrel_stat():
 
     # TODO. Now it is RuSentRel statistics.
     # TODO. Refactoring.
+    # TODO. Implement in doc_stat_generator.
+    # TODO. Make not iterative
 
     for doc_id in RuSentRelIOUtils.iter_collection_indices():
 
@@ -41,4 +57,4 @@ def __iter_rusentrel_stat():
         news = RuSentRelNews.read_document(doc_id=doc_id,
                                            entities=entities)
 
-        yield (doc_id, news.sentences_count())
+        yield (doc_id, news.SentencesCount())

@@ -20,6 +20,10 @@ class RuSentRelNews(object):
     # region properties
 
     @property
+    def SentencesCount(self):
+        return len(self.__sentences)
+
+    @property
     def DocEntities(self):
         return self.__entities
 
@@ -113,9 +117,6 @@ class RuSentRelNews(object):
     # endregion
 
     # region public methods
-
-    def sentences_count(self):
-        return len(self.__sentences)
 
     def get_sentence_by_index(self, index):
         return self.__sentences[index]
