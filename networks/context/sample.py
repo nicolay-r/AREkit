@@ -8,19 +8,23 @@ from arekit.common.frames.collection import FramesCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.synonyms import SynonymsCollection
 from arekit.networks.context.embedding import indices
-from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
 from arekit.common.entities.base import Entity
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.networks.context.features.dist import DistanceFeatures
-from arekit.networks.context.features.frames import FrameFeatures
-from arekit.networks.context.features.inds import IndicesFeature
-from arekit.networks.context.features.pointers import PointersFeature
-from arekit.networks.context.features.utils import pad_right_or_crop_inplace
+
+# TODO. Remove related dependency
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.contrib.networks.features.dist import DistanceFeatures
+from arekit.contrib.networks.features.frames import FrameFeatures
+from arekit.contrib.networks.features.inds import IndicesFeature
+from arekit.contrib.networks.features.pointers import PointersFeature
+from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
 
 
+# TODO. This implementations should be moved into contrib.
+# TODO. Implement and leave here InputSampleBase (abstract class/interface).
 class InputSample(object):
     """
     Base sample which is a part of a Bag
