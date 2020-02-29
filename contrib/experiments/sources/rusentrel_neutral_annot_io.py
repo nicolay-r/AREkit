@@ -6,7 +6,7 @@ from os.path import join
 
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
+from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.neutral_annot.default import DefaultNeutralAnnotationAlgorithm
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
@@ -30,7 +30,7 @@ class RuSentRelNeutralAnnotatorIO(object):
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self, experiments_io):
-        assert(isinstance(experiments_io, BaseExperimentsIO))
+        assert(isinstance(experiments_io, BaseExperimentsIOUtils))
 
         self.__experiments_io = experiments_io
         self.__stemmer = MystemWrapper()
@@ -110,7 +110,7 @@ class RuSentRelNeutralAnnotatorIO(object):
         assert(isinstance(doc_id, int))
         assert(isinstance(is_train, bool))
         assert(isinstance(model_name, unicode))
-        assert(isinstance(experiments_io, BaseExperimentsIO))
+        assert(isinstance(experiments_io, BaseExperimentsIOUtils))
 
         root = get_path_of_subfolder_in_experiments_dir(subfolder_name=model_name,
                                                         experiments_io=experiments_io)

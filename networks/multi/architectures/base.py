@@ -6,7 +6,7 @@ from arekit.networks.tf_helpers.initialization import init_weighted_cost, init_a
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType
 from arekit.networks.multi.training.batch import MultiInstanceBatch
-from arekit.networks.network import NeuralNetwork
+from arekit.networks.nn import NeuralNetwork
 
 
 class BaseMultiInstanceNeuralNetwork(NeuralNetwork):

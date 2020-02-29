@@ -93,9 +93,9 @@ This toolset includes the following instruments and domain-related datasets:
         - ParsedText [[base-class]](processing/text/parsed.py) -- processed text;
         - Tokens [[base-class]](processing/text/tokens.py) -- specific text terms, such as: punctuation signs, numbers, URL-links etc.;
 * **Neural Networks** [[README]](networks/README.md)
-    * Network [[base-class]](networks/network.py);
+    * Network [[base-class]](networks/nn.py);
     * Model [[base-class]](networks/tf_model.py);
-    * IO [[base-class]](networks/network_io.py);
+    * IO [[base-class]](networks/nn_io.py);
     * Callback [[base-class]](networks/callback.py);
     * **Aspect-based Attentive encoders**:
         - Multilayer Perceptron (MLP)

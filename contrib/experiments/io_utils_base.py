@@ -1,5 +1,5 @@
 # TODO. Rename as ExperimentsIOUtilsBase
-class BaseExperimentsIO(object):
+class BaseExperimentsIOUtils(object):
     """
     Related methods implementation should be
     declared outside of an AREkit framework.

@@ -11,8 +11,8 @@ from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.context.debug import DebugKeys
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
-from arekit.networks.network_io import NetworkIO
-from arekit.networks.network import NeuralNetwork
+from arekit.networks.nn_io import NeuralNetworkIO
+from arekit.networks.nn import NeuralNetwork
 from arekit.networks.data_type import DataType
 from arekit.networks.predict_log import NetworkInputDependentVariables
 
@@ -36,7 +36,7 @@ class TensorflowModel(object):
     """
 
     def __init__(self, io, network, callback=None):
-        assert(isinstance(io, NetworkIO))
+        assert(isinstance(io, NeuralNetworkIO))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)
         self.__sess = None

@@ -1,16 +1,16 @@
 import os
 
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
+from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
-from arekit.networks.network_io import NetworkIO
+from arekit.networks.nn_io import NeuralNetworkIO
 from arekit.processing.lemmatization.base import Stemmer
 
 
-class BaseIO(NetworkIO):
+class BaseExperimentIO(NeuralNetworkIO):
 
     def __init__(self, experiments_io, model_name):
-        assert(isinstance(experiments_io, BaseExperimentsIO))
+        assert(isinstance(experiments_io, BaseExperimentsIOUtils))
         self.__experiments_io = experiments_io
         self.__model_name = model_name
         self.__synonyms = None

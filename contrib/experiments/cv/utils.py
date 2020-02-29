@@ -2,7 +2,7 @@ from os import path
 
 import numpy as np
 
-from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
+from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.doc_stat.base import DocStatGeneratorBase
 
 
@@ -35,7 +35,7 @@ def iter_by_same_size_parts_cv(cv_count, docs_stat, experiments_io):
     Separation with the specific separation, in terms of cv-classes size difference.
     """
     assert(isinstance(docs_stat, DocStatGeneratorBase))
-    assert(isinstance(experiments_io, BaseExperimentsIO))
+    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
 
     doc_stat_filepath = experiments_io.get_doc_stat_filepath()
 
@@ -67,7 +67,7 @@ def get_cv_pair_by_index(cv_count, cv_index, experiments_io, docs_stat):
     assert(isinstance(cv_count, int))
     assert(isinstance(cv_count, int) and cv_index < cv_count)
     assert(isinstance(docs_stat, DocStatGeneratorBase))
-    assert(isinstance(experiments_io, BaseExperimentsIO))
+    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
 
     it = iter_by_same_size_parts_cv(cv_count=cv_count,
                                     experiments_io=experiments_io,

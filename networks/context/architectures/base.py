@@ -4,7 +4,7 @@ from arekit.networks.context.configurations.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType
-from arekit.networks.network import NeuralNetwork
+from arekit.networks.nn import NeuralNetwork
 
 
 class SingleInstanceNeuralNetwork(NeuralNetwork):

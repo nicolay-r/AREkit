@@ -2,7 +2,7 @@ import collections
 
 from arekit.evaluation.evaluators.base import BaseEvaluator
 from arekit.networks.eval.base import EvaluationHelper
-from arekit.networks.network_io import NetworkIO
+from arekit.networks.nn_io import NeuralNetworkIO
 
 
 class OpinionBasedEvaluationHelper(EvaluationHelper):
@@ -12,7 +12,7 @@ class OpinionBasedEvaluationHelper(EvaluationHelper):
         self.__evaluator = evaluator
 
     def evaluate_model(self, data_type, io, doc_ids, epoch_index):
-        assert(isinstance(io, NetworkIO))
+        assert(isinstance(io, NeuralNetworkIO))
         assert(isinstance(doc_ids, collections.Iterable))
         assert(isinstance(epoch_index, int))
 

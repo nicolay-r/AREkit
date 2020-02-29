@@ -1,4 +1,4 @@
-class NetworkIO(object):
+class NeuralNetworkIO(object):
     """
     Now it includes IO to interact with collection,
     and it is specific towards RuSentiRel collection.

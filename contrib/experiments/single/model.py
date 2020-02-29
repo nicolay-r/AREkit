@@ -1,5 +1,5 @@
 from arekit.contrib.experiments.single.helpers.initialization import SingleInstanceModelInitHelper
-from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelNetworkIO
+from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 
 from arekit.networks.eval.opinion_based import OpinionBasedEvaluationHelper
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
@@ -8,7 +8,7 @@ from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.callback import Callback
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_model import TensorflowModel
-from arekit.networks.network import NeuralNetwork
+from arekit.networks.nn import NeuralNetwork
 
 
 class SingleInstanceTensorflowModel(TensorflowModel):
@@ -18,7 +18,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     """
 
     def __init__(self, io, network, config, evaluator_class, callback):
-        assert(isinstance(io, RuSentRelNetworkIO))
+        assert(isinstance(io, RuSentRelBasedExperimentIO))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)

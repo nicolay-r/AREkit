@@ -14,14 +14,14 @@ from arekit.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.processing.lemmatization.base import Stemmer
 
 
-class RuSentRelNetworkIO(CVBasedIO):
+class RuSentRelBasedExperimentIO(CVBasedIO):
     """
     Represents Input interface for NeuralNetwork ctx
     Now exploited (treated) as input interface only
     """
 
     def __init__(self, model_name, experiments_io, cv_count=1):
-        super(RuSentRelNetworkIO, self).__init__(
+        super(RuSentRelBasedExperimentIO, self).__init__(
             experiments_io=experiments_io,
             cv_count=cv_count,
             model_name=model_name)
@@ -116,7 +116,7 @@ class RuSentRelNetworkIO(CVBasedIO):
             for doc_id in RuSentRelIOUtils.iter_test_indices():
                 yield doc_id
         else:
-            for doc_id in super(RuSentRelNetworkIO, self).iter_test_data_indices():
+            for doc_id in super(RuSentRelBasedExperimentIO, self).iter_test_data_indices():
                 yield doc_id
 
     def iter_train_data_indices(self):
@@ -124,7 +124,7 @@ class RuSentRelNetworkIO(CVBasedIO):
             for doc_id in RuSentRelIOUtils.iter_train_indices():
                 yield doc_id
         else:
-            for doc_id in super(RuSentRelNetworkIO, self).iter_train_data_indices():
+            for doc_id in super(RuSentRelBasedExperimentIO, self).iter_train_data_indices():
                 yield doc_id
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):

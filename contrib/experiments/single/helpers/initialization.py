@@ -13,7 +13,7 @@ from arekit.common.labels.base import NeutralLabel
 from arekit.contrib.experiments.single.helpers.bags import BagsCollectionHelper
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
 from arekit.contrib.experiments.single.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
-from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelNetworkIO
+from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 from arekit.networks.data_type import DataType
 from arekit.networks.context.debug import DebugKeys
 from arekit.networks.context.sample import InputSample
@@ -45,7 +45,7 @@ class SingleInstanceModelInitHelper(object):
     STATE_ENTITY_TYPE = u"STATE"
 
     def __init__(self, io, config):
-        assert(isinstance(io, RuSentRelNetworkIO))
+        assert(isinstance(io, RuSentRelBasedExperimentIO))
         assert(isinstance(config, DefaultNetworkConfig))
 
         print "Loading word embedding: {}".format(io.get_word_embedding_filepath())
@@ -355,7 +355,7 @@ class SingleInstanceModelInitHelper(object):
         return reversed_opinion
 
     def __extract_text_opinions(self, io, data_type, config):
-        assert(isinstance(io, RuSentRelNetworkIO))
+        assert(isinstance(io, RuSentRelBasedExperimentIO))
         assert(isinstance(data_type, unicode))
         assert(isinstance(config, DefaultNetworkConfig))
 
