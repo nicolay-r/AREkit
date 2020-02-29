@@ -147,7 +147,7 @@ This toolset includes the following instruments and domain-related datasets:
             [[code]](contrib/networks/multi/architectures/max_pooling.py) /
             [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
         - Single MLP
-            [[code]](contrib/networks/multi/architectures/base_single_mlp.py);
+            [[code]](contrib/networks/multi/architectures/base/base_single_mlp.py);
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
     * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
     * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);
