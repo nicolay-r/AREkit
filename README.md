@@ -92,7 +92,7 @@ This toolset includes the following instruments and domain-related datasets:
         - Parser [[base-class]](processing/text/parser.py) -- text parser;
         - ParsedText [[base-class]](processing/text/parsed.py) -- processed text;
         - Tokens [[base-class]](processing/text/tokens.py) -- specific text terms, such as: punctuation signs, numbers, URL-links etc.;
-* **Neural Networks** [[README]](networks/README.md)
+* **Neural Networks** [[README]](contrib/networks/README.md)
     * Network [[base-class]](networks/nn.py);
     * Model [[base-class]](networks/tf_model.py);
     * IO [[base-class]](networks/nn_io.py);
