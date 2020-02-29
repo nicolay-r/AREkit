@@ -1,5 +1,5 @@
 from arekit.contrib.networks.attention.architectures.mlp import MLPAttention
-from arekit.networks.context.architectures.base import SingleInstanceNeuralNetwork
+from arekit.contrib.networks.context.architectures.base.base import SingleInstanceNeuralNetwork
 from arekit.networks.context.sample import InputSample
 
 

@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from arekit.contrib.networks.attention import common
 from arekit.contrib.networks.attention.architectures.self_p_zhou import self_attention_by_peng_zhou
-from arekit.networks.multi.architectures.base_single_mlp import BaseMultiInstanceSingleMLP
+from arekit.contrib.networks.multi.architectures.base_single_mlp import BaseMultiInstanceSingleMLP
 
 
 class AttSelfOverSentences(BaseMultiInstanceSingleMLP):

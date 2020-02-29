@@ -9,7 +9,7 @@ from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers import sequence
 from arekit.contrib.networks.context.configurations.bilstm import BiLSTMConfig
 from arekit.networks.context.sample import InputSample
-from arekit.networks.context.architectures.fc_single import FullyConnectedLayer
+from arekit.contrib.networks.context.architectures.base.fc_single import FullyConnectedLayer
 
 
 class BiLSTM(FullyConnectedLayer):

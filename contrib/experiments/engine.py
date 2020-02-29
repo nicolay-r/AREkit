@@ -8,7 +8,7 @@ from os import path
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 from arekit.networks.callback import Callback
-from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.experiments.sources.rusentrel_neutral_annot_io import RuSentRelNeutralAnnotatorIO
 
 from io_utils import RuSentRelBasedExperimentsIOUtils

@@ -1,5 +1,5 @@
 import tensorflow as tf
-from arekit.networks.context.architectures.fc_single import FullyConnectedLayer
+from arekit.contrib.networks.context.architectures.base.fc_single import FullyConnectedLayer
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers import sequence
 from arekit.networks.context.sample import InputSample

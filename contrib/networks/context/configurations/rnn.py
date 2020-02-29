@@ -1,5 +1,5 @@
 import tensorflow as tf
-from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.tf_helpers.sequence import CellTypes
 
 

@@ -53,7 +53,7 @@ from arekit.contrib.networks.context.configurations.self_att_bilstm import SelfA
 from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.contrib.networks.context.architectures.cnn import VanillaCNN
 from arekit.contrib.networks.context.architectures.rnn import RNN
-from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.context.configurations.rnn import RNNConfig
 
 

@@ -1,7 +1,7 @@
 import tensorflow as tf
 from collections import OrderedDict
 from arekit.networks.tf_helpers.layers import get_k_layer_pair_logits
-from arekit.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
+from arekit.contrib.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
 
 
 class BaseMultiInstanceSingleMLP(BaseMultiInstanceNeuralNetwork):

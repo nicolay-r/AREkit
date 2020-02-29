@@ -1,6 +1,6 @@
 import tensorflow as tf
 from arekit.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
-from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType

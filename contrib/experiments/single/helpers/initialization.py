@@ -17,7 +17,7 @@ from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperi
 from arekit.networks.data_type import DataType
 from arekit.networks.context.debug import DebugKeys
 from arekit.networks.context.sample import InputSample
-from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.bags.collection import BagsCollection
 from arekit.networks.context.embedding import entity
 from arekit.networks.context.embedding.input import create_term_embedding_matrix

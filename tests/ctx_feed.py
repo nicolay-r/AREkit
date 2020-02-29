@@ -5,7 +5,7 @@ import numpy as np
 import logging
 
 from arekit.common.labels.base import Label
-from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.sample import InputSample
 from arekit.networks.context.training.bags.bag import Bag
 from arekit.networks.context.training.batch import MiniBatch

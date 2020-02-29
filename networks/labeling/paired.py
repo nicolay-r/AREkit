@@ -6,7 +6,7 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.labels.base import Label
 from arekit.common.labels.pair import LabelPair
-from arekit.networks.context.configurations.base import LabelCalculationMode
+from arekit.contrib.networks.context.configurations.base.base import LabelCalculationMode
 from arekit.networks.context.debug import DebugKeys
 from arekit.networks.labeling.base import LabelsHelper
 

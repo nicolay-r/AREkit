@@ -3,7 +3,7 @@ from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperi
 
 from arekit.networks.eval.opinion_based import OpinionBasedEvaluationHelper
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.callback import Callback
 from arekit.networks.data_type import DataType

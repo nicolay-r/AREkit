@@ -8,7 +8,7 @@ from arekit.common.frames.collection import FramesCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.synonyms import SynonymsCollection
 from arekit.networks.context.embedding import indices
-from arekit.networks.context.configurations.base import DefaultNetworkConfig
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
 from arekit.common.entities.base import Entity
 from arekit.common.text_opinions.end_type import EntityEndType

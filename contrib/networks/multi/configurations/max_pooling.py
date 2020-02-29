@@ -1,4 +1,4 @@
-from arekit.networks.multi.configurations.base import BaseMultiInstanceConfig
+from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
 
 
 class MaxPoolingOverSentencesConfig(BaseMultiInstanceConfig):

@@ -1,6 +1,6 @@
 import tensorflow as tf
 from collections import OrderedDict
-from arekit.networks.multi.architectures.base_single_mlp import BaseMultiInstanceSingleMLP
+from arekit.contrib.networks.multi.architectures.base_single_mlp import BaseMultiInstanceSingleMLP
 
 
 class MaxPoolingOverSentences(BaseMultiInstanceSingleMLP):

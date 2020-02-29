@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import logging
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-from arekit.networks.multi.configurations.base import BaseMultiInstanceConfig
+from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
 from arekit.tests.ctx_compile import init_config
 from arekit.tests.ctx_feed import contexts_supported
 

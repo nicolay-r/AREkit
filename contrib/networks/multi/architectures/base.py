@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from arekit.networks.context.architectures.base import SingleInstanceNeuralNetwork
-from arekit.networks.multi.configurations.base import BaseMultiInstanceConfig
+from arekit.contrib.networks.context.architectures.base.base import SingleInstanceNeuralNetwork
+from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
 from arekit.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
 from arekit.networks.context.sample import InputSample
 from arekit.networks.data_type import DataType

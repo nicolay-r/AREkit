@@ -1,4 +1,4 @@
-from arekit.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
+from arekit.contrib.networks.multi.architectures.base import BaseMultiInstanceNeuralNetwork
 
 
 class RNNOverSentences(BaseMultiInstanceNeuralNetwork):
