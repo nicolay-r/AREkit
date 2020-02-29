@@ -6,10 +6,8 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.labels.base import Label
 from arekit.common.labels.pair import LabelPair
-from arekit.contrib.networks.context.configurations.base.base import LabelCalculationMode
 from arekit.networks.context.debug import DebugKeys
-from arekit.networks.labeling.base import LabelsHelper
-
+from arekit.networks.labeling.base import LabelsHelper, LabelCalculationMode
 
 logger = logging.getLogger(__name__)
 

@@ -2,13 +2,9 @@ import datetime
 
 import tensorflow as tf
 from arekit.common.embeddings.base import Embedding
+from arekit.networks.labeling.base import LabelCalculationMode
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
-
-
-class LabelCalculationMode:
-    FIRST_APPEARED = u'take_first_appeared'
-    AVERAGE = u'average'
 
 
 class DefaultNetworkConfig(object):

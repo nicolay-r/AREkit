@@ -1,5 +1,6 @@
 import tensorflow as tf
-from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig, LabelCalculationMode
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.networks.labeling.base import LabelCalculationMode
 
 
 class BaseMultiInstanceConfig(DefaultNetworkConfig):

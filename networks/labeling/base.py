@@ -20,3 +20,7 @@ class LabelsHelper(object):
     def get_classes_count():
         raise NotImplementedError()
 
+
+class LabelCalculationMode:
+    FIRST_APPEARED = u'take_first_appeared'
+    AVERAGE = u'average'
