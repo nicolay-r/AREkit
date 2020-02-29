@@ -1,4 +1,3 @@
-# TODO. Rename as ExperimentsIOUtilsBase
 class BaseExperimentsIOUtils(object):
     """
     Related methods implementation should be

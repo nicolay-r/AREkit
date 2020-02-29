@@ -1,9 +1,9 @@
 import logging
 import numpy as np
 
-from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from arekit.common.embeddings.base import Embedding
 from arekit.common.embeddings.tokens import TokenEmbedding
+from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.context.debug import DebugKeys
 
 

@@ -5,14 +5,14 @@ import numpy as np
 
 from arekit.common.entities.base import Entity
 from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.common.embeddings.base import Embedding
+from arekit.common.embeddings.tokens import TokenEmbedding
 from arekit.networks.context.embedding import entity
+from arekit.networks.context.debug import DebugKeys
 from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from arekit.processing.pos.base import POSTagger
 from arekit.processing.text.token import Token
 from arekit.processing.text.tokens import Tokens
-from arekit.common.embeddings.base import Embedding
-from arekit.common.embeddings.tokens import TokenEmbedding
-from arekit.networks.context.debug import DebugKeys
 
 
 logger = logging.getLogger(__name__)
