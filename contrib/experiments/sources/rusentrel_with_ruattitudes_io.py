@@ -1,9 +1,14 @@
+import logging
+
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.sources.utils import read_ruattitudes_in_memory
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelNetworkIO
+
+
+logger = logging.getLogger(__name__)
 
 
 class RuSentRelWithRuAttitudesIO(RuSentRelNetworkIO):
@@ -23,9 +28,7 @@ class RuSentRelWithRuAttitudesIO(RuSentRelNetworkIO):
     def init_synonyms_collection(self, stemmer):
         assert(isinstance(stemmer, Stemmer))
         super(RuSentRelWithRuAttitudesIO, self).init_synonyms_collection(stemmer)
-
-        # TODO. Replace with logger.
-        print "Loading RuAttitudes collection in memory, please wait ..."
+        logger.debug("Loading RuAttitudes collection in memory, please wait ...")
         self.__ru_attitudes = read_ruattitudes_in_memory(stemmer)
 
     def read_parsed_news(self, doc_id, keep_tokens, stemmer):

@@ -23,6 +23,22 @@ class CVBasedIO(BaseIO):
 
     # endregion
 
+    # region private methods
+
+    def __get_eval_root_filepath(self, data_type, epoch_index):
+        assert(isinstance(epoch_index, int))
+
+        result_dir = os.path.join(
+            self.__get_model_root(),
+            os.path.join(u"eval/{}/{}/{}".format(data_type,
+                                                 self.__current_cv_index,
+                                                 str(epoch_index))))
+
+        create_dir_if_not_exists(result_dir)
+        return result_dir
+
+    # endregion
+
     def create_docs_stat_generator(self):
         raise NotImplementedError()
 
@@ -54,16 +70,4 @@ class CVBasedIO(BaseIO):
         filepath = os.path.join(model_eval_root, u"{}.opin.txt".format(doc_id))
         create_dir_if_not_exists(filepath)
         return filepath
-
-    def __get_eval_root_filepath(self, data_type, epoch_index):
-        assert(isinstance(epoch_index, int))
-
-        result_dir = os.path.join(
-            self.__get_model_root(),
-            os.path.join(u"eval/{}/{}/{}".format(data_type,
-                                                 self.__current_cv_index,
-                                                 str(epoch_index))))
-
-        create_dir_if_not_exists(result_dir)
-        return result_dir
 

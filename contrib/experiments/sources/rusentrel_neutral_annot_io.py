@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import logging
 import os
 from os.path import join
 
@@ -16,6 +17,9 @@ from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollecti
 from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
 from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 from arekit.processing.lemmatization.mystem import MystemWrapper
+
+
+logger = logging.getLogger(__name__)
 
 
 class RuSentRelNeutralAnnotatorIO(object):
@@ -78,13 +82,14 @@ class RuSentRelNeutralAnnotatorIO(object):
             # Skip if this file is already exists
             if os.path.isfile(neutral_filepath):
                 if os.path.getsize(neutral_filepath):
-                    # TODO. To logger.
-                    print "Skipping File: {} [OK. File already exists]".format(neutral_filepath)
+                    logger.debug("Skipping File: {} [OK. File already exists]".format(neutral_filepath))
                     continue
 
-            # TODO. To logger.
-            print "Create Neutral File (MODE {}): '{}'".format("TRAIN" if is_train else "TEST",
-                                                               neutral_filepath)
+            msg = "Create Neutral File (MODE {}): '{}'".format(
+                "TRAIN" if is_train else "TEST",
+                neutral_filepath)
+
+            logger.debug(msg)
 
             entities = RuSentRelDocumentEntityCollection.read_collection(
                 doc_id=doc_id,

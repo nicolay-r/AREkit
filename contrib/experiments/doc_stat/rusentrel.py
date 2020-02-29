@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.cv.docs_stat import DocStatGeneratorBase
+from arekit.contrib.experiments.doc_stat.base import DocStatGeneratorBase
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.news import RuSentRelNews

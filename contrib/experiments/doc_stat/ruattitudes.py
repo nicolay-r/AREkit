@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.cv.docs_stat import DocStatGeneratorBase
+from arekit.contrib.experiments.doc_stat.base import DocStatGeneratorBase
 
 
 class RuAttitudesStatGenerator(DocStatGeneratorBase):

@@ -3,7 +3,7 @@ from os import path
 import numpy as np
 
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
-from arekit.contrib.experiments.cv.docs_stat import DocStatGeneratorBase
+from arekit.contrib.experiments.doc_stat.base import DocStatGeneratorBase
 
 
 # region private methods

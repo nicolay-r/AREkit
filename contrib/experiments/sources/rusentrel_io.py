@@ -1,6 +1,6 @@
 import collections
 
-from arekit.contrib.experiments.cv.rusentrel_docs_stat import RuSentRelDocStatGenerator
+from arekit.contrib.experiments.doc_stat.rusentrel import RuSentRelDocStatGenerator
 from arekit.contrib.experiments.sources.cv_based_io import CVBasedIO
 from arekit.contrib.experiments.sources.rusentrel_neutral_annot_io import RuSentRelNeutralAnnotatorIO
 from arekit.networks.data_type import DataType
