@@ -26,7 +26,6 @@ class RuSentRelWithRuAttitudesIO(RuSentRelNetworkIO):
 
         # TODO. Replace with logger.
         print "Loading RuAttitudes collection in memory, please wait ..."
-
         self.__ru_attitudes = read_ruattitudes_in_memory(stemmer)
 
     def read_parsed_news(self, doc_id, keep_tokens, stemmer):

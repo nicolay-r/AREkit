@@ -1,4 +1,6 @@
 import collections
+
+from arekit.contrib.experiments.cv.rusentrel_docs_stat import RuSentRelDocStatGenerator
 from arekit.contrib.experiments.sources.cv_based_io import CVBasedIO
 from arekit.contrib.experiments.sources.rusentrel_neutral_annot_io import RuSentRelNeutralAnnotatorIO
 from arekit.networks.data_type import DataType
@@ -46,6 +48,9 @@ class RuSentRelNetworkIO(CVBasedIO):
         return self.__eval_on_rusentrel_docs_key
 
     # endregion
+
+    def generate_docs_stat(self):
+        return RuSentRelDocStatGenerator(synonyms=self.SynonymsCollection)
 
     def set_eval_on_rusentrel_docs_key(self, value):
         assert(isinstance(value, bool))

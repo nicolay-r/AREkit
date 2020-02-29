@@ -13,10 +13,18 @@ class CVBasedIO(BaseIO):
                                         model_name=model_name)
         self.__current_cv_index = 0
         self.__cv_count = cv_count
+        self.__docs_stat = self.generate_docs_stat()
+
+    # region properties
 
     @property
     def CVCurrentIndex(self):
         return self.__current_cv_index
+
+    # endregion
+
+    def generate_docs_stat(self):
+        raise NotImplementedError()
 
     def inc_cv_index(self):
         self.__current_cv_index += 1
@@ -24,14 +32,16 @@ class CVBasedIO(BaseIO):
     def iter_train_data_indices(self):
         train, _ = get_cv_pair_by_index(cv_count=self.__cv_count,
                                         cv_index=self.__current_cv_index,
-                                        experiments_io=self.__experiments_io)
+                                        experiments_io=self.__experiments_io,
+                                        docs_stat=None)
         for doc_id in train:
             yield doc_id
 
     def iter_test_data_indices(self):
         _, test = get_cv_pair_by_index(cv_count=self.__cv_count,
                                        cv_index=self.__current_cv_index,
-                                       experiments_io=self.__experiments_io)
+                                       experiments_io=self.__experiments_io,
+                                       docs_stat=None)
         for doc_id in test:
             yield doc_id
 
