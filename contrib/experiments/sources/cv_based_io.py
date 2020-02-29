@@ -13,7 +13,7 @@ class CVBasedIO(BaseIO):
                                         model_name=model_name)
         self.__current_cv_index = 0
         self.__cv_count = cv_count
-        self.__docs_stat = self.generate_docs_stat()
+        self.__docs_stat = self.create_docs_stat_generator()
 
     # region properties
 
@@ -23,7 +23,7 @@ class CVBasedIO(BaseIO):
 
     # endregion
 
-    def generate_docs_stat(self):
+    def create_docs_stat_generator(self):
         raise NotImplementedError()
 
     def inc_cv_index(self):
@@ -33,7 +33,7 @@ class CVBasedIO(BaseIO):
         train, _ = get_cv_pair_by_index(cv_count=self.__cv_count,
                                         cv_index=self.__current_cv_index,
                                         experiments_io=self.__experiments_io,
-                                        docs_stat=None)
+                                        docs_stat=self.__docs_stat)
         for doc_id in train:
             yield doc_id
 
@@ -41,7 +41,7 @@ class CVBasedIO(BaseIO):
         _, test = get_cv_pair_by_index(cv_count=self.__cv_count,
                                        cv_index=self.__current_cv_index,
                                        experiments_io=self.__experiments_io,
-                                       docs_stat=None)
+                                       docs_stat=self.__docs_stat)
         for doc_id in test:
             yield doc_id
 

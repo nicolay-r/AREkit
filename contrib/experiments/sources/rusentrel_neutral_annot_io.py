@@ -34,8 +34,7 @@ class RuSentRelNeutralAnnotatorIO(object):
             stemmer=self.__stemmer,
             is_read_only=True)
 
-        self.__pnc = ParsedNewsCollection()
-        self.__init_parsed_news_collection()
+        self.__pnc = self.__init_rusentrel_parsed_news_collection()
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self.__synonyms,
@@ -48,7 +47,9 @@ class RuSentRelNeutralAnnotatorIO(object):
 
     # region private methods
 
-    def __init_parsed_news_collection(self):
+    def __init_rusentrel_parsed_news_collection(self):
+        pnc = ParsedNewsCollection()
+
         for doc_id in RuSentRelIOUtils.iter_collection_indices():
             entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
                                                                          synonyms=self.__synonyms)
@@ -59,7 +60,9 @@ class RuSentRelNeutralAnnotatorIO(object):
                                                                        rusentrel_news=news,
                                                                        keep_tokens=False,
                                                                        stemmer=self.__stemmer)
-            self.__pnc.add(parsed_news)
+            pnc.add(parsed_news)
+
+        return pnc
 
     # endregion
 

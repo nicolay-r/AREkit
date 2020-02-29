@@ -49,7 +49,7 @@ class RuSentRelNetworkIO(CVBasedIO):
 
     # endregion
 
-    def generate_docs_stat(self):
+    def create_docs_stat_generator(self):
         return RuSentRelDocStatGenerator(synonyms=self.SynonymsCollection)
 
     def set_eval_on_rusentrel_docs_key(self, value):

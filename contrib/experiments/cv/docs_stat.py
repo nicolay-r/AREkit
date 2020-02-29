@@ -12,7 +12,7 @@ class DocStatGeneratorBase(object):
 
     # region public methods
 
-    def write_doc_stat(self, filepath):
+    def calculate_and_write_doc_stat(self, filepath):
         with open(filepath, 'w') as f:
             for doc_index in self.iter_doc_ids():
                 s_count = self.calculate_sentences_count(doc_index)

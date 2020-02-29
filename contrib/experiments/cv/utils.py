@@ -1,3 +1,5 @@
+from os import path
+
 import numpy as np
 
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
@@ -35,7 +37,13 @@ def iter_by_same_size_parts_cv(cv_count, docs_stat, experiments_io):
     assert(isinstance(docs_stat, DocStatGeneratorBase))
     assert(isinstance(experiments_io, BaseExperimentsIO))
 
-    docs_stat = docs_stat.read_docs_stat(filepath=experiments_io.get_doc_stat_filepath())
+    doc_stat_filepath = experiments_io.get_doc_stat_filepath()
+
+    if not path.exists(doc_stat_filepath):
+        docs_stat.calculate_and_write_doc_stat(doc_stat_filepath)
+
+    docs_stat = docs_stat.read_docs_stat(filepath=doc_stat_filepath)
+
     sorted_stat = reversed(sorted(docs_stat, key=lambda pair: pair[1]))
     cv_group_docs = [[] for _ in range(cv_count)]
     cv_group_sizes = [[] for _ in range(cv_count)]
