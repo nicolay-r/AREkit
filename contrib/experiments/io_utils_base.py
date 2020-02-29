@@ -11,10 +11,10 @@ class BaseExperimentsIO(object):
     def get_experiments_dir(self):
         raise NotImplementedError()
 
-    def get_capitals_filepath(self):
+    def get_capitals_list(self):
         raise NotImplementedError()
 
-    def get_states_filepath(self):
+    def get_states_list(self):
         raise NotImplementedError()
 
     def get_rusvectores_news_embedding_filepath(self):

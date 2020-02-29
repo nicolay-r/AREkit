@@ -1,6 +1,6 @@
 import collections
 from arekit.contrib.experiments.sources.cv_based_io import CVBasedIO
-from arekit.contrib.experiments.sources.rusentrel_neutral_io import RuSentRelNeutralIOUtils
+from arekit.contrib.experiments.sources.rusentrel_neutral_annot_io import RuSentRelNeutralAnnotatorIO
 from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.news import RuSentRelNews
@@ -24,7 +24,6 @@ class RuSentRelNetworkIO(CVBasedIO):
             cv_count=cv_count,
             model_name=model_name)
 
-        self.__synonyms = None
         self.__model_name = model_name
         self.__rusentrel_news_ids_list = list(RuSentRelIOUtils.iter_collection_indices())
         self.__rusentrel_news_ids = set(self.__rusentrel_news_ids_list)
@@ -37,10 +36,6 @@ class RuSentRelNetworkIO(CVBasedIO):
     @property
     def RuSentRelNewsIDsList(self):
         return self.__rusentrel_news_ids_list
-
-    @property
-    def SynonymsCollection(self):
-        return self.__synonyms
 
     @property
     def CVCount(self):
@@ -68,7 +63,7 @@ class RuSentRelNetworkIO(CVBasedIO):
         assert(isinstance(stemmer, Stemmer))
 
         entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                     synonyms=self.__synonyms)
+                                                                     synonyms=self.SynonymsCollection)
 
         news = RuSentRelNews.read_document(doc_id, entities)
 
@@ -81,25 +76,25 @@ class RuSentRelNetworkIO(CVBasedIO):
 
     def read_synonyms_collection(self, stemmer):
         assert(isinstance(stemmer, Stemmer))
-        self.__synonyms = RuSentRelSynonymsCollection.read_collection(stemmer=stemmer,
-                                                                      is_read_only=True)
+        return RuSentRelSynonymsCollection.read_collection(stemmer=stemmer,
+                                                           is_read_only=True)
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, unicode))
 
-        filepath = RuSentRelNeutralIOUtils.get_rusentrel_neutral_opin_filepath(
+        filepath = RuSentRelNeutralAnnotatorIO.get_rusentrel_neutral_opin_filepath(
             doc_id=doc_id,
             is_train=True if data_type == DataType.Train else False,
             experiments_io=self.__experiments_io)
 
         return RuSentRelOpinionCollection.read_from_file(filepath=filepath,
-                                                         synonyms=self.__synonyms)
+                                                         synonyms=self.SynonymsCollection)
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
 
         return RuSentRelOpinionCollection.read_collection(doc_id=doc_id,
-                                                          synonyms=self.__synonyms)
+                                                          synonyms=self.SynonymsCollection)
 
     # endregion
 
@@ -142,7 +137,7 @@ class RuSentRelNetworkIO(CVBasedIO):
                 filepath=self.create_result_opinion_collection_filepath(data_type=data_type,
                                                                         doc_id=doc_id,
                                                                         epoch_index=epoch_index),
-                synonyms=self.__synonyms))
+                synonyms=self.SynonymsCollection))
 
         for opinions_cmp in it:
             yield opinions_cmp
@@ -152,6 +147,6 @@ class RuSentRelNetworkIO(CVBasedIO):
     # region 'create' public methods
 
     def create_opinion_collection(self):
-        return RuSentRelOpinionCollection([], synonyms=self.__synonyms)
+        return RuSentRelOpinionCollection([], synonyms=self.SynonymsCollection)
 
     # endregion

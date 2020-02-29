@@ -1,11 +1,9 @@
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiments.sources.utils import read_ruattitudes_in_memory
+from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
-from arekit.source.ruattitudes.news import RuAttitudesNews
-from arekit.source.ruattitudes.reader import RuAttitudesFormatReader
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelNetworkIO
-
-from arekit.processing.lemmatization.base import Stemmer
 
 
 class RuSentRelWithRuAttitudesIO(RuSentRelNetworkIO):
@@ -22,10 +20,14 @@ class RuSentRelWithRuAttitudesIO(RuSentRelNetworkIO):
 
     # region 'read' public methods
 
-    def read_synonyms_collection(self, stemmer):
-        super(RuSentRelWithRuAttitudesIO, self).read_synonyms_collection(stemmer)
+    def init_synonyms_collection(self, stemmer):
+        assert(isinstance(stemmer, Stemmer))
+        super(RuSentRelWithRuAttitudesIO, self).init_synonyms_collection(stemmer)
+
+        # TODO. Replace with logger.
         print "Loading RuAttitudes collection in memory, please wait ..."
-        self.__ru_attitudes = self.__read_ruattitudes_in_memory(stemmer)
+
+        self.__ru_attitudes = read_ruattitudes_in_memory(stemmer)
 
     def read_parsed_news(self, doc_id, keep_tokens, stemmer):
         if doc_id in self.RuSentRelNewsIDsList:
@@ -56,36 +58,15 @@ class RuSentRelWithRuAttitudesIO(RuSentRelNetworkIO):
         assert(isinstance(data_type, unicode))
 
         if doc_id in self.RuSentRelNewsIDsList:
-            return super(RuSentRelWithRuAttitudesIO, self).read_neutral_opinion_collection(doc_id, data_type)
-
-        pass
+            return super(RuSentRelWithRuAttitudesIO, self).read_neutral_opinion_collection(
+                doc_id=doc_id,
+                data_type=data_type)
 
     def iter_train_data_indices(self):
         for doc_id in super(RuSentRelWithRuAttitudesIO, self).iter_train_data_indices():
             yield doc_id
         for doc_id in self.__ru_attitudes.iterkeys():
             yield doc_id
-
-    # endregion
-
-    # region private methods (READER)
-
-    # TODO. Must be general, support indices as a parameter.
-    # TODO. To skip inappropriate
-
-    @staticmethod
-    def __read_ruattitudes_in_memory(stemmer):
-        assert(isinstance(stemmer, Stemmer))
-
-        d = {}
-
-        # TODO. Support indices to skip inappropriate documents.
-        for news in RuAttitudesFormatReader.iter_news(stemmer=stemmer):
-            assert(isinstance(news, RuAttitudesNews))
-            # TODO. .. if index in list or list is None:
-            d[news.NewsIndex] = news
-
-        return d
 
     # endregion
 

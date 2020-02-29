@@ -4,6 +4,7 @@ from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.networks.network_io import NetworkIO
+from arekit.processing.lemmatization.base import Stemmer
 
 
 class BaseIO(NetworkIO):
@@ -12,6 +13,11 @@ class BaseIO(NetworkIO):
         assert(isinstance(experiments_io, BaseExperimentsIO))
         self.__experiments_io = experiments_io
         self.__model_name = model_name
+        self.__synonyms = None
+
+    @property
+    def SynonymsCollection(self):
+        return self.__synonyms
 
     # region 'get' public methods
 
@@ -25,11 +31,11 @@ class BaseIO(NetworkIO):
     def get_word_embedding_filepath(self):
         return self.__experiments_io.get_rusvectores_news_embedding_filepath()
 
-    def get_capitals_filepath(self):
-        return self.__experiments_io.get_capitals_filepath()
+    def get_capitals_list(self):
+        return self.__experiments_io.get_capitals_list()
 
-    def get_states_filepath(self):
-        return self.__experiments_io.get_states_filepath()
+    def get_states_list(self):
+        return self.__experiments_io.get_states_list()
 
     # endregion
 
@@ -48,19 +54,18 @@ class BaseIO(NetworkIO):
 
     # endregion
 
-    @staticmethod
-    def read_list_from_lss(filepath):
-        """
-        Reading lines in lowercase mode
-        """
-        lines = []
-        with open(filepath) as f:
-            for line in f.readlines():
-                row = line.decode('utf-8')
-                row = row.lower().strip()
-                lines.append(row)
+    def read_parsed_news(self, doc_id, keep_tokens, stemmer):
+        raise NotImplementedError()
 
-        return lines
+    def read_neutral_opinion_collection(self, doc_id, data_type):
+        raise NotImplementedError()
+
+    def read_synonyms_collection(self, stemmer):
+        raise NotImplementedError()
+
+    def init_synonyms_collection(self, stemmer):
+        assert(isinstance(stemmer, Stemmer))
+        self.__synonyms = self.read_synonyms_collection(stemmer=stemmer)
 
     def create_model_state_filepath(self):
         return os.path.join(self.__get_model_states_dir(),

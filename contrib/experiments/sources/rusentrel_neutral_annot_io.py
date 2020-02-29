@@ -1,12 +1,13 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import os
+from os.path import join
 
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIO
 from arekit.contrib.experiments.neutral_annot.default import DefaultNeutralAnnotationAlgorithm
-from arekit.contrib.experiments.sources.rusentrel_neutral_io import RuSentRelNeutralIOUtils
+from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
@@ -45,6 +46,8 @@ class RuSentRelNeutralAnnotatorIO(object):
             create_opinion_collection_func=lambda: RuSentRelOpinionCollection(opinions=None, synonyms=self.__synonyms),
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
+    # region private methods
+
     def __init_parsed_news_collection(self):
         for doc_id in RuSentRelIOUtils.iter_collection_indices():
             entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
@@ -58,14 +61,16 @@ class RuSentRelNeutralAnnotatorIO(object):
                                                                        stemmer=self.__stemmer)
             self.__pnc.add(parsed_news)
 
+    # endregion
+
     def create(self, is_train):
         assert(isinstance(is_train, bool))
 
         for doc_id in RuSentRelIOUtils.iter_collection_indices():
 
-            neutral_filepath = RuSentRelNeutralIOUtils.get_rusentrel_neutral_opin_filepath(doc_id=doc_id,
-                                                                                           is_train=is_train,
-                                                                                           experiments_io=self.__experiments_io)
+            neutral_filepath = self.get_rusentrel_neutral_opin_filepath(doc_id=doc_id,
+                                                                        is_train=is_train,
+                                                                        experiments_io=self.__experiments_io)
 
             # Skip if this file is already exists
             if os.path.isfile(neutral_filepath):
@@ -91,4 +96,16 @@ class RuSentRelNeutralAnnotatorIO(object):
                 sentiment_opinions=opinions if is_train else None)
 
             neutral_opins.save_to_file(neutral_filepath)
+
+    @staticmethod
+    def get_rusentrel_neutral_opin_filepath(doc_id, is_train, experiments_io, model_name=u"universal"):
+        assert(isinstance(doc_id, int))
+        assert(isinstance(is_train, bool))
+        assert(isinstance(model_name, unicode))
+        assert(isinstance(experiments_io, BaseExperimentsIO))
+
+        root = get_path_of_subfolder_in_experiments_dir(subfolder_name=model_name,
+                                                        experiments_io=experiments_io)
+        return join(root, u"art{}.neut.{}.txt".format(doc_id, u'train' if is_train else u'test'))
+
 

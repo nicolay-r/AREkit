@@ -4,7 +4,7 @@ from arekit.common.labels.base import NeutralLabel
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.synonyms import SynonymsCollection
-from arekit.contrib.experiments.annot.base import BaseNeutralAnnotationAlgorithm
+from arekit.contrib.experiments.neutral_annot.base import BaseNeutralAnnotationAlgorithm
 
 
 class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
@@ -16,7 +16,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
     def __init__(self, synonyms,
                  create_opinion_func,
                  create_opinion_collection_func,
-                 ignored_entity_values):
+                 ignored_entity_values=None):
         """
         create_opinion_func:
             func (source_value, target_value, sentiment) -> Opinion
@@ -26,12 +26,13 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         assert(isinstance(synonyms, SynonymsCollection))
         assert(callable(create_opinion_func))
         assert(callable(create_opinion_collection_func))
-        assert(isinstance(ignored_entity_values, list))
+        assert(isinstance(ignored_entity_values, list) or ignored_entity_values is None)
+        # TODO. Fill pnc.
         self.__pnc = ParsedNewsCollection()
         self.__create_opinion_func = create_opinion_func
         self.__create_opinion_collection_func = create_opinion_collection_func
         self.__synonyms = synonyms
-        self.__ignored_entity_values = ignored_entity_values
+        self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
 
     # region private methods
 

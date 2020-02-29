@@ -66,9 +66,9 @@ class SingleInstanceModelInitHelper(object):
 
         self.__frames_collection = RuSentiFramesCollection.read_collection()
 
-        self.__capitals_list = io.read_list_from_lss(io.get_capitals_filepath())
+        self.__capitals_list = io.get_capitals_list()
 
-        self.__states_list = io.read_list_from_lss(io.get_states_filepath())
+        self.__states_list = io.get_states_list()
 
         self.__frame_variants = FrameVariantsCollection.from_iterable(
             variants_with_id=self.__frames_collection.iter_frame_id_and_variants(),
