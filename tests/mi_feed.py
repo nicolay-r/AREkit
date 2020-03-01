@@ -3,7 +3,7 @@ import ctx_feed
 from arekit.common.labels.base import PositiveLabel
 from arekit.contrib.networks.multi.configurations.max_pooling import MaxPoolingOverSentencesConfig
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 from arekit.networks.context.training.bags.bag import Bag
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 from arekit.networks.multi.training.batch import MultiInstanceBatch

@@ -1,8 +1,7 @@
 import logging
 from collections import OrderedDict
 from arekit.networks.context.debug import DebugKeys
-from arekit.networks.context.sample import InputSample
-
+from arekit.networks.context.sample import InputSampleBase
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,8 +17,16 @@ class MiniBatch(object):
     def __init__(self, bags, batch_id=None):
         assert(isinstance(batch_id, int) or batch_id is None)
         assert(isinstance(bags, list))
-        self._batch_id = batch_id
-        self.bags = bags
+        self.__batch_id = batch_id
+        self.__bags = bags
+
+    # region properties
+
+    @property
+    def Bags(self):
+        return self.__bags
+
+    # endregion
 
     # region public methods
 
@@ -28,7 +35,7 @@ class MiniBatch(object):
 
         for sample in self.iter_by_samples():
 
-            assert(isinstance(sample, InputSample))
+            assert(isinstance(sample, InputSampleBase))
 
             for arg, value in sample:
                 if arg not in result:
@@ -61,12 +68,12 @@ class MiniBatch(object):
     # region public 'iter' methods
 
     def iter_by_samples(self):
-        for bag in self.bags:
+        for bag in self.__bags:
             for sample in bag:
                 yield sample
 
     def iter_by_bags(self):
-        for bag in self.bags:
+        for bag in self.__bags:
             yield bag
 
     # endregion

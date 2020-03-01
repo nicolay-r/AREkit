@@ -2,7 +2,7 @@ import logging
 import tensorflow as tf
 
 from arekit.contrib.networks.attention.architectures.mlp import MLPAttention
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 from arekit.networks.tf_helpers import filtering
 from arekit.networks.tf_helpers import sequence
 

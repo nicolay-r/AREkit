@@ -3,7 +3,7 @@ import numpy as np
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.networks.context.training.bags.bag import Bag
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 
 
 class BagsCollection:

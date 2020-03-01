@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 from arekit.contrib.networks.context.architectures.base.fc_single import FullyConnectedLayer
 from arekit.contrib.networks.context.configurations.rcnn import RCNNConfig
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers import sequence
 

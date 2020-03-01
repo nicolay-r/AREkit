@@ -1,6 +1,6 @@
 from arekit.common.labels.base import Label
 from arekit.common.labels.pair import LabelPair
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 
 
 class Bag:

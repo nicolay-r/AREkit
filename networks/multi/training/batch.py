@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from arekit.networks.context.debug import DebugKeys
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 from arekit.networks.context.training.bags.bag import Bag
 from arekit.networks.context.training.batch import MiniBatch
 
@@ -19,7 +19,7 @@ class MultiInstanceBatch(MiniBatch):
                 assert(isinstance(sample, InputSample))
                 for arg, value in sample:
                     if arg not in result:
-                        result[arg] = [[None] * len(bag) for _ in xrange(len(self.bags))]
+                        result[arg] = [[None] * len(bag) for _ in xrange(len(self.Bags))]
                     result[arg][bag_index][sample_index] = value
 
         for bag in self.iter_by_bags():

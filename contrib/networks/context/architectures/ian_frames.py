@@ -1,5 +1,5 @@
 from arekit.contrib.networks.context.architectures.base.ian_base import IANBase
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 
 
 class IANFrames(IANBase):

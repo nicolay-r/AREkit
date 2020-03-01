@@ -1,6 +1,6 @@
 import tensorflow as tf
 from arekit.contrib.networks.context.architectures.ian_frames import IANFrames
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 
 
 class IANSynonymEndsBased(IANFrames):

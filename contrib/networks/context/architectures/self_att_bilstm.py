@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from arekit.contrib.networks.attention import common
 from arekit.contrib.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 from arekit.networks.data_type import DataType
 from arekit.networks.tf_helpers import sequence
 from arekit.contrib.networks.context.architectures.base.base import SingleInstanceNeuralNetwork

@@ -2,7 +2,7 @@
 import tensorflow as tf
 from arekit.contrib.networks.context.architectures.cnn import VanillaCNN
 from arekit.contrib.networks.context.configurations.cnn import CNNConfig
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 
 
 class PiecewiseCNN(VanillaCNN):

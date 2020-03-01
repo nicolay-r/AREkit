@@ -16,7 +16,7 @@ from arekit.contrib.experiments.single.helpers.text_opinions import LabeledLinke
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 from arekit.networks.data_type import DataType
 from arekit.networks.context.debug import DebugKeys
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.bags.collection import BagsCollection
 from arekit.networks.context.embedding import entity

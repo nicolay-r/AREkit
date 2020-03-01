@@ -1,6 +1,6 @@
 import tensorflow as tf
 from arekit.contrib.networks.context.architectures.base.att_cnn_base import AttentionCNNBase
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 
 
 class AttentionSynonymEndsAndFramesCNN(AttentionCNNBase):

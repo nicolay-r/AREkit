@@ -1,5 +1,5 @@
 from arekit.contrib.experiments.single.helpers.initialization import SingleInstanceModelInitHelper
-from arekit.networks.context.sample import InputSample
+from arekit.contrib.networks.sample import InputSample
 from arekit.networks.multi.training.bags import MultiInstanceBagsCollection
 
 
