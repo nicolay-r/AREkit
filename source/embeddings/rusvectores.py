@@ -20,6 +20,10 @@ class RusvectoresEmbedding(Embedding):
         assert(isinstance(stemmer, Stemmer))
         self.__stemmer = stemmer
 
+    # TODO. This is not a functionality of RusVectores.
+    # TODO. This should be moved into base class (likely) or somewhere out (as algo)
+    # TODO. Parts, word_separator -- also parameter of algo, not a function.
+    # TODO. Move method to base (with different parameters ALGO_TYPE, etc)
     def create_term_embedding(self, term, max_part_size=3, word_separator=u' '):
         assert(isinstance(term, unicode))
 
@@ -33,6 +37,9 @@ class RusvectoresEmbedding(Embedding):
 
         return vector / count if count > 0 else vector
 
+    # TODO. Separate the algorithm from the embedding functionality.
+    # TODO. Move the algorithm into core/embeddings/missed/default.py
+    # TODO. Search as a param func that returns bool (found/not found)
     def __create_embedding_for_word(self, word, max_part_size):
         assert(isinstance(word, unicode))
 
@@ -75,6 +82,8 @@ class RusvectoresEmbedding(Embedding):
         return self.__try_find_index(term=word,
                                      lemmatize=lemmatize)
 
+    # region private methods
+
     def __try_find_index(self, term, lemmatize=True):
         assert(isinstance(term, unicode))
         assert(isinstance(lemmatize, bool))
@@ -96,6 +105,10 @@ class RusvectoresEmbedding(Embedding):
 
         return d
 
+    # endregion
+
+    # region general methods
+
     def __contains__(self, term):
         assert(isinstance(term, unicode))
         return self.__try_find_index(term) is not None
@@ -104,3 +117,5 @@ class RusvectoresEmbedding(Embedding):
         assert(isinstance(term, unicode))
         index = self.__try_find_index(term)
         return self.get_vector_by_index(index)
+
+    # endregion

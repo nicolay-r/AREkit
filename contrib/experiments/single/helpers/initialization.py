@@ -39,6 +39,7 @@ from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 
 
+# TODO. Rename as ...Initializer
 class SingleInstanceModelInitHelper(object):
 
     CAPITAL_ENTITY_TYPE = u"CAPITAL"
@@ -88,6 +89,7 @@ class SingleInstanceModelInitHelper(object):
         print "Replaced with 'STATES' entities: {}".format(self.__log_states_presented)
         print "Replaced with 'CAPITALS' entities: {}".format(self.__log_capitals_presented)
 
+        # TODO. In separated file (WORDS)
         # Init Custom Words Embedding.
         custom_embedding = Embedding.from_list_with_embedding_func(
             words_iter=self.__iter_custom_words(config=config),
@@ -95,6 +97,7 @@ class SingleInstanceModelInitHelper(object):
 
         config.set_custom_words_embedding(custom_embedding)
 
+        # TODO. In separated file. (TOKENS)
         # Init Token Embedding.
         seed_token_offset = 12345
         token_embedding = TokenEmbedding.from_supported_tokens(
@@ -107,10 +110,12 @@ class SingleInstanceModelInitHelper(object):
 
         config.set_token_embedding(token_embedding)
 
+        # TODO. In separated file. (FRAMES)
         # Init Frame Embedding.
         frame_embedding = Embedding.from_list_with_embedding_func(
             words_iter=self.__iter_variants(),
             embedding_func=lambda variant_value: word_embedding.create_term_embedding(term=variant_value,
+                                                                                      # TODO. The same parameter.
                                                                                       max_part_size=3)
         )
         config.set_frames_embedding(frame_embedding)
@@ -294,6 +299,7 @@ class SingleInstanceModelInitHelper(object):
 
     # region private methods
 
+    # TODO. In utils
     def __custom_embedding_func(self, term, word_embedding):
         assert(isinstance(term, unicode))
 
@@ -303,11 +309,13 @@ class SingleInstanceModelInitHelper(object):
         # TODO. Entity has _ separator!!!
         return word_embedding.create_term_embedding(term)
 
+    # TODO. In separated file (FRAMES)
     def __iter_variants(self):
         frame_variants_iter = self.__iter_all_terms(lambda t: isinstance(t, TextFrameVariant))
         for variant in frame_variants_iter:
             yield variant.Variant.get_value()
 
+    # TODO. In separated file (WORDS)
     def __iter_custom_words(self, config):
         all_terms_iter = self.__iter_all_terms(lambda t:
                                                isinstance(t, unicode) and
@@ -339,6 +347,7 @@ class SingleInstanceModelInitHelper(object):
                         continue
                     yield term
 
+    # TODO. REMOVE
     @staticmethod
     def __find_or_create_reversed_opinion(opinion, opinion_collections):
         assert(isinstance(opinion, Opinion))
@@ -354,6 +363,7 @@ class SingleInstanceModelInitHelper(object):
 
         return reversed_opinion
 
+    # TODO. In separated file (TEXT OPINIONS)
     def __extract_text_opinions(self, io, data_type, config):
         assert(isinstance(io, RuSentRelBasedExperimentIO))
         assert(isinstance(data_type, unicode))
@@ -392,6 +402,7 @@ class SingleInstanceModelInitHelper(object):
 
         return text_opinions
 
+    # TODO. In separated file (TEXT OPINIONS)
     def __provide_entity_type_by_value(self, value):
 
         if not self.__synonyms.contains_synonym_value(value):
@@ -409,6 +420,7 @@ class SingleInstanceModelInitHelper(object):
 
         return None
 
+    # TODO. In separated file (TEXT OPINIONS)
     @staticmethod
     def __read_document(io, news_id, config):
         assert(isinstance(news_id, int))
@@ -425,6 +437,7 @@ class SingleInstanceModelInitHelper(object):
 
         return news, parsed_news
 
+    # TODO. In separated file (TEXT OPINIONS)
     @staticmethod
     def __iter_opinion_collections(io, news_id, data_type):
         assert(isinstance(news_id, int))
@@ -439,6 +452,7 @@ class SingleInstanceModelInitHelper(object):
         if data_type == DataType.Train:
             yield io.read_etalon_opinion_collection(doc_id=news_id)
 
+    # TODO. In separated file (TEXT OPINIONS)
     def __fill_text_opinions(self,
                              text_opinions,
                              news,

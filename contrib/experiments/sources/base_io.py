@@ -31,9 +31,11 @@ class BaseExperimentIO(NeuralNetworkIO):
     def get_word_embedding_filepath(self):
         return self.__experiments_io.get_rusvectores_news_embedding_filepath()
 
+    # TODO. To separated class
     def get_capitals_list(self):
         return self.__experiments_io.get_capitals_list()
 
+    # TODO. To separated class
     def get_states_list(self):
         return self.__experiments_io.get_states_list()
 
