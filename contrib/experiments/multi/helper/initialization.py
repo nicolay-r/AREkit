@@ -1,9 +1,9 @@
-from arekit.contrib.experiments.single.helpers.initialization import SingleInstanceModelInitHelper
+from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.multi.training.bags import MultiInstanceBagsCollection
 
 
-class MultiInstanceModelInitHelper(SingleInstanceModelInitHelper):
+class MultiInstanceModelInitHelper(SingleInstanceModelInitializer):
 
     def __init__(self, io, config):
         super(MultiInstanceModelInitHelper, self).__init__(io=io, config=config)

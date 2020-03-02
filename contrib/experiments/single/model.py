@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.single.helpers.initialization import SingleInstanceModelInitHelper
+from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 
 from arekit.networks.eval.opinion_based import OpinionBasedEvaluationHelper
@@ -89,7 +89,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         return MiniBatch(bags_group)
 
     def create_model_init_helper(self):
-        return SingleInstanceModelInitHelper(io=self.IO, config=self.Config)
+        return SingleInstanceModelInitializer(io=self.IO, config=self.Config)
 
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
