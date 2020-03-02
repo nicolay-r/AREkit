@@ -1,5 +1,4 @@
 import logging
-import numpy as np
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.common.embeddings.base import Embedding
 
@@ -19,63 +18,6 @@ class RusvectoresEmbedding(Embedding):
     def set_stemmer(self, stemmer):
         assert(isinstance(stemmer, Stemmer))
         self.__stemmer = stemmer
-
-    # TODO. This is not a functionality of RusVectores.
-    # TODO. This should be moved into base class (likely) or somewhere out (as algo)
-    # TODO. Parts, word_separator -- also parameter of algo, not a function.
-    # TODO. Move method to base (with different parameters ALGO_TYPE, etc)
-    def create_term_embedding(self, term, max_part_size=3, word_separator=u' '):
-        assert(isinstance(term, unicode))
-
-        count = 0
-        vector = np.zeros(self.VectorSize)
-        for word in term.split(word_separator):
-            v, c = self.__create_embedding_for_word(word=word,
-                                                    max_part_size=max_part_size)
-            count += c
-            vector += v
-
-        return vector / count if count > 0 else vector
-
-    # TODO. Separate the algorithm from the embedding functionality.
-    # TODO. Move the algorithm into core/embeddings/missed/default.py
-    # TODO. Search as a param func that returns bool (found/not found)
-    def __create_embedding_for_word(self, word, max_part_size):
-        assert(isinstance(word, unicode))
-
-        if word in self:
-            return self[word], 1
-
-        c_i = 0
-        c_l = max_part_size
-        count = 0
-        vector = np.zeros(self.VectorSize)
-        missings = []
-
-        while c_i < len(word):
-
-            if c_l == 0:
-                missings.append(c_i)
-                c_i += 1
-                c_l = max_part_size
-                continue
-
-            right_b = min(len(word), c_i + c_l)
-            s_i = self.__try_find_index(term=word[c_i:right_b],
-                                        lemmatize=False)
-
-            if s_i is None:
-                c_l -= 1
-                continue
-            vector += self.get_vector_by_index(s_i)
-            c_i += c_l
-            count += 1
-
-        w_debug = u''.join([u'?' if i in missings else ch
-                            for i, ch in enumerate(word)])
-        logger.debug(u'Embedded: {}'.format(w_debug).encode('utf-8'))
-
-        return vector, count
 
     def try_find_index_by_word(self, word, lemmatize=True):
         assert(isinstance(word, unicode))
@@ -104,6 +46,13 @@ class RusvectoresEmbedding(Embedding):
             d[word] = index
 
         return d
+
+    def contains_as_plain(self, word):
+        """
+        Considering a non-lemmatized term in search
+        """
+        assert(isinstance(word, unicode))
+        return self.__try_find_index(word, lemmatize=False) is not None
 
     # endregion
 

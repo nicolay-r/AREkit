@@ -90,6 +90,10 @@ class Embedding(object):
         assert(isinstance(word, unicode))
         return self.__index_by_word[word]
 
+    def contains_as_plain(self, word):
+        assert(isinstance(word, unicode))
+        return word in self.__index_by_word
+
     # region overriden methods
 
     def __contains__(self, word):

@@ -1,4 +1,5 @@
 from arekit.common.embeddings.base import Embedding
+from arekit.contrib.experiments.single.embedding.custom import create_term_embedding
 from arekit.contrib.experiments.single.embedding.entities import iter_all_entity_types
 from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
 from arekit.networks.context.embedding import entity
@@ -11,7 +12,9 @@ def __custom_embedding_func(self, term, word_embedding):
         return self.__entity_embeddings[term]
 
     # TODO. Entity has _ separator!!!
-    return word_embedding.create_term_embedding(term)
+    return create_term_embedding(term=term,
+                                 embedding=word_embedding,
+                                 max_part_size=3)
 
 
 def __iter_custom_words(m_init, config):
