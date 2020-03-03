@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.multi.helper.initialization import MultiInstanceModelInitHelper
+from arekit.contrib.experiments.multi.initialization import MultiInstanceModelInitializer
 from arekit.contrib.experiments.single.model import SingleInstanceTensorflowModel
 from arekit.networks.multi.training.batch import MultiInstanceBatch
 
@@ -13,4 +13,4 @@ class MultiInstanceTensorflowModel(SingleInstanceTensorflowModel):
         return MultiInstanceBatch(bags_group)
 
     def create_model_init_helper(self):
-        return MultiInstanceModelInitHelper(io=self.IO, config=self.Config)
+        return MultiInstanceModelInitializer(io=self.IO, config=self.Config)

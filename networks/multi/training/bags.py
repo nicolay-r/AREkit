@@ -2,9 +2,9 @@ import numpy as np
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection, TextOpinion
+from arekit.networks.context.sample import InputSampleBase
 from arekit.networks.context.training.bags.bag import Bag
 from arekit.networks.context.training.bags.collection import BagsCollection
-from arekit.contrib.networks.sample import InputSample
 
 
 class MultiInstanceBagsCollection(BagsCollection):
@@ -64,7 +64,7 @@ class MultiInstanceBagsCollection(BagsCollection):
                         complete_last_bag()
                         bags.append(Bag(label=opinion.Sentiment))
 
-                assert(isinstance(s, InputSample))
+                assert(isinstance(s, InputSampleBase))
                 last_bag().add_sample(s)
 
             if is_empty_last_bag():

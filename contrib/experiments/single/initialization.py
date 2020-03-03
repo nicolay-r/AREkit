@@ -3,28 +3,25 @@ import logging
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.synonyms import SynonymsCollection
+from arekit.common.parsed_news.collection import ParsedNewsCollection
+from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.contrib.experiments.single.embedding.entities import generate_entity_embeddings
 from arekit.contrib.experiments.single.embedding.frames import init_frames_embedding
 from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
 from arekit.contrib.experiments.single.embedding.tokens import create_tokens_embedding
 from arekit.contrib.experiments.single.embedding.words import init_custom_words_embedding
-
 from arekit.contrib.experiments.single.helpers.bags import BagsCollectionHelper
 from arekit.contrib.experiments.single.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
-from arekit.networks.data_type import DataType
-from arekit.contrib.networks.sample import InputSample
+from arekit.contrib.experiments.utils import create_input_sample
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.bags.collection import BagsCollection
 from arekit.networks.context.embedding.input import create_term_embedding_matrix
 from arekit.networks.labeling.paired import PairedLabelsHelper
+from arekit.networks.data_type import DataType
 from arekit.networks.labeling.single import SingleLabelsHelper
 from arekit.source.embeddings.rusvectores import RusvectoresEmbedding
 from arekit.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.text_opinions.helper import TextOpinionHelper
-from arekit.common.text_opinions.base import TextOpinion
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 
 
 logger = logging.getLogger(__name__)
@@ -58,18 +55,13 @@ class SingleInstanceModelInitializer(object):
             variants_with_id=self.__frames_collection.iter_frame_id_and_variants(),
             stemmer=config.Stemmer)
 
-        self.__text_opinion_collections = {
-            DataType.Test: extract_text_opinions(io=io,
-                                                 data_type=DataType.Test,
-                                                 frame_variants_collection=frame_variants,
-                                                 config=config),
-            DataType.Train: extract_text_opinions(io=io,
-                                                  data_type=DataType.Train,
-                                                  frame_variants_collection=frame_variants,
-                                                  config=config)
-        }
+        self.__text_opinion_collections = self.__create_collection(
+            lambda data_type: extract_text_opinions(io=io,
+                                                    data_type=data_type,
+                                                    frame_variants_collection=frame_variants,
+                                                    config=config))
 
-        custom_embedding = init_custom_words_embedding(m_init=self,
+        custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        word_embedding=word_embedding,
                                                        config=config)
 
@@ -78,7 +70,7 @@ class SingleInstanceModelInitializer(object):
         token_embedding = create_tokens_embedding(word_embedding.VectorSize)
         config.set_token_embedding(token_embedding)
 
-        frame_embedding = init_frames_embedding(m_init=self,
+        frame_embedding = init_frames_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                 word_embedding=word_embedding)
 
         config.set_frames_embedding(frame_embedding)
@@ -88,44 +80,27 @@ class SingleInstanceModelInitializer(object):
                 custom_embedding=config.CustomWordEmbedding,
                 token_embedding=config.TokenEmbedding,
                 frame_embedding=config.FrameEmbedding)
-
         config.set_term_embedding(term_embedding)
 
-        self.__bags_collection = {
-            DataType.Test: self.create_bags_collection(
-                text_opinions_collection=self.__text_opinion_collections[DataType.Test],
+        self.__bags_collection = self.__create_collection(
+            lambda data_type: self.create_bags_collection(
+                text_opinions_collection=self.__text_opinion_collections[data_type],
                 frames_collection=self.__frames_collection,
                 synonyms_collection=self.__synonyms,
-                data_type=DataType.Test,
-                config=config),
-            DataType.Train: self.create_bags_collection(
-                text_opinions_collection=self.__text_opinion_collections[DataType.Train],
-                frames_collection=self.__frames_collection,
-                synonyms_collection=self.__synonyms,
-                data_type=DataType.Train,
-                config=config)
-        }
+                data_type=data_type,
+                config=config))
 
-        self.__bags_collection_helpers = {
-            DataType.Train: BagsCollectionHelper(bags_collection=self.__bags_collection[DataType.Train],
-                                                 name=DataType.Train),
-            DataType.Test: BagsCollectionHelper(bags_collection=self.__bags_collection[DataType.Test],
-                                                name=DataType.Test)
-        }
+        self.__bags_collection_helpers = self.__create_collection(
+            lambda data_type: BagsCollectionHelper(bags_collection=self.__bags_collection[data_type],
+                                                   name=data_type))
 
-        self.__text_opinion_collection_helpers = {
-            DataType.Test: LabeledLinkedTextOpinionCollectionHelper(
-                collection=self.__text_opinion_collections[DataType.Test],
+        self.__text_opinion_collection_helpers = self.__create_collection(
+            lambda data_type: LabeledLinkedTextOpinionCollectionHelper(
+                collection=self.__text_opinion_collections[data_type],
                 labels_helper=self.__labels_helper,
-                name=DataType.Test),
-            DataType.Train: LabeledLinkedTextOpinionCollectionHelper(
-                collection=self.__text_opinion_collections[DataType.Train],
-                labels_helper=self.__labels_helper,
-                name=DataType.Train)
-        }
+                name=data_type))
 
         norm, _ = self.__text_opinion_collection_helpers[DataType.Train].get_statistic()
-
         config.set_class_weights(norm)
 
         config.notify_initialization_completed()
@@ -154,8 +129,6 @@ class SingleInstanceModelInitializer(object):
 
     # endregion
 
-    # region public methods
-
     @staticmethod
     def create_bags_collection(text_opinions_collection,
                                frames_collection,
@@ -173,7 +146,7 @@ class SingleInstanceModelInitializer(object):
             bag_size=config.BagSize,
             shuffle=True,
             create_empty_sample_func=None,
-            create_sample_func=lambda r: SingleInstanceModelInitializer.create_sample(
+            create_sample_func=lambda r: create_input_sample(
                 text_opinion=r,
                 frames_collection=frames_collection,
                 synonyms_collection=synonyms_collection,
@@ -181,36 +154,30 @@ class SingleInstanceModelInitializer(object):
 
         return collection
 
+    # region private methods
+
     @staticmethod
-    def create_sample(text_opinion, frames_collection, synonyms_collection, config):
-        assert(isinstance(text_opinion, TextOpinion))
-        assert(TextOpinionHelper.check_ends_has_same_sentence_index(text_opinion))
+    def __create_collection(collection_by_data_type_func):
+        assert(callable(collection_by_data_type_func))
 
-        text_opinion_collection = text_opinion.Owner
-        assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
+        collection = {}
+        for data_type in DataType.iter_supported():
+            collection[data_type] = collection_by_data_type_func(data_type)
 
-        parsed_news_collection = text_opinion_collection.RelatedParsedNewsCollection
-        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
+        return collection
 
-        return InputSample.from_text_opinion(
-            text_opinion=text_opinion,
-            parsed_news=parsed_news_collection.get_by_news_id(text_opinion.NewsID),
-            config=config,
-            frames_collection=frames_collection,
-            synonyms_collection=synonyms_collection)
-
-    # endregion
-
-    def iter_all_parsed_collections(self):
+    def __iter_all_parsed_collections(self):
         for collection in self.__text_opinion_collections.itervalues():
             assert(isinstance(collection, LabeledLinkedTextOpinionCollection))
             yield collection.RelatedParsedNewsCollection
 
-    def iter_all_terms(self, term_check_func):
-        for pnc in self.iter_all_parsed_collections():
+    def __iter_all_terms(self, term_check_func):
+        for pnc in self.__iter_all_parsed_collections():
             assert(isinstance(pnc, ParsedNewsCollection))
             for news_ID in pnc.iter_news_ids():
                 for term in pnc.iter_news_terms(news_ID):
                     if not term_check_func(term):
                         continue
                     yield term
+
+    # endregion

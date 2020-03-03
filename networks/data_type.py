@@ -7,3 +7,8 @@ class DataType:
     Train = u"train"
 
     Test = u"test"
+
+    @staticmethod
+    def iter_supported():
+        yield DataType.Train
+        yield DataType.Test

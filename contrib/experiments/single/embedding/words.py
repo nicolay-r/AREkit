@@ -17,12 +17,12 @@ def __custom_embedding_func(self, term, word_embedding):
                                  max_part_size=3)
 
 
-def __iter_custom_words(m_init, config):
-    assert(isinstance(m_init, SingleInstanceModelInitializer))
+def __iter_custom_words(iter_all_terms_func, config):
+    assert(callable(iter_all_terms_func))
 
-    all_terms_iter = m_init.iter_all_terms(lambda t:
-                                           isinstance(t, unicode) and
-                                           t not in config.WordEmbedding)
+    all_terms_iter = iter_all_terms_func(lambda t:
+                                         isinstance(t, unicode) and
+                                         t not in config.WordEmbedding)
 
     for e_mask in entity.iter_entity_masks():
         for e_type in iter_all_entity_types():
@@ -35,11 +35,12 @@ def __iter_custom_words(m_init, config):
         yield term
 
 
-def init_custom_words_embedding(m_init, word_embedding, config):
-    assert(isinstance(m_init, SingleInstanceModelInitializer))
+def init_custom_words_embedding(iter_all_terms_func, word_embedding, config):
+    assert(callable(iter_all_terms_func))
 
     return Embedding.from_list_with_embedding_func(
-            words_iter=__iter_custom_words(m_init=m_init, config=config),
+            words_iter=__iter_custom_words(iter_all_terms_func=iter_all_terms_func,
+                                           config=config),
             embedding_func=lambda term: __custom_embedding_func(term, word_embedding=word_embedding))
 
 
