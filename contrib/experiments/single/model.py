@@ -31,30 +31,23 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         self.__evaluator_class = evaluator_class
         self.__init_helper = None
         self.__eval_helper = None
-        self.prepare_sources()
+        self.__prepare_sources()
+
+    # region properties
 
     @property
     def Config(self):
         return self.__config
 
-    def prepare_sources(self):
-        self.__init_helper = self.create_model_init_helper()
-        # TODO. In core
-        self.__eval_helper = OpinionBasedEvaluationHelper(
-            self.__evaluator_class(synonyms=self.IO.SynonymsCollection))
-        self.__print_statistic()
+    # endregion
+
+    # region Tensorflow Model
 
     def get_bags_collection(self, data_type):
         return self.__init_helper.BagsCollections[data_type]
 
-    def get_bags_collection_helper(self, data_type):
-        return self.__init_helper.BagsCollectionHelpers[data_type]
-
     def get_text_opinions_collection(self, data_type):
         return self.__init_helper.TextOpinionCollections[data_type]
-
-    def get_text_opinions_collection_helper(self, data_type):
-        return self.__init_helper.TextOpinionCollectionHelpers[data_type]
 
     def get_gpu_memory_fraction(self):
         return self.__config.GPUMemoryFraction
@@ -91,6 +84,23 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def create_model_init_helper(self):
         return SingleInstanceModelInitializer(io=self.IO, config=self.Config)
 
+    # endregion
+
+    # region private methods
+
+    def get_text_opinions_collection_helper(self, data_type):
+        return self.__init_helper.TextOpinionCollectionHelpers[data_type]
+
+    def get_bags_collection_helper(self, data_type):
+        return self.__init_helper.BagsCollectionHelpers[data_type]
+
+    def __prepare_sources(self):
+        self.__init_helper = self.create_model_init_helper()
+        # TODO. In core
+        self.__eval_helper = OpinionBasedEvaluationHelper(
+            self.__evaluator_class(synonyms=self.IO.SynonymsCollection))
+        self.__print_statistic()
+
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
         self.IO.write_log(log_names=keys, log_values=values)
@@ -100,3 +110,5 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         self.get_text_opinions_collection_helper(DataType.Test).debug_unique_relations_statistic()
         self.get_bags_collection_helper(DataType.Train).print_log_statistics()
         self.get_bags_collection_helper(DataType.Test).print_log_statistics()
+
+    # endregion
