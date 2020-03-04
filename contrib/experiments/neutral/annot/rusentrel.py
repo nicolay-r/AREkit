@@ -7,7 +7,8 @@ from os.path import join
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
-from arekit.contrib.experiments.neutral_annot.default import DefaultNeutralAnnotationAlgorithm
+from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
+from arekit.contrib.experiments.neutral.annot.base import BaseAnnotator
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
@@ -22,9 +23,10 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 logger = logging.getLogger(__name__)
 
 
-class RuSentRelNeutralAnnotatorIO(object):
+class RuSentRelNeutralAnnotator(BaseAnnotator):
     """
-    Neutral Annotator for RuSentRel Collection
+    Neutral Annotator for RuSentRel Collection (of each data_type)
+    Three scale classification task.
     """
 
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
@@ -70,14 +72,15 @@ class RuSentRelNeutralAnnotatorIO(object):
 
     # endregion
 
+    # TODO. Use data_type instead!
     def create(self, is_train):
         assert(isinstance(is_train, bool))
 
         for doc_id in RuSentRelIOUtils.iter_collection_indices():
 
-            neutral_filepath = self.get_rusentrel_neutral_opin_filepath(doc_id=doc_id,
-                                                                        is_train=is_train,
-                                                                        experiments_io=self.__experiments_io)
+            neutral_filepath = self.get_opin_filepath(doc_id=doc_id,
+                                                      is_train=is_train,
+                                                      experiments_io=self.__experiments_io)
 
             # Skip if this file is already exists
             if os.path.isfile(neutral_filepath):
@@ -105,9 +108,11 @@ class RuSentRelNeutralAnnotatorIO(object):
 
             neutral_opins.save_to_file(neutral_filepath)
 
+    # TODO. Remove static
     @staticmethod
-    def get_rusentrel_neutral_opin_filepath(doc_id, is_train, experiments_io, model_name=u"universal"):
+    def get_opin_filepath(doc_id, is_train, experiments_io, model_name=u"universal"):
         assert(isinstance(doc_id, int))
+        # TODO. Use train/test only of data_type
         assert(isinstance(is_train, bool))
         assert(isinstance(model_name, unicode))
         assert(isinstance(experiments_io, BaseExperimentsIOUtils))

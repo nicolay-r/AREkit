@@ -39,6 +39,7 @@ def __iter_opinion_collections(io, news_id, data_type):
     assert(isinstance(news_id, int))
     assert(isinstance(data_type, unicode))
 
+    # TODO. Here.
     neutral = io.read_neutral_opinion_collection(doc_id=news_id,
                                                  data_type=data_type)
 

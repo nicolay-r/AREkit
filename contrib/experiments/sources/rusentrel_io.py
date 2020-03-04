@@ -2,7 +2,7 @@ import collections
 
 from arekit.contrib.experiments.doc_stat.rusentrel import RuSentRelDocStatGenerator
 from arekit.contrib.experiments.sources.cv_based_io import CVBasedIO
-from arekit.contrib.experiments.sources.rusentrel_neutral_annot_io import RuSentRelNeutralAnnotatorIO
+from arekit.contrib.experiments.neutral.annot.rusentrel import RuSentRelNeutralAnnotator
 from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.news import RuSentRelNews
@@ -87,7 +87,8 @@ class RuSentRelBasedExperimentIO(CVBasedIO):
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, unicode))
 
-        filepath = RuSentRelNeutralAnnotatorIO.get_rusentrel_neutral_opin_filepath(
+        # TODO. Create non-static
+        filepath = RuSentRelNeutralAnnotator.get_opin_filepath(
             doc_id=doc_id,
             is_train=True if data_type == DataType.Train else False,
             experiments_io=self.__experiments_io)

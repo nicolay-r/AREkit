@@ -9,7 +9,7 @@ from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 from arekit.networks.callback import Callback
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.experiments.sources.rusentrel_neutral_annot_io import RuSentRelNeutralAnnotatorIO
+from arekit.contrib.experiments.neutral.annot.rusentrel import RuSentRelNeutralAnnotator
 
 from io_utils import RuSentRelBasedExperimentsIOUtils
 
@@ -75,8 +75,12 @@ def run_testing(full_model_name,
     # TODO. External parameter, refactor
     experiments_io = RuSentRelBasedExperimentsIOUtils()
 
-    na = RuSentRelNeutralAnnotatorIO(experiments_io=experiments_io)
+    # TODO. Support a custom annotator
+    na = RuSentRelNeutralAnnotator(experiments_io=experiments_io)
+    # TODO. This should be a public API.
+    # TODO. Use data_type instead!
     na.create(is_train=True)
+    # TODO. Use data_type instead!
     na.create(is_train=False)
 
     io, callback = __create_io_and_callback(

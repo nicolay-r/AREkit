@@ -4,7 +4,7 @@ from arekit.common.labels.base import NeutralLabel
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.synonyms import SynonymsCollection
-from arekit.contrib.experiments.neutral_annot.base import BaseNeutralAnnotationAlgorithm
+from arekit.contrib.experiments.neutral.algo.base import BaseNeutralAnnotationAlgorithm
 
 
 class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
