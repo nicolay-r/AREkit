@@ -6,14 +6,10 @@ import shutil
 from os import path
 
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
-from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
+from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.networks.callback import Callback
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.experiments.neutral.annot.rusentrel import RuSentRelNeutralAnnotator
 from arekit.networks.data_type import DataType
-
-from io_utils import RuSentRelBasedExperimentsIOUtils
-
 
 def run_testing(full_model_name,
                 create_config,
@@ -22,6 +18,7 @@ def run_testing(full_model_name,
                 create_callback,
                 create_io,
                 evaluator_class,
+                experiments_io,
                 cv_count=1,
                 common_callback_modification_func=None,
                 custom_config_modification_func=None,
@@ -54,6 +51,7 @@ def run_testing(full_model_name,
     assert(callable(common_config_modification_func) or common_config_modification_func is None)
     assert(callable(custom_config_modification_func) or custom_config_modification_func is None)
     assert(callable(evaluator_class))
+    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
     assert(isinstance(cv_count, int) and cv_count > 0)
     assert(isinstance(cancel_training_by_cost, bool))
 
@@ -73,8 +71,6 @@ def run_testing(full_model_name,
     logger.info("Run: Saving neutral annotations task.")
     logger.info("Initialization: Building parsed_news collection")
 
-    # TODO. External parameter, refactor
-    experiments_io = RuSentRelBasedExperimentsIOUtils()
     for data_type in DataType.iter_supported():
         experiments_io.NeutralAnnontator.create(data_type=data_type)
 
@@ -88,7 +84,7 @@ def run_testing(full_model_name,
         clear_model_contents=True)
 
     assert(isinstance(callback, Callback))
-    assert(isinstance(io, RuSentRelBasedExperimentIO))
+    assert(isinstance(io, RuSentRelBasedNeuralNetworkIO))
 
     for cv_index in range(io.CVCount):
 
@@ -155,7 +151,7 @@ def __create_io_and_callback(
                         experiments_io=experiments_io,
                         cv_count=cv_count)
 
-    assert(isinstance(io, RuSentRelBasedExperimentIO))
+    assert(isinstance(io, RuSentRelBasedNeuralNetworkIO))
 
     io.set_eval_on_rusentrel_docs_key(True)
 
