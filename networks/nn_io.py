@@ -23,9 +23,6 @@ class NeuralNetworkIO(object):
     def get_model_filepath(self):
         raise NotImplementedError()
 
-    def get_word_embedding_filepath(self):
-        raise NotImplementedError()
-
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
         raise NotImplementedError()
 

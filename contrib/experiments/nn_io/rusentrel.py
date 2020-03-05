@@ -1,7 +1,7 @@
 import collections
 
 from arekit.contrib.experiments.doc_stat.rusentrel import RuSentRelDocStatGenerator
-from arekit.contrib.experiments.sources.cv_based_io import CVBasedIO
+from arekit.contrib.experiments.nn_io.cv_based import CVBasedNeuralNetworkIO
 from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.news import RuSentRelNews
@@ -13,14 +13,14 @@ from arekit.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.processing.lemmatization.base import Stemmer
 
 
-class RuSentRelBasedExperimentIO(CVBasedIO):
+class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     """
     Represents Input interface for NeuralNetwork ctx
-    Now exploited (treated) as input interface only
+    Now exploited (treated) as an input interface only
     """
 
     def __init__(self, model_name, experiments_io, cv_count=1):
-        super(RuSentRelBasedExperimentIO, self).__init__(
+        super(RuSentRelBasedNeuralNetworkIO, self).__init__(
             experiments_io=experiments_io,
             cv_count=cv_count,
             model_name=model_name)
@@ -111,7 +111,7 @@ class RuSentRelBasedExperimentIO(CVBasedIO):
             for doc_id in RuSentRelIOUtils.iter_test_indices():
                 yield doc_id
         else:
-            for doc_id in super(RuSentRelBasedExperimentIO, self).iter_test_data_indices():
+            for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_test_data_indices():
                 yield doc_id
 
     def iter_train_data_indices(self):
@@ -119,7 +119,7 @@ class RuSentRelBasedExperimentIO(CVBasedIO):
             for doc_id in RuSentRelIOUtils.iter_train_indices():
                 yield doc_id
         else:
-            for doc_id in super(RuSentRelBasedExperimentIO, self).iter_train_data_indices():
+            for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_train_data_indices():
                 yield doc_id
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):

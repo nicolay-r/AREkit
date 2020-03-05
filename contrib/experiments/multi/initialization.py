@@ -6,8 +6,8 @@ from arekit.networks.multi.training.bags import MultiInstanceBagsCollection
 
 class MultiInstanceModelInitializer(SingleInstanceModelInitializer):
 
-    def __init__(self, io, config):
-        super(MultiInstanceModelInitializer, self).__init__(io=io, config=config)
+    def __init__(self, nn_io, config):
+        super(MultiInstanceModelInitializer, self).__init__(nn_io=nn_io, config=config)
 
     @staticmethod
     def create_bags_collection(text_opinions_collection, frames_collection, synonyms_collection, data_type, config):

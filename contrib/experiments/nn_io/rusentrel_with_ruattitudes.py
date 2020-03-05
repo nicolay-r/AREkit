@@ -1,17 +1,17 @@
 import logging
 
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiments.sources.utils import read_ruattitudes_in_memory
+from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
+from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
-from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 
 
 logger = logging.getLogger(__name__)
 
 
-class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedExperimentIO):
+class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
     """
     IO for the experiment with distant supervision for sentiment attitude extraction task.
     Paper: https://www.aclweb.org/anthology/R19-1118/

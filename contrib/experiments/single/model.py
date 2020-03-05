@@ -1,8 +1,8 @@
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
-from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 
 from arekit.networks.eval.opinion_based import OpinionBasedEvaluationHelper
-from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.callback import Callback
@@ -17,15 +17,15 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     with an attitude mentioned in it.
     """
 
-    def __init__(self, io, network, config, evaluator_class, callback):
-        assert(isinstance(io, RuSentRelBasedExperimentIO))
+    def __init__(self, nn_io, network, config, evaluator_class, callback):
+        assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)
         assert(callable(evaluator_class))
 
         super(SingleInstanceTensorflowModel, self).__init__(
-            io=io, network=network, callback=callback)
+            nn_io=nn_io, network=network, callback=callback)
 
         self.__config = config
         self.__evaluator_class = evaluator_class
@@ -68,7 +68,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
             label_calculation_mode=self.Config.TextOpinionLabelCalculationMode)
 
         for collection, news_id in collections_iter:
-            assert(isinstance(collection, RuSentRelOpinionCollection))
+            assert(isinstance(collection, OpinionCollection))
 
             if self.IO.EvalOnRuSentRelDocsOnly and not self.IO.is_rusentrel_news_id(news_id):
                 continue
@@ -82,7 +82,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         return MiniBatch(bags_group)
 
     def create_model_init_helper(self):
-        return SingleInstanceModelInitializer(io=self.IO, config=self.Config)
+        return SingleInstanceModelInitializer(nn_io=self.IO, config=self.Config)
 
     # endregion
 

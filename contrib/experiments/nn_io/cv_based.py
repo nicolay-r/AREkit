@@ -1,16 +1,16 @@
 import os
 
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.experiments.sources.base_io import BaseExperimentIO
 from arekit.contrib.experiments.cv.utils import get_cv_pair_by_index
+from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
 
 
-class CVBasedIO(BaseExperimentIO):
+class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
 
     def __init__(self, model_name, cv_count, experiments_io):
         assert(isinstance(cv_count, int))
-        super(CVBasedIO, self).__init__(experiments_io=experiments_io,
-                                        model_name=model_name)
+        super(CVBasedNeuralNetworkIO, self).__init__(experiments_io=experiments_io,
+                                                     model_name=model_name)
         self.__current_cv_index = 0
         self.__cv_count = cv_count
         self.__docs_stat = self.create_docs_stat_generator()

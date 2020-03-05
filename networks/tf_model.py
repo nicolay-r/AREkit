@@ -35,14 +35,14 @@ class TensorflowModel(object):
         and more.
     """
 
-    def __init__(self, io, network, callback=None):
-        assert(isinstance(io, NeuralNetworkIO))
+    def __init__(self, nn_io, network, callback=None):
+        assert(isinstance(nn_io, NeuralNetworkIO))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)
         self.__sess = None
         self.__saver = None
         self.__optimiser = None
-        self.__io = io
+        self.__nn_io = nn_io
         self.__network = network
         self.__callback = callback
         self.__current_epoch_index = 0
@@ -75,7 +75,7 @@ class TensorflowModel(object):
 
     @property
     def IO(self):
-        return self.__io
+        return self.__nn_io
 
     # endregion
 
@@ -110,7 +110,7 @@ class TensorflowModel(object):
         self.__initialize_session()
 
         if load_model:
-            save_path = self.__io.create_model_state_filepath()
+            save_path = self.__nn_io.create_model_state_filepath()
             logger.info("Loading model: {}".format(save_path))
             self.load_model(save_path)
 

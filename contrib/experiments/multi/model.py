@@ -13,4 +13,4 @@ class MultiInstanceTensorflowModel(SingleInstanceTensorflowModel):
         return MultiInstanceBatch(bags_group)
 
     def create_model_init_helper(self):
-        return MultiInstanceModelInitializer(io=self.IO, config=self.Config)
+        return MultiInstanceModelInitializer(nn_io=self.IO, config=self.Config)

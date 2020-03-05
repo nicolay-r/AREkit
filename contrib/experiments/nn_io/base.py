@@ -7,7 +7,7 @@ from arekit.networks.nn_io import NeuralNetworkIO
 from arekit.processing.lemmatization.base import Stemmer
 
 
-class BaseExperimentIO(NeuralNetworkIO):
+class BaseExperimentNeuralNetworkIO(NeuralNetworkIO):
 
     def __init__(self, experiments_io, model_name):
         assert(isinstance(experiments_io, BaseExperimentsIOUtils))

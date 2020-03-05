@@ -1,11 +1,11 @@
-from arekit.contrib.experiments.sources.cv_based_io import CVBasedIO
-from arekit.contrib.experiments.sources.utils import read_ruattitudes_in_memory
+from arekit.contrib.experiments.nn_io.cv_based import CVBasedNeuralNetworkIO
+from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
 from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
-class CustomRuAttitudesFormatIO(CVBasedIO):
+class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
 
     def __init__(self, model_name, cv_count, experiments_io, doc_ids):
         """

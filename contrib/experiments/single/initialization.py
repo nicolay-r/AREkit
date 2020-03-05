@@ -5,6 +5,7 @@ from arekit.common.frames.collection import FramesCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single.embedding.entities import generate_entity_embeddings
 from arekit.contrib.experiments.single.embedding.frames import init_frames_embedding
 from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
@@ -12,7 +13,6 @@ from arekit.contrib.experiments.single.embedding.tokens import create_tokens_emb
 from arekit.contrib.experiments.single.embedding.words import init_custom_words_embedding
 from arekit.contrib.experiments.single.helpers.bags import BagsCollectionHelper
 from arekit.contrib.experiments.single.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
-from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 from arekit.contrib.experiments.utils import create_input_sample
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.bags.collection import BagsCollection
@@ -29,12 +29,12 @@ logger = logging.getLogger(__name__)
 
 class SingleInstanceModelInitializer(object):
 
-    def __init__(self, io, config):
-        assert(isinstance(io, RuSentRelBasedExperimentIO))
+    def __init__(self, nn_io, config):
+        assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
         assert(isinstance(config, DefaultNetworkConfig))
 
         word_embedding = RusvectoresEmbedding.from_word2vec_format(
-            filepath=io.ExperimentsIO.get_word_embedding_filepath(),
+            filepath=nn_io.ExperimentsIO.get_word_embedding_filepath(),
             binary=True)
         word_embedding.set_stemmer(config.Stemmer)
         config.set_word_embedding(word_embedding)
@@ -43,7 +43,7 @@ class SingleInstanceModelInitializer(object):
             use_types=config.UseEntityTypesInEmbedding,
             word_embedding=word_embedding)
 
-        self.__synonyms = io.SynonymsCollection
+        self.__synonyms = nn_io.SynonymsCollection
 
         self.__frames_collection = RuSentiFramesCollection.read_collection()
 
@@ -54,7 +54,7 @@ class SingleInstanceModelInitializer(object):
             stemmer=config.Stemmer)
 
         self.__text_opinion_collections = self.__create_collection(
-            lambda data_type: extract_text_opinions(io=io,
+            lambda data_type: extract_text_opinions(io=nn_io,
                                                     data_type=data_type,
                                                     frame_variants_collection=frame_variants,
                                                     config=config))
