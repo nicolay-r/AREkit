@@ -32,21 +32,6 @@ class BaseExperimentIO(NeuralNetworkIO):
     def ExperimentsIO(self):
         return self.__experiments_io
 
-    # TODO. Duplicated
-    # TODO. Remove
-    def get_word_embedding_filepath(self):
-        return self.__experiments_io.get_rusvectores_news_embedding_filepath()
-
-    # TODO. Duplicated
-    # TODO. Remove
-    def get_capitals_list(self):
-        return self.__experiments_io.get_capitals_list()
-
-    # TODO. Duplicated
-    # TODO. Remove
-    def get_states_list(self):
-        return self.__experiments_io.get_states_list()
-
     # endregion
 
     # region 'write' methods

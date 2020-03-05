@@ -1,9 +1,9 @@
 import itertools
 import numpy as np
 
+from arekit.common.embeddings.base import Embedding
 from arekit.common.synonyms import SynonymsCollection
 from arekit.networks.context.embedding import entity
-from arekit.source.embeddings.rusvectores import RusvectoresEmbedding
 
 
 ################################
@@ -72,7 +72,7 @@ def iter_all_entity_types():
 
 def generate_entity_embeddings(use_types, word_embedding):
     assert(isinstance(use_types, bool))
-    assert(isinstance(word_embedding, RusvectoresEmbedding))
+    assert(isinstance(word_embedding, Embedding))
 
     # Unique start index
     embeddings = {}
@@ -91,8 +91,8 @@ def generate_entity_embeddings(use_types, word_embedding):
                 mask = __entity_mask_to_word(e_mask)
                 t = __entity_type_to_word(e_type)
 
-                m_ind = word_embedding.try_find_index_by_word(mask, lemmatize=False)
-                t_ind = word_embedding.try_find_index_by_word(t, lemmatize=False)
+                m_ind = word_embedding.try_find_index_by_plain_word(mask)
+                t_ind = word_embedding.try_find_index_by_plain_word(t)
 
                 e_v = np.mean([word_embedding.get_vector_by_index(m_ind),
                                word_embedding.get_vector_by_index(t_ind)],

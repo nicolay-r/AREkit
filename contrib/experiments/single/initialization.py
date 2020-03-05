@@ -33,10 +33,8 @@ class SingleInstanceModelInitializer(object):
         assert(isinstance(io, RuSentRelBasedExperimentIO))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        logger.info("Loading word embedding: {}".format(io.get_word_embedding_filepath()))
-
         word_embedding = RusvectoresEmbedding.from_word2vec_format(
-            filepath=io.get_word_embedding_filepath(),
+            filepath=io.ExperimentsIO.get_word_embedding_filepath(),
             binary=True)
         word_embedding.set_stemmer(config.Stemmer)
         config.set_word_embedding(word_embedding)

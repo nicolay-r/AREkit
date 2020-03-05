@@ -3,6 +3,7 @@ from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpini
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.base import TextOpinion
+from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.single.embedding.entities import provide_entity_type_by_value
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
 from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
@@ -90,6 +91,9 @@ def extract_text_opinions(io,
     assert(isinstance(config, DefaultNetworkConfig))
     assert(isinstance(frame_variants_collection, FrameVariantsCollection))
 
+    experiments_io = io.ExperimentsIO
+    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
+
     parsed_collection = ParsedNewsCollection()
 
     text_opinions = LabeledLinkedTextOpinionCollection(
@@ -110,8 +114,8 @@ def extract_text_opinions(io,
             lambda value: provide_entity_type_by_value(
                 value=value,
                 synonyms=io.SynonymsCollection,
-                states_list=io.get_states_list(),
-                capitals_list=io.get_capitals_list()))
+                states_list=experiments_io.get_states_list(),
+                capitals_list=experiments_io.get_capitals_list()))
 
         if not parsed_collection.contains_id(news_id):
             parsed_collection.add(parsed_news)

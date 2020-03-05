@@ -20,7 +20,7 @@ class BaseExperimentsIOUtils(object):
     def get_states_list(self):
         raise NotImplementedError()
 
-    def get_rusvectores_news_embedding_filepath(self):
+    def get_word_embedding_filepath(self):
         raise NotImplementedError()
 
     def get_doc_stat_filepath(self):

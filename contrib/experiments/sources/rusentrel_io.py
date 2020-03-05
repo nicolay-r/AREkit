@@ -2,7 +2,6 @@ import collections
 
 from arekit.contrib.experiments.doc_stat.rusentrel import RuSentRelDocStatGenerator
 from arekit.contrib.experiments.sources.cv_based_io import CVBasedIO
-from arekit.contrib.experiments.neutral.annot.rusentrel import RuSentRelNeutralAnnotator
 from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.news import RuSentRelNews

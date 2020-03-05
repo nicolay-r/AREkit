@@ -19,10 +19,15 @@ class RusvectoresEmbedding(Embedding):
         assert(isinstance(stemmer, Stemmer))
         self.__stemmer = stemmer
 
-    def try_find_index_by_word(self, word, lemmatize=True):
+    def try_find_index_by_word(self, word):
         assert(isinstance(word, unicode))
         return self.__try_find_index(term=word,
-                                     lemmatize=lemmatize)
+                                     lemmatize=True)
+
+    def try_find_index_by_plain_word(self, word):
+        assert(isinstance(word, unicode))
+        return self.__try_find_index(term=word,
+                                     lemmatize=False)
 
     # region private methods
 
