@@ -1,3 +1,5 @@
+import collections
+
 from arekit.common.entities.base import Entity
 from arekit.common.entities.collection import EntityCollection
 from arekit.common.labels.base import NeutralLabel
@@ -5,6 +7,7 @@ from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.experiments.neutral.algo.base import BaseNeutralAnnotationAlgorithm
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 
 
 class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
@@ -13,9 +16,16 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
     within a sentence which are not a part of sentiment.
     """
 
+    class DistanceType:
+        InTerms = 'in_terms'
+        InSentences = 'in_sentences'
+
+
     def __init__(self, synonyms,
                  create_opinion_func,
                  create_opinion_collection_func,
+                 create_parsed_news_func,
+                 iter_news_ids,
                  ignored_entity_values=None):
         """
         create_opinion_func:
@@ -26,13 +36,18 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         assert(isinstance(synonyms, SynonymsCollection))
         assert(callable(create_opinion_func))
         assert(callable(create_opinion_collection_func))
+        assert(callable(create_parsed_news_func))
+        assert(isinstance(iter_news_ids, collections.Iterable))
         assert(isinstance(ignored_entity_values, list) or ignored_entity_values is None)
-        # TODO. Fill pnc.
-        self.__pnc = ParsedNewsCollection()
+
         self.__create_opinion_func = create_opinion_func
         self.__create_opinion_collection_func = create_opinion_collection_func
         self.__synonyms = synonyms
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
+
+        self.__pnc = ParsedNewsCollection()
+        for doc_id in RuSentRelIOUtils.iter_collection_indices():
+            self.__pnc.add(create_parsed_news_func(doc_id))
 
     # region private methods
 
@@ -46,28 +61,34 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         assert(isinstance(entity_value, unicode))
         return entity_value in self.__ignored_entity_values
 
+    # TODO. leave single func with the param e -> index.
+    # TODO: Remove this.
     def __get_distance_in_terms_between_entities(self, n_id, e1, e2):
         assert(isinstance(e1, Entity))
         assert(isinstance(e2, Entity))
 
-        nt = self.__pnc.get_by_news_id(n_id)
+        parsed_news = self.__pnc.get_by_news_id(n_id)
 
-        assert(isinstance(nt, ParsedNews))
+        assert(isinstance(parsed_news, ParsedNews))
 
-        erp1 = nt.get_entity_document_level_term_index(e1.IdInDocument)
-        erp2 = nt.get_entity_document_level_term_index(e2.IdInDocument)
+        erp1 = parsed_news.get_entity_document_level_term_index(e1.IdInDocument)
+        erp2 = parsed_news.get_entity_document_level_term_index(e2.IdInDocument)
         return abs(erp1 - erp2)
 
+    # TODO: Leave sigle func with the param e -> index.
     def __get_distance_in_sentences_between_entities(self, n_id, e1, e2):
+        """
+        distance_type: string
+        """
         assert(isinstance(e1, Entity))
         assert(isinstance(e2, Entity))
 
-        nt = self.__pnc.get_by_news_id(n_id)
+        parsed_news = self.__pnc.get_by_news_id(n_id)
 
-        assert(isinstance(nt, ParsedNews))
+        assert(isinstance(parsed_news, ParsedNews))
 
-        e1_ind = nt.get_entity_sentence_index(e1.IdInDocument)
-        e2_ind = nt.get_entity_sentence_index(e2.IdInDocument)
+        e1_ind = parsed_news.get_entity_sentence_index(e1.IdInDocument)
+        e2_ind = parsed_news.get_entity_sentence_index(e2.IdInDocument)
         return abs(e1_ind - e2_ind)
 
     def __create_opinions_between_entities(self, relevant_pairs, entities_collection):

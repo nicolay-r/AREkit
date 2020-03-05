@@ -5,7 +5,6 @@ import os
 from os.path import join
 
 from arekit.common.labels.base import NeutralLabel
-from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.contrib.experiments.neutral.annot.base import BaseAnnotator
@@ -34,13 +33,13 @@ class RuSentRelNeutralAnnotator(BaseAnnotator):
     def __init__(self, experiments_io):
         assert(isinstance(experiments_io, BaseExperimentsIOUtils))
 
+        # TODO. Should be a parameters
         self.__experiments_io = experiments_io
         self.__stemmer = MystemWrapper()
+
         self.__synonyms = RuSentRelSynonymsCollection.read_collection(
             stemmer=self.__stemmer,
             is_read_only=True)
-
-        self.__pnc = self.__init_rusentrel_parsed_news_collection()
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self.__synonyms,
@@ -48,27 +47,28 @@ class RuSentRelNeutralAnnotator(BaseAnnotator):
                 value_source=s_value,
                 value_target=t_value,
                 sentiment=NeutralLabel()),
-            create_opinion_collection_func=lambda: RuSentRelOpinionCollection(opinions=None, synonyms=self.__synonyms),
+            create_opinion_collection_func=lambda: RuSentRelOpinionCollection(opinions=None,
+                                                                              synonyms=self.__synonyms),
+            create_parsed_news_func=lambda doc_id: self.__create_parsed_news(doc_id=doc_id,
+                                                                             synonyms=self.__synonyms,
+                                                                             stemmer=self.__stemmer),
+            iter_news_ids=RuSentRelIOUtils.iter_collection_indices(),
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
     # region private methods
 
-    def __init_rusentrel_parsed_news_collection(self):
-        pnc = ParsedNewsCollection()
+    @staticmethod
+    def __create_parsed_news(doc_id, synonyms, stemmer):
+        entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
+                                                                     synonyms=synonyms)
 
-        for doc_id in RuSentRelIOUtils.iter_collection_indices():
-            entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                         synonyms=self.__synonyms)
+        news = RuSentRelNews.read_document(doc_id=doc_id,
+                                           entities=entities)
 
-            news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
-
-            parsed_news = RuSentRelParsedNewsHelper.create_parsed_news(rusentrel_news_id=doc_id,
-                                                                       rusentrel_news=news,
-                                                                       keep_tokens=False,
-                                                                       stemmer=self.__stemmer)
-            pnc.add(parsed_news)
-
-        return pnc
+        return RuSentRelParsedNewsHelper.create_parsed_news(rusentrel_news_id=doc_id,
+                                                            rusentrel_news=news,
+                                                            keep_tokens=False,
+                                                            stemmer=stemmer)
 
     # endregion
 
