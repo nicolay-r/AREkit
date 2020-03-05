@@ -40,10 +40,6 @@ class RuSentRelBasedExperimentIO(CVBasedIO):
         return self.__rusentrel_news_ids_list
 
     @property
-    def CVCount(self):
-        return self.__cv_count
-
-    @property
     def EvalOnRuSentRelDocsOnly(self):
         return self.__eval_on_rusentrel_docs_key
 
@@ -87,11 +83,10 @@ class RuSentRelBasedExperimentIO(CVBasedIO):
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, unicode))
 
-        # TODO. Create non-static
-        filepath = RuSentRelNeutralAnnotator.get_opin_filepath(
+        filepath = self.ExperimentsIO.NeutralAnnontator.get_opin_filepath(
             doc_id=doc_id,
-            is_train=True if data_type == DataType.Train else False,
-            experiments_io=self.__experiments_io)
+            data_type=data_type,
+            output_dir=self.__experiments_io.get_experiments_dir())
 
         return RuSentRelOpinionCollection.read_from_file(filepath=filepath,
                                                          synonyms=self.SynonymsCollection)
@@ -113,7 +108,7 @@ class RuSentRelBasedExperimentIO(CVBasedIO):
             return self.iter_test_data_indices()
 
     def iter_test_data_indices(self):
-        if self.__cv_count == 1:
+        if self.CVCount == 1:
             for doc_id in RuSentRelIOUtils.iter_test_indices():
                 yield doc_id
         else:
@@ -121,7 +116,7 @@ class RuSentRelBasedExperimentIO(CVBasedIO):
                 yield doc_id
 
     def iter_train_data_indices(self):
-        if self.__cv_count == 1:
+        if self.CVCount == 1:
             for doc_id in RuSentRelIOUtils.iter_train_indices():
                 yield doc_id
         else:

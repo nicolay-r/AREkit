@@ -21,6 +21,10 @@ class CVBasedIO(BaseExperimentIO):
     def CVCurrentIndex(self):
         return self.__current_cv_index
 
+    @property
+    def CVCount(self):
+        return self.__cv_count
+
     # endregion
 
     # region private methods

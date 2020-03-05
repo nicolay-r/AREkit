@@ -4,6 +4,10 @@ class BaseExperimentsIOUtils(object):
     declared outside of an AREkit framework.
     """
 
+    @property
+    def NeutralAnnontator(self):
+        raise NotImplementedError()
+
     def get_data_root(self):
         raise NotImplementedError()
 

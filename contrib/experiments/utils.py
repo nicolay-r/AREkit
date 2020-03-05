@@ -5,18 +5,17 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.networks.sample import InputSample
 
 
-def get_path_of_subfolder_in_experiments_dir(subfolder_name, experiments_io):
+def get_path_of_subfolder_in_experiments_dir(subfolder_name, experiments_dir):
     """
     Returns subfolder in experiments directory
     """
     assert(isinstance(subfolder_name, unicode))
-    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
+    assert(isinstance(experiments_dir, unicode))
 
-    target_dir = join(experiments_io.get_experiments_dir(), u"{}/".format(subfolder_name))
+    target_dir = join(experiments_dir, u"{}/".format(subfolder_name))
     create_dir_if_not_exists(target_dir)
     return target_dir
 

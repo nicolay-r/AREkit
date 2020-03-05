@@ -28,14 +28,22 @@ class BaseExperimentIO(NeuralNetworkIO):
     def get_model_root(self):
         return self.__get_model_root()
 
+    @property
+    def ExperimentsIO(self):
+        return self.__experiments_io
+
+    # TODO. Duplicated
+    # TODO. Remove
     def get_word_embedding_filepath(self):
         return self.__experiments_io.get_rusvectores_news_embedding_filepath()
 
-    # TODO. To separated class
+    # TODO. Duplicated
+    # TODO. Remove
     def get_capitals_list(self):
         return self.__experiments_io.get_capitals_list()
 
-    # TODO. To separated class
+    # TODO. Duplicated
+    # TODO. Remove
     def get_states_list(self):
         return self.__experiments_io.get_states_list()
 
@@ -78,7 +86,7 @@ class BaseExperimentIO(NeuralNetworkIO):
     def __get_model_root(self):
         return get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__model_name,
-            experiments_io=self.__experiments_io)
+            experiments_dir=self.__experiments_io.get_experiments_dir())
 
     def __get_model_states_dir(self):
 
