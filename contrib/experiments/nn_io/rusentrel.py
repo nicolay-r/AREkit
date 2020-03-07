@@ -29,8 +29,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
         self.__rusentrel_news_ids_list = list(RuSentRelIOUtils.iter_collection_indices())
         self.__rusentrel_news_ids = set(self.__rusentrel_news_ids_list)
 
-        # Keys
-        self.__eval_on_rusentrel_docs_key = False
+        self.__eval_on_rusentrel_docs_key = True
 
     # region properties
 
@@ -46,10 +45,6 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
 
     def create_docs_stat_generator(self):
         return RuSentRelDocStatGenerator(synonyms=self.SynonymsCollection)
-
-    def set_eval_on_rusentrel_docs_key(self, value):
-        assert(isinstance(value, bool))
-        self.__eval_on_rusentrel_docs_key = value
 
     def is_rusentrel_news_id(self, news_id):
         assert(isinstance(news_id, int))
@@ -100,7 +95,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
 
     # region 'iters' public methods
 
-    def iter_data_indices(self, data_type):
+    def iter_doc_ids(self, data_type):
         if data_type == DataType.Train:
             return self.iter_train_data_indices()
         if data_type == DataType.Test:

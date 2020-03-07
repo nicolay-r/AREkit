@@ -110,9 +110,9 @@ class TensorflowModel(object):
         self.__initialize_session()
 
         if load_model:
-            save_path = self.__nn_io.create_model_state_filepath()
-            logger.info("Loading model: {}".format(save_path))
-            self.load_model(save_path)
+            saved_model_path = self.__nn_io.ModelSavePath
+            logger.info("Loading model: {}".format(saved_model_path))
+            self.load_model(saved_model_path)
 
         self.fit()
         self.dispose_session()
@@ -146,9 +146,8 @@ class TensorflowModel(object):
 
         self.before_evaluation(dest_data_type)
 
-        eval_result = self.get_eval_helper().evaluate_model(
+        eval_result = self.get_eval_helper().evaluate(
             data_type=dest_data_type,
-            io=self.IO,
             doc_ids=text_opinions.iter_unique_news_ids(),
             epoch_index=self.__current_epoch_index)
 
@@ -284,7 +283,7 @@ class TensorflowModel(object):
             groups_count += 1
 
         if DebugKeys.FitSaveTensorflowModelState:
-            self.save_model(save_path=self.IO.get_model_filepath())
+            self.save_model(save_path=self.IO.ModelSavePathPrefix)
 
         return fit_total_cost / groups_count, fit_total_acc / groups_count
 

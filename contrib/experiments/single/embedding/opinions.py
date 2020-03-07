@@ -4,9 +4,9 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
+from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single.embedding.entities import provide_entity_type_by_value
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
-from arekit.contrib.experiments.sources.rusentrel_io import RuSentRelBasedExperimentIO
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.context.debug import DebugKeys
@@ -20,11 +20,11 @@ from arekit.source.rusentrel.news import RuSentRelNews
 
 # region private methods
 
-def __read_document(io, news_id, config):
-    assert(isinstance(news_id, int))
+def __read_document(io, doc_id, config):
+    assert(isinstance(doc_id, int))
     assert(isinstance(config, DefaultNetworkConfig))
 
-    news, parsed_news = io.read_parsed_news(doc_id=news_id,
+    news, parsed_news = io.read_parsed_news(doc_id=doc_id,
                                             keep_tokens=config.KeepTokens,
                                             stemmer=config.Stemmer)
 
@@ -82,16 +82,16 @@ def __fill_text_opinions(text_opinions,
 # endregions
 
 
-def extract_text_opinions(io,
+def extract_text_opinions(nn_io,
                           data_type,
                           frame_variants_collection,
                           config):
-    assert(isinstance(io, RuSentRelBasedExperimentIO))
+    assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(data_type, unicode))
     assert(isinstance(config, DefaultNetworkConfig))
     assert(isinstance(frame_variants_collection, FrameVariantsCollection))
 
-    experiments_io = io.ExperimentsIO
+    experiments_io = nn_io.ExperimentsIO
     assert(isinstance(experiments_io, BaseExperimentsIOUtils))
 
     parsed_collection = ParsedNewsCollection()
@@ -99,10 +99,10 @@ def extract_text_opinions(io,
     text_opinions = LabeledLinkedTextOpinionCollection(
         parsed_news_collection=parsed_collection)
 
-    for news_id in io.iter_data_indices(data_type):
+    for news_id in nn_io.iter_doc_ids(data_type):
 
-        news, parsed_news = __read_document(io=io,
-                                            news_id=news_id,
+        news, parsed_news = __read_document(io=nn_io,
+                                            doc_id=news_id,
                                             config=config)
 
         parsed_news.modify_parsed_sentences(
@@ -113,7 +113,7 @@ def extract_text_opinions(io,
         parsed_news.modify_entity_types(
             lambda value: provide_entity_type_by_value(
                 value=value,
-                synonyms=io.SynonymsCollection,
+                synonyms=nn_io.SynonymsCollection,
                 states_list=experiments_io.get_states_list(),
                 capitals_list=experiments_io.get_capitals_list()))
 
@@ -122,7 +122,7 @@ def extract_text_opinions(io,
         else:
             print "Warning: Skipping document with id={}, news={}".format(news.DocumentID, news)
 
-        opinions_it = __iter_opinion_collections(io=io,
+        opinions_it = __iter_opinion_collections(io=nn_io,
                                                  news_id=news_id,
                                                  data_type=data_type)
 

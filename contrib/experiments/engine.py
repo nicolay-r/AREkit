@@ -6,17 +6,19 @@ import shutil
 from os import path
 
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
+from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
-from arekit.networks.callback import Callback
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.networks.callback import Callback
 from arekit.networks.data_type import DataType
+
 
 def run_testing(full_model_name,
                 create_config,
                 create_network,
                 create_model,
                 create_callback,
-                create_io,
+                create_nn_io,
                 evaluator_class,
                 experiments_io,
                 cv_count=1,
@@ -31,7 +33,7 @@ def run_testing(full_model_name,
     :param create_network:
     :param create_model:
     :param create_callback:
-    :param create_io:
+    :param create_nn_io:
     :param evaluator_class:
     :param cv_count: int, cv_count > 0
         1 -- considered a fixed train/test separation.
@@ -74,24 +76,24 @@ def run_testing(full_model_name,
     for data_type in DataType.iter_supported():
         experiments_io.NeutralAnnontator.create(data_type=data_type)
 
-    io, callback = __create_io_and_callback(
+    nn_io, callback = __create_nn_io_and_callback(
         cv_count=cv_count,
         experiments_io=experiments_io,
-        create_io_func=create_io,
+        create_nn_io_func=create_nn_io,
         create_callback_func=create_callback,
         model_name=full_model_name,
         cancel_training_by_cost=cancel_training_by_cost,
         clear_model_contents=True)
 
     assert(isinstance(callback, Callback))
-    assert(isinstance(io, RuSentRelBasedNeuralNetworkIO))
+    assert(isinstance(nn_io, RuSentRelBasedNeuralNetworkIO))
 
-    for cv_index in range(io.CVCount):
+    for cv_index in range(nn_io.CVCount):
 
         # Initialize config
         config = create_config()
         assert(isinstance(config, DefaultNetworkConfig))
-        io.init_synonyms_collection(config.Stemmer)
+        nn_io.init_synonyms_collection(config.Stemmer)
 
         # Initialize network
         network = create_network()
@@ -109,7 +111,7 @@ def run_testing(full_model_name,
         callback.reset_experiment_dependent_parameters()
 
         # Initialize model
-        model = create_model(io=io,
+        model = create_model(nn_io=nn_io,
                              network=network,
                              config=config,
                              evaluator_class=evaluator_class,
@@ -118,44 +120,42 @@ def run_testing(full_model_name,
         ###########
         # Run model
         ###########
-        print u"Running model '{}' at cv_index {}".format(full_model_name, io.CVCurrentIndex)
+        print u"Running model '{}' at cv_index {}".format(full_model_name, nn_io.CVCurrentIndex)
         model.run(load_model=False)
 
         del config
         del network
         del model
 
-        io.inc_cv_index()
+        nn_io.inc_cv_index()
         gc.collect()
 
 # region private functions
 
 
-def __create_io_and_callback(
+def __create_nn_io_and_callback(
         cv_count,
         experiments_io,
-        create_io_func,
+        create_nn_io_func,
         create_callback_func,
         model_name,
         cancel_training_by_cost,
         clear_model_contents):
     assert(isinstance(cv_count, int))
     assert(isinstance(experiments_io, BaseExperimentsIOUtils))
-    assert(callable(create_io_func))
+    assert(callable(create_nn_io_func))
     assert(callable(create_callback_func))
     assert(isinstance(model_name, unicode))
     assert(isinstance(cancel_training_by_cost, bool))
     assert(isinstance(clear_model_contents, bool))
 
-    io = create_io_func(model_name=model_name,
-                        experiments_io=experiments_io,
-                        cv_count=cv_count)
+    nn_io = create_nn_io_func(model_name=model_name,
+                              experiments_io=experiments_io,
+                              cv_count=cv_count)
 
-    assert(isinstance(io, RuSentRelBasedNeuralNetworkIO))
+    assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
 
-    io.set_eval_on_rusentrel_docs_key(True)
-
-    model_root = io.get_model_root()
+    model_root = nn_io.ModelRoot
 
     # Clear model output.
     if clear_model_contents:
@@ -167,7 +167,7 @@ def __create_io_and_callback(
 
     callback.PredictVerbosePerFileStatistic = False
 
-    return io, callback
+    return nn_io, callback
 
 # endregion
 

@@ -1,23 +1,24 @@
 import collections
 
 from arekit.evaluation.evaluators.base import BaseEvaluator
-from arekit.networks.eval.base import EvaluationHelper
-from arekit.networks.nn_io import NeuralNetworkIO
+from arekit.networks.eval.base import BaseModelEvaluator
 
 
-class OpinionBasedEvaluationHelper(EvaluationHelper):
+class OpinionBasedModelEvaluator(BaseModelEvaluator):
 
     def __init__(self, evaluator):
         assert(isinstance(evaluator, BaseEvaluator))
         self.__evaluator = evaluator
 
-    def evaluate_model(self, data_type, io, doc_ids, epoch_index):
-        assert(isinstance(io, NeuralNetworkIO))
+    def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
+        raise NotImplementedError()
+
+    def evaluate(self, data_type, doc_ids, epoch_index):
         assert(isinstance(doc_ids, collections.Iterable))
         assert(isinstance(epoch_index, int))
 
-        opinions_cmp = io.iter_opinion_collections_to_compare(data_type=data_type,
-                                                              doc_ids=doc_ids,
-                                                              epoch_index=epoch_index)
+        opinions_cmp = self.iter_opinion_collections_to_compare(data_type=data_type,
+                                                                doc_ids=doc_ids,
+                                                                epoch_index=epoch_index)
 
         return self.__evaluator.evaluate(cmp_pairs=opinions_cmp)

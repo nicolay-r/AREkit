@@ -21,11 +21,17 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO):
 
     # region 'get' public methods
 
-    def get_model_filepath(self):
+    @property
+    def ModelSavePathPrefix(self):
         return os.path.join(self.__get_model_states_dir(),
                             u'{}'.format(self.__model_name))
 
-    def get_model_root(self):
+    @property
+    def ModelSavePath(self):
+        return u"{}.state".format(self.ModelSavePathPrefix)
+
+    @property
+    def ModelRoot(self):
         return self.__get_model_root()
 
     @property
@@ -41,13 +47,16 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO):
         assert(isinstance(log_values, list))
         assert(len(log_names) == len(log_values))
 
-        log_path = os.path.join(self.get_model_root(), u"log.txt")
+        log_path = os.path.join(self.ModelRoot, u"log.txt")
 
         with open(log_path, 'w') as f:
             for index, log_value in enumerate(log_values):
                 f.write("{}: {}\n".format(log_names[index], log_value))
 
     # endregion
+
+    def iter_doc_ids(self, data_type):
+        raise NotImplementedError()
 
     def read_parsed_news(self, doc_id, keep_tokens, stemmer):
         raise NotImplementedError()
@@ -58,13 +67,18 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO):
     def read_synonyms_collection(self, stemmer):
         raise NotImplementedError()
 
+    def create_opinion_collection(self):
+        raise NotImplementedError()
+
+    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
+        raise NotImplementedError()
+
+    def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
+        raise NotImplementedError()
+
     def init_synonyms_collection(self, stemmer):
         assert(isinstance(stemmer, Stemmer))
         self.__synonyms = self.read_synonyms_collection(stemmer=stemmer)
-
-    def create_model_state_filepath(self):
-        return os.path.join(self.__get_model_states_dir(),
-                            u'{}.state'.format(self.__model_name))
 
     # region private methods
 

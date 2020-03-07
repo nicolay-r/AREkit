@@ -1,5 +1,4 @@
-class EvaluationHelper(object):
+class BaseModelEvaluator(object):
 
-    @staticmethod
-    def evaluate_model(data_type, io, indices, epoch_index):
+    def evaluate(self, data_type, indices, epoch_index):
         raise NotImplementedError()

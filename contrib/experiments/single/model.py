@@ -1,8 +1,8 @@
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.single.evaluator import CustomOpinionBasedModelEvaluator
 from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
 
-from arekit.networks.eval.opinion_based import OpinionBasedEvaluationHelper
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.callback import Callback
@@ -96,9 +96,11 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     def __prepare_sources(self):
         self.__init_helper = self.create_model_init_helper()
-        # TODO. In core
-        self.__eval_helper = OpinionBasedEvaluationHelper(
-            self.__evaluator_class(synonyms=self.IO.SynonymsCollection))
+
+        self.__eval_helper = CustomOpinionBasedModelEvaluator(
+            evaluator=self.__evaluator_class(synonyms=self.IO.SynonymsCollection),
+            nn_io=self.__nn_io)
+
         self.__print_statistic()
 
     def __print_statistic(self):
