@@ -1,7 +1,7 @@
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
-from arekit.evaluation.evaluators.cmp_table import DocumentCompareTable
+from arekit.common.evaluation import DocumentCompareTable
 
 
 class BaseEvaluator(object):

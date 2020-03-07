@@ -1,7 +1,7 @@
 from collections import OrderedDict
-from arekit.evaluation.evaluators.cmp_table import DocumentCompareTable
-from arekit.evaluation.results.base import BaseEvalResult
-from arekit.evaluation.results.utils import calc_f1_single_class
+from arekit.common.evaluation import DocumentCompareTable
+from arekit.common.evaluation import BaseEvalResult
+from arekit.common.evaluation.results.utils import calc_f1_single_class
 
 
 class SingleClassEvalResult(BaseEvalResult):

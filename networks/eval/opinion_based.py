@@ -1,6 +1,6 @@
 import collections
 
-from arekit.evaluation.evaluators.base import BaseEvaluator
+from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.networks.eval.base import BaseModelEvaluator
 
 

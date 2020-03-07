@@ -4,10 +4,10 @@ import collections
 
 from arekit.common.labels.base import PositiveLabel, NegativeLabel, Label
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.evaluation.cmp_opinions import OpinionCollectionsToCompare
-from arekit.evaluation.evaluators import metrics
-from arekit.evaluation.evaluators.base import BaseEvaluator
-from arekit.evaluation.results.two_class import TwoClassEvalResult
+from arekit.common.evaluation.cmp_opinions import OpinionCollectionsToCompare
+from arekit.common.evaluation.evaluators import metrics
+from arekit.common.evaluation.evaluators.base import BaseEvaluator
+from arekit.common.evaluation import TwoClassEvalResult
 
 
 class TwoClassEvaluator(BaseEvaluator):

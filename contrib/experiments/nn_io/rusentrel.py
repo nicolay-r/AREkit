@@ -9,7 +9,7 @@ from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
-from arekit.evaluation.utils import OpinionCollectionsToCompareUtils
+from arekit.common.evaluation import OpinionCollectionsToCompareUtils
 from arekit.processing.lemmatization.base import Stemmer
 
 

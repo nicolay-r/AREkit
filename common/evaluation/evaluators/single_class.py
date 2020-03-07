@@ -3,10 +3,10 @@ import collections
 from arekit.common.labels.base import Label
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.opinions.base import Opinion
-from arekit.evaluation.cmp_opinions import OpinionCollectionsToCompare
-from arekit.evaluation.evaluators import metrics
-from arekit.evaluation.evaluators.base import BaseEvaluator
-from arekit.evaluation.results.single_class import SingleClassEvalResult
+from arekit.common.evaluation.cmp_opinions import OpinionCollectionsToCompare
+from arekit.common.evaluation.evaluators import metrics
+from arekit.common.evaluation.evaluators.base import BaseEvaluator
+from arekit.common.evaluation.results.single_class import SingleClassEvalResult
 
 
 class SentimentLabel(Label):

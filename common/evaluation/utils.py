@@ -1,5 +1,5 @@
 import collections
-from arekit.evaluation.cmp_opinions import OpinionCollectionsToCompare
+from arekit.common.evaluation.cmp_opinions import OpinionCollectionsToCompare
 
 
 class OpinionCollectionsToCompareUtils:
