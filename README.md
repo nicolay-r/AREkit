@@ -4,32 +4,25 @@
 
 **AREkit** -- is a python toolkit for **sentiment attitude extraction** task.
 
-# Contents
-* [Description](#description)
-* [Dependencies](#dependencies)
-* [Manual](#manual-update-in-progress)
-* [Installation](#installation)
-* [How to use examples](#usage-update-in-progress)
-
 ## Description
 
 Large news and analytical articles shares a large amount of opinions conveyed as by author towards
 mentioned entities/events, and also between mentioned entities, i.e. from **subject** towards **object**.
-The contribution of this library is as follows:
 
-* Brings the task of sentiment attitudes extraction at
-fundamental level by providing a common types/structures that are important for domain research;
-Please refer to `common/` source directory for more details.
+* [Contribution](contrib) directory --  is a contribution in Sentiment Attitude Extraction domain;
 
-* Provides a necessary toolset to perform natural language processing (NLP):
+* [Common](common) directory -- brings the sentiment attitudes extraction task at a
+fundamental level by providing common types/structures that are important for domain research;
+
+* [Processing](processing) directory -- provides a necessary toolset to perform natural language processing (NLP):
 text parsers,
 syntax processing,
 named entity recognition (NER),
 part of speech tagging (POS),
 stemmer;
-Please refer to `processing/` source directory for more details.
 
-* Provides implemented ML models `networks/` that are intended for automatic sentiment relation extraction (RE)
+* [Networks](networks) directory -- Provides both neural network model implementation (in Tensorflow) 
+intended for the automatic sentiment relation extraction (RE)
 on document level.
 
 Structurally, the fundamental task representation could be departed into following domains:
@@ -64,90 +57,10 @@ List of the toolset dependencies is as follows:
 
 This toolset includes the following instruments and domain-related datasets:
 
-* **Common** [[DIR]](networks) -- fundamential structures and types utilized in Sentiment Attitudes Extraction Task;
-    * Bound [[base-class]](common/bound.py) -- range in text;
-    * TextObject [[base-class]](common/text_object.py) -- any entry in text with related *Bound*;
-    * Entity [[base-class]](common/entities/base.py) -- same as TextObject but related to specific text entries;
-    * Opinion [[base-class]](common/opinions/base.py) -- actually text attitudes with 'source' and 'destination' ('X' -> 'Y');
-    * Label [[base-classes]](common/labels/base.py) -- sentiment label;
-    * Frame;
-    * FrameVariant [[base-class]](common/frame_variants/base.py);
-    * Embedding [[base-class]](common/embeddings/base.py) -- base class for Word2Vec-like embeddings;
-    * Synonyms [[base-class]](common/synonyms.py) -- storage for synonymous entries (words and phrases);
-* **Processing** [[README]](processing/README.md);
-    * Lemmatization [[API]](processing/lemmatization/base.py);
-        - Mystem [[wrapper]](processing/lemmatization/mystem.py) -- Yandex Mystem wrapper
-            [[github-repo]](https://github.com/dmitry/yandex_mystem);
-        - Texterra [[wrapper]](processing/lemmatization/texterra_wrap.py) -- not supported/utilized in this project;
-    * Named Entity Recognition (NER) [[API]](processing/ner/base.py):
-        - DeepNER [[wrapper]](processing/ner/deepner_wrap.py) -- is a wrapper of IPavlov CRF-BiLSTM model
-            [[service]](https://github.com/nicolay-r/ner-flask-wrapper) /
-            [[original]](https://github.com/deepmipt/ner);
-    * Part-Of-Speech Tagging (POS) [[API]](processing/pos/base.py);
-        - Mystem [[wrapper]](processing/pos/mystem_wrap.py) -- Yandex Mystem wrapper;
-    * Syntax Parser [[API]](processing/syntax/base.py);
-        - SyntaxNet [[wrapper]](processing/syntax/syntaxnet_wrap.py);
-        - Texterra [[wrapper]](processing/syntax/texterra_wrap.py);
-    * Text Processing
-        - Parser [[base-class]](processing/text/parser.py) -- text parser;
-        - ParsedText [[base-class]](processing/text/parsed.py) -- processed text;
-        - Tokens [[base-class]](processing/text/tokens.py) -- specific text terms, such as: punctuation signs, numbers, URL-links etc.;
-* **Neural Networks** [[README]](contrib/networks/README.md)
-    * Network [[base-class]](networks/nn.py);
+* **Network** [[base-class]](networks/nn.py);
     * Model [[base-class]](networks/tf_model.py);
     * IO [[base-class]](networks/nn_io.py);
     * Callback [[base-class]](networks/callback.py);
-    * **Aspect-based Attentive encoders**:
-        - Multilayer Perceptron (MLP)
-            [[code]](contrib/networks/attention/architectures/mlp.py) /
-            [[github:nicolay-r]](https://github.com/nicolay-r/mlp-attention);
-    * **Self-based Attentive encoders**:
-        - P. Zhou et. al.
-            [[code]](contrib/networks/attention/architectures/self_p_zhou.py) /
-            [[github:SeoSangwoo]](https://github.com/SeoSangwoo/Attention-Based-BiLSTM-relation-extraction);
-        - Z. Yang et. al.
-            [[code]](contrib/networks/attention/architectures/self_z_yang.py) /
-            [[github:ilivans]](https://github.com/ilivans/tf-rnn-attention);
-    * **Single Sentence Based Architectures**:
-        - CNN
-            [[code]](contrib/networks/context/architectures/cnn.py) /
-            [[github:roomylee]](https://github.com/roomylee/cnn-relation-extraction);
-        - CNN + Aspect-based MLP Attention
-            [[code]](contrib/networks/context/architectures/base/att_cnn_base.py);
-        - PCNN
-            [[code]](contrib/networks/context/architectures/pcnn.py) /
-            [[github:nicolay-r]](https://github.com/nicolay-r/sentiment-pcnn);
-        - PCNN + Aspect-based MLP Attention
-            [[code]](contrib/networks/context/architectures/base/att_pcnn_base.py);
-        - RNN (LSTM/GRU/RNN)
-            [[code]](contrib/networks/context/architectures/rnn.py) /
-            [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
-        - IAN (frames based)
-            [[code]](contrib/networks/context/architectures/ian_frames.py) /
-            [[github:lpq29743]](https://github.com/lpq29743/IAN);
-        - RCNN (BiLSTM + CNN)
-            [[code]](contrib/networks/context/architectures/rcnn.py) /
-            [[github:roomylee]](https://github.com/roomylee/rcnn-text-classification);
-        - RCNN + Self Attention
-            [[code]](networks/context/architectures/rcnn_self.py);
-        - BiLSTM
-            [[code]](contrib/networks/context/architectures/bilstm.py) /
-            [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
-        - Bi-LSTM + Aspect-based MLP Attention 
-            [[code]](contrib/networks/context/architectures/base/att_bilstm_base.py)
-        - Bi-LSTM + Self Attention
-            [[code]](contrib/networks/context/architectures/self_att_bilstm.py) /
-            [[github:roomylee]](https://github.com/roomylee/self-attentive-emb-tf);
-        - RCNN + Self Attention
-            [[code]](contrib/networks/context/architectures/att_self_rcnn.py);
-    * **Multi Sentence Based Encoders Architectures**:
-        - Self Attentive 
-            [[code]](contrib/networks/multi/architectures/att_self.py);
-        - Max Pooling
-            [[code]](contrib/networks/multi/architectures/max_pooling.py) /
-            [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
-        - Single MLP
-            [[code]](contrib/networks/multi/architectures/base/base_single_mlp.py);
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
     * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
     * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);
