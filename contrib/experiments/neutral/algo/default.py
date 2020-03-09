@@ -108,7 +108,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
                 if key not in relevant_pairs:
                     continue
 
-                opinion = self.__create_opinion_func(e1.Value, e2.Value, NeutralLabel())
+                opinion = self.__create_opinion_func(e1.Value, e2.Value)
 
                 if neutral_opinions.has_synonymous_opinion(opinion):
                     continue
@@ -158,7 +158,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
                     continue
 
                 if sentiment_opinions is not None:
-                    o = self.__create_opinion_func(e1.Value, e2.Value, NeutralLabel())
+                    o = self.__create_opinion_func(e1.Value, e2.Value)
                     if sentiment_opinions.has_synonymous_opinion(opinion=o):
                         continue
 
