@@ -57,7 +57,8 @@ def __create_embedding_for_word(word, max_part_size, embedding):
         if s_i is None:
             c_l -= 1
             continue
-        vector += embedding.get_vector_by_index(s_i)
+
+        vector = vector + embedding.get_vector_by_index(s_i)
         c_i += c_l
         count += 1
 
