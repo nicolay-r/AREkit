@@ -1,4 +1,4 @@
-from arekit.common.evaluation import DocumentCompareTable
+from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 
 
 class BaseEvalResult(object):
