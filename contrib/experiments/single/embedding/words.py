@@ -1,7 +1,6 @@
 from arekit.common.embeddings.base import Embedding
 from arekit.contrib.experiments.single.embedding.custom import create_term_embedding
 from arekit.contrib.experiments.single.embedding.entities import iter_all_entity_types
-from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
 from arekit.networks.context.embedding import entity
 
 
