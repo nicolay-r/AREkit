@@ -24,7 +24,7 @@ def create_term_embedding(term,
                                            max_part_size=max_part_size,
                                            embedding=embedding)
         count += c
-        vector += v
+        vector = vector + v
 
     return vector / count if count > 0 else vector
 
