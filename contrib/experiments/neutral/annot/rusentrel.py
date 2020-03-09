@@ -10,14 +10,13 @@ from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnota
 from arekit.contrib.experiments.neutral.annot.base import BaseAnnotator
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.networks.data_type import DataType
+from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
-from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
-from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
 logger = logging.getLogger(__name__)
@@ -31,16 +30,14 @@ class RuSentRelNeutralAnnotator(BaseAnnotator):
 
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
-    def __init__(self, experiments_io):
+    def __init__(self, experiments_io, stemmer, create_synonyms_collection):
         assert(isinstance(experiments_io, BaseExperimentsIOUtils))
+        assert(isinstance(stemmer, Stemmer))
+        assert(callable(create_synonyms_collection))
 
-        # TODO. Should be a parameters
         self.__experiments_io = experiments_io
-        self.__stemmer = MystemWrapper()
-
-        self.__synonyms = RuSentRelSynonymsCollection.read_collection(
-            stemmer=self.__stemmer,
-            is_read_only=True)
+        self.__stemmer = stemmer
+        self.__synonyms = create_synonyms_collection()
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self.__synonyms,

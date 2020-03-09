@@ -80,7 +80,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
         filepath = self.ExperimentsIO.NeutralAnnontator.get_opin_filepath(
             doc_id=doc_id,
             data_type=data_type,
-            output_dir=self.__experiments_io.get_experiments_dir())
+            output_dir=self.ExperimentsIO.get_experiments_dir())
 
         return RuSentRelOpinionCollection.read_from_file(filepath=filepath,
                                                          synonyms=self.SynonymsCollection)
