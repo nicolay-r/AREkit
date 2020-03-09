@@ -39,7 +39,7 @@ class SingleInstanceModelInitializer(object):
         word_embedding.set_stemmer(config.Stemmer)
         config.set_word_embedding(word_embedding)
 
-        self.__entity_embeddings = generate_entity_embeddings(
+        entity_embeddings = generate_entity_embeddings(
             use_types=config.UseEntityTypesInEmbedding,
             word_embedding=word_embedding)
 
@@ -60,6 +60,7 @@ class SingleInstanceModelInitializer(object):
                                                     config=config))
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
+                                                       entity_embeddings=entity_embeddings,
                                                        word_embedding=word_embedding,
                                                        config=config)
 

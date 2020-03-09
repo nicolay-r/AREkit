@@ -4,11 +4,14 @@ from arekit.contrib.experiments.single.embedding.entities import iter_all_entity
 from arekit.networks.context.embedding import entity
 
 
-def __custom_embedding_func(self, term, word_embedding):
+# region private functions
+
+def __custom_embedding_func(term, entity_embeddings, word_embedding):
+    assert(isinstance(entity_embeddings, dict))
     assert(isinstance(term, unicode))
 
-    if term in self.__entity_embeddings:
-        return self.__entity_embeddings[term]
+    if term in entity_embeddings:
+        return entity_embeddings[term]
 
     # TODO. Entity has _ separator!!!
     return create_term_embedding(term=term,
@@ -34,13 +37,18 @@ def __iter_custom_words(iter_all_terms_func, config):
         yield term
 
 
-def init_custom_words_embedding(iter_all_terms_func, word_embedding, config):
+# endregion
+
+def init_custom_words_embedding(iter_all_terms_func,
+                                entity_embeddings,
+                                word_embedding,
+                                config):
+    assert(isinstance(entity_embeddings, dict))
     assert(callable(iter_all_terms_func))
 
     return Embedding.from_list_with_embedding_func(
             words_iter=__iter_custom_words(iter_all_terms_func=iter_all_terms_func,
                                            config=config),
-            embedding_func=lambda term: __custom_embedding_func(term, word_embedding=word_embedding))
-
-
-
+            embedding_func=lambda term: __custom_embedding_func(term=term,
+                                                                entity_embeddings=entity_embeddings,
+                                                                word_embedding=word_embedding))
