@@ -52,13 +52,6 @@ class RusvectoresEmbedding(Embedding):
 
         return d
 
-    def contains_as_plain(self, word):
-        """
-        Considering a non-lemmatized term in search
-        """
-        assert(isinstance(word, unicode))
-        return self.__try_find_index(word, lemmatize=False) is not None
-
     # endregion
 
     # region general methods

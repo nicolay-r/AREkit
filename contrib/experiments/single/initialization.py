@@ -20,7 +20,6 @@ from arekit.networks.context.embedding.input import create_term_embedding_matrix
 from arekit.networks.labeling.paired import PairedLabelsHelper
 from arekit.networks.data_type import DataType
 from arekit.networks.labeling.single import SingleLabelsHelper
-from arekit.source.embeddings.rusvectores import RusvectoresEmbedding
 from arekit.source.rusentiframes.collection import RuSentiFramesCollection
 
 
@@ -33,9 +32,8 @@ class SingleInstanceModelInitializer(object):
         assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        word_embedding = RusvectoresEmbedding.from_word2vec_format(
-            filepath=nn_io.ExperimentsIO.get_word_embedding_filepath(),
-            binary=True)
+        word_embedding = nn_io.ExperimentsIO.WordEmbedding
+
         word_embedding.set_stemmer(config.Stemmer)
         config.set_word_embedding(word_embedding)
 

@@ -52,13 +52,13 @@ def __create_embedding_for_word(word, max_part_size, embedding):
 
         right_b = min(len(word), c_i + c_l)
 
-        s_i = embedding.contains_as_plain(word=word[c_i:right_b])
+        s_i = embedding.try_find_index_by_plain_word(word=word[c_i:right_b])
 
         if s_i is None:
             c_l -= 1
             continue
 
-        vector = vector + embedding.get_vector_by_index(s_i)
+        vector += embedding.get_vector_by_index(s_i)
         c_i += c_l
         count += 1
 

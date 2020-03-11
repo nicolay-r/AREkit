@@ -27,6 +27,7 @@ def run_testing(full_model_name,
                 common_config_modification_func=None,
                 cancel_training_by_cost=True):
     """
+    :param experiments_io:
     :param full_model_name: unicode
         model name
     :param create_config: func
