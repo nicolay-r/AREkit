@@ -99,7 +99,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
         self.__eval_helper = CustomOpinionBasedModelEvaluator(
             evaluator=self.__evaluator_class(synonyms=self.IO.SynonymsCollection),
-            nn_io=self.__nn_io)
+            nn_io=self.IO)
 
         self.__print_statistic()
 
