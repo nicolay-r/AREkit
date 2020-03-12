@@ -8,7 +8,7 @@ from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.embeddings.base import Embedding
 from arekit.common.embeddings.tokens import TokenEmbedding
 from arekit.networks.context.debug import DebugKeys
-from arekit.networks.context.embedding.entity import EntityMasks
+from arekit.networks.context.embedding.entity_masks import EntityMasks
 from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from arekit.processing.pos.base import POSTagger
 from arekit.processing.text.token import Token
@@ -16,18 +16,6 @@ from arekit.processing.text.tokens import Tokens
 
 
 logger = logging.getLogger(__name__)
-
-
-# region private functions
-
-def __select_entity_mask(index, subjects_set, objects_set):
-    if index in objects_set:
-        return EntityMasks.OBJ_ENTITY_MASK
-    elif index in subjects_set:
-        return EntityMasks.SUBJ_ENTITY_MASK
-    return EntityMasks.ANY_ENTITY_MASK
-
-# endregion
 
 
 def iter_embedding_indices_for_terms(terms,
@@ -72,11 +60,11 @@ def iter_embedding_indices_for_terms(terms,
         elif isinstance(term, TextFrameVariant):
             index = embedding_offsets.get_frame_index(frames_embedding.try_find_index_by_word(term.Variant.get_value()))
         elif isinstance(term, Entity):
-            e_mask = __select_entity_mask(index=i,
-                                          subjects_set=syn_subj_indices,
-                                          objects_set=syn_obj_indices)
-            e_value = entity.compose_entity_mask(e_mask=e_mask,
-                                                 e_type=term.Type if use_entity_types else None)
+            e_mask = EntityMasks.select_mask(index=i,
+                                             subjects_set=syn_subj_indices,
+                                             objects_set=syn_obj_indices)
+            e_value = EntityMasks.compose(e_mask=e_mask,
+                                          e_type=term.Type if use_entity_types else None)
             index = embedding_offsets.get_custom_word_index(custom_word_embedding.try_find_index_by_word(e_value))
         else:
             raise Exception("Unsuported type {}".format(term))

@@ -1,7 +1,6 @@
 from arekit.common.embeddings.base import Embedding
 from arekit.contrib.experiments.single.embedding.custom import create_term_embedding
-from arekit.contrib.experiments.single.embedding.entities import iter_all_entity_types
-from arekit.networks.context.embedding.entity import EntityMasks
+from arekit.networks.context.embedding.entity_masks import EntityMasks
 
 
 # region private functions
@@ -13,7 +12,6 @@ def __custom_embedding_func(term, entity_embeddings, word_embedding):
     if term in entity_embeddings:
         return entity_embeddings[term]
 
-    # TODO. Entity has _ separator!!!
     return create_term_embedding(term=term,
                                  embedding=word_embedding,
                                  max_part_size=3)
@@ -27,10 +25,6 @@ def __iter_custom_words(iter_all_terms_func, config):
                                          t not in config.WordEmbedding)
 
     for e_mask in EntityMasks.iter_supported_entity_masks():
-        for e_type in iter_all_entity_types():
-            # TODO. Entity has a different separator for type
-            yield EntityMasks.compose(e_mask=e_mask, e_type=e_type)
-            # TODO. Entity has a different separator for type
         yield EntityMasks.compose(e_mask=e_mask, e_type=None)
 
     for term in all_terms_iter:
