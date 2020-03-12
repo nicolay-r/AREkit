@@ -27,13 +27,13 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO):
     def __get_model_states_dir(self):
 
         result_dir = os.path.join(
-            self.__get_model_root(),
+            self.get_model_root(),
             os.path.join(u'model_states/'))
 
         create_dir_if_not_exists(result_dir)
         return result_dir
 
-    def __get_model_root(self):
+    def get_model_root(self):
         return get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__model_name,
             experiments_dir=self.__experiments_io.get_experiments_dir())
@@ -55,7 +55,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO):
         assert(isinstance(log_values, list))
         assert(len(log_names) == len(log_values))
 
-        log_path = os.path.join(self.__get_model_root(), u"log.txt")
+        log_path = os.path.join(self.get_model_root(), u"log.txt")
 
         with open(log_path, 'w') as f:
             for index, log_value in enumerate(log_values):
@@ -69,7 +69,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO):
         rm_dir_contents(model_root)
 
     def get_logfile_dir(self):
-        return path.join(self.__get_model_root(), u"log/")
+        return path.join(self.get_model_root(), u"log/")
 
     # TODO. Everything below is a part of BaseExperimentDataProcessing
 

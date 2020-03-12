@@ -33,7 +33,7 @@ class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
         assert(isinstance(epoch_index, int))
 
         result_dir = os.path.join(
-            self.__get_model_root(),
+            self.get_model_root(),
             os.path.join(u"eval/{}/{}/{}".format(data_type,
                                                  self.__current_cv_index,
                                                  str(epoch_index))))

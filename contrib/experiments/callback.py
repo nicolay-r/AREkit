@@ -130,7 +130,7 @@ class CustomCallback(Callback):
 
     # region private methods
 
-    def __reset_experiment_dependent_parameters(self, ):
+    def __reset_experiment_dependent_parameters(self):
         self.__costs_history = []
 
     def __check_costs_still_improving(self, avg_cost):
