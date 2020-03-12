@@ -1,9 +1,6 @@
-import glob
 import os
 import gc
 import logging
-import shutil
-from os import path
 
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
@@ -156,15 +153,7 @@ def __create_nn_io_and_callback(
 
     assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
 
-    model_root = nn_io.ModelRoot
-
-    # Clear model output.
-    if clear_model_contents:
-        rm_dir_contents(model_root)
-
-    log_filedir = path.join(model_root, u"log/")
-
-    callback = create_callback_func(log_dir=log_filedir)
+    callback = create_callback_func(log_dir=nn_io.get_logfile_dir())
 
     callback.PredictVerbosePerFileStatistic = False
 
@@ -173,11 +162,3 @@ def __create_nn_io_and_callback(
 # endregion
 
 
-def rm_dir_contents(dir_path):
-    contents = glob.glob(dir_path)
-    for f in contents:
-        print "Removing old file/dir: {}".format(f)
-        if os.path.isfile(f):
-            os.remove(f)
-        else:
-            shutil.rmtree(f, ignore_errors=True)

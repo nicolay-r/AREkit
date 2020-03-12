@@ -14,10 +14,10 @@ class BaseExperimentsIOUtils(object):
     def get_experiments_dir(self):
         raise NotImplementedError()
 
-    def get_capitals_list(self):
+    def get_capitals_set(self):
         raise NotImplementedError()
 
-    def get_states_list(self):
+    def get_states_set(self):
         raise NotImplementedError()
 
     def get_doc_stat_filepath(self):

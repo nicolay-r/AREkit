@@ -114,8 +114,8 @@ def extract_text_opinions(nn_io,
             lambda value: provide_entity_type_by_value(
                 value=value,
                 synonyms=nn_io.SynonymsCollection,
-                states_list=experiments_io.get_states_list(),
-                capitals_list=experiments_io.get_capitals_list()))
+                states_set=experiments_io.get_states_set(),
+                capitals_set=experiments_io.get_capitals_set()))
 
         if not parsed_collection.contains_id(news_id):
             parsed_collection.add(parsed_news)

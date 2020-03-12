@@ -1,3 +1,7 @@
+import glob
+import os
+import shutil
+
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.news import RuAttitudesNews
 from arekit.source.ruattitudes.reader import RuAttitudesFormatReader
@@ -26,3 +30,13 @@ def read_ruattitudes_in_memory(stemmer, doc_ids_set=None):
         d[news.NewsIndex] = news
 
     return d
+
+
+def rm_dir_contents(dir_path):
+    contents = glob.glob(dir_path)
+    for f in contents:
+        print "Removing old file/dir: {}".format(f)
+        if os.path.isfile(f):
+            os.remove(f)
+        else:
+            shutil.rmtree(f, ignore_errors=True)

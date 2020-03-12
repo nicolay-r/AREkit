@@ -20,11 +20,6 @@ from arekit.networks.predict_log import NetworkInputDependentVariables
 logger = logging.getLogger(__name__)
 
 
-# TODO. Implement and apply method, which is assumes to receive a text from
-# which we should first:
-# 1) extract entities (NER);
-# 2) extract sentiment attitudes;
-# Finally: Plot graph.
 class TensorflowModel(object):
     """
     Base model class, which provides api for
@@ -110,7 +105,7 @@ class TensorflowModel(object):
         self.__initialize_session()
 
         if load_model:
-            saved_model_path = self.__nn_io.ModelSavePath
+            saved_model_path = u"{}.state".format(self.__nn_io.ModelSavePathPrefix)
             logger.info("Loading model: {}".format(saved_model_path))
             self.load_model(saved_model_path)
 
