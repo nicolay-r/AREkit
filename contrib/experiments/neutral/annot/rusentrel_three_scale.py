@@ -22,9 +22,10 @@ from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
 logger = logging.getLogger(__name__)
 
 
-class RuSentRelNeutralAnnotator(BaseAnnotator):
+class RuSentRelThreeScaleNeutralAnnotator(BaseAnnotator):
     """
     Neutral Annotator for RuSentRel Collection (of each data_type)
+
     Three scale classification task.
     """
 
@@ -121,6 +122,6 @@ class RuSentRelNeutralAnnotator(BaseAnnotator):
         return join(root,
                     u"art{doc_id}.neut.{d_type}.txt".format(
                         doc_id=doc_id,
-                        d_type=RuSentRelNeutralAnnotator.__data_type_to_string(data_type)))
+                        d_type=RuSentRelThreeScaleNeutralAnnotator.__data_type_to_string(data_type)))
 
 

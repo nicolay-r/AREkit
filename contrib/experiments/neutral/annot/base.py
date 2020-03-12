@@ -4,10 +4,8 @@ class BaseAnnotator(object):
     Performs neutral annotation for different data_type.
     """
 
-    # TODO. Use data_type instead!
-    def create(self, is_train):
+    def create(self, data_type):
         raise NotImplementedError()
 
-    # TODO. Add
-    # def get_opin_filepath(doc_id, is_train, experiments_io, model_name=u"universal"):
-    #    raise NotImplementedError
+    def get_opin_filepath(self, doc_id, data_type, output_dir, model_name=u"universal"):
+        raise NotImplementedError()
