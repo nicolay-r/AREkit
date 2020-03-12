@@ -2,7 +2,6 @@ import collections
 
 from arekit.common.entities.base import Entity
 from arekit.common.entities.collection import EntityCollection
-from arekit.common.labels.base import NeutralLabel
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.synonyms import SynonymsCollection

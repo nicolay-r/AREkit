@@ -5,7 +5,6 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
-from arekit.contrib.experiments.single.embedding.entities import provide_entity_type_by_value
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
@@ -109,13 +108,6 @@ def extract_text_opinions(nn_io,
             lambda sentence: RuSentiFramesParseHelper.parse_frames_in_parsed_text(
                 frame_variants_collection=frame_variants_collection,
                 parsed_text=sentence))
-
-        parsed_news.modify_entity_types(
-            lambda value: provide_entity_type_by_value(
-                value=value,
-                synonyms=nn_io.SynonymsCollection,
-                states_set=experiments_io.get_states_set(),
-                capitals_set=experiments_io.get_capitals_set()))
 
         if not parsed_collection.contains_id(news_id):
             parsed_collection.add(parsed_news)
