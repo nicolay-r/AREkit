@@ -1,4 +1,5 @@
 import collections
+import os
 
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.contrib.experiments.doc_stat.rusentrel import RuSentRelDocStatGenerator
@@ -82,12 +83,14 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
             data_type=data_type,
             output_dir=self.ExperimentsIO.get_experiments_dir())
 
+        if not os.path.exists(filepath):
+            return None
+
         return RuSentRelOpinionCollection.read_from_file(filepath=filepath,
                                                          synonyms=self.SynonymsCollection)
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
-
         return RuSentRelOpinionCollection.read_collection(doc_id=doc_id,
                                                           synonyms=self.SynonymsCollection)
 

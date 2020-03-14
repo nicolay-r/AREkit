@@ -1,14 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import utils
 import logging
-import os
-from os.path import join
 
 from arekit.common.labels.base import NeutralLabel
 from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
 from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
-from arekit.contrib.experiments.neutral.annot.base import BaseAnnotator
-from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.contrib.experiments.neutral.annot.rusentrel_two_scale import RuSentRelTwoScaleNeutralAnnotator
 from arekit.networks.data_type import DataType
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
@@ -22,13 +20,14 @@ from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
 logger = logging.getLogger(__name__)
 
 
-class RuSentRelThreeScaleNeutralAnnotator(BaseAnnotator):
+class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
     """
     Neutral Annotator for RuSentRel Collection (of each data_type)
 
     Three scale classification task.
     """
 
+    __annot_name = u"neutral_3_scale"
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self, experiments_io, stemmer, create_synonyms_collection):
@@ -36,9 +35,11 @@ class RuSentRelThreeScaleNeutralAnnotator(BaseAnnotator):
         assert(isinstance(stemmer, Stemmer))
         assert(callable(create_synonyms_collection))
 
-        self.__experiments_io = experiments_io
+        super(RuSentRelThreeScaleNeutralAnnotator).__init__(
+            experiments_io=experiments_io,
+            create_synonyms_collection=create_synonyms_collection)
+
         self.__stemmer = stemmer
-        self.__synonyms = create_synonyms_collection()
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self.__synonyms,
@@ -47,12 +48,16 @@ class RuSentRelThreeScaleNeutralAnnotator(BaseAnnotator):
                 value_target=t_value,
                 sentiment=NeutralLabel()),
             create_opinion_collection_func=lambda: RuSentRelOpinionCollection(opinions=None,
-                                                                              synonyms=self.__synonyms),
+                                                                              synonyms=self.SynonoymsCollection),
             create_parsed_news_func=lambda doc_id: self.__create_parsed_news(doc_id=doc_id,
-                                                                             synonyms=self.__synonyms,
+                                                                             synonyms=self.SynonoymsCollection,
                                                                              stemmer=self.__stemmer),
             iter_news_ids=RuSentRelIOUtils.iter_collection_indices(),
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
+
+    @property
+    def AnnotationModelName(self):
+        return self.__annot_name
 
     # region private methods
 
@@ -69,13 +74,6 @@ class RuSentRelThreeScaleNeutralAnnotator(BaseAnnotator):
                                                             keep_tokens=False,
                                                             stemmer=stemmer)
 
-    @staticmethod
-    def __data_type_to_string(data_type):
-        if data_type == DataType.Train:
-            return u'train'
-        if data_type == DataType.Test:
-            return u'test'
-
     # endregion
 
     def create(self, data_type):
@@ -85,13 +83,10 @@ class RuSentRelThreeScaleNeutralAnnotator(BaseAnnotator):
 
             neutral_filepath = self.get_opin_filepath(doc_id=doc_id,
                                                       data_type=data_type,
-                                                      output_dir=self.__experiments_io.get_experiments_dir())
+                                                      output_dir=self.ExperimentsIO.get_experiments_dir())
 
-            # Skip if this file is already exists
-            if os.path.isfile(neutral_filepath):
-                if os.path.getsize(neutral_filepath):
-                    logger.debug("Skipping File: {} [OK. File already exists]".format(neutral_filepath))
-                    continue
+            if utils.check_file_already_exsited(filepath=neutral_filepath, logger=logger):
+                continue
 
             msg = "Create Neutral File (MODE {}): '{}'".format(data_type, neutral_filepath)
 
@@ -102,7 +97,7 @@ class RuSentRelThreeScaleNeutralAnnotator(BaseAnnotator):
                 synonyms=self.__synonyms)
 
             news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
-            opinions = RuSentRelOpinionCollection.read_collection(doc_id=doc_id, synonyms=self.__synonyms)
+            opinions = RuSentRelOpinionCollection.read_collection(doc_id=doc_id, synonyms=self.SynonoymsCollection)
 
             neutral_opins = self.__algo.make_neutrals(
                 news_id=doc_id,
@@ -111,17 +106,5 @@ class RuSentRelThreeScaleNeutralAnnotator(BaseAnnotator):
 
             neutral_opins.save_to_file(neutral_filepath)
 
-    def get_opin_filepath(self, doc_id, data_type, output_dir, model_name=u"universal"):
-        assert(isinstance(doc_id, int))
-        assert(isinstance(data_type, unicode))
-        assert(isinstance(model_name, unicode))
-        assert(isinstance(output_dir, unicode))
-
-        root = get_path_of_subfolder_in_experiments_dir(subfolder_name=model_name,
-                                                        experiments_dir=output_dir)
-        return join(root,
-                    u"art{doc_id}.neut.{d_type}.txt".format(
-                        doc_id=doc_id,
-                        d_type=RuSentRelThreeScaleNeutralAnnotator.__data_type_to_string(data_type)))
 
 

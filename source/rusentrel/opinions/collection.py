@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-import io
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.opinions.base import Opinion
-from arekit.common.utils import create_dir_if_not_exists
 from arekit.common.labels.base import Label
 from arekit.common.synonyms import SynonymsCollection
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
+from arekit.source.rusentrel.opinions.serializer import RuSentRelOpinionCollectionSerializer
 
 
 class RuSentRelOpinionCollection(OpinionCollection):
@@ -57,26 +55,7 @@ class RuSentRelOpinionCollection(OpinionCollection):
 
         return cls(opinions, synonyms)
 
-    @staticmethod
-    def __opinion_to_str(opinion):
-        assert(isinstance(opinion, Opinion))
-        return u"{}, {}, {}, current".format(
-            opinion.SourceValue,
-            opinion.TargetValue,
-            opinion.Sentiment.to_str())
-
     def save_to_file(self, filepath):
-        assert(isinstance(filepath, unicode))
-
-        def __opinion_key(opinion):
-            assert(isinstance(opinion, Opinion))
-            return opinion.SourceValue + opinion.TargetValue
-
-        sorted_ops = sorted(self, key=__opinion_key)
-
-        create_dir_if_not_exists(filepath)
-
-        with io.open(filepath, 'w') as f:
-            for o in sorted_ops:
-                f.write(self.__opinion_to_str(o))
-                f.write(u'\n')
+        RuSentRelOpinionCollectionSerializer.save_to_file(
+            collection=self,
+            filepath=filepath)
