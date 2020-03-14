@@ -1,24 +1,9 @@
-from arekit.processing.lemmatization.base import Stemmer
 
 
 class OpinionOperations(object):
 
     def __init__(self):
         self.__synonyms = None
-
-    # TODO. Already in data.io
-    @property
-    def SynonymsCollection(self):
-        return self.__synonyms
-
-    # TODO. Already in data.io
-    def read_synonyms_collection(self, stemmer):
-        raise NotImplementedError()
-
-    # TODO. Already in data.io
-    def init_synonyms_collection(self, stemmer):
-        assert(isinstance(stemmer, Stemmer))
-        self.__synonyms = self.read_synonyms_collection(stemmer=stemmer)
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
         raise NotImplementedError()

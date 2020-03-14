@@ -41,7 +41,7 @@ class SingleInstanceModelInitializer(object):
             use_types=config.UseEntityTypesInEmbedding,
             word_embedding=word_embedding)
 
-        self.__synonyms = nn_io.SynonymsCollection
+        self.__synonyms = nn_io.DataIO.SynonymsCollection
 
         self.__frames_collection = RuSentiFramesCollection.read_collection()
 

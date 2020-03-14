@@ -1,8 +1,5 @@
 from arekit.contrib.experiments.nn_io.cv_based import CVBasedNeuralNetworkIO
-from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
-from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
-from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
 class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
@@ -24,17 +21,6 @@ class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
         #     synonyms=None,
         #     create_opinion_func=None,
         #     create_opinion_collection_func=None)
-
-    def init_synonyms_collection(self, stemmer):
-        assert(isinstance(stemmer, Stemmer))
-        super(CustomRuAttitudesFormatIO, self).init_synonyms_collection(stemmer)
-        self.__ra_format_docs = read_ruattitudes_in_memory(stemmer)
-
-    def read_synonyms_collection(self, stemmer):
-        assert(isinstance(stemmer, Stemmer))
-        super(CustomRuAttitudesFormatIO, self).read_synonyms_collection(stemmer)
-        return RuSentRelSynonymsCollection.read_collection(stemmer=stemmer,
-                                                           is_read_only=True)
 
     def read_parsed_news(self, doc_id, keep_tokens, stemmer):
 

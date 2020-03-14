@@ -10,7 +10,6 @@ from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 from arekit.processing.lemmatization.base import Stemmer
 
 
@@ -45,7 +44,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     # endregion
 
     def create_docs_stat_generator(self):
-        return RuSentRelDocStatGenerator(synonyms=self.SynonymsCollection)
+        return RuSentRelDocStatGenerator(synonyms=self.DataIO.SynonymsCollection)
 
     def is_rusentrel_news_id(self, news_id):
         assert(isinstance(news_id, int))
@@ -53,13 +52,15 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
 
     # region 'read' public methods
 
+    # TODO. Remove stemmer.
     def read_parsed_news(self, doc_id, keep_tokens, stemmer):
         assert(isinstance(doc_id, int))
         assert(isinstance(keep_tokens, bool))
+        # TODO. Remove stemmer.
         assert(isinstance(stemmer, Stemmer))
 
         entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                     synonyms=self.SynonymsCollection)
+                                                                     synonyms=self.DataIO.SynonymsCollection)
 
         news = RuSentRelNews.read_document(doc_id, entities)
 
@@ -69,11 +70,6 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
                                                                    stemmer=stemmer)
 
         return news, parsed_news
-
-    def read_synonyms_collection(self, stemmer):
-        assert(isinstance(stemmer, Stemmer))
-        return RuSentRelSynonymsCollection.read_collection(stemmer=stemmer,
-                                                           is_read_only=True)
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, unicode))
@@ -87,12 +83,12 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
             return None
 
         return RuSentRelOpinionCollection.read_from_file(filepath=filepath,
-                                                         synonyms=self.SynonymsCollection)
+                                                         synonyms=self.DataIO.SynonymsCollection)
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
         return RuSentRelOpinionCollection.read_collection(doc_id=doc_id,
-                                                          synonyms=self.SynonymsCollection)
+                                                          synonyms=self.DataIO.SynonymsCollection)
 
     # endregion
 
@@ -135,7 +131,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
                 filepath=self.create_result_opinion_collection_filepath(data_type=data_type,
                                                                         doc_id=doc_id,
                                                                         epoch_index=epoch_index),
-                synonyms=self.SynonymsCollection))
+                synonyms=self.DataIO.SynonymsCollection))
 
         for opinions_cmp in it:
             yield opinions_cmp
@@ -145,6 +141,6 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     # region 'create' public methods
 
     def create_opinion_collection(self):
-        return RuSentRelOpinionCollection([], synonyms=self.SynonymsCollection)
+        return RuSentRelOpinionCollection([], synonyms=self.DataIO.SynonymsCollection)
 
     # endregion

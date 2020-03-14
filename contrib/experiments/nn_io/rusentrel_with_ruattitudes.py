@@ -3,7 +3,6 @@ import logging
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
-from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
 
@@ -21,16 +20,13 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
         super(RuSentRelWithRuAttitudesBasedExperimentIO, self).__init__(model_name=model_name,
                                                                         data_io=data_io,
                                                                         cv_count=cv_count)
-        self.__ru_attitudes = None
+
+        logger.debug("Loading RuAttitudes collection in memory, please wait ...")
+        self.__ru_attitudes = read_ruattitudes_in_memory(data_io.Stemmer)
 
     # region 'read' public methods
 
-    def init_synonyms_collection(self, stemmer):
-        assert(isinstance(stemmer, Stemmer))
-        super(RuSentRelWithRuAttitudesBasedExperimentIO, self).init_synonyms_collection(stemmer)
-        logger.debug("Loading RuAttitudes collection in memory, please wait ...")
-        self.__ru_attitudes = read_ruattitudes_in_memory(stemmer)
-
+    # TODO. Remove stemmer
     def read_parsed_news(self, doc_id, keep_tokens, stemmer):
         if doc_id in self.RuSentRelNewsIDsList:
             return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(doc_id=doc_id,
@@ -53,16 +49,18 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
         opinions = [opinion for opinion, _ in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news)]
 
         return OpinionCollection(opinions=opinions,
-                                 synonyms=self.SynonymsCollection)
+                                 synonyms=self.DataIO.SynonymsCollection)
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, unicode))
 
-        if doc_id in self.RuSentRelNewsIDsList:
-            return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_neutral_opinion_collection(
-                doc_id=doc_id,
-                data_type=data_type)
+        if not doc_id in self.RuSentRelNewsIDsList:
+            return None
+
+        return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_neutral_opinion_collection(
+            doc_id=doc_id,
+            data_type=data_type)
 
     def iter_train_data_indices(self):
         for doc_id in super(RuSentRelWithRuAttitudesBasedExperimentIO, self).iter_train_data_indices():

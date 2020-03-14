@@ -91,7 +91,6 @@ def run_testing(full_model_name,
         # Initialize config
         config = create_config()
         assert(isinstance(config, DefaultNetworkConfig))
-        nn_io.init_synonyms_collection(config.Stemmer)
 
         # Initialize network
         network = create_network()

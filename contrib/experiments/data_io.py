@@ -1,5 +1,12 @@
 class DataIO(object):
 
+    # TODO. Other dependecies (properties).
+    # TODO. Remove Stemmer from DefaultConfig
+
+    @property
+    def SynonymsCollection(self):
+        raise NotImplementedError()
+
     @property
     def NeutralAnnontator(self):
         raise NotImplementedError()

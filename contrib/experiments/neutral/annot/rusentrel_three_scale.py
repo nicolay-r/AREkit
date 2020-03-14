@@ -4,6 +4,7 @@ import utils
 import logging
 
 from arekit.common.labels.base import NeutralLabel
+from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.contrib.experiments.neutral.annot.rusentrel_two_scale import RuSentRelTwoScaleNeutralAnnotator
@@ -15,7 +16,7 @@ from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityC
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
-
+from arekit.source.rusentrel.opinions.serializer import RuSentRelOpinionCollectionSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -30,28 +31,27 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
     __annot_name = u"neutral_3_scale"
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
-    def __init__(self, data_io, stemmer, create_synonyms_collection):
+    def __init__(self, data_io, stemmer):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(stemmer, Stemmer))
-        assert(callable(create_synonyms_collection))
 
-        super(RuSentRelThreeScaleNeutralAnnotator).__init__(
-            data_io=data_io,
-            create_synonyms_collection=create_synonyms_collection)
+        super(RuSentRelThreeScaleNeutralAnnotator).__init__(data_io=data_io)
 
-        self.__stemmer = stemmer
+        self.__synonyms = data_io.SynonymsCollection
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self.__synonyms,
+            # TODO. Use Opninon instead. RuSentRelOpinion might be removed.
+            # TODO. Reason: to make this algorithm independent from RuSentRel*
             create_opinion_func=lambda s_value, t_value: RuSentRelOpinion(
                 value_source=s_value,
                 value_target=t_value,
                 sentiment=NeutralLabel()),
-            create_opinion_collection_func=lambda: RuSentRelOpinionCollection(opinions=None,
-                                                                              synonyms=self.SynonoymsCollection),
+            create_opinion_collection_func=lambda: OpinionCollection(opinions=None,
+                                                                     synonyms=self.__synonyms),
             create_parsed_news_func=lambda doc_id: self.__create_parsed_news(doc_id=doc_id,
-                                                                             synonyms=self.SynonoymsCollection,
-                                                                             stemmer=self.__stemmer),
+                                                                             synonyms=self.__synonyms,
+                                                                             stemmer=stemmer),
             iter_news_ids=RuSentRelIOUtils.iter_collection_indices(),
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
@@ -92,19 +92,19 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
 
             logger.debug(msg)
 
-            entities = RuSentRelDocumentEntityCollection.read_collection(
-                doc_id=doc_id,
-                synonyms=self.__synonyms)
+            entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
+                                                                         synonyms=self.__synonyms)
 
             news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
-            opinions = RuSentRelOpinionCollection.read_collection(doc_id=doc_id, synonyms=self.SynonoymsCollection)
+            opinions = RuSentRelOpinionCollection.read_collection(doc_id=doc_id, synonyms=self.__synonyms)
 
             neutral_opins = self.__algo.make_neutrals(
                 news_id=doc_id,
                 entities_collection=news.DocEntities,
                 sentiment_opinions=opinions if data_type == DataType.Train else None)
 
-            neutral_opins.save_to_file(neutral_filepath)
+            RuSentRelOpinionCollectionSerializer.save_to_file(collection=neutral_opins,
+                                                              filepath=neutral_filepath)
 
 
 

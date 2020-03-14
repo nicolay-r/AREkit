@@ -5,6 +5,7 @@ from os.path import join
 import utils
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.neutral.annot.base import BaseAnnotator
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.networks.data_type import DataType
@@ -25,19 +26,15 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
 
     __annot_name = u"neutral_2_scale"
 
-    def __init__(self, data_io, create_synonyms_collection):
+    def __init__(self, data_io):
+        assert(isinstance(data_io, DataIO))
         self.__data_io = data_io
-        self.__synonyms = create_synonyms_collection()
 
     # region properties
 
     @property
     def AnnotationModelName(self):
         return self.__annot_name
-
-    @property
-    def SynonoymsCollection(self):
-        return self.__synonyms
 
     @property
     def DataIO(self):
@@ -87,10 +84,11 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
 
             neul_opin_iter = self.__iter_opinion_as_neutral(
                 opinions=RuSentRelOpinionCollection.read_collection(doc_id=doc_id,
-                                                                    synonyms=self.__synonyms))
+                                                                    synonyms=self.__data_io.SynonymsCollection))
 
             RuSentRelOpinionCollectionSerializer.save_to_file(
-                collection=OpinionCollection(opinions=list(neul_opin_iter), synonyms=self.__synonyms),
+                collection=OpinionCollection(opinions=list(neul_opin_iter),
+                                             synonyms=self.__data_io.SynonymsCollection),
                 filepath=neutral_filepath)
 
     def get_opin_filepath(self, doc_id, data_type, output_dir):
