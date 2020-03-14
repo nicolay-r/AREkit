@@ -1,8 +1,4 @@
-class BaseExperimentsIOUtils(object):
-    """
-    Related methods implementation should be
-    declared outside of an AREkit framework.
-    """
+class DataIO(object):
 
     @property
     def NeutralAnnontator(self):
@@ -12,12 +8,6 @@ class BaseExperimentsIOUtils(object):
         raise NotImplementedError()
 
     def get_experiments_dir(self):
-        raise NotImplementedError()
-
-    def get_capitals_set(self):
-        raise NotImplementedError()
-
-    def get_states_set(self):
         raise NotImplementedError()
 
     def get_doc_stat_filepath(self):

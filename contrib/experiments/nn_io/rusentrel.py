@@ -20,9 +20,9 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     Now exploited (treated) as an input interface only
     """
 
-    def __init__(self, model_name, experiments_io, cv_count=1):
+    def __init__(self, model_name, data_io, cv_count=1):
         super(RuSentRelBasedNeuralNetworkIO, self).__init__(
-            experiments_io=experiments_io,
+            data_io=data_io,
             cv_count=cv_count,
             model_name=model_name)
 
@@ -78,10 +78,10 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, unicode))
 
-        filepath = self.ExperimentsIO.NeutralAnnontator.get_opin_filepath(
+        filepath = self.DataIO.NeutralAnnontator.get_opin_filepath(
             doc_id=doc_id,
             data_type=data_type,
-            output_dir=self.ExperimentsIO.get_experiments_dir())
+            output_dir=self.DataIO.get_experiments_dir())
 
         if not os.path.exists(filepath):
             return None

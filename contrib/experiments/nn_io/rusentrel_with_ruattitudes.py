@@ -17,9 +17,9 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
     Paper: https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, model_name, experiments_io, cv_count):
+    def __init__(self, model_name, data_io, cv_count):
         super(RuSentRelWithRuAttitudesBasedExperimentIO, self).__init__(model_name=model_name,
-                                                                        experiments_io=experiments_io,
+                                                                        data_io=data_io,
                                                                         cv_count=cv_count)
         self.__ru_attitudes = None
 

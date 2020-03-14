@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.networks.eval.opinion_based import OpinionBasedModelEvaluator
 
 

@@ -25,8 +25,8 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
 
     __annot_name = u"neutral_2_scale"
 
-    def __init__(self, experiments_io, create_synonyms_collection):
-        self.__experiments_io = experiments_io
+    def __init__(self, data_io, create_synonyms_collection):
+        self.__data_io = data_io
         self.__synonyms = create_synonyms_collection()
 
     # region properties
@@ -40,8 +40,8 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
         return self.__synonyms
 
     @property
-    def ExperimentsIO(self):
-        return self.__experiments_io
+    def DataIO(self):
+        return self.__data_io
 
     # endregion
 
@@ -76,7 +76,7 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
             neutral_filepath = self.get_opin_filepath(
                 doc_id=doc_id,
                 data_type=data_type,
-                output_dir=self.__experiments_io.get_experiments_dir())
+                output_dir=self.__data_io.get_experiments_dir())
 
             if utils.check_file_already_exsited(filepath=neutral_filepath, logger=logger):
                 continue

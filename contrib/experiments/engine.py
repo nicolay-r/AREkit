@@ -2,8 +2,8 @@ import os
 import gc
 import logging
 
-from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
-from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.data_io import DataIO
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.callback import Callback
@@ -51,7 +51,7 @@ def run_testing(full_model_name,
     assert(callable(common_config_modification_func) or common_config_modification_func is None)
     assert(callable(custom_config_modification_func) or custom_config_modification_func is None)
     assert(callable(evaluator_class))
-    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
+    assert(isinstance(experiments_io, DataIO))
     assert(isinstance(cv_count, int) and cv_count > 0)
     assert(isinstance(cancel_training_by_cost, bool))
 
@@ -76,7 +76,7 @@ def run_testing(full_model_name,
 
     nn_io, callback = __create_nn_io_and_callback(
         cv_count=cv_count,
-        experiments_io=experiments_io,
+        data_io=experiments_io,
         create_nn_io_func=create_nn_io,
         create_callback_func=create_callback,
         model_name=full_model_name,
@@ -133,14 +133,14 @@ def run_testing(full_model_name,
 
 def __create_nn_io_and_callback(
         cv_count,
-        experiments_io,
+        data_io,
         create_nn_io_func,
         create_callback_func,
         model_name,
         cancel_training_by_cost,
         clear_model_contents):
     assert(isinstance(cv_count, int))
-    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
+    assert(isinstance(data_io, DataIO))
     assert(callable(create_nn_io_func))
     assert(callable(create_callback_func))
     assert(isinstance(model_name, unicode))
@@ -148,7 +148,7 @@ def __create_nn_io_and_callback(
     assert(isinstance(clear_model_contents, bool))
 
     nn_io = create_nn_io_func(model_name=model_name,
-                              experiments_io=experiments_io,
+                              data_io=data_io,
                               cv_count=cv_count)
 
     assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))

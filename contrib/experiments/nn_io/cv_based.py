@@ -2,14 +2,14 @@ import os
 
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.experiments.cv.utils import get_cv_pair_by_index
-from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 
 
 class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
 
-    def __init__(self, model_name, cv_count, experiments_io):
+    def __init__(self, model_name, cv_count, data_io):
         assert(isinstance(cv_count, int))
-        super(CVBasedNeuralNetworkIO, self).__init__(experiments_io=experiments_io,
+        super(CVBasedNeuralNetworkIO, self).__init__(data_io=data_io,
                                                      model_name=model_name)
         self.__current_cv_index = 0
         self.__cv_count = cv_count
@@ -52,7 +52,7 @@ class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
     def iter_train_data_indices(self):
         train, _ = get_cv_pair_by_index(cv_count=self.__cv_count,
                                         cv_index=self.__current_cv_index,
-                                        experiments_io=self.__experiments_io,
+                                        data_io=self.__data_io,
                                         docs_stat=self.__docs_stat)
         for doc_id in train:
             yield doc_id
@@ -60,7 +60,7 @@ class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
     def iter_test_data_indices(self):
         _, test = get_cv_pair_by_index(cv_count=self.__cv_count,
                                        cv_index=self.__current_cv_index,
-                                       experiments_io=self.__experiments_io,
+                                       data_io=self.__data_io,
                                        docs_stat=self.__docs_stat)
         for doc_id in test:
             yield doc_id

@@ -5,7 +5,7 @@ from arekit.common.frames.collection import FramesCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single.embedding.entities import generate_entity_embeddings
 from arekit.contrib.experiments.single.embedding.frames import init_frames_embedding
 from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
@@ -32,7 +32,7 @@ class SingleInstanceModelInitializer(object):
         assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        word_embedding = nn_io.ExperimentsIO.WordEmbedding
+        word_embedding = nn_io.DataIO.WordEmbedding
 
         word_embedding.set_stemmer(config.Stemmer)
         config.set_word_embedding(word_embedding)

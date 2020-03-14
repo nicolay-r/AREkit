@@ -3,8 +3,8 @@ from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpini
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
-from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.data_io import DataIO
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
@@ -90,8 +90,8 @@ def extract_text_opinions(nn_io,
     assert(isinstance(config, DefaultNetworkConfig))
     assert(isinstance(frame_variants_collection, FrameVariantsCollection))
 
-    experiments_io = nn_io.ExperimentsIO
-    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
+    experiments_io = nn_io.DataIO
+    assert(isinstance(experiments_io, DataIO))
 
     parsed_collection = ParsedNewsCollection()
 

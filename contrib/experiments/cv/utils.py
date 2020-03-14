@@ -2,7 +2,7 @@ from os import path
 
 import numpy as np
 
-from arekit.contrib.experiments.io_utils_base import BaseExperimentsIOUtils
+from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.doc_stat.base import DocStatGeneratorBase
 
 
@@ -30,14 +30,14 @@ def __calc_cv_group_delta(cv_group_size, item, g_index_to_add):
 # endregion
 
 
-def iter_by_same_size_parts_cv(cv_count, docs_stat, experiments_io):
+def iter_by_same_size_parts_cv(cv_count, docs_stat, data_io):
     """
     Separation with the specific separation, in terms of cv-classes size difference.
     """
     assert(isinstance(docs_stat, DocStatGeneratorBase))
-    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
+    assert(isinstance(data_io, DataIO))
 
-    doc_stat_filepath = experiments_io.get_doc_stat_filepath()
+    doc_stat_filepath = data_io.get_doc_stat_filepath()
 
     if not path.exists(doc_stat_filepath):
         docs_stat.calculate_and_write_doc_stat(doc_stat_filepath)
@@ -63,14 +63,14 @@ def iter_by_same_size_parts_cv(cv_count, docs_stat, experiments_io):
         yield train, test
 
 
-def get_cv_pair_by_index(cv_count, cv_index, experiments_io, docs_stat):
+def get_cv_pair_by_index(cv_count, cv_index, data_io, docs_stat):
     assert(isinstance(cv_count, int))
     assert(isinstance(cv_count, int) and cv_index < cv_count)
     assert(isinstance(docs_stat, DocStatGeneratorBase))
-    assert(isinstance(experiments_io, BaseExperimentsIOUtils))
+    assert(isinstance(data_io, DataIO))
 
     it = iter_by_same_size_parts_cv(cv_count=cv_count,
-                                    experiments_io=experiments_io,
+                                    data_io=data_io,
                                     docs_stat=docs_stat)
 
     for index, pair in enumerate(it):

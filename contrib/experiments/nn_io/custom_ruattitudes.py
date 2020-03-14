@@ -7,7 +7,7 @@ from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
 
-    def __init__(self, model_name, cv_count, experiments_io, doc_ids):
+    def __init__(self, model_name, cv_count, data_io, doc_ids):
         """
         doc_ids: set
             set of doc_ids which is supposed to saved during reading process
@@ -16,7 +16,7 @@ class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
         super(CustomRuAttitudesFormatIO, self).__init__(
             model_name=model_name,
             cv_count=cv_count,
-            experiments_io=experiments_io)
+            data_io=data_io)
 
         self.__ra_format_docs = None
 

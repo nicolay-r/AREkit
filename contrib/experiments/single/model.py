@@ -1,5 +1,6 @@
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiments.nn_io.base import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.single import log
 from arekit.contrib.experiments.single.evaluator import CustomOpinionBasedModelEvaluator
 from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
 
@@ -105,7 +106,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
-        self.IO.write_log(log_names=keys, log_values=values)
+        log.write_log(nn_io=self.IO, log_names=keys, log_values=values)
         self.get_text_opinions_collection_helper(DataType.Train).debug_labels_statistic()
         self.get_text_opinions_collection_helper(DataType.Train).debug_unique_relations_statistic()
         self.get_text_opinions_collection_helper(DataType.Test).debug_labels_statistic()
