@@ -71,9 +71,6 @@ This toolset includes the following instruments and domain-related datasets:
             [[news-w2v-download]](http://rusvectores.org/static/models/rusvectores2/news_mystem_skipgram_1000_20_2015.bin.gz);
     * Lexicons
         * RuSentiLex [[lab-site]](https://www.labinform.ru/pub/rusentilex/index.htm);
-* **Evaluation** -- tools that allows to perform models quality assessment.
-    * CmpOpinion [[API]](common/evaluation/cmp_opinions.py) -- structure describes pairs of opinions to compare;
-    * BaseEvaluator [[API]](common/evaluation/evaluators/base.py);
 
 ## Installation (Python 2.7)
 Using [virtualenv](https://www.pythoncentral.io/how-to-install-virtualenv-python/). 

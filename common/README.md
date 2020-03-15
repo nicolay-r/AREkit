@@ -11,3 +11,6 @@ Fundamental structures and types utilized in a Sentiment Attitudes Extraction Ta
 * FrameVariant [[base-class]](common/frame_variants/base.py);
 * Embedding [[base-class]](common/embeddings/base.py) -- base class for Word2Vec-like embeddings;
 * Synonyms [[base-class]](common/synonyms.py) -- storage for synonymous entries (words and phrases);
+* **Evaluation** -- tools that allows to perform models quality assessment.
+    * CmpOpinion [[API]](common/evaluation/cmp_opinions.py) -- structure describes pairs of opinions to compare;
+    * BaseEvaluator [[API]](common/evaluation/evaluators/base.py);
