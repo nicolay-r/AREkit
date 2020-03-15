@@ -15,9 +15,6 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
 
         self.sort_entities(key=lambda entity: entity.CharIndexBegin)
 
-        self.__by_id = self.create_index(entities=entities,
-                                         key_func=lambda e: e.IdInDocument)
-
     @classmethod
     def read_collection(cls, doc_id, synonyms, version=RuSentRelVersions.V11):
         assert(isinstance(doc_id, int))
@@ -56,12 +53,5 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
             entities.append(entity)
 
         return cls(entities, synonyms)
-
-    def get_entity_by_id(self, id):
-        assert(isinstance(id, int))
-
-        value = self.__by_id[id]
-        assert(len(value) == 1)
-        return value[0]
 
 

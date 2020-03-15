@@ -24,6 +24,9 @@ class EntityCollection(object):
             entities=entities,
             key_func=lambda e: synonyms.get_synonym_group_index(e.Value))
 
+        self.__by_id = self.create_index(entities=entities,
+                                         key_func=lambda e: e.IdInDocument)
+
     def sort_entities(self, key):
         assert(callable(key))
         self.__entities.sort(key=key)
@@ -55,6 +58,13 @@ class EntityCollection(object):
             return self.__value_or_none(self.__by_synonyms, key)
         if group_key == self.KeyType.BY_VALUE:
             return self.__value_or_none(self.__by_value, value)
+
+    def get_entity_by_id(self, id):
+        assert(isinstance(id, int))
+
+        value = self.__by_id[id]
+        assert(len(value) == 1)
+        return value[0]
 
     def __len__(self):
         return len(self.__entities)

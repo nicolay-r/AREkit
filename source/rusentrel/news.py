@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
-from arekit.source.rusentrel.helpers.news import RuSentRelNewsHelper
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
+from arekit.source.rusentrel.helpers.news import RuSentRelNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.source.rusentrel.sentence import RuSentRelSentence
 
