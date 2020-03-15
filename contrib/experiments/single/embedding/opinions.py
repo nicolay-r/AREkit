@@ -20,13 +20,12 @@ from arekit.source.rusentrel.news import RuSentRelNews
 
 # region private methods
 
-def __read_document(io, doc_id, config, data_io):
+def __read_document(experiment_io, doc_id, config):
+    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(doc_id, int))
     assert(isinstance(config, DefaultNetworkConfig))
-    assert(isinstance(data_io, DataIO))
 
-    news, parsed_news = io.read_parsed_news(doc_id=doc_id,
-                                            keep_tokens=config.KeepTokens)
+    news, parsed_news = experiment_io.read_parsed_news(doc_id=doc_id)
 
     if DebugKeys.NewsTermsStatisticShow:
         ParsedNewsHelper.debug_statistics(parsed_news)
@@ -36,19 +35,19 @@ def __read_document(io, doc_id, config, data_io):
     return news, parsed_news
 
 
-def __iter_opinion_collections(io, news_id, data_type):
-    assert(isinstance(io, OpinionOperations))
+def __iter_opinion_collections(opinion_operations, news_id, data_type):
+    assert(isinstance(opinion_operations, OpinionOperations))
     assert(isinstance(news_id, int))
     assert(isinstance(data_type, unicode))
 
-    neutral = io.read_neutral_opinion_collection(doc_id=news_id,
-                                                 data_type=data_type)
+    neutral = opinion_operations.read_neutral_opinion_collection(doc_id=news_id,
+                                                                 data_type=data_type)
 
     if neutral is not None:
         yield neutral
 
     if data_type == DataType.Train:
-        yield io.read_etalon_opinion_collection(doc_id=news_id)
+        yield opinion_operations.read_etalon_opinion_collection(doc_id=news_id)
 
 
 def __fill_text_opinions(text_opinions,
@@ -82,29 +81,25 @@ def __fill_text_opinions(text_opinions,
 # endregions
 
 
-def extract_text_opinions(nn_io,
+def extract_text_opinions(experiment_io,
                           data_type,
                           frame_variants_collection,
                           config):
-    assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
+    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(data_type, unicode))
     assert(isinstance(config, DefaultNetworkConfig))
     assert(isinstance(frame_variants_collection, FrameVariantsCollection))
-
-    experiments_io = nn_io.DataIO
-    assert(isinstance(experiments_io, DataIO))
 
     parsed_collection = ParsedNewsCollection()
 
     text_opinions = LabeledLinkedTextOpinionCollection(
         parsed_news_collection=parsed_collection)
 
-    for news_id in nn_io.iter_doc_ids(data_type):
+    for news_id in experiment_io.iter_doc_ids(data_type):
 
-        news, parsed_news = __read_document(io=nn_io,
+        news, parsed_news = __read_document(experiment_io=experiment_io,
                                             doc_id=news_id,
-                                            config=config,
-                                            data_io=nn_io.DataIO)
+                                            config=config)
 
         parsed_news.modify_parsed_sentences(
             lambda sentence: RuSentiFramesParseHelper.parse_frames_in_parsed_text(
@@ -116,7 +111,7 @@ def extract_text_opinions(nn_io,
         else:
             print "Warning: Skipping document with id={}, news={}".format(news.DocumentID, news)
 
-        opinions_it = __iter_opinion_collections(io=nn_io,
+        opinions_it = __iter_opinion_collections(opinion_operations=experiment_io,
                                                  news_id=news_id,
                                                  data_type=data_type)
 

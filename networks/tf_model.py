@@ -97,7 +97,7 @@ class TensorflowModel(object):
         """
         self.__sess.close()
 
-    def run(self, load_model=False):
+    def run_training(self, epochs_count, load_model=False):
         self.__network.compile(self.Config, reset_graph=True)
         self.set_optimiser()
         self.__notify_initialized()
@@ -109,7 +109,7 @@ class TensorflowModel(object):
             logger.info("Loading model: {}".format(saved_model_path))
             self.load_model(saved_model_path)
 
-        self.fit()
+        self.fit(epochs_count=epochs_count)
         self.dispose_session()
 
     def before_labeling_func_application(self, text_opinions):
@@ -164,14 +164,15 @@ class TensorflowModel(object):
 
     # region Abstract
 
-    def fit(self):
+    def fit(self, epochs_count):
+        assert(isinstance(epochs_count, int))
         assert(self.Session is not None)
 
         operation_cancel = OperationCancellation()
         minibatches = list(self.get_bags_collection(DataType.Train).iter_by_groups(self.Config.BagsPerMinibatch))
         logger.info("Minibatches passing per epoch count: {}".format(len(minibatches)))
 
-        for epoch_index in xrange(self.Config.Epochs):
+        for epoch_index in xrange(epochs_count):
 
             if operation_cancel.IsCancelled:
                 break

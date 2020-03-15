@@ -26,11 +26,9 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
 
     # region 'read' public methods
 
-    def read_parsed_news(self, doc_id, keep_tokens):
+    def read_parsed_news(self, doc_id):
         if doc_id in self.RuSentRelNewsIDsList:
-            return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(
-                doc_id=doc_id,
-                keep_tokens=keep_tokens)
+            return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(doc_id=doc_id)
 
         news = self.__ru_attitudes[doc_id]
         parsed_news = RuAttitudesParsedNewsHelper.create_parsed_news(doc_id=doc_id,

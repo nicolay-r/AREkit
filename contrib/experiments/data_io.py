@@ -13,6 +13,10 @@ class DataIO(object):
         raise NotImplementedError()
 
     @property
+    def KeepTokens(self):
+        return True
+
+    @property
     def OpinionFormatter(self):
         raise NotImplementedError()
 

@@ -12,14 +12,12 @@ class DefaultNetworkConfig(object):
     # region private settings
 
     __gpu_memory_fraction = 0.25
-    __test_on_epoch = range(0, 30000, 50)
     __use_class_weights = True
 
     __dropout_keep_prob = 0.5
     __embedding_dropout_keep_prob = 1.0
 
     __classes_count = 9
-    __keep_tokens = True
     __default_pos_tagger = POSMystemWrapper(MystemWrapper().MystemInstance)
     __terms_per_context = 50
     __synonyms_per_context = 3
@@ -148,10 +146,6 @@ class DefaultNetworkConfig(object):
     def modify_regularizer(self, value):
         self.__default_regularizer = value
 
-    def modify_test_on_epochs(self, value):
-        assert(isinstance(value, list))
-        self.__test_on_epoch = value
-
     def modify_classes_count(self, value):
         self.__classes_count = value
         self.__class_weights = None
@@ -239,10 +233,6 @@ class DefaultNetworkConfig(object):
         return self.__optimiser
 
     @property
-    def TestOnEpochs(self):
-        return self.__test_on_epoch
-
-    @property
     def BatchSize(self):
         return self.BagSize * self.BagsPerMinibatch
 
@@ -257,10 +247,6 @@ class DefaultNetworkConfig(object):
     @property
     def DropoutKeepProb(self):
         return self.__dropout_keep_prob
-
-    @property
-    def KeepTokens(self):
-        return self.__keep_tokens
 
     @property
     def TermsPerContext(self):
@@ -307,10 +293,6 @@ class DefaultNetworkConfig(object):
         return self.__learning_rate
 
     @property
-    def Epochs(self):
-        return max(self.TestOnEpochs) + 1
-
-    @property
     def EmbeddingDropoutKeepProb(self):
         return self.__embedding_dropout_keep_prob
 
@@ -335,7 +317,6 @@ class DefaultNetworkConfig(object):
             ("base:use_class_weights", self.UseClassWeights),
             ("base:dropout (keep prob)", self.DropoutKeepProb),
             ("base:classes_count", self.ClassesCount),
-            ("base:keep_tokens", self.KeepTokens),
             ("base:class_weights", self.ClassWeights),
             ("base:default_pos_tagger", self.PosTagger),
             ("base:terms_per_context", self.TermsPerContext),

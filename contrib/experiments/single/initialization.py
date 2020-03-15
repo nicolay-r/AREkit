@@ -52,7 +52,7 @@ class SingleInstanceModelInitializer(object):
             stemmer=nn_io.DataIO.Stemmer)
 
         self.__text_opinion_collections = self.__create_collection(
-            lambda data_type: extract_text_opinions(nn_io=nn_io,
+            lambda data_type: extract_text_opinions(experiment_io=nn_io,
                                                     data_type=data_type,
                                                     frame_variants_collection=frame_variants,
                                                     config=config))

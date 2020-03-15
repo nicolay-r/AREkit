@@ -104,7 +104,7 @@ def run_testing(full_model_name,
         # Setup callback
         if common_callback_modification_func is not None:
             common_callback_modification_func(callback)
-        callback.set_test_on_epochs(config.TestOnEpochs)
+
         callback.reset_experiment_dependent_parameters()
 
         # Initialize model
@@ -118,7 +118,8 @@ def run_testing(full_model_name,
         # Run model
         ###########
         print u"Running model '{}' at cv_index {}".format(full_model_name, nn_io.CVCurrentIndex)
-        model.run(load_model=False)
+        model.run_training(load_model=False,
+                           )
 
         del config
         del network
