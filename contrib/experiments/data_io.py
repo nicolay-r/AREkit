@@ -1,7 +1,8 @@
 class DataIO(object):
 
-    # TODO. Other dependecies (properties).
-    # TODO. Remove Stemmer from DefaultConfig
+    @property
+    def Stemmer(self):
+        raise NotImplementedError()
 
     @property
     def SynonymsCollection(self):

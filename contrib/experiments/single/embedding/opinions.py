@@ -5,6 +5,7 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.operations.opinions import OpinionOperations
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
@@ -19,13 +20,13 @@ from arekit.source.rusentrel.news import RuSentRelNews
 
 # region private methods
 
-def __read_document(io, doc_id, config):
+def __read_document(io, doc_id, config, data_io):
     assert(isinstance(doc_id, int))
     assert(isinstance(config, DefaultNetworkConfig))
+    assert(isinstance(data_io, DataIO))
 
     news, parsed_news = io.read_parsed_news(doc_id=doc_id,
-                                            keep_tokens=config.KeepTokens,
-                                            stemmer=config.Stemmer)
+                                            keep_tokens=config.KeepTokens)
 
     if DebugKeys.NewsTermsStatisticShow:
         ParsedNewsHelper.debug_statistics(parsed_news)
@@ -36,10 +37,10 @@ def __read_document(io, doc_id, config):
 
 
 def __iter_opinion_collections(io, news_id, data_type):
+    assert(isinstance(io, OpinionOperations))
     assert(isinstance(news_id, int))
     assert(isinstance(data_type, unicode))
 
-    # TODO. Here.
     neutral = io.read_neutral_opinion_collection(doc_id=news_id,
                                                  data_type=data_type)
 
@@ -102,7 +103,8 @@ def extract_text_opinions(nn_io,
 
         news, parsed_news = __read_document(io=nn_io,
                                             doc_id=news_id,
-                                            config=config)
+                                            config=config,
+                                            data_io=nn_io.DataIO)
 
         parsed_news.modify_parsed_sentences(
             lambda sentence: RuSentiFramesParseHelper.parse_frames_in_parsed_text(

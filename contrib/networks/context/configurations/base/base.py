@@ -20,8 +20,7 @@ class DefaultNetworkConfig(object):
 
     __classes_count = 9
     __keep_tokens = True
-    __default_stemmer = MystemWrapper()
-    __default_pos_tagger = POSMystemWrapper(__default_stemmer.MystemInstance)
+    __default_pos_tagger = POSMystemWrapper(MystemWrapper().MystemInstance)
     __terms_per_context = 50
     __synonyms_per_context = 3
     __frames_per_context = 5
@@ -228,10 +227,6 @@ class DefaultNetworkConfig(object):
         return self.__classes_count
 
     @property
-    def Stemmer(self):
-        return self.__default_stemmer
-
-    @property
     def PosTagger(self):
         return self.__default_pos_tagger
 
@@ -342,7 +337,6 @@ class DefaultNetworkConfig(object):
             ("base:classes_count", self.ClassesCount),
             ("base:keep_tokens", self.KeepTokens),
             ("base:class_weights", self.ClassWeights),
-            ("base:default_stemmer",  self.Stemmer),
             ("base:default_pos_tagger", self.PosTagger),
             ("base:terms_per_context", self.TermsPerContext),
             ("base:synonyms_per_context", self.SynonymsPerContext),

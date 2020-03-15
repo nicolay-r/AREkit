@@ -22,7 +22,7 @@ class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
         #     create_opinion_func=None,
         #     create_opinion_collection_func=None)
 
-    def read_parsed_news(self, doc_id, keep_tokens, stemmer):
+    def read_parsed_news(self, doc_id, keep_tokens):
 
         news = self.__ra_format_docs[doc_id]
         parsed_news = RuAttitudesParsedNewsHelper.create_parsed_news(doc_id=doc_id,

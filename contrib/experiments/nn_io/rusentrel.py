@@ -52,12 +52,9 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
 
     # region 'read' public methods
 
-    # TODO. Remove stemmer.
-    def read_parsed_news(self, doc_id, keep_tokens, stemmer):
+    def read_parsed_news(self, doc_id, keep_tokens):
         assert(isinstance(doc_id, int))
         assert(isinstance(keep_tokens, bool))
-        # TODO. Remove stemmer.
-        assert(isinstance(stemmer, Stemmer))
 
         entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
                                                                      synonyms=self.DataIO.SynonymsCollection)
@@ -67,7 +64,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
         parsed_news = RuSentRelParsedNewsHelper.create_parsed_news(rusentrel_news_id=doc_id,
                                                                    rusentrel_news=news,
                                                                    keep_tokens=keep_tokens,
-                                                                   stemmer=stemmer)
+                                                                   stemmer=self.DataIO.Stemmer)
 
         return news, parsed_news
 

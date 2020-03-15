@@ -55,7 +55,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
     def get_logfile_dir(self):
         return path.join(self.get_model_root(), u"log/")
 
-    def read_parsed_news(self, doc_id, keep_tokens, stemmer):
+    def read_parsed_news(self, doc_id, keep_tokens):
         raise NotImplementedError()
 
     def iter_doc_ids(self, data_type):

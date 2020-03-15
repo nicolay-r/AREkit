@@ -34,7 +34,7 @@ class SingleInstanceModelInitializer(object):
 
         word_embedding = nn_io.DataIO.WordEmbedding
 
-        word_embedding.set_stemmer(config.Stemmer)
+        word_embedding.set_stemmer(nn_io.DataIO.Stemmer)
         config.set_word_embedding(word_embedding)
 
         entity_embeddings = generate_entity_embeddings(
@@ -49,7 +49,7 @@ class SingleInstanceModelInitializer(object):
 
         frame_variants = FrameVariantsCollection.from_iterable(
             variants_with_id=self.__frames_collection.iter_frame_id_and_variants(),
-            stemmer=config.Stemmer)
+            stemmer=nn_io.DataIO.Stemmer)
 
         self.__text_opinion_collections = self.__create_collection(
             lambda data_type: extract_text_opinions(nn_io=nn_io,

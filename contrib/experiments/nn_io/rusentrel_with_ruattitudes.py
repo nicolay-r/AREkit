@@ -26,12 +26,11 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
 
     # region 'read' public methods
 
-    # TODO. Remove stemmer
-    def read_parsed_news(self, doc_id, keep_tokens, stemmer):
+    def read_parsed_news(self, doc_id, keep_tokens):
         if doc_id in self.RuSentRelNewsIDsList:
-            return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(doc_id=doc_id,
-                                                                                           keep_tokens=keep_tokens,
-                                                                                           stemmer=stemmer)
+            return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(
+                doc_id=doc_id,
+                keep_tokens=keep_tokens)
 
         news = self.__ru_attitudes[doc_id]
         parsed_news = RuAttitudesParsedNewsHelper.create_parsed_news(doc_id=doc_id,
