@@ -4,7 +4,7 @@ from arekit.common.ref_opinon import RefOpinion
 from arekit.common.labels.base import Label
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.processing.text.parser import TextParser
-from arekit.source.ruattitudes.io_utils import RuAttitudesIOUtils
+from arekit.source.ruattitudes.io_utils import RuAttitudesIOUtils, RuAttitudesVersions
 from arekit.source.ruattitudes.news import RuAttitudesNews
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
@@ -27,11 +27,12 @@ class RuAttitudesFormatReader(object):
         pass
 
     @staticmethod
-    def iter_news(stemmer=None):
+    def iter_news(stemmer=None, version=RuAttitudesVersions.V11):
 
         it = RuAttitudesIOUtils.iter_from_zip(
             inner_path=RuAttitudesIOUtils.get_collection_filepath(),
-            process_func=lambda input_file: RuAttitudesFormatReader.__iter_news(input_file, stemmer))
+            process_func=lambda input_file: RuAttitudesFormatReader.__iter_news(input_file, stemmer),
+            version=version)
 
         for news in it:
             yield news

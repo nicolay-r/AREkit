@@ -2,13 +2,13 @@
 import logging
 from arekit.common.bound import Bound
 from arekit.common.entities.collection import EntityCollection
+from arekit.common.opinions.base import Opinion
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
 from arekit.source.rusentrel.sentence import RuSentRelSentence
 from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
@@ -31,18 +31,17 @@ for doc_id in RuSentRelIOUtils.iter_collection_indices():
 
     # Read collections
     entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                 stemmer=stemmer,
                                                                  synonyms=synonyms)
 
     news = RuSentRelNews.read_document(doc_id=doc_id,
                                        entities=entities)
 
-    opininons = RuSentRelOpinionCollection.read_collection(doc_id=doc_id,
-                                                           synonyms=synonyms)
+    opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
+                                                          synonyms=synonyms)
 
     # Example: Access to the read OPINIONS collection.
-    for opinion in opininons:
-        assert(isinstance(opinion, RuSentRelOpinion))
+    for opinion in opinions:
+        assert(isinstance(opinion, Opinion))
         logger.info(u"\t{}->{} ({}) [synonym groups opinion: {}->{}]".format(
             opinion.SourceValue,
             opinion.TargetValue,

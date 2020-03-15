@@ -1,9 +1,9 @@
-import collections
 import logging
 from os.path import join
 
 import utils
 from arekit.common.labels.base import NeutralLabel
+from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.neutral.annot.base import BaseAnnotator
@@ -11,8 +11,6 @@ from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiment
 from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
-from arekit.source.rusentrel.opinions.serializer import RuSentRelOpinionCollectionSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -45,13 +43,13 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
     # region static methods
 
     @staticmethod
-    def __iter_opinion_as_neutral(opinions):
-        assert(isinstance(opinions, collections.Iterable))
+    def __iter_opinion_as_neutral(collection):
+        assert(isinstance(collection, OpinionCollection))
 
-        for opinion in opinions:
-            yield RuSentRelOpinion(value_source=opinion.SourceValue,
-                                   value_target=opinion.TargetValue,
-                                   sentiment=NeutralLabel())
+        for opinion in collection:
+            yield Opinion(source_value=opinion.SourceValue,
+                          target_value=opinion.TargetValue,
+                          sentiment=NeutralLabel())
 
     @staticmethod
     def __data_type_to_string(data_type):
@@ -81,12 +79,13 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
             utils.notify_newfile_creation(filepath=neutral_filepath,
                                           data_type=data_type,
                                           logger=logger)
+            collection = RuSentRelOpinionCollection.load_collection(
+                doc_id=doc_id,
+                synonyms=self.__data_io.SynonymsCollection)
 
-            neul_opin_iter = self.__iter_opinion_as_neutral(
-                opinions=RuSentRelOpinionCollection.read_collection(doc_id=doc_id,
-                                                                    synonyms=self.__data_io.SynonymsCollection))
+            neul_opin_iter = self.__iter_opinion_as_neutral(collection)
 
-            RuSentRelOpinionCollectionSerializer.save_to_file(
+            self.__data_io.OpinionFormatter.save_to_file(
                 collection=OpinionCollection(opinions=list(neul_opin_iter),
                                              synonyms=self.__data_io.SynonymsCollection),
                 filepath=neutral_filepath)

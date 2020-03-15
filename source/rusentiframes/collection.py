@@ -2,7 +2,7 @@ import json
 
 from arekit.common.labels.base import Label
 from arekit.common.frames.collection import FramesCollection
-from arekit.source.rusentiframes.io_utils import RuSentiFramesIOUtils
+from arekit.source.rusentiframes.io_utils import RuSentiFramesIOUtils, RuSentiFramesVersions
 from arekit.source.rusentiframes.polarity import RuSentiFramesFramePolarity
 from arekit.source.rusentiframes.role import FrameRole
 from arekit.source.rusentiframes.state import FrameState
@@ -21,10 +21,11 @@ class RuSentiFramesCollection(FramesCollection):
     # region classmethods
 
     @classmethod
-    def read_collection(cls):
+    def read_collection(cls, version=RuSentiFramesVersions.V10):
         return RuSentiFramesIOUtils.read_from_zip(
             inner_path=RuSentiFramesIOUtils.get_collection_filepath(),
-            process_func=lambda input_file: cls.__from_json(input_file))
+            process_func=lambda input_file: cls.__from_json(input_file),
+            version=version)
 
     @classmethod
     def __from_json(cls, input_file):

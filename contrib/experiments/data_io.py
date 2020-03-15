@@ -12,6 +12,10 @@ class DataIO(object):
     def NeutralAnnontator(self):
         raise NotImplementedError()
 
+    @property
+    def OpinionFormatter(self):
+        raise NotImplementedError()
+
     def get_data_root(self):
         raise NotImplementedError()
 

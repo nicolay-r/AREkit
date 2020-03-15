@@ -57,9 +57,6 @@ class OpinionCollection(object):
             if o.sentiment == sentiment:
                 yield o
 
-    def save_to_file(self, filepath):
-        raise NotImplementedError()
-
     # endregion
 
     # region private methods

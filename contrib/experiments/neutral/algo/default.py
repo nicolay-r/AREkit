@@ -2,6 +2,9 @@ import collections
 
 from arekit.common.entities.base import Entity
 from arekit.common.entities.collection import EntityCollection
+from arekit.common.labels.base import NeutralLabel
+from arekit.common.opinions.base import Opinion
+from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.synonyms import SynonymsCollection
@@ -20,9 +23,8 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         InSentences = 'in_sentences'
 
 
-    def __init__(self, synonyms,
-                 create_opinion_func,
-                 create_opinion_collection_func,
+    def __init__(self,
+                 synonyms,
                  create_parsed_news_func,
                  iter_news_ids,
                  ignored_entity_values=None):
@@ -33,14 +35,10 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
             func () -> OpinionCollection
         """
         assert(isinstance(synonyms, SynonymsCollection))
-        assert(callable(create_opinion_func))
-        assert(callable(create_opinion_collection_func))
         assert(callable(create_parsed_news_func))
         assert(isinstance(iter_news_ids, collections.Iterable))
         assert(isinstance(ignored_entity_values, list) or ignored_entity_values is None)
 
-        self.__create_opinion_func = create_opinion_func
-        self.__create_opinion_collection_func = create_opinion_collection_func
         self.__synonyms = synonyms
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
 
@@ -95,7 +93,8 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         assert(self.__synonyms.IsReadOnly is True)
 
         extracted_count = 0
-        neutral_opinions = self.__create_opinion_collection_func()
+        neutral_opinions = OpinionCollection(opinions=None,
+                                             synonyms=self.__synonyms)
 
         for e1 in entities_collection:
             assert(isinstance(e1, Entity))
@@ -107,7 +106,9 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
                 if key not in relevant_pairs:
                     continue
 
-                opinion = self.__create_opinion_func(e1.Value, e2.Value)
+                opinion = Opinion(source_value=e1.Value,
+                                  target_value=e2.Value,
+                                  sentiment=NeutralLabel())
 
                 if neutral_opinions.has_synonymous_opinion(opinion):
                     continue
@@ -157,7 +158,9 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
                     continue
 
                 if sentiment_opinions is not None:
-                    o = self.__create_opinion_func(e1.Value, e2.Value)
+                    o = Opinion(source_value=e1.Value,
+                                target_value=e2.Value,
+                                sentiment=NeutralLabel())
                     if sentiment_opinions.has_synonymous_opinion(opinion=o):
                         continue
 

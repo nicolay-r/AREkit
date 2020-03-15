@@ -2,7 +2,7 @@
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.helpers.news import RuSentRelNewsHelper
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
-from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.source.rusentrel.sentence import RuSentRelSentence
 
 
@@ -38,12 +38,13 @@ class RuSentRelNews(object):
     # endregion
 
     @classmethod
-    def read_document(cls, doc_id, entities):
+    def read_document(cls, doc_id, entities, version=RuSentRelVersions.V11):
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_news_innerpath(doc_id),
             process_func=lambda input_file: cls.__from_file(doc_id=doc_id,
                                                             input_file=input_file,
-                                                            entities=entities))
+                                                            entities=entities),
+            version=version)
 
     @classmethod
     def __from_file(cls, doc_id, input_file, entities):

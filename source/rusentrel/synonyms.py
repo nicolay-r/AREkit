@@ -2,16 +2,16 @@ import logging
 
 from arekit.common.synonyms import SynonymsCollection
 from arekit.processing.lemmatization.base import Stemmer
-from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
-
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 
 logger = logging.getLogger(__name__)
 
 
+# TODO. Also should be a formatter
 class RuSentRelSynonymsCollection(SynonymsCollection):
 
     @classmethod
-    def read_collection(cls, stemmer, is_read_only=True, debug=False):
+    def read_collection(cls, stemmer, is_read_only=True, debug=False, version=RuSentRelVersions.V11):
         assert(isinstance(stemmer, Stemmer))
 
         by_index = []
@@ -19,7 +19,8 @@ class RuSentRelSynonymsCollection(SynonymsCollection):
         RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_synonyms_innerpath(),
             process_func=lambda input_file: cls.__from_file(
-                input_file, by_index, by_synonym, stemmer, debug))
+                input_file, by_index, by_synonym, stemmer, debug),
+            version=version)
 
         return cls(by_index=by_index,
                    by_synonym=by_synonym,

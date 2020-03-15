@@ -1,14 +1,21 @@
 from os import path
-from arekit.source.base import BaseIOUtils
+from arekit.source.zip_utils import ZipArchiveUtils
 
 
-class RuAttitudesIOUtils(BaseIOUtils):
+class RuAttitudesVersions:
+    V10 = u"v1_0"
+    V11 = u"v1_1"
+
+
+class RuAttitudesIOUtils(ZipArchiveUtils):
 
     # region internal methods
 
     @staticmethod
-    def get_archive_filepath():
-        return path.join(RuAttitudesIOUtils.get_data_root(), u"ruattitudes-v1_1.zip")
+    def get_archive_filepath(version):
+        assert(isinstance(version, unicode))
+        return path.join(RuAttitudesIOUtils.get_data_root(),
+                         u"ruattitudes-{version}.zip".format(version=version))
 
     @staticmethod
     def get_collection_filepath():

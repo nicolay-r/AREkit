@@ -10,6 +10,8 @@ class Opinion(object):
         assert(isinstance(source_value, unicode))
         assert(isinstance(target_value, unicode))
         assert(isinstance(sentiment, Label))
+        assert(',' not in source_value)  # Could be removed.
+        assert(',' not in target_value)  # Could be removed.
         self.__source_value = source_value.lower()
         self.__target_value = target_value.lower()
         self.__sentiment = sentiment

@@ -1,14 +1,19 @@
 from os import path
-from arekit.source.base import BaseIOUtils
+from arekit.source.zip_utils import ZipArchiveUtils
 
 
-class RuSentRelIOUtils(BaseIOUtils):
+class RuSentRelVersions:
+    V11 = u"v1_1"
+
+
+class RuSentRelIOUtils(ZipArchiveUtils):
 
     __sep_doc_id = 46
 
     @staticmethod
-    def get_archive_filepath():
-        return path.join(RuSentRelIOUtils.get_data_root(), u"rusentrel-v1_1.zip")
+    def get_archive_filepath(version):
+        assert(isinstance(version, unicode))
+        return path.join(RuSentRelIOUtils.get_data_root(), u"rusentrel-{}.zip".format(version))
 
     # region internal methods
 

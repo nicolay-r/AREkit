@@ -3,8 +3,6 @@
 import utils
 import logging
 
-from arekit.common.labels.base import NeutralLabel
-from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.contrib.experiments.neutral.annot.rusentrel_two_scale import RuSentRelTwoScaleNeutralAnnotator
@@ -15,8 +13,6 @@ from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-from arekit.source.rusentrel.opinions.opinion import RuSentRelOpinion
-from arekit.source.rusentrel.opinions.serializer import RuSentRelOpinionCollectionSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -41,14 +37,6 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self.__synonyms,
-            # TODO. Use Opninon instead. RuSentRelOpinion might be removed.
-            # TODO. Reason: to make this algorithm independent from RuSentRel*
-            create_opinion_func=lambda s_value, t_value: RuSentRelOpinion(
-                value_source=s_value,
-                value_target=t_value,
-                sentiment=NeutralLabel()),
-            create_opinion_collection_func=lambda: OpinionCollection(opinions=None,
-                                                                     synonyms=self.__synonyms),
             create_parsed_news_func=lambda doc_id: self.__create_parsed_news(doc_id=doc_id,
                                                                              synonyms=self.__synonyms,
                                                                              stemmer=stemmer),
@@ -96,15 +84,16 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
                                                                          synonyms=self.__synonyms)
 
             news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
-            opinions = RuSentRelOpinionCollection.read_collection(doc_id=doc_id, synonyms=self.__synonyms)
+            opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
+                                                                  synonyms=self.__synonyms)
 
             neutral_opins = self.__algo.make_neutrals(
                 news_id=doc_id,
                 entities_collection=news.DocEntities,
                 sentiment_opinions=opinions if data_type == DataType.Train else None)
 
-            RuSentRelOpinionCollectionSerializer.save_to_file(collection=neutral_opins,
-                                                              filepath=neutral_filepath)
+            self.DataIO.OpinionFormatter.save_to_file(collection=neutral_opins,
+                                                      filepath=neutral_filepath)
 
 
 

@@ -2,7 +2,7 @@
 from arekit.common.entities.collection import EntityCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
-from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 
 
 class RuSentRelDocumentEntityCollection(EntityCollection):
@@ -19,14 +19,15 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
                                          key_func=lambda e: e.IdInDocument)
 
     @classmethod
-    def read_collection(cls, doc_id, synonyms):
+    def read_collection(cls, doc_id, synonyms, version=RuSentRelVersions.V11):
         assert(isinstance(doc_id, int))
 
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_entity_innerpath(doc_id),
             process_func=lambda input_file: cls.__from_file(
                 input_file=input_file,
-                synonyms=synonyms))
+                synonyms=synonyms),
+            version=version)
 
     @classmethod
     def __from_file(cls, input_file, synonyms):
