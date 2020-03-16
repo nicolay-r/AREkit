@@ -15,6 +15,8 @@ from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollecti
 logger = logging.getLogger(__name__)
 
 
+# TODO. Provide method of reading etalon collection
+# TODO. Rename as two_scale.py
 class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
     """
     Neutral Annotator for RuSentRel Collection (of each data_type)

@@ -40,6 +40,10 @@ class CustomCallback(Callback):
 
         self.__train_doc_ids = None
 
+    @property
+    def Epochs(self):
+        return max(self.__test_on_epochs)
+
     def reset_experiment_dependent_parameters(self):
         self.__reset_experiment_dependent_parameters()
 

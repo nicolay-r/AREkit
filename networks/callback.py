@@ -3,6 +3,10 @@ class Callback(object):
     def on_initialized(self, network):
         pass
 
+    @property
+    def Epochs(self):
+        raise NotImplementedError()
+
     def on_epoch_finished(self, avg_fit_cost, avg_fit_acc, epoch_index, operation_cancel):
         pass
 

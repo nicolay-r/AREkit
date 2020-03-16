@@ -119,7 +119,7 @@ def run_testing(full_model_name,
         ###########
         print u"Running model '{}' at cv_index {}".format(full_model_name, nn_io.CVCurrentIndex)
         model.run_training(load_model=False,
-                           )
+                           epochs_count=callback.Epochs)
 
         del config
         del network

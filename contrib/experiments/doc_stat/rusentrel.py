@@ -21,4 +21,4 @@ class RuSentRelDocStatGenerator(DocStatGeneratorBase):
 
         news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
 
-        yield (doc_id, news.SentencesCount())
+        return news.SentencesCount

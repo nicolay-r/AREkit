@@ -37,14 +37,14 @@ def iter_by_same_size_parts_cv(cv_count, docs_stat, data_io):
     assert(isinstance(docs_stat, DocStatGeneratorBase))
     assert(isinstance(data_io, DataIO))
 
-    doc_stat_filepath = data_io.get_doc_stat_filepath()
+    docs_stat_filepath = data_io.get_docs_stat_filepath()
 
-    if not path.exists(doc_stat_filepath):
-        docs_stat.calculate_and_write_doc_stat(doc_stat_filepath)
+    if not path.exists(docs_stat_filepath):
+        docs_stat.calculate_and_write_doc_stat(docs_stat_filepath)
 
-    docs_stat = docs_stat.read_docs_stat(filepath=doc_stat_filepath)
+    docs_info = docs_stat.read_docs_stat(filepath=docs_stat_filepath)
 
-    sorted_stat = reversed(sorted(docs_stat, key=lambda pair: pair[1]))
+    sorted_stat = reversed(sorted(docs_info, key=lambda pair: pair[1]))
     cv_group_docs = [[] for _ in range(cv_count)]
     cv_group_sizes = [[] for _ in range(cv_count)]
 
@@ -57,8 +57,7 @@ def iter_by_same_size_parts_cv(cv_count, docs_stat, data_io):
 
     for g_index in range(len(cv_group_docs)):
         test = cv_group_docs[g_index]
-        train = [doc_id for doc_id, _ in docs_stat
-                 if doc_id not in test]
+        train = [doc_id for doc_id, _ in docs_info if doc_id not in test]
 
         yield train, test
 

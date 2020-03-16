@@ -26,5 +26,5 @@ class DataIO(object):
     def get_experiments_dir(self):
         raise NotImplementedError()
 
-    def get_doc_stat_filepath(self):
+    def get_docs_stat_filepath(self):
         raise NotImplementedError()
