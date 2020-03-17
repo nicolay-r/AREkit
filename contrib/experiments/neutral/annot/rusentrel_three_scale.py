@@ -89,12 +89,12 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
             opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
                                                                   synonyms=self.__synonyms)
 
-            neutral_opins = self.__algo.make_neutrals(
+            collection = self.__algo.make_neutrals(
                 news_id=doc_id,
                 entities_collection=news.DocEntities,
                 sentiment_opinions=opinions if data_type == DataType.Train else None)
 
-            self.DataIO.OpinionFormatter.save_to_file(collection=neutral_opins,
+            self.DataIO.OpinionFormatter.save_to_file(collection=collection,
                                                       filepath=neutral_filepath)
 
 

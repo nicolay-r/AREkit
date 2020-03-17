@@ -77,7 +77,8 @@ class SingleInstanceTensorflowModel(TensorflowModel):
             filepath = self.IO.create_result_opinion_collection_filepath(data_type=dest_data_type,
                                                                          doc_id=news_id,
                                                                          epoch_index=self.CurrentEpochIndex)
-            self.IO.DataIO.OpinionFormatter.save_to_file(filepath)
+            self.IO.DataIO.OpinionFormatter.save_to_file(collection=collection,
+                                                         filepath=filepath)
 
     def create_batch_by_bags_group(self, bags_group):
         return MiniBatch(bags_group)
