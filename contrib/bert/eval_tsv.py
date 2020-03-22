@@ -8,14 +8,12 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.bert.eval_helper import OpinionBasedEvaluationHelper
+from arekit.contrib.experiments.data_io import DataIO
 from arekit.networks.data_type import DataType
 from arekit.networks.labeling.base import LabelCalculationMode
-from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
-from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
-from readers.rusentrel_io import RuSentRelDataIO
 from format import opinions_io, samples_io
 
 
@@ -44,7 +42,7 @@ def iter_eval_collections(bert_result_fp,
 
     print "bert_output: {}".format(bert_result_fp)
     print "samples: {}".format(samples_fp)
-    print "opinions: {}".format(opinions_fp)
+    print "opinions: {}".format(opinion_fp)
 
     # bert results: p_neut, p_pos, p_neg
     df_bert_results = pd.read_csv(bert_result_fp, sep='\t', header=None)
@@ -122,22 +120,19 @@ def iter_eval_collections(bert_result_fp,
         yield news_id, collection
 
 
-if __name__ == "__main__":
+def eval_tsv(data_io, data_type):
+    assert(isinstance(data_io, DataIO))
 
-    data_type = DataType.Test
-    stemmer = MystemWrapper()
-    synonyms = RuSentRelSynonymsCollection.load_collection(
-        stemmer=stemmer,
-        is_read_only=True)
+    # TODO. complete
+    io = RuSentRelDataIO(data_io.SynonymsCollection)
 
-    io = RuSentRelDataIO(synonyms)
     bert_result_fp = u"test_results.tsv"
     opinions_fp = opinions_io.get_filepath(data_type=data_type, model_name=io.ModelName)
     samples_fp = samples_io.get_filepath(data_type=data_type, model_name=io.ModelName)
     iter_eval = iter_eval_collections(bert_result_fp=bert_result_fp,
                                       samples_fp=samples_fp,
                                       opinion_fp=opinions_fp,
-                                      synonyms=synonyms,
+                                      synonyms=data_io.SynonymsCollection,
                                       label_calculation_mode=LabelCalculationMode.FIRST_APPEARED)
 
     for news_id, collection in iter_eval:
@@ -150,7 +145,7 @@ if __name__ == "__main__":
                                                          filepath=filepath)
 
     # Result evaluation.
-    evaluator = TwoClassEvaluator(synonyms=synonyms)
+    evaluator = TwoClassEvaluator(synonyms=data_io.SynonymsCollection)
     # TODO. complete
     eval_helper = OpinionBasedEvaluationHelper(evaluator=evaluator)
 

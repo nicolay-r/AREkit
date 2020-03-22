@@ -58,5 +58,11 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
     def read_parsed_news(self, doc_id):
         raise NotImplementedError()
 
+    def iter_train_data_indices(self):
+        raise NotImplementedError()
+
+    def iter_test_data_indices(self):
+        raise NotImplementedError()
+
     def iter_doc_ids(self, data_type):
         raise NotImplementedError()

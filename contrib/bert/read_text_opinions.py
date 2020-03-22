@@ -2,13 +2,13 @@ from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpini
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.base import TextOpinion
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.data_type import DataType
 from arekit.source.ruattitudes.helpers.linked_text_opinions import RuAttitudesNewsTextOpinionExtractorHelper
 from arekit.source.ruattitudes.news import RuAttitudesNews
 from arekit.source.rusentrel.helpers.linked_text_opinions import RuSentRelNewsTextOpinionExtractorHelper
 from arekit.source.rusentrel.news import RuSentRelNews
-from readers.rusentrel_io import RuSentRelDataIO
 
 
 def __iter_opinion_collections(io, news_id, data_type):
@@ -60,7 +60,7 @@ def __fill_text_opinions(text_opinions, news, opinions, terms_per_context):
 
 
 def extract_text_opinions(io, data_type, terms_per_context):
-    assert(isinstance(io, RuSentRelDataIO))
+    assert(isinstance(io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(data_type, unicode))
     assert(isinstance(terms_per_context, int))
 
@@ -73,7 +73,7 @@ def extract_text_opinions(io, data_type, terms_per_context):
 
     for news_id in news_ids:
 
-        news, parsed_news = io.read_document(doc_id=news_id, keep_tokens=True)
+        news, parsed_news = io.read_parsed_news(doc_id=news_id)
 
         if not parsed_collection.contains_id(news_id):
             parsed_collection.add(parsed_news)

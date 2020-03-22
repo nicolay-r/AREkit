@@ -1,4 +1,3 @@
-# TODO. Implement.
 class OpinionBasedEvaluationHelper(object):
 
     def __init__(self, evaluator):
