@@ -3,6 +3,7 @@ import logging
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
+from arekit.networks.data_type import DataType
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
 
@@ -51,17 +52,19 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, unicode))
 
-        if not doc_id in self.RuSentRelNewsIDsList:
+        if doc_id not in self.RuSentRelNewsIDsList:
             return None
 
         return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_neutral_opinion_collection(
             doc_id=doc_id,
             data_type=data_type)
 
-    # TODO. Refactor with data_type parameter
-    def iter_train_data_indices(self):
-        for doc_id in super(RuSentRelWithRuAttitudesBasedExperimentIO, self).iter_train_data_indices():
-            yield doc_id
+    def iter_data_indices(self, data_type):
+        super(RuSentRelWithRuAttitudesBasedExperimentIO, self).iter_data_indices(data_type)
+
+        if data_type != DataType.Train:
+            return
+
         for doc_id in self.__ru_attitudes.iterkeys():
             yield doc_id
 

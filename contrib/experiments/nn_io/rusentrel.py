@@ -85,31 +85,19 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
 
     # region 'iters' public methods
 
-    # TODO. The code is the same
-    def iter_doc_ids(self, data_type):
-        if data_type == DataType.Train:
-            return self.iter_train_data_indices()
-        if data_type == DataType.Test:
-            return self.iter_test_data_indices()
-
-    # TODO. The code is the same
-    # TODO. Refactor with data_type parameter
-    def iter_test_data_indices(self):
+    def iter_data_indices(self, data_type):
         if self.DataIO.CVFoldingAlgorithm.CVCount == 1:
-            for doc_id in RuSentRelIOUtils.iter_test_indices():
+
+            if data_type not in [DataType.Train, DataType.Test]:
+                raise Exception("Not supported data_type='{data_type}'".format(data_type=data_type))
+
+            data_indices = RuSentRelIOUtils.iter_train_indices() \
+                if data_type == DataType.Train else RuSentRelIOUtils.iter_test_indices()
+
+            for doc_id in data_indices:
                 yield doc_id
         else:
-            for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_test_data_indices():
-                yield doc_id
-
-    # TODO. The code is the same
-    # TODO. Refactor with data_type parameter
-    def iter_train_data_indices(self):
-        if self.DataIO.CVFoldingAlgorithm.CVCount == 1:
-            for doc_id in RuSentRelIOUtils.iter_train_indices():
-                yield doc_id
-        else:
-            for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_train_data_indices():
+            for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_data_indices(data_type):
                 yield doc_id
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):

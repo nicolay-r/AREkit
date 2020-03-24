@@ -2,9 +2,6 @@
 
 class OpinionOperations(object):
 
-    def __init__(self):
-        self.__synonyms = None
-
     def read_neutral_opinion_collection(self, doc_id, data_type):
         raise NotImplementedError()
 

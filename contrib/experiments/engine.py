@@ -118,7 +118,7 @@ def run_testing(full_model_name,
         ###########
         # Run model
         ###########
-        print u"Running model '{}' at cv_index {}".format(full_model_name, nn_io.CVCurrentIndex)
+        print u"Running model '{}' at cv_index {}".format(full_model_name, experiments_io.CVFoldingAlgorithm.IterationIndex)
         model.run_training(load_model=False,
                            epochs_count=callback.Epochs)
 
@@ -152,8 +152,9 @@ def __create_nn_io_and_callback(
     assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
 
     callback = create_callback_func(log_dir=nn_io.get_logfile_dir())
-
     callback.PredictVerbosePerFileStatistic = False
+
+    nn_io.prepare_model_root()
 
     return nn_io, callback
 

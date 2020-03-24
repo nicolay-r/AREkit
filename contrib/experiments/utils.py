@@ -1,3 +1,6 @@
+import glob
+import os
+import shutil
 from os.path import join
 
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
@@ -40,3 +43,12 @@ def create_input_sample(text_opinion, frames_collection, synonyms_collection, co
         frames_collection=frames_collection,
         synonyms_collection=synonyms_collection)
 
+
+def rm_dir_contents(dir_path):
+    contents = glob.glob(dir_path)
+    for f in contents:
+        print "Removing old file/dir: {}".format(f)
+        if os.path.isfile(f):
+            os.remove(f)
+        else:
+            shutil.rmtree(f, ignore_errors=True)

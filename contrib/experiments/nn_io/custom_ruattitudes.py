@@ -4,7 +4,7 @@ from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsH
 
 class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
 
-    def __init__(self, model_name, cv_count, data_io, doc_ids):
+    def __init__(self, model_name, data_io, doc_ids):
         """
         doc_ids: set
             set of doc_ids which is supposed to saved during reading process
@@ -12,7 +12,6 @@ class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
         assert(isinstance(doc_ids, set) or doc_ids is None)
         super(CustomRuAttitudesFormatIO, self).__init__(
             model_name=model_name,
-            cv_count=cv_count,
             data_io=data_io)
 
         self.__ra_format_docs = None

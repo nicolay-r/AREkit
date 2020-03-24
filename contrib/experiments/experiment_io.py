@@ -4,8 +4,7 @@ from os import path
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.operations.opinions import OpinionOperations
-from arekit.contrib.experiments.nn_io.utils import rm_dir_contents
-from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir, rm_dir_contents
 from arekit.networks.nn_io import NeuralNetworkIO
 
 
@@ -49,15 +48,13 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
 
     # endregion
 
-    # TODO. Remove.
-    @staticmethod
-    def prepare_model_root(model_root, rm_contents=True):
+    def prepare_model_root(self, rm_contents=True):
+
         if not rm_contents:
             return
 
-        rm_dir_contents(model_root)
+        rm_dir_contents(self.get_model_root())
 
-    # TODO. Might be in a data_io.
     def get_logfile_dir(self):
         return path.join(self.get_model_root(), u"log/")
 
@@ -68,15 +65,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
     def read_parsed_news(self, doc_id):
         raise NotImplementedError()
 
-    # TODO. Maybe update, based on DataType.
-    def iter_train_data_indices(self):
-        raise NotImplementedError()
-
-    # TODO. Maybe update, based on DataType.
-    def iter_test_data_indices(self):
-        raise NotImplementedError()
-
-    def iter_doc_ids(self, data_type):
+    def iter_data_indices(self, data_type):
         raise NotImplementedError()
 
     # endregion
