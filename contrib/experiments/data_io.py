@@ -1,3 +1,4 @@
+# TODO. Add base implementations.
 class DataIO(object):
 
     @property
@@ -17,6 +18,10 @@ class DataIO(object):
         return True
 
     @property
+    def CVFoldingAlgorithm(self):
+        raise NotImplementedError()
+
+    @property
     def OpinionFormatter(self):
         raise NotImplementedError()
 
@@ -24,7 +29,4 @@ class DataIO(object):
         raise NotImplementedError()
 
     def get_experiments_dir(self):
-        raise NotImplementedError()
-
-    def get_docs_stat_filepath(self):
         raise NotImplementedError()

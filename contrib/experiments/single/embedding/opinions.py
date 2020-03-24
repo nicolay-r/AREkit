@@ -3,7 +3,6 @@ from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpini
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.operations.opinions import OpinionOperations
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper

@@ -19,9 +19,13 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
         self.__data_io = data_io
         self.__model_name = model_name
 
+    # region Properties
+
     @property
     def DataIO(self):
         return self.__data_io
+
+    # endregion
 
     # region implemented nn_io
 
@@ -45,6 +49,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
 
     # endregion
 
+    # TODO. Remove.
     @staticmethod
     def prepare_model_root(model_root, rm_contents=True):
         if not rm_contents:
@@ -52,17 +57,26 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
 
         rm_dir_contents(model_root)
 
+    # TODO. Might be in a data_io.
     def get_logfile_dir(self):
         return path.join(self.get_model_root(), u"log/")
+
+    # TODO. Might be in a separated interface/class.
+
+    # region Document Operations
 
     def read_parsed_news(self, doc_id):
         raise NotImplementedError()
 
+    # TODO. Maybe update, based on DataType.
     def iter_train_data_indices(self):
         raise NotImplementedError()
 
+    # TODO. Maybe update, based on DataType.
     def iter_test_data_indices(self):
         raise NotImplementedError()
 
     def iter_doc_ids(self, data_type):
         raise NotImplementedError()
+
+    # endregion

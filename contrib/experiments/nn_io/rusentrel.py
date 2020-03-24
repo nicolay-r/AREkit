@@ -3,7 +3,6 @@ import os
 
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiments.doc_stat.rusentrel import RuSentRelDocStatGenerator
 from arekit.contrib.experiments.nn_io.cv_based import CVBasedNeuralNetworkIO
 from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
@@ -19,10 +18,9 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     Now exploited (treated) as an input interface only
     """
 
-    def __init__(self, model_name, data_io, cv_count=1):
+    def __init__(self, model_name, data_io):
         super(RuSentRelBasedNeuralNetworkIO, self).__init__(
             data_io=data_io,
-            cv_count=cv_count,
             model_name=model_name)
 
         self.__model_name = model_name
@@ -42,9 +40,6 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
         return self.__eval_on_rusentrel_docs_key
 
     # endregion
-
-    def create_docs_stat_generator(self):
-        return RuSentRelDocStatGenerator(synonyms=self.DataIO.SynonymsCollection)
 
     def is_rusentrel_news_id(self, news_id):
         assert(isinstance(news_id, int))
@@ -90,22 +85,27 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
 
     # region 'iters' public methods
 
+    # TODO. The code is the same
     def iter_doc_ids(self, data_type):
         if data_type == DataType.Train:
             return self.iter_train_data_indices()
         if data_type == DataType.Test:
             return self.iter_test_data_indices()
 
+    # TODO. The code is the same
+    # TODO. Refactor with data_type parameter
     def iter_test_data_indices(self):
-        if self.CVCount == 1:
+        if self.DataIO.CVFoldingAlgorithm.CVCount == 1:
             for doc_id in RuSentRelIOUtils.iter_test_indices():
                 yield doc_id
         else:
             for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_test_data_indices():
                 yield doc_id
 
+    # TODO. The code is the same
+    # TODO. Refactor with data_type parameter
     def iter_train_data_indices(self):
-        if self.CVCount == 1:
+        if self.DataIO.CVFoldingAlgorithm.CVCount == 1:
             for doc_id in RuSentRelIOUtils.iter_train_indices():
                 yield doc_id
         else:

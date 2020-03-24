@@ -7,7 +7,6 @@ import io_utils
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
-from arekit.contrib.bert_encoder.io_utils import get_experiments_dir
 
 
 # region private functions
@@ -97,6 +96,10 @@ def sample_row_id_to_opinion_id(row_id):
     """
     assert(isinstance(row_id, unicode))
     return row_id[:row_id.find(u'i')] + u"i0"
+
+
+def get_experiments_dir():
+    raise NotImplementedError()
 
 
 def get_filepath(data_type, model_name):

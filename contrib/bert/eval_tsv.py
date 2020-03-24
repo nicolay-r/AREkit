@@ -120,6 +120,10 @@ def iter_eval_collections(bert_result_fp,
         yield news_id, collection
 
 
+class RuSentRelDataIO(object):
+    pass
+
+
 def eval_tsv(data_io, data_type):
     assert(isinstance(data_io, DataIO))
 

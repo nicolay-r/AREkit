@@ -67,6 +67,7 @@ def extract_text_opinions(io, data_type, terms_per_context):
     parsed_collection = ParsedNewsCollection()
     text_opinions = LabeledLinkedTextOpinionCollection(parsed_news_collection=parsed_collection)
 
+    # TODO. Use data_type parameter instead
     news_ids = io.iter_test_data_indices() \
         if data_type == DataType.Test else \
         io.iter_train_data_indices()

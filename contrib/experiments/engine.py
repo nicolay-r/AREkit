@@ -71,11 +71,12 @@ def run_testing(full_model_name,
     logger.info("Run: Saving neutral annotations task.")
     logger.info("Initialization: Building parsed_news collection")
 
+    # Initialize data_io
     for data_type in DataType.iter_supported():
         experiments_io.NeutralAnnontator.create(data_type=data_type)
+    experiments_io.CVFoldingAlgorithm.set_cv_count(cv_count)
 
     nn_io, callback = __create_nn_io_and_callback(
-        cv_count=cv_count,
         data_io=experiments_io,
         create_nn_io_func=create_nn_io,
         create_callback_func=create_callback,
@@ -86,7 +87,7 @@ def run_testing(full_model_name,
     assert(isinstance(callback, Callback))
     assert(isinstance(nn_io, RuSentRelBasedNeuralNetworkIO))
 
-    for cv_index in range(nn_io.CVCount):
+    for cv_index in range(experiments_io.CVFoldingAlgorithm.CVCount):
 
         # Initialize config
         config = create_config()
@@ -125,21 +126,19 @@ def run_testing(full_model_name,
         del network
         del model
 
-        nn_io.inc_cv_index()
+        experiments_io.CVFoldingAlgorithm.set_iteration_index(cv_index+1)
         gc.collect()
 
 # region private functions
 
 
 def __create_nn_io_and_callback(
-        cv_count,
         data_io,
         create_nn_io_func,
         create_callback_func,
         model_name,
         cancel_training_by_cost,
         clear_model_contents):
-    assert(isinstance(cv_count, int))
     assert(isinstance(data_io, DataIO))
     assert(callable(create_nn_io_func))
     assert(callable(create_callback_func))
@@ -148,8 +147,7 @@ def __create_nn_io_and_callback(
     assert(isinstance(clear_model_contents, bool))
 
     nn_io = create_nn_io_func(model_name=model_name,
-                              data_io=data_io,
-                              cv_count=cv_count)
+                              data_io=data_io)
 
     assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
 

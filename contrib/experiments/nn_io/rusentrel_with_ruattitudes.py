@@ -16,10 +16,9 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
     Paper: https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, model_name, data_io, cv_count):
+    def __init__(self, model_name, data_io):
         super(RuSentRelWithRuAttitudesBasedExperimentIO, self).__init__(model_name=model_name,
-                                                                        data_io=data_io,
-                                                                        cv_count=cv_count)
+                                                                        data_io=data_io)
 
         logger.debug("Loading RuAttitudes collection in memory, please wait ...")
         self.__ru_attitudes = read_ruattitudes_in_memory(data_io.Stemmer)
@@ -59,6 +58,7 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
             doc_id=doc_id,
             data_type=data_type)
 
+    # TODO. Refactor with data_type parameter
     def iter_train_data_indices(self):
         for doc_id in super(RuSentRelWithRuAttitudesBasedExperimentIO, self).iter_train_data_indices():
             yield doc_id
