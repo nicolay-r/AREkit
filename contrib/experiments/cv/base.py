@@ -31,7 +31,7 @@ class BaseCVFolding(object):
 
     def set_iteration_index(self, value):
         assert(isinstance(value, int))
-        assert(value < self.__iteration_index)
+        assert(value < self.__cv_count)
         self.__iteration_index = value
 
     def get_cv_train_test_pair_by_index(self, doc_ids_iter):
