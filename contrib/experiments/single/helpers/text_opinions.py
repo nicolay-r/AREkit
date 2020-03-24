@@ -37,13 +37,13 @@ class LabeledLinkedTextOpinionCollectionHelper:
             yield collection, news_id
 
     def debug_labels_statistic(self):
-        norm, _ = self.get_statistic()
+        norm, stat = self.get_statistic()
         total = len(self.__collection)
         print "Extracted relation collection: {}".format(self.__name)
         print "\tTotal: {}".format(total)
         for i, value in enumerate(norm):
             label = self.__labels_helper.create_label_from_uint(i)
-            print "\t{}: {:.2f}%".format(label.to_str(), value)
+            print "\t{}: {:.2f}%\t({} relations)".format(label.to_str(), value, stat[i])
 
     def debug_unique_relations_statistic(self):
         statistic = self.__get_group_statistic()
