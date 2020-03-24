@@ -1,3 +1,4 @@
+import collections
 import random
 
 from arekit.contrib.experiments.cv.base import BaseCVFolding
@@ -5,11 +6,8 @@ from arekit.contrib.experiments.cv.base import BaseCVFolding
 
 class SimpleCVFolding(BaseCVFolding):
 
-    def __init__(self,  doc_ids):
-        assert(isinstance(doc_ids, list))
+    def __init__(self):
         super(SimpleCVFolding, self).__init__()
-
-        self.__doc_ids = doc_ids
 
     # region private methods
 
@@ -25,16 +23,17 @@ class SimpleCVFolding(BaseCVFolding):
 
         return out
 
-    def __items_to_cv_pairs(self, shuffle=True, seed=1):
+    def __items_to_cv_pairs(self, doc_ids, shuffle=True, seed=1):
         """
         Splits array of indices into list of pairs (train_indices_list,
         test_indices_list)
         """
+        assert(isinstance(doc_ids, list))
 
         if shuffle:
-            random.Random(seed).shuffle(self.__doc_ids)
+            random.Random(seed).shuffle(doc_ids)
 
-        chunks = self.__chunk_it(self.__doc_ids, self.__cv_count)
+        chunks = self.__chunk_it(doc_ids, self.CVCount)
 
         for test_index, chunk in enumerate(chunks):
             train_indices = range(len(chunks))
@@ -47,8 +46,13 @@ class SimpleCVFolding(BaseCVFolding):
 
     # endregion
 
-    def get_cv_pair_by_index(self):
-        it = self.__items_to_cv_pairs(shuffle=True, seed=1)
+    def get_cv_train_test_pair_by_index(self, doc_ids_iter):
+        assert(isinstance(doc_ids_iter, collections.Iterable))
+
+        it = self.__items_to_cv_pairs(
+            doc_ids=list(doc_ids_iter),
+            shuffle=True,
+            seed=1)
 
         for index, pair in enumerate(it):
             train, test = pair

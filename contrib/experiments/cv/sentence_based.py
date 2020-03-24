@@ -1,3 +1,4 @@
+import collections
 from os import path
 
 import numpy as np
@@ -43,15 +44,18 @@ class SentenceBasedCVFolding(BaseCVFolding):
         sums[g_index_to_add] += item
         return max(sums) - np.mean(sums)
 
-    def __iter_by_same_size_parts_cv(self):
+    def __iter_by_same_size_parts_cv(self, doc_ids_set):
         """
         Separation with the specific separation, in terms of cv-classes size difference.
         """
+        assert(isinstance(doc_ids_set, set))
 
         if not path.exists(self.__docs_stat_filepath):
             self.__docs_stat.calculate_and_write_doc_stat(self.__docs_stat_filepath)
 
-        docs_info = self.__docs_stat.read_docs_stat(filepath=self.__docs_stat_filepath)
+        docs_info = self.__docs_stat.read_docs_stat(
+            filepath=self.__docs_stat_filepath,
+            doc_ids_set=doc_ids_set)
 
         sorted_stat = reversed(sorted(docs_info, key=lambda pair: pair[1]))
         cv_group_docs = [[] for _ in range(self.CVCount)]
@@ -72,9 +76,10 @@ class SentenceBasedCVFolding(BaseCVFolding):
 
     # endregion
 
-    def get_cv_pair_by_index(self):
+    def get_cv_train_test_pair_by_index(self, doc_ids_iter):
+        assert(isinstance(doc_ids_iter, collections.Iterable))
 
-        it = self.__iter_by_same_size_parts_cv()
+        it = self.__iter_by_same_size_parts_cv(doc_ids_set=set(doc_ids_iter))
 
         for index, pair in enumerate(it):
             train, test = pair

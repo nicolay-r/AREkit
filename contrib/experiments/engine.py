@@ -68,8 +68,6 @@ def run_testing(full_model_name,
 
     # Log
     logger.info("Full-Model-Name: {}".format(full_model_name))
-    logger.info("Run: Saving neutral annotations task.")
-    logger.info("Initialization: Building parsed_news collection")
 
     # Initialize data_io
     for data_type in DataType.iter_supported():

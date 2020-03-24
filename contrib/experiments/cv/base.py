@@ -34,5 +34,5 @@ class BaseCVFolding(object):
         assert(value < self.__iteration_index)
         self.__iteration_index = value
 
-    def get_cv_pair_by_index(self):
+    def get_cv_train_test_pair_by_index(self, doc_ids_iter):
         raise NotImplementedError()

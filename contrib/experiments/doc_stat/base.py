@@ -18,16 +18,25 @@ class DocStatGeneratorBase(object):
                 s_count = self.calculate_sentences_count(doc_index)
                 f.write("{}: {}\n".format(doc_index, s_count))
 
-    def read_docs_stat(self, filepath):
+    def read_docs_stat(self, filepath, doc_ids_set):
         """
+        doc_ids_set: set
+            set of documents expected to be extracted
+
         return:
             list of the following pairs: (doc_id, sentences_count)
         """
+        assert(isinstance(doc_ids_set, set))
+
         docs_info = []
         with open(filepath, 'r') as f:
             for line in f.readlines():
                 args = [int(i) for i in line.split(':')]
                 doc_id, s_count = args
+
+                if doc_id not in doc_ids_set:
+                    continue
+
                 docs_info.append((doc_id, s_count))
 
         return docs_info
