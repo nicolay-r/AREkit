@@ -28,9 +28,12 @@ class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
 
     # endregion
 
+    def get_data_indices_to_fold(self):
+        raise NotImplementedError()
+
     def iter_data_indices(self, data_type):
-        doc_ids_iter = self.iter_data_indices(data_type=data_type)
-        train, test = self.DataIO.CVFoldingAlgorithm.get_cv_train_test_pair_by_index(doc_id=doc_ids_iter)
+        data_indices = self.get_data_indices_to_fold()
+        train, test = self.DataIO.CVFoldingAlgorithm.get_cv_train_test_pair_by_index(doc_ids_iter=data_indices)
 
         if data_type not in [DataType.Train, DataType.Test]:
             raise Exception("Not supported data_type='{data_type}'".format(data_type=data_type))

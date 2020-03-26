@@ -1,4 +1,5 @@
 import collections
+import itertools
 import os
 
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
@@ -81,16 +82,27 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
 
     # region 'iters' public methods
 
-    def iter_data_indices(self, data_type):
-        if self.DataIO.CVFoldingAlgorithm.CVCount == 1:
+    def __use_fixed_folding(self):
+        return self.DataIO.CVFoldingAlgorithm.CVCount == 1
 
+    def get_fixed_folding(self, data_type):
+        if data_type == DataType.Train:
+            return RuSentRelIOUtils.iter_train_indices()
+        elif data_type == DataType.Test:
+            return RuSentRelIOUtils.iter_test_indices()
+        else:
+            raise NotImplementedError("DataType '{}' is not supported".format(data_type))
+
+    def get_data_indices_to_fold(self):
+        return list(itertools.chain(RuSentRelIOUtils.iter_train_indices(),
+                                    RuSentRelIOUtils.iter_test_indices()))
+
+    def iter_data_indices(self, data_type):
+        if self.__use_fixed_folding():
             if data_type not in [DataType.Train, DataType.Test]:
                 raise Exception("Not supported data_type='{data_type}'".format(data_type=data_type))
 
-            data_indices = RuSentRelIOUtils.iter_train_indices() \
-                if data_type == DataType.Train else RuSentRelIOUtils.iter_test_indices()
-
-            for doc_id in data_indices:
+            for doc_id in self.get_fixed_folding(data_type):
                 yield doc_id
         else:
             for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_data_indices(data_type):

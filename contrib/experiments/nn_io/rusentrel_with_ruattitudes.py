@@ -62,11 +62,9 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
     def iter_data_indices(self, data_type):
         super(RuSentRelWithRuAttitudesBasedExperimentIO, self).iter_data_indices(data_type)
 
-        if data_type != DataType.Train:
-            return
-
-        for doc_id in self.__ru_attitudes.iterkeys():
-            yield doc_id
+        if data_type == DataType.Train:
+            for doc_id in self.__ru_attitudes.iterkeys():
+                yield doc_id
 
     # endregion
 
