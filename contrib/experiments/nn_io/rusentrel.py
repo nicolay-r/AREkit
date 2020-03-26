@@ -3,6 +3,7 @@ import os
 
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiments.experiment_io import DocumentIterationType
 from arekit.contrib.experiments.nn_io.cv_based import CVBasedNeuralNetworkIO
 from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
@@ -34,10 +35,6 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     @property
     def RuSentRelNewsIDsList(self):
         return self.__rusentrel_news_ids_list
-
-    @property
-    def EvalOnRuSentRelDocsOnly(self):
-        return self.__eval_on_rusentrel_docs_key
 
     # endregion
 

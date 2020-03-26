@@ -11,6 +11,7 @@ from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.context.debug import DebugKeys
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
+from arekit.networks.eval.base import BaseModelEvaluator
 from arekit.networks.nn_io import NeuralNetworkIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.networks.data_type import DataType
@@ -141,7 +142,10 @@ class TensorflowModel(object):
 
         self.before_evaluation(dest_data_type)
 
-        eval_result = self.get_eval_helper().evaluate(
+        evaluator = self.get_evaluator()
+        assert(isinstance(evaluator, BaseModelEvaluator))
+
+        eval_result = evaluator.evaluate(
             data_type=dest_data_type,
             doc_ids=text_opinions.iter_unique_news_ids(),
             epoch_index=self.__current_epoch_index)
@@ -219,7 +223,7 @@ class TensorflowModel(object):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
         self.set_optimiser_value(optimiser)
 
-    def get_eval_helper(self):
+    def get_evaluator(self):
         raise NotImplementedError()
 
     def get_labels_helper(self):

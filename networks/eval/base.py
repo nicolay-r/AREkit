@@ -1,4 +1,4 @@
 class BaseModelEvaluator(object):
 
-    def evaluate(self, data_type, indices, epoch_index):
+    def evaluate(self, data_type, doc_ids, epoch_index):
         raise NotImplementedError()

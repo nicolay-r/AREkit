@@ -58,8 +58,6 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
     def get_logfile_dir(self):
         return path.join(self.get_model_root(), u"log/")
 
-    # TODO. Might be in a separated interface/class.
-
     # region Document Operations
 
     def read_parsed_news(self, doc_id):

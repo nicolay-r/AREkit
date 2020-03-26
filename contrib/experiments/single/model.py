@@ -1,5 +1,5 @@
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO, DocumentIterationType
 from arekit.contrib.experiments.single import log
 from arekit.contrib.experiments.single.evaluator import CustomOpinionBasedModelEvaluator
 from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
@@ -30,9 +30,11 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
         self.__config = config
         self.__evaluator_class = evaluator_class
-        self.__init_helper = None
-        self.__eval_helper = None
-        self.__prepare_sources()
+        self.__init_helper = self.create_model_init_helper()
+        self.__evaluator = CustomOpinionBasedModelEvaluator(
+            evaluator=self.__evaluator_class(synonyms=self.IO.DataIO.SynonymsCollection),
+            nn_io=self.IO)
+        self.__print_statistic()
 
     # region properties
 
@@ -56,22 +58,38 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def get_labels_helper(self):
         return self.__init_helper.LabelsHelper
 
-    def get_eval_helper(self):
-        return self.__eval_helper
+    def get_evaluator(self):
+        return self.__evaluator
+
+    def __get_doc_ids_set_for_evaluation(self, data_type):
+        assert(isinstance(data_type, unicode))
+
+        cmp_doc_it = self.__evaluator.iter_opinion_collections_to_compare(
+            data_type=data_type,
+            doc_ids=self.IO.iter_data_indices(data_type),
+            epoch_index=self.CurrentEpochIndex)
+
+        return set([cmp_doc.DocumentID for cmp_doc in cmp_doc_it])
 
     def before_evaluation(self, dest_data_type):
-        helper = self.get_text_opinions_collection_helper(dest_data_type)
+        opinion_collections_helper = self.get_text_opinions_collection_helper(
+            data_type=dest_data_type)
 
-        helper.debug_labels_statistic()
+        opinion_collections_helper.debug_labels_statistic()
 
-        collections_iter = helper.iter_opinion_collections(
+        collections_iter = opinion_collections_helper.iter_opinion_collections(
             create_collection_func=lambda: self.IO.create_opinion_collection(),
             label_calculation_mode=self.Config.TextOpinionLabelCalculationMode)
+
+        count = 0
+        news_ids_list = []
+
+        doc_ids_for_evaluation = self.__get_doc_ids_set_for_evaluation(data_type=dest_data_type)
 
         for collection, news_id in collections_iter:
             assert(isinstance(collection, OpinionCollection))
 
-            if self.IO.EvalOnRuSentRelDocsOnly and not self.IO.is_rusentrel_news_id(news_id):
+            if news_id not in doc_ids_for_evaluation:
                 continue
 
             filepath = self.IO.create_result_opinion_collection_filepath(data_type=dest_data_type,
@@ -79,6 +97,13 @@ class SingleInstanceTensorflowModel(TensorflowModel):
                                                                          epoch_index=self.CurrentEpochIndex)
             self.IO.DataIO.OpinionFormatter.save_to_file(collection=collection,
                                                          filepath=filepath)
+
+            count += 1
+            news_ids_list.append(news_id)
+
+        print "dest_data_type: {}".format(dest_data_type)
+        print "Collections saved: {}".format(count)
+        print "News list: [{lst}]".format(lst=", ".join([str(id) for id in news_ids_list]))
 
     def create_batch_by_bags_group(self, bags_group):
         return MiniBatch(bags_group)
@@ -95,15 +120,6 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     def get_bags_collection_helper(self, data_type):
         return self.__init_helper.BagsCollectionHelpers[data_type]
-
-    def __prepare_sources(self):
-        self.__init_helper = self.create_model_init_helper()
-
-        self.__eval_helper = CustomOpinionBasedModelEvaluator(
-            evaluator=self.__evaluator_class(synonyms=self.IO.DataIO.SynonymsCollection),
-            nn_io=self.IO)
-
-        self.__print_statistic()
 
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
