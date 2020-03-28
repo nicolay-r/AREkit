@@ -19,7 +19,6 @@ class TwoClassEvalResult(BaseEvalResult):
         super(TwoClassEvalResult, self).__init__()
 
         self.__documents = OrderedDict()
-        self.__cmp_results = OrderedDict()
         self.__result = None
 
     def get_result_as_str(self):
@@ -55,10 +54,6 @@ class TwoClassEvalResult(BaseEvalResult):
         self.__documents[doc_id][self.C_POS_RECALL] = round(pos_recall, 5)
         self.__documents[doc_id][self.C_NEG_RECALL] = round(neg_recall, 5)
 
-    def add_cmp_results(self, doc_id, cmp_results):
-        assert(doc_id not in self.__cmp_results)
-        self.__cmp_results[doc_id] = cmp_results
-
     def calculate(self):
         pos_prec, neg_prec, pos_recall, neg_recall = (0.0, 0.0, 0.0, 0.0)
 
@@ -91,7 +86,3 @@ class TwoClassEvalResult(BaseEvalResult):
     def iter_document_results(self):
         for doc_id, info in self.__documents.iteritems():
             yield doc_id, info
-
-    def iter_document_cmp(self):
-        for doc_id, cmp_result in self.__cmp_results.iteritems():
-            yield doc_id, cmp_result

@@ -14,7 +14,6 @@ class SingleClassEvalResult(BaseEvalResult):
         super(SingleClassEvalResult, self).__init__()
 
         self.__documents = OrderedDict()
-        self.__cmp_results = OrderedDict()
         self.__result = None
 
     @property
