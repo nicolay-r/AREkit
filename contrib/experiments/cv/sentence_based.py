@@ -4,7 +4,7 @@ from os import path
 import numpy as np
 
 from arekit.contrib.experiments.cv.base import BaseCVFolding
-from arekit.contrib.experiments.doc_stat.base import DocStatGeneratorBase
+from arekit.contrib.experiments.cv.doc_stat.base import DocStatGeneratorBase
 
 
 class SentenceBasedCVFolding(BaseCVFolding):

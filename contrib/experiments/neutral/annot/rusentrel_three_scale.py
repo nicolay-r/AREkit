@@ -62,38 +62,35 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
                                                             keep_tokens=False,
                                                             stemmer=stemmer)
 
+    def __create_opinions_for_extraction(self, doc_id, data_type):
+        entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
+                                                                     synonyms=self.__synonyms)
+
+        news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
+        opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
+                                                              synonyms=self.__synonyms)
+
+        collection = self.__algo.make_neutrals(
+            news_id=doc_id,
+            entities_collection=news.DocEntities,
+            sentiment_opinions=opinions if data_type == DataType.Train else None)
+
+        return collection
+
     # endregion
 
     def create(self, data_type):
         assert(isinstance(data_type, unicode))
 
-        for doc_id in RuSentRelIOUtils.iter_collection_indices():
+        filtered_iter = self._filter_non_created_doc_ids(data_type=data_type,
+                                                         all_doc_ids=RuSentRelIOUtils.iter_collection_indices())
 
-            neutral_filepath = self.get_opin_filepath(doc_id=doc_id,
-                                                      data_type=data_type,
-                                                      output_dir=self.DataIO.get_experiments_dir())
-
-            if utils.check_file_already_exsited(filepath=neutral_filepath, logger=logger):
-                continue
-
-            msg = "Create Neutral File (MODE {}): '{}'".format(data_type, neutral_filepath)
-
-            logger.debug(msg)
-
-            entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                         synonyms=self.__synonyms)
-
-            news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
-            opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
-                                                                  synonyms=self.__synonyms)
-
-            collection = self.__algo.make_neutrals(
-                news_id=doc_id,
-                entities_collection=news.DocEntities,
-                sentiment_opinions=opinions if data_type == DataType.Train else None)
-
+        for doc_id, filepath in filtered_iter:
+            logger.debug("Create Neutral File (MODE {}): '{}'".format(data_type, filepath))
+            collection = self.__create_opinions_for_extraction(doc_id=doc_id,
+                                                               data_type=data_type)
             self.DataIO.OpinionFormatter.save_to_file(collection=collection,
-                                                      filepath=neutral_filepath)
+                                                      filepath=filepath)
 
 
 

@@ -58,7 +58,33 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
         if data_type == DataType.Test:
             return u'test'
 
+    def __create_opinions_for_classification(self, doc_id):
+        # TODO. This should be based on samples.
+        # TODO. And sentence-based document processing.
+        collection = RuSentRelOpinionCollection.load_collection(
+            doc_id=doc_id,
+            synonyms=self.__data_io.SynonymsCollection)
+
+        neul_opin_iter = self.__iter_opinion_as_neutral(collection)
+
+        return OpinionCollection(opinions=list(neul_opin_iter),
+                                 synonyms=self.__data_io.SynonymsCollection)
+
     # endregion
+
+    def _filter_non_created_doc_ids(self, all_doc_ids, data_type):
+
+        for doc_id in all_doc_ids:
+
+            filepath = self.get_opin_filepath(
+                doc_id=doc_id,
+                data_type=data_type,
+                output_dir=self.__data_io.get_experiments_dir())
+
+            if utils.check_file_already_existed(filepath=filepath, logger=logger):
+                continue
+
+            yield doc_id, filepath
 
     def create(self, data_type):
         assert(isinstance(data_type, unicode))
@@ -66,29 +92,19 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
         if data_type == DataType.Train:
             return
 
-        for doc_id in RuSentRelIOUtils.iter_collection_indices():
+        filtered_iter = self._filter_non_created_doc_ids(
+            all_doc_ids=RuSentRelIOUtils.iter_collection_indices(),
+            data_type=data_type)
 
-            neutral_filepath = self.get_opin_filepath(
-                doc_id=doc_id,
-                data_type=data_type,
-                output_dir=self.__data_io.get_experiments_dir())
+        for doc_id, filepath in filtered_iter:
 
-            if utils.check_file_already_exsited(filepath=neutral_filepath, logger=logger):
-                continue
-
-            utils.notify_newfile_creation(filepath=neutral_filepath,
+            utils.notify_newfile_creation(filepath=filepath,
                                           data_type=data_type,
                                           logger=logger)
-            collection = RuSentRelOpinionCollection.load_collection(
-                doc_id=doc_id,
-                synonyms=self.__data_io.SynonymsCollection)
-
-            neul_opin_iter = self.__iter_opinion_as_neutral(collection)
 
             self.__data_io.OpinionFormatter.save_to_file(
-                collection=OpinionCollection(opinions=list(neul_opin_iter),
-                                             synonyms=self.__data_io.SynonymsCollection),
-                filepath=neutral_filepath)
+                collection=self.__create_opinions_for_classification(doc_id),
+                filepath=filepath)
 
     def get_opin_filepath(self, doc_id, data_type, output_dir):
         assert(isinstance(doc_id, int))
