@@ -2,7 +2,7 @@
 import logging
 import collections
 import cPickle as pickle
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.collection import TextOpinionCollection
 

@@ -5,7 +5,7 @@ from os.path import join
 
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.networks.sample import InputSample

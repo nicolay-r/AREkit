@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from arekit.common.text_object import TextObject
-from arekit.common.ref_opinon import RefOpinion
+from arekit.common.text_opinions.base import RefOpinion
 from arekit.common.labels.base import Label
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.processing.text.parser import TextParser

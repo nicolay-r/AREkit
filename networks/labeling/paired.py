@@ -1,7 +1,7 @@
 import logging
 import numpy as np
 from arekit.common.text_opinions.helper import TextOpinionHelper
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.labels.base import Label

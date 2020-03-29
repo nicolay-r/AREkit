@@ -2,7 +2,7 @@ from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.operations.opinions import OpinionOperations
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
@@ -12,8 +12,8 @@ from arekit.networks.context.debug import DebugKeys
 from arekit.networks.data_type import DataType
 from arekit.source.ruattitudes.helpers.linked_text_opinions import RuAttitudesNewsTextOpinionExtractorHelper
 from arekit.source.ruattitudes.news import RuAttitudesNews
-from arekit.source.rusentiframes.helpers.parse import RuSentiFramesParseHelper
 from arekit.source.rusentrel.helpers.linked_text_opinions import RuSentRelNewsTextOpinionExtractorHelper
+from arekit.source.rusentiframes.helpers.parse import RuSentiFramesParseHelper
 from arekit.source.rusentrel.news import RuSentRelNews
 
 
@@ -64,6 +64,11 @@ def __fill_text_opinions(text_opinions,
             window_size=terms_per_context,
             text_opinion=text_opinion)
 
+    # TODO. Here is a dependency from certain format.
+    # TODO. Add entries duplicated in different classes.
+    # TODO. Here only an iterator.
+    # TODO. Use  collection filling (text_opinions) later.
+
     if isinstance(news, RuSentRelNews):
         return RuSentRelNewsTextOpinionExtractorHelper.add_entries(
             text_opinion_collection=text_opinions,
@@ -76,6 +81,8 @@ def __fill_text_opinions(text_opinions,
             text_opinion_collection=text_opinions,
             news=news,
             check_text_opinion_is_correct=__check_text_opinion)
+
+    # TODO. Fill here.
 
 # endregions
 

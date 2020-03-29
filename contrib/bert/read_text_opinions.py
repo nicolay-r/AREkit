@@ -1,7 +1,7 @@
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.data_type import DataType
@@ -28,6 +28,7 @@ def __iter_opinion_collections(io, news_id, data_type):
         yield io.read_etalon_opinion_collection(doc_id=news_id)
 
 
+# TODO. Code is the same.
 def __fill_text_opinions(text_opinions, news, opinions, terms_per_context):
     """
     Fill text_opinions collection

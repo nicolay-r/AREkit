@@ -1,7 +1,7 @@
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text_opinions.collection import TextOpinionCollection
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 
 

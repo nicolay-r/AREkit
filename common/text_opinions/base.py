@@ -1,75 +1,53 @@
-from arekit.common.ref_opinon import RefOpinion
 from arekit.common.labels.base import Label
 
 
-class TextOpinion(RefOpinion):
+class RefOpinion(object):
     """
-    Represents a relation which were found in news article
-    and composed between two named entities
-        (it was found especially by Opinion with predefined label)
-        allows to modify label using set_label
+    Provides references within Owner collection with id's.
     """
 
-    # region constructors
-
-    def __init__(self, news_id, text_opinion_id, source_id, target_id, owner, label):
-        assert(isinstance(news_id, int))
-        assert(isinstance(text_opinion_id, int) or text_opinion_id is None)
-
-        super(TextOpinion, self).__init__(source_id=source_id,
-                                          target_id=target_id,
-                                          sentiment=label,
-                                          owner=owner)
-        self.__news_id = news_id
-        self.__text_opinion_id = text_opinion_id
-        self.__modifiable_label = label
-
-    @classmethod
-    def create_copy(cls, other):
-        assert(isinstance(other, TextOpinion))
-        return TextOpinion(news_id=other.__news_id,
-                           text_opinion_id=other.__text_opinion_id,
-                           source_id=other.SourceId,
-                           target_id=other.TargetId,
-                           owner=other.Owner,
-                           label=other.Sentiment)
-
-    @classmethod
-    def create_from_ref_opinion(cls, news_id, text_opinion_id, ref_opinion):
-        assert(isinstance(ref_opinion, RefOpinion))
-        return cls(news_id=news_id,
-                   text_opinion_id=text_opinion_id,
-                   source_id=ref_opinion.SourceId,
-                   target_id=ref_opinion.TargetId,
-                   owner=ref_opinion.Owner,
-                   label=ref_opinion.Sentiment)
-
-    # endregion
+    def __init__(self, source_id, target_id, sentiment, owner=None):
+        assert(isinstance(source_id, int))
+        assert(isinstance(target_id, int))
+        assert(isinstance(sentiment, Label))
+        self.__source_id = source_id
+        self.__target_id = target_id
+        self.__sentiment = sentiment
+        self.__owner = owner
+        self.__tag = None
 
     # region properties
 
     @property
+    def SourceId(self):
+        return self.__source_id
+
+    @property
+    def TargetId(self):
+        return self.__target_id
+
+    @property
+    def Owner(self):
+        return self.__owner
+
+    @property
     def Sentiment(self):
-        return self.__modifiable_label
+        return self.__sentiment
 
     @property
-    def NewsID(self):
-        return self.__news_id
-
-    @property
-    def TextOpinionID(self):
-        return self.__text_opinion_id
+    def Tag(self):
+        return self.__tag
 
     # endregion
 
     # region public methods
 
-    def set_text_opinion_id(self, relation_id):
-        assert(isinstance(relation_id, int))
-        self.__text_opinion_id = relation_id
+    def set_tag(self, value):
+        self.__tag = value
 
-    def set_label(self, label):
-        assert(isinstance(label, Label))
-        self.__modifiable_label = label
+    def set_owner(self, owner):
+        assert(owner is not None)
+        assert(self.__owner is None)
+        self.__owner = owner
 
     # endregion

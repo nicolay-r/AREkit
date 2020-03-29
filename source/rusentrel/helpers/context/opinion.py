@@ -1,4 +1,4 @@
-from arekit.common.ref_opinon import RefOpinion
+from arekit.common.text_opinions.base import RefOpinion
 from arekit.common.labels.base import Label
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 

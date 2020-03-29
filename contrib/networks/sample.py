@@ -7,7 +7,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.synonyms import SynonymsCollection
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 

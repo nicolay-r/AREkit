@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.rusentrel.helpers.context.collection import RuSentRelTextOpinionCollection
 from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 from arekit.source.rusentrel.news import RuSentRelNews
@@ -12,11 +12,16 @@ class RuSentRelNewsTextOpinionExtractorHelper:
     TextOpinion provider from RuSentRel news
     """
 
+    # TODO. Duplicated in RuAttitudes.
+    # TODO. Should be iterator of text_opinions.
     @staticmethod
     def add_entries(text_opinion_collection,
                     news,
                     opinions,
                     check_text_opinion_is_correct):
+        """
+        Convert opinions to TextOpinions and then adds to text_opinion_collection.
+        """
         assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinions, OpinionCollection))
@@ -40,6 +45,7 @@ class RuSentRelNewsTextOpinionExtractorHelper:
 
     # region private methods
 
+    # TODO. This should be public.
     @staticmethod
     def __iter_text_opinions(entries):
         for entry in entries:

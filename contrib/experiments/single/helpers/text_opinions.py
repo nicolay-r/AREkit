@@ -1,7 +1,7 @@
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.networks.labeling.base import LabelsHelper
 
 

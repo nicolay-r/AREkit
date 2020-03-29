@@ -1,6 +1,6 @@
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from arekit.common.ref_opinon import RefOpinion
-from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.text_opinions.base import RefOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from arekit.source.ruattitudes.news import RuAttitudesNews
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
@@ -11,6 +11,9 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
     TextOpinion provider from RuAttitudesNews
     """
 
+    # TODO. Duplicated in RuSentRel
+    # TODO. Should be iterator of text_opinions.
+    # TODO. Rename as "extract_text_opinions"
     @staticmethod
     def add_entries(text_opinion_collection,
                     news,
@@ -22,7 +25,7 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
         discarded = 0
         for opinion, sentences in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news):
 
-            text_opinions = RuAttitudesNewsTextOpinionExtractorHelper.__iter_text_opinions(
+            text_opinions = RuAttitudesNewsTextOpinionExtractorHelper.__iter_all_text_opinions_in_sentences(
                 opinion=opinion,
                 sentences=sentences)
 
@@ -34,8 +37,9 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
 
     # region private methods
 
+    # TODO. This should be public.
     @staticmethod
-    def __iter_text_opinions(opinion, sentences):
+    def __iter_all_text_opinions_in_sentences(opinion, sentences):
         for sentence in sentences:
             assert(isinstance(sentence, RuAttitudesSentence))
             ref_opinion = sentence.find_ref_opinion_by_key(key=opinion.Tag)
