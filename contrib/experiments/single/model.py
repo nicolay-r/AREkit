@@ -66,7 +66,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
         cmp_doc_it = self.__evaluator.iter_opinion_collections_to_compare(
             data_type=data_type,
-            doc_ids=self.IO.iter_data_indices(data_type),
+            doc_ids=self.IO.iter_news_indices(data_type),
             epoch_index=self.CurrentEpochIndex)
 
         return set([cmp_doc.DocumentID for cmp_doc in cmp_doc_it])

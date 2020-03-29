@@ -101,7 +101,7 @@ def extract_text_opinions(experiment_io,
     text_opinions = LabeledLinkedTextOpinionCollection(
         parsed_news_collection=parsed_collection)
 
-    for news_id in experiment_io.iter_data_indices(data_type):
+    for news_id in experiment_io.iter_news_indices(data_type):
 
         news, parsed_news = __read_document(experiment_io=experiment_io,
                                             doc_id=news_id,

@@ -59,8 +59,8 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
             doc_id=doc_id,
             data_type=data_type)
 
-    def iter_data_indices(self, data_type):
-        super(RuSentRelWithRuAttitudesBasedExperimentIO, self).iter_data_indices(data_type)
+    def iter_news_indices(self, data_type):
+        super(RuSentRelWithRuAttitudesBasedExperimentIO, self).iter_news_indices(data_type)
 
         if data_type == DataType.Train:
             for doc_id in self.__ru_attitudes.iterkeys():

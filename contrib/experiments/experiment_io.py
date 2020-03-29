@@ -63,7 +63,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO, OpinionOperations):
     def read_parsed_news(self, doc_id):
         raise NotImplementedError()
 
-    def iter_data_indices(self, data_type):
+    def iter_news_indices(self, data_type):
         raise NotImplementedError()
 
     # endregion

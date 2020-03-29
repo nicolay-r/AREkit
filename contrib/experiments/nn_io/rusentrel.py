@@ -97,7 +97,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
         return list(itertools.chain(RuSentRelIOUtils.iter_train_indices(),
                                     RuSentRelIOUtils.iter_test_indices()))
 
-    def iter_data_indices(self, data_type):
+    def iter_news_indices(self, data_type):
         if self.__use_fixed_folding():
             if data_type not in [DataType.Train, DataType.Test]:
                 raise Exception("Not supported data_type='{data_type}'".format(data_type=data_type))
@@ -105,7 +105,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
             for doc_id in self.get_fixed_folding(data_type):
                 yield doc_id
         else:
-            for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_data_indices(data_type):
+            for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_news_indices(data_type):
                 yield doc_id
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):

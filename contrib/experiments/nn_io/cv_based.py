@@ -31,7 +31,7 @@ class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
     def get_data_indices_to_fold(self):
         raise NotImplementedError()
 
-    def iter_data_indices(self, data_type):
+    def iter_news_indices(self, data_type):
         data_indices = self.get_data_indices_to_fold()
         train, test = self.DataIO.CVFoldingAlgorithm.get_cv_train_test_pair_by_index(doc_ids_iter=data_indices)
 
