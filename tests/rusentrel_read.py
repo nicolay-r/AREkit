@@ -29,12 +29,8 @@ for doc_id in RuSentRelIOUtils.iter_collection_indices():
 
     logger.info(u"NewsID: {}".format(doc_id))
 
-    # Read collections
-    entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                 synonyms=synonyms)
-
     news = RuSentRelNews.read_document(doc_id=doc_id,
-                                       entities=entities)
+                                       synonyms=synonyms)
 
     opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
                                                           synonyms=synonyms)

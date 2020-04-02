@@ -21,6 +21,11 @@ class DataIO(object):
     def CVFoldingAlgorithm(self):
         raise NotImplementedError()
 
+    # TODO. Utilize this.
+    @property
+    def TermsPerContext(self):
+        raise NotImplementedError()
+
     @property
     def OpinionFormatter(self):
         raise NotImplementedError()

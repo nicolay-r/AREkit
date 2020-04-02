@@ -9,7 +9,6 @@ from arekit.networks.data_type import DataType
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
-from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 
@@ -47,10 +46,8 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     def read_parsed_news(self, doc_id):
         assert(isinstance(doc_id, int))
 
-        entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                     synonyms=self.DataIO.SynonymsCollection)
-
-        news = RuSentRelNews.read_document(doc_id, entities)
+        news = RuSentRelNews.read_document(doc_id=doc_id,
+                                           synonyms=self.DataIO.SynonymsCollection)
 
         parsed_news = RuSentRelParsedNewsHelper.create_parsed_news(rusentrel_news_id=doc_id,
                                                                    rusentrel_news=news,

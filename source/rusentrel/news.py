@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.common.news import News
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
@@ -9,6 +10,7 @@ from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 from arekit.source.rusentrel.helpers.news import RuSentRelNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.source.rusentrel.sentence import RuSentRelSentence
+from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
 class RuSentRelNews(News):
@@ -48,7 +50,14 @@ class RuSentRelNews(News):
     # region class methods
 
     @classmethod
-    def read_document(cls, doc_id, entities, version=RuSentRelVersions.V11):
+    def read_document(cls, doc_id, synonyms, version=RuSentRelVersions.V11):
+        assert(isinstance(synonyms, SynonymsCollection))
+
+        entities = RuSentRelDocumentEntityCollection.read_collection(
+            doc_id=doc_id,
+            synonyms=synonyms,
+            version=version)
+
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_news_innerpath(doc_id),
             process_func=lambda input_file: cls.__from_file(doc_id=doc_id,

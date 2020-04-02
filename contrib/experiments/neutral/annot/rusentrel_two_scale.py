@@ -24,6 +24,10 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
 
     __annot_name = u"neutral_2_scale"
 
+    # TODO. experiment_io use (we need an access to opinions).
+    # TODO. exp_io.read_parsed_news.
+    # TODO. exp_io.read_etalon_opinion_collection()
+    # TODO. access to filter.
     def __init__(self, data_io):
         assert(isinstance(data_io, DataIO))
         self.__data_io = data_io
@@ -62,6 +66,11 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
         # TODO. This should be based on samples.
         # TODO. Use helper to obtain such samples.
         # TODO. And sentence-based document processing.
+        # TODO. Use news -> iter_text_opinions
+        # TODO. experiment_io use (we need an access to opinions).
+        # TODO. exp_io.read_parsed_news.
+        # TODO. exp_io.read_etalon_opinion_collection()
+        # TODO. access to filter.
         collection = RuSentRelOpinionCollection.load_collection(
             doc_id=doc_id,
             synonyms=self.__data_io.SynonymsCollection)
@@ -86,6 +95,8 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
                 continue
 
             yield doc_id, filepath
+
+    # region public methods
 
     def create(self, data_type):
         assert(isinstance(data_type, unicode))
@@ -120,3 +131,5 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
             d_type=RuSentRelTwoScaleNeutralAnnotator.__data_type_to_string(data_type))
 
         return join(root, filename)
+
+    # endregion

@@ -22,7 +22,6 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         InTerms = 'in_terms'
         InSentences = 'in_sentences'
 
-
     def __init__(self,
                  synonyms,
                  create_parsed_news_func,

@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import utils
 import logging
 
 from arekit.contrib.experiments.data_io import DataIO
@@ -10,7 +9,6 @@ from arekit.networks.data_type import DataType
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
-from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
@@ -51,11 +49,8 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
 
     @staticmethod
     def __create_parsed_news(doc_id, synonyms, stemmer):
-        entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                     synonyms=synonyms)
-
         news = RuSentRelNews.read_document(doc_id=doc_id,
-                                           entities=entities)
+                                           synonyms=synonyms)
 
         return RuSentRelParsedNewsHelper.create_parsed_news(rusentrel_news_id=doc_id,
                                                             rusentrel_news=news,
@@ -63,10 +58,9 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
                                                             stemmer=stemmer)
 
     def __create_opinions_for_extraction(self, doc_id, data_type):
-        entities = RuSentRelDocumentEntityCollection.read_collection(doc_id=doc_id,
-                                                                     synonyms=self.__synonyms)
+        news = RuSentRelNews.read_document(doc_id=doc_id,
+                                           synonyms=self.__synonyms)
 
-        news = RuSentRelNews.read_document(doc_id=doc_id, entities=entities)
         opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
                                                               synonyms=self.__synonyms)
 
