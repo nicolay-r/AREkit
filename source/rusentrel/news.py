@@ -1,17 +1,25 @@
 # -*- coding: utf-8 -*-
+from arekit.common.news import News
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
+from arekit.source.rusentrel.helpers.context.collection import RuSentRelTextOpinionCollection
+from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 from arekit.source.rusentrel.helpers.news import RuSentRelNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.source.rusentrel.sentence import RuSentRelSentence
 
 
-class RuSentRelNews(object):
+class RuSentRelNews(News):
 
     def __init__(self, doc_id, sentences, entities):
         assert(isinstance(doc_id, int))
         assert(isinstance(sentences, list))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
+
+        super(News, self).__init__()
+
         self.__doc_id = doc_id
         self.__sentences = sentences
         self.__entities = entities
@@ -36,6 +44,8 @@ class RuSentRelNews(object):
         return self.__doc_id
 
     # endregion
+
+    # region class methods
 
     @classmethod
     def read_document(cls, doc_id, entities, version=RuSentRelVersions.V11):
@@ -86,6 +96,8 @@ class RuSentRelNews(object):
                    sentences=sentences,
                    entities=entities)
 
+    # endregion
+
     # region private methods
 
     @staticmethod
@@ -125,5 +137,58 @@ class RuSentRelNews(object):
     def iter_sentences(self):
         for sentence in self.__sentences:
             yield sentence
+
+    # endregion
+
+    # region base News
+
+    def iter_text_opinions(self, opinions):
+        assert(isinstance(opinions, OpinionCollection))
+        for entries in self.__iter_rusentrel_text_opinion_entries(opinions=opinions):
+            assert(isinstance(entries, RuSentRelTextOpinionCollection))
+            for text_opinion in RuSentRelNews.__iter_text_opinions(entries=entries):
+                yield text_opinion
+
+    # region private methods
+
+    @staticmethod
+    def __iter_text_opinions(entries):
+        for entry in entries:
+            yield RuSentRelNews.__entry_to_text_opinion(entry=entry)
+
+    @staticmethod
+    def __entry_to_text_opinion(entry):
+        """
+        Text Level Opinion -> Text Opinion
+        """
+        assert(isinstance(entry, RuSentRelTextOpinion))
+
+        return TextOpinion(
+            news_id=entry.RuSentRelNewsId,
+            source_id=entry.SourceId,
+            target_id=entry.TargetId,
+            label=entry.Sentiment,
+            owner=None,
+            text_opinion_id=None)
+
+    def __iter_rusentrel_text_opinion_entries(self, opinions):
+        """
+        Document Level Opinions -> Linked Text Level Opinions
+        """
+        assert(isinstance(opinions, OpinionCollection))
+
+        def same_sentence_text_opinions(opinion):
+            return abs(self.Helper.get_sentence_index_by_entity(opinion.SourceEntity) -
+                       self.Helper.get_sentence_index_by_entity(opinion.TargetEntity)) == 0
+
+        for opinion in opinions:
+
+            yield RuSentRelTextOpinionCollection.from_opinion(
+                rusentrel_news_id=self.DocumentID,
+                doc_entities=self.DocEntities,
+                opinion=opinion,
+                check_text_opinion_correctness=same_sentence_text_opinions)
+
+    # endregion
 
     # endregion

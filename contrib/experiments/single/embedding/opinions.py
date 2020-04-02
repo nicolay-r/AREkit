@@ -1,20 +1,14 @@
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
-from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
-from arekit.contrib.experiments.operations.opinions import OpinionOperations
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.context.debug import DebugKeys
 from arekit.networks.data_type import DataType
-from arekit.source.ruattitudes.helpers.linked_text_opinions import RuAttitudesNewsTextOpinionExtractorHelper
-from arekit.source.ruattitudes.news import RuAttitudesNews
-from arekit.source.rusentrel.helpers.linked_text_opinions import RuSentRelNewsTextOpinionExtractorHelper
 from arekit.source.rusentiframes.helpers.parse import RuSentiFramesParseHelper
-from arekit.source.rusentrel.news import RuSentRelNews
 
 
 # region private methods
@@ -48,18 +42,6 @@ def __iter_opinion_collections(experiment_io, news_id, data_type):
 
     if data_type == DataType.Train:
         yield experiment_io.read_etalon_opinion_collection(doc_id=news_id)
-
-
-def __get_text_opinion_iterator(news, opinions):
-    assert(isinstance(news, RuSentRelNews) or isinstance(news, RuAttitudesNews))
-    assert(isinstance(opinions, OpinionCollection))
-
-    if isinstance(news, RuSentRelNews):
-        # TODO. Opinions utilized in RuSentRel news only.
-        return RuSentRelNewsTextOpinionExtractorHelper.iter_text_opinions(news=news, opinions=opinions)
-
-    elif isinstance(news, RuAttitudesNews):
-        return RuAttitudesNewsTextOpinionExtractorHelper.iter_text_opinions(news=news)
 
 
 def __check_text_opinion(text_opinion, terms_per_context):
@@ -106,12 +88,9 @@ def extract_text_opinions(experiment_io,
                                                  news_id=news_id,
                                                  data_type=data_type)
 
-        discarded = 0
         for opinions in opinions_it:
-            text_opins_it = __get_text_opinion_iterator(news=news, opinions=opinions)
-
-            for text_opinion in text_opins_it:
-                discarded += text_opinions.try_add_linked_text_opinions(
+            for text_opinion in news.iter_text_opinions(opinions=opinions):
+                text_opinions.try_add_linked_text_opinions(
                     linked_text_opinions=text_opinions,
                     check_opinion_correctness=__check_text_opinion(text_opinion, config.TermsPerContext))
 

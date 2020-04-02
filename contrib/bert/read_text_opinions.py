@@ -5,9 +5,7 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.data_type import DataType
-from arekit.source.ruattitudes.helpers.linked_text_opinions import RuAttitudesNewsTextOpinionExtractorHelper
 from arekit.source.ruattitudes.news import RuAttitudesNews
-from arekit.source.rusentrel.helpers.linked_text_opinions import RuSentRelNewsTextOpinionExtractorHelper
 from arekit.source.rusentrel.news import RuSentRelNews
 
 

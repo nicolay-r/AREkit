@@ -63,9 +63,12 @@ class RuAttitudesSentence(object):
             yield object
 
     def find_ref_opinion_by_key(self, key):
+        assert(key is not None)
+
         for opinion in self.__ref_opinions:
             if opinion.Tag == key:
                 return opinion
+
         return None
 
     def iter_ref_opinions(self):

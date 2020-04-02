@@ -1,12 +1,18 @@
+from arekit.common.news import News
+from arekit.common.text_opinions.base import RefOpinion
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
-class RuAttitudesNews(object):
+class RuAttitudesNews(News):
 
     def __init__(self, sentences, news_index):
         assert(isinstance(sentences, list))
         assert(len(sentences) > 0)
         assert(isinstance(news_index, int))
+
+        super(News, self).__init__()
+
         self.__sentences = sentences
         self.__news_index = news_index
         self.__set_owners()
@@ -41,7 +47,6 @@ class RuAttitudesNews(object):
 
         return d
 
-
     # endregion
 
     # region public methods
@@ -55,5 +60,53 @@ class RuAttitudesNews(object):
     def iter_sentences(self):
         for sentence in self.__sentences:
             yield sentence
+
+    # endregion
+
+    # region base News
+
+    def iter_text_opinions(self, opinions):
+        """
+        Note: Complexity is O(N^2)
+        """
+        for opinion in opinions:
+            for text_opinion in self.__iter_all_text_opinions_in_sentences(opinion=opinion):
+                yield text_opinion
+
+    # region Private methods
+
+    def __iter_all_text_opinions_in_sentences(self, opinion):
+        for sentence in self.iter_sentences():
+            assert(isinstance(sentence, RuAttitudesSentence))
+
+            ref_opinion = sentence.find_ref_opinion_by_key(key=opinion.Tag)
+
+            if ref_opinion is None:
+                continue
+
+            yield self.__ref_opinion_to_text_opinion(
+                news_index=sentence.Owner.NewsIndex,
+                ref_opinion=ref_opinion,
+                sent_to_doc_id_func=sentence.get_doc_level_text_object_id)
+
+    @staticmethod
+    def __ref_opinion_to_text_opinion(news_index,
+                                      ref_opinion,
+                                      sent_to_doc_id_func):
+        assert(isinstance(news_index, int))
+        assert(isinstance(ref_opinion, RefOpinion))
+        assert(callable(sent_to_doc_id_func))
+
+        cloned_ref_opinion = RefOpinion(
+            source_id=sent_to_doc_id_func(ref_opinion.SourceId),
+            target_id=sent_to_doc_id_func(ref_opinion.TargetId),
+            sentiment=ref_opinion.Sentiment)
+
+        return TextOpinion.create_from_ref_opinion(
+            news_id=news_index,
+            text_opinion_id=None,
+            ref_opinion=cloned_ref_opinion)
+
+    # endregion
 
     # endregion

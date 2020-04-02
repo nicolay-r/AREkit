@@ -1,9 +1,9 @@
 import logging
 
+from arekit.networks.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
-from arekit.networks.data_type import DataType
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
 
@@ -53,7 +53,9 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
         assert(isinstance(data_type, unicode))
 
         if doc_id not in self.RuSentRelNewsIDsList:
-            return None
+            news = self.__ru_attitudes[doc_id]
+            opinions, _ = RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news=news)
+            return opinions
 
         return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_neutral_opinion_collection(
             doc_id=doc_id,
