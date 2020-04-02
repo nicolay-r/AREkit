@@ -1,10 +1,8 @@
 #!/usr/bin/python
 import logging
 from arekit.common.bound import Bound
-from arekit.common.entities.collection import EntityCollection
 from arekit.common.opinions.base import Opinion
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.news import RuSentRelNews
@@ -61,11 +59,3 @@ for doc_id in RuSentRelIOUtils.iter_collection_indices():
                 bound.Position,
                 bound.Position + bound.Length,
                 entity.IdInDocument).encode('utf-8'))
-
-    # Example: Access to the read ENTITIES collection.
-    example_entity = entities.get_entity_by_index(10)
-    entities_list = entities.try_get_entities(example_entity.Value,
-                                              group_key=EntityCollection.KeyType.BY_SYNONYMS)
-    logger.info(u"\tText synonymous to: '{}'".format(example_entity.Value).encode('utf-8'))
-    logger.info(u"\t[{}]".format(", ".join([str((e.Value, str(e.IdInDocument)))
-                                            for e in entities_list])).encode('utf-8'))

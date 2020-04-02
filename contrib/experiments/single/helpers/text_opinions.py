@@ -25,14 +25,14 @@ class LabeledLinkedTextOpinionCollectionHelper:
 
     # region public methods
 
-    def iter_opinion_collections(self, create_collection_func, label_calculation_mode):
+    def iter_converted_to_opinion_collections(self, create_collection_func, label_calc_mode):
         assert(callable(create_collection_func))
-        assert(isinstance(label_calculation_mode, unicode))
+        assert(isinstance(label_calc_mode, unicode))
 
         for news_id in self.__collection.iter_unique_news_ids():
             collection = self.__to_opinion_collection(create_collection_func=create_collection_func,
                                                       news_id=news_id,
-                                                      label_mode=label_calculation_mode)
+                                                      label_mode=label_calc_mode)
 
             yield collection, news_id
 
@@ -68,6 +68,7 @@ class LabeledLinkedTextOpinionCollectionHelper:
 
     # region private methods
 
+    # TODO. Iter opinions, refactor.
     def __to_opinion_collection(self, create_collection_func, news_id, label_mode):
         assert(callable(create_collection_func))
         assert(isinstance(news_id, int))

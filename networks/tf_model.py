@@ -119,9 +119,6 @@ class TensorflowModel(object):
     def after_labeling_func_application(self, text_opinions):
         assert(text_opinions.check_all_text_opinions_has_labels())
 
-    def before_evaluation(self, dest_data_type):
-        pass
-
     def predict_core(self,
                      dest_data_type,
                      labeling_callback,
@@ -139,8 +136,6 @@ class TensorflowModel(object):
         self.before_labeling_func_application(text_opinions)
         predict_log = labeling_callback(text_opinions, dest_data_type, doc_ids_set)
         self.after_labeling_func_application(text_opinions)
-
-        self.before_evaluation(dest_data_type)
 
         evaluator = self.get_evaluator()
         assert(isinstance(evaluator, BaseModelEvaluator))
