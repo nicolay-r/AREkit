@@ -24,6 +24,14 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
         logger.debug("Loading RuAttitudes collection in memory, please wait ...")
         self.__ru_attitudes = read_ruattitudes_in_memory(data_io.Stemmer)
 
+    # region private methods
+
+    def __get_opinions_in_news(self, doc_id):
+        news = self.__ru_attitudes[doc_id]
+        return [opinion for opinion, _ in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news)]
+
+    # endregion
+
     # region 'read' public methods
 
     def read_parsed_news(self, doc_id):
@@ -31,8 +39,7 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
             return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(doc_id=doc_id)
 
         news = self.__ru_attitudes[doc_id]
-        parsed_news = RuAttitudesParsedNewsHelper.create_parsed_news(doc_id=doc_id,
-                                                                     news=news)
+        parsed_news = RuAttitudesParsedNewsHelper.create_parsed_news(doc_id=doc_id, news=news)
 
         return news, parsed_news
 
@@ -42,10 +49,7 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
         if doc_id in self.RuSentRelNewsIDsList:
             return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_etalon_opinion_collection(doc_id)
 
-        news = self.__ru_attitudes[doc_id]
-        opinions = [opinion for opinion, _ in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news)]
-
-        return OpinionCollection(opinions=opinions,
+        return OpinionCollection(opinions=self.__get_opinions_in_news(doc_id),
                                  synonyms=self.DataIO.SynonymsCollection)
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
@@ -53,9 +57,7 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
         assert(isinstance(data_type, unicode))
 
         if doc_id not in self.RuSentRelNewsIDsList:
-            news = self.__ru_attitudes[doc_id]
-            opinions, _ = RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news=news)
-            return opinions
+            return self.__get_opinions_in_news(doc_id=doc_id)
 
         return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_neutral_opinion_collection(
             doc_id=doc_id,
