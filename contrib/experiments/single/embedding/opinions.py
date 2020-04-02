@@ -19,6 +19,7 @@ from arekit.source.rusentrel.news import RuSentRelNews
 
 # region private methods
 
+# TODO. Useless method, could be removed.
 def __read_document(experiment_io, doc_id, config):
     assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(doc_id, int))
@@ -34,55 +35,38 @@ def __read_document(experiment_io, doc_id, config):
     return news, parsed_news
 
 
-def __iter_opinion_collections(opinion_operations, news_id, data_type):
-    assert(isinstance(opinion_operations, OpinionOperations))
+def __iter_opinion_collections(experiment_io, news_id, data_type):
+    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(news_id, int))
     assert(isinstance(data_type, unicode))
 
-    neutral = opinion_operations.read_neutral_opinion_collection(doc_id=news_id,
-                                                                 data_type=data_type)
+    neutral = experiment_io.read_neutral_opinion_collection(doc_id=news_id,
+                                                            data_type=data_type)
 
     if neutral is not None:
         yield neutral
 
     if data_type == DataType.Train:
-        yield opinion_operations.read_etalon_opinion_collection(doc_id=news_id)
+        yield experiment_io.read_etalon_opinion_collection(doc_id=news_id)
 
 
-def __fill_text_opinions(text_opinions,
-                         news,
-                         opinions,
-                         terms_per_context):
+def __get_text_opinion_iterator(news, opinions):
     assert(isinstance(news, RuSentRelNews) or isinstance(news, RuAttitudesNews))
-    assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
     assert(isinstance(opinions, OpinionCollection))
-    assert(isinstance(terms_per_context, int))
-
-    def __check_text_opinion(text_opinion):
-        assert(isinstance(text_opinion, TextOpinion))
-        return InputSample.check_ability_to_create_sample(
-            window_size=terms_per_context,
-            text_opinion=text_opinion)
-
-    # TODO. Here is a dependency from certain format.
-    # TODO. Add entries duplicated in different classes.
-    # TODO. Here only an iterator.
-    # TODO. Use  collection filling (text_opinions) later.
 
     if isinstance(news, RuSentRelNews):
-        return RuSentRelNewsTextOpinionExtractorHelper.add_entries(
-            text_opinion_collection=text_opinions,
-            news=news,
-            opinions=opinions,
-            check_text_opinion_is_correct=__check_text_opinion)
+        # TODO. Opinions utilized in RuSentRel news only.
+        return RuSentRelNewsTextOpinionExtractorHelper.iter_text_opinions(news=news, opinions=opinions)
 
     elif isinstance(news, RuAttitudesNews):
-        return RuAttitudesNewsTextOpinionExtractorHelper.add_entries(
-            text_opinion_collection=text_opinions,
-            news=news,
-            check_text_opinion_is_correct=__check_text_opinion)
+        return RuAttitudesNewsTextOpinionExtractorHelper.iter_text_opinions(news=news)
 
-    # TODO. Fill here.
+
+def __check_text_opinion(text_opinion, terms_per_context):
+    assert(isinstance(text_opinion, TextOpinion))
+    return InputSample.check_ability_to_create_sample(
+        window_size=terms_per_context,
+        text_opinion=text_opinion)
 
 # endregions
 
@@ -103,6 +87,7 @@ def extract_text_opinions(experiment_io,
 
     for news_id in experiment_io.iter_news_indices(data_type):
 
+        # TODO. method is useless, the code from the inside could be moved here.
         news, parsed_news = __read_document(experiment_io=experiment_io,
                                             doc_id=news_id,
                                             config=config)
@@ -117,14 +102,17 @@ def extract_text_opinions(experiment_io,
         else:
             print "Warning: Skipping document with id={}, news={}".format(news.DocumentID, news)
 
-        opinions_it = __iter_opinion_collections(opinion_operations=experiment_io,
+        opinions_it = __iter_opinion_collections(experiment_io=experiment_io,
                                                  news_id=news_id,
                                                  data_type=data_type)
 
+        discarded = 0
         for opinions in opinions_it:
-            __fill_text_opinions(text_opinions=text_opinions,
-                                 news=news,
-                                 opinions=opinions,
-                                 terms_per_context=config.TermsPerContext)
+            text_opins_it = __get_text_opinion_iterator(news=news, opinions=opinions)
+
+            for text_opinion in text_opins_it:
+                discarded += text_opinions.try_add_linked_text_opinions(
+                    linked_text_opinions=text_opinions,
+                    check_opinion_correctness=__check_text_opinion(text_opinion, config.TermsPerContext))
 
     return text_opinions

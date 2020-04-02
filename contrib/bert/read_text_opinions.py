@@ -60,6 +60,7 @@ def __fill_text_opinions(text_opinions, news, opinions, terms_per_context):
             check_text_opinion_is_correct=__check_text_opinion)
 
 
+# TODO. This is the same and should be removed.
 def extract_text_opinions(io, data_type, terms_per_context):
     assert(isinstance(io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(data_type, unicode))

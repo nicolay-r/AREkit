@@ -1,5 +1,3 @@
-import collections
-
 from arekit.common.text_object import TextObject
 from arekit.common.text_opinions.base import RefOpinion
 from arekit.common.opinions.base import Opinion
@@ -14,23 +12,6 @@ class RuAttitudesNewsHelper(object):
     @staticmethod
     def build_opinion_dict(news):
         return RuAttitudesNewsHelper.__build_opinion_dict(news)
-
-    @staticmethod
-    def to_news_dict(sentence_list):
-        assert(isinstance(sentence_list, collections.Iterable))
-        docs = {}
-
-        for s in sentence_list:
-            assert(isinstance(s, RuAttitudesSentence))
-            assert(isinstance(s.Owner, RuAttitudesNews))
-            news_id = s.Owner.NewsIndex
-
-            if news_id in docs:
-                continue
-
-            docs[news_id] = s.Owner
-
-        return docs
 
     @staticmethod
     def iter_opinions_with_related_sentences(news):

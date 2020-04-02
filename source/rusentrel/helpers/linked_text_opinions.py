@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.rusentrel.helpers.context.collection import RuSentRelTextOpinionCollection
@@ -12,36 +11,23 @@ class RuSentRelNewsTextOpinionExtractorHelper:
     TextOpinion provider from RuSentRel news
     """
 
-    # TODO. Duplicated in RuAttitudes.
-    # TODO. Should be iterator of text_opinions.
     @staticmethod
-    def add_entries(text_opinion_collection,
-                    news,
-                    opinions,
-                    check_text_opinion_is_correct):
-        """
-        Convert opinions to TextOpinions and then adds to text_opinion_collection.
-        """
-        assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
+    def iter_text_opinions(news, opinions):
         assert(isinstance(news, RuSentRelNews))
+        # TODO: opinions in document + Neutral (optional). Weird
         assert(isinstance(opinions, OpinionCollection))
-        assert(callable(check_text_opinion_is_correct))
 
         it_entries = RuSentRelNewsTextOpinionExtractorHelper.__iter_rusentrel_text_opinion_entries(
             news=news,
             opinions=opinions)
 
-        discarded = 0
         for entries in it_entries:
             assert(isinstance(entries, RuSentRelTextOpinionCollection))
 
             text_opinions = RuSentRelNewsTextOpinionExtractorHelper.__iter_text_opinions(entries=entries)
 
-            discarded += text_opinion_collection.try_add_linked_text_opinions(
-                linked_text_opinions=text_opinions,
-                check_opinion_correctness=check_text_opinion_is_correct)
-
-        return discarded
+            for text_opinion in text_opinions:
+                yield text_opinion
 
     # region private methods
 
@@ -74,9 +60,9 @@ class RuSentRelNewsTextOpinionExtractorHelper:
         assert(isinstance(news, RuSentRelNews))
         assert(isinstance(opinions, OpinionCollection))
 
-        def same_sentence_text_opinions(relation):
-            return abs(news.Helper.get_sentence_index_by_entity(relation.SourceEntity) -
-                       news.Helper.get_sentence_index_by_entity(relation.TargetEntity)) == 0
+        def same_sentence_text_opinions(opinion):
+            return abs(news.Helper.get_sentence_index_by_entity(opinion.SourceEntity) -
+                       news.Helper.get_sentence_index_by_entity(opinion.TargetEntity)) == 0
 
         for opinion in opinions:
 

@@ -60,6 +60,7 @@ class RuSentRelTwoScaleNeutralAnnotator(BaseAnnotator):
 
     def __create_opinions_for_classification(self, doc_id):
         # TODO. This should be based on samples.
+        # TODO. Use helper to obtain such samples.
         # TODO. And sentence-based document processing.
         collection = RuSentRelOpinionCollection.load_collection(
             doc_id=doc_id,

@@ -1,4 +1,3 @@
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.text_opinions.base import RefOpinion
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
@@ -11,29 +10,17 @@ class RuAttitudesNewsTextOpinionExtractorHelper:
     TextOpinion provider from RuAttitudesNews
     """
 
-    # TODO. Duplicated in RuSentRel
-    # TODO. Should be iterator of text_opinions.
-    # TODO. Rename as "extract_text_opinions"
     @staticmethod
-    def add_entries(text_opinion_collection,
-                    news,
-                    check_text_opinion_is_correct):
-        assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
+    def iter_text_opinions(news):
         assert(isinstance(news, RuAttitudesNews))
-        assert(callable(check_text_opinion_is_correct))
-
-        discarded = 0
+        # TODO. This should be in nn_io.with_ds
         for opinion, sentences in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news):
-
             text_opinions = RuAttitudesNewsTextOpinionExtractorHelper.__iter_all_text_opinions_in_sentences(
                 opinion=opinion,
                 sentences=sentences)
 
-            discarded += text_opinion_collection.try_add_linked_text_opinions(
-                linked_text_opinions=text_opinions,
-                check_opinion_correctness=check_text_opinion_is_correct)
-
-        return discarded
+            for text_opinion in text_opinions:
+                yield text_opinion
 
     # region private methods
 

@@ -7,6 +7,9 @@ from arekit.source.rusentrel.news import RuSentRelNews
 
 class RuSentRelParsedNewsHelper:
 
+    # TODO. this should a base mehod
+    # TODO. rusentrel_news_id -> doc_id
+    # TODO. keep_tokens, stemmer -- extra parameters.
     @staticmethod
     def create_parsed_news(rusentrel_news_id, rusentrel_news, keep_tokens, stemmer=None):
         assert(isinstance(rusentrel_news_id, int))
