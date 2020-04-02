@@ -1,4 +1,3 @@
-from arekit.common.opinions.collection import OpinionCollection
 from arekit.networks.eval.opinion_based import OpinionBasedModelEvaluator
 
 
@@ -12,16 +11,14 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
         doc_ids = list(self.__model.IO.iter_doc_ids_to_compare(doc_ids))
 
-        for collection, doc_id in doc_ids:
-            assert(isinstance(collection, OpinionCollection))
-
+        for doc_id in doc_ids:
             filepath = self.__model.IO.create_result_opinion_collection_filepath(
                 data_type=data_type,
                 doc_id=doc_id,
                 epoch_index=epoch_index)
 
             self.__model.IO.DataIO.OpinionFormatter.save_to_file(
-                collection=collection,
+                collection=self.__model.get_text_opinions_collection(data_type),
                 filepath=filepath)
 
         print "Data Type: {}".format(data_type)
