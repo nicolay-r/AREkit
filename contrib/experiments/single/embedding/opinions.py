@@ -44,6 +44,7 @@ def __iter_opinion_collections(experiment_io, news_id, data_type):
         yield experiment_io.read_etalon_opinion_collection(doc_id=news_id)
 
 
+# TODO. This should be public
 def __check_text_opinion(text_opinion, terms_per_context):
     assert(isinstance(text_opinion, TextOpinion))
     return InputSample.check_ability_to_create_sample(
@@ -89,9 +90,8 @@ def extract_text_opinions(experiment_io,
                                                  data_type=data_type)
 
         for opinions in opinions_it:
-            for text_opinion in news.iter_text_opinions(opinions=opinions):
-                text_opinions.try_add_linked_text_opinions(
-                    linked_text_opinions=text_opinions,
-                    check_opinion_correctness=__check_text_opinion(text_opinion, config.TermsPerContext))
+            text_opinions.try_add_linked_text_opinions(
+                linked_text_opinions=news.iter_text_opinions(opinions=opinions),
+                check_opinion_correctness=lambda text_opinion: __check_text_opinion(text_opinion, config.TermsPerContext))
 
     return text_opinions
