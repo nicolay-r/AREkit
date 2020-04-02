@@ -1,12 +1,10 @@
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiments.single.model import SingleInstanceTensorflowModel
 from arekit.networks.eval.opinion_based import OpinionBasedModelEvaluator
 
 
 class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
     def __init__(self, evaluator, model):
-        assert(isinstance(model, SingleInstanceTensorflowModel))
         super(CustomOpinionBasedModelEvaluator, self).__init__(evaluator=evaluator)
         self.__model = model
 

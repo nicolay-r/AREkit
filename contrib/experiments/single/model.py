@@ -1,4 +1,3 @@
-from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single import log
 from arekit.contrib.experiments.single.evaluator import CustomOpinionBasedModelEvaluator
