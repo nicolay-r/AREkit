@@ -38,7 +38,7 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
         print "Data Type: {}".format(data_type)
         print "Collections saved: {}".format(len(used_doc_ids))
-        print "News list: [{lst}]".format(lst=", ".join(used_doc_ids))
+        print "News list: [{lst}]".format(lst=", ".join([str(i) for i in used_doc_ids]))
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
         return self.__model.IO.iter_opinion_collections_to_compare(
