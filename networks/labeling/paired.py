@@ -53,19 +53,12 @@ class PairedLabelsHelper(LabelsHelper):
                          backward=backward.Sentiment)
 
     @staticmethod
-    def create_opinions_from_text_opinion_and_label(text_opinion, label):
+    def iter_opinions_from_text_opinion_and_label(text_opinion, label):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(label, LabelPair))
 
         source = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Source)
         target = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Target)
 
-        forward_opinion = Opinion(source_value=source,
-                                  target_value=target,
-                                  sentiment=label.Forward)
-
-        backward_opinion = Opinion(source_value=target,
-                                   target_value=source,
-                                   sentiment=label.Backward)
-
-        return [forward_opinion, backward_opinion]
+        yield Opinion(source_value=source, target_value=target, sentiment=label.Forward)
+        yield Opinion(source_value=target, target_value=source, sentiment=label.Backward)

@@ -30,9 +30,10 @@ class LabeledLinkedTextOpinionCollectionHelper:
         assert(isinstance(label_calc_mode, unicode))
 
         for news_id in self.__collection.iter_unique_news_ids():
-            collection = self.__to_opinion_collection(create_collection_func=create_collection_func,
-                                                      news_id=news_id,
-                                                      label_mode=label_calc_mode)
+            collection = create_collection_func()
+            for doc_opinion in self.__iter_opinions(news_id=news_id, label_mode=label_calc_mode):
+                self.__opitional_add_opinion(opinion=doc_opinion,
+                                             collection=collection)
 
             yield collection, news_id
 
@@ -68,13 +69,9 @@ class LabeledLinkedTextOpinionCollectionHelper:
 
     # region private methods
 
-    # TODO. Iter opinions, refactor.
-    def __to_opinion_collection(self, create_collection_func, news_id, label_mode):
-        assert(callable(create_collection_func))
+    def __iter_opinions(self, news_id, label_mode):
         assert(isinstance(news_id, int))
         assert(isinstance(label_mode, unicode))
-
-        collection = create_collection_func()
 
         for liked_text_opinions in self.__collection.iter_by_linked_text_opinions():
 
@@ -89,15 +86,12 @@ class LabeledLinkedTextOpinionCollectionHelper:
                 text_opinion_labels=[text_opinion.Sentiment for text_opinion in liked_text_opinions],
                 label_creation_mode=label_mode)
 
-            opinion_list = self.__labels_helper.create_opinions_from_text_opinion_and_label(
+            opinions_it = self.__labels_helper.iter_opinions_from_text_opinion_and_label(
                 text_opinion=first,
                 label=label)
 
-            for opinion in opinion_list:
-                self.__opitional_add_opinion(opinion=opinion,
-                                             collection=collection)
-
-        return collection
+            for opinion in opinions_it:
+                yield opinion
 
     @staticmethod
     def __opitional_add_opinion(opinion, collection):

@@ -40,16 +40,14 @@ class SingleLabelsHelper(LabelsHelper):
         return forward.Sentiment
 
     @staticmethod
-    def create_opinions_from_text_opinion_and_label(text_opinion, label):
+    def iter_opinions_from_text_opinion_and_label(text_opinion, label):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(label, Label))
 
         source = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Source)
         target = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Target)
 
-        opinion = Opinion(source_value=source,
-                          target_value=target,
-                          sentiment=label)
-
-        return [opinion]
+        yield Opinion(source_value=source,
+                      target_value=target,
+                      sentiment=label)
 

@@ -27,6 +27,7 @@ def __iter_opinion_collections(io, news_id, data_type):
 
 
 # TODO. Code is the same.
+# TODO. To be removed/refactored.
 def __fill_text_opinions(text_opinions, news, opinions, terms_per_context):
     """
     Fill text_opinions collection
