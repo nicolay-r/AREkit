@@ -71,7 +71,7 @@ def run_testing(full_model_name,
 
     # Initialize data_io
     for data_type in DataType.iter_supported():
-        experiments_io.NeutralAnnontator.create(data_type=data_type)
+        experiments_io.NeutralAnnontator.create_collection(data_type=data_type)
     experiments_io.CVFoldingAlgorithm.set_cv_count(cv_count)
 
     nn_io, callback = __create_nn_io_and_callback(
@@ -84,6 +84,8 @@ def run_testing(full_model_name,
 
     assert(isinstance(callback, Callback))
     assert(isinstance(nn_io, RuSentRelBasedNeuralNetworkIO))
+
+    experiments_io.NeutralAnnontator.initialize(experiments_io=nn_io)
 
     for cv_index in range(experiments_io.CVFoldingAlgorithm.CVCount):
 

@@ -59,7 +59,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, unicode))
 
-        filepath = self.DataIO.NeutralAnnontator.get_opin_filepath(
+        filepath = self.DataIO.NeutralAnnontator.create_neutral_opinion_collection_filepath(
             doc_id=doc_id,
             data_type=data_type,
             output_dir=self.DataIO.get_experiments_dir())
@@ -135,7 +135,9 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
 
     # region 'create' public methods
 
-    def create_opinion_collection(self):
-        return OpinionCollection([], synonyms=self.DataIO.SynonymsCollection)
+    def create_opinion_collection(self, opinions=None):
+        assert(isinstance(opinions, list) or opinions is None)
+        return OpinionCollection(opinions=[] if opinions is None else opinions,
+                                 synonyms=self.DataIO.SynonymsCollection)
 
     # endregion
