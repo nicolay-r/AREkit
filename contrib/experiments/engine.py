@@ -89,6 +89,8 @@ def run_testing(full_model_name,
 
     for cv_index in range(experiments_io.CVFoldingAlgorithm.CVCount):
 
+        experiments_io.CVFoldingAlgorithm.set_iteration_index(cv_index)
+
         # Initialize config
         config = create_config()
         assert(isinstance(config, DefaultNetworkConfig))
@@ -126,7 +128,6 @@ def run_testing(full_model_name,
         del network
         del model
 
-        experiments_io.CVFoldingAlgorithm.set_iteration_index(cv_index+1)
         gc.collect()
 
 # region private functions
