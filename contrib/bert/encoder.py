@@ -19,7 +19,7 @@ def to_tsv(data_io):
     terms_per_context = 50
 
     for data_type in DataType.iter_supported():
-        data_io.NeutralAnnontator.create_collection(data_type)
+        data_io.NeutralAnnotator.create_collection(data_type)
 
     for data_type in DataType.iter_supported():
 

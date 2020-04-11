@@ -9,7 +9,7 @@ class OpinionOperations(object):
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 
-    def create_neutral_opinion_collection_filepath(self, doc_id, data_type, annot_name):
+    def create_neutral_opinion_collection_filepath(self, doc_id, data_type):
         raise NotImplementedError()
 
     def iter_doc_ids_to_compare(self, doc_ids):

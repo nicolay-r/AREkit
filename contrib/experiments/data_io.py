@@ -10,7 +10,7 @@ class DataIO(object):
         raise NotImplementedError()
 
     @property
-    def NeutralAnnontator(self):
+    def NeutralAnnotator(self):
         raise NotImplementedError()
 
     @property
