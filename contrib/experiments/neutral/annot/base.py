@@ -20,6 +20,10 @@ class BaseNeutralAnnotator(object):
     def ExperimentIO(self):
         return self.__experiments_io
 
+    @property
+    def AnnotatorName(self):
+        return self.__annot_name
+
     # region private methods
 
     def __iter_all_doc_ids(self):

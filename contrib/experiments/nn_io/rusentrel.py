@@ -59,10 +59,9 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, unicode))
 
-        filepath = self.DataIO.NeutralAnnontator.create_neutral_opinion_collection_filepath(
+        filepath = self.create_neutral_opinion_collection_filepath(
             doc_id=doc_id,
-            data_type=data_type,
-            output_dir=self.DataIO.get_experiments_dir())
+            data_type=data_type)
 
         if not os.path.exists(filepath):
             return None

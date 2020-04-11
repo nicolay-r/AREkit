@@ -151,19 +151,12 @@ class RuSentRelNews(News):
 
     # region base News
 
-    def iter_text_opinions(self, opinions):
+    def iter_linked_text_opinions(self, opinions):
         assert(isinstance(opinions, OpinionCollection))
         for entries in self.__iter_rusentrel_text_opinion_entries(opinions=opinions):
-            assert(isinstance(entries, RuSentRelTextOpinionCollection))
-            for text_opinion in RuSentRelNews.__iter_text_opinions(entries=entries):
-                yield text_opinion
+            yield [self.__entry_to_text_opinion(entry) for entry in entries]
 
     # region private methods
-
-    @staticmethod
-    def __iter_text_opinions(entries):
-        for entry in entries:
-            yield RuSentRelNews.__entry_to_text_opinion(entry=entry)
 
     @staticmethod
     def __entry_to_text_opinion(entry):

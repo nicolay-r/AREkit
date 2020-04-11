@@ -72,14 +72,14 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
         if data_type == DataType.Test:
             return u'test'
 
-    def create_neutral_opinion_collection_filepath(self, doc_id, data_type, annot_name):
+    def create_neutral_opinion_collection_filepath(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, unicode))
 
         output_dir = self.DataIO.get_experiments_dir()
 
         root = get_path_of_subfolder_in_experiments_dir(
-            subfolder_name=annot_name,
+            subfolder_name=self.DataIO.NeutralAnnotator.AnnotatorName,
             experiments_dir=output_dir)
 
         filename = u"art{doc_id}.neut.{d_type}.txt".format(

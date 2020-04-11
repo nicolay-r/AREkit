@@ -10,12 +10,12 @@ class BaseEvaluator(object):
         assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
         self.__synonyms = synonyms
 
-    def evaluate(self, cmp_pairs):
-        raise NotImplementedError()
-
     @property
     def Synonyms(self):
         return self.__synonyms
+
+    def evaluate(self, cmp_pairs):
+        raise NotImplementedError()
 
     def calc_difference(self, etalon_opins, test_opins):
         assert(isinstance(etalon_opins, OpinionCollection))
