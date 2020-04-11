@@ -65,13 +65,12 @@ class RuAttitudesNews(News):
 
     # region base News
 
-    def iter_text_opinions(self, opinions):
+    def iter_linked_text_opinions(self, opinions):
         """
         Note: Complexity is O(N^2)
         """
         for opinion in opinions:
-            for text_opinion in self.__iter_all_text_opinions_in_sentences(opinion=opinion):
-                yield text_opinion
+            yield list(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
 
     # region Private methods
 
