@@ -90,8 +90,9 @@ def extract_text_opinions(experiment_io,
                                                  data_type=data_type)
 
         for opinions in opinions_it:
-            text_opinions.try_add_linked_text_opinions(
-                linked_text_opinions=news.iter_text_opinions(opinions=opinions),
-                check_opinion_correctness=lambda text_opinion: __check_text_opinion(text_opinion, config.TermsPerContext))
+            for linked_text_opinions in news.iter_linked_text_opinions(opinions=opinions):
+                text_opinions.try_add_linked_text_opinions(
+                    linked_text_opinions=linked_text_opinions,
+                    check_opinion_correctness=lambda text_opinion: __check_text_opinion(text_opinion, config.TermsPerContext))
 
     return text_opinions
