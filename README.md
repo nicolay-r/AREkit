@@ -1,4 +1,4 @@
-# AREkit
+# AREkit-0.20.0 [NLDB-2020 release]
 
 ![](logo.png)
 
