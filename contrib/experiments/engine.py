@@ -15,13 +15,13 @@ def run_testing(full_model_name,
                 create_network,
                 create_model,
                 create_nn_io,
-                experiments_io,
+                data_io,
                 cv_count=1,
                 common_callback_modification_func=None,
                 custom_config_modification_func=None,
                 common_config_modification_func=None):
     """
-    :param experiments_io:
+    :param data_io:
     :param full_model_name: unicode
         model name
     :param create_config: func
@@ -43,7 +43,7 @@ def run_testing(full_model_name,
     assert(callable(common_callback_modification_func) or common_callback_modification_func is None)
     assert(callable(common_config_modification_func) or common_config_modification_func is None)
     assert(callable(custom_config_modification_func) or custom_config_modification_func is None)
-    assert(isinstance(experiments_io, DataIO))
+    assert(isinstance(data_io, DataIO))
     assert(isinstance(cv_count, int) and cv_count > 0)
 
     # Disable tensorflow logging
@@ -62,25 +62,25 @@ def run_testing(full_model_name,
 
     # Initialize data_io
     for data_type in DataType.iter_supported():
-        experiments_io.NeutralAnnotator.create_collection(data_type=data_type)
+        data_io.NeutralAnnotator.create_collection(data_type=data_type)
     # TODO. This should be intialized automatically somewhere else.
-    experiments_io.CVFoldingAlgorithm.set_cv_count(cv_count)
+    data_io.CVFoldingAlgorithm.set_cv_count(cv_count)
 
     nn_io = __create_nn_io(
-        data_io=experiments_io,
+        data_io=data_io,
         create_nn_io_func=create_nn_io,
         model_name=full_model_name,
         clear_model_contents=True)
 
-    callback = experiments_io.Callback
+    callback = data_io.Callback
     callback.PredictVerbosePerFileStatistic = False
 
     assert(isinstance(callback, Callback))
     assert(isinstance(nn_io, RuSentRelBasedNeuralNetworkIO))
 
-    for cv_index in range(experiments_io.CVFoldingAlgorithm.CVCount):
+    for cv_index in range(data_io.CVFoldingAlgorithm.CVCount):
 
-        experiments_io.CVFoldingAlgorithm.set_iteration_index(cv_index)
+        data_io.CVFoldingAlgorithm.set_iteration_index(cv_index)
 
         # Initialize config
         config = create_config()
@@ -110,7 +110,7 @@ def run_testing(full_model_name,
         ###########
         # Run model
         ###########
-        print u"Running model '{}' at cv_index {}".format(full_model_name, experiments_io.CVFoldingAlgorithm.IterationIndex)
+        print u"Running model '{}' at cv_index {}".format(full_model_name, data_io.CVFoldingAlgorithm.IterationIndex)
         model.run_training(load_model=False,
                            epochs_count=callback.Epochs)
 
