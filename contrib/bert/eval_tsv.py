@@ -12,7 +12,8 @@ from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetwork
 from arekit.contrib.experiments.nn_io.rusentrel_with_ruattitudes import RuSentRelWithRuAttitudesBasedExperimentIO
 
 from arekit.networks.labeling.base import LabelCalculationMode
-from format import opinions_io, samples_io
+from format.opinions_io import OpinionsFormatter
+from format import samples_io
 
 
 # region private methods
@@ -93,12 +94,12 @@ def __iter_eval_collections(bert_result_fp,
         sample_row_id = samples_io.parse_row_id(samples_row)
         news_id = samples_io.parse_news_id(sample_row_id)
 
-        opinion_id = opinions_io.sample_row_id_to_opinion_id(sample_row_id)
+        opinion_id = OpinionsFormatter.sample_row_id_to_opinion_id(sample_row_id)
 
         _opinion_row = df_opinions[df_opinions['id'] == opinion_id]
         opinion_row = _opinion_row.iloc[0].tolist()
 
-        _, source, target = opinions_io.parse_row(opinion_row)
+        _, source, target = OpinionsFormatter.parse_row(opinion_row)
 
         opinion = Opinion(source_value=source,
                           target_value=target,
@@ -135,8 +136,8 @@ def eval_tsv(data_io, data_type):
 
     bert_result_fp = u"test_results.tsv"
 
-    opinions_fp = opinions_io.get_filepath(data_type=data_type,
-                                           experiment_io=experiment_io)
+    opinions_fp = OpinionsFormatter.get_filepath(data_type=data_type,
+                                                 experiment_io=experiment_io)
 
     samples_fp = samples_io.get_filepath(data_type=data_type,
                                          experiment_io=experiment_io)

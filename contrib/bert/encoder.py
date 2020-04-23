@@ -1,4 +1,4 @@
-from arekit.contrib.bert.format.opinions_io import create_and_save_opinions_to_csv
+from arekit.contrib.bert.format.opinions_io import create_and_save_opinions_to_csv, OpinionsFormatter
 from arekit.contrib.bert.format.samples_io import create_and_save_samples_to_tsv
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
@@ -31,9 +31,9 @@ class BertEncoder(object):
             #
             # Compose csv file with related opinions (Necessary for evaluation)
             #
-            create_and_save_opinions_to_csv(text_opinions=text_opinions,
-                                            data_type=data_type,
-                                            experiment_io=experiment_io)
+            OpinionsFormatter.create_and_save_opinions_to_csv(text_opinions=text_opinions,
+                                                              data_type=data_type,
+                                                              experiment_io=experiment_io)
 
             #
             # Train/Test input samples for bert
