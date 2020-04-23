@@ -1,7 +1,7 @@
 import collections
 
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
-from arekit.networks.eval.base import BaseModelEvaluator
+from arekit.common.model.eval.base import BaseModelEvaluator
 
 
 class OpinionBasedModelEvaluator(BaseModelEvaluator):

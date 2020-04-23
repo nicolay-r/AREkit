@@ -6,12 +6,12 @@ import tensorflow as tf
 from tensorflow.python.training.saver import Saver
 
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.model.base import BaseModel
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.context.debug import DebugKeys
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
-from arekit.networks.eval.base import BaseModelEvaluator
+from arekit.common.model.eval.base import BaseModelEvaluator
 from arekit.networks.nn_io import NeuralNetworkIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.networks.data_type import DataType
@@ -21,7 +21,7 @@ from arekit.networks.predict_log import NetworkInputDependentVariables
 logger = logging.getLogger(__name__)
 
 
-class TensorflowModel(object):
+class TensorflowModel(BaseModel):
     """
     Base model class, which provides api for
         - tensorflow model compilation
@@ -30,6 +30,9 @@ class TensorflowModel(object):
         - load/save states during fitting/training
         and more.
     """
+
+    SaveTensorflowModelStateOnFit = False
+    FeedDictShow = False
 
     def __init__(self, nn_io, network, callback=None):
         assert(isinstance(nn_io, NeuralNetworkIO))
@@ -195,7 +198,7 @@ class TensorflowModel(object):
             DataType.Train or DataTypes.Test
         doc_ids_set: set or None
             set of documents says which documents and related text opinions should be used in predict process.
-            None -- ignore the related parameter, i.e. utilize all documents in `predict` procedure.
+            None -- ignore the related parameter, i.e. utilize all the documents in `predict` procedure.
         """
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
@@ -242,7 +245,7 @@ class TensorflowModel(object):
         assert(isinstance(data_type, unicode))
 
         network_input = minibatch.to_network_input()
-        if DebugKeys.FeedDictShow:
+        if self.FeedDictShow:
             MiniBatch.debug_output(network_input)
 
         return self.Network.create_feed_dict(network_input, data_type)
@@ -277,7 +280,7 @@ class TensorflowModel(object):
             fit_total_acc += result[2]
             groups_count += 1
 
-        if DebugKeys.FitSaveTensorflowModelState:
+        if TensorflowModel.SaveTensorflowModelStateOnFit:
             self.save_model(save_path=self.IO.ModelSavePathPrefix)
 
         return fit_total_cost / groups_count, fit_total_acc / groups_count

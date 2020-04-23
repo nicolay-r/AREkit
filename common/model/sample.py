@@ -2,6 +2,9 @@ from collections import OrderedDict
 
 
 class InputSampleBase(object):
+    """
+    Description of a single sample (context) of a model
+    """
 
     def __init__(self, text_opinion_id, values):
         assert(isinstance(text_opinion_id, int))

@@ -1,5 +1,5 @@
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
-from arekit.networks.eval.opinion_based import OpinionBasedModelEvaluator
+from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
 
 
 class BERTModelEvaluator(OpinionBasedModelEvaluator):

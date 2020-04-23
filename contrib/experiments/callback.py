@@ -6,7 +6,6 @@ import os
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.context.debug import DebugKeys
 from arekit.networks.tf_model import TensorflowModel
 
 
@@ -16,8 +15,9 @@ class ExperimentCallback(Callback):
     HiddenParamsTemplate = u'hparams_{}_e{}'
     InputDependentParamsTemplate = u'idparams_{}_e{}'
     PredictVerbosePerFileStatistic = True
+    FitEpochCompleted = True
 
-    def __init__(self, log_dir):
+    def __init__(self):
 
         self.__model = None
         self.__test_on_epochs = None
@@ -50,7 +50,7 @@ class ExperimentCallback(Callback):
         assert(isinstance(avg_fit_acc, float))
         assert(isinstance(operation_cancel, OperationCancellation))
 
-        if DebugKeys.FitEpochCompleted:
+        if self.FitEpochCompleted:
             print "{}: Epoch: {}: avg_fit_cost: {:.3f}, avg_fit_acc: {:.3f}".format(
                 str(datetime.datetime.now()),
                 epoch_index,

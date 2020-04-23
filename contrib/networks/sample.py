@@ -19,7 +19,7 @@ from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
 
 from arekit.networks.context.embedding import indices
-from arekit.networks.context.sample import InputSampleBase
+from arekit.common.model.sample import InputSampleBase
 
 
 class InputSample(InputSampleBase):

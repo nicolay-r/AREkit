@@ -35,7 +35,6 @@ def run_testing(full_model_name,
         for all models
     :param custom_config_modification_func:
         for model
-    :param cancel_training_by_cost:
     """
     assert(isinstance(full_model_name, unicode))
     assert(callable(create_config))
@@ -64,6 +63,7 @@ def run_testing(full_model_name,
     # Initialize data_io
     for data_type in DataType.iter_supported():
         experiments_io.NeutralAnnotator.create_collection(data_type=data_type)
+    # TODO. This should be intialized automatically somewhere else.
     experiments_io.CVFoldingAlgorithm.set_cv_count(cv_count)
 
     nn_io = __create_nn_io(

@@ -1,6 +1,8 @@
 import logging
 
 from arekit.common.frames.collection import FramesCollection
+from arekit.common.model.labeling.paired import PairedLabelsHelper
+from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
@@ -18,9 +20,7 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 
 from arekit.networks.context.training.bags.collection import BagsCollection
 from arekit.networks.context.embedding.input import create_term_embedding_matrix
-from arekit.networks.labeling.paired import PairedLabelsHelper
 from arekit.networks.data_type import DataType
-from arekit.networks.labeling.single import SingleLabelsHelper
 
 
 logger = logging.getLogger(__name__)

@@ -4,6 +4,7 @@ import numpy as np
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.labels.base import Label
+from arekit.common.model.labeling.base import LabelCalculationMode
 from arekit.common.opinions.base import Opinion
 
 from arekit.contrib.bert.evaluator import BERTModelEvaluator
@@ -11,7 +12,6 @@ from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.nn_io.rusentrel_with_ruattitudes import RuSentRelWithRuAttitudesBasedExperimentIO
 
-from arekit.networks.labeling.base import LabelCalculationMode
 from format.opinions_io import OpinionsFormatter
 from format import samples_io
 
