@@ -14,10 +14,9 @@ from arekit.source.rusentiframes.helpers.parse import RuSentiFramesParseHelper
 # region private methods
 
 # TODO. Useless method, could be removed.
-def __read_document(experiment_io, doc_id, config):
+def __read_document(experiment_io, doc_id):
     assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(doc_id, int))
-    assert(isinstance(config, DefaultNetworkConfig))
 
     news, parsed_news = experiment_io.read_parsed_news(doc_id=doc_id)
 
@@ -56,12 +55,11 @@ def __check_text_opinion(text_opinion, terms_per_context):
 
 def extract_text_opinions(experiment_io,
                           data_type,
-                          frame_variants_collection,
-                          config):
+                          terms_per_context):
     assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(data_type, unicode))
-    assert(isinstance(config, DefaultNetworkConfig))
-    assert(isinstance(frame_variants_collection, FrameVariantsCollection))
+    assert(isinstance(terms_per_context, int))
+    assert(terms_per_context > 0)
 
     parsed_collection = ParsedNewsCollection()
 
@@ -70,14 +68,11 @@ def extract_text_opinions(experiment_io,
 
     for news_id in experiment_io.iter_news_indices(data_type):
 
-        # TODO. method is useless, the code from the inside could be moved here.
-        news, parsed_news = __read_document(experiment_io=experiment_io,
-                                            doc_id=news_id,
-                                            config=config)
+        news, parsed_news = __read_document(experiment_io=experiment_io, doc_id=news_id)
 
         parsed_news.modify_parsed_sentences(
             lambda sentence: RuSentiFramesParseHelper.parse_frames_in_parsed_text(
-                frame_variants_collection=frame_variants_collection,
+                frame_variants_collection=experiment_io.DataIO.FrameVariantCollection,
                 parsed_text=sentence))
 
         if not parsed_collection.contains_id(news_id):
@@ -93,6 +88,6 @@ def extract_text_opinions(experiment_io,
             for linked_text_opinions in news.iter_linked_text_opinions(opinions=opinions):
                 text_opinions.try_add_linked_text_opinions(
                     linked_text_opinions=linked_text_opinions,
-                    check_opinion_correctness=lambda text_opinion: __check_text_opinion(text_opinion, config.TermsPerContext))
+                    check_opinion_correctness=lambda text_opinion: __check_text_opinion(text_opinion, terms_per_context))
 
     return text_opinions

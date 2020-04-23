@@ -1,10 +1,10 @@
 import logging
 
-from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single.embedding.entities import generate_entity_embeddings
 from arekit.contrib.experiments.single.embedding.frames import init_frames_embedding
@@ -15,12 +15,12 @@ from arekit.contrib.experiments.single.helpers.bags import BagsCollectionHelper
 from arekit.contrib.experiments.single.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.contrib.experiments.utils import create_input_sample
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+
 from arekit.networks.context.training.bags.collection import BagsCollection
 from arekit.networks.context.embedding.input import create_term_embedding_matrix
 from arekit.networks.labeling.paired import PairedLabelsHelper
 from arekit.networks.data_type import DataType
 from arekit.networks.labeling.single import SingleLabelsHelper
-from arekit.source.rusentiframes.collection import RuSentiFramesCollection
 
 
 logger = logging.getLogger(__name__)
@@ -43,19 +43,12 @@ class SingleInstanceModelInitializer(object):
 
         self.__synonyms = nn_io.DataIO.SynonymsCollection
 
-        self.__frames_collection = RuSentiFramesCollection.read_collection()
-
         self.__labels_helper = SingleLabelsHelper() if config.ClassesCount == 3 else PairedLabelsHelper()
-
-        frame_variants = FrameVariantsCollection.from_iterable(
-            variants_with_id=self.__frames_collection.iter_frame_id_and_variants(),
-            stemmer=nn_io.DataIO.Stemmer)
 
         self.__text_opinion_collections = self.__create_collection(
             lambda data_type: extract_text_opinions(experiment_io=nn_io,
                                                     data_type=data_type,
-                                                    frame_variants_collection=frame_variants,
-                                                    config=config))
+                                                    terms_per_context=config.TermsPerContext))
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,
@@ -82,7 +75,7 @@ class SingleInstanceModelInitializer(object):
         self.__bags_collection = self.__create_collection(
             lambda data_type: self.create_bags_collection(
                 text_opinions_collection=self.__text_opinion_collections[data_type],
-                frames_collection=self.__frames_collection,
+                frames_collection=nn_io.DataIO.FramesCollection,
                 synonyms_collection=self.__synonyms,
                 data_type=data_type,
                 config=config))

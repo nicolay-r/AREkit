@@ -13,6 +13,8 @@ from arekit.networks.data_type import DataType
 from arekit.networks.predict_log import NetworkInputDependentVariables
 
 
+# TODO. Experiment callback
+# TODO. Add abstract checkers of the state
 class CustomCallback(Callback):
 
     VocabularyOutputFilePathInLogDir = u'vocab.txt'
@@ -26,16 +28,20 @@ class CustomCallback(Callback):
         self.__test_on_epochs = None
         self.__log_dir = log_dir
 
+        # TODO. Move outlide (custom algorithm)
         self.__costs_history = None
         self.__reset_experiment_dependent_parameters()
 
+        # TODO. Move outside (custom algorithm)
         self.__costs_window = 5
 
         self.__key_save_hidden_parameters = True
         self.__key_stop_training_by_cost = False
         self.__debug_save_info = False
 
+        # TODO. Move outside (custom algorithm)
         self.__cancellation_acc_bound = 0.99
+        # TODO. Move outside (custom algorithm)
         self.__cancellation_f1_train_bound = 0.85
 
         self.__train_doc_ids = None
@@ -45,6 +51,7 @@ class CustomCallback(Callback):
         return max(self.__test_on_epochs)
 
     def reset_experiment_dependent_parameters(self):
+        # TODO. catch from outside
         self.__reset_experiment_dependent_parameters()
 
     # region event handlers
@@ -65,6 +72,8 @@ class CustomCallback(Callback):
                 avg_fit_cost,
                 avg_fit_acc)
 
+        # TODO. Move outside
+
         if avg_fit_acc >= self.__cancellation_acc_bound:
             print "Stop training process: avg_fit_acc > {}".format(self.__cancellation_acc_bound)
             operation_cancel.Cancel()
@@ -75,6 +84,7 @@ class CustomCallback(Callback):
         result_train = self.__process_for_data_type(data_type=DataType.Train,
                                                     epoch_index=epoch_index)
 
+        # TODO. Move outside
         f1_train = result_train.get_result_by_metric(result_train.C_F1)
         if f1_train >= self.__cancellation_f1_train_bound:
             print "Stop training process: F1-train ({}) > {}".format(
@@ -99,6 +109,7 @@ class CustomCallback(Callback):
 
     # region 'set' methods
 
+    # TODO. In nested
     def set_key_stop_training_by_cost(self, value):
         assert(isinstance(value, bool))
         self.__key_stop_training_by_cost = value
@@ -111,14 +122,17 @@ class CustomCallback(Callback):
         assert(isinstance(value, list))
         self.__test_on_epochs = value
 
+    # TODO. In nested
     def set_cancellation_acc_bound(self, value):
         assert(isinstance(value, float))
         self.__cancellation_acc_bound = value
 
+    # TODO. In nested
     def set_cancellation_f1_train_bound(self, value):
         assert(isinstance(value, float))
         self.__cancellation_f1_train_bound = value
 
+    # TODO. Remove as non unused.
     def set_test_doc_ids_list(self, value):
         """
         Due to the train set could be large and F1 evaluation might take a lot of time.
@@ -137,6 +151,7 @@ class CustomCallback(Callback):
     def __reset_experiment_dependent_parameters(self):
         self.__costs_history = []
 
+    # TODO. In nested
     def __check_costs_still_improving(self, avg_cost):
 
         history_len = len(self.__costs_history)

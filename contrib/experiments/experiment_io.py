@@ -11,6 +11,8 @@ from arekit.networks.data_type import DataType
 from arekit.networks.nn_io import NeuralNetworkIO
 
 
+# TODO. Remove dependency from NeuralNetworkIO
+# TODO -> make depending on model + model reference
 class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
                                     OpinionOperations,
                                     DocumentOperations):

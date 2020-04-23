@@ -1,12 +1,22 @@
 # TODO. Add base implementations.
 class DataIO(object):
 
+    # region properties
+
     @property
     def Stemmer(self):
         raise NotImplementedError()
 
     @property
     def SynonymsCollection(self):
+        raise NotImplementedError()
+
+    @property
+    def FramesCollection(self):
+        raise NotImplementedError()
+
+    @property
+    def FrameVariantCollection(self):
         raise NotImplementedError()
 
     @property
@@ -21,14 +31,16 @@ class DataIO(object):
     def CVFoldingAlgorithm(self):
         raise NotImplementedError()
 
-    # TODO. Utilize this.
-    @property
-    def TermsPerContext(self):
-        raise NotImplementedError()
-
     @property
     def OpinionFormatter(self):
         raise NotImplementedError()
+
+    # TODO. In future Proposal to move from nn configs here.
+    @property
+    def TermsPerContext(self):
+        raise NotImplementedError
+
+    # endregion
 
     def get_data_root(self):
         raise NotImplementedError()

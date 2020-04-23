@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from os import path
 
 import numpy as np
 import pandas as pd
@@ -8,6 +9,7 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 
 # region private functions
 
@@ -46,6 +48,7 @@ def __create_opinion_row(linked_text_opinion):
 
 # endregion
 
+
 def parse_row(df_row):
     assert(isinstance(df_row, list))
 
@@ -65,8 +68,8 @@ def create_opinion_id(first_text_opinion, index_in_linked):
                                  index_in_linked)
 
 
-def create_and_save_opinions_to_csv(text_opinions, data_type, model_name):
-    assert(isinstance(model_name, unicode))
+def create_and_save_opinions_to_csv(text_opinions, experiment_io, data_type):
+    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(data_type, unicode))
 
     df = __create_empty_df()
@@ -82,7 +85,10 @@ def create_and_save_opinions_to_csv(text_opinions, data_type, model_name):
 
         df = df.append(row, ignore_index=True)
 
-    df.to_csv(get_filepath(data_type=data_type, model_name=model_name),
+    filepath = get_filepath(data_type=data_type,
+                            experiment_io=experiment_io)
+
+    df.to_csv(filepath,
               sep='\t',
               encoding='utf-8',
               index=False,
@@ -92,24 +98,18 @@ def create_and_save_opinions_to_csv(text_opinions, data_type, model_name):
 def sample_row_id_to_opinion_id(row_id):
     """
     Id in sample rows has information of linked opinions.
-    Here the latter ommited and id could be suffexed with 'i0' only.
+    Here the latter ommited and id could be suffixed with 'i0' only.
     """
     assert(isinstance(row_id, unicode))
     return row_id[:row_id.find(u'i')] + u"i0"
 
 
-def get_experiments_dir():
-    raise NotImplementedError()
-
-
-def get_filepath(data_type, model_name):
-    assert(isinstance(model_name, unicode))
+def get_filepath(data_type, experiment_io):
+    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(data_type, unicode))
 
-    filepath = u"{dir}{model_name}/{filename}.csv".format(
-        dir=get_experiments_dir(),
-        model_name=model_name,
-        filename=u"{}-opinions".format(data_type))
+    filepath = path.join(experiment_io.get_model_root(),
+                         u"{filename}.csv".format(filename=u"{}-opinions".format(data_type)))
 
     io_utils.create_dir_if_not_exists(filepath)
 

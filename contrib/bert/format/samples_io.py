@@ -1,5 +1,6 @@
 import random
 from collections import OrderedDict
+from os import path
 
 import numpy as np
 import pandas as pd
@@ -12,6 +13,7 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 
 from arekit.networks.data_type import DataType
 from arekit.processing.text.token import Token
@@ -112,13 +114,15 @@ def balance(df, label, other_label=0, seed=1):
 # endregion
 
 
-def create_and_save_samples_to_tsv(text_opinions, pnc, data_type, model_name):
+def create_and_save_samples_to_tsv(text_opinions, data_type, experiment_io):
     """
         Train/Test input samples for BERT
     """
     assert(isinstance(data_type, unicode))
-    assert(isinstance(model_name, unicode))
     assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
+    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
+
+    pnc = text_opinions.RelatedParsedNewsCollection
     assert(isinstance(pnc, ParsedNewsCollection))
 
     df = __create_empty_df(data_type)
@@ -170,7 +174,10 @@ def create_and_save_samples_to_tsv(text_opinions, pnc, data_type, model_name):
 
         df = df.iloc[np.random.permutation(len(df))]
 
-    df.to_csv(get_filepath(model_name=model_name, data_type=data_type),
+    filepath = get_filepath(experiment_io=experiment_io,
+                            data_type=data_type)
+
+    df.to_csv(filepath,
               sep='\t',
               encoding='utf-8',
               index=False,
@@ -187,14 +194,12 @@ def parse_news_id(row_id):
     return int(row_id[row_id.index(u'n') + 1:row_id.index(u'_')])
 
 
-def get_filepath(model_name, data_type):
-    assert(isinstance(model_name, unicode))
+def get_filepath(experiment_io, data_type):
+    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
     assert(isinstance(data_type, unicode))
 
-    filepath = u"{dir}{model_name}/{filename}.tsv".format(
-        dir=io_utils.get_experiments_dir(),
-        model_name=model_name,
-        filename=data_type)
+    filepath = path.join(experiment_io.get_model_root(),
+                         u"{filename}.tsv".format(filename=data_type))
 
     io_utils.create_dir_if_not_exists(filepath)
 
