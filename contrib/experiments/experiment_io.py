@@ -25,6 +25,8 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
         self.__data_io = data_io
         self.__model_name = model_name
 
+        self.__data_io.Callback.set_log_dir(log_dir=path.join(self.get_model_root(), u"log/"))
+
     # region Properties
 
     @property
@@ -62,6 +64,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
 
         rm_dir_contents(self.get_model_root())
 
+    # TODO. Remove from here.
     def get_logfile_dir(self):
         return path.join(self.get_model_root(), u"log/")
 

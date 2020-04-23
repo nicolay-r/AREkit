@@ -39,6 +39,10 @@ class DataIO(object):
     def OpinionFormatter(self):
         raise NotImplementedError()
 
+    @property
+    def Callback(self):
+        raise NotImplementedError()
+
     # TODO. In future Proposal to move from nn configs here.
     @property
     def TermsPerContext(self):
