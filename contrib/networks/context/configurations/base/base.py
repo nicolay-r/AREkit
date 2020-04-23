@@ -2,7 +2,7 @@ import datetime
 
 import tensorflow as tf
 from arekit.common.embeddings.base import Embedding
-from arekit.networks.labeling.base import LabelCalculationMode
+from arekit.common.model.labeling.base import LabelCalculationMode
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 

@@ -3,7 +3,7 @@ from arekit.networks.tf_helpers.initialization import init_weighted_cost, init_a
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.contrib.networks.sample import InputSample
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 from arekit.networks.nn import NeuralNetwork
 
 

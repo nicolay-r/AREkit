@@ -2,7 +2,7 @@ import tensorflow as tf
 
 from arekit.contrib.networks.attention.helpers import embedding
 from arekit.contrib.networks.context.architectures.base.fc_single import FullyConnectedLayer
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 from arekit.networks.tf_helpers.sequence import get_cell
 from arekit.contrib.networks.context.configurations.base.ian_base import StatesAggregationModes, IANBaseConfig
 from arekit.contrib.networks.sample import InputSample

@@ -6,7 +6,7 @@ from arekit.contrib.experiments.single.initialization import SingleInstanceModel
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.callback import Callback
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 from arekit.networks.tf_model import TensorflowModel
 from arekit.networks.nn import NeuralNetwork
 
@@ -17,21 +17,19 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     with an attitude mentioned in it.
     """
 
-    def __init__(self, nn_io, network, config, evaluator_class, callback):
+    def __init__(self, nn_io, network, config, callback):
         assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)
-        assert(callable(evaluator_class))
 
         super(SingleInstanceTensorflowModel, self).__init__(
             nn_io=nn_io, network=network, callback=callback)
 
         self.__config = config
-        self.__evaluator_class = evaluator_class
         self.__init_helper = self.create_model_init_helper()
         self.__evaluator = CustomOpinionBasedModelEvaluator(
-            evaluator=self.__evaluator_class(synonyms=self.IO.DataIO.SynonymsCollection),
+            evaluator=nn_io.DataIO.Evaluator,
             model=self)
         self.__print_statistic()
 

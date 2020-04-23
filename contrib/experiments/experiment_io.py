@@ -7,10 +7,12 @@ from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.operations.documents import DocumentOperations
 from arekit.contrib.experiments.operations.opinions import OpinionOperations
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir, rm_dir_contents
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 from arekit.networks.nn_io import NeuralNetworkIO
 
 
+# TODO. Remove dependency from NeuralNetworkIO
+# TODO -> make depending on model + model reference
 class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
                                     OpinionOperations,
                                     DocumentOperations):
@@ -22,6 +24,10 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
 
         self.__data_io = data_io
         self.__model_name = model_name
+
+        self.__data_io.Callback.set_log_dir(log_dir=path.join(self.get_model_root(), u"log/"))
+
+        self.__data_io.NeutralAnnotator.initialize(experiment_io=self)
 
     # region Properties
 
@@ -59,9 +65,6 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
             return
 
         rm_dir_contents(self.get_model_root())
-
-    def get_logfile_dir(self):
-        return path.join(self.get_model_root(), u"log/")
 
     # region annot output filepath
 

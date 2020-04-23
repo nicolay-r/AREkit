@@ -46,12 +46,12 @@ class NetworkInputDependentVariables:
             values_list = np.array(tensor_values_list[name_ind])
             values_list = values_list.flatten()
             if len(values_list) > bags_per_minibatch:
-		values_list = values_list.reshape([bags_per_minibatch,
-						   bag_size,
-						   len(values_list) / (bags_per_minibatch * bag_size)])
+                values_list = values_list.reshape([bags_per_minibatch,
+                                                   bag_size,
+                                                   len(values_list) / (bags_per_minibatch * bag_size)])
             else:
                 # labels.
-	        values_list = values_list.reshape([bags_per_minibatch, 1, 1])
+                values_list = values_list.reshape([bags_per_minibatch, 1, 1])
 
             # Save only first sentence ref.
             t_ind = 0

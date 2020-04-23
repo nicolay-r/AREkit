@@ -10,7 +10,6 @@ from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 from arekit.source.rusentrel.helpers.news import RuSentRelNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.source.rusentrel.sentence import RuSentRelSentence
-from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
 class RuSentRelNews(News):

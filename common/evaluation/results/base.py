@@ -10,6 +10,9 @@ class BaseEvalResult(object):
         assert(isinstance(doc_id, int))
         return self.__documents[doc_id]
 
+    def get_result_as_str(self):
+        raise NotImplementedError()
+
     def calculate(self):
         raise NotImplementedError()
 

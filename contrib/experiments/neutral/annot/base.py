@@ -1,7 +1,7 @@
 import logging
 import utils
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 
 logger = logging.getLogger(__name__)
 
@@ -38,8 +38,7 @@ class BaseNeutralAnnotator(object):
 
             filepath = self.ExperimentIO.create_neutral_opinion_collection_filepath(
                 doc_id=doc_id,
-                data_type=data_type,
-                annot_name=self.__annot_name)
+                data_type=data_type)
 
             if utils.check_file_already_existed(filepath=filepath, logger=logger):
                 continue

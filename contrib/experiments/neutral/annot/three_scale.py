@@ -5,7 +5,7 @@ import logging
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.contrib.experiments.neutral.annot.base import BaseNeutralAnnotator
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 
 logger = logging.getLogger(__name__)
 
@@ -23,14 +23,13 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         super(ThreeScaleNeutralAnnotator).__init__(
             annot_name=u"neutral_3_scale")
         self.__algo = None
-        self.__experiments_io = None
 
     # region private methods
 
     def __create_opinions_for_extraction(self, doc_id, data_type):
-        assert(isinstance(self.__experiments_io, BaseExperimentNeuralNetworkIO))
-        news, _ = self.__experiments_io.read_parsed_news(doc_id=doc_id)
-        opinions = self.__experiments_io.read_etalon_opinion_collection(doc_id=doc_id)
+        assert(isinstance(self.ExperimentIO, BaseExperimentNeuralNetworkIO))
+        news, _ = self.ExperimentIO.read_parsed_news(doc_id=doc_id)
+        opinions = self.ExperimentIO.read_etalon_opinion_collection(doc_id=doc_id)
         collection = self.__algo.make_neutrals(
             news_id=doc_id,
             entities_collection=news.DocEntities,
@@ -46,7 +45,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=experiment_io.DataIO.SynonymsCollection,
-            create_parsed_news_func=lambda doc_id: self.__experiments_io.read_parsed_news(doc_id=doc_id),
+            create_parsed_news_func=lambda doc_id: self.ExperimentIO.read_parsed_news(doc_id=doc_id),
             iter_news_ids=self.iter_doc_ids_to_compare(),
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
