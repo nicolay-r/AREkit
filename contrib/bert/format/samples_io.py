@@ -13,11 +13,11 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 
 from arekit.networks.data_type import DataType
 from arekit.processing.text.token import Token
-from opinions_io import create_opinion_id
 
 
 # region private functions
@@ -58,8 +58,8 @@ def __create_row(parsed_news,
 
     row = OrderedDict()
 
-    row['id'] = create_opinion_id(first_text_opinion=first_text_opinion,
-                                  index_in_linked=index_in_linked)
+    row['id'] = OpinionsFormatter.create_opinion_id(first_text_opinion=first_text_opinion,
+                                                    index_in_linked=index_in_linked)
 
     if data_type == DataType.Train:
         row['label'] = text_opinion.Sentiment.to_uint()

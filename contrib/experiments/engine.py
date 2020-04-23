@@ -78,8 +78,6 @@ def run_testing(full_model_name,
     assert(isinstance(callback, Callback))
     assert(isinstance(nn_io, RuSentRelBasedNeuralNetworkIO))
 
-    experiments_io.NeutralAnnotator.initialize(experiments_io=nn_io)
-
     for cv_index in range(experiments_io.CVFoldingAlgorithm.CVCount):
 
         experiments_io.CVFoldingAlgorithm.set_iteration_index(cv_index)

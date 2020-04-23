@@ -38,8 +38,7 @@ class BaseNeutralAnnotator(object):
 
             filepath = self.ExperimentIO.create_neutral_opinion_collection_filepath(
                 doc_id=doc_id,
-                data_type=data_type,
-                annot_name=self.__annot_name)
+                data_type=data_type)
 
             if utils.check_file_already_existed(filepath=filepath, logger=logger):
                 continue

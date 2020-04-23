@@ -19,6 +19,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
     """
 
     def __init__(self, model_name, data_io):
+        assert(isinstance(model_name, unicode))
         super(RuSentRelBasedNeuralNetworkIO, self).__init__(
             data_io=data_io,
             model_name=model_name)

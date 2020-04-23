@@ -27,6 +27,8 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
 
         self.__data_io.Callback.set_log_dir(log_dir=path.join(self.get_model_root(), u"log/"))
 
+        self.__data_io.NeutralAnnotator.initialize(experiment_io=self)
+
     # region Properties
 
     @property
@@ -63,10 +65,6 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
             return
 
         rm_dir_contents(self.get_model_root())
-
-    # TODO. Remove from here.
-    def get_logfile_dir(self):
-        return path.join(self.get_model_root(), u"log/")
 
     # region annot output filepath
 
