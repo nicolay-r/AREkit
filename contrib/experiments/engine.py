@@ -7,7 +7,7 @@ from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetwork
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.callback import Callback
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 
 
 def run_testing(full_model_name,

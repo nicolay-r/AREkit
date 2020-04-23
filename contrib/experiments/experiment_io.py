@@ -7,7 +7,7 @@ from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.operations.documents import DocumentOperations
 from arekit.contrib.experiments.operations.opinions import OpinionOperations
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir, rm_dir_contents
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 from arekit.networks.nn_io import NeuralNetworkIO
 
 

@@ -5,7 +5,7 @@ import logging
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.contrib.experiments.neutral.annot.base import BaseNeutralAnnotator
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 
 logger = logging.getLogger(__name__)
 

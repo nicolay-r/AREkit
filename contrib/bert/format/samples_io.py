@@ -16,7 +16,7 @@ from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 from arekit.processing.text.token import Token
 
 

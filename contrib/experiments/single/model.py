@@ -6,7 +6,7 @@ from arekit.contrib.experiments.single.initialization import SingleInstanceModel
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.callback import Callback
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 from arekit.networks.tf_model import TensorflowModel
 from arekit.networks.nn import NeuralNetwork
 

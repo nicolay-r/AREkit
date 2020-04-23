@@ -2,7 +2,7 @@ from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
 from arekit.contrib.bert.format.samples_io import create_and_save_samples_to_tsv
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 
 
 class BertEncoder(object):

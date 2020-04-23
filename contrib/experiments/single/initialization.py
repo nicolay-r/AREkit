@@ -20,7 +20,7 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 
 from arekit.networks.context.training.bags.collection import BagsCollection
 from arekit.networks.context.embedding.input import create_term_embedding_matrix
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 
 
 logger = logging.getLogger(__name__)

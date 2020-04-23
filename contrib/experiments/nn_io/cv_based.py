@@ -2,7 +2,7 @@ import os
 
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 
 
 class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):

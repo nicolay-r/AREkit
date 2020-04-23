@@ -5,7 +5,7 @@ from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetwork
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.context.debug import DebugKeys
-from arekit.networks.data_type import DataType
+from arekit.common.data_type import DataType
 from arekit.source.rusentiframes.helpers.parse import RuSentiFramesParseHelper
 
 
