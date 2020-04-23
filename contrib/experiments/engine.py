@@ -16,7 +16,6 @@ def run_testing(full_model_name,
                 create_model,
                 create_callback,
                 create_nn_io,
-                evaluator_class,
                 experiments_io,
                 cv_count=1,
                 common_callback_modification_func=None,
@@ -32,7 +31,6 @@ def run_testing(full_model_name,
     :param create_model:
     :param create_callback:
     :param create_nn_io:
-    :param evaluator_class:
     :param cv_count: int, cv_count > 0
         1 -- considered a fixed train/test separation.
     :param common_callback_modification_func:
@@ -50,7 +48,6 @@ def run_testing(full_model_name,
     assert(callable(common_callback_modification_func) or common_callback_modification_func is None)
     assert(callable(common_config_modification_func) or common_config_modification_func is None)
     assert(callable(custom_config_modification_func) or custom_config_modification_func is None)
-    assert(callable(evaluator_class))
     assert(isinstance(experiments_io, DataIO))
     assert(isinstance(cv_count, int) and cv_count > 0)
     assert(isinstance(cancel_training_by_cost, bool))
@@ -114,7 +111,6 @@ def run_testing(full_model_name,
         model = create_model(nn_io=nn_io,
                              network=network,
                              config=config,
-                             evaluator_class=evaluator_class,
                              callback=callback)
 
         ###########

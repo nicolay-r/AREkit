@@ -28,6 +28,10 @@ class DataIO(object):
         return True
 
     @property
+    def Evaluator(self):
+        raise NotImplementedError()
+
+    @property
     def CVFoldingAlgorithm(self):
         raise NotImplementedError()
 

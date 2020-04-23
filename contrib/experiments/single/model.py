@@ -17,21 +17,19 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     with an attitude mentioned in it.
     """
 
-    def __init__(self, nn_io, network, config, evaluator_class, callback):
+    def __init__(self, nn_io, network, config, callback):
         assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)
-        assert(callable(evaluator_class))
 
         super(SingleInstanceTensorflowModel, self).__init__(
             nn_io=nn_io, network=network, callback=callback)
 
         self.__config = config
-        self.__evaluator_class = evaluator_class
         self.__init_helper = self.create_model_init_helper()
         self.__evaluator = CustomOpinionBasedModelEvaluator(
-            evaluator=self.__evaluator_class(synonyms=self.IO.DataIO.SynonymsCollection),
+            evaluator=nn_io.DataIO.Evaluator,
             model=self)
         self.__print_statistic()
 
