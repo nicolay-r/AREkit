@@ -5,36 +5,39 @@ from arekit.contrib.experiments.single.embedding.opinions import extract_text_op
 from arekit.networks.data_type import DataType
 
 
-def to_tsv(experiment_io):
-    """
-    experiment_io:
-        Example of experiment io
-        RuSentRelWithRuAttitudesBasedExperimentIO(data_io=data_io, model_name="bert")
-    """
-    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
+class BertEncoder(object):
 
-    terms_per_context = 50
+    @staticmethod
+    def to_tsv(experiment_io):
+        """
+        experiment_io:
+            Example of experiment io
+            RuSentRelWithRuAttitudesBasedExperimentIO(data_io=data_io, model_name="bert")
+        """
+        assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
 
-    for data_type in DataType.iter_supported():
-        experiment_io.DataIO.NeutralAnnotator.create_collection(data_type)
+        terms_per_context = 50
 
-    for data_type in DataType.iter_supported():
+        for data_type in DataType.iter_supported():
+            experiment_io.DataIO.NeutralAnnotator.create_collection(data_type)
 
-        text_opinions = extract_text_opinions(
-            experiment_io=experiment_io,
-            data_type=data_type,
-            terms_per_context=terms_per_context)
+        for data_type in DataType.iter_supported():
 
-        #
-        # Compose csv file with related opinions (Necessary for evaluation)
-        #
-        create_and_save_opinions_to_csv(text_opinions=text_opinions,
-                                        data_type=data_type,
-                                        experiment_io=experiment_io)
+            text_opinions = extract_text_opinions(
+                experiment_io=experiment_io,
+                data_type=data_type,
+                terms_per_context=terms_per_context)
 
-        #
-        # Train/Test input samples for bert
-        #
-        create_and_save_samples_to_tsv(text_opinions=text_opinions,
-                                       data_type=data_type,
-                                       experiment_io=experiment_io)
+            #
+            # Compose csv file with related opinions (Necessary for evaluation)
+            #
+            create_and_save_opinions_to_csv(text_opinions=text_opinions,
+                                            data_type=data_type,
+                                            experiment_io=experiment_io)
+
+            #
+            # Train/Test input samples for bert
+            #
+            create_and_save_samples_to_tsv(text_opinions=text_opinions,
+                                           data_type=data_type,
+                                           experiment_io=experiment_io)

@@ -15,6 +15,8 @@ from arekit.networks.labeling.base import LabelCalculationMode
 from format import opinions_io, samples_io
 
 
+# region private methods
+
 def __calculate_label(lcm, labels):
     assert(isinstance(lcm, unicode))
     assert(isinstance(labels, list))
@@ -27,7 +29,7 @@ def __calculate_label(lcm, labels):
         return labels[0]
 
 
-def iter_opinions(opinions_dict, label_calculation_mode):
+def __iter_opinions(opinions_dict, label_calculation_mode):
     assert(isinstance(opinions_dict, dict))
     assert(isinstance(label_calculation_mode, unicode))
 
@@ -42,12 +44,12 @@ def iter_opinions(opinions_dict, label_calculation_mode):
                       sentiment=label)
 
 
-def iter_eval_collections(bert_result_fp,
-                          samples_fp,
-                          opinion_fp,
-                          experiment_io,
-                          label_calculation_mode,
-                          classes_count=3):
+def __iter_eval_collections(bert_result_fp,
+                            samples_fp,
+                            opinion_fp,
+                            experiment_io,
+                            label_calculation_mode,
+                            classes_count=3):
     assert(isinstance(bert_result_fp, unicode))
     assert(isinstance(samples_fp, unicode))
     assert(isinstance(opinion_fp, unicode))
@@ -113,11 +115,13 @@ def iter_eval_collections(bert_result_fp,
 
     for news_id, opinions_dict in all_opinions.iteritems():
         collections[news_id] = experiment_io.create_opinion_collection(
-            opinions=list(iter_opinions(opinions_dict=opinions_dict,
-                                        label_calculation_mode=label_calculation_mode)))
+            opinions=list(__iter_opinions(opinions_dict=opinions_dict,
+                                          label_calculation_mode=label_calculation_mode)))
 
     for news_id, collection in collections.iteritems():
         yield news_id, collection
+
+# endregion
 
 
 def eval_tsv(data_io, data_type):
@@ -137,10 +141,10 @@ def eval_tsv(data_io, data_type):
     samples_fp = samples_io.get_filepath(data_type=data_type,
                                          experiment_io=experiment_io)
 
-    iter_eval = iter_eval_collections(bert_result_fp=bert_result_fp,
-                                      samples_fp=samples_fp,
-                                      opinion_fp=opinions_fp,
-                                      label_calculation_mode=LabelCalculationMode.FIRST_APPEARED)
+    iter_eval = __iter_eval_collections(bert_result_fp=bert_result_fp,
+                                        samples_fp=samples_fp,
+                                        opinion_fp=opinions_fp,
+                                        label_calculation_mode=LabelCalculationMode.FIRST_APPEARED)
 
     for news_id, collection in iter_eval:
 
