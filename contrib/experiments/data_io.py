@@ -24,6 +24,10 @@ class DataIO(object):
         raise NotImplementedError()
 
     @property
+    def ModelIO(self):
+        raise NotImplementedError()
+
+    @property
     def KeepTokens(self):
         return True
 

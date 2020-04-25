@@ -1,8 +1,8 @@
-from arekit.contrib.experiments.nn_io.cv_based import CVBasedNeuralNetworkIO
+from arekit.contrib.experiments.nn_io.cv_based import CVBasedExperiment
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
 
 
-class CustomRuAttitudesFormatIO(CVBasedNeuralNetworkIO):
+class CustomRuAttitudesFormatIO(CVBasedExperiment):
 
     def __init__(self, model_name, data_io, doc_ids):
         """

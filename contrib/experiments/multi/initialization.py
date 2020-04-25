@@ -1,13 +1,15 @@
-from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
+from arekit.contrib.experiments.single.initialization import SingleInstanceModelExperimentInitializer
 from arekit.contrib.experiments.utils import create_input_sample
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.multi.training.bags import MultiInstanceBagsCollection
 
 
-class MultiInstanceModelInitializer(SingleInstanceModelInitializer):
+class MultiInstanceModeExperimentlInitializer(SingleInstanceModelExperimentInitializer):
 
-    def __init__(self, nn_io, config):
-        super(MultiInstanceModelInitializer, self).__init__(nn_io=nn_io, config=config)
+    def __init__(self, experiment, config):
+        super(MultiInstanceModeExperimentlInitializer, self).__init__(
+            experiment=experiment,
+            config=config)
 
     @staticmethod
     def create_bags_collection(text_opinions_collection, frames_collection, synonyms_collection, data_type, config):

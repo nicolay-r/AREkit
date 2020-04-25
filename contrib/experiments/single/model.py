@@ -1,7 +1,7 @@
-from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.base import BaseExperiment
 from arekit.contrib.experiments.single import log
 from arekit.contrib.experiments.single.evaluator import CustomOpinionBasedModelEvaluator
-from arekit.contrib.experiments.single.initialization import SingleInstanceModelInitializer
+from arekit.contrib.experiments.single.initialization import SingleInstanceModelExperimentInitializer
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
@@ -17,19 +17,22 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     with an attitude mentioned in it.
     """
 
-    def __init__(self, nn_io, network, config, callback):
-        assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
+    def __init__(self, experiment, network, config, callback):
+        assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)
 
         super(SingleInstanceTensorflowModel, self).__init__(
-            nn_io=nn_io, network=network, callback=callback)
+            nn_io=experiment.DataIO.ModelIO,
+            network=network,
+            callback=callback)
 
         self.__config = config
+        self.__experiment = experiment
         self.__init_helper = self.create_model_init_helper()
         self.__evaluator = CustomOpinionBasedModelEvaluator(
-            evaluator=nn_io.DataIO.Evaluator,
+            evaluator=experiment.DataIO.Evaluator,
             model=self)
         self.__print_statistic()
 
@@ -62,7 +65,8 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         return MiniBatch(bags_group)
 
     def create_model_init_helper(self):
-        return SingleInstanceModelInitializer(nn_io=self.IO, config=self.Config)
+        return SingleInstanceModelExperimentInitializer(experiment=self.__experiment,
+                                                        config=self.Config)
 
     # endregion
 
@@ -76,7 +80,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
-        log.write_log(nn_io=self.IO, log_names=keys, log_values=values)
+        log.write_log(experiment=self.IO, log_names=keys, log_values=values)
         self.get_text_opinions_collection_helper(DataType.Train).debug_labels_statistic()
         self.get_text_opinions_collection_helper(DataType.Train).debug_unique_relations_statistic()
         self.get_text_opinions_collection_helper(DataType.Test).debug_labels_statistic()

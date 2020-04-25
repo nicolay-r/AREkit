@@ -7,7 +7,7 @@ from arekit.common.synonyms import SynonymsCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 
-from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.base import BaseExperiment
 from arekit.contrib.experiments.single.embedding.entities import generate_entity_embeddings
 from arekit.contrib.experiments.single.embedding.frames import init_frames_embedding
 from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
@@ -26,27 +26,27 @@ from arekit.common.data_type import DataType
 logger = logging.getLogger(__name__)
 
 
-class SingleInstanceModelInitializer(object):
+class SingleInstanceModelExperimentInitializer(object):
 
-    def __init__(self, nn_io, config):
-        assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
+    def __init__(self, experiment, config):
+        assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        word_embedding = nn_io.DataIO.WordEmbedding
+        word_embedding = experiment.DataIO.WordEmbedding
 
-        word_embedding.set_stemmer(nn_io.DataIO.Stemmer)
+        word_embedding.set_stemmer(experiment.DataIO.Stemmer)
         config.set_word_embedding(word_embedding)
 
         entity_embeddings = generate_entity_embeddings(
             use_types=config.UseEntityTypesInEmbedding,
             word_embedding=word_embedding)
 
-        self.__synonyms = nn_io.DataIO.SynonymsCollection
+        self.__synonyms = experiment.DataIO.SynonymsCollection
 
         self.__labels_helper = SingleLabelsHelper() if config.ClassesCount == 3 else PairedLabelsHelper()
 
         self.__text_opinion_collections = self.__create_collection(
-            lambda data_type: extract_text_opinions(experiment_io=nn_io,
+            lambda data_type: extract_text_opinions(experiment=experiment,
                                                     data_type=data_type,
                                                     terms_per_context=config.TermsPerContext))
 
@@ -75,7 +75,7 @@ class SingleInstanceModelInitializer(object):
         self.__bags_collection = self.__create_collection(
             lambda data_type: self.create_bags_collection(
                 text_opinions_collection=self.__text_opinion_collections[data_type],
-                frames_collection=nn_io.DataIO.FramesCollection,
+                frames_collection=experiment.DataIO.FramesCollection,
                 synonyms_collection=self.__synonyms,
                 data_type=data_type,
                 config=config))

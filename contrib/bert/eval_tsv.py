@@ -9,7 +9,7 @@ from arekit.common.opinions.base import Opinion
 
 from arekit.contrib.bert.evaluator import BERTModelEvaluator
 from arekit.contrib.experiments.data_io import DataIO
-from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.base import BaseExperiment
 from arekit.contrib.experiments.nn_io.rusentrel_with_ruattitudes import RuSentRelWithRuAttitudesBasedExperimentIO
 
 from format.opinions_io import OpinionsFormatter
@@ -48,14 +48,14 @@ def __iter_opinions(opinions_dict, label_calculation_mode):
 def __iter_eval_collections(bert_result_fp,
                             samples_fp,
                             opinion_fp,
-                            experiment_io,
+                            experiment,
                             label_calculation_mode,
                             classes_count=3):
     assert(isinstance(bert_result_fp, unicode))
     assert(isinstance(samples_fp, unicode))
     assert(isinstance(opinion_fp, unicode))
     assert(isinstance(label_calculation_mode, unicode))
-    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
+    assert(isinstance(experiment, BaseExperiment))
 
     print "bert_output: {}".format(bert_result_fp)
     print "samples: {}".format(samples_fp)
@@ -115,7 +115,7 @@ def __iter_eval_collections(bert_result_fp,
         news_opininons[opinion_id].append(opinion)
 
     for news_id, opinions_dict in all_opinions.iteritems():
-        collections[news_id] = experiment_io.create_opinion_collection(
+        collections[news_id] = experiment.create_opinion_collection(
             opinions=list(__iter_opinions(opinions_dict=opinions_dict,
                                           label_calculation_mode=label_calculation_mode)))
 
@@ -128,42 +128,43 @@ def __iter_eval_collections(bert_result_fp,
 def eval_tsv(data_io, data_type):
     assert(isinstance(data_io, DataIO))
 
-    experiment_io = RuSentRelWithRuAttitudesBasedExperimentIO(
+    experiment = RuSentRelWithRuAttitudesBasedExperimentIO(
         data_io=data_io,
         model_name=u"bert")
 
-    experiment_io.create_opinion_collection()
+    experiment.create_opinion_collection()
 
     bert_result_fp = u"test_results.tsv"
 
     opinions_fp = OpinionsFormatter.get_filepath(data_type=data_type,
-                                                 experiment_io=experiment_io)
+                                                 experiment=experiment)
 
     samples_fp = samples_io.get_filepath(data_type=data_type,
-                                         experiment_io=experiment_io)
+                                         experiment=experiment)
 
     iter_eval = __iter_eval_collections(bert_result_fp=bert_result_fp,
+                                        experiment=experiment,
                                         samples_fp=samples_fp,
                                         opinion_fp=opinions_fp,
                                         label_calculation_mode=LabelCalculationMode.FIRST_APPEARED)
 
     for news_id, collection in iter_eval:
 
-        filepath = experiment_io.create_result_opinion_collection_filepath(
+        filepath = experiment.create_result_opinion_collection_filepath(
             data_type=data_type,
             doc_id=news_id,
             epoch_index=0)
 
-        experiment_io.DataIO.OpinionFormatter.save_to_file(collection=collection,
-                                                           filepath=filepath)
+        experiment.DataIO.OpinionFormatter.save_to_file(collection=collection,
+                                                        filepath=filepath)
 
     bert_evaluator = BERTModelEvaluator(
         evaluator=TwoClassEvaluator(synonyms=data_io.SynonymsCollection),
-        experiment_io=experiment_io)
+        experiment=experiment)
 
-    doc_ids = experiment_io.iter_news_indices(data_type=data_type)
+    doc_ids = experiment.iter_news_indices(data_type=data_type)
     result = bert_evaluator.evaluate(data_type=data_type,
-                                     doc_ids=experiment_io.iter_doc_ids_to_compare(doc_ids),
+                                     doc_ids=experiment.iter_doc_ids_to_compare(doc_ids),
                                      epoch_index=0)
 
     assert(isinstance(result, BaseEvalResult))

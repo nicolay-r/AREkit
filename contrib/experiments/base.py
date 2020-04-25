@@ -1,21 +1,14 @@
-import os
 from os import path
 from os.path import join
 
-from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.experiments.data_io import DataIO
 from arekit.contrib.experiments.operations.documents import DocumentOperations
 from arekit.contrib.experiments.operations.opinions import OpinionOperations
 from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir, rm_dir_contents
 from arekit.common.data_type import DataType
-from arekit.networks.nn_io import NeuralNetworkIO
 
 
-# TODO. Remove dependency from NeuralNetworkIO
-# TODO -> make depending on model + model reference
-class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
-                                    OpinionOperations,
-                                    DocumentOperations):
+class BaseExperiment(OpinionOperations, DocumentOperations):
 
     def __init__(self, data_io, model_name):
         assert(isinstance(data_io, DataIO))
@@ -25,9 +18,11 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
         self.__data_io = data_io
         self.__model_name = model_name
 
+        # Setup DataIO
         self.__data_io.Callback.set_log_dir(log_dir=path.join(self.get_model_root(), u"log/"))
-
-        self.__data_io.NeutralAnnotator.initialize(experiment_io=self)
+        self.__data_io.NeutralAnnotator.initialize(experiment=self)
+        self.__data_io.ModelIO.set_model_root(value=self.get_model_root())
+        self.__data_io.ModelIO.set_model_name(value=model_name)
 
     # region Properties
 
@@ -39,19 +34,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
 
     # region implemented nn_io
 
-    @property
-    def ModelSavePathPrefix(self):
-        return os.path.join(self.__get_model_states_dir(),
-                            u'{}'.format(self.__model_name))
-
-    def __get_model_states_dir(self):
-        result_dir = os.path.join(
-            self.get_model_root(),
-            os.path.join(u'model_states/'))
-
-        create_dir_if_not_exists(result_dir)
-        return result_dir
-
+    # TODO. Move into data_io
     def get_model_root(self):
         return get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__model_name,
@@ -87,7 +70,7 @@ class BaseExperimentNeuralNetworkIO(NeuralNetworkIO,
 
         filename = u"art{doc_id}.neut.{d_type}.txt".format(
             doc_id=doc_id,
-            d_type=BaseExperimentNeuralNetworkIO.__data_type_to_string(data_type))
+            d_type=BaseExperiment.__data_type_to_string(data_type))
 
         return join(root, filename)
 
