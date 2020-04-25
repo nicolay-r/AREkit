@@ -25,6 +25,8 @@ stemmer;
 intended for the automatic sentiment relation extraction (RE)
 on document level.
 
+* **Services** directory -- application in News Processing [N/A, TODO]
+
 Structurally, the fundamental task representation could be departed into following domains:
 
 1. **Named Entity Recognition** -- to extract mentioned named entities;

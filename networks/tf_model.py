@@ -12,7 +12,7 @@ from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from arekit.common.model.eval.base import BaseModelEvaluator
-from arekit.networks.nn_io import NeuralNetworkIO
+from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.common.data_type import DataType
 from arekit.networks.predict_log import NetworkInputDependentVariables
@@ -35,13 +35,14 @@ class TensorflowModel(BaseModel):
     FeedDictShow = False
 
     def __init__(self, nn_io, network, callback=None):
-        assert(isinstance(nn_io, NeuralNetworkIO))
+        assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)
+        super(TensorflowModel, self).__init__(io=nn_io)
+
         self.__sess = None
         self.__saver = None
         self.__optimiser = None
-        self.__nn_io = nn_io
         self.__network = network
         self.__callback = callback
         self.__current_epoch_index = 0
@@ -71,10 +72,6 @@ class TensorflowModel(BaseModel):
     @property
     def Optimiser(self):
         return self.__optimiser
-
-    @property
-    def IO(self):
-        return self.__nn_io
 
     # endregion
 
@@ -109,7 +106,7 @@ class TensorflowModel(BaseModel):
         self.__initialize_session()
 
         if load_model:
-            saved_model_path = u"{}.state".format(self.__nn_io.ModelSavePathPrefix)
+            saved_model_path = u"{}.state".format(self.IO.ModelSavePathPrefix)
             logger.info("Loading model: {}".format(saved_model_path))
             self.load_model(saved_model_path)
 

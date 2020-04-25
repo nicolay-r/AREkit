@@ -1,15 +1,15 @@
 import os
 
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.base import BaseExperiment
 from arekit.common.data_type import DataType
 
 
-class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
+class CVBasedExperiment(BaseExperiment):
 
     def __init__(self, model_name, data_io):
-        super(CVBasedNeuralNetworkIO, self).__init__(data_io=data_io,
-                                                     model_name=model_name)
+        super(CVBasedExperiment, self).__init__(data_io=data_io,
+                                                model_name=model_name)
 
     # region private methods
 
@@ -17,7 +17,7 @@ class CVBasedNeuralNetworkIO(BaseExperimentNeuralNetworkIO):
         assert(isinstance(epoch_index, int))
 
         result_dir = os.path.join(
-            self.get_model_root(),
+            self.DataIO.get_model_root(),
             os.path.join(u"eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type,
                 iter_index=self.DataIO.CVFoldingAlgorithm.IterationIndex,

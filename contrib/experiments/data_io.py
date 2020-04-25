@@ -1,7 +1,14 @@
-# TODO. Add base implementations.
+from arekit.contrib.experiments.utils import \
+    get_path_of_subfolder_in_experiments_dir, \
+    rm_dir_contents
+
+
 class DataIO(object):
 
     # region properties
+
+    def __init__(self):
+        self.__model_name = None
 
     @property
     def Stemmer(self):
@@ -21,6 +28,10 @@ class DataIO(object):
 
     @property
     def NeutralAnnotator(self):
+        raise NotImplementedError()
+
+    @property
+    def ModelIO(self):
         raise NotImplementedError()
 
     @property
@@ -55,3 +66,19 @@ class DataIO(object):
 
     def get_experiments_dir(self):
         raise NotImplementedError()
+
+    def set_model_name(self, value):
+        self.__model_name = value
+
+    def get_model_root(self):
+        return get_path_of_subfolder_in_experiments_dir(
+            subfolder_name=self.__model_name,
+            experiments_dir=self.get_experiments_dir())
+
+    def prepare_model_root(self, rm_contents=True):
+
+        if not rm_contents:
+            return
+
+        rm_dir_contents(self.get_model_root())
+

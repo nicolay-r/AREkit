@@ -3,7 +3,6 @@ import gc
 import logging
 
 from arekit.contrib.experiments.data_io import DataIO
-from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.callback import Callback
@@ -14,20 +13,20 @@ def run_testing(full_model_name,
                 create_config,
                 create_network,
                 create_model,
-                create_nn_io,
-                experiments_io,
+                create_experiment,
+                data_io,
                 cv_count=1,
                 common_callback_modification_func=None,
                 custom_config_modification_func=None,
                 common_config_modification_func=None):
     """
-    :param experiments_io:
+    :param data_io:
     :param full_model_name: unicode
         model name
     :param create_config: func
     :param create_network:
     :param create_model:
-    :param create_nn_io:
+    :param create_experiment:
     :param cv_count: int, cv_count > 0
         1 -- considered a fixed train/test separation.
     :param common_callback_modification_func:
@@ -43,7 +42,7 @@ def run_testing(full_model_name,
     assert(callable(common_callback_modification_func) or common_callback_modification_func is None)
     assert(callable(common_config_modification_func) or common_config_modification_func is None)
     assert(callable(custom_config_modification_func) or custom_config_modification_func is None)
-    assert(isinstance(experiments_io, DataIO))
+    assert(isinstance(data_io, DataIO))
     assert(isinstance(cv_count, int) and cv_count > 0)
 
     # Disable tensorflow logging
@@ -60,27 +59,31 @@ def run_testing(full_model_name,
     # Log
     logger.info("Full-Model-Name: {}".format(full_model_name))
 
-    # Initialize data_io
-    for data_type in DataType.iter_supported():
-        experiments_io.NeutralAnnotator.create_collection(data_type=data_type)
-    # TODO. This should be intialized automatically somewhere else.
-    experiments_io.CVFoldingAlgorithm.set_cv_count(cv_count)
+    # TODO. Refactor
+    data_io.set_model_name(full_model_name)
+    data_io.ModelIO.set_model_name(value=full_model_name)
 
-    nn_io = __create_nn_io(
-        data_io=experiments_io,
-        create_nn_io_func=create_nn_io,
-        model_name=full_model_name,
+    experiment = __create_experiment(
+        data_io=data_io,
+        create_experiment_func=create_experiment,
         clear_model_contents=True)
 
-    callback = experiments_io.Callback
+    # TODO. This should be intialized automatically somewhere else.
+    data_io.CVFoldingAlgorithm.set_cv_count(cv_count)
+
+    # Initialize data_io
+    for data_type in DataType.iter_supported():
+        data_io.NeutralAnnotator.create_collection(data_type=data_type)
+
+    callback = data_io.Callback
     callback.PredictVerbosePerFileStatistic = False
 
     assert(isinstance(callback, Callback))
-    assert(isinstance(nn_io, RuSentRelBasedNeuralNetworkIO))
+    assert(isinstance(experiment, RuSentRelBasedNeuralNetworkIO))
 
-    for cv_index in range(experiments_io.CVFoldingAlgorithm.CVCount):
+    for cv_index in range(data_io.CVFoldingAlgorithm.CVCount):
 
-        experiments_io.CVFoldingAlgorithm.set_iteration_index(cv_index)
+        data_io.CVFoldingAlgorithm.set_iteration_index(cv_index)
 
         # Initialize config
         config = create_config()
@@ -102,7 +105,7 @@ def run_testing(full_model_name,
         callback.reset_experiment_dependent_parameters()
 
         # Initialize model
-        model = create_model(nn_io=nn_io,
+        model = create_model(experiment=experiment,
                              network=network,
                              config=config,
                              callback=callback)
@@ -110,7 +113,7 @@ def run_testing(full_model_name,
         ###########
         # Run model
         ###########
-        print u"Running model '{}' at cv_index {}".format(full_model_name, experiments_io.CVFoldingAlgorithm.IterationIndex)
+        print u"Running model '{}' at cv_index {}".format(full_model_name, data_io.CVFoldingAlgorithm.IterationIndex)
         model.run_training(load_model=False,
                            epochs_count=callback.Epochs)
 
@@ -123,23 +126,16 @@ def run_testing(full_model_name,
 # region private functions
 
 
-def __create_nn_io(
+def __create_experiment(
         data_io,
-        create_nn_io_func,
-        model_name,
+        create_experiment_func,
         clear_model_contents):
     assert(isinstance(data_io, DataIO))
-    assert(callable(create_nn_io_func))
-    assert(isinstance(model_name, unicode))
+    assert(callable(create_experiment_func))
     assert(isinstance(clear_model_contents, bool))
 
-    nn_io = create_nn_io_func(model_name=model_name,
-                              data_io=data_io)
-
-    assert(isinstance(nn_io, BaseExperimentNeuralNetworkIO))
-    nn_io.prepare_model_root()
-
-    return nn_io
+    return create_experiment_func(data_io=data_io,
+                                  prepare_model_root=clear_model_contents)
 
 # endregion
 

@@ -5,14 +5,15 @@ import os
 from arekit.common.data_type import DataType
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiments.nn_io.cv_based import CVBasedNeuralNetworkIO
+from arekit.contrib.experiments.nn_io.cv_based import CVBasedExperiment
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 
-class RuSentRelBasedNeuralNetworkIO(CVBasedNeuralNetworkIO):
+# TODO. Rename as experiment
+class RuSentRelBasedNeuralNetworkIO(CVBasedExperiment):
     """
     Represents Input interface for NeuralNetwork ctx
     Now exploited (treated) as an input interface only

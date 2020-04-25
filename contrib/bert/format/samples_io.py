@@ -15,9 +15,10 @@ from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
-from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.base import BaseExperiment
 
 from arekit.common.data_type import DataType
+from arekit.contrib.experiments.data_io import DataIO
 from arekit.processing.text.token import Token
 
 
@@ -115,13 +116,13 @@ def balance(df, label, other_label=0, seed=1):
 # endregion
 
 
-def create_and_save_samples_to_tsv(text_opinions, data_type, experiment_io):
+def create_and_save_samples_to_tsv(text_opinions, data_type, experiment):
     """
         Train/Test input samples for BERT
     """
     assert(isinstance(data_type, unicode))
     assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
-    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
+    assert(isinstance(experiment, BaseExperiment))
 
     pnc = text_opinions.RelatedParsedNewsCollection
     assert(isinstance(pnc, ParsedNewsCollection))
@@ -175,7 +176,7 @@ def create_and_save_samples_to_tsv(text_opinions, data_type, experiment_io):
 
         df = df.iloc[np.random.permutation(len(df))]
 
-    filepath = get_filepath(experiment_io=experiment_io,
+    filepath = get_filepath(data_io=experiment.DataIO,
                             data_type=data_type)
 
     df.to_csv(filepath,
@@ -195,11 +196,11 @@ def parse_news_id(row_id):
     return int(row_id[row_id.index(u'n') + 1:row_id.index(u'_')])
 
 
-def get_filepath(experiment_io, data_type):
-    assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
+def get_filepath(data_io, data_type):
+    assert(isinstance(data_io, DataIO))
     assert(isinstance(data_type, unicode))
 
-    filepath = path.join(experiment_io.get_model_root(),
+    filepath = path.join(data_io.get_model_root(),
                          u"{filename}.tsv".format(filename=data_type))
 
     io_utils.create_dir_if_not_exists(filepath)

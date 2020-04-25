@@ -9,7 +9,7 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
-from arekit.contrib.experiments.experiment_io import BaseExperimentNeuralNetworkIO
+from arekit.contrib.experiments.base import BaseExperiment
 
 
 class OpinionsFormatter(object):
@@ -71,8 +71,8 @@ class OpinionsFormatter(object):
                                      index_in_linked)
 
     @staticmethod
-    def create_and_save_opinions_to_csv(text_opinions, experiment_io, data_type):
-        assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
+    def create_and_save_opinions_to_csv(text_opinions, experiment, data_type):
+        assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(data_type, unicode))
 
         df = OpinionsFormatter.__create_empty_df()
@@ -89,7 +89,7 @@ class OpinionsFormatter(object):
             df = df.append(row, ignore_index=True)
 
         filepath = OpinionsFormatter.get_filepath(data_type=data_type,
-                                                  experiment_io=experiment_io)
+                                                  experiment=experiment)
 
         df.to_csv(filepath,
                   sep='\t',
@@ -107,11 +107,11 @@ class OpinionsFormatter(object):
         return row_id[:row_id.find(u'i')] + u"i0"
 
     @staticmethod
-    def get_filepath(data_type, experiment_io):
-        assert(isinstance(experiment_io, BaseExperimentNeuralNetworkIO))
+    def get_filepath(data_type, experiment):
+        assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(data_type, unicode))
 
-        filepath = path.join(experiment_io.get_model_root(),
+        filepath = path.join(experiment.DataIO.get_model_root(),
                              u"{filename}.csv".format(filename=u"{}-opinions".format(data_type)))
 
         io_utils.create_dir_if_not_exists(filepath)

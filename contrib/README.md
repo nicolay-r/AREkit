@@ -2,7 +2,6 @@
 
 * **Experiments** -- application of Neural Network Models (training/testing) 
 in Sentiment Attitude Extraction Task.
-* **Services** -- application in News Processing [N/A, TODO]
 * **Neural Network Models**
     * **Aspect-based Attentive encoders**:
         - Multilayer Perceptron (MLP)
