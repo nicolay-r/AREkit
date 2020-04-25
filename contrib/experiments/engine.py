@@ -14,7 +14,7 @@ def run_testing(full_model_name,
                 create_config,
                 create_network,
                 create_model,
-                create_nn_io,
+                create_experiment,
                 data_io,
                 cv_count=1,
                 common_callback_modification_func=None,
@@ -27,7 +27,7 @@ def run_testing(full_model_name,
     :param create_config: func
     :param create_network:
     :param create_model:
-    :param create_nn_io:
+    :param create_experiment:
     :param cv_count: int, cv_count > 0
         1 -- considered a fixed train/test separation.
     :param common_callback_modification_func:
@@ -62,7 +62,7 @@ def run_testing(full_model_name,
 
     experiment = __create_experiment(
         data_io=data_io,
-        create_experiment_func=create_nn_io,
+        create_experiment_func=create_experiment,
         model_name=full_model_name,
         clear_model_contents=True)
 

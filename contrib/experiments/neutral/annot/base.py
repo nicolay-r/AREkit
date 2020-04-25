@@ -17,7 +17,7 @@ class BaseNeutralAnnotator(object):
         self.__experiment = None
 
     @property
-    def ExperimentIO(self):
+    def Experiment(self):
         return self.__experiment
 
     @property
@@ -36,7 +36,7 @@ class BaseNeutralAnnotator(object):
 
         for doc_id in all_doc_ids:
 
-            filepath = self.ExperimentIO.create_neutral_opinion_collection_filepath(
+            filepath = self.Experiment.create_neutral_opinion_collection_filepath(
                 doc_id=doc_id,
                 data_type=data_type)
 
