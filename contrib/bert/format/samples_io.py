@@ -17,6 +17,7 @@ from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
 from arekit.contrib.experiments.base import BaseExperiment
 
 from arekit.common.data_type import DataType
+from arekit.contrib.experiments.data_io import DataIO
 from arekit.processing.text.token import Token
 
 
@@ -174,7 +175,7 @@ def create_and_save_samples_to_tsv(text_opinions, data_type, experiment):
 
         df = df.iloc[np.random.permutation(len(df))]
 
-    filepath = get_filepath(experiment=experiment,
+    filepath = get_filepath(data_io=experiment.DataIO,
                             data_type=data_type)
 
     df.to_csv(filepath,
@@ -194,11 +195,11 @@ def parse_news_id(row_id):
     return int(row_id[row_id.index(u'n') + 1:row_id.index(u'_')])
 
 
-def get_filepath(experiment, data_type):
-    assert(isinstance(experiment, BaseExperiment))
+def get_filepath(data_io, data_type):
+    assert(isinstance(data_io, DataIO))
     assert(isinstance(data_type, unicode))
 
-    filepath = path.join(experiment.get_model_root(),
+    filepath = path.join(data_io.get_model_root(),
                          u"{filename}.tsv".format(filename=data_type))
 
     io_utils.create_dir_if_not_exists(filepath)

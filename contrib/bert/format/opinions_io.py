@@ -111,7 +111,7 @@ class OpinionsFormatter(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(data_type, unicode))
 
-        filepath = path.join(experiment.get_model_root(),
+        filepath = path.join(experiment.DataIO.get_model_root(),
                              u"{filename}.csv".format(filename=u"{}-opinions".format(data_type)))
 
         io_utils.create_dir_if_not_exists(filepath)

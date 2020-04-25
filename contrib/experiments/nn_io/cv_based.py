@@ -17,7 +17,7 @@ class CVBasedExperiment(BaseExperiment):
         assert(isinstance(epoch_index, int))
 
         result_dir = os.path.join(
-            self.get_model_root(),
+            self.DataIO.get_model_root(),
             os.path.join(u"eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type,
                 iter_index=self.DataIO.CVFoldingAlgorithm.IterationIndex,

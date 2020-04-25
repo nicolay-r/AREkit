@@ -80,7 +80,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
-        log.write_log(experiment=self.IO, log_names=keys, log_values=values)
+        log.write_log(data_io=self.__experiment.DataIO, log_names=keys, log_values=values)
         self.get_text_opinions_collection_helper(DataType.Train).debug_labels_statistic()
         self.get_text_opinions_collection_helper(DataType.Train).debug_unique_relations_statistic()
         self.get_text_opinions_collection_helper(DataType.Test).debug_labels_statistic()

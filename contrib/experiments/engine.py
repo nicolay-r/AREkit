@@ -3,7 +3,6 @@ import gc
 import logging
 
 from arekit.contrib.experiments.data_io import DataIO
-from arekit.contrib.experiments.base import BaseExperiment
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.callback import Callback
@@ -60,10 +59,13 @@ def run_testing(full_model_name,
     # Log
     logger.info("Full-Model-Name: {}".format(full_model_name))
 
+    # TODO. Refactor
+    data_io.set_model_name(full_model_name)
+    data_io.ModelIO.set_model_name(value=full_model_name)
+
     experiment = __create_experiment(
         data_io=data_io,
         create_experiment_func=create_experiment,
-        model_name=full_model_name,
         clear_model_contents=True)
 
     # TODO. This should be intialized automatically somewhere else.
@@ -127,20 +129,13 @@ def run_testing(full_model_name,
 def __create_experiment(
         data_io,
         create_experiment_func,
-        model_name,
         clear_model_contents):
     assert(isinstance(data_io, DataIO))
     assert(callable(create_experiment_func))
-    assert(isinstance(model_name, unicode))
     assert(isinstance(clear_model_contents, bool))
 
-    experiment = create_experiment_func(model_name=model_name,
-                                        data_io=data_io)
-
-    assert(isinstance(experiment, BaseExperiment))
-    experiment.prepare_model_root()
-
-    return experiment
+    return create_experiment_func(data_io=data_io,
+                                  prepare_model_root=clear_model_contents)
 
 # endregion
 
