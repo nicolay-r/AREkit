@@ -7,9 +7,9 @@ from arekit.common.data_type import DataType
 
 class CVBasedExperiment(BaseExperiment):
 
-    def __init__(self, model_name, data_io):
+    def __init__(self, data_io, prepare_model_root):
         super(CVBasedExperiment, self).__init__(data_io=data_io,
-                                                model_name=model_name)
+                                                prepare_model_root=prepare_model_root)
 
     # region private methods
 

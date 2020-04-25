@@ -5,10 +5,10 @@ from arekit.contrib.experiments.utils import \
 
 class DataIO(object):
 
-    # region properties
-
     def __init__(self):
         self.__model_name = None
+
+    # region Properties
 
     @property
     def Stemmer(self):
