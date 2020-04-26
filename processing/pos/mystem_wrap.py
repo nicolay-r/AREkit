@@ -87,12 +87,12 @@ class POSMystemWrapper(POSTagger):
 
     def is_adjective(self, pos_type):
         assert(isinstance(pos_type, unicode))
-        return pos_type.lower() == self.PosAdjective
+        return pos_type.upper() == self.PosAdjective
 
     def is_noun(self, pos_type):
         assert(isinstance(pos_type, unicode))
-        return pos_type.lower() == self.PosNoun
+        return pos_type.upper() == self.PosNoun
 
     def is_verb(self, pos_type):
         assert(isinstance(pos_type, unicode))
-        return pos_type.lower() == self.PosNoun
+        return pos_type.upper() == self.PosVerb
