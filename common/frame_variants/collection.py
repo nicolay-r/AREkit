@@ -20,15 +20,21 @@ class FrameVariantsCollection:
         self.__frames_list = frames_list
 
     @classmethod
-    def from_iterable(cls, variants_with_id, stemmer):
+    def create_unique_variants_from_iterable(cls, variants_with_id, stemmer):
         assert(isinstance(variants_with_id, collections.Iterable))
         assert(isinstance(stemmer, Stemmer))
+
+        __check_uniqueness = False
 
         variants = {}
         frames_dict = {}
         frames_list = []
         for frame_id, variant in variants_with_id:
             FrameVariantsCollection.__register_frame(frames_dict, frames_list, frame_id)
+
+            if variant in variants and __check_uniqueness:
+                raise Exception("Variant already registered")
+
             variants[variant] = FrameVariant(variant, frame_id)
 
         return cls(variants=variants, frames_list=frames_list, stemmer=stemmer)

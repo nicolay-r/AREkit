@@ -1,7 +1,8 @@
 import json
 
-from arekit.common.labels.base import Label
+from arekit.common.labels.base import Label, PositiveLabel, NegativeLabel
 from arekit.common.frames.collection import FramesCollection
+from arekit.source.rusentiframes.effect import FrameEffect
 from arekit.source.rusentiframes.io_utils import RuSentiFramesIOUtils, RuSentiFramesVersions
 from arekit.source.rusentiframes.polarity import RuSentiFramesFramePolarity
 from arekit.source.rusentiframes.role import FrameRole
@@ -13,6 +14,7 @@ class RuSentiFramesCollection(FramesCollection):
     __frames_key = u"frames"
     __polarity_key = u"polarity"
     __state_key = u"state"
+    __effect_key = u"effect"
 
     def __init__(self, data):
         assert(isinstance(data, dict))
@@ -94,8 +96,12 @@ class RuSentiFramesCollection(FramesCollection):
 
     def get_frame_effects(self, frame_id):
         assert(isinstance(frame_id, unicode))
-        # TODO. Not implemented yet.
-        pass
+
+        if self.__effect_key not in self.__data[frame_id][self.__frames_key]:
+            return []
+
+        return [FrameEffect(role=args[0], label=self.__effect_label(args[1]), prob=args[2])
+                for args in self.__data[frame_id][self.__frames_key][self.__effect_key]]
 
     # endregion
 
@@ -123,5 +129,15 @@ class RuSentiFramesCollection(FramesCollection):
                                           role_dest=args[1],
                                           label=Label.from_str(args[2]),
                                           prob=args[3])
+
+    @staticmethod
+    def __effect_label(value):
+        assert(isinstance(value, unicode))
+        if value == u'+':
+            return PositiveLabel()
+        elif value == u'-':
+            return NegativeLabel()
+        else:
+            raise Exception("Not supported label type: '{}'".format(value))
 
     # endregion

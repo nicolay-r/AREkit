@@ -38,7 +38,7 @@ for frame_id in frames.iter_frames_ids():
     logger.info(u"Has a0->a1 polarity: {}".format(has_a0_a1_pol is not None).encode('utf-8'))
 
 # frame variants.
-frame_variants = FrameVariantsCollection.from_iterable(
+frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
     variants_with_id=frames.iter_frame_id_and_variants(),
     stemmer=stemmer)
 frame_variant = frame_variants.get_variant_by_value(u"хвалить")
