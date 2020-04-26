@@ -3,7 +3,17 @@ from arekit.source.zip_utils import ZipArchiveUtils
 
 
 class RuSentiFramesVersions:
+
+    # Papers for description:
+    # Distant Supervision for Sentiment Attitude Extraction (RANLP-2019)
+    # Nicolay Rusnachenko, Natalia Loukachevitch, Elena Tutubalina
+    # https://www.aclweb.org/anthology/R19-1118/
     V10 = u"v1_0"
+
+    # Papers for description:
+    # Sentiment Frames for Attitude Extraction in Russian (DIALOG-2020)
+    # Natalia Loukachevitch, Nicolay Rusnachenko
+    V11 = u"v1_1"
 
 
 class RuSentiFramesIOUtils(ZipArchiveUtils):
