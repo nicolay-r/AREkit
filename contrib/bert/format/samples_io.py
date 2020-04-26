@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 import io_utils
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.common.entities.base import Entity
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
@@ -16,7 +16,7 @@ from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
 from arekit.contrib.bert.format.utils import get_output_dir
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.base import BaseExperiment
 from arekit.processing.text.token import Token
 
 

@@ -1,7 +1,7 @@
 import collections
 import random
 
-from arekit.contrib.experiments.cv.base import BaseCVFolding
+from arekit.common.experiment.cv.base import BaseCVFolding
 
 
 class SimpleCVFolding(BaseCVFolding):

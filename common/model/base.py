@@ -1,4 +1,4 @@
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.common.model.model_io import BaseModelIO
 
 
@@ -10,6 +10,10 @@ class BaseModel(object):
     def __init__(self, io):
         assert(isinstance(io, BaseModelIO))
         self.__io = io
+
+        # TODO. move here evaluator from experiments
+
+    # TODO. move here property to access the evaluator.
 
     @property
     def IO(self):

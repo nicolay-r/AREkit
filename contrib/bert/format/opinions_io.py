@@ -10,7 +10,7 @@ from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.contrib.bert.format.utils import get_output_dir
 
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.base import BaseExperiment
 
 
 class OpinionsFormatter(object):

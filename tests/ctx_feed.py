@@ -7,7 +7,7 @@ import logging
 from arekit.common.labels.base import Label
 from arekit.networks.context.training.bags.bag import Bag
 from arekit.networks.context.training.batch import MiniBatch
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.networks.nn import NeuralNetwork
 from arekit.tests.ctx_compile import contexts_supported
 

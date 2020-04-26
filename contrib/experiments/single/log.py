@@ -1,5 +1,5 @@
 import os
-from arekit.contrib.experiments.data_io import DataIO
+from arekit.common.experiment.data_io import DataIO
 
 
 def write_log(data_io, log_names, log_values):

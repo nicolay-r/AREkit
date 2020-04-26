@@ -1,11 +1,11 @@
 from os import path
 from os.path import join
 
-from arekit.contrib.experiments.data_io import DataIO
-from arekit.contrib.experiments.operations.documents import DocumentOperations
-from arekit.contrib.experiments.operations.opinions import OpinionOperations
-from arekit.contrib.experiments.utils import get_path_of_subfolder_in_experiments_dir
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.operations.documents import DocumentOperations
+from arekit.common.experiment.operations.opinions import OpinionOperations
+from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
 class BaseExperiment(OpinionOperations, DocumentOperations):

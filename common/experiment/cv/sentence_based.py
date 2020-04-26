@@ -3,8 +3,8 @@ from os import path
 
 import numpy as np
 
-from arekit.contrib.experiments.cv.base import BaseCVFolding
-from arekit.contrib.experiments.cv.doc_stat.base import DocStatGeneratorBase
+from arekit.common.experiment.cv.base import BaseCVFolding
+from arekit.common.experiment.cv.doc_stat.base import DocStatGeneratorBase
 
 
 class SentenceBasedCVFolding(BaseCVFolding):

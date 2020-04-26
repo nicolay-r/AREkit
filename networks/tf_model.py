@@ -14,7 +14,7 @@ from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
 from arekit.common.model.eval.base import BaseModelEvaluator
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.networks.predict_log import NetworkInputDependentVariables
 
 

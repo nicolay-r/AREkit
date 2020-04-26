@@ -1,8 +1,8 @@
 import os
 
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.experiments.base import BaseExperiment
-from arekit.common.data_type import DataType
+from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.data_type import DataType
 
 
 class CVBasedExperiment(BaseExperiment):

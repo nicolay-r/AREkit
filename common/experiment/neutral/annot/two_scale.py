@@ -1,11 +1,11 @@
 import logging
 
 import utils
+from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiments.neutral.annot.base import BaseNeutralAnnotator
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 
 logger = logging.getLogger(__name__)
 

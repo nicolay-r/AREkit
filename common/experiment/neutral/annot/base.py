@@ -1,7 +1,7 @@
 import logging
 import utils
-from arekit.contrib.experiments.base import BaseExperiment
-from arekit.common.data_type import DataType
+from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.data_type import DataType
 
 logger = logging.getLogger(__name__)
 

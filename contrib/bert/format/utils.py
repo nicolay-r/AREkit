@@ -1,5 +1,5 @@
 import os
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.base import BaseExperiment
 
 
 def get_output_dir(data_type, experiment):

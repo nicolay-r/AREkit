@@ -5,7 +5,7 @@ Project: https://github.com/aymericdamien/TensorFlow-Examples/
 """
 import tensorflow as tf
 
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.tf_helpers import sequence
 from arekit.contrib.networks.context.configurations.bilstm import BiLSTMConfig
 from arekit.contrib.networks.sample import InputSample

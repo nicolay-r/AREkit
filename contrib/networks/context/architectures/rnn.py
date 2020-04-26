@@ -1,6 +1,6 @@
 import tensorflow as tf
 from arekit.contrib.networks.context.architectures.base.fc_single import FullyConnectedLayer
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.tf_helpers import sequence
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.context.configurations.rnn import RNNConfig

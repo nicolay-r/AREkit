@@ -8,8 +8,8 @@ from arekit.common.model.labeling.base import LabelCalculationMode
 from arekit.common.opinions.base import Opinion
 
 from arekit.contrib.bert.evaluator import BERTModelEvaluator
-from arekit.contrib.experiments.data_io import DataIO
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.base import BaseExperiment
 from arekit.contrib.experiments.nn_io.rusentrel_with_ruattitudes import RuSentRelWithRuAttitudesBasedExperimentIO
 
 from format.opinions_io import OpinionsFormatter
