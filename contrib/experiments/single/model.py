@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.base import BaseExperiment
 from arekit.contrib.experiments.single import log
 from arekit.contrib.experiments.single.evaluator import CustomOpinionBasedModelEvaluator
 from arekit.contrib.experiments.single.initialization import SingleInstanceModelExperimentInitializer
@@ -6,7 +6,7 @@ from arekit.contrib.experiments.single.initialization import SingleInstanceModel
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.context.training.batch import MiniBatch
 from arekit.networks.callback import Callback
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.networks.tf_model import TensorflowModel
 from arekit.networks.nn import NeuralNetwork
 
@@ -31,9 +31,12 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         self.__config = config
         self.__experiment = experiment
         self.__init_helper = self.create_model_init_helper()
+
+        # TODO. To base model.
         self.__evaluator = CustomOpinionBasedModelEvaluator(
             evaluator=experiment.DataIO.Evaluator,
             model=self)
+
         self.__print_statistic()
 
     # region properties

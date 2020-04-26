@@ -1,15 +1,15 @@
 import os
 
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.experiments.base import BaseExperiment
-from arekit.common.data_type import DataType
+from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.data_type import DataType
 
 
 class CVBasedExperiment(BaseExperiment):
 
-    def __init__(self, model_name, data_io):
+    def __init__(self, data_io, prepare_model_root):
         super(CVBasedExperiment, self).__init__(data_io=data_io,
-                                                model_name=model_name)
+                                                prepare_model_root=prepare_model_root)
 
     # region private methods
 

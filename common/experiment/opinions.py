@@ -1,11 +1,15 @@
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.data_type import DataType
+# TODO. Remove dependency
 from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
+# TODO. Remove dependency
 from arekit.contrib.networks.sample import InputSample
+# TODO. Remove dependency
 from arekit.networks.context.debug import DebugKeys
-from arekit.common.data_type import DataType
+# TODO. Remove dependency
 from arekit.source.rusentiframes.helpers.parse import RuSentiFramesParseHelper
 
 
@@ -69,6 +73,7 @@ def extract_text_opinions(experiment,
         news, parsed_news = __read_document(experiment=experiment, doc_id=news_id)
 
         parsed_news.modify_parsed_sentences(
+            # TODO. Remove dependency
             lambda sentence: RuSentiFramesParseHelper.parse_frames_in_parsed_text(
                 frame_variants_collection=experiment.DataIO.FrameVariantCollection,
                 parsed_text=sentence))

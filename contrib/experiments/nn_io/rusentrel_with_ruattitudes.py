@@ -1,6 +1,6 @@
 import logging
 
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 
 from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
@@ -19,9 +19,9 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
     Paper: https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, model_name, data_io):
-        super(RuSentRelWithRuAttitudesBasedExperimentIO, self).__init__(model_name=model_name,
-                                                                        data_io=data_io)
+    def __init__(self, data_io, prepare_model_root):
+        super(RuSentRelWithRuAttitudesBasedExperimentIO, self).__init__(data_io=data_io,
+                                                                        prepare_model_root=prepare_model_root)
 
         logger.debug("Loading RuAttitudes collection in memory, please wait ...")
         self.__ru_attitudes = read_ruattitudes_in_memory(data_io.Stemmer)

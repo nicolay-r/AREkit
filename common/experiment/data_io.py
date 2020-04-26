@@ -1,14 +1,14 @@
 from arekit.contrib.experiments.utils import \
-    get_path_of_subfolder_in_experiments_dir, \
     rm_dir_contents
+from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
 class DataIO(object):
 
-    # region properties
-
     def __init__(self):
         self.__model_name = None
+
+    # region Properties
 
     @property
     def Stemmer(self):

@@ -2,7 +2,7 @@ import collections
 import itertools
 import os
 
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.nn_io.cv_based import CVBasedExperiment
@@ -19,13 +19,10 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedExperiment):
     Now exploited (treated) as an input interface only
     """
 
-    def __init__(self, model_name, data_io):
-        assert(isinstance(model_name, unicode))
-        super(RuSentRelBasedNeuralNetworkIO, self).__init__(
-            data_io=data_io,
-            model_name=model_name)
+    def __init__(self, data_io, prepare_model_root):
+        super(RuSentRelBasedNeuralNetworkIO, self).__init__(data_io=data_io,
+                                                            prepare_model_root=prepare_model_root)
 
-        self.__model_name = model_name
         self.__rusentrel_news_ids_list = list(RuSentRelIOUtils.iter_collection_indices())
         self.__rusentrel_news_ids = set(self.__rusentrel_news_ids_list)
 

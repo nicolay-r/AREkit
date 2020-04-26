@@ -1,6 +1,6 @@
 from arekit.common.entities.base import Entity
-from arekit.processing.text.token import Token
 from arekit.common.parsed_news.base import ParsedNews
+from arekit.processing.text.token import Token
 
 
 class ParsedNewsHelper(object):

@@ -3,7 +3,7 @@ import tensorflow as tf
 from arekit.contrib.networks.attention.helpers import embedding
 from arekit.contrib.networks.attention import common
 from arekit.contrib.networks.context.architectures.bilstm import BiLSTM
-from arekit.networks.tf_helpers import sequence
+from arekit.contrib.networks.tf_helpers import sequence
 
 
 class AttentionBiLSTMBase(BiLSTM):

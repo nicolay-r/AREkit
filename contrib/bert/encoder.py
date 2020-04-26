@@ -1,8 +1,8 @@
 from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
 from arekit.contrib.bert.format.samples_io import create_and_save_samples_to_tsv
-from arekit.contrib.experiments.base import BaseExperiment
-from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
-from arekit.common.data_type import DataType
+from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.opinions import extract_text_opinions
+from arekit.common.experiment.data_type import DataType
 
 
 class BertEncoder(object):

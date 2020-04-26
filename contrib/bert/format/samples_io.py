@@ -6,19 +6,17 @@ import numpy as np
 import pandas as pd
 
 import io_utils
+from arekit.common.experiment.data_type import DataType
 from arekit.common.entities.base import Entity
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
-
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
-from arekit.contrib.experiments.base import BaseExperiment
-
-from arekit.common.data_type import DataType
-from arekit.contrib.experiments.data_io import DataIO
+from arekit.contrib.bert.format.utils import get_output_dir
+from arekit.common.experiment.base import BaseExperiment
 from arekit.processing.text.token import Token
 
 
@@ -176,8 +174,8 @@ def create_and_save_samples_to_tsv(text_opinions, data_type, experiment):
 
         df = df.iloc[np.random.permutation(len(df))]
 
-    filepath = get_filepath(data_io=experiment.DataIO,
-                            data_type=data_type)
+    filepath = get_filepath(data_type=data_type,
+                            experiment=experiment)
 
     df.to_csv(filepath,
               sep='\t',
@@ -196,11 +194,11 @@ def parse_news_id(row_id):
     return int(row_id[row_id.index(u'n') + 1:row_id.index(u'_')])
 
 
-def get_filepath(data_io, data_type):
-    assert(isinstance(data_io, DataIO))
+def get_filepath(data_type, experiment):
     assert(isinstance(data_type, unicode))
+    assert(isinstance(experiment, BaseExperiment))
 
-    filepath = path.join(data_io.get_model_root(),
+    filepath = path.join(get_output_dir(data_type=data_type, experiment=experiment),
                          u"{filename}.tsv".format(filename=data_type))
 
     io_utils.create_dir_if_not_exists(filepath)

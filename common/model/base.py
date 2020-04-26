@@ -1,3 +1,4 @@
+from arekit.common.experiment.data_type import DataType
 from arekit.common.model.model_io import BaseModelIO
 
 
@@ -10,6 +11,17 @@ class BaseModel(object):
         assert(isinstance(io, BaseModelIO))
         self.__io = io
 
+        # TODO. move here evaluator from experiments
+
+    # TODO. move here property to access the evaluator.
+
     @property
     def IO(self):
         return self.__io
+
+    # TODO. Remove epochs count, since it is related to NeuralNetworks only.
+    def run_training(self, epochs_count, load_model=False):
+        raise NotImplementedError()
+
+    def predict(self, dest_data_type=DataType.Test, doc_ids_set=None):
+        raise NotImplementedError()

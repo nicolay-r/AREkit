@@ -4,10 +4,10 @@ from arekit.contrib.networks.sample import InputSample
 from arekit.networks.multi.training.bags import MultiInstanceBagsCollection
 
 
-class MultiInstanceModeExperimentlInitializer(SingleInstanceModelExperimentInitializer):
+class MultiInstanceModeExperimentInitializer(SingleInstanceModelExperimentInitializer):
 
     def __init__(self, experiment, config):
-        super(MultiInstanceModeExperimentlInitializer, self).__init__(
+        super(MultiInstanceModeExperimentInitializer, self).__init__(
             experiment=experiment,
             config=config)
 

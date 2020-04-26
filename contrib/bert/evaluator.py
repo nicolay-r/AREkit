@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.base import BaseExperiment
 from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
 
 

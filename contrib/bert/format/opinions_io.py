@@ -8,8 +8,9 @@ import io_utils
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.contrib.bert.format.utils import get_output_dir
 
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.base import BaseExperiment
 
 
 class OpinionsFormatter(object):
@@ -111,7 +112,7 @@ class OpinionsFormatter(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(data_type, unicode))
 
-        filepath = path.join(experiment.DataIO.get_model_root(),
+        filepath = path.join(get_output_dir(data_type=data_type, experiment=experiment),
                              u"{filename}.csv".format(filename=u"{}-opinions".format(data_type)))
 
         io_utils.create_dir_if_not_exists(filepath)

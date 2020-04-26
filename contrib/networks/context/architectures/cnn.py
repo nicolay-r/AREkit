@@ -2,7 +2,7 @@ import tensorflow as tf
 from collections import OrderedDict
 from arekit.contrib.networks.context.architectures.base.base import SingleInstanceNeuralNetwork
 from arekit.contrib.networks.context.configurations.cnn import CNNConfig
-from arekit.networks.tf_helpers import layers
+from arekit.contrib.networks.tf_helpers import layers
 
 
 class VanillaCNN(SingleInstanceNeuralNetwork):

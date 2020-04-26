@@ -7,10 +7,10 @@ from arekit.common.synonyms import SynonymsCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 
-from arekit.contrib.experiments.base import BaseExperiment
+from arekit.common.experiment.base import BaseExperiment
 from arekit.contrib.experiments.single.embedding.entities import generate_entity_embeddings
 from arekit.contrib.experiments.single.embedding.frames import init_frames_embedding
-from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
+from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.contrib.experiments.single.embedding.tokens import create_tokens_embedding
 from arekit.contrib.experiments.single.embedding.words import init_custom_words_embedding
 from arekit.contrib.experiments.single.helpers.bags import BagsCollectionHelper
@@ -20,7 +20,7 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 
 from arekit.networks.context.training.bags.collection import BagsCollection
 from arekit.networks.context.embedding.input import create_term_embedding_matrix
-from arekit.common.data_type import DataType
+from arekit.common.experiment.data_type import DataType
 
 
 logger = logging.getLogger(__name__)

@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from arekit.contrib.experiments.base import BaseExperiment
-from arekit.contrib.experiments.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
-from arekit.contrib.experiments.neutral.annot.base import BaseNeutralAnnotator
-from arekit.common.data_type import DataType
+from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
+from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
+from arekit.common.experiment.data_type import DataType
 
 logger = logging.getLogger(__name__)
 
