@@ -10,7 +10,7 @@ from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpini
 from arekit.contrib.experiments.base import BaseExperiment
 from arekit.contrib.experiments.single.embedding.entities import generate_entity_embeddings
 from arekit.contrib.experiments.single.embedding.frames import init_frames_embedding
-from arekit.contrib.experiments.single.embedding.opinions import extract_text_opinions
+from arekit.contrib.experiments.single.opinions import extract_text_opinions
 from arekit.contrib.experiments.single.embedding.tokens import create_tokens_embedding
 from arekit.contrib.experiments.single.embedding.words import init_custom_words_embedding
 from arekit.contrib.experiments.single.helpers.bags import BagsCollectionHelper

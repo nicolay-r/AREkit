@@ -1,11 +1,6 @@
 import tensorflow as tf
 
-
-class CellTypes:
-    RNN = u'vanilla'
-    GRU = u'gru'
-    LSTM = u'lstm'
-    BasicLSTM = u'basic-lstm'
+from arekit.networks.cell_types import CellTypes
 
 
 def get_cell(hidden_size, cell_type, lstm_initializer=None, dropout_rnn_keep_prob=1.0):

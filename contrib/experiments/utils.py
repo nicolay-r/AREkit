@@ -43,7 +43,7 @@ def create_input_sample(text_opinion, frames_collection, synonyms_collection, co
         frames_collection=frames_collection,
         synonyms_collection=synonyms_collection)
 
-
+# TODO. To data_io
 def rm_dir_contents(dir_path):
     contents = glob.glob(dir_path)
     for f in contents:
@@ -52,3 +52,5 @@ def rm_dir_contents(dir_path):
             os.remove(f)
         else:
             shutil.rmtree(f, ignore_errors=True)
+
+# TODO. Rename this file as sample.

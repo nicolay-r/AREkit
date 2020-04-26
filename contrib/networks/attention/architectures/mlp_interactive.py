@@ -3,9 +3,7 @@ import tensorflow as tf
 
 from arekit.contrib.networks.attention.architectures.mlp import MLPAttention
 from arekit.contrib.networks.sample import InputSample
-from arekit.networks.tf_helpers import filtering
-from arekit.networks.tf_helpers import sequence
-
+from arekit.contrib.networks.tf_helpers import filtering, sequence
 
 logger = logging.getLogger(__name__)
 

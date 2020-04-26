@@ -1,6 +1,6 @@
 import tensorflow as tf
 from arekit.contrib.networks.context.configurations.rnn import RNNConfig
-from arekit.networks.tf_helpers.sequence import CellTypes
+from arekit.networks.cell_types import CellTypes
 
 
 class BiLSTMConfig(RNNConfig):
