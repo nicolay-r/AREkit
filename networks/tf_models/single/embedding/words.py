@@ -1,6 +1,6 @@
 from arekit.common.embeddings.base import Embedding
+from arekit.networks.embedding.entity_masks import EntityMasks
 from arekit.networks.tf_models.single.embedding.custom import create_term_embedding
-from arekit.networks.embedding import EntityMasks
 
 
 # region private functions
