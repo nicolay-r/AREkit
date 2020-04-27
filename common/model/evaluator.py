@@ -1,5 +1,5 @@
-from arekit.contrib.experiments.single.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
+from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 
 
 class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
@@ -45,4 +45,3 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
             data_type=data_type,
             doc_ids=doc_ids,
             epoch_index=epoch_index)
-

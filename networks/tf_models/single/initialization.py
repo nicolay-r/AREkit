@@ -8,18 +8,18 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 
 from arekit.common.experiment.base import BaseExperiment
-from arekit.contrib.experiments.single.embedding.entities import generate_entity_embeddings
-from arekit.contrib.experiments.single.embedding.frames import init_frames_embedding
+from arekit.networks.tf_models.single.embedding.entities import generate_entity_embeddings
+from arekit.networks.tf_models.single.embedding.frames import init_frames_embedding
 from arekit.common.experiment.opinions import extract_text_opinions
-from arekit.contrib.experiments.single.embedding.tokens import create_tokens_embedding
-from arekit.contrib.experiments.single.embedding.words import init_custom_words_embedding
-from arekit.contrib.experiments.single.helpers.bags import BagsCollectionHelper
-from arekit.contrib.experiments.single.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
-from arekit.contrib.experiments.utils import create_input_sample
+from arekit.networks.tf_models.single.embedding.tokens import create_tokens_embedding
+from arekit.networks.tf_models.single.embedding.words import init_custom_words_embedding
+from arekit.networks.tf_models.single.helpers.bags import BagsCollectionHelper
+from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
+from arekit.networks.tf_models.sample import create_input_sample
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
-from arekit.networks.context.training.bags.collection import BagsCollection
-from arekit.networks.context.embedding.input import create_term_embedding_matrix
+from arekit.networks.training.single.bags.collection import BagsCollection
+from arekit.networks.embedding.input import create_term_embedding_matrix
 from arekit.common.experiment.data_type import DataType
 
 

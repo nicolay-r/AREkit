@@ -1,6 +1,6 @@
-from arekit.contrib.experiments.multi.initialization import MultiInstanceModeExperimentInitializer
-from arekit.contrib.experiments.single.model import SingleInstanceTensorflowModel
-from arekit.networks.multi.training.batch import MultiInstanceBatch
+from arekit.networks.tf_models.multi.initialization import MultiInstanceModeExperimentInitializer
+from arekit.networks.training.multi.batch import MultiInstanceBatch
+from arekit.networks.tf_models.single.model import SingleInstanceTensorflowModel
 
 
 class MultiInstanceTensorflowModel(SingleInstanceTensorflowModel):

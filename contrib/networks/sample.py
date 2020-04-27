@@ -18,7 +18,7 @@ from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
 
-from arekit.networks.context.embedding import indices
+from arekit.networks.embedding import indices
 from arekit.common.model.sample import InputSampleBase
 
 

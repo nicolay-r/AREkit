@@ -1,6 +1,6 @@
 import logging
 from collections import OrderedDict
-from arekit.networks.context.debug import DebugKeys
+from arekit.networks.debug import DebugKeys
 from arekit.common.model.sample import InputSampleBase
 
 logger = logging.getLogger(__name__)

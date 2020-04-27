@@ -3,7 +3,7 @@ import logging
 from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 
-from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
+from arekit.contrib.experiments.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
 
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper

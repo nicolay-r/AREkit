@@ -7,9 +7,9 @@ from arekit.common.entities.base import Entity
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.embeddings.base import Embedding
 from arekit.common.embeddings.tokens import TokenEmbedding
-from arekit.networks.context.debug import DebugKeys
-from arekit.networks.context.embedding.entity_masks import EntityMasks
-from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
+from arekit.networks.debug import DebugKeys
+from arekit.networks.embedding.entity_masks import EntityMasks
+from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
 from arekit.processing.pos.base import POSTagger
 from arekit.processing.text.token import Token
 from arekit.processing.text.tokens import Tokens

@@ -1,10 +1,10 @@
 import tensorflow as tf
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.tf_helpers.initialization import init_weighted_cost, init_accuracy
-from arekit.networks.context.training.batch import MiniBatch
 from arekit.contrib.networks.sample import InputSample
 from arekit.common.experiment.data_type import DataType
 from arekit.networks.nn import NeuralNetwork
+from arekit.networks.training.single.batch import MiniBatch
 
 
 class SingleInstanceNeuralNetwork(NeuralNetwork):

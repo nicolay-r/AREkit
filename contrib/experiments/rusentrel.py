@@ -5,7 +5,7 @@ import os
 from arekit.common.experiment.data_type import DataType
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiments.nn_io.cv_based import CVBasedExperiment
+from arekit.common.experiment.cv_based import CVBasedExperiment
 from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
 from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils

@@ -1,4 +1,4 @@
-from arekit.networks.context.training.bags.collection import BagsCollection
+from arekit.networks.training.single.bags.collection import BagsCollection
 
 
 class BagsCollectionHelper:

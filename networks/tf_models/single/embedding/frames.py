@@ -1,6 +1,6 @@
 from arekit.common.embeddings.base import Embedding
 from arekit.common.text_frame_variant import TextFrameVariant
-from arekit.contrib.experiments.single.embedding.custom import create_term_embedding
+from arekit.networks.tf_models.single.embedding.custom import create_term_embedding
 
 
 def __iter_variants(iter_all_terms_func):

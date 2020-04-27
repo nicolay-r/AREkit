@@ -1,5 +1,5 @@
 from arekit.common.embeddings.base import Embedding
-from arekit.networks.context.embedding.entity_masks import EntityMasks
+from arekit.networks.embedding.entity_masks import EntityMasks
 
 
 def __entity_mask_to_word(mask):

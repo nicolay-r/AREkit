@@ -4,11 +4,11 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 # TODO. Remove dependency
-from arekit.contrib.experiments.single.helpers.parsed_news import ParsedNewsHelper
+from arekit.common.model.helpers.parsed_news import ParsedNewsHelper
 # TODO. Remove dependency
 from arekit.contrib.networks.sample import InputSample
 # TODO. Remove dependency
-from arekit.networks.context.debug import DebugKeys
+from arekit.networks.debug import DebugKeys
 # TODO. Remove dependency
 from arekit.source.rusentiframes.helpers.parse import RuSentiFramesParseHelper
 

@@ -3,8 +3,8 @@ import numpy as np
 
 from arekit.common.embeddings.base import Embedding
 from arekit.common.embeddings.tokens import TokenEmbedding
-from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
-from arekit.networks.context.debug import DebugKeys
+from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
+from arekit.networks.debug import DebugKeys
 
 
 logger = logging.getLogger(__name__)

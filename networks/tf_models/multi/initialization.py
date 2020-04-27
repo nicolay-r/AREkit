@@ -1,7 +1,7 @@
-from arekit.contrib.experiments.single.initialization import SingleInstanceModelExperimentInitializer
-from arekit.contrib.experiments.utils import create_input_sample
+from arekit.networks.tf_models.single.initialization import SingleInstanceModelExperimentInitializer
+from arekit.networks.tf_models.sample import create_input_sample
+from arekit.networks.training.multi.bags import MultiInstanceBagsCollection
 from arekit.contrib.networks.sample import InputSample
-from arekit.networks.multi.training.bags import MultiInstanceBagsCollection
 
 
 class MultiInstanceModeExperimentInitializer(SingleInstanceModelExperimentInitializer):

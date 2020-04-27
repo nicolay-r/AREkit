@@ -7,16 +7,16 @@ from tensorflow.python.training.saver import Saver
 
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.base import BaseModel
+from arekit.common.model.eval.base import BaseModelEvaluator
+from arekit.common.experiment.data_type import DataType
+
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.context.training.batch import MiniBatch
-from arekit.networks.context.embedding.offsets import TermsEmbeddingOffsets
-from arekit.common.model.eval.base import BaseModelEvaluator
+from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
-from arekit.common.experiment.data_type import DataType
-from arekit.networks.predict_log import NetworkInputDependentVariables
-
+from arekit.networks.tf_models.predict_log import NetworkInputDependentVariables
+from arekit.networks.training.single.batch import MiniBatch
 
 logger = logging.getLogger(__name__)
 

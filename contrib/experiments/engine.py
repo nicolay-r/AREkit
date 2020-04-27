@@ -4,7 +4,7 @@ import logging
 
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
+from arekit.contrib.experiments.rusentrel import RuSentRelBasedNeuralNetworkIO
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.callback import Callback
 

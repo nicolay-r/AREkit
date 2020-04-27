@@ -1,18 +1,18 @@
-from arekit.contrib.experiments.nn_io.cv_based import CVBasedExperiment
+from arekit.common.experiment.cv_based import CVBasedExperiment
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
 
 
 class CustomRuAttitudesFormatIO(CVBasedExperiment):
 
-    def __init__(self, model_name, data_io, doc_ids):
+    def __init__(self, data_io, doc_ids):
         """
         doc_ids: set
             set of doc_ids which is supposed to saved during reading process
         """
         assert(isinstance(doc_ids, set) or doc_ids is None)
         super(CustomRuAttitudesFormatIO, self).__init__(
-            model_name=model_name,
-            data_io=data_io)
+            data_io=data_io,
+            prepare_model_root=True)
 
         self.__ra_format_docs = None
 

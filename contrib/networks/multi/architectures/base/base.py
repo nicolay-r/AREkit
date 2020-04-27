@@ -5,7 +5,7 @@ from arekit.contrib.networks.context.architectures.base.base import SingleInstan
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.tf_helpers.initialization import init_accuracy, init_weighted_cost
-from arekit.networks.multi.training.batch import MultiInstanceBatch
+from arekit.networks.training.multi.batch import MultiInstanceBatch
 from arekit.networks.nn import NeuralNetwork
 
 
