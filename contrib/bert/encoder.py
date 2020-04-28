@@ -42,7 +42,7 @@ class BertEncoder(object):
     def __create_formatter(data_type, formatter_type):
         assert(isinstance(formatter_type, unicode))
 
-        if formatter_type == SampleFormatters.COLA:
+        if formatter_type == SampleFormatters.DEFAULT:
             return BaseSampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.NLI_M:
             return NliSampleFormatter(data_type=data_type)

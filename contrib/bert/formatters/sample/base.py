@@ -16,15 +16,15 @@ from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.bert.formatters.opinion import OpinionsFormatter
 from arekit.common.experiment.base import BaseExperiment
-from arekit.contrib.bert.formatters.utils import get_output_dir
+from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
 from arekit.processing.text.token import Token
 
 
 class BaseSampleFormatter(object):
     """
-    Default, based on COLA task.
+    Custom Processor with the following fields
 
-    [id, label, type, text_a] -- for train
+    [id, label, text_a] -- for train
     [id, text_a] -- for test
     """
 
@@ -33,8 +33,9 @@ class BaseSampleFormatter(object):
     """
     ID = 'id'
     LABEL = 'label'
-    TYPE = 'type'
     TEXT_A = 'text_a'
+    S_IND = 's_ind'
+    T_IND = 't_ind'
 
     SUBJECT = u"X"
     OBJECT = u"Y"
@@ -101,9 +102,10 @@ class BaseSampleFormatter(object):
 
         if self.is_train():
             dtypes_list.append((self.LABEL, 'int32'))
-            dtypes_list.append((self.TYPE, 'string'))
 
         dtypes_list.append((self.TEXT_A, 'float64'))
+        dtypes_list.append((self.S_IND, 'int32'))
+        dtypes_list.append((self.T_IND, 'int32'))
 
         return dtypes_list
 
@@ -147,9 +149,10 @@ class BaseSampleFormatter(object):
 
         if self.is_train():
             row[self.LABEL] = text_opinion.Sentiment.to_uint()
-            row[self.TYPE] = 'a'
 
         row[self.TEXT_A] = self.TERMS_SEPARATOR.join(self.__iterate_sentence_terms(sentence_terms, s_ind=s_ind, t_ind=t_ind))
+        row[self.S_IND] = s_ind
+        row[self.T_IND] = t_ind
 
         return row
 
@@ -234,9 +237,11 @@ class BaseSampleFormatter(object):
     def get_filepath(data_type, experiment):
         assert(isinstance(experiment, BaseExperiment))
 
-        filepath = path.join(get_output_dir(data_type=data_type,
-                                            experiment=experiment),
-                             u"{filename}.tsv".format(filename=data_type))
+        fname = generate_filename(data_type=data_type,
+                                  experiment=experiment,
+                                  prefix=u'samples')
+
+        filepath = path.join(get_output_dir(experiment=experiment), fname)
 
         io_utils.create_dir_if_not_exists(filepath)
 

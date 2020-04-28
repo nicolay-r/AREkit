@@ -10,7 +10,7 @@ from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 from arekit.common.experiment.base import BaseExperiment
-from arekit.contrib.bert.formatters.utils import get_output_dir
+from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
 
 
 class OpinionsFormatter(object):
@@ -117,8 +117,11 @@ class OpinionsFormatter(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(data_type, unicode))
 
-        filepath = path.join(get_output_dir(data_type=data_type, experiment=experiment),
-                             u"{filename}.csv".format(filename=u"{}-opinions".format(data_type)))
+        fname = generate_filename(data_type=data_type,
+                                  experiment=experiment,
+                                  prefix=u'opinions')
+
+        filepath = path.join(get_output_dir(experiment=experiment), fname)
 
         io_utils.create_dir_if_not_exists(filepath)
 

@@ -6,7 +6,7 @@ class SampleFormatters(object):
     """
     Default formatter
     """
-    COLA = u'cola'
+    DEFAULT = u'default'
 
     """
     Natural Language Inference samplers
@@ -17,6 +17,6 @@ class SampleFormatters(object):
 
     @staticmethod
     def iter_supported():
-        yield SampleFormatters.COLA
+        yield SampleFormatters.DEFAULT
         yield SampleFormatters.QA_M
         yield SampleFormatters.NLI_M
