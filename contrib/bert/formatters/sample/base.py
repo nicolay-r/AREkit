@@ -201,7 +201,7 @@ class BaseSampleFormatter(object):
                 len(text_opinions),
                 round(100 * float(added) / len(text_opinions), 2))
 
-        if self.__data_type == DataType.Train:
+        if self.is_train():
 
             df_neut = self.__df[self.__df[self.LABEL] == 0]
             df_pos = self.__balance(label=1)

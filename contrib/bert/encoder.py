@@ -1,11 +1,15 @@
 from arekit.contrib.bert.formatters.opinion import OpinionsFormatter
+
 from arekit.common.experiment.base import BaseExperiment
 from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.experiment.data_type import DataType
+
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
-from arekit.contrib.bert.formatters.sample.nli import NliSampleFormatter
-from arekit.contrib.bert.formatters.sample.qa import QaSampleFormatter
+from arekit.contrib.bert.formatters.sample.nli_b import NliBSampleFormatter
+from arekit.contrib.bert.formatters.sample.nli_m import NliMSampleFormatter
+from arekit.contrib.bert.formatters.sample.qa_b import QaBSampleFormatter
+from arekit.contrib.bert.formatters.sample.qa_m import QaMSampleFormatter
 
 
 class BertEncoder(object):
@@ -45,9 +49,13 @@ class BertEncoder(object):
         if formatter_type == SampleFormatters.DEFAULT:
             return BaseSampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.NLI_M:
-            return NliSampleFormatter(data_type=data_type)
+            return NliMSampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.QA_M:
-            return QaSampleFormatter(data_type=data_type)
+            return QaMSampleFormatter(data_type=data_type)
+        if formatter_type == SampleFormatters.NLI_B:
+            return NliBSampleFormatter(data_type=data_type)
+        if formatter_type == SampleFormatters.QA_B:
+            return QaBSampleFormatter(data_type=data_type)
 
         return None
 

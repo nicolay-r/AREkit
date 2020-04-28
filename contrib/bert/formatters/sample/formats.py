@@ -15,8 +15,13 @@ class SampleFormatters(object):
     QA_M = u"qa_m"
     NLI_M = u'nli_b'
 
+    QA_B = u"qa_b"
+    NLI_B = u"nli_b"
+
     @staticmethod
     def iter_supported():
         yield SampleFormatters.DEFAULT
         yield SampleFormatters.QA_M
         yield SampleFormatters.NLI_M
+        yield SampleFormatters.QA_B
+        yield SampleFormatters.NLI_B

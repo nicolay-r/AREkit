@@ -88,6 +88,7 @@ def __iter_eval_collections(bert_result_fp,
         result_row = df_bert_results.iloc[row_index].tolist()
         assert(len(result_row) == classes_count)
 
+        # TODO. Now it assumes to perform a max (Need to support a binary format)
         label = Label.from_uint(np.argmax(result_row))
 
         samples_row = df_samples.iloc[row_index].tolist()
