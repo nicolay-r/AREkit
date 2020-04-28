@@ -39,6 +39,8 @@ class BaseSampleFormatter(object):
     SUBJECT = u"X"
     OBJECT = u"Y"
 
+    TERMS_SEPARATOR = u" "
+
     def __init__(self, data_type):
         self.__data_type = data_type
         self.__df = self.__create_empty_df()
@@ -147,7 +149,7 @@ class BaseSampleFormatter(object):
             row[self.LABEL] = text_opinion.Sentiment.to_uint()
             row[self.TYPE] = 'a'
 
-        row[self.TEXT_A] = u" ".join(self.__iterate_sentence_terms(sentence_terms, s_ind=s_ind, t_ind=t_ind))
+        row[self.TEXT_A] = self.TERMS_SEPARATOR.join(self.__iterate_sentence_terms(sentence_terms, s_ind=s_ind, t_ind=t_ind))
 
         return row
 

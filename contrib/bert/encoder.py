@@ -13,6 +13,7 @@ class BertEncoder(object):
     @staticmethod
     def to_tsv(experiment, sample_formatter):
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(sample_formatter, unicode))
 
         terms_per_context = 50
 

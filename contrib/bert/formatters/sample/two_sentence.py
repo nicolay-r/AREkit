@@ -32,9 +32,7 @@ class TwoSentenceSampleFormatter(BaseSampleFormatter):
                     break
 
             if reading_inner_part:
-                continue
-
-            yield term
+                yield term
 
     def create_row(self, parsed_news, linked_text_opinions, index_in_linked, sentence_terms):
         row = super(TwoSentenceSampleFormatter, self).create_row(
@@ -43,10 +41,13 @@ class TwoSentenceSampleFormatter(BaseSampleFormatter):
             index_in_linked=index_in_linked,
             sentence_terms=sentence_terms)
 
-        inner_context = list(self.__get_inner_part_of_text(row[self.TEXT_A]))
+        terms = row[self.TEXT_A].split(self.TERMS_SEPARATOR)
+        inner_context = list(self.__get_inner_part_of_text(terms))
 
         text_template = self.get_text_template()
         row[self.TEXT_B] = text_template.format(
             subject=self.SUBJECT,
             object=self.OBJECT,
-            context=u" ".join(inner_context))
+            context=self.TERMS_SEPARATOR.join(inner_context))
+
+        return row

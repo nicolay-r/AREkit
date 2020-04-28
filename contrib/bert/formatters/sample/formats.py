@@ -6,14 +6,14 @@ class SampleFormatters(object):
     """
     Default formatter
     """
-    COLA = 'cola'
+    COLA = u'cola'
 
     """
     Natural Language Inference samplers
-    paper:
+    paper: https://www.aclweb.org/anthology/N19-1035.pdf
     """
-    QA_M = "qa_m"
-    NLI_M = 'nli_b'
+    QA_M = u"qa_m"
+    NLI_M = u'nli_b'
 
     @staticmethod
     def iter_supported():
