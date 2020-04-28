@@ -12,4 +12,4 @@ class NliSampleFormatter(TwoSentenceSampleFormatter):
     """
 
     def get_text_template(self):
-        return u" {subject} к {object} в контексте : {context}"
+        return u' {subject} к {object} в контексте : " {context} "'

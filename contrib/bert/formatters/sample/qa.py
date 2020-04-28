@@ -12,4 +12,4 @@ class QaSampleFormatter(TwoSentenceSampleFormatter):
     """
 
     def get_text_template(self):
-        return u"Что вы думаете по поводу отношения {subject} к {object} в контексте : {context} ?"
+        return u'Что вы думаете по поводу отношения {subject} к {object} в контексте : " {context} " ?'
