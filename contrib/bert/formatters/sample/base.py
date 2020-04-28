@@ -39,6 +39,7 @@ class BaseSampleFormatter(object):
 
     SUBJECT = u"X"
     OBJECT = u"Y"
+    ENTITY = u"E"
 
     TERMS_SEPARATOR = u" "
 
@@ -64,7 +65,7 @@ class BaseSampleFormatter(object):
                 elif i == t_ind:
                     yield BaseSampleFormatter.OBJECT
                 else:
-                    u"E"
+                    yield BaseSampleFormatter.ENTITY
             elif isinstance(term, Token):
                 yield term.get_original_value()
 
@@ -144,6 +145,8 @@ class BaseSampleFormatter(object):
 
         row = OrderedDict()
 
+        # TODO. this should be depends on the <<classification problem format>>
+        # TODO. If output is <Y/N>, i.e. not a label, then label should be also included in ID.
         row[self.ID] = OpinionsFormatter.create_opinion_id(first_text_opinion=first_text_opinion,
                                                            index_in_linked=index_in_linked)
 
@@ -223,11 +226,15 @@ class BaseSampleFormatter(object):
                          index=False,
                          header=not self.is_train())
 
+    # TODO. This should be moved from here. (to utils)
+    # TODO. Utlize column searching in df
     @staticmethod
     def parse_row_id(opinion_row):
         assert(isinstance(opinion_row, list))
         return unicode(opinion_row[0])
 
+    # TODO. This should be moved from here.
+    # TODO. It depends on the formatter, declared in opinion
     @staticmethod
     def parse_news_id(row_id):
         assert(isinstance(row_id, unicode))
