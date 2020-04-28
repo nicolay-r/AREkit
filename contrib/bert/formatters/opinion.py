@@ -8,21 +8,25 @@ import io_utils
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
-from arekit.contrib.bert.format.utils import get_output_dir
 
 from arekit.common.experiment.base import BaseExperiment
+from arekit.contrib.bert.formatters.utils import get_output_dir
 
 
 class OpinionsFormatter(object):
+
+    __id = 'id'
+    __source = 'source'
+    __target = 'target'
 
     # region methods
 
     @staticmethod
     def __create_empty_df():
         dtypes_list = []
-        dtypes_list.append(('id', 'int32'))
-        dtypes_list.append(('source', 'string'))
-        dtypes_list.append(('target', 'string'))
+        dtypes_list.append((OpinionsFormatter.__id, 'int32'))
+        dtypes_list.append((OpinionsFormatter.__source, 'string'))
+        dtypes_list.append((OpinionsFormatter.__target, 'string'))
 
         data = np.empty(0, dtype=np.dtype(dtypes_list))
         return pd.DataFrame(data)
@@ -43,10 +47,11 @@ class OpinionsFormatter(object):
             text_opinion=linked_text_opinion,
             end_type=EntityEndType.Target)
 
-        row['id'] = OpinionsFormatter.create_opinion_id(first_text_opinion=linked_text_opinion,
-                                                        index_in_linked=0)
-        row['source'] = src_value
-        row['target'] = target_value
+        row[OpinionsFormatter.__id] = OpinionsFormatter.create_opinion_id(
+            first_text_opinion=linked_text_opinion,
+            index_in_linked=0)
+        row[OpinionsFormatter.__source] = src_value
+        row[OpinionsFormatter.__target] = target_value
 
         return row
 

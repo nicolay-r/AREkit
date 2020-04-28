@@ -10,10 +10,10 @@ from arekit.common.opinions.base import Opinion
 from arekit.contrib.bert.evaluator import BERTModelEvaluator
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.base import BaseExperiment
+from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.experiments.nn_io.rusentrel_with_ruattitudes import RuSentRelWithRuAttitudesBasedExperimentIO
 
-from format.opinions_io import OpinionsFormatter
-from format import samples_io
+from arekit.contrib.bert.formatters.opinion import OpinionsFormatter
 
 
 # region private methods
@@ -91,8 +91,8 @@ def __iter_eval_collections(bert_result_fp,
         label = Label.from_uint(np.argmax(result_row))
 
         samples_row = df_samples.iloc[row_index].tolist()
-        sample_row_id = samples_io.parse_row_id(samples_row)
-        news_id = samples_io.parse_news_id(sample_row_id)
+        sample_row_id = BaseSampleFormatter.parse_row_id(samples_row)
+        news_id = BaseSampleFormatter.parse_news_id(sample_row_id)
 
         opinion_id = OpinionsFormatter.sample_row_id_to_opinion_id(sample_row_id)
 
