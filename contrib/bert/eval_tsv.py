@@ -130,7 +130,7 @@ def eval_tsv(data_io, data_type):
 
     experiment = RuSentRelWithRuAttitudesBasedExperimentIO(
         data_io=data_io,
-        model_name=u"bert")
+        prepare_model_root=True)
 
     experiment.create_opinion_collection()
 
@@ -139,8 +139,8 @@ def eval_tsv(data_io, data_type):
     opinions_fp = OpinionsFormatter.get_filepath(data_type=data_type,
                                                  experiment=experiment)
 
-    samples_fp = samples_io.get_filepath(data_type=data_type,
-                                         experiment=experiment)
+    samples_fp = BaseSampleFormatter.get_filepath(data_type=data_type,
+                                                  experiment=experiment)
 
     iter_eval = __iter_eval_collections(bert_result_fp=bert_result_fp,
                                         experiment=experiment,

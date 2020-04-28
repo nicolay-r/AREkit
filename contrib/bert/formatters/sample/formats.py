@@ -12,7 +12,11 @@ class SampleFormatters(object):
     Natural Language Inference samplers
     paper:
     """
-    NLI_M = "nli_m"
-    NLI_B = 'nli_b'
-    QA_B = 'qa_b'
-    QA_M = 'qa_m'
+    QA_M = "qa_m"
+    NLI_M = 'nli_b'
+
+    @staticmethod
+    def iter_supported():
+        yield SampleFormatters.COLA
+        yield SampleFormatters.QA_M
+        yield SampleFormatters.NLI_M

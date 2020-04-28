@@ -87,17 +87,6 @@ class BaseSampleFormatter(object):
 
         return df_label
 
-    def __get_filepath(self, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-
-        filepath = path.join(get_output_dir(data_type=self.__data_type,
-                                            experiment=experiment),
-                             u"{filename}.tsv".format(filename=self.__data_type))
-
-        io_utils.create_dir_if_not_exists(filepath)
-
-        return filepath
-
     # endregion
 
     def get_columns_list_with_types(self):
@@ -121,7 +110,7 @@ class BaseSampleFormatter(object):
         return pd.DataFrame(data)
 
     @staticmethod
-    def get_opinion_end_inices(parsed_news, text_opinion):
+    def __get_opinion_end_inices(parsed_news, text_opinion):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(text_opinion, TextOpinion))
 
@@ -147,7 +136,7 @@ class BaseSampleFormatter(object):
         assert(isinstance(first_text_opinion, TextOpinion))
         assert(isinstance(text_opinion, TextOpinion))
 
-        s_ind, t_ind = self.get_opinion_end_inices(parsed_news, text_opinion)
+        s_ind, t_ind = self.__get_opinion_end_inices(parsed_news, text_opinion)
 
         row = OrderedDict()
 
@@ -219,7 +208,11 @@ class BaseSampleFormatter(object):
 
     def to_tsv_by_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
-        self.__df.to_csv(self.__get_filepath(experiment=experiment),
+
+        filepath = self.get_filepath(data_type=self.__data_type,
+                                     experiment=experiment)
+
+        self.__df.to_csv(filepath,
                          sep='\t',
                          encoding='utf-8',
                          index=False,
@@ -234,3 +227,16 @@ class BaseSampleFormatter(object):
     def parse_news_id(row_id):
         assert(isinstance(row_id, unicode))
         return int(row_id[row_id.index(u'n') + 1:row_id.index(u'_')])
+
+    @staticmethod
+    def get_filepath(data_type, experiment):
+        assert(isinstance(experiment, BaseExperiment))
+
+        filepath = path.join(get_output_dir(data_type=data_type,
+                                            experiment=experiment),
+                             u"{filename}.tsv".format(filename=data_type))
+
+        io_utils.create_dir_if_not_exists(filepath)
+
+        return filepath
+

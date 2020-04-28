@@ -4,6 +4,8 @@ from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
+from arekit.contrib.bert.formatters.sample.nli import NliSampleFormatter
+from arekit.contrib.bert.formatters.sample.qa import QaSampleFormatter
 
 
 class BertEncoder(object):
@@ -31,26 +33,20 @@ class BertEncoder(object):
                                                               data_type=data_type,
                                                               experiment=experiment)
 
-            #
-            # Train/Test input samples for bert
-            #
             sampler = BertEncoder.__create_formatter(data_type=data_type, formatter_type=sample_formatter)
             sampler.to_samples(text_opinions=text_opinions)
             sampler.to_tsv_by_experiment(experiment=experiment)
 
+    @staticmethod
     def __create_formatter(data_type, formatter_type):
         assert(isinstance(formatter_type, unicode))
 
         if formatter_type == SampleFormatters.COLA:
             return BaseSampleFormatter(data_type=data_type)
-        if formatter_type == SampleFormatters.NLI_B:
-            return None
         if formatter_type == SampleFormatters.NLI_M:
-            return None
+            return NliSampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.QA_M:
-            return None
-        if formatter_type == SampleFormatters.QA_B:
-            return None
+            return QaSampleFormatter(data_type=data_type)
 
         return None
 
