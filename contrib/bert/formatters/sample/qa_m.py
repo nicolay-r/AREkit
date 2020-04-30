@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.bert.formatters.sample.label.multiple import MultipleLabelProvider
 from arekit.contrib.bert.formatters.sample.text.pair import PairTextProvider
@@ -21,6 +20,5 @@ class QaMultipleSampleFormatter(BaseSampleFormatter):
         text_b_template = u'Что вы думаете по поводу отношения {subject} к {object} в контексте : " {context} " ?'
         super(QaMultipleSampleFormatter, self).__init__(
             data_type=data_type,
-            row_ids_formatter=MultipleIDFormatter(),
             text_provider=PairTextProvider(text_b_template),
             label_provider=MultipleLabelProvider())

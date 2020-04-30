@@ -15,10 +15,11 @@ from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.base import BaseExperiment
-from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
 from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
 from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.sample.label.base import LabelProvider
+from arekit.contrib.bert.formatters.sample.label.binary import BinaryLabelProvider
+from arekit.contrib.bert.formatters.sample.label.multiple import MultipleLabelProvider
 from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
 from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
 
@@ -39,25 +40,32 @@ class BaseSampleFormatter(object):
     S_IND = 's_ind'
     T_IND = 't_ind'
 
-    def __init__(self, data_type, row_ids_formatter, label_provider, text_provider):
-        assert(isinstance(row_ids_formatter, BaseIDFormatter))
+    def __init__(self, data_type, label_provider, text_provider):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(text_provider, SingleTextProvider))
 
         self.__data_type = data_type
-        self.__df = self.__create_empty_df()
-        self.__id_col_index = self.__df.column.get_loc[BaseSampleFormatter.ID]
-        self.__row_ids_formatter = row_ids_formatter
+        # self.__id_col_index = self.__df.column.get_loc[BaseSampleFormatter.ID]
         self.__label_provider = label_provider
         self.__text_provider = text_provider
+        self.__df = self.__create_empty_df()
+        self.__row_ids_formatter = self.__create_row_ids_formatter(label_provider)
 
     # region Private methods
+
+    @staticmethod
+    def __create_row_ids_formatter(label_provider):
+        if isinstance(label_provider, BinaryLabelProvider):
+            return BinaryIDFormatter()
+        if isinstance(label_provider, MultipleLabelProvider):
+            return MultipleIDFormatter()
 
     def is_train(self):
         return self.__data_type == DataType.Train
 
     def __get_class(self, l):
-        return self.__df[self.__df[self.LABEL] == l]
+        assert(isinstance(l, Label))
+        return self.__df[self.__df[self.LABEL] == self.__label_provider.get_label(expected_label=l, etalon_label=l)]
 
     def __get_largest_class_size(self):
 
@@ -70,9 +78,9 @@ class BaseSampleFormatter(object):
         """
         Composes a DataFrame which has the same amount of examples as one with 'other_label'
         """
-        assert(isinstance(label, int))
+        assert(isinstance(label, Label))
 
-        df_label = self.__df[self.__df[self.LABEL] == label]
+        df_label = self.__get_class(l=label)
 
         random.seed(seed)
         rows = []
@@ -126,7 +134,7 @@ class BaseSampleFormatter(object):
         return pd.DataFrame(data)
 
     @staticmethod
-    def __get_opinion_end_inices(parsed_news, text_opinion):
+    def __get_opinion_end_indices(parsed_news, text_opinion):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(text_opinion, TextOpinion))
 
@@ -153,11 +161,11 @@ class BaseSampleFormatter(object):
         assert(isinstance(first_text_opinion, TextOpinion))
         assert(isinstance(text_opinion, TextOpinion))
 
-        s_ind, t_ind = self.__get_opinion_end_inices(parsed_news, text_opinion)
+        s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
 
         row = OrderedDict()
 
-        row[self.ID] = self.__row_ids_formatter.create_opinion_id(
+        row[self.ID] = self.__row_ids_formatter.create_sample_id(
             first_text_opinion=first_text_opinion,
             index_in_linked=index_in_linked)
 
@@ -249,7 +257,7 @@ class BaseSampleFormatter(object):
                 len(text_opinions),
                 round(100 * float(added) / len(text_opinions), 2))
 
-        if self.is_train():
+        if self.is_train() and isinstance(self.__row_ids_formatter, MultipleLabelProvider):
             self.__balance()
 
     def to_tsv_by_experiment(self, experiment):

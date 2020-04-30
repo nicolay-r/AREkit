@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 
 from arekit.contrib.bert.formatters.sample.label.binary import BinaryLabelProvider
@@ -23,6 +22,5 @@ class QaBinarySampleFormatter(BaseSampleFormatter):
         text_b_template = u'Что вы думаете по поводу отношения {subject} к {object} в контексте : " {context} " ?'
         super(QaBinarySampleFormatter, self).__init__(
             data_type=data_type,
-            row_ids_formatter=BinaryIDFormatter(),
             text_provider=PairTextProvider(text_b_template),
             label_provider=BinaryLabelProvider())

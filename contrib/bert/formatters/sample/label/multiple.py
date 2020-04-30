@@ -1,7 +1,8 @@
 from arekit.common.labels.base import Label
+from arekit.contrib.bert.formatters.sample.label.base import LabelProvider
 
 
-class MultipleLabelProvider(object):
+class MultipleLabelProvider(LabelProvider):
 
     @staticmethod
     def get_label(expected_label, etalon_label):

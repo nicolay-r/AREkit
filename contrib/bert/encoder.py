@@ -6,10 +6,13 @@ from arekit.common.experiment.data_type import DataType
 
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
+from arekit.contrib.bert.formatters.sample.label.binary import BinaryLabelProvider
+from arekit.contrib.bert.formatters.sample.label.multiple import MultipleLabelProvider
 from arekit.contrib.bert.formatters.sample.nli_b import NliBinarySampleFormatter
 from arekit.contrib.bert.formatters.sample.nli_m import NliMultipleSampleFormatter
 from arekit.contrib.bert.formatters.sample.qa_b import QaBinarySampleFormatter
 from arekit.contrib.bert.formatters.sample.qa_m import QaMultipleSampleFormatter
+from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
 
 
 class BertEncoder(object):
@@ -27,7 +30,7 @@ class BertEncoder(object):
             text_opinions = extract_text_opinions(
                 experiment=experiment,
                 data_type=data_type,
-                terms_per_context=experiment.DataIO.TermsPerContext)
+                terms_per_context=50)
 
             opnion_formatter = OpinionsFormatter(data_type=data_type)
             opnion_formatter.format(text_opinions=text_opinions)
@@ -41,8 +44,14 @@ class BertEncoder(object):
     def __create_formatter(data_type, formatter_type):
         assert(isinstance(formatter_type, unicode))
 
-        if formatter_type == SampleFormatters.DEFAULT:
-            return BaseSampleFormatter(data_type=data_type)
+        if formatter_type == SampleFormatters.CLASSIF_M:
+            return BaseSampleFormatter(data_type=data_type,
+                                       label_provider=MultipleLabelProvider(),
+                                       text_provider=SingleTextProvider())
+        if formatter_type == SampleFormatters.CLASSIF_B:
+            return BaseSampleFormatter(data_type=data_type,
+                                       label_provider=BinaryLabelProvider(),
+                                       text_provider=SingleTextProvider())
         if formatter_type == SampleFormatters.NLI_M:
             return NliMultipleSampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.QA_M:

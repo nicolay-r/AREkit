@@ -6,7 +6,8 @@ class SampleFormatters(object):
     """
     Default formatter
     """
-    DEFAULT = u'default'
+    CLASSIF_M = u'c_m'
+    CLASSIF_B = u'c_b'
 
     """
     Natural Language Inference samplers
@@ -20,7 +21,8 @@ class SampleFormatters(object):
 
     @staticmethod
     def iter_supported():
-        yield SampleFormatters.DEFAULT
+        yield SampleFormatters.CLASSIF_M
+        yield SampleFormatters.CLASSIF_B
         yield SampleFormatters.QA_M
         yield SampleFormatters.NLI_M
         yield SampleFormatters.QA_B

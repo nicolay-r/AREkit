@@ -6,7 +6,7 @@ from arekit.processing.text.token import Token
 
 class SingleTextProvider(object):
 
-    TEXT_A = 'text_a'
+    TEXT_A = u'text_a'
     TERMS_SEPARATOR = u" "
 
     SUBJECT = u"X"

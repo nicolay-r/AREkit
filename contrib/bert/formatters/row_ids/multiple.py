@@ -1,4 +1,3 @@
-from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
 
 
@@ -8,13 +7,10 @@ class MultipleIDFormatter(BaseIDFormatter):
     """
 
     @staticmethod
-    def create_opinion_id(first_text_opinion, index_in_linked):
-        assert(isinstance(first_text_opinion, TextOpinion))
-        assert(isinstance(index_in_linked, int))
-
-        return u"n{}_o{}_i{}".format(first_text_opinion.NewsID,
-                                     first_text_opinion.TextOpinionID,
-                                     index_in_linked)
+    def create_sample_id(first_text_opinion, index_in_linked):
+        BaseIDFormatter.create_opinion_id(
+            first_text_opinion=first_text_opinion,
+            index_in_linked=index_in_linked)
 
     @staticmethod
     def parse_news_id(row_id):
