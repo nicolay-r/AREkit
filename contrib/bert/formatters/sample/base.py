@@ -7,17 +7,20 @@ import pandas as pd
 
 import io_utils
 from arekit.common.experiment.data_type import DataType
-from arekit.common.entities.base import Entity
+from arekit.common.labels.base import Label
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.contrib.bert.formatters.opinion import OpinionsFormatter
 from arekit.common.experiment.base import BaseExperiment
+from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
+from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
+from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
+from arekit.contrib.bert.formatters.sample.label.base import LabelProvider
+from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
 from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
-from arekit.processing.text.token import Token
 
 
 class BaseSampleFormatter(object):
@@ -33,54 +36,47 @@ class BaseSampleFormatter(object):
     """
     ID = 'id'
     LABEL = 'label'
-    TEXT_A = 'text_a'
     S_IND = 's_ind'
     T_IND = 't_ind'
 
-    SUBJECT = u"X"
-    OBJECT = u"Y"
-    ENTITY = u"E"
+    def __init__(self, data_type, row_ids_formatter, label_provider, text_provider):
+        assert(isinstance(row_ids_formatter, BaseIDFormatter))
+        assert(isinstance(label_provider, LabelProvider))
+        assert(isinstance(text_provider, SingleTextProvider))
 
-    TERMS_SEPARATOR = u" "
-
-    def __init__(self, data_type):
         self.__data_type = data_type
         self.__df = self.__create_empty_df()
+        self.__id_col_index = self.__df.column.get_loc[BaseSampleFormatter.ID]
+        self.__row_ids_formatter = row_ids_formatter
+        self.__label_provider = label_provider
+        self.__text_provider = text_provider
 
     # region Private methods
 
     def is_train(self):
         return self.__data_type == DataType.Train
 
-    @staticmethod
-    def __iterate_sentence_terms(sentence_terms, s_ind, t_ind):
+    def __get_class(self, l):
+        return self.__df[self.__df[self.LABEL] == l]
 
-        for i, term in enumerate(sentence_terms):
+    def __get_largest_class_size(self):
 
-            if isinstance(term, unicode):
-                yield term
-            elif isinstance(term, Entity):
-                if i == s_ind:
-                    yield BaseSampleFormatter.SUBJECT
-                elif i == t_ind:
-                    yield BaseSampleFormatter.OBJECT
-                else:
-                    yield BaseSampleFormatter.ENTITY
-            elif isinstance(term, Token):
-                yield term.get_original_value()
+        sizes = [len(self.__get_class(label))
+                 for label in self.__label_provider.get_supported_labels()]
 
-    def __balance(self, label, other_label=0, seed=1):
+        return max(sizes)
+
+    def __extract_balanced_class(self, label, seed=1):
         """
         Composes a DataFrame which has the same amount of examples as one with 'other_label'
         """
         assert(isinstance(label, int))
-        assert(isinstance(other_label, int))
+
         df_label = self.__df[self.__df[self.LABEL] == label]
-        df_other_label = self.__df[self.__df[self.LABEL] == other_label]
 
         random.seed(seed)
         rows = []
-        need_to_append = len(df_other_label) - len(df_label)
+        need_to_append = self.__get_largest_class_size() - len(df_label)
 
         while len(rows) < need_to_append:
             i = random.randint(0, len(df_label) - 1)
@@ -90,6 +86,16 @@ class BaseSampleFormatter(object):
             df_label = df_label.append(row)
 
         return df_label
+
+    def __balance(self):
+        """
+        Balancing related dataframe by amount of examples per class
+        """
+        balanced = [self.__extract_balanced_class(label=label)
+                    for label in self.__label_provider.get_supported_labels()]
+        self.__df = pd.concat(balanced)
+
+        self.__df = self.__df.iloc[np.random.permutation(len(self.__df))]
 
     # endregion
 
@@ -101,10 +107,15 @@ class BaseSampleFormatter(object):
         dtypes_list = []
         dtypes_list.append((self.ID, 'int32'))
 
+        # insert labels
         if self.is_train():
             dtypes_list.append((self.LABEL, 'int32'))
 
-        dtypes_list.append((self.TEXT_A, 'float64'))
+        # insert text columns
+        for col_name in self.__text_provider.iter_columns():
+            dtypes_list.append((col_name, 'float64'))
+
+        # insert indices
         dtypes_list.append((self.S_IND, 'int32'))
         dtypes_list.append((self.T_IND, 'int32'))
 
@@ -124,7 +135,7 @@ class BaseSampleFormatter(object):
 
         return (s_ind, t_ind)
 
-    def create_row(self, parsed_news, linked_text_opinions, index_in_linked, sentence_terms):
+    def __create_row(self, parsed_news, linked_text_opinions, index_in_linked, sentence_terms, etalon_label):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -134,6 +145,7 @@ class BaseSampleFormatter(object):
         """
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(sentence_terms, list))
+        assert(isinstance(etalon_label, Label))
 
         first_text_opinion = linked_text_opinions[0]
         text_opinion = linked_text_opinions[index_in_linked]
@@ -145,19 +157,51 @@ class BaseSampleFormatter(object):
 
         row = OrderedDict()
 
-        # TODO. this should be depends on the <<classification problem format>>
-        # TODO. If output is <Y/N>, i.e. not a label, then label should be also included in ID.
-        row[self.ID] = OpinionsFormatter.create_opinion_id(first_text_opinion=first_text_opinion,
-                                                           index_in_linked=index_in_linked)
+        row[self.ID] = self.__row_ids_formatter.create_opinion_id(
+            first_text_opinion=first_text_opinion,
+            index_in_linked=index_in_linked)
 
         if self.is_train():
-            row[self.LABEL] = text_opinion.Sentiment.to_uint()
+            row[self.LABEL] = self.__label_provider.get_label(expected_label=text_opinion.Sentiment,
+                                                              etalon_label=etalon_label)
 
-        row[self.TEXT_A] = self.TERMS_SEPARATOR.join(self.__iterate_sentence_terms(sentence_terms, s_ind=s_ind, t_ind=t_ind))
+        self.__text_provider.add_text_in_row(row=row,
+                                             sentence_terms=sentence_terms,
+                                             s_ind=s_ind,
+                                             t_ind=t_ind)
+
         row[self.S_IND] = s_ind
         row[self.T_IND] = t_ind
 
         return row
+
+    def __provide_rows(self, parsed_news, linked_text_opinions, index_in_linked, sentence_terms):
+        """
+        Providing Rows depending on row_id_formatter type
+        """
+
+        origin = linked_text_opinions[0]
+
+        if isinstance(self.__row_ids_formatter, BinaryIDFormatter):
+            """
+            Enumerate all opinions as if it would be with the different label types.
+            """
+            for label in Label._get_supported_labels():
+                copy = TextOpinion.create_copy(other=origin)
+                copy.set_label(label=label)
+                linked_text_opinions[0] = copy
+                yield self.__create_row(parsed_news=parsed_news,
+                                        linked_text_opinions=linked_text_opinions,
+                                        index_in_linked=index_in_linked,
+                                        sentence_terms=sentence_terms,
+                                        etalon_label=origin.Sentiment)
+
+        if isinstance(self.__row_ids_formatter, MultipleIDFormatter):
+            yield self.__create_row(parsed_news=parsed_news,
+                                    linked_text_opinions=linked_text_opinions,
+                                    index_in_linked=index_in_linked,
+                                    sentence_terms=sentence_terms,
+                                    etalon_label=origin.Sentiment)
 
     def to_samples(self, text_opinions):
         """
@@ -189,12 +233,13 @@ class BaseSampleFormatter(object):
                 sentence_terms = list(pn.iter_sentence_terms(s_ind))
 
                 # Add text_an
-                row = self.create_row(linked_text_opinions=linked_opinions,
-                                      index_in_linked=i,
-                                      sentence_terms=sentence_terms,
-                                      parsed_news=pn)
+                rows_it = self.__provide_rows(linked_text_opinions=linked_opinions,
+                                              index_in_linked=i,
+                                              sentence_terms=sentence_terms,
+                                              parsed_news=pn)
 
-                self.__df = self.__df.append(row, ignore_index=True)
+                for row in rows_it:
+                    self.__df = self.__df.append(row, ignore_index=True)
 
                 added += 1
 
@@ -205,14 +250,7 @@ class BaseSampleFormatter(object):
                 round(100 * float(added) / len(text_opinions), 2))
 
         if self.is_train():
-
-            df_neut = self.__df[self.__df[self.LABEL] == 0]
-            df_pos = self.__balance(label=1)
-            df_neg = self.__balance(label=2)
-
-            self.__df = pd.concat([df_neut, df_neg, df_pos])
-
-            self.__df = self.__df.iloc[np.random.permutation(len(self.__df))]
+            self.__balance()
 
     def to_tsv_by_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
@@ -226,19 +264,10 @@ class BaseSampleFormatter(object):
                          index=False,
                          header=not self.is_train())
 
-    # TODO. This should be moved from here. (to utils)
-    # TODO. Utlize column searching in df
     @staticmethod
-    def parse_row_id(opinion_row):
+    def extract_row_id(opinion_row):
         assert(isinstance(opinion_row, list))
         return unicode(opinion_row[0])
-
-    # TODO. This should be moved from here.
-    # TODO. It depends on the formatter, declared in opinion
-    @staticmethod
-    def parse_news_id(row_id):
-        assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(u'n') + 1:row_id.index(u'_')])
 
     @staticmethod
     def get_filepath(data_type, experiment):

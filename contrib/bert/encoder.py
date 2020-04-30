@@ -6,10 +6,10 @@ from arekit.common.experiment.data_type import DataType
 
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
-from arekit.contrib.bert.formatters.sample.nli_b import NliBSampleFormatter
-from arekit.contrib.bert.formatters.sample.nli_m import NliMSampleFormatter
-from arekit.contrib.bert.formatters.sample.qa_b import QaBSampleFormatter
-from arekit.contrib.bert.formatters.sample.qa_m import QaMSampleFormatter
+from arekit.contrib.bert.formatters.sample.nli_b import NliBinarySampleFormatter
+from arekit.contrib.bert.formatters.sample.nli_m import NliMultipleSampleFormatter
+from arekit.contrib.bert.formatters.sample.qa_b import QaBinarySampleFormatter
+from arekit.contrib.bert.formatters.sample.qa_m import QaMultipleSampleFormatter
 
 
 class BertEncoder(object):
@@ -19,8 +19,6 @@ class BertEncoder(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(sample_formatter, unicode))
 
-        terms_per_context = 50
-
         for data_type in DataType.iter_supported():
             experiment.DataIO.NeutralAnnotator.create_collection(data_type)
 
@@ -29,14 +27,11 @@ class BertEncoder(object):
             text_opinions = extract_text_opinions(
                 experiment=experiment,
                 data_type=data_type,
-                terms_per_context=terms_per_context)
+                terms_per_context=experiment.DataIO.TermsPerContext)
 
-            #
-            # Compose csv file with related opinions (Necessary for evaluation)
-            #
-            OpinionsFormatter.create_and_save_opinions_to_csv(text_opinions=text_opinions,
-                                                              data_type=data_type,
-                                                              experiment=experiment)
+            opnion_formatter = OpinionsFormatter(data_type=data_type)
+            opnion_formatter.format(text_opinions=text_opinions)
+            opnion_formatter.to_tsv_by_experiment(experiment=experiment)
 
             sampler = BertEncoder.__create_formatter(data_type=data_type, formatter_type=sample_formatter)
             sampler.to_samples(text_opinions=text_opinions)
@@ -49,13 +44,13 @@ class BertEncoder(object):
         if formatter_type == SampleFormatters.DEFAULT:
             return BaseSampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.NLI_M:
-            return NliMSampleFormatter(data_type=data_type)
+            return NliMultipleSampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.QA_M:
-            return QaMSampleFormatter(data_type=data_type)
+            return QaMultipleSampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.NLI_B:
-            return NliBSampleFormatter(data_type=data_type)
+            return NliBinarySampleFormatter(data_type=data_type)
         if formatter_type == SampleFormatters.QA_B:
-            return QaBSampleFormatter(data_type=data_type)
+            return QaBinarySampleFormatter(data_type=data_type)
 
         return None
 
