@@ -8,7 +8,7 @@ from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.base import BaseExperiment
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 
-from arekit.contrib.bert.formatters.opinion import OpinionsFormatter
+from arekit.contrib.bert.formatters.opinions.base import OpinionsFormatter
 
 
 def eval_tsv(data_io, data_type, experiment):

@@ -1,4 +1,4 @@
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 
 
 class BaseIDFormatter(object):
@@ -11,14 +11,16 @@ class BaseIDFormatter(object):
     """
 
     @staticmethod
-    def create_opinion_id(first_text_opinion, index_in_linked):
-        assert(isinstance(first_text_opinion, TextOpinion))
+    def create_opinion_id(opinion_provider, linked_opinions, index_in_linked):
+        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(linked_opinions, list))
         assert(isinstance(index_in_linked, int))
 
+        first_text_opinion = linked_opinions[0]
         return u"n{}_o{}_i{}".format(first_text_opinion.NewsID,
                                      first_text_opinion.TextOpinionID,
                                      index_in_linked)
 
     @staticmethod
-    def create_sample_id(first_text_opinion, index_in_linked):
+    def create_sample_id(opinion_provider, linked_opinions, index_in_linked):
         raise NotImplementedError()

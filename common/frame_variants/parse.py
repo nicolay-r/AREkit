@@ -5,11 +5,11 @@ from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.languages.ru.mods import RussianLanguageMods
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.languages.mods import BaseLanguageMods
+from arekit.common.frame_variants.search import FrameVariantsSearcher
 from arekit.processing.text.parsed import ParsedText
-from arekit.source.rusentiframes.helpers.search import RuSentiFramesSearchHelper
 
 
-class RuSentiFramesParseHelper(object):
+class FrameVariantsParser(object):
 
     # region private methods
 
@@ -41,7 +41,7 @@ class RuSentiFramesParseHelper(object):
         assert(isinstance(parsed_text, ParsedText))
         assert(issubclass(locale_mods, BaseLanguageMods))
 
-        frame_variants_iter = RuSentiFramesSearchHelper.iter_frames_from_parsed_text(
+        frame_variants_iter = FrameVariantsSearcher.iter_frames_from_parsed_text(
             frame_variants=frame_variants_collection,
             parsed_text=parsed_text,
             locale_mods=locale_mods)
@@ -49,7 +49,7 @@ class RuSentiFramesParseHelper(object):
         if frame_variants_iter is None:
             return parsed_text
 
-        updated_terms = RuSentiFramesParseHelper.__insert_frame_variants_into_raw_terms_list(
+        updated_terms = FrameVariantsParser.__insert_frame_variants_into_raw_terms_list(
             raw_terms_list=list(parsed_text.iter_raw_terms()),
             frame_variants_iter=frame_variants_iter)
 

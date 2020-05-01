@@ -1,7 +1,7 @@
 from arekit.common.experiment.cv_based import CVBasedExperiment
 from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
 
-
+# TODO. Remove.
 class CustomRuAttitudesFormatIO(CVBasedExperiment):
 
     def __init__(self, data_io, doc_ids):

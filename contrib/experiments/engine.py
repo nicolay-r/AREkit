@@ -63,6 +63,7 @@ def run_testing(full_model_name,
     data_io.set_model_name(full_model_name)
     data_io.ModelIO.set_model_name(value=full_model_name)
 
+    # TODO. Refactor.
     experiment = __create_experiment(
         data_io=data_io,
         create_experiment_func=create_experiment,
@@ -126,6 +127,7 @@ def run_testing(full_model_name,
 # region private functions
 
 
+# TODO. remove __create_experiment func
 def __create_experiment(
         data_io,
         create_experiment_func,

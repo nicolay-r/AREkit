@@ -1,8 +1,8 @@
-from arekit.contrib.bert.formatters.opinion import OpinionsFormatter
+from arekit.contrib.bert.formatters.opinions.base import OpinionsFormatter
 
 from arekit.common.experiment.base import BaseExperiment
-from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
@@ -26,18 +26,14 @@ class BertEncoder(object):
             experiment.DataIO.NeutralAnnotator.create_collection(data_type)
 
         for data_type in DataType.iter_supported():
-
-            text_opinions = extract_text_opinions(
-                experiment=experiment,
-                data_type=data_type,
-                terms_per_context=50)
+            opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)
 
             opnion_formatter = OpinionsFormatter(data_type=data_type)
-            opnion_formatter.format(text_opinions=text_opinions)
+            opnion_formatter.format(opinion_provider=opinion_provider)
             opnion_formatter.to_tsv_by_experiment(experiment=experiment)
 
             sampler = BertEncoder.__create_formatter(data_type=data_type, formatter_type=sample_formatter)
-            sampler.to_samples(text_opinions=text_opinions)
+            sampler.to_samples(opinion_provider=opinion_provider)
             sampler.to_tsv_by_experiment(experiment=experiment)
 
     @staticmethod

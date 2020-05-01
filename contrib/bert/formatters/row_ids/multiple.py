@@ -7,9 +7,10 @@ class MultipleIDFormatter(BaseIDFormatter):
     """
 
     @staticmethod
-    def create_sample_id(first_text_opinion, index_in_linked):
+    def create_sample_id(opinion_provider, linked_opinions, index_in_linked):
         BaseIDFormatter.create_opinion_id(
-            first_text_opinion=first_text_opinion,
+            opinion_provider=opinion_provider,
+            linked_opinions=linked_opinions,
             index_in_linked=index_in_linked)
 
     @staticmethod

@@ -1,5 +1,4 @@
-from arekit.common.labels.base import Label
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
 
 
@@ -9,18 +8,18 @@ class BinaryIDFormatter(BaseIDFormatter):
     """
 
     @staticmethod
-    def create_sample_id(first_text_opinion, index_in_linked):
-        assert(isinstance(first_text_opinion, TextOpinion))
+    def create_sample_id(opinion_provider, linked_opinions, index_in_linked):
+        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(linked_opinions, list))
+        assert(isinstance(index_in_linked, int))
 
         o_id = BaseIDFormatter.create_opinion_id(
-            first_text_opinion=first_text_opinion,
+            opinion_provider=opinion_provider,
+            linked_opinions=linked_opinions,
             index_in_linked=index_in_linked)
 
-        label = first_text_opinion.Sentiment
-
-        assert(isinstance(label, Label))
-
-        return u"{multiple}_l{label}".format(multiple=o_id,
-                                             label=label.to_uint())
+        return u"{multiple}_l{label}".format(
+            multiple=o_id,
+            label=opinion_provider.get_linked_sentiment(linked_opinions))
 
 

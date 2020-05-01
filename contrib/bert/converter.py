@@ -5,7 +5,7 @@ from arekit.common.experiment.base import BaseExperiment
 from arekit.common.labels.base import Label
 from arekit.common.model.labeling.base import LabelCalculationMode
 from arekit.common.opinions.base import Opinion
-from arekit.contrib.bert.formatters.opinion import OpinionsFormatter
+from arekit.contrib.bert.formatters.opinions.base import OpinionsFormatter
 from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 

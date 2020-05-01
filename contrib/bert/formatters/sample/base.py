@@ -8,11 +8,7 @@ import pandas as pd
 import io_utils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
-from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.text_opinions.end_type import EntityEndType
-from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.base import BaseExperiment
 from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
@@ -20,6 +16,7 @@ from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.sample.label.base import LabelProvider
 from arekit.contrib.bert.formatters.sample.label.binary import BinaryLabelProvider
 from arekit.contrib.bert.formatters.sample.label.multiple import MultipleLabelProvider
+from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
 from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
 
@@ -60,7 +57,7 @@ class BaseSampleFormatter(object):
         if isinstance(label_provider, MultipleLabelProvider):
             return MultipleIDFormatter()
 
-    def is_train(self):
+    def __is_train(self):
         return self.__data_type == DataType.Train
 
     def __get_class(self, l):
@@ -74,40 +71,7 @@ class BaseSampleFormatter(object):
 
         return max(sizes)
 
-    def __extract_balanced_class(self, label, seed=1):
-        """
-        Composes a DataFrame which has the same amount of examples as one with 'other_label'
-        """
-        assert(isinstance(label, Label))
-
-        df_label = self.__get_class(l=label)
-
-        random.seed(seed)
-        rows = []
-        need_to_append = self.__get_largest_class_size() - len(df_label)
-
-        while len(rows) < need_to_append:
-            i = random.randint(0, len(df_label) - 1)
-            rows.append(df_label.iloc[i])
-
-        for row in rows:
-            df_label = df_label.append(row)
-
-        return df_label
-
-    def __balance(self):
-        """
-        Balancing related dataframe by amount of examples per class
-        """
-        balanced = [self.__extract_balanced_class(label=label)
-                    for label in self.__label_provider.get_supported_labels()]
-        self.__df = pd.concat(balanced)
-
-        self.__df = self.__df.iloc[np.random.permutation(len(self.__df))]
-
-    # endregion
-
-    def get_columns_list_with_types(self):
+    def __get_columns_list_with_types(self):
         """
         Composing df with the following columns:
             [id, label, type, text_a]
@@ -116,7 +80,7 @@ class BaseSampleFormatter(object):
         dtypes_list.append((self.ID, 'int32'))
 
         # insert labels
-        if self.is_train():
+        if self.__is_train():
             dtypes_list.append((self.LABEL, 'int32'))
 
         # insert text columns
@@ -130,7 +94,7 @@ class BaseSampleFormatter(object):
         return dtypes_list
 
     def __create_empty_df(self):
-        data = np.empty(0, dtype=np.dtype(self.get_columns_list_with_types()))
+        data = np.empty(0, dtype=np.dtype(self.__get_columns_list_with_types()))
         return pd.DataFrame(data)
 
     @staticmethod
@@ -143,7 +107,7 @@ class BaseSampleFormatter(object):
 
         return (s_ind, t_ind)
 
-    def __create_row(self, parsed_news, linked_text_opinions, index_in_linked, sentence_terms, etalon_label):
+    def __create_row(self, opinion_provider, linked_opinions, index_in_linked, etalon_label):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -151,30 +115,31 @@ class BaseSampleFormatter(object):
         returns: OrderedDict
             row with key values
         """
-        assert(isinstance(parsed_news, ParsedNews))
-        assert(isinstance(sentence_terms, list))
+        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(linked_opinions, list))
+        assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
 
-        first_text_opinion = linked_text_opinions[0]
-        text_opinion = linked_text_opinions[index_in_linked]
+        text_opinion = linked_opinions[index_in_linked]
 
-        assert(isinstance(first_text_opinion, TextOpinion))
-        assert(isinstance(text_opinion, TextOpinion))
-
+        parsed_news, sentence_ind = opinion_provider.get_opinion_location(text_opinion)
         s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
 
         row = OrderedDict()
 
         row[self.ID] = self.__row_ids_formatter.create_sample_id(
-            first_text_opinion=first_text_opinion,
+            opinion_provider=opinion_provider,
+            linked_opinions=linked_opinions,
             index_in_linked=index_in_linked)
 
-        if self.is_train():
-            row[self.LABEL] = self.__label_provider.get_label(expected_label=text_opinion.Sentiment,
-                                                              etalon_label=etalon_label)
+        if self.__is_train():
+            row[self.LABEL] = self.__label_provider.get_label(
+                expected_label=opinion_provider.get_linked_sentiment(linked_opinions),
+                etalon_label=etalon_label)
 
+        terms = list(parsed_news.iter_sentence_terms(sentence_ind))
         self.__text_provider.add_text_in_row(row=row,
-                                             sentence_terms=sentence_terms,
+                                             sentence_terms=terms,
                                              s_ind=s_ind,
                                              t_ind=t_ind)
 
@@ -183,7 +148,7 @@ class BaseSampleFormatter(object):
 
         return row
 
-    def __provide_rows(self, parsed_news, linked_text_opinions, index_in_linked, sentence_terms):
+    def __provide_rows(self, opinion_provider, linked_text_opinions, index_in_linked, ):
         """
         Providing Rows depending on row_id_formatter type
         """
@@ -195,56 +160,41 @@ class BaseSampleFormatter(object):
             Enumerate all opinions as if it would be with the different label types.
             """
             for label in Label._get_supported_labels():
+
+                # TODO. Simplify using wrapper.
                 copy = TextOpinion.create_copy(other=origin)
                 copy.set_label(label=label)
                 linked_text_opinions[0] = copy
-                yield self.__create_row(parsed_news=parsed_news,
-                                        linked_text_opinions=linked_text_opinions,
+
+                yield self.__create_row(opinion_provider=opinion_provider,
+                                        linked_opinions=linked_text_opinions,
                                         index_in_linked=index_in_linked,
-                                        sentence_terms=sentence_terms,
                                         etalon_label=origin.Sentiment)
 
         if isinstance(self.__row_ids_formatter, MultipleIDFormatter):
-            yield self.__create_row(parsed_news=parsed_news,
-                                    linked_text_opinions=linked_text_opinions,
+            yield self.__create_row(opinion_provider=opinion_provider,
+                                    linked_opinions=linked_text_opinions,
                                     index_in_linked=index_in_linked,
-                                    sentence_terms=sentence_terms,
                                     etalon_label=origin.Sentiment)
 
-    def to_samples(self, text_opinions):
+    # endregion
+
+    def to_samples(self, opinion_provider):
         """
         Converts text_opinions into samples by filling related df.
         """
-        assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
-
-        pnc = text_opinions.RelatedParsedNewsCollection
-        assert(isinstance(pnc, ParsedNewsCollection))
+        assert(isinstance(opinion_provider, OpinionProvider))
 
         added = 0
 
-        for linked_opinions in text_opinions.iter_by_linked_text_opinions():
+        for linked_opinions in opinion_provider.iter_linked_opinions(balance=self.__is_train()):
+            # TODO. Wrap linked opinions
 
-            for i, text_opinion in enumerate(linked_opinions):
-                assert(isinstance(text_opinion, TextOpinion))
-
-                # Determining text_a by text_opinion end.
-                s_ind = TextOpinionHelper.extract_entity_sentence_index(
-                    text_opinion=text_opinion,
-                    end_type=EntityEndType.Source)
-
-                # Extract specific document by text_opinion.NewsID
-                pn = pnc.get_by_news_id(text_opinion.NewsID)
-
-                assert(isinstance(pn, ParsedNews))
-
-                # Extract text_a terms.
-                sentence_terms = list(pn.iter_sentence_terms(s_ind))
-
-                # Add text_an
-                rows_it = self.__provide_rows(linked_text_opinions=linked_opinions,
-                                              index_in_linked=i,
-                                              sentence_terms=sentence_terms,
-                                              parsed_news=pn)
+            for i in range(len(linked_opinions)):
+                rows_it = self.__provide_rows(
+                    opinion_provider=opinion_provider,
+                    linked_text_opinions=linked_opinions,
+                    index_in_linked=i)
 
                 for row in rows_it:
                     self.__df = self.__df.append(row, ignore_index=True)
@@ -254,11 +204,8 @@ class BaseSampleFormatter(object):
             print "Samples ('{}') added: {}/{} ({}%)".format(
                 self.__data_type,
                 added,
-                len(text_opinions),
-                round(100 * float(added) / len(text_opinions), 2))
-
-        if self.is_train() and isinstance(self.__row_ids_formatter, MultipleLabelProvider):
-            self.__balance()
+                opinion_provider.opinions_count(),
+                round(100 * float(added) / opinion_provider.opinions_count(), 2))
 
     def to_tsv_by_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
@@ -270,7 +217,7 @@ class BaseSampleFormatter(object):
                          sep='\t',
                          encoding='utf-8',
                          index=False,
-                         header=not self.is_train())
+                         header=not self.__is_train())
 
     @staticmethod
     def extract_row_id(opinion_row):

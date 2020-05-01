@@ -9,6 +9,7 @@ from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 from arekit.common.experiment.base import BaseExperiment
+from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
 
@@ -37,23 +38,28 @@ class OpinionsFormatter(object):
         return pd.DataFrame(data)
 
     @staticmethod
-    def __create_opinion_row(linked_text_opinion):
+    def __create_opinion_row(opinion_provider, linked_text_opinions):
         """
         row format: [id, src, target, label]
         """
+        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(linked_text_opinions, list))
 
         row = OrderedDict()
 
+        first_opinion = linked_text_opinions[0]
+
         src_value = TextOpinionHelper.extract_entity_value(
-            text_opinion=linked_text_opinion,
+            text_opinion=first_opinion,
             end_type=EntityEndType.Source)
 
         target_value = TextOpinionHelper.extract_entity_value(
-            text_opinion=linked_text_opinion,
+            text_opinion=first_opinion,
             end_type=EntityEndType.Target)
 
         row[OpinionsFormatter.ID] = MultipleIDFormatter.create_opinion_id(
-            first_text_opinion=linked_text_opinion,
+            opinion_provider=opinion_provider,
+            linked_opinions=linked_text_opinions,
             index_in_linked=0)
         row[OpinionsFormatter.SOURCE] = src_value
         row[OpinionsFormatter.TARGET] = target_value
@@ -72,10 +78,16 @@ class OpinionsFormatter(object):
 
         return news_id, source, target
 
-    def format(self, text_opinions):
+    def format(self, opinion_provider):
+        assert(isinstance(opinion_provider, OpinionProvider))
+
         print "Adding opinions ('{}') ... ".format(self.__data_type)
-        for linked_opinions in text_opinions.iter_by_linked_text_opinions():
-            row = OpinionsFormatter.__create_opinion_row(linked_text_opinion=linked_opinions[0])
+
+        # TODO. Wrap linked opinions
+        for linked_opinions in opinion_provider.iter_linked_opinions(balance=False):
+            row = OpinionsFormatter.__create_opinion_row(
+                opinion_provider=opinion_provider,
+                linked_text_opinions=linked_opinions)
             self.__df = self.__df.append(row, ignore_index=True)
 
     def to_tsv_by_experiment(self, experiment):

@@ -10,7 +10,7 @@ from arekit.contrib.networks.sample import InputSample
 # TODO. Remove dependency
 from arekit.networks.debug import DebugKeys
 # TODO. Remove dependency
-from arekit.source.rusentiframes.helpers.parse import RuSentiFramesParseHelper
+from arekit.common.frame_variants.parse import FrameVariantsParser
 
 
 # region private methods
@@ -74,7 +74,7 @@ def extract_text_opinions(experiment,
 
         parsed_news.modify_parsed_sentences(
             # TODO. Remove dependency
-            lambda sentence: RuSentiFramesParseHelper.parse_frames_in_parsed_text(
+            lambda sentence: FrameVariantsParser.parse_frames_in_parsed_text(
                 frame_variants_collection=experiment.DataIO.FrameVariantCollection,
                 parsed_text=sentence))
 

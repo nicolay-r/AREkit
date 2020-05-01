@@ -5,7 +5,7 @@ from arekit.common.languages.mods import BaseLanguageMods
 from arekit.processing.text.parsed import ParsedText
 
 
-class RuSentiFramesSearchHelper(object):
+class FrameVariantsSearcher(object):
 
     # region private methods
 
@@ -42,7 +42,7 @@ class RuSentiFramesSearchHelper(object):
                 if not(last_ind < len(lemmas)):
                     continue
 
-                is_all_words_within = RuSentiFramesSearchHelper.__check_all_words_within(
+                is_all_words_within = FrameVariantsSearcher.__check_all_words_within(
                     terms=lemmas,
                     start_index=start_ind,
                     last_index=last_ind)
@@ -55,8 +55,8 @@ class RuSentiFramesSearchHelper(object):
                 if not frame_variants.has_variant(ctx_value):
                     continue
 
-                prep_term = RuSentiFramesSearchHelper.__get_preposition(terms=lemmas,
-                                                                        index=start_ind)
+                prep_term = FrameVariantsSearcher.__get_preposition(terms=lemmas,
+                                                                    index=start_ind)
 
                 yield TextFrameVariant(
                     variant=frame_variants.get_variant_by_value(ctx_value),

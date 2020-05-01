@@ -49,6 +49,9 @@ class Label:
         assert(isinstance(other, Label))
         return self.to_int() != other.to_int()
 
+    def __hash__(self):
+        return hash(self.to_int())
+
 
 class PositiveLabel(Label):
 

@@ -20,7 +20,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self):
-        super(ThreeScaleNeutralAnnotator).__init__(
+        super(ThreeScaleNeutralAnnotator, self).__init__(
             annot_name=u"neutral_3_scale")
         self.__algo = None
 
