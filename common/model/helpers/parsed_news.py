@@ -2,7 +2,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.processing.text.token import Token
 
-# TODO. To Common.
+
 class ParsedNewsHelper(object):
 
     @staticmethod

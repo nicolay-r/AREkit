@@ -3,7 +3,7 @@ import pandas as pd
 
 from arekit.common.experiment.base import BaseExperiment
 from arekit.common.labels.base import Label
-from arekit.common.model.labeling.base import LabelCalculationMode
+from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
 from arekit.contrib.bert.formatters.opinions.base import OpinionsFormatter
 from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
@@ -26,12 +26,14 @@ def __iter_eval_collections(bert_result_fp,
     print "samples: {}".format(samples_fp)
     print "opinions: {}".format(opinion_fp)
 
+    # TODO. Read from class.
     # bert results: p_neut, p_pos, p_neg
     df_bert_results = pd.read_csv(bert_result_fp, sep='\t', header=None)
 
     # origin: [id, ...]
     df_samples = pd.read_csv(samples_fp, sep='\t')
 
+    # TODO. load from opinion file
     # df opinions: [subj, obj, news_id]
     df_opinions = pd.read_csv(opinion_fp, sep='\t', header=None)
     df_opinions.columns = ['id', 'source', 'target']
@@ -41,6 +43,10 @@ def __iter_eval_collections(bert_result_fp,
     assert(len(df_bert_results) == len(df_samples))
 
     collections = dict()
+
+    #
+    # Compose all opinions grouped by news
+    #
 
     # dict of news_id, opinion_id
     all_opinions = {}
@@ -66,6 +72,8 @@ def __iter_eval_collections(bert_result_fp,
         opinion_row = _opinion_row.iloc[0].tolist()
 
         _, source, target = OpinionsFormatter.parse_row(opinion_row)
+
+        # TODO. Provide opinion iterator from classes in result/
 
         opinion = Opinion(source_value=source,
                           target_value=target,
@@ -94,23 +102,11 @@ def __iter_opinions(opinions_dict, label_calculation_mode):
     assert(isinstance(label_calculation_mode, unicode))
 
     for opinion_id, opinions in opinions_dict.iteritems():
-        # Recalculate average label
 
-        label = __calculate_label(lcm=label_calculation_mode,
-                                  labels=[o.Sentiment for o in opinions])
+        label = SingleLabelsHelper.create_label_from_text_opinions(
+            text_opinion_labels=[o.Sentiment for o in opinions],
+            label_creation_mode=label_calculation_mode)
 
         yield Opinion(source_value=opinions[0].SourceValue,
                       target_value=opinions[0].TargetValue,
                       sentiment=label)
-
-
-def __calculate_label(lcm, labels):
-    assert(isinstance(lcm, unicode))
-    assert(isinstance(labels, list))
-
-    if lcm == LabelCalculationMode.AVERAGE:
-        avg_label = np.sign(sum([l.to_int() for l in labels]))
-        return Label.from_int(avg_label)
-
-    if lcm == LabelCalculationMode.FIRST_APPEARED:
-        return labels[0]

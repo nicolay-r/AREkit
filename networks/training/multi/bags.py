@@ -47,10 +47,11 @@ class MultiInstanceBagsCollection(BagsCollection):
 
         bags = []
 
-        for text_opinions in text_opinion_collection.iter_by_linked_text_opinions():
+        for linked_wrap in text_opinion_collection.iter_wrapped_linked_text_opinions():
 
-            bags.append(Bag(label=text_opinions[0].Sentiment))
-            for o_ind, opinion in enumerate(text_opinions):
+            bags.append(Bag(label=linked_wrap.FirstOpinion.Sentiment))
+
+            for o_ind, opinion in enumerate(linked_wrap):
                 assert(isinstance(opinion, TextOpinion))
 
                 if len(last_bag()) == max_bag_size:
@@ -58,7 +59,7 @@ class MultiInstanceBagsCollection(BagsCollection):
 
                 s = create_sample_func(opinion)
 
-                prior_opinion = text_opinions[o_ind - 1] if o_ind > 0 else None
+                prior_opinion = linked_wrap.get_prior_opinion_by_index(index=o_ind)
                 if prior_opinion is not None and not is_empty_last_bag():
                     if not is_context_continued(c_rel=opinion, p_rel=prior_opinion):
                         complete_last_bag()

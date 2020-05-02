@@ -300,10 +300,6 @@ class InputSample(InputSampleBase):
     # endregion
 
     @staticmethod
-    def check_ability_to_create_sample(window_size, text_opinion):
-        return abs(TextOpinionHelper.calculate_distance_between_entities_in_terms(text_opinion)) < window_size
-
-    @staticmethod
     def iter_parameters():
         for var_name in dir(InputSample):
             if not var_name.startswith('I_'):

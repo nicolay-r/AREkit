@@ -1,3 +1,4 @@
+from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
 
@@ -10,7 +11,7 @@ class BinaryIDFormatter(BaseIDFormatter):
     @staticmethod
     def create_sample_id(opinion_provider, linked_opinions, index_in_linked):
         assert(isinstance(opinion_provider, OpinionProvider))
-        assert(isinstance(linked_opinions, list))
+        assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
 
         o_id = BaseIDFormatter.create_opinion_id(
@@ -20,6 +21,6 @@ class BinaryIDFormatter(BaseIDFormatter):
 
         return u"{multiple}_l{label}".format(
             multiple=o_id,
-            label=opinion_provider.get_linked_sentiment(linked_opinions))
+            label=linked_opinions.get_linked_sentiment())
 
 

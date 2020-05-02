@@ -1,10 +1,11 @@
 from arekit.common.labels.base import NeutralLabel
+from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.opinions.base import Opinion
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
-# TODO. ToCommon
+
 class LabeledLinkedTextOpinionCollectionHelper:
 
     def __init__(self, collection, labels_helper, name):
@@ -73,21 +74,18 @@ class LabeledLinkedTextOpinionCollectionHelper:
         assert(isinstance(news_id, int))
         assert(isinstance(label_mode, unicode))
 
-        for liked_text_opinions in self.__collection.iter_by_linked_text_opinions():
+        for linked_wrap in self.__collection.iter_wrapped_linked_text_opinions():
+            assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
-            first = liked_text_opinions[0]
-            assert(isinstance(first, TextOpinion))
-
-            # TODO. Use textOpinionHelper.
-            if first.NewsID != news_id:
+            if linked_wrap.RelatedNewsID != news_id:
                 continue
 
             label = self.__labels_helper.create_label_from_text_opinions(
-                text_opinion_labels=[text_opinion.Sentiment for text_opinion in liked_text_opinions],
+                text_opinion_labels=linked_wrap,
                 label_creation_mode=label_mode)
 
             opinions_it = self.__labels_helper.iter_opinions_from_text_opinion_and_label(
-                text_opinion=first,
+                text_opinion=linked_wrap.FirstOpinion,
                 label=label)
 
             for opinion in opinions_it:
@@ -107,8 +105,8 @@ class LabeledLinkedTextOpinionCollectionHelper:
 
     def __get_group_statistic(self):
         statistic = {}
-        for group in self.__collection.iter_by_linked_text_opinions():
-            key = len(group)
+        for linked_wrap in self.__collection.iter_wrapped_linked_text_opinions():
+            key = len(linked_wrap)
             if key not in statistic:
                 statistic[key] = 1
             else:

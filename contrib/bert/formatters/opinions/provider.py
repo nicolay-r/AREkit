@@ -1,4 +1,4 @@
-from arekit.common.experiment.opinions import extract_text_opinions
+from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
 from arekit.common.labels.base import Label
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
@@ -18,7 +18,7 @@ class OpinionProvider(object):
 
     @classmethod
     def from_experiment(cls, experiment, data_type):
-        text_opinions = extract_text_opinions(
+        text_opinions = extract_text_opinions_and_parse_news(
             experiment=experiment,
             data_type=data_type,
             terms_per_context=50)
@@ -29,25 +29,16 @@ class OpinionProvider(object):
     def opinions_count(self):
         return len(self.__text_opinions)
 
-    @staticmethod
-    def get_linked_sentiment(linked_opinions):
-        return linked_opinions[0].Sentiment
-
     # region private methods
-
-    def __iter_linked_with_sentiment(self):
-        for linked_opinions in self.__text_opinions.iter_by_linked_text_opinions():
-            label = self.get_linked_sentiment(linked_opinions)
-            yield linked_opinions, label
 
     def __iter_linked_opinons(self, label, count):
         while count > 0:
-            for linked_opinions, linked_label in self.__iter_linked_with_sentiment():
+            for linked_wrap in self.__text_opinions.iter_wrapped_linked_text_opinions():
 
-                if linked_label != label:
+                if linked_wrap.get_linked_sentiment() != label:
                     continue
 
-                yield linked_opinions
+                yield linked_wrap
                 count -= 1
 
                 if count == 0:
@@ -58,10 +49,10 @@ class OpinionProvider(object):
         for label in Label._get_supported_labels():
             counts[label] = 0
 
-        for linked_opinions, label in self.__iter_linked_with_sentiment():
-            counts[label] += 1
+        for linked_wrap in self.__text_opinions.iter_wrapped_linked_text_opinions():
+            counts[linked_wrap.get_linked_sentiment()] += 1
 
-            yield linked_opinions
+            yield linked_wrap
 
         top = max(counts.values())
 
@@ -74,17 +65,14 @@ class OpinionProvider(object):
 
     # endregion
 
-    def iter_linked_opinions(self, balance):
+    def iter_linked_opinion_wrappers(self, balance):
         assert(isinstance(balance, bool))
 
-        if not balance:
-            for linked_opinions in self.__text_opinions.iter_by_linked_text_opinions():
-                # TODO. Wrap
-                yield linked_opinions
-        else:
-            for linked_opinions in self.__iter_balanced():
-                # TODO. Wrap
-                yield linked_opinions
+        linked_opinion_wrap_it = self.__text_opinions.iter_wrapped_linked_text_opinions() \
+            if not balance else self.__iter_balanced()
+
+        for linked_wrap in linked_opinion_wrap_it:
+            yield linked_wrap
 
     def get_opinion_location(self, text_opinion):
 

@@ -8,6 +8,7 @@ import pandas as pd
 import io_utils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
+from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.base import BaseExperiment
@@ -107,7 +108,7 @@ class BaseSampleFormatter(object):
 
         return (s_ind, t_ind)
 
-    def __create_row(self, opinion_provider, linked_opinions, index_in_linked, etalon_label):
+    def __create_row(self, opinion_provider, linked_wrap, index_in_linked, etalon_label):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -116,11 +117,11 @@ class BaseSampleFormatter(object):
             row with key values
         """
         assert(isinstance(opinion_provider, OpinionProvider))
-        assert(isinstance(linked_opinions, list))
+        assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
 
-        text_opinion = linked_opinions[index_in_linked]
+        text_opinion = linked_wrap.get_by_index(index_in_linked)
 
         parsed_news, sentence_ind = opinion_provider.get_opinion_location(text_opinion)
         s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
@@ -129,12 +130,12 @@ class BaseSampleFormatter(object):
 
         row[self.ID] = self.__row_ids_formatter.create_sample_id(
             opinion_provider=opinion_provider,
-            linked_opinions=linked_opinions,
+            linked_opinions=linked_wrap,
             index_in_linked=index_in_linked)
 
         if self.__is_train():
             row[self.LABEL] = self.__label_provider.get_label(
-                expected_label=opinion_provider.get_linked_sentiment(linked_opinions),
+                expected_label=linked_wrap.get_linked_sentiment(),
                 etalon_label=etalon_label)
 
         terms = list(parsed_news.iter_sentence_terms(sentence_ind))
@@ -148,34 +149,40 @@ class BaseSampleFormatter(object):
 
         return row
 
-    def __provide_rows(self, opinion_provider, linked_text_opinions, index_in_linked, ):
+    def __provide_rows(self, opinion_provider, linked_wrap, index_in_linked):
         """
         Providing Rows depending on row_id_formatter type
         """
+        assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
-        origin = linked_text_opinions[0]
-
+        origin = linked_wrap.FirstOpinion
         if isinstance(self.__row_ids_formatter, BinaryIDFormatter):
             """
             Enumerate all opinions as if it would be with the different label types.
             """
             for label in Label._get_supported_labels():
-
-                # TODO. Simplify using wrapper.
-                copy = TextOpinion.create_copy(other=origin)
-                copy.set_label(label=label)
-                linked_text_opinions[0] = copy
-
                 yield self.__create_row(opinion_provider=opinion_provider,
-                                        linked_opinions=linked_text_opinions,
+                                        linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
                                         index_in_linked=index_in_linked,
                                         etalon_label=origin.Sentiment)
 
         if isinstance(self.__row_ids_formatter, MultipleIDFormatter):
             yield self.__create_row(opinion_provider=opinion_provider,
-                                    linked_opinions=linked_text_opinions,
+                                    linked_wrap=linked_wrap,
                                     index_in_linked=index_in_linked,
                                     etalon_label=origin.Sentiment)
+
+    @staticmethod
+    def __copy_modified_linked_wrap(linked_wrap, label):
+        assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
+        linked_opinions = [o for o in linked_wrap]
+
+        copy = TextOpinion.create_copy(other=linked_opinions[0])
+        copy.set_label(label=label)
+
+        linked_opinions[0] = copy
+
+        return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
     # endregion
 
@@ -187,13 +194,12 @@ class BaseSampleFormatter(object):
 
         added = 0
 
-        for linked_opinions in opinion_provider.iter_linked_opinions(balance=self.__is_train()):
-            # TODO. Wrap linked opinions
+        for linked_wrap in opinion_provider.iter_linked_opinion_wrappers(balance=self.__is_train()):
 
-            for i in range(len(linked_opinions)):
+            for i in range(len(linked_wrap)):
                 rows_it = self.__provide_rows(
                     opinion_provider=opinion_provider,
-                    linked_text_opinions=linked_opinions,
+                    linked_wrap=linked_wrap,
                     index_in_linked=i)
 
                 for row in rows_it:

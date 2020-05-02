@@ -30,9 +30,9 @@ class BagsCollection:
 
         bags = []
 
-        for text_opinions in text_opinion_collection.iter_by_linked_text_opinions():
-            bags.append(Bag(text_opinions[0].Sentiment))
-            for opinion in text_opinions:
+        for linked_wrap in text_opinion_collection.iter_wrapped_linked_text_opinions():
+            bags.append(Bag(linked_wrap.FirstOpinion.Sentiment))
+            for opinion in linked_wrap:
                 assert(isinstance(opinion, TextOpinion))
 
                 if len(bags[-1]) == bag_size:

@@ -13,15 +13,15 @@ from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollecti
 
 
 # TODO. Rename as experiment
-class RuSentRelBasedNeuralNetworkIO(CVBasedExperiment):
+class RuSentRelExperiment(CVBasedExperiment):
     """
     Represents Input interface for NeuralNetwork ctx
     Now exploited (treated) as an input interface only
     """
 
     def __init__(self, data_io, prepare_model_root):
-        super(RuSentRelBasedNeuralNetworkIO, self).__init__(data_io=data_io,
-                                                            prepare_model_root=prepare_model_root)
+        super(RuSentRelExperiment, self).__init__(data_io=data_io,
+                                                  prepare_model_root=prepare_model_root)
 
         self.__rusentrel_news_ids_list = list(RuSentRelIOUtils.iter_collection_indices())
         self.__rusentrel_news_ids = set(self.__rusentrel_news_ids_list)
@@ -100,7 +100,7 @@ class RuSentRelBasedNeuralNetworkIO(CVBasedExperiment):
             for doc_id in self.get_fixed_folding(data_type):
                 yield doc_id
         else:
-            for doc_id in super(RuSentRelBasedNeuralNetworkIO, self).iter_news_indices(data_type):
+            for doc_id in super(RuSentRelExperiment, self).iter_news_indices(data_type):
                 yield doc_id
 
     def __iter_doc_ids_to_compare(self, doc_ids):

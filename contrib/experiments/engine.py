@@ -4,7 +4,7 @@ import logging
 
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.experiments.rusentrel import RuSentRelBasedNeuralNetworkIO
+from arekit.contrib.experiments.rusentrel import RuSentRelExperiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.callback import Callback
 
@@ -63,11 +63,7 @@ def run_testing(full_model_name,
     data_io.set_model_name(full_model_name)
     data_io.ModelIO.set_model_name(value=full_model_name)
 
-    # TODO. Refactor.
-    experiment = __create_experiment(
-        data_io=data_io,
-        create_experiment_func=create_experiment,
-        clear_model_contents=True)
+    experiment = create_experiment(data_io=data_io, prepare_model_root=True)
 
     # TODO. This should be intialized automatically somewhere else.
     data_io.CVFoldingAlgorithm.set_cv_count(cv_count)
@@ -80,7 +76,7 @@ def run_testing(full_model_name,
     callback.PredictVerbosePerFileStatistic = False
 
     assert(isinstance(callback, Callback))
-    assert(isinstance(experiment, RuSentRelBasedNeuralNetworkIO))
+    assert(isinstance(experiment, RuSentRelExperiment))
 
     for cv_index in range(data_io.CVFoldingAlgorithm.CVCount):
 
@@ -123,22 +119,3 @@ def run_testing(full_model_name,
         del model
 
         gc.collect()
-
-# region private functions
-
-
-# TODO. remove __create_experiment func
-def __create_experiment(
-        data_io,
-        create_experiment_func,
-        clear_model_contents):
-    assert(isinstance(data_io, DataIO))
-    assert(callable(create_experiment_func))
-    assert(isinstance(clear_model_contents, bool))
-
-    return create_experiment_func(data_io=data_io,
-                                  prepare_model_root=clear_model_contents)
-
-# endregion
-
-

@@ -10,7 +10,7 @@ from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpini
 from arekit.common.experiment.base import BaseExperiment
 from arekit.networks.tf_models.single.embedding.entities import generate_entity_embeddings
 from arekit.networks.tf_models.single.embedding.frames import init_frames_embedding
-from arekit.common.experiment.opinions import extract_text_opinions
+from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
 from arekit.networks.tf_models.single.embedding.tokens import create_tokens_embedding
 from arekit.networks.tf_models.single.embedding.words import init_custom_words_embedding
 from arekit.networks.tf_models.single.helpers.bags import BagsCollectionHelper
@@ -46,9 +46,9 @@ class SingleInstanceModelExperimentInitializer(object):
         self.__labels_helper = SingleLabelsHelper() if config.ClassesCount == 3 else PairedLabelsHelper()
 
         self.__text_opinion_collections = self.__create_collection(
-            lambda data_type: extract_text_opinions(experiment=experiment,
-                                                    data_type=data_type,
-                                                    terms_per_context=config.TermsPerContext))
+            lambda data_type: extract_text_opinions_and_parse_news(experiment=experiment,
+                                                                   data_type=data_type,
+                                                                   terms_per_context=config.TermsPerContext))
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,

@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 import io_utils
+from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
@@ -38,28 +39,26 @@ class OpinionsFormatter(object):
         return pd.DataFrame(data)
 
     @staticmethod
-    def __create_opinion_row(opinion_provider, linked_text_opinions):
+    def __create_opinion_row(opinion_provider, linked_wrapper):
         """
         row format: [id, src, target, label]
         """
         assert(isinstance(opinion_provider, OpinionProvider))
-        assert(isinstance(linked_text_opinions, list))
+        assert(isinstance(linked_wrapper, LinkedTextOpinionsWrapper))
 
         row = OrderedDict()
 
-        first_opinion = linked_text_opinions[0]
-
         src_value = TextOpinionHelper.extract_entity_value(
-            text_opinion=first_opinion,
+            text_opinion=linked_wrapper.FirstOpinion,
             end_type=EntityEndType.Source)
 
         target_value = TextOpinionHelper.extract_entity_value(
-            text_opinion=first_opinion,
+            text_opinion=linked_wrapper.FirstOpinion,
             end_type=EntityEndType.Target)
 
         row[OpinionsFormatter.ID] = MultipleIDFormatter.create_opinion_id(
             opinion_provider=opinion_provider,
-            linked_opinions=linked_text_opinions,
+            linked_opinions=linked_wrapper,
             index_in_linked=0)
         row[OpinionsFormatter.SOURCE] = src_value
         row[OpinionsFormatter.TARGET] = target_value
@@ -83,11 +82,10 @@ class OpinionsFormatter(object):
 
         print "Adding opinions ('{}') ... ".format(self.__data_type)
 
-        # TODO. Wrap linked opinions
-        for linked_opinions in opinion_provider.iter_linked_opinions(balance=False):
+        for linked_wrapper in opinion_provider.iter_linked_opinion_wrappers(balance=False):
             row = OpinionsFormatter.__create_opinion_row(
                 opinion_provider=opinion_provider,
-                linked_text_opinions=linked_opinions)
+                linked_wrapper=linked_wrapper)
             self.__df = self.__df.append(row, ignore_index=True)
 
     def to_tsv_by_experiment(self, experiment):
