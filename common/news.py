@@ -10,3 +10,11 @@ class News(object):
             is an iterable opinions that should be used to find a related text_opinion entries.
         """
         raise NotImplementedError()
+
+    # TODO. Implement
+    def parse(self):
+        raise NotImplementedError()
+
+    # TODO. Implement
+    def ID(self):
+        raise NotImplementedError()

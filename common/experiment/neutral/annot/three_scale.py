@@ -28,6 +28,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     def __create_opinions_for_extraction(self, doc_id, data_type):
         assert(isinstance(self.Experiment, BaseExperiment))
+        # TODO. Single parameter
         news, _ = self.Experiment.read_parsed_news(doc_id=doc_id)
         opinions = self.Experiment.read_etalon_opinion_collection(doc_id=doc_id)
         collection = self.__algo.make_neutrals(

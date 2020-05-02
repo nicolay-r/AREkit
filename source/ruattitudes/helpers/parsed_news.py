@@ -61,6 +61,8 @@ class RuAttitudesParsedNewsHelper(object):
 
     # endregion
 
+    # TODO. rename to Parse
+    # TODO. rusentrel_news_id -> doc_id (REMOVE, since it will be available in News base class)
     @classmethod
     def create_parsed_news(cls, doc_id, news):
         assert(isinstance(doc_id, int))

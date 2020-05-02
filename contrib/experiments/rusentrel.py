@@ -42,6 +42,7 @@ class RuSentRelExperiment(CVBasedExperiment):
 
     # region 'read' public methods
 
+    # TODO. Read news. (rename)
     def read_parsed_news(self, doc_id):
         assert(isinstance(doc_id, int))
 

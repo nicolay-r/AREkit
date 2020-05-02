@@ -1,4 +1,4 @@
-# AREkit
+# AREkit 0.20.4
 
 ![](logo.png)
 

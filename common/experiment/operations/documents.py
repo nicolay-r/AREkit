@@ -1,5 +1,6 @@
 class DocumentOperations(object):
 
+    # TODO. Read news. (rename)
     def read_parsed_news(self, doc_id):
         raise NotImplementedError()
 

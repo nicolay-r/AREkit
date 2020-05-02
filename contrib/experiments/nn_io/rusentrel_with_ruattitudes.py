@@ -36,13 +36,16 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelExperiment):
 
     # region 'read' public methods
 
+    # TODO. Read news
     def read_parsed_news(self, doc_id):
         if doc_id in self.RuSentRelNewsIDsList:
             return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(doc_id=doc_id)
 
         news = self.__ru_attitudes[doc_id]
+        # TODO. remove (will be provided in news)
         parsed_news = RuAttitudesParsedNewsHelper.create_parsed_news(doc_id=doc_id, news=news)
 
+        # TODO. Return only one parameter (news).
         return news, parsed_news
 
     def read_etalon_opinion_collection(self, doc_id):
