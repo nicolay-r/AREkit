@@ -20,7 +20,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self):
-        super(ThreeScaleNeutralAnnotator).__init__(
+        super(ThreeScaleNeutralAnnotator, self).__init__(
             annot_name=u"neutral_3_scale")
         self.__algo = None
 
@@ -28,6 +28,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     def __create_opinions_for_extraction(self, doc_id, data_type):
         assert(isinstance(self.Experiment, BaseExperiment))
+        # TODO. Single parameter
         news, _ = self.Experiment.read_parsed_news(doc_id=doc_id)
         opinions = self.Experiment.read_etalon_opinion_collection(doc_id=doc_id)
         collection = self.__algo.make_neutrals(

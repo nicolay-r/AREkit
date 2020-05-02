@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news import News
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
@@ -150,10 +151,10 @@ class RuSentRelNews(News):
 
     # region base News
 
-    def iter_linked_text_opinions(self, opinions):
+    def iter_wrapped_linked_text_opinions(self, opinions):
         assert(isinstance(opinions, OpinionCollection))
         for entries in self.__iter_rusentrel_text_opinion_entries(opinions=opinions):
-            yield [self.__entry_to_text_opinion(entry) for entry in entries]
+            yield LinkedTextOpinionsWrapper(linked_text_opinions=[self.__entry_to_text_opinion(entry) for entry in entries])
 
     # region private methods
 

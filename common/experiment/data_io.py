@@ -1,5 +1,6 @@
-from arekit.contrib.experiments.utils import \
-    rm_dir_contents
+import glob
+import os
+import shutil
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
@@ -61,6 +62,20 @@ class DataIO(object):
 
     # endregion
 
+    # region private methods
+
+    @staticmethod
+    def __rm_dir_contents(dir_path):
+        contents = glob.glob(dir_path)
+        for f in contents:
+            print "Removing old file/dir: {}".format(f)
+            if os.path.isfile(f):
+                os.remove(f)
+            else:
+                shutil.rmtree(f, ignore_errors=True)
+
+    # endregion
+
     def get_data_root(self):
         raise NotImplementedError()
 
@@ -80,5 +95,5 @@ class DataIO(object):
         if not rm_contents:
             return
 
-        rm_dir_contents(self.get_model_root())
+        self.__rm_dir_contents(self.get_model_root())
 

@@ -6,7 +6,7 @@ import os
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.tf_model import TensorflowModel
+from arekit.networks.tf_models.model import TensorflowModel
 
 
 class ExperimentCallback(Callback):

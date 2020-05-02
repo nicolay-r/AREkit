@@ -3,7 +3,7 @@ import logging
 from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 
-from arekit.contrib.experiments.nn_io.rusentrel import RuSentRelBasedNeuralNetworkIO
+from arekit.contrib.experiments.rusentrel import RuSentRelExperiment
 from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
 
 from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
@@ -13,7 +13,7 @@ from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsH
 logger = logging.getLogger(__name__)
 
 
-class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
+class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelExperiment):
     """
     IO for the experiment with distant supervision for sentiment attitude extraction task.
     Paper: https://www.aclweb.org/anthology/R19-1118/
@@ -36,13 +36,16 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelBasedNeuralNetworkIO):
 
     # region 'read' public methods
 
+    # TODO. Read news
     def read_parsed_news(self, doc_id):
         if doc_id in self.RuSentRelNewsIDsList:
             return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(doc_id=doc_id)
 
         news = self.__ru_attitudes[doc_id]
+        # TODO. remove (will be provided in news)
         parsed_news = RuAttitudesParsedNewsHelper.create_parsed_news(doc_id=doc_id, news=news)
 
+        # TODO. Return only one parameter (news).
         return news, parsed_news
 
     def read_etalon_opinion_collection(self, doc_id):

@@ -2,6 +2,8 @@
 import logging
 import collections
 import cPickle as pickle
+
+from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.collection import TextOpinionCollection
@@ -141,25 +143,16 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
 
     # region iter methods
 
-    def iter_by_linked_text_opinions(self):
-        for linked_opinions in self.__iter_by_linked_text_opinions():
-            yield linked_opinions
-
-    def iter_by_linked_text_opinion_groups(self, group_size):
-        assert(isinstance(group_size, int))
-        group = []
-        for index, linked_opinions in enumerate(self.__iter_by_linked_text_opinions()):
-            group.append(linked_opinions)
-            if len(group) == group_size:
-                yield group
-                group = []
+    def iter_wrapped_linked_text_opinions(self):
+        for linked_wrap in self.__iter_by_linked_text_opinions():
+            yield linked_wrap
 
     def __iter_by_linked_text_opinions(self):
         linked_opinions = []
         for index, text_opinion in enumerate(self):
             linked_opinions.append(text_opinion)
             if self.__next_opinion_id[index] == self.NO_NEXT_OPINION:
-                yield linked_opinions
+                yield LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
                 linked_opinions = []
 
     # endregion

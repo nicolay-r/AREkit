@@ -1,3 +1,4 @@
+from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news import News
 from arekit.common.text_opinions.base import RefOpinion
 from arekit.common.text_opinions.text_opinion import TextOpinion
@@ -65,12 +66,12 @@ class RuAttitudesNews(News):
 
     # region base News
 
-    def iter_linked_text_opinions(self, opinions):
+    def iter_wrapped_linked_text_opinions(self, opinions):
         """
         Note: Complexity is O(N^2)
         """
         for opinion in opinions:
-            yield list(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
+            yield LinkedTextOpinionsWrapper(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
 
     # region Private methods
 

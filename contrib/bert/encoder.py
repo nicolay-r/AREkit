@@ -1,38 +1,62 @@
-from arekit.contrib.bert.format.opinions_io import OpinionsFormatter
-from arekit.contrib.bert.format.samples_io import create_and_save_samples_to_tsv
+from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
+
 from arekit.common.experiment.base import BaseExperiment
-from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
+
+from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
+from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
+from arekit.contrib.bert.formatters.sample.label.binary import BinaryLabelProvider
+from arekit.contrib.bert.formatters.sample.label.multiple import MultipleLabelProvider
+from arekit.contrib.bert.formatters.sample.nli_b import NliBinarySampleFormatter
+from arekit.contrib.bert.formatters.sample.nli_m import NliMultipleSampleFormatter
+from arekit.contrib.bert.formatters.sample.qa_b import QaBinarySampleFormatter
+from arekit.contrib.bert.formatters.sample.qa_m import QaMultipleSampleFormatter
+from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
 
 
 class BertEncoder(object):
 
     @staticmethod
-    def to_tsv(experiment):
+    def to_tsv(experiment, sample_formatter):
         assert(isinstance(experiment, BaseExperiment))
-
-        terms_per_context = 50
+        assert(isinstance(sample_formatter, unicode))
 
         for data_type in DataType.iter_supported():
             experiment.DataIO.NeutralAnnotator.create_collection(data_type)
 
         for data_type in DataType.iter_supported():
+            opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)
 
-            text_opinions = extract_text_opinions(
-                experiment=experiment,
-                data_type=data_type,
-                terms_per_context=terms_per_context)
+            opnion_formatter = BertOpinionsFormatter(data_type=data_type)
+            opnion_formatter.format(opinion_provider=opinion_provider)
+            opnion_formatter.to_tsv_by_experiment(experiment=experiment)
 
-            #
-            # Compose csv file with related opinions (Necessary for evaluation)
-            #
-            OpinionsFormatter.create_and_save_opinions_to_csv(text_opinions=text_opinions,
-                                                              data_type=data_type,
-                                                              experiment=experiment)
+            sampler = BertEncoder.create_formatter(data_type=data_type, formatter_type=sample_formatter)
+            sampler.to_samples(opinion_provider=opinion_provider)
+            sampler.to_tsv_by_experiment(experiment=experiment)
 
-            #
-            # Train/Test input samples for bert
-            #
-            create_and_save_samples_to_tsv(text_opinions=text_opinions,
-                                           data_type=data_type,
-                                           experiment=experiment)
+    @staticmethod
+    def create_formatter(data_type, formatter_type):
+        assert(isinstance(formatter_type, unicode))
+
+        if formatter_type == SampleFormatters.CLASSIF_M:
+            return BaseSampleFormatter(data_type=data_type,
+                                       label_provider=MultipleLabelProvider(),
+                                       text_provider=SingleTextProvider())
+        if formatter_type == SampleFormatters.CLASSIF_B:
+            return BaseSampleFormatter(data_type=data_type,
+                                       label_provider=BinaryLabelProvider(),
+                                       text_provider=SingleTextProvider())
+        if formatter_type == SampleFormatters.NLI_M:
+            return NliMultipleSampleFormatter(data_type=data_type)
+        if formatter_type == SampleFormatters.QA_M:
+            return QaMultipleSampleFormatter(data_type=data_type)
+        if formatter_type == SampleFormatters.NLI_B:
+            return NliBinarySampleFormatter(data_type=data_type)
+        if formatter_type == SampleFormatters.QA_B:
+            return QaBinarySampleFormatter(data_type=data_type)
+
+        return None
+
+

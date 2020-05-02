@@ -18,7 +18,7 @@ from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
 
-from arekit.networks.context.embedding import indices
+from arekit.networks.embedding import indices
 from arekit.common.model.sample import InputSampleBase
 
 
@@ -298,10 +298,6 @@ class InputSample(InputSampleBase):
         return feature
 
     # endregion
-
-    @staticmethod
-    def check_ability_to_create_sample(window_size, text_opinion):
-        return abs(TextOpinionHelper.calculate_distance_between_entities_in_terms(text_opinion)) < window_size
 
     @staticmethod
     def iter_parameters():
