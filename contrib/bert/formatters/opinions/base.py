@@ -15,7 +15,7 @@ from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
 
 
-class OpinionsFormatter(object):
+class BertOpinionsFormatter(object):
 
     ID = 'id'
     SOURCE = 'source'
@@ -26,14 +26,14 @@ class OpinionsFormatter(object):
     def __init__(self, data_type):
         assert(isinstance(data_type, unicode))
         self.__data_type = data_type
-        self.__df = OpinionsFormatter.__create_empty_df()
+        self.__df = BertOpinionsFormatter.__create_empty_df()
 
     @staticmethod
     def __create_empty_df():
         dtypes_list = []
-        dtypes_list.append((OpinionsFormatter.ID, 'int32'))
-        dtypes_list.append((OpinionsFormatter.SOURCE, 'string'))
-        dtypes_list.append((OpinionsFormatter.TARGET, 'string'))
+        dtypes_list.append((BertOpinionsFormatter.ID, 'int32'))
+        dtypes_list.append((BertOpinionsFormatter.SOURCE, 'string'))
+        dtypes_list.append((BertOpinionsFormatter.TARGET, 'string'))
 
         data = np.empty(0, dtype=np.dtype(dtypes_list))
         return pd.DataFrame(data)
@@ -56,20 +56,22 @@ class OpinionsFormatter(object):
             text_opinion=linked_wrapper.FirstOpinion,
             end_type=EntityEndType.Target)
 
-        row[OpinionsFormatter.ID] = MultipleIDFormatter.create_opinion_id(
+        row[BertOpinionsFormatter.ID] = MultipleIDFormatter.create_opinion_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrapper,
             index_in_linked=0)
-        row[OpinionsFormatter.SOURCE] = src_value
-        row[OpinionsFormatter.TARGET] = target_value
+        row[BertOpinionsFormatter.SOURCE] = src_value
+        row[BertOpinionsFormatter.TARGET] = target_value
 
         return row
 
     # endregion
 
-    @staticmethod
-    def parse_row(df_row):
-        assert(isinstance(df_row, list))
+    def parse_row(self, opinion_id):
+        assert(isinstance(opinion_id, unicode))
+
+        opinion_row = self.__df[self.__df[self.ID] == opinion_id]
+        df_row = opinion_row.iloc[0].tolist()
 
         news_id = df_row[0]
         source = df_row[1].decode('utf-8')
@@ -83,20 +85,36 @@ class OpinionsFormatter(object):
         print "Adding opinions ('{}') ... ".format(self.__data_type)
 
         for linked_wrapper in opinion_provider.iter_linked_opinion_wrappers(balance=False):
-            row = OpinionsFormatter.__create_opinion_row(
+            row = BertOpinionsFormatter.__create_opinion_row(
                 opinion_provider=opinion_provider,
                 linked_wrapper=linked_wrapper)
             self.__df = self.__df.append(row, ignore_index=True)
 
     def to_tsv_by_experiment(self, experiment):
-        filepath = OpinionsFormatter.get_filepath(data_type=self.__data_type,
-                                                  experiment=experiment)
+        assert(isinstance(experiment, BaseExperiment))
+
+        filepath = BertOpinionsFormatter.get_filepath(data_type=self.__data_type,
+                                                      experiment=experiment)
 
         self.__df.to_csv(filepath,
                          sep='\t',
                          encoding='utf-8',
                          index=False,
                          header=False)
+
+    def from_tsv(self, experiment):
+        assert(isinstance(experiment, BaseExperiment))
+
+        filepath = BertOpinionsFormatter.get_filepath(data_type=self.__data_type,
+                                                      experiment=experiment)
+
+        self.__df = pd.read_csv(filepath,
+                                sep='\t',
+                                header=None,
+                                names=[self.ID, self.SOURCE, self.TARGET])
+
+    def get_ids(self):
+        return self.__df.iloc[0].tolist()
 
     @staticmethod
     def get_filepath(data_type, experiment):

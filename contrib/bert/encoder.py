@@ -1,4 +1,4 @@
-from arekit.contrib.bert.formatters.opinions.base import OpinionsFormatter
+from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 
 from arekit.common.experiment.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
@@ -28,16 +28,16 @@ class BertEncoder(object):
         for data_type in DataType.iter_supported():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)
 
-            opnion_formatter = OpinionsFormatter(data_type=data_type)
+            opnion_formatter = BertOpinionsFormatter(data_type=data_type)
             opnion_formatter.format(opinion_provider=opinion_provider)
             opnion_formatter.to_tsv_by_experiment(experiment=experiment)
 
-            sampler = BertEncoder.__create_formatter(data_type=data_type, formatter_type=sample_formatter)
+            sampler = BertEncoder.create_formatter(data_type=data_type, formatter_type=sample_formatter)
             sampler.to_samples(opinion_provider=opinion_provider)
             sampler.to_tsv_by_experiment(experiment=experiment)
 
     @staticmethod
-    def __create_formatter(data_type, formatter_type):
+    def create_formatter(data_type, formatter_type):
         assert(isinstance(formatter_type, unicode))
 
         if formatter_type == SampleFormatters.CLASSIF_M:

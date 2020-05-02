@@ -1,14 +1,11 @@
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.model.labeling.base import LabelCalculationMode
-from arekit.contrib.bert.converter import __iter_eval_collections
+from arekit.contrib.bert.converter import iter_eval_collections
 
 from arekit.contrib.bert.evaluation.opinion_based import BERTModelEvaluator
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.base import BaseExperiment
-from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
-
-from arekit.contrib.bert.formatters.opinions.base import OpinionsFormatter
 
 
 def eval_tsv(data_io, data_type, experiment):
@@ -17,19 +14,8 @@ def eval_tsv(data_io, data_type, experiment):
 
     experiment.create_opinion_collection()
 
-    bert_result_fp = u"test_results.tsv"
-
-    opinions_fp = OpinionsFormatter.get_filepath(data_type=data_type,
-                                                 experiment=experiment)
-
-    samples_fp = BaseSampleFormatter.get_filepath(data_type=data_type,
-                                                  experiment=experiment)
-
-    iter_eval = __iter_eval_collections(bert_result_fp=bert_result_fp,
-                                        experiment=experiment,
-                                        samples_fp=samples_fp,
-                                        opinion_fp=opinions_fp,
-                                        label_calculation_mode=LabelCalculationMode.FIRST_APPEARED)
+    iter_eval = iter_eval_collections(experiment=experiment,
+                                      label_calculation_mode=LabelCalculationMode.FIRST_APPEARED)
 
     for news_id, collection in iter_eval:
 

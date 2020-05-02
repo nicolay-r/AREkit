@@ -225,6 +225,13 @@ class BaseSampleFormatter(object):
                          index=False,
                          header=not self.__is_train())
 
+    def from_tsv(self, experiment):
+
+        filepath = self.get_filepath(data_type=self.__data_type,
+                                     experiment=experiment)
+
+        self.__df = pd.read_csv(filepath, sep='\t')
+
     @staticmethod
     def extract_row_id(opinion_row):
         assert(isinstance(opinion_row, list))
@@ -244,3 +251,5 @@ class BaseSampleFormatter(object):
 
         return filepath
 
+    def __len__(self):
+        return len(self.__df)
