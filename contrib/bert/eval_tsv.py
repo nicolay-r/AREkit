@@ -1,21 +1,23 @@
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
-from arekit.common.model.labeling.base import LabelCalculationMode
-from arekit.contrib.bert.converter import iter_eval_collections
-
-from arekit.contrib.bert.evaluation.opinion_based import BERTModelEvaluator
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.base import BaseExperiment
+from arekit.contrib.bert.converter import iter_eval_collections
+from arekit.contrib.bert.evaluation.opinion_based import BERTModelEvaluator
 
 
-def eval_tsv(data_io, data_type, experiment):
+# TODO. Eval make a part of results
+def eval_tsv(formatter_type, data_io, data_type, experiment, label_calculation_mode):
+    assert(isinstance(formatter_type, unicode))
     assert(isinstance(data_io, DataIO))
     assert(isinstance(experiment, BaseExperiment))
+    assert(isinstance(label_calculation_mode, unicode))
 
     experiment.create_opinion_collection()
 
-    iter_eval = iter_eval_collections(experiment=experiment,
-                                      label_calculation_mode=LabelCalculationMode.FIRST_APPEARED)
+    iter_eval = iter_eval_collections(formatter_type=formatter_type,
+                                      experiment=experiment,
+                                      label_calculation_mode=label_calculation_mode)
 
     for news_id, collection in iter_eval:
 

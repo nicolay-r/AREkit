@@ -20,10 +20,30 @@ class SampleFormatters(object):
     NLI_B = u"nli_b"
 
     @staticmethod
-    def iter_supported():
-        yield SampleFormatters.CLASSIF_M
-        yield SampleFormatters.CLASSIF_B
+    def __iter_multiple():
         yield SampleFormatters.QA_M
         yield SampleFormatters.NLI_M
+        yield SampleFormatters.CLASSIF_M
+
+    @staticmethod
+    def __iter_binary():
+        yield SampleFormatters.CLASSIF_B
         yield SampleFormatters.QA_B
         yield SampleFormatters.NLI_B
+
+    @staticmethod
+    def is_binary(formatter_type):
+        binary = list(SampleFormatters.__iter_binary())
+        return formatter_type in binary
+
+    @staticmethod
+    def is_multiple(formatter_type):
+        multiple = list(SampleFormatters.__iter_multiple())
+        return formatter_type in multiple
+
+    @staticmethod
+    def iter_supported():
+        for formatter in SampleFormatters.__iter_binary():
+            yield formatter
+        for formatter in SampleFormatters.__iter_multiple():
+            yield formatter

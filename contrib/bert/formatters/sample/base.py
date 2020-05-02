@@ -232,6 +232,9 @@ class BaseSampleFormatter(object):
 
         self.__df = pd.read_csv(filepath, sep='\t')
 
+    def extract_ids(self):
+        return self.__df[self.ID].tolist()
+
     @staticmethod
     def extract_row_id(opinion_row):
         assert(isinstance(opinion_row, list))

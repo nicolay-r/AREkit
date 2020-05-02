@@ -23,4 +23,3 @@ class BinaryIDFormatter(BaseIDFormatter):
             multiple=o_id,
             label=linked_opinions.get_linked_sentiment())
 
-

@@ -14,11 +14,6 @@ class MultipleIDFormatter(BaseIDFormatter):
             index_in_linked=index_in_linked)
 
     @staticmethod
-    def parse_news_id(row_id):
-        assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(u'n') + 1:row_id.index(u'_')])
-
-    @staticmethod
     def sample_row_id_to_opinion_id(row_id):
         """
         Id in sample rows has information of linked opinions.
