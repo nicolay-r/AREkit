@@ -11,15 +11,16 @@ from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 
 class BertMultipleResults(BertResults):
 
-    def __init__(self):
+    def __init__(self, supported_labels):
+        assert(isinstance(supported_labels, list))
         super(BertMultipleResults, self).__init__(ids_formatter=MultipleIDFormatter())
+        self.__labels = supported_labels
 
     # region protected methods
 
+    # TODO. Use label provider instead
     def _get_column_header(self):
-        # TODO. Depends on experiment format (2-scale, 3-scale),
-        # TODO. Should be supported and declared in common/experiments.
-        return [u'neut', u'pos', u'neg']
+        return self.__labels
 
     def _calculate_label(self, row):
         labels_prob = [row[label] for label in self._get_column_header()]
@@ -35,7 +36,7 @@ class BertMultipleResults(BertResults):
         sample_row_id = row[self.ID]
 
         opinion_id = MultipleIDFormatter.sample_row_id_to_opinion_id(sample_row_id)
-        _, source, target = bert_opinions.parse_row(opinion_id=opinion_id)
+        _, source, target = bert_opinions.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
 
         return Opinion(source_value=source,
                        target_value=target,

@@ -67,7 +67,7 @@ class BertOpinionsFormatter(object):
 
     # endregion
 
-    def parse_row(self, opinion_id):
+    def provide_opinion_info_by_opinion_id(self, opinion_id):
         assert(isinstance(opinion_id, unicode))
 
         opinion_row = self.__df[self.__df[self.ID] == opinion_id]

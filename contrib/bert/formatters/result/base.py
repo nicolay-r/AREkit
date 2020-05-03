@@ -18,6 +18,10 @@ class BertResults(object):
         self.__ids_formatter = ids_formatter
         self.__df = None
 
+    @property
+    def _IdsFormatter(self):
+        return self.__ids_formatter
+
     # region public methods
 
     def from_tsv(self, data_type, experiment, ids_values):

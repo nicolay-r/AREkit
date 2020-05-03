@@ -1,7 +1,6 @@
 from os import path
 from os.path import join
 
-from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.operations.documents import DocumentOperations
 from arekit.common.experiment.operations.opinions import OpinionOperations
 from arekit.common.experiment.data_type import DataType
@@ -11,7 +10,6 @@ from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_
 class BaseExperiment(OpinionOperations, DocumentOperations):
 
     def __init__(self, data_io, prepare_model_root):
-        assert(isinstance(data_io, DataIO))
         assert(isinstance(prepare_model_root, bool))
 
         OpinionOperations.__init__(self)

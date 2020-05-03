@@ -11,6 +11,10 @@ class BaseIDFormatter(object):
     i -- index in lined (for example: i=3 => 03)
     """
 
+    NEWS = u"n{news}"
+    OPINION = u"o{opinion}"
+    INDEX = u"i{index}"
+
     # region 'create' methods
 
     @staticmethod
@@ -19,9 +23,13 @@ class BaseIDFormatter(object):
         assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
 
-        return u"n{news}_o{opinion}_i{index}".format(news=linked_opinions.FirstOpinion.NewsID,
-                                                     opinion=linked_opinions.FirstOpinion.TextOpinionID,
-                                                     index=index_in_linked)
+        template = u"{}_{}_{}".format(BaseIDFormatter.NEWS,
+                                      BaseIDFormatter.OPINION,
+                                      BaseIDFormatter.INDEX)
+
+        return template.format(news=linked_opinions.FirstOpinion.NewsID,
+                               opinion=linked_opinions.FirstOpinion.TextOpinionID,
+                               index=index_in_linked)
 
     @staticmethod
     def create_sample_id(opinion_provider, linked_opinions, index_in_linked):
@@ -30,12 +38,17 @@ class BaseIDFormatter(object):
     @staticmethod
     def create_news_id_pattern(news_id):
         assert(isinstance(news_id, int))
-        return u"n{news}_".format(news=news_id)
+        return BaseIDFormatter.NEWS.format(news=news_id)
 
     @staticmethod
     def create_opinion_id_pattern(opinion_id):
         assert(isinstance(opinion_id, int))
-        return u"o{opinion}_".format(opinion=opinion_id)
+        return BaseIDFormatter.OPINION.format(opinion=opinion_id)
+
+    @staticmethod
+    def create_index_id_pattern(index_id):
+        assert(isinstance(index_id, int))
+        return BaseIDFormatter.INDEX.format(index=index_id)
 
     # endregion
 
@@ -44,11 +57,11 @@ class BaseIDFormatter(object):
     @staticmethod
     def parse_opinion_in_opinion_id(row_id):
         assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(u'o') + 1:row_id.index(u'_')])
+        return int(row_id[row_id.index(BaseIDFormatter.OPINION[0]) + 1:row_id.index(u'_')])
 
     @staticmethod
     def parse_news_in_sample_id(row_id):
         assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(u'n') + 1:row_id.index(u'_')])
+        return int(row_id[row_id.index(BaseIDFormatter.NEWS[0]) + 1:row_id.index(u'_')])
 
     # endregion

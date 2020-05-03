@@ -4,15 +4,20 @@ import shutil
 
 from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutralAnnotator
 from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnnotator
+
+from arekit.common.experiment.scales.base import BaseLabelScaleExperiment
 from arekit.common.experiment.scales.three import TwoScaleExperiment
 from arekit.common.experiment.scales.two import ThreeScaleExperiment
+
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
 class DataIO(object):
 
-    def __init__(self):
+    def __init__(self, labels_scale):
+        assert(isinstance(labels_scale, BaseLabelScaleExperiment))
         self.__model_name = None
+        self.__labels_scale = labels_scale
         self.__neutral_annot = self.__init_annotator()
 
     def __init_annotator(self):
@@ -23,9 +28,14 @@ class DataIO(object):
 
     # region Properties
 
+    # TODO. To Experiment
+    @property
+    def NeutralAnnotator(self):
+        return self.__neutral_annot
+
     @property
     def LabelsScale(self):
-        raise NotImplementedError()
+        return self.__labels_scale
 
     @property
     def Stemmer(self):
@@ -41,10 +51,6 @@ class DataIO(object):
 
     @property
     def FrameVariantCollection(self):
-        raise NotImplementedError()
-
-    @property
-    def NeutralAnnotator(self):
         raise NotImplementedError()
 
     @property

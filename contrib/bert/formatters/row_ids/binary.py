@@ -23,3 +23,13 @@ class BinaryIDFormatter(BaseIDFormatter):
             multiple=o_id,
             label=linked_opinions.get_linked_sentiment())
 
+    @staticmethod
+    def parse_label_in_sample_id(row_id):
+        assert(isinstance(row_id, unicode))
+        return int(row_id[row_id.index(u'l') + 1:len(row_id)])
+
+    @staticmethod
+    def parse_index_in_sample_id(row_id):
+        assert(isinstance(row_id, unicode))
+        return int(row_id[row_id.index(BaseIDFormatter.INDEX[0]) + 1:row_id.index(u'_')])
+

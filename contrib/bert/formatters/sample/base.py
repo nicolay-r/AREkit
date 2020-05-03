@@ -194,7 +194,11 @@ class BaseSampleFormatter(object):
 
         added = 0
 
-        for linked_wrap in opinion_provider.iter_linked_opinion_wrappers(balance=self.__is_train()):
+        linked_iter = opinion_provider.iter_linked_opinion_wrappers(
+            balance=self.__is_train(),
+            supported_labels=self.__label_provider.SupportedLabels)
+
+        for linked_wrap in linked_iter:
 
             for i in range(len(linked_wrap)):
                 rows_it = self.__provide_rows(

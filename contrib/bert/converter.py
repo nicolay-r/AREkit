@@ -23,13 +23,19 @@ def iter_eval_collections(formatter_type,
 
     data_type = DataType.Test
 
-    bert_test_samples = BertEncoder.create_formatter(data_type=data_type, formatter_type=formatter_type)
+    supported_labels = experiment.DataIO.LabelsScale.supported_labels()
+
+    bert_test_samples = BertEncoder.create_formatter(
+        data_type=data_type,
+        formatter_type=formatter_type,
+        supported_labels=supported_labels)
     bert_test_samples.from_tsv(experiment=experiment)
 
     bert_results = __read_results(formatter_type=formatter_type,
                                   data_type=data_type,
                                   experiment=experiment,
-                                  ids_values=bert_test_samples.extract_ids())
+                                  ids_values=bert_test_samples.extract_ids(),
+                                  supported_labels=supported_labels)
     assert(isinstance(bert_results, BertResults))
 
     bert_test_opinions = BertOpinionsFormatter(data_type=data_type)
@@ -66,7 +72,7 @@ def __to_doc_opinion(linked_wrap, label_calculation_mode):
                    sentiment=label)
 
 
-def __read_results(formatter_type, data_type, experiment, ids_values):
+def __read_results(formatter_type, data_type, experiment, ids_values, supported_labels):
     assert(isinstance(formatter_type, unicode))
     assert(isinstance(experiment, BaseExperiment))
     assert(isinstance(data_type, unicode))
@@ -79,7 +85,7 @@ def __read_results(formatter_type, data_type, experiment, ids_values):
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
     if SampleFormatters.is_binary(formatter_type):
-        results = BertMultipleResults()
+        results = BertMultipleResults(supported_labels=supported_labels)
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
     return results
