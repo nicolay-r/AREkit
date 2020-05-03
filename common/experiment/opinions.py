@@ -1,5 +1,6 @@
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.sample import InputSampleBase
+from arekit.common.news import News
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.base import BaseExperiment
@@ -63,7 +64,10 @@ def extract_text_opinions_and_parse_news(experiment,
 
     for doc_id in experiment.iter_news_indices(data_type):
 
-        news, parsed_news = experiment.read_parsed_news(doc_id=doc_id)
+        news = experiment.read_news(doc_id=doc_id)
+        parsed_news = news.parse(options=experiment.create_parse_options())
+
+        assert(isinstance(news, News))
 
         if NewsTermsStatisticShow:
             ParsedNewsHelper.debug_statistics(parsed_news)
@@ -78,7 +82,7 @@ def extract_text_opinions_and_parse_news(experiment,
         if not parsed_collection.contains_id(doc_id):
             parsed_collection.add(parsed_news)
         else:
-            print "Warning: Skipping document with id={}, news={}".format(news.DocumentID, news)
+            print "Warning: Skipping document with id={}, news={}".format(news.ID, news)
 
         opinions_it = __iter_opinion_collections(experiment=experiment,
                                                  doc_id=doc_id,

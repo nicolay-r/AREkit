@@ -6,9 +6,7 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel import RuSentRelExperiment
 from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
 
-from arekit.source.ruattitudes.helpers.news_helper import RuAttitudesNewsHelper
-from arekit.source.ruattitudes.helpers.parsed_news import RuAttitudesParsedNewsHelper
-
+from arekit.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
 logger = logging.getLogger(__name__)
 
@@ -36,17 +34,10 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelExperiment):
 
     # region 'read' public methods
 
-    # TODO. Read news
-    def read_parsed_news(self, doc_id):
+    def read_news(self, doc_id):
         if doc_id in self.RuSentRelNewsIDsList:
-            return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_parsed_news(doc_id=doc_id)
-
-        news = self.__ru_attitudes[doc_id]
-        # TODO. remove (will be provided in news)
-        parsed_news = RuAttitudesParsedNewsHelper.create_parsed_news(doc_id=doc_id, news=news)
-
-        # TODO. Return only one parameter (news).
-        return news, parsed_news
+            return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_news(doc_id=doc_id)
+        return self.__ru_attitudes[doc_id]
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))

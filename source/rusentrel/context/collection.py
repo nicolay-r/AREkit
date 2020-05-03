@@ -2,9 +2,9 @@ import logging
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.collection import TextOpinionCollection
+from arekit.source.rusentrel.context.opinion import RuSentRelTextOpinion
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
-from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
 
 
 logger = logging.getLogger(__name__)

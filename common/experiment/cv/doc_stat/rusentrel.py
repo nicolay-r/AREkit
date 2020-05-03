@@ -1,6 +1,6 @@
 from arekit.common.experiment.cv.doc_stat.base import DocStatGeneratorBase
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
-from arekit.source.rusentrel.news import RuSentRelNews
+from arekit.source.rusentrel.news.base import RuSentRelNews
 
 
 class RuSentRelDocStatGenerator(DocStatGeneratorBase):

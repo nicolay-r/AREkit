@@ -1,7 +1,7 @@
 import logging
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.source.ruattitudes.news import RuAttitudesNews
+from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.reader import RuAttitudesFormatReader
 
 
@@ -16,8 +16,8 @@ if __name__ == "__main__":
     ids = set()
     for news in reader.iter_news(stemmer):
         assert(isinstance(news, RuAttitudesNews))
-        if news.NewsIndex in ids:
-            logging.debug("index already exist: {}".format(news.NewsIndex))
-        ids.add(news.NewsIndex)
+        if news.ID in ids:
+            logging.debug("index already exist: {}".format(news.ID))
+        ids.add(news.ID)
 
     logger.debug("OK")

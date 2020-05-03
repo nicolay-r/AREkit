@@ -5,7 +5,7 @@ from arekit.common.opinions.base import Opinion
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
-from arekit.source.rusentrel.news import RuSentRelNews
+from arekit.source.rusentrel.news.base import RuSentRelNews
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.source.rusentrel.sentence import RuSentRelSentence
 from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
