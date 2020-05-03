@@ -1,5 +1,7 @@
+from arekit.common.experiment.base import BaseExperiment
 from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
 from arekit.common.labels.base import Label
+from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.end_type import EntityEndType
@@ -13,11 +15,14 @@ class OpinionProvider(object):
 
     def __init__(self, data_type, text_opinions):
         assert(isinstance(data_type, unicode))
+        assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
         self.__text_opinions = text_opinions
         self.__data_type = data_type
 
     @classmethod
     def from_experiment(cls, experiment, data_type):
+        assert(isinstance(experiment, BaseExperiment))
+
         text_opinions = extract_text_opinions_and_parse_news(
             experiment=experiment,
             data_type=data_type,
@@ -44,9 +49,12 @@ class OpinionProvider(object):
                 if count == 0:
                     break
 
-    def __iter_balanced(self):
+    def __iter_balanced(self, supported_labels):
+        assert(isinstance(supported_labels, list))
+
         counts = {}
-        for label in Label._get_supported_labels():
+        for label in supported_labels:
+            assert(isinstance(label, Label))
             counts[label] = 0
 
         for linked_wrap in self.__text_opinions.iter_wrapped_linked_text_opinions():
@@ -65,11 +73,12 @@ class OpinionProvider(object):
 
     # endregion
 
-    def iter_linked_opinion_wrappers(self, balance):
+    def iter_linked_opinion_wrappers(self, balance, supported_labels):
         assert(isinstance(balance, bool))
+        assert(isinstance(supported_labels, list) or supported_labels is None)
 
         linked_opinion_wrap_it = self.__text_opinions.iter_wrapped_linked_text_opinions() \
-            if not balance else self.__iter_balanced()
+            if not balance else self.__iter_balanced(supported_labels=supported_labels)
 
         for linked_wrap in linked_opinion_wrap_it:
             yield linked_wrap

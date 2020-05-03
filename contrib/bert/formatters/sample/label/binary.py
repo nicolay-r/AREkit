@@ -10,6 +10,5 @@ class BinaryLabelProvider(LabelProvider):
         assert(isinstance(etalon_label, Label))
         return 1 if expected_label == etalon_label else 0
 
-    @staticmethod
-    def get_supported_labels():
+    def get_supported_labels(self):
         return [0, 1]

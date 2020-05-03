@@ -1,6 +1,11 @@
 import glob
 import os
 import shutil
+
+from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutralAnnotator
+from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnnotator
+from arekit.common.experiment.scales.three import TwoScaleExperiment
+from arekit.common.experiment.scales.two import ThreeScaleExperiment
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
@@ -8,8 +13,19 @@ class DataIO(object):
 
     def __init__(self):
         self.__model_name = None
+        self.__neutral_annot = self.__init_annotator()
+
+    def __init_annotator(self):
+        if isinstance(self.LabelsScale, TwoScaleExperiment):
+            return TwoScaleNeutralAnnotator()
+        if isinstance(self.LabelsScale, ThreeScaleExperiment):
+            return ThreeScaleNeutralAnnotator()
 
     # region Properties
+
+    @property
+    def LabelsScale(self):
+        raise NotImplementedError()
 
     @property
     def Stemmer(self):
@@ -36,10 +52,6 @@ class DataIO(object):
         raise NotImplementedError()
 
     @property
-    def KeepTokens(self):
-        return True
-
-    @property
     def Evaluator(self):
         raise NotImplementedError()
 
@@ -59,6 +71,10 @@ class DataIO(object):
     @property
     def TermsPerContext(self):
         raise NotImplementedError
+
+    @property
+    def KeepTokens(self):
+        return True
 
     # endregion
 

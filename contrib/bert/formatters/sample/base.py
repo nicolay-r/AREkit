@@ -160,7 +160,7 @@ class BaseSampleFormatter(object):
             """
             Enumerate all opinions as if it would be with the different label types.
             """
-            for label in Label._get_supported_labels():
+            for label in self.__label_provider.get_supported_labels():
                 yield self.__create_row(opinion_provider=opinion_provider,
                                         linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
                                         index_in_linked=index_in_linked,

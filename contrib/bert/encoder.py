@@ -32,30 +32,37 @@ class BertEncoder(object):
             opnion_formatter.format(opinion_provider=opinion_provider)
             opnion_formatter.to_tsv_by_experiment(experiment=experiment)
 
-            sampler = BertEncoder.create_formatter(data_type=data_type, formatter_type=sample_formatter)
+            sampler = BertEncoder.create_formatter(data_type=data_type,
+                                                   formatter_type=sample_formatter,
+                                                   supported_labels=experiment.DataIO.LabelsScale.supported_labels())
             sampler.to_samples(opinion_provider=opinion_provider)
             sampler.to_tsv_by_experiment(experiment=experiment)
 
     @staticmethod
-    def create_formatter(data_type, formatter_type):
+    def create_formatter(data_type, formatter_type, supported_labels):
         assert(isinstance(formatter_type, unicode))
+        assert(isinstance(supported_labels, list))
 
         if formatter_type == SampleFormatters.CLASSIF_M:
             return BaseSampleFormatter(data_type=data_type,
-                                       label_provider=MultipleLabelProvider(),
+                                       label_provider=MultipleLabelProvider(supported_labels=supported_labels),
                                        text_provider=SingleTextProvider())
         if formatter_type == SampleFormatters.CLASSIF_B:
             return BaseSampleFormatter(data_type=data_type,
-                                       label_provider=BinaryLabelProvider(),
+                                       label_provider=BinaryLabelProvider(supported_labels=supported_labels),
                                        text_provider=SingleTextProvider())
         if formatter_type == SampleFormatters.NLI_M:
-            return NliMultipleSampleFormatter(data_type=data_type)
+            return NliMultipleSampleFormatter(data_type=data_type,
+                                              supported_labels=supported_labels)
         if formatter_type == SampleFormatters.QA_M:
-            return QaMultipleSampleFormatter(data_type=data_type)
+            return QaMultipleSampleFormatter(data_type=data_type,
+                                             supported_labels=supported_labels)
         if formatter_type == SampleFormatters.NLI_B:
-            return NliBinarySampleFormatter(data_type=data_type)
+            return NliBinarySampleFormatter(data_type=data_type,
+                                            supported_labels=supported_labels)
         if formatter_type == SampleFormatters.QA_B:
-            return QaBinarySampleFormatter(data_type=data_type)
+            return QaBinarySampleFormatter(data_type=data_type,
+                                           supported_labels=supported_labels)
 
         return None
 

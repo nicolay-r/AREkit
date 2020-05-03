@@ -15,10 +15,10 @@ class QaMultipleSampleFormatter(BaseSampleFormatter):
     https://www.aclweb.org/anthology/N19-1035.pdf
     """
 
-    def __init__(self, data_type):
+    def __init__(self, data_type, supported_labels):
 
         text_b_template = u'Что вы думаете по поводу отношения {subject} к {object} в контексте : " {context} " ?'
         super(QaMultipleSampleFormatter, self).__init__(
             data_type=data_type,
             text_provider=PairTextProvider(text_b_template),
-            label_provider=MultipleLabelProvider())
+            label_provider=MultipleLabelProvider(supported_labels=supported_labels))

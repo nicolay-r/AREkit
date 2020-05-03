@@ -12,7 +12,6 @@ from arekit.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 
-# TODO. Rename as experiment
 class RuSentRelExperiment(CVBasedExperiment):
     """
     Represents Input interface for NeuralNetwork ctx

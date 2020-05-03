@@ -16,11 +16,11 @@ class QaBinarySampleFormatter(BaseSampleFormatter):
     https://www.aclweb.org/anthology/N19-1035.pdf
     """
 
-    def __init__(self, data_type):
+    def __init__(self, data_type, supported_labels):
 
         # TODO. Provide label
         text_b_template = u'Что вы думаете по поводу отношения {subject} к {object} в контексте : " {context} " ?'
         super(QaBinarySampleFormatter, self).__init__(
             data_type=data_type,
             text_provider=PairTextProvider(text_b_template),
-            label_provider=BinaryLabelProvider())
+            label_provider=BinaryLabelProvider(supported_labels=supported_labels))
