@@ -36,31 +36,12 @@ def __check_text_opinion(text_opinion, terms_per_context):
         window_size=terms_per_context,
         text_opinion=text_opinion)
 
-# endregions
 
-
-def extract_text_opinions_and_parse_news(experiment,
-                                         data_type,
-                                         terms_per_context):
-    """
-    Extracting text-level opinions based on doc-level opinions in documents,
-    obtained by information in experiment.
-
-    NOTE:
-    1. Assumes to provide the same label (doc level opinion) onto related text-level opinions.
-    """
+def __create_parsed_collection(experiment, data_type):
     assert(isinstance(experiment, BaseExperiment))
     assert(isinstance(data_type, unicode))
-    assert(isinstance(terms_per_context, int))
-    assert(terms_per_context > 0)
-
-    # TODO. Extract parsed_news_collection creation from here,
-    # TODO. ... as it merged with text_opinion_extraction process
 
     parsed_collection = ParsedNewsCollection()
-
-    text_opinions = LabeledLinkedTextOpinionCollection(
-        parsed_news_collection=parsed_collection)
 
     for doc_id in experiment.iter_news_indices(data_type):
 
@@ -83,6 +64,37 @@ def extract_text_opinions_and_parse_news(experiment,
             parsed_collection.add(parsed_news)
         else:
             print "Warning: Skipping document with id={}, news={}".format(news.ID, news)
+
+    return parsed_collection
+
+# endregions
+
+
+def extract_text_opinions_and_parse_news(experiment,
+                                         data_type,
+                                         terms_per_context):
+    """
+    Extracting text-level opinions based on doc-level opinions in documents,
+    obtained by information in experiment.
+
+    NOTE:
+    1. Assumes to provide the same label (doc level opinion) onto related text-level opinions.
+    """
+    assert(isinstance(experiment, BaseExperiment))
+    assert(isinstance(data_type, unicode))
+    assert(isinstance(terms_per_context, int))
+    assert(terms_per_context > 0)
+
+    parsed_collection = __create_parsed_collection(
+        experiment=experiment,
+        data_type=data_type)
+
+    text_opinions = LabeledLinkedTextOpinionCollection(
+        parsed_news_collection=parsed_collection)
+
+    for doc_id in parsed_collection.iter_news_ids():
+
+        news = experiment.read_news(doc_id=doc_id)
 
         opinions_it = __iter_opinion_collections(experiment=experiment,
                                                  doc_id=doc_id,
