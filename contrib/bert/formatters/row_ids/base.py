@@ -1,4 +1,3 @@
-from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 
@@ -53,6 +52,10 @@ class BaseIDFormatter(object):
         return BaseIDFormatter.INDEX.format(index=index_id)
 
     # endregion
+
+    @staticmethod
+    def convert_sample_id_to_opinion_id(sample_id):
+        raise NotImplementedError()
 
     # region 'parse' methods
 

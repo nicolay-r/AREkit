@@ -34,7 +34,7 @@ class BertEncoder(object):
 
             sampler = BertEncoder.create_formatter(data_type=data_type,
                                                    formatter_type=sample_formatter,
-                                                   label_scaler=experiment.DataIO.LabelsScale)
+                                                   label_scaler=experiment.DataIO.LabelsScaler)
             sampler.to_samples(opinion_provider=opinion_provider)
             sampler.to_tsv_by_experiment(experiment=experiment)
 

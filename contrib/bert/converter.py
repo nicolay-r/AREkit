@@ -1,5 +1,6 @@
 from arekit.common.experiment.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
@@ -23,19 +24,19 @@ def iter_eval_collections(formatter_type,
 
     data_type = DataType.Test
 
-    supported_labels = experiment.DataIO.LabelsScale.ordered_suppoted_labels()
-
     bert_test_samples = BertEncoder.create_formatter(
         data_type=data_type,
         formatter_type=formatter_type,
-        supported_labels=supported_labels)
+        label_scaler=experiment.DataIO.LabelsScaler)
+
     bert_test_samples.from_tsv(experiment=experiment)
 
     bert_results = __read_results(formatter_type=formatter_type,
                                   data_type=data_type,
                                   experiment=experiment,
                                   ids_values=bert_test_samples.extract_ids(),
-                                  supported_labels=supported_labels)
+                                  labels_scaler=experiment.DataIO.LabelsScaler)
+
     assert(isinstance(bert_results, BertResults))
 
     bert_test_opinions = BertOpinionsFormatter(data_type=data_type)
@@ -72,20 +73,21 @@ def __to_doc_opinion(linked_wrap, label_calculation_mode):
                    sentiment=label)
 
 
-def __read_results(formatter_type, data_type, experiment, ids_values, supported_labels):
+def __read_results(formatter_type, data_type, experiment, ids_values, labels_scaler):
     assert(isinstance(formatter_type, unicode))
     assert(isinstance(experiment, BaseExperiment))
     assert(isinstance(data_type, unicode))
     assert(isinstance(ids_values, list))
+    assert(isinstance(labels_scaler, BaseLabelScaler))
 
     results = None
 
     if SampleFormatters.is_binary(formatter_type):
-        results = BertBinaryResults()
+        results = BertBinaryResults(labels_scaler=labels_scaler)
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
     if SampleFormatters.is_binary(formatter_type):
-        results = BertMultipleResults(ordered_labels=supported_labels)
+        results = BertMultipleResults(labels_scaler=labels_scaler)
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
     return results

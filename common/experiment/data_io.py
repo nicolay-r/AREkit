@@ -21,9 +21,9 @@ class DataIO(object):
         self.__neutral_annot = self.__init_annotator()
 
     def __init_annotator(self):
-        if isinstance(self.LabelsScale, ThreeLabelScaler):
+        if isinstance(self.LabelsScaler, ThreeLabelScaler):
             return TwoScaleNeutralAnnotator()
-        if isinstance(self.LabelsScale, TwoLabelScaler):
+        if isinstance(self.LabelsScaler, TwoLabelScaler):
             return ThreeScaleNeutralAnnotator()
 
     # region Properties
@@ -34,7 +34,7 @@ class DataIO(object):
         return self.__neutral_annot
 
     @property
-    def LabelsScale(self):
+    def LabelsScaler(self):
         return self.__labels_scale
 
     @property
