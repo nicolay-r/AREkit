@@ -38,10 +38,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
         # TODO. exp_io.read_parsed_news.
         # TODO. exp_io.read_etalon_opinion_collection()
 
-        # TODO. Single parameter
-        news, _ = self.Experiment.read_parsed_news(doc_id)
         collection = self.Experiment.read_etalon_opinion_collection(doc_id)
-
         return self.Experiment.create_opinon_collection(
             opinions=list(self.__iter_opinion_as_neutral(collection)))
 

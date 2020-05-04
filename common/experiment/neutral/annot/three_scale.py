@@ -28,8 +28,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     def __create_opinions_for_extraction(self, doc_id, data_type):
         assert(isinstance(self.Experiment, BaseExperiment))
-        # TODO. Single parameter
-        news, _ = self.Experiment.read_parsed_news(doc_id=doc_id)
+        news = self.Experiment.read_news(doc_id=doc_id)
         opinions = self.Experiment.read_etalon_opinion_collection(doc_id=doc_id)
         collection = self.__algo.make_neutrals(
             news_id=doc_id,
@@ -44,9 +43,14 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         assert(isinstance(experiment, BaseExperiment))
         super(ThreeScaleNeutralAnnotator, self).initialize(experiment)
 
+        def __parse_news(doc_id):
+            assert(isinstance(doc_id, int))
+            news = self.Experiment.read_news(doc_id=doc_id)
+            return news.parse(options=self.Experiment.create_parse_options())
+
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=experiment.DataIO.SynonymsCollection,
-            create_parsed_news_func=lambda doc_id: self.Experiment.read_parsed_news(doc_id=doc_id),
+            create_parsed_news_func=lambda doc_id: __parse_news(doc_id),
             iter_news_ids=self.iter_doc_ids_to_compare(),
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 

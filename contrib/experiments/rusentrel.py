@@ -6,13 +6,12 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.experiment.cv_based import CVBasedExperiment
-from arekit.source.rusentrel.helpers.parsed_news import RuSentRelParsedNewsHelper
-from arekit.source.rusentrel.news import RuSentRelNews
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.source.rusentrel.news.base import RuSentRelNews
+from arekit.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 
-# TODO. Rename as experiment
 class RuSentRelExperiment(CVBasedExperiment):
     """
     Represents Input interface for NeuralNetwork ctx
@@ -42,19 +41,13 @@ class RuSentRelExperiment(CVBasedExperiment):
 
     # region 'read' public methods
 
-    # TODO. Read news. (rename)
-    def read_parsed_news(self, doc_id):
+    def read_news(self, doc_id):
         assert(isinstance(doc_id, int))
+        return RuSentRelNews.read_document(doc_id=doc_id, synonyms=self.DataIO.SynonymsCollection)
 
-        news = RuSentRelNews.read_document(doc_id=doc_id,
-                                           synonyms=self.DataIO.SynonymsCollection)
-
-        parsed_news = RuSentRelParsedNewsHelper.create_parsed_news(rusentrel_news_id=doc_id,
-                                                                   rusentrel_news=news,
-                                                                   keep_tokens=self.DataIO.KeepTokens,
-                                                                   stemmer=self.DataIO.Stemmer)
-
-        return news, parsed_news
+    def create_parse_options(self):
+        return RuSentRelNewsParseOptions(keep_tokens=self.DataIO.KeepTokens,
+                                         stemmer=self.DataIO.Stemmer)
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, unicode))

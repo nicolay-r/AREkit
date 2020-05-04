@@ -1,9 +1,25 @@
-class LabelProvider(object):
+from arekit.common.experiment.scales.base import BaseLabelScaler
 
-    @staticmethod
-    def get_label(expected_label, etalon_label):
+
+class BertLabelProvider(object):
+
+    def __init__(self, label_scaler):
+        assert(isinstance(label_scaler, BaseLabelScaler))
+        self.__label_scaler = label_scaler
+
+    @property
+    def LabelScaler(self):
+        return self.__label_scaler
+
+    @property
+    def SupportedLabels(self):
+        return self.__label_scaler.ordered_suppoted_labels()
+
+    @property
+    def OutputLabels(self):
         raise NotImplementedError()
 
     @staticmethod
-    def get_supported_labels():
+    def calculate_output_label(expected_label, etalon_label):
         raise NotImplementedError()
+

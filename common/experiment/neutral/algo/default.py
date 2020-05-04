@@ -43,7 +43,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
 
         self.__pnc = ParsedNewsCollection()
         for doc_id in RuSentRelIOUtils.iter_collection_indices():
-            _, parsed_news = create_parsed_news_func(doc_id)
+            parsed_news = create_parsed_news_func(doc_id)
             self.__pnc.add(parsed_news)
 
     # region private methods

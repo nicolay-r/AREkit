@@ -5,7 +5,7 @@ from arekit.common.labels.base import Label
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.processing.text.parser import TextParser
 from arekit.source.ruattitudes.io_utils import RuAttitudesIOUtils, RuAttitudesVersions
-from arekit.source.ruattitudes.news import RuAttitudesNews
+from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 

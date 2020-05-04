@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 # iterating through collection
 for news in reader.iter_news(stemmer):
-    logger.debug(u"News: {}".format(news.NewsIndex))
+    logger.debug(u"News: {}".format(news.ID))
     for sentence in news.iter_sentences():
         # text
         logger.debug(u" ".join(sentence.ParsedText.Terms).encode('utf-8'))

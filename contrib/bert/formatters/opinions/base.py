@@ -67,7 +67,7 @@ class BertOpinionsFormatter(object):
 
     # endregion
 
-    def parse_row(self, opinion_id):
+    def provide_opinion_info_by_opinion_id(self, opinion_id):
         assert(isinstance(opinion_id, unicode))
 
         opinion_row = self.__df[self.__df[self.ID] == opinion_id]
@@ -84,7 +84,11 @@ class BertOpinionsFormatter(object):
 
         print "Adding opinions ('{}') ... ".format(self.__data_type)
 
-        for linked_wrapper in opinion_provider.iter_linked_opinion_wrappers(balance=False):
+        linked_iter = opinion_provider.iter_linked_opinion_wrappers(
+            balance=False,
+            supported_labels=None)
+
+        for linked_wrapper in linked_iter:
             row = BertOpinionsFormatter.__create_opinion_row(
                 opinion_provider=opinion_provider,
                 linked_wrapper=linked_wrapper)

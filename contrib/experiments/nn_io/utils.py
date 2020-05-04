@@ -1,5 +1,5 @@
 from arekit.processing.lemmatization.base import Stemmer
-from arekit.source.ruattitudes.news import RuAttitudesNews
+from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.reader import RuAttitudesFormatReader
 
 
@@ -20,9 +20,9 @@ def read_ruattitudes_in_memory(stemmer, doc_ids_set=None):
     for news in RuAttitudesFormatReader.iter_news(stemmer=stemmer):
         assert(isinstance(news, RuAttitudesNews))
 
-        if doc_ids_set is not None and news.NewsIndex not in doc_ids_set:
+        if doc_ids_set is not None and news.ID not in doc_ids_set:
             continue
 
-        d[news.NewsIndex] = news
+        d[news.ID] = news
 
     return d

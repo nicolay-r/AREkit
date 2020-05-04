@@ -1,28 +1,32 @@
 # -*- coding: utf-8 -*-
+from arekit.common import utils
 from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news import News
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
+
+from arekit.processing.text.parser import TextParser
+
+from arekit.source.rusentrel.context.collection import RuSentRelTextOpinionCollection
+from arekit.source.rusentrel.context.opinion import RuSentRelTextOpinion
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
-from arekit.source.rusentrel.helpers.context.collection import RuSentRelTextOpinionCollection
-from arekit.source.rusentrel.helpers.context.opinion import RuSentRelTextOpinion
-from arekit.source.rusentrel.helpers.news import RuSentRelNewsHelper
+from arekit.source.rusentrel.news.helper import RuSentRelNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
+from arekit.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 from arekit.source.rusentrel.sentence import RuSentRelSentence
 
 
 class RuSentRelNews(News):
 
     def __init__(self, doc_id, sentences, entities):
-        assert(isinstance(doc_id, int))
         assert(isinstance(sentences, list))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
-        super(News, self).__init__()
+        super(RuSentRelNews, self).__init__(news_id=doc_id)
 
-        self.__doc_id = doc_id
         self.__sentences = sentences
         self.__entities = entities
         self.__helper = RuSentRelNewsHelper(self)
@@ -40,10 +44,6 @@ class RuSentRelNews(News):
     @property
     def Helper(self):
         return self.__helper
-
-    @property
-    def DocumentID(self):
-        return self.__doc_id
 
     # endregion
 
@@ -156,7 +156,26 @@ class RuSentRelNews(News):
         for entries in self.__iter_rusentrel_text_opinion_entries(opinions=opinions):
             yield LinkedTextOpinionsWrapper(linked_text_opinions=[self.__entry_to_text_opinion(entry) for entry in entries])
 
+    def parse(self, options):
+        assert(isinstance(options, RuSentRelNewsParseOptions))
+        parsed_sentences_iter = self.__iter_parsed_sentences(options)
+        return ParsedNews(news_id=self.ID,
+                          parsed_sentences=parsed_sentences_iter)
+
     # region private methods
+
+    def __iter_parsed_sentences(self, options):
+        assert(isinstance(options, RuSentRelNewsParseOptions))
+
+        for s_index, sentence in enumerate(self.iter_sentences()):
+
+            string_iter = utils.iter_text_with_substitutions(
+                text=sentence.Text,
+                iter_subs=sentence.iter_entity_with_local_bounds())
+
+            yield TextParser.parse_string_list(string_iter=string_iter,
+                                               keep_tokens=options.KeepTokens,
+                                               stemmer=options.Stemmer)
 
     @staticmethod
     def __entry_to_text_opinion(entry):
@@ -186,7 +205,7 @@ class RuSentRelNews(News):
         for opinion in opinions:
 
             yield RuSentRelTextOpinionCollection.from_opinion(
-                rusentrel_news_id=self.DocumentID,
+                rusentrel_news_id=self.ID,
                 doc_entities=self.DocEntities,
                 opinion=opinion,
                 check_text_opinion_correctness=same_sentence_text_opinions)

@@ -1,5 +1,6 @@
 from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.sample import InputSampleBase
+from arekit.common.news import News
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.base import BaseExperiment
@@ -35,6 +36,37 @@ def __check_text_opinion(text_opinion, terms_per_context):
         window_size=terms_per_context,
         text_opinion=text_opinion)
 
+
+def __create_parsed_collection(experiment, data_type):
+    assert(isinstance(experiment, BaseExperiment))
+    assert(isinstance(data_type, unicode))
+
+    parsed_collection = ParsedNewsCollection()
+
+    for doc_id in experiment.iter_news_indices(data_type):
+
+        news = experiment.read_news(doc_id=doc_id)
+        parsed_news = news.parse(options=experiment.create_parse_options())
+
+        assert(isinstance(news, News))
+
+        if NewsTermsStatisticShow:
+            ParsedNewsHelper.debug_statistics(parsed_news)
+        if NewsTermsShow:
+            ParsedNewsHelper.debug_show_terms(parsed_news)
+
+        parsed_news.modify_parsed_sentences(
+            lambda sentence: FrameVariantsParser.parse_frames_in_parsed_text(
+                frame_variants_collection=experiment.DataIO.FrameVariantCollection,
+                parsed_text=sentence))
+
+        if not parsed_collection.contains_id(doc_id):
+            parsed_collection.add(parsed_news)
+        else:
+            print "Warning: Skipping document with id={}, news={}".format(news.ID, news)
+
+    return parsed_collection
+
 # endregions
 
 
@@ -53,32 +85,16 @@ def extract_text_opinions_and_parse_news(experiment,
     assert(isinstance(terms_per_context, int))
     assert(terms_per_context > 0)
 
-    # TODO. Extract parsed_news_collection creation from here,
-    # TODO. ... as it merged with text_opinion_extraction process
-
-    parsed_collection = ParsedNewsCollection()
+    parsed_collection = __create_parsed_collection(
+        experiment=experiment,
+        data_type=data_type)
 
     text_opinions = LabeledLinkedTextOpinionCollection(
         parsed_news_collection=parsed_collection)
 
-    for doc_id in experiment.iter_news_indices(data_type):
+    for doc_id in parsed_collection.iter_news_ids():
 
-        news, parsed_news = experiment.read_parsed_news(doc_id=doc_id)
-
-        if NewsTermsStatisticShow:
-            ParsedNewsHelper.debug_statistics(parsed_news)
-        if NewsTermsShow:
-            ParsedNewsHelper.debug_show_terms(parsed_news)
-
-        parsed_news.modify_parsed_sentences(
-            lambda sentence: FrameVariantsParser.parse_frames_in_parsed_text(
-                frame_variants_collection=experiment.DataIO.FrameVariantCollection,
-                parsed_text=sentence))
-
-        if not parsed_collection.contains_id(doc_id):
-            parsed_collection.add(parsed_news)
-        else:
-            print "Warning: Skipping document with id={}, news={}".format(news.DocumentID, news)
+        news = experiment.read_news(doc_id=doc_id)
 
         opinions_it = __iter_opinion_collections(experiment=experiment,
                                                  doc_id=doc_id,

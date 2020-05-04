@@ -14,9 +14,9 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.base import BaseExperiment
 from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
 from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
-from arekit.contrib.bert.formatters.sample.label.base import LabelProvider
-from arekit.contrib.bert.formatters.sample.label.binary import BinaryLabelProvider
-from arekit.contrib.bert.formatters.sample.label.multiple import MultipleLabelProvider
+from arekit.contrib.bert.formatters.sample.label.base import BertLabelProvider
+from arekit.contrib.bert.formatters.sample.label.binary import BertBinaryLabelProvider
+from arekit.contrib.bert.formatters.sample.label.multiple import BertMultipleLabelProvider
 from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
 from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
@@ -39,7 +39,7 @@ class BaseSampleFormatter(object):
     T_IND = 't_ind'
 
     def __init__(self, data_type, label_provider, text_provider):
-        assert(isinstance(label_provider, LabelProvider))
+        assert(isinstance(label_provider, BertLabelProvider))
         assert(isinstance(text_provider, SingleTextProvider))
 
         self.__data_type = data_type
@@ -53,24 +53,13 @@ class BaseSampleFormatter(object):
 
     @staticmethod
     def __create_row_ids_formatter(label_provider):
-        if isinstance(label_provider, BinaryLabelProvider):
+        if isinstance(label_provider, BertBinaryLabelProvider):
             return BinaryIDFormatter()
-        if isinstance(label_provider, MultipleLabelProvider):
+        if isinstance(label_provider, BertMultipleLabelProvider):
             return MultipleIDFormatter()
 
     def __is_train(self):
         return self.__data_type == DataType.Train
-
-    def __get_class(self, l):
-        assert(isinstance(l, Label))
-        return self.__df[self.__df[self.LABEL] == self.__label_provider.get_label(expected_label=l, etalon_label=l)]
-
-    def __get_largest_class_size(self):
-
-        sizes = [len(self.__get_class(label))
-                 for label in self.__label_provider.get_supported_labels()]
-
-        return max(sizes)
 
     def __get_columns_list_with_types(self):
         """
@@ -131,11 +120,12 @@ class BaseSampleFormatter(object):
         row[self.ID] = self.__row_ids_formatter.create_sample_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrap,
-            index_in_linked=index_in_linked)
+            index_in_linked=index_in_linked,
+            label_scaler=self.__label_provider.LabelScaler)
 
         if self.__is_train():
-            row[self.LABEL] = self.__label_provider.get_label(
-                expected_label=linked_wrap.get_linked_sentiment(),
+            row[self.LABEL] = self.__label_provider.calculate_output_label(
+                expected_label=linked_wrap.get_linked_label(),
                 etalon_label=etalon_label)
 
         terms = list(parsed_news.iter_sentence_terms(sentence_ind))
@@ -160,7 +150,7 @@ class BaseSampleFormatter(object):
             """
             Enumerate all opinions as if it would be with the different label types.
             """
-            for label in Label._get_supported_labels():
+            for label in self.__label_provider.SupportedLabels:
                 yield self.__create_row(opinion_provider=opinion_provider,
                                         linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
                                         index_in_linked=index_in_linked,
@@ -194,7 +184,11 @@ class BaseSampleFormatter(object):
 
         added = 0
 
-        for linked_wrap in opinion_provider.iter_linked_opinion_wrappers(balance=self.__is_train()):
+        linked_iter = opinion_provider.iter_linked_opinion_wrappers(
+            balance=self.__is_train(),
+            supported_labels=self.__label_provider.SupportedLabels)
+
+        for linked_wrap in linked_iter:
 
             for i in range(len(linked_wrap)):
                 rows_it = self.__provide_rows(

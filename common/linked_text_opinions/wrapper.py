@@ -20,7 +20,7 @@ class LinkedTextOpinionsWrapper(object):
     def RelatedNewsID(self):
         return self.FirstOpinion.NewsID
 
-    def get_linked_sentiment(self):
+    def get_linked_label(self):
         return self.FirstOpinion.Sentiment
 
     def get_prior_opinion_by_index(self, index):
