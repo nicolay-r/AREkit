@@ -1,3 +1,4 @@
+from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 
@@ -14,6 +15,7 @@ class BaseIDFormatter(object):
     NEWS = u"n{news}"
     OPINION = u"o{opinion}"
     INDEX = u"i{index}"
+    SEPARATOR = u'_'
 
     # region 'create' methods
 
@@ -23,16 +25,16 @@ class BaseIDFormatter(object):
         assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
 
-        template = u"{}_{}_{}".format(BaseIDFormatter.NEWS,
-                                      BaseIDFormatter.OPINION,
-                                      BaseIDFormatter.INDEX)
+        template = BaseIDFormatter.SEPARATOR.join([BaseIDFormatter.NEWS,
+                                                   BaseIDFormatter.OPINION,
+                                                   BaseIDFormatter.INDEX])
 
         return template.format(news=linked_opinions.FirstOpinion.NewsID,
                                opinion=linked_opinions.FirstOpinion.TextOpinionID,
                                index=index_in_linked)
 
     @staticmethod
-    def create_sample_id(opinion_provider, linked_opinions, index_in_linked):
+    def create_sample_id(opinion_provider, linked_opinions, index_in_linked, label_scaler):
         raise NotImplementedError()
 
     @staticmethod
@@ -57,11 +59,11 @@ class BaseIDFormatter(object):
     @staticmethod
     def parse_opinion_in_opinion_id(row_id):
         assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(BaseIDFormatter.OPINION[0]) + 1:row_id.index(u'_')])
+        return int(row_id[row_id.index(BaseIDFormatter.OPINION[0]) + 1:row_id.index(BaseIDFormatter.SEPARATOR)])
 
     @staticmethod
     def parse_news_in_sample_id(row_id):
         assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(BaseIDFormatter.NEWS[0]) + 1:row_id.index(u'_')])
+        return int(row_id[row_id.index(BaseIDFormatter.NEWS[0]) + 1:row_id.index(BaseIDFormatter.SEPARATOR)])
 
     # endregion

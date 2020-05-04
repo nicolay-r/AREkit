@@ -23,7 +23,7 @@ def iter_eval_collections(formatter_type,
 
     data_type = DataType.Test
 
-    supported_labels = experiment.DataIO.LabelsScale.supported_labels()
+    supported_labels = experiment.DataIO.LabelsScale.ordered_suppoted_labels()
 
     bert_test_samples = BertEncoder.create_formatter(
         data_type=data_type,
@@ -85,7 +85,7 @@ def __read_results(formatter_type, data_type, experiment, ids_values, supported_
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
     if SampleFormatters.is_binary(formatter_type):
-        results = BertMultipleResults(supported_labels=supported_labels)
+        results = BertMultipleResults(ordered_labels=supported_labels)
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
     return results

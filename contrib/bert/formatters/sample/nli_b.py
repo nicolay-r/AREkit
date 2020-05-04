@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
-from arekit.contrib.bert.formatters.sample.label.binary import BinaryLabelProvider
+from arekit.contrib.bert.formatters.sample.label.binary import BertBinaryLabelProvider
 from arekit.contrib.bert.formatters.sample.text.pair import PairTextProvider
 
 
@@ -15,11 +15,11 @@ class NliBinarySampleFormatter(BaseSampleFormatter):
     https://www.aclweb.org/anthology/N19-1035.pdf
     """
 
-    def __init__(self, data_type, supported_labels):
+    def __init__(self, data_type, label_scaler):
 
         # TODO. provide label
         text_b_template = u' {subject} к {object} в контексте : " {context} "'
         super(NliBinarySampleFormatter, self).__init__(
             data_type=data_type,
             text_provider=PairTextProvider(text_b_template),
-            label_provider=BinaryLabelProvider(supported_labels=supported_labels))
+            label_provider=BertBinaryLabelProvider(label_scaler=label_scaler))

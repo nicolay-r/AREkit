@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import Label
 from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.opinions.base import Opinion
@@ -11,16 +12,15 @@ from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 
 class BertMultipleResults(BertResults):
 
-    def __init__(self, supported_labels):
-        assert(isinstance(supported_labels, list))
+    def __init__(self, labels_scaler):
+        assert(isinstance(labels_scaler, BaseLabelScaler))
         super(BertMultipleResults, self).__init__(ids_formatter=MultipleIDFormatter())
-        self.__labels = supported_labels
+        self.__labels_scaler = labels_scaler
 
     # region protected methods
 
-    # TODO. Use label provider instead
     def _get_column_header(self):
-        return self.__labels
+        return self.__labels_scaler.ordered_suppoted_labels()
 
     def _calculate_label(self, row):
         labels_prob = [row[label] for label in self._get_column_header()]

@@ -7,7 +7,7 @@ class MultipleIDFormatter(BaseIDFormatter):
     """
 
     @staticmethod
-    def create_sample_id(opinion_provider, linked_opinions, index_in_linked):
+    def create_sample_id(opinion_provider, linked_opinions, index_in_linked, label_scaler):
         BaseIDFormatter.create_opinion_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_opinions,
@@ -20,5 +20,5 @@ class MultipleIDFormatter(BaseIDFormatter):
         Here the latter ommited and id could be suffixed with 'i0' only.
         """
         assert(isinstance(row_id, unicode))
-        return row_id[:row_id.find(u'i')] + u"i0"
+        return row_id[:row_id.find(BaseIDFormatter.INDEX)] + u"i0"
 

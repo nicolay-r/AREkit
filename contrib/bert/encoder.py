@@ -6,8 +6,8 @@ from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
-from arekit.contrib.bert.formatters.sample.label.binary import BinaryLabelProvider
-from arekit.contrib.bert.formatters.sample.label.multiple import MultipleLabelProvider
+from arekit.contrib.bert.formatters.sample.label.binary import BertBinaryLabelProvider
+from arekit.contrib.bert.formatters.sample.label.multiple import BertMultipleLabelProvider
 from arekit.contrib.bert.formatters.sample.nli_b import NliBinarySampleFormatter
 from arekit.contrib.bert.formatters.sample.nli_m import NliMultipleSampleFormatter
 from arekit.contrib.bert.formatters.sample.qa_b import QaBinarySampleFormatter
@@ -34,35 +34,34 @@ class BertEncoder(object):
 
             sampler = BertEncoder.create_formatter(data_type=data_type,
                                                    formatter_type=sample_formatter,
-                                                   supported_labels=experiment.DataIO.LabelsScale.supported_labels())
+                                                   label_scaler=experiment.DataIO.LabelsScale)
             sampler.to_samples(opinion_provider=opinion_provider)
             sampler.to_tsv_by_experiment(experiment=experiment)
 
     @staticmethod
-    def create_formatter(data_type, formatter_type, supported_labels):
+    def create_formatter(data_type, formatter_type, label_scaler):
         assert(isinstance(formatter_type, unicode))
-        assert(isinstance(supported_labels, list))
 
         if formatter_type == SampleFormatters.CLASSIF_M:
             return BaseSampleFormatter(data_type=data_type,
-                                       label_provider=MultipleLabelProvider(supported_labels=supported_labels),
+                                       label_provider=BertMultipleLabelProvider(label_scaler=label_scaler),
                                        text_provider=SingleTextProvider())
         if formatter_type == SampleFormatters.CLASSIF_B:
             return BaseSampleFormatter(data_type=data_type,
-                                       label_provider=BinaryLabelProvider(supported_labels=supported_labels),
+                                       label_provider=BertBinaryLabelProvider(label_scaler=label_scaler),
                                        text_provider=SingleTextProvider())
         if formatter_type == SampleFormatters.NLI_M:
             return NliMultipleSampleFormatter(data_type=data_type,
-                                              supported_labels=supported_labels)
+                                              label_scaler=label_scaler)
         if formatter_type == SampleFormatters.QA_M:
             return QaMultipleSampleFormatter(data_type=data_type,
-                                             supported_labels=supported_labels)
+                                             label_scaler=label_scaler)
         if formatter_type == SampleFormatters.NLI_B:
             return NliBinarySampleFormatter(data_type=data_type,
-                                            supported_labels=supported_labels)
+                                            label_scaler=label_scaler)
         if formatter_type == SampleFormatters.QA_B:
             return QaBinarySampleFormatter(data_type=data_type,
-                                           supported_labels=supported_labels)
+                                           label_scaler=label_scaler)
 
         return None
 

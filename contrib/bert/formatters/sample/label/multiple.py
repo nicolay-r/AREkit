@@ -1,17 +1,16 @@
 from arekit.common.labels.base import Label
-from arekit.contrib.bert.formatters.sample.label.base import LabelProvider
+from arekit.contrib.bert.formatters.sample.label.base import BertLabelProvider
 
 
-class MultipleLabelProvider(LabelProvider):
+class BertMultipleLabelProvider(BertLabelProvider):
 
-    def __init__(self, supported_labels):
-        super(MultipleLabelProvider, self).__init__(supported_labels=supported_labels)
+    def __init__(self, label_scaler):
+        super(BertMultipleLabelProvider, self).__init__(label_scaler=label_scaler)
 
-    @staticmethod
-    def get_label(expected_label, etalon_label):
+    def calculate_output_label(self, expected_label, etalon_label):
         assert(isinstance(expected_label, Label))
-        return expected_label.to_uint()
+        return self.LabelScaler.label_to_uint(label=expected_label)
 
-    def get_supported_labels(self):
+    def OutputLabels(self):
         return self.SupportedLabels
 

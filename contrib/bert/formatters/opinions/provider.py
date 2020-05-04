@@ -40,7 +40,7 @@ class OpinionProvider(object):
         while count > 0:
             for linked_wrap in self.__text_opinions.iter_wrapped_linked_text_opinions():
 
-                if linked_wrap.get_linked_sentiment() != label:
+                if linked_wrap.get_linked_label() != label:
                     continue
 
                 yield linked_wrap
@@ -58,7 +58,7 @@ class OpinionProvider(object):
             counts[label] = 0
 
         for linked_wrap in self.__text_opinions.iter_wrapped_linked_text_opinions():
-            counts[linked_wrap.get_linked_sentiment()] += 1
+            counts[linked_wrap.get_linked_label()] += 1
 
             yield linked_wrap
 
