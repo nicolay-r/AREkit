@@ -6,7 +6,6 @@ from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
-from arekit.contrib.bert.formatters.sample.label.binary import BertBinaryLabelProvider
 from arekit.contrib.bert.formatters.sample.label.multiple import BertMultipleLabelProvider
 from arekit.contrib.bert.formatters.sample.nli_b import NliBinarySampleFormatter
 from arekit.contrib.bert.formatters.sample.nli_m import NliMultipleSampleFormatter
@@ -45,10 +44,6 @@ class BertEncoder(object):
         if formatter_type == SampleFormatters.CLASSIF_M:
             return BaseSampleFormatter(data_type=data_type,
                                        label_provider=BertMultipleLabelProvider(label_scaler=label_scaler),
-                                       text_provider=SingleTextProvider())
-        if formatter_type == SampleFormatters.CLASSIF_B:
-            return BaseSampleFormatter(data_type=data_type,
-                                       label_provider=BertBinaryLabelProvider(label_scaler=label_scaler),
                                        text_provider=SingleTextProvider())
         if formatter_type == SampleFormatters.NLI_M:
             return NliMultipleSampleFormatter(data_type=data_type,
