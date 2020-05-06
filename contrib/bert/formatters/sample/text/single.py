@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from arekit.common.entities.base import Entity
+from arekit.common.labels.base import Label
 from arekit.processing.text.token import Token
 
 
@@ -36,8 +37,9 @@ class SingleTextProvider(object):
             elif isinstance(term, Token):
                 yield term.get_original_value()
 
-    def add_text_in_row(self, row, sentence_terms, s_ind, t_ind):
+    def add_text_in_row(self, row, sentence_terms, s_ind, t_ind, expected_label):
         assert(isinstance(row, OrderedDict))
+        assert(isinstance(expected_label, Label))
         row[self.TEXT_A] = self.TERMS_SEPARATOR.join(self.__iterate_sentence_terms(sentence_terms,
                                                                                    s_ind=s_ind,
                                                                                    t_ind=t_ind))

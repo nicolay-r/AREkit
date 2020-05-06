@@ -34,12 +34,12 @@ class BinaryIDFormatter(BaseIDFormatter):
         return sample_id[:sample_id.index(BinaryIDFormatter.Label)]
 
     @staticmethod
-    def parse_label_in_sample_id(row_id):
-        assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(BinaryIDFormatter.Label) + 1:len(row_id)])
+    def parse_label_in_sample_id(sample_id):
+        assert(isinstance(sample_id, unicode))
+        return int(sample_id[sample_id.index(BinaryIDFormatter.Label) + 1:len(sample_id)])
 
     @staticmethod
-    def parse_index_in_sample_id(row_id):
-        assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(BaseIDFormatter.INDEX[0]) + 1:row_id.index(BaseIDFormatter.SEPARATOR)])
+    def parse_index_in_sample_id(sample_id):
+        assert(isinstance(sample_id, unicode))
+        return int(sample_id[sample_id.index(BaseIDFormatter.INDEX[0]) + 1:sample_id.index(BaseIDFormatter.SEPARATOR)])
 

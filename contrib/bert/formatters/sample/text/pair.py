@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from arekit.common.labels.base import Label
 from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
 
 
@@ -43,12 +44,15 @@ class PairTextProvider(SingleTextProvider):
             if reading_inner_part:
                 yield term
 
-    def add_text_in_row(self, row, sentence_terms, s_ind, t_ind):
+    def add_text_in_row(self, row, sentence_terms, s_ind, t_ind, expected_label):
+        assert(isinstance(expected_label, Label))
+
         super(PairTextProvider, self).add_text_in_row(
             row=row,
             sentence_terms=sentence_terms,
             s_ind=s_ind,
-            t_ind=t_ind)
+            t_ind=t_ind,
+            expected_label=expected_label)
 
         terms = row[self.TEXT_A].split(self.TERMS_SEPARATOR)
         inner_context = list(self.__get_inner_part_of_text(terms))
@@ -56,6 +60,7 @@ class PairTextProvider(SingleTextProvider):
         row[self.TEXT_B] = self.__text_b_template.format(
             subject=self.SUBJECT,
             object=self.OBJECT,
-            context=self.TERMS_SEPARATOR.join(inner_context))
+            context=self.TERMS_SEPARATOR.join(inner_context),
+            label=expected_label.to_str())
 
         return row

@@ -60,13 +60,13 @@ class BaseIDFormatter(object):
     # region 'parse' methods
 
     @staticmethod
-    def parse_opinion_in_opinion_id(row_id):
-        assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(BaseIDFormatter.OPINION[0]) + 1:row_id.index(BaseIDFormatter.SEPARATOR)])
+    def parse_opinion_in_opinion_id(opinion_id):
+        assert(isinstance(opinion_id, unicode))
+        return int(opinion_id[opinion_id.index(BaseIDFormatter.OPINION[0]) + 1:opinion_id.index(BaseIDFormatter.SEPARATOR)])
 
     @staticmethod
-    def parse_news_in_sample_id(row_id):
-        assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(BaseIDFormatter.NEWS[0]) + 1:row_id.index(BaseIDFormatter.SEPARATOR)])
+    def parse_news_in_sample_id(opinion_id):
+        assert(isinstance(opinion_id, unicode))
+        return int(opinion_id[opinion_id.index(BaseIDFormatter.NEWS[0]) + 1:opinion_id.index(BaseIDFormatter.SEPARATOR)])
 
     # endregion

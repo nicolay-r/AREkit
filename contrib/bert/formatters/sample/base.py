@@ -123,16 +123,19 @@ class BaseSampleFormatter(object):
             index_in_linked=index_in_linked,
             label_scaler=self.__label_provider.LabelScaler)
 
+        expected_label = linked_wrap.get_linked_label()
+
         if self.__is_train():
             row[self.LABEL] = self.__label_provider.calculate_output_label(
-                expected_label=linked_wrap.get_linked_label(),
+                expected_label=expected_label,
                 etalon_label=etalon_label)
 
         terms = list(parsed_news.iter_sentence_terms(sentence_ind))
         self.__text_provider.add_text_in_row(row=row,
                                              sentence_terms=terms,
                                              s_ind=s_ind,
-                                             t_ind=t_ind)
+                                             t_ind=t_ind,
+                                             expected_label=expected_label)
 
         row[self.S_IND] = s_ind
         row[self.T_IND] = t_ind

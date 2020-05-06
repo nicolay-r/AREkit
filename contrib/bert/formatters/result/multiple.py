@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.labels.base import Label
 
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 from arekit.contrib.bert.formatters.result.base import BertResults
@@ -26,8 +25,7 @@ class BertMultipleResults(BertResults):
         Using a single row (probabilities by each class)
         """
         labels_prob = [row[label] for label in self._get_column_header()]
-
-        return Label.from_uint(np.argmax(labels_prob))
+        return self.__labels_scaler.uint_to_label(value=np.argmax(labels_prob))
 
     def _to_opinions(self, linked_df, bert_opinions):
         assert(isinstance(linked_df, pd.DataFrame))

@@ -17,8 +17,7 @@ class NliBinarySampleFormatter(BaseSampleFormatter):
 
     def __init__(self, data_type, label_scaler):
 
-        # TODO. provide label
-        text_b_template = u' {subject} к {object} в контексте : " {context} "'
+        text_b_template = u' {subject} к {object} в контексте " {context} " -- {label}'
         super(NliBinarySampleFormatter, self).__init__(
             data_type=data_type,
             text_provider=PairTextProvider(text_b_template),
