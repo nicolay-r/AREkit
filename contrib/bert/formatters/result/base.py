@@ -50,8 +50,11 @@ class BertResults(object):
 
         for linked_df in self._iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
-            opinions = list(self._to_opinions(linked_df=linked_df, bert_opinions=bert_opinions))
-            yield LinkedTextOpinionsWrapper(linked_text_opinions=opinions)
+
+            opinions_it = self._iter_by_opinions(linked_df=linked_df,
+                                                 bert_opinions=bert_opinions)
+
+            yield LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
 
     # endregion
 
@@ -60,7 +63,7 @@ class BertResults(object):
     def _get_column_header(self):
         raise NotImplementedError()
 
-    def _to_opinions(self, linked_df, bert_opinions):
+    def _iter_by_opinions(self, linked_df, bert_opinions):
         """
         lined_df: DataFrame
             describes a linked opinions in dataframe (related rows)

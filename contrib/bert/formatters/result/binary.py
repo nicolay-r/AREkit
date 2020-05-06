@@ -39,7 +39,7 @@ class BertBinaryResults(BertResults):
         uint_label = self._IdsFormatter.parse_label_in_sample_id(related_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)
 
-    def _to_opinions(self, linked_df, bert_opinions):
+    def _iter_by_opinions(self, linked_df, bert_opinions):
         assert(isinstance(linked_df, pd.DataFrame))
         assert(isinstance(bert_opinions, bert_opinions))
 

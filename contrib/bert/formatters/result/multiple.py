@@ -27,7 +27,7 @@ class BertMultipleResults(BertResults):
         labels_prob = [row[label] for label in self._get_column_header()]
         return self.__labels_scaler.uint_to_label(value=np.argmax(labels_prob))
 
-    def _to_opinions(self, linked_df, bert_opinions):
+    def _iter_by_opinions(self, linked_df, bert_opinions):
         assert(isinstance(linked_df, pd.DataFrame))
         assert(isinstance(bert_opinions, BertOpinionsFormatter))
 
