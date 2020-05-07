@@ -39,17 +39,12 @@ class BaseIDFormatter(object):
     @staticmethod
     def create_news_id_pattern(news_id):
         assert(isinstance(news_id, int))
-        return BaseIDFormatter.NEWS.format(news=news_id)
+        return BaseIDFormatter.NEWS.format(news=news_id) + BaseIDFormatter.SEPARATOR
 
     @staticmethod
     def create_opinion_id_pattern(opinion_id):
         assert(isinstance(opinion_id, int))
-        return BaseIDFormatter.OPINION.format(opinion=opinion_id)
-
-    @staticmethod
-    def create_index_id_pattern(index_id):
-        assert(isinstance(index_id, int))
-        return BaseIDFormatter.INDEX.format(index=index_id)
+        return BaseIDFormatter.OPINION.format(opinion=opinion_id) + BaseIDFormatter.SEPARATOR
 
     # endregion
 

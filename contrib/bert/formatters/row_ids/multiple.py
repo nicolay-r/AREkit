@@ -19,5 +19,5 @@ class MultipleIDFormatter(BaseIDFormatter):
         Here the latter ommited and id could be suffixed with 'i0' only.
         """
         assert(isinstance(sample_id, unicode))
-        return sample_id[:sample_id.find(BaseIDFormatter.INDEX)] + u"0"
+        return sample_id[:sample_id.index(BaseIDFormatter.INDEX[0]) + 1] + u"0"
 

@@ -50,7 +50,7 @@ class BertResults(object):
         assert(isinstance(news_id, int))
         assert(isinstance(bert_opinions, BertOpinionsFormatter))
 
-        for linked_df in self._iter_linked_opinions_df(news_id=news_id):
+        for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
 
             yield list(self._iter_by_opinions(linked_df=linked_df, bert_opinions=bert_opinions))
@@ -70,16 +70,16 @@ class BertResults(object):
         """
         raise NotImplementedError()
 
-    def _iter_linked_opinions_df(self, news_id):
+    def __iter_linked_opinions_df(self, news_id):
         news_id_pattern = self.__ids_formatter.create_news_id_pattern(news_id=news_id)
-        news_samples_df = self.__df[self.__df[self.ID].str.contains(news_id_pattern)]
+        n_df = self.__df[self.__df[self.ID].str.contains(news_id_pattern)]
 
         opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
-                       for opinion_id in news_samples_df[self.ID]]
+                       for opinion_id in n_df[self.ID]]
 
-        for opinion_id in opinion_ids:
+        for opinion_id in set(opinion_ids):
             opin_id_pattern = self.__ids_formatter.create_opinion_id_pattern(opinion_id)
-            linked_opins_df = news_samples_df[news_samples_df[self.ID].str.contains(opin_id_pattern)]
+            linked_opins_df = n_df[n_df[self.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
     def _compose_opinion_by_opinion_id(self, sample_id, bert_opinions, calc_label_func):

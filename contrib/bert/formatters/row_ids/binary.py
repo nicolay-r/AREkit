@@ -30,6 +30,11 @@ class BinaryIDFormatter(BaseIDFormatter):
                                label=label_scaler.label_to_uint(linked_opinions.get_linked_label()))
 
     @staticmethod
+    def create_index_id_pattern(index_id):
+        assert(isinstance(index_id, int))
+        return BaseIDFormatter.INDEX.format(index=index_id) + BaseIDFormatter.SEPARATOR
+
+    @staticmethod
     def convert_sample_id_to_opinion_id(sample_id):
         return sample_id[:sample_id.index(BinaryIDFormatter.Label)]
 
