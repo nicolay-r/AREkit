@@ -1,6 +1,7 @@
 from arekit.common.experiment.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.base import NeutralLabel
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -54,6 +55,12 @@ def iter_eval_collections(formatter_type,
         for linked_opinions in linked_iter:
             opinion = __to_doc_opinion(opinions_list=linked_opinions,
                                        label_calculation_mode=label_calculation_mode)
+
+            # TODO. This should be a part of experiment (__optional_add_opinion)
+            # TODO. It is important to think how this might be combined and refactored.
+            # TODO. Search: NeutralLabel() usage.
+            if opinion.Sentiment == NeutralLabel():
+                continue
 
             collection.add_opinion(opinion)
 
