@@ -17,7 +17,7 @@ class QaMultipleSampleFormatter(BaseSampleFormatter):
 
     def __init__(self, data_type, label_scaler):
 
-        text_b_template = u'Что вы думаете по поводу отношения {subject} к {object} в контексте : " {context} " ?'
+        text_b_template = u'Что вы думаете по поводу отношения {subject} к {object} в контексте : << {context} >> ?'
         super(QaMultipleSampleFormatter, self).__init__(
             data_type=data_type,
             text_provider=PairTextProvider(text_b_template),

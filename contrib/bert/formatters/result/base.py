@@ -71,14 +71,16 @@ class BertResults(object):
         raise NotImplementedError()
 
     def __iter_linked_opinions_df(self, news_id):
-        news_id_pattern = self.__ids_formatter.create_news_id_pattern(news_id=news_id)
+        news_id_pattern = self.__ids_formatter.create_pattern(id_value=news_id,
+                                                              p_type=BaseIDFormatter.NEWS)
         n_df = self.__df[self.__df[self.ID].str.contains(news_id_pattern)]
 
         opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
                        for opinion_id in n_df[self.ID]]
 
         for opinion_id in set(opinion_ids):
-            opin_id_pattern = self.__ids_formatter.create_opinion_id_pattern(opinion_id)
+            opin_id_pattern = self.__ids_formatter.create_pattern(id_value=opinion_id,
+                                                                  p_type=BaseIDFormatter.OPINION)
             linked_opins_df = n_df[n_df[self.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 

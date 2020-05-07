@@ -41,7 +41,7 @@ class SampleFormatters(object):
 
     @staticmethod
     def iter_supported():
-        for formatter in SampleFormatters.__iter_multiple():
-            yield formatter
         for formatter in SampleFormatters.__iter_binary():
+            yield formatter
+        for formatter in SampleFormatters.__iter_multiple():
             yield formatter
