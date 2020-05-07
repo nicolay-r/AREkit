@@ -20,9 +20,9 @@ class SampleFormatters(object):
 
     @staticmethod
     def __iter_multiple():
+        yield SampleFormatters.CLASSIF_M
         yield SampleFormatters.QA_M
         yield SampleFormatters.NLI_M
-        yield SampleFormatters.CLASSIF_M
 
     @staticmethod
     def __iter_binary():
@@ -41,7 +41,7 @@ class SampleFormatters(object):
 
     @staticmethod
     def iter_supported():
-        for formatter in SampleFormatters.__iter_binary():
-            yield formatter
         for formatter in SampleFormatters.__iter_multiple():
+            yield formatter
+        for formatter in SampleFormatters.__iter_binary():
             yield formatter

@@ -230,7 +230,7 @@ class BaseSampleFormatter(object):
         self.__df = pd.read_csv(filepath, sep='\t')
 
     def extract_ids(self):
-        return self.__df[self.ID].tolist()
+        return self.__df[self.ID].astype(unicode).tolist()
 
     @staticmethod
     def extract_row_id(opinion_row):
@@ -252,4 +252,4 @@ class BaseSampleFormatter(object):
         return filepath
 
     def __len__(self):
-        return len(self.__df)
+        return len(self.__df.index)

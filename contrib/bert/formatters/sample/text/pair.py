@@ -60,7 +60,7 @@ class PairTextProvider(SingleTextProvider):
         row[self.TEXT_B] = self.__text_b_template.format(
             subject=self.SUBJECT,
             object=self.OBJECT,
-            context=self.TERMS_SEPARATOR.join(inner_context),
+            context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
             label=expected_label.to_str())
 
         return row

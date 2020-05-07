@@ -76,6 +76,7 @@ class BertOpinionsFormatter(object):
         news_id = df_row[0]
         source = df_row[1].decode('utf-8')
         target = df_row[2].decode('utf-8')
+        print news_id, source, target
 
         return news_id, source, target
 

@@ -4,7 +4,6 @@ import pandas as pd
 
 import io_utils
 from arekit.common.experiment.base import BaseExperiment
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.opinions.base import Opinion
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
@@ -33,28 +32,28 @@ class BertResults(object):
         filepath = self.__get_filepath(data_type=data_type,
                                        experiment=experiment)
 
-        self.__df = pd.read_csv(filepath, sep='\t', header=None)
-
-        assert(len(ids_values) == len(self.__df))
-        self.__df[self.ID] = self._get_column_header()
+        self.__df = pd.read_csv(filepath,
+                                sep='\t',
+                                index_col=False,
+                                header=None)
+        self.__df.columns = self._get_column_header()
+        self.__df.insert(0, self.ID, ids_values)
+        self.__df.set_index(self.ID)
 
     def iter_news_ids(self):
         sample_row_ids = self.__df[self.ID].tolist()
-        all_news = [self.__ids_formatter.parse_news_in_sample_id(row_id) for row_id in sample_row_ids]
+        all_news = [self.__ids_formatter.parse_news_in_sample_id(sample_id) for sample_id in sample_row_ids]
         for news_id in set(all_news):
             yield news_id
 
-    def iter_wrapped_linked_text_opinions(self, news_id, bert_opinions):
+    def iter_linked_opinions(self, news_id, bert_opinions):
         assert(isinstance(news_id, int))
         assert(isinstance(bert_opinions, BertOpinionsFormatter))
 
         for linked_df in self._iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
 
-            opinions_it = self._iter_by_opinions(linked_df=linked_df,
-                                                 bert_opinions=bert_opinions)
-
-            yield LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
+            yield list(self._iter_by_opinions(linked_df=linked_df, bert_opinions=bert_opinions))
 
     # endregion
 
@@ -105,7 +104,7 @@ class BertResults(object):
 
         fname = generate_filename(data_type=data_type,
                                   experiment=experiment,
-                                  prefix=u'samples')
+                                  prefix=u'result')
 
         filepath = path.join(get_output_dir(experiment=experiment), fname)
 
@@ -116,4 +115,4 @@ class BertResults(object):
     # endregion
 
     def __len__(self):
-        return len(self.__df)
+        return len(self.__df.index)

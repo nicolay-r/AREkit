@@ -18,7 +18,7 @@ class BertMultipleResults(BertResults):
     # region protected methods
 
     def _get_column_header(self):
-        return self.__labels_scaler.ordered_suppoted_labels()
+        return [label.to_str() for label in self.__labels_scaler.ordered_suppoted_labels()]
 
     def __calculate_label(self, row):
         """
@@ -31,11 +31,11 @@ class BertMultipleResults(BertResults):
         assert(isinstance(linked_df, pd.DataFrame))
         assert(isinstance(bert_opinions, BertOpinionsFormatter))
 
-        for sample_row in linked_df.iterrows():
+        for index, series in linked_df.iterrows():
             yield self._compose_opinion_by_opinion_id(
-                sample_id=sample_row[self.ID],
+                sample_id=series[self.ID],
                 bert_opinions=bert_opinions,
-                calc_label_func=lambda: self.__calculate_label(sample_row))
+                calc_label_func=lambda: self.__calculate_label(series))
 
     # endregion
 

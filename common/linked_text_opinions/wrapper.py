@@ -1,3 +1,4 @@
+import collections
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
 
@@ -7,8 +8,8 @@ class LinkedTextOpinionsWrapper(object):
     """
 
     def __init__(self, linked_text_opinions):
-        assert(isinstance(linked_text_opinions, list))
-        self.__linked_opinions = linked_text_opinions
+        assert(isinstance(linked_text_opinions, collections.Iterable))
+        self.__linked_opinions = list(linked_text_opinions)
 
     @property
     def FirstOpinion(self):

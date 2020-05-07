@@ -37,9 +37,15 @@ class SingleTextProvider(object):
             elif isinstance(term, Token):
                 yield term.get_original_value()
 
+    @staticmethod
+    def _process_text(text):
+        assert(isinstance(text, unicode))
+        return text.strip()
+
     def add_text_in_row(self, row, sentence_terms, s_ind, t_ind, expected_label):
         assert(isinstance(row, OrderedDict))
         assert(isinstance(expected_label, Label))
-        row[self.TEXT_A] = self.TERMS_SEPARATOR.join(self.__iterate_sentence_terms(sentence_terms,
-                                                                                   s_ind=s_ind,
-                                                                                   t_ind=t_ind))
+        text = self.TERMS_SEPARATOR.join(self.__iterate_sentence_terms(sentence_terms,
+                                                                       s_ind=s_ind,
+                                                                       t_ind=t_ind))
+        row[self.TEXT_A] = self._process_text(text)

@@ -1,7 +1,6 @@
 from arekit.common.experiment.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -49,27 +48,28 @@ def iter_eval_collections(formatter_type,
         collection = experiment.create_opinion_collection()
         assert(isinstance(collection, OpinionCollection))
 
-        linked_iter = bert_results.iter_wrapped_linked_text_opinions(news_id=news_id,
-                                                                     bert_opinions=bert_test_opinions)
+        linked_iter = bert_results.iter_linked_opinions(news_id=news_id,
+                                                        bert_opinions=bert_test_opinions)
 
-        for linked_wrap in linked_iter:
-            opinion = __to_doc_opinion(linked_wrap=linked_wrap,
+        for linked_opinions in linked_iter:
+            opinion = __to_doc_opinion(opinions_list=linked_opinions,
                                        label_calculation_mode=label_calculation_mode)
+
             collection.add_opinion(opinion)
 
         yield news_id, collection
 
 
-def __to_doc_opinion(linked_wrap, label_calculation_mode):
-    assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
+def __to_doc_opinion(opinions_list, label_calculation_mode):
+    assert(isinstance(opinions_list, list))
     assert(isinstance(label_calculation_mode, unicode))
 
     label = SingleLabelsHelper.create_label_from_text_opinions(
-        text_opinion_labels=[opinion.Sentiment for opinion in linked_wrap],
+        text_opinion_labels=[opinion.Sentiment for opinion in opinions_list],
         label_creation_mode=label_calculation_mode)
 
-    return Opinion(source_value=linked_wrap.FirstOpinion.SourceValue,
-                   target_value=linked_wrap.FirstOpinion.TargetValue,
+    return Opinion(source_value=opinions_list[0].SourceValue,
+                   target_value=opinions_list[0].TargetValue,
                    sentiment=label)
 
 
@@ -86,7 +86,7 @@ def __read_results(formatter_type, data_type, experiment, ids_values, labels_sca
         results = BertBinaryResults(labels_scaler=labels_scaler)
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
-    if SampleFormatters.is_binary(formatter_type):
+    if SampleFormatters.is_multiple(formatter_type):
         results = BertMultipleResults(labels_scaler=labels_scaler)
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
