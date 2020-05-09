@@ -10,7 +10,7 @@ from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollecti
 
 class RuSentrelOpinionOperations(CVBasedOpinionOperations):
 
-    def __init__(self, data_io, annot_name, rusentrel_news_ids):
+    def __init__(self, data_io, annot_name_func, rusentrel_news_ids):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(rusentrel_news_ids, set))
 
@@ -18,7 +18,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             model_root=data_io.get_model_root(),
             experiments_dir=data_io.get_experiments_dir(),
             folding_algo=data_io.CVFoldingAlgorithm,
-            annot_name=annot_name
+            annot_name_func=annot_name_func
         )
 
         self._data_io = data_io

@@ -5,11 +5,11 @@ from arekit.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
 class RuSentrelWithRuAttitudesOpinionOperations(RuSentrelOpinionOperations):
 
-    def __init__(self, data_io, annot_name, rusentrel_news_inds):
+    def __init__(self, data_io, annot_name_func, rusentrel_news_inds):
         assert(isinstance(rusentrel_news_inds, set))
         super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__(
             data_io=data_io,
-            annot_name=annot_name,
+            annot_name_func=annot_name_func,
             rusentrel_news_ids=rusentrel_news_inds)
 
         self.__ru_attitudes = None

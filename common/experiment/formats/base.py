@@ -1,4 +1,6 @@
 from os import path
+
+from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutralAnnotator
@@ -10,6 +12,7 @@ from arekit.common.experiment.scales.two import TwoLabelScaler
 class BaseExperiment(object):
 
     def __init__(self, data_io, opin_operation, doc_operations, prepare_model_root):
+        assert(isinstance(data_io, DataIO))
         assert(isinstance(prepare_model_root, bool))
         assert(isinstance(opin_operation, OpinionOperations))
         assert(isinstance(doc_operations, DocumentOperations))
@@ -30,7 +33,7 @@ class BaseExperiment(object):
 
         self.__neutral_annot.initialize(data_io=data_io,
                                         opin_ops=self.OpinionOperations,
-                                         doc_ops=self.DocumentOperations)
+                                        doc_ops=self.DocumentOperations)
 
         self.__data_io.ModelIO.set_model_root(value=self.DataIO.get_model_root())
 

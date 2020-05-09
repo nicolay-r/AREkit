@@ -111,7 +111,7 @@ class BaseSampleFormatter(object):
         assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
 
-        text_opinion = linked_wrap.get_by_index(index_in_linked)
+        text_opinion = linked_wrap[index_in_linked]
 
         parsed_news, sentence_ind = opinion_provider.get_opinion_location(text_opinion)
         s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)

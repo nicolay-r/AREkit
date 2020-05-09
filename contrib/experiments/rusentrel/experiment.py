@@ -17,7 +17,7 @@ class RuSentRelExperiment(CVBasedExperiment):
 
         opin_ops = RuSentrelOpinionOperations(
             data_io=data_io,
-            annot_name=self.NeutralAnnotator.AnnotatorName,
+            annot_name_func=lambda: self.NeutralAnnotator.AnnotatorName,
             rusentrel_news_ids=self.get_rusentrel_inds())
 
         doc_ops = RuSentrelDocumentOperations(data_io=data_io)

@@ -28,7 +28,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
             data_io=data_io,
-            annot_name=self.NeutralAnnotator.AnnotatorName,
+            annot_name_func=lambda: self.NeutralAnnotator.AnnotatorName,
             rusentrel_news_inds=rusentrel_news_inds)
 
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(
