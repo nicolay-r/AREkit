@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 import io_utils
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linked.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 

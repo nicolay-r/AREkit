@@ -1,4 +1,3 @@
-import random
 from collections import OrderedDict
 from os import path
 
@@ -8,7 +7,7 @@ import pandas as pd
 import io_utils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linked.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.base import BaseExperiment

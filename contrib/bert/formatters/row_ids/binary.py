@@ -1,5 +1,5 @@
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linked.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
 
