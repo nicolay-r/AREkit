@@ -1,33 +1,72 @@
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+import collections
+
+from arekit.common.entities.base import Entity
+from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.formats.documents import DocumentOperations
+from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.labels.base import NeutralLabel
+from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.news import News
+from arekit.common.opinions.base import Opinion
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.common.frame_variants.parse import FrameVariantsParser
-from arekit.common.model.helpers.parsed_news import ParsedNewsHelper
+from arekit.processing.text.token import Token
 
 
 NewsTermsShow = False
 NewsTermsStatisticShow = False
 
+
 # region private methods
 
+def __debug_show_terms(parsed_news):
+    assert(isinstance(parsed_news, ParsedNews))
+    for term in parsed_news.iter_terms():
+        if isinstance(term, unicode):
+            print "Word:    '{}'".format(term.encode('utf-8'))
+        elif isinstance(term, Token):
+            print "Token:   '{}' ('{}')".format(term.get_token_value().encode('utf-8'),
+                                                term.get_original_value().encode('utf-8'))
+        elif isinstance(term, Entity):
+            print "Entity:  '{}'".format(term.Value.encode('utf-8'))
+        else:
+            raise Exception("unsuported type {}".format(term))
 
-def __iter_opinion_collections(experiment, doc_id, data_type):
-    assert(isinstance(experiment, BaseExperiment))
+
+def __debug_statistics(parsed_news):
+    assert(isinstance(parsed_news, ParsedNews))
+
+    terms = list(parsed_news.iter_terms())
+    words = filter(lambda term: isinstance(term, unicode), terms)
+    tokens = filter(lambda term: isinstance(term, Token), terms)
+    entities = filter(lambda term: isinstance(term, Entity), terms)
+    total = len(words) + len(tokens) + len(entities)
+
+    print "Extracted news_words info, NEWS_ID: {}".format(parsed_news.RelatedNewsID)
+    print "\tWords: {} ({}%)".format(len(words), 100.0 * len(words) / total)
+    print "\tTokens: {} ({}%)".format(len(tokens), 100.0 * len(tokens) / total)
+    print "\tEntities: {} ({}%)".format(len(entities), 100.0 * len(entities) / total)
+
+
+def __iter_opinion_collections(opin_operations, doc_id, data_type):
+    assert(isinstance(opin_operations, OpinionOperations))
     assert(isinstance(doc_id, int))
     assert(isinstance(data_type, unicode))
 
-    neutral = experiment.read_neutral_opinion_collection(doc_id=doc_id,
-                                                         data_type=data_type)
+    neutral = opin_operations.read_neutral_opinion_collection(doc_id=doc_id,
+                                                              data_type=data_type)
 
     if neutral is not None:
         yield neutral
 
     if data_type == DataType.Train:
-        yield experiment.read_etalon_opinion_collection(doc_id=doc_id)
+        yield opin_operations.read_etalon_opinion_collection(doc_id=doc_id)
 
 
 def __check_text_opinion(text_opinion, terms_per_context):
@@ -37,27 +76,28 @@ def __check_text_opinion(text_opinion, terms_per_context):
         text_opinion=text_opinion)
 
 
-def __create_parsed_collection(experiment, data_type):
-    assert(isinstance(experiment, BaseExperiment))
+def __create_parsed_collection(doc_operations, data_io, data_type):
+    assert(isinstance(doc_operations, DocumentOperations))
+    assert(isinstance(data_io, DataIO))
     assert(isinstance(data_type, unicode))
 
     parsed_collection = ParsedNewsCollection()
 
-    for doc_id in experiment.iter_news_indices(data_type):
+    for doc_id in doc_operations.iter_news_indices(data_type):
 
-        news = experiment.read_news(doc_id=doc_id)
-        parsed_news = news.parse(options=experiment.create_parse_options())
+        news = doc_operations.read_news(doc_id=doc_id)
+        parsed_news = news.parse(options=doc_operations.create_parse_options())
 
         assert(isinstance(news, News))
 
         if NewsTermsStatisticShow:
-            ParsedNewsHelper.debug_statistics(parsed_news)
+            __debug_statistics(parsed_news)
         if NewsTermsShow:
-            ParsedNewsHelper.debug_show_terms(parsed_news)
+            __debug_show_terms(parsed_news)
 
         parsed_news.modify_parsed_sentences(
             lambda sentence: FrameVariantsParser.parse_frames_in_parsed_text(
-                frame_variants_collection=experiment.DataIO.FrameVariantCollection,
+                frame_variants_collection=data_io.FrameVariantCollection,
                 parsed_text=sentence))
 
         if not parsed_collection.contains_id(doc_id):
@@ -86,7 +126,8 @@ def extract_text_opinions_and_parse_news(experiment,
     assert(terms_per_context > 0)
 
     parsed_collection = __create_parsed_collection(
-        experiment=experiment,
+        doc_operations=experiment.DocumentOperations,
+        data_io=experiment.DataIO,
         data_type=data_type)
 
     text_opinions = LabeledLinkedTextOpinionCollection(
@@ -94,9 +135,10 @@ def extract_text_opinions_and_parse_news(experiment,
 
     for doc_id in parsed_collection.iter_news_ids():
 
-        news = experiment.read_news(doc_id=doc_id)
+        news = experiment.DocumentOperations.read_news(doc_id=doc_id)
+        assert(isinstance(news, News))
 
-        opinions_it = __iter_opinion_collections(experiment=experiment,
+        opinions_it = __iter_opinion_collections(opin_operations=experiment.OpinionOperations,
                                                  doc_id=doc_id,
                                                  data_type=data_type)
 
@@ -107,3 +149,25 @@ def extract_text_opinions_and_parse_news(experiment,
                     check_opinion_correctness=lambda text_opinion: __check_text_opinion(text_opinion, terms_per_context))
 
     return text_opinions
+
+
+def compose_opinion_collection(create_collection_func,
+                               opinions_iter):
+    assert(callable(create_collection_func))
+    assert(isinstance(opinions_iter, collections.Iterable))
+
+    collection = create_collection_func()
+    assert(isinstance(collection, OpinionCollection))
+
+    for opinion in opinions_iter:
+        assert(isinstance(opinion, Opinion))
+
+        if isinstance(opinion.Sentiment, NeutralLabel):
+            return
+
+        if collection.has_synonymous_opinion(opinion):
+            return
+
+        collection.add_opinion(opinion)
+
+    return collection

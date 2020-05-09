@@ -1,6 +1,6 @@
 from arekit.common import utils
 from arekit.common.entities.base import Entity
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news import News
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_object import TextObject

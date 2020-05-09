@@ -5,7 +5,7 @@ import tensorflow as tf
 
 from tensorflow.python.training.saver import Saver
 
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.base import BaseModel
 from arekit.common.model.eval.base import BaseModelEvaluator
 from arekit.common.experiment.data_type import DataType
@@ -34,6 +34,7 @@ class TensorflowModel(BaseModel):
     SaveTensorflowModelStateOnFit = False
     FeedDictShow = False
 
+    # TODO. Provide scaler
     def __init__(self, nn_io, network, callback=None):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
@@ -241,6 +242,7 @@ class TensorflowModel(BaseModel):
         assert(isinstance(minibatch, MiniBatch))
         assert(isinstance(data_type, unicode))
 
+        # TODO. Provide scaler (pass in class __init__)
         network_input = minibatch.to_network_input()
         if self.FeedDictShow:
             MiniBatch.debug_output(network_input)

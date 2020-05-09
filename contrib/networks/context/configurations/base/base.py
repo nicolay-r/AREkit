@@ -17,6 +17,7 @@ class DefaultNetworkConfig(object):
     __dropout_keep_prob = 0.5
     __embedding_dropout_keep_prob = 1.0
 
+    # TODO. setup classes count using experiment settings.
     __classes_count = 9
     __default_pos_tagger = POSMystemWrapper(MystemWrapper().MystemInstance)
     __terms_per_context = 50
@@ -57,8 +58,8 @@ class DefaultNetworkConfig(object):
 
     def __init__(self):
         self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
-        # TODO. This should not be there, as it is related to specific source.
-        # TODO. Move into init of experiments. maybe
+
+        # TODO. setup classes count using experiment settings.
 
     # region properties
 

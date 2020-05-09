@@ -1,6 +1,7 @@
 from arekit.common.labels.base import Label
 
 
+# TODO. Remove.
 class LabelPair(Label):
 
     def __init__(self, forward, backward):
@@ -22,13 +23,16 @@ class LabelPair(Label):
         assert(isinstance(other, LabelPair))
         return LabelPair(other.Backward, other.Forward)
 
+    # TODO. Remove
     @staticmethod
     def _pair_to_int(i, j):
         return int("{}{}".format(i, j), 3)
 
+    # TODO. Remove
     def to_uint(self):
         return self._pair_to_int(self.__forward.to_uint(), self.__backward.to_uint())
 
+    # TODO. Remove
     def to_int(self):
         return self.to_uint()
 
@@ -37,9 +41,12 @@ class LabelPair(Label):
 
     @staticmethod
     def from_uint(value):
+        # TODO. Fix, depends on experiment format
         for i in xrange(3):
+            # TODO. Fix, depends on experiment format
             for j in xrange(3):
                 if value == LabelPair._pair_to_int(i, j):
+                    # TODO. Fix, depends on experiment format
                     return LabelPair(Label.from_uint(i), Label.from_uint(j))
 
     @staticmethod

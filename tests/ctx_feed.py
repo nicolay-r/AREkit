@@ -35,6 +35,7 @@ def create_minibatch(config):
 
     bags = []
     for i in range(config.BagsPerMinibatch):
+        # TODO. Fix
         label = Label.from_uint(random.randint(0, 2))
         bag = Bag(label)
         for j in range(config.BagSize):
@@ -61,6 +62,7 @@ def test_ctx_feed(network, network_config, create_minibatch_func, logger,
         # Save graph
         writer = tf.summary.FileWriter("output", sess.graph)
         # Init feed dict
+        # TODO. Provide scaler (init scaler before)
         feed_dict = network.create_feed_dict(input=minibatch.to_network_input(),
                                              data_type=DataType.Train)
 

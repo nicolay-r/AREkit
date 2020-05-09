@@ -1,11 +1,11 @@
-from arekit.common.labels.base import NeutralLabel
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.experiment.opinions import compose_opinion_collection
+from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.model.labeling.base import LabelsHelper
-from arekit.common.opinions.base import Opinion
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
 
+# TODO. This should not be helper.
 class LabeledLinkedTextOpinionCollectionHelper:
 
     def __init__(self, collection, labels_helper, name):
@@ -16,14 +16,6 @@ class LabeledLinkedTextOpinionCollectionHelper:
         self.__labels_helper = labels_helper
         self.__name = name
 
-    # region properties
-
-    @property
-    def Name(self):
-        return self.__name
-
-    # endregion
-
     # region public methods
 
     def iter_converted_to_opinion_collections(self, create_collection_func, label_calc_mode):
@@ -31,13 +23,14 @@ class LabeledLinkedTextOpinionCollectionHelper:
         assert(isinstance(label_calc_mode, unicode))
 
         for news_id in self.__collection.iter_unique_news_ids():
-            collection = create_collection_func()
-            for doc_opinion in self.__iter_opinions(news_id=news_id, label_mode=label_calc_mode):
-                self.__opitional_add_opinion(opinion=doc_opinion,
-                                             collection=collection)
+
+            collection = compose_opinion_collection(
+                create_collection_func=create_collection_func,
+                opinions_iter=self.__iter_opinions(news_id=news_id, label_mode=label_calc_mode))
 
             yield collection, news_id
 
+    # TODO. using scaler for casting
     def debug_labels_statistic(self):
         norm, stat = self.get_statistic()
         total = len(self.__collection)
@@ -56,10 +49,12 @@ class LabeledLinkedTextOpinionCollectionHelper:
             print "\t{} -- {} ({:.2f}%)".format(key, value, 100.0 * value / total)
             total += value
 
+    # TODO. using scaler for casting
     def get_statistic(self):
         stat = [0] * self.__labels_helper.get_classes_count()
         for text_opinion in self.__collection:
             assert(isinstance(text_opinion, TextOpinion))
+            # TODO. using scaler for casting
             stat[text_opinion.Sentiment.to_uint()] += 1
 
         total = sum(stat)
@@ -90,18 +85,6 @@ class LabeledLinkedTextOpinionCollectionHelper:
 
             for opinion in opinions_it:
                 yield opinion
-
-    @staticmethod
-    def __opitional_add_opinion(opinion, collection):
-        assert(isinstance(opinion, Opinion))
-
-        if isinstance(opinion.Sentiment, NeutralLabel):
-            return
-
-        if collection.has_synonymous_opinion(opinion):
-            return
-
-        collection.add_opinion(opinion)
 
     def __get_group_statistic(self):
         statistic = {}

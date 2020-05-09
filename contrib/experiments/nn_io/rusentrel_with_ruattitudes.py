@@ -3,8 +3,8 @@ import logging
 from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 
-from arekit.contrib.experiments.rusentrel import RuSentRelExperiment
 from arekit.contrib.experiments.nn_io.utils import read_ruattitudes_in_memory
+from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 
 from arekit.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
@@ -35,6 +35,7 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelExperiment):
     # region 'read' public methods
 
     def read_news(self, doc_id):
+        # TODO. Now in opinions operations
         if doc_id in self.RuSentRelNewsIDsList:
             return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_news(doc_id=doc_id)
         return self.__ru_attitudes[doc_id]
@@ -42,6 +43,7 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelExperiment):
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
 
+        # TODO. Now in opinions operations
         if doc_id in self.RuSentRelNewsIDsList:
             return super(RuSentRelWithRuAttitudesBasedExperimentIO, self).read_etalon_opinion_collection(doc_id)
 
@@ -52,6 +54,7 @@ class RuSentRelWithRuAttitudesBasedExperimentIO(RuSentRelExperiment):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, unicode))
 
+        # TODO. Now in opinions operations
         if doc_id not in self.RuSentRelNewsIDsList:
             return self.__get_opinions_in_news(doc_id=doc_id)
 

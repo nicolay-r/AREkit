@@ -1,6 +1,6 @@
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 
@@ -22,7 +22,7 @@ class BertEncoder(object):
         assert(isinstance(sample_formatter, unicode))
 
         for data_type in DataType.iter_supported():
-            experiment.DataIO.NeutralAnnotator.create_collection(data_type)
+            experiment.NeutralAnnotator.create_collection(data_type)
 
         for data_type in DataType.iter_supported():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)

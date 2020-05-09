@@ -5,12 +5,14 @@ import numpy as np
 import pandas as pd
 
 import io_utils
+
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
-from arekit.common.linked.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
+
 from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
 from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.sample.label.base import BertLabelProvider

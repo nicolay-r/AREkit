@@ -17,9 +17,11 @@ class SentimentLabel(Label):
     def to_str(self):
         return 'sent'
 
+    # TODO. Should be removed
     def to_int(self):
         return int(3)
 
+    # TODO. Should be removed
     def to_uint(self):
         return int(3)
 
@@ -58,15 +60,6 @@ class SingleClassEvaluator(BaseEvaluator):
             new_collection.add_opinion(new_opinion)
 
         return new_collection
-
-    @staticmethod
-    def __has_opinions_with_label(opinions, label):
-        assert(isinstance(label, Label))
-        assert(isinstance(opinions, OpinionCollection))
-        for opinion in opinions:
-            if opinion.sentiment.to_int() == label.to_int():
-                return True
-        return False
 
     def evaluate(self, cmp_pairs):
         assert(isinstance(cmp_pairs, collections.Iterable))

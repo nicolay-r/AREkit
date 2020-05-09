@@ -3,7 +3,7 @@ from os import path
 import pandas as pd
 
 import io_utils
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.linked.data import LinkedDataWrapper
 from arekit.common.opinions.base import Opinion
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter

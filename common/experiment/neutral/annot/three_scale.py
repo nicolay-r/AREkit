@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.formats.documents import DocumentOperations
+from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.experiment.data_type import DataType
@@ -27,9 +29,8 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     # region private methods
 
     def __create_opinions_for_extraction(self, doc_id, data_type):
-        assert(isinstance(self.Experiment, BaseExperiment))
-        news = self.Experiment.read_news(doc_id=doc_id)
-        opinions = self.Experiment.read_etalon_opinion_collection(doc_id=doc_id)
+        news = self._DocOps.read_news(doc_id=doc_id)
+        opinions = self._OpinOps.read_etalon_opinion_collection(doc_id=doc_id)
         collection = self.__algo.make_neutrals(
             news_id=doc_id,
             entities_collection=news.DocEntities,
@@ -39,17 +40,22 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     # endregion
 
-    def initialize(self, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-        super(ThreeScaleNeutralAnnotator, self).initialize(experiment)
+    def initialize(self, data_io, opin_ops, doc_ops):
+        assert(isinstance(data_io, DataIO))
+        assert(isinstance(opin_ops, OpinionOperations))
+        assert(isinstance(doc_ops, DocumentOperations))
+
+        super(ThreeScaleNeutralAnnotator, self).initialize(data_io=data_io,
+                                                           opin_ops=opin_ops,
+                                                           doc_ops=doc_ops)
 
         def __parse_news(doc_id):
             assert(isinstance(doc_id, int))
-            news = self.Experiment.read_news(doc_id=doc_id)
-            return news.parse(options=self.Experiment.create_parse_options())
+            news = self._DocOps.read_news(doc_id=doc_id)
+            return news.parse(options=self._OpinOps.create_parse_options())
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
-            synonyms=experiment.DataIO.SynonymsCollection,
+            synonyms=self._DataIO.SynonymsCollection,
             create_parsed_news_func=lambda doc_id: __parse_news(doc_id),
             iter_news_ids=self.iter_doc_ids_to_compare(),
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
@@ -65,8 +71,8 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
             collection = self.__create_opinions_for_extraction(doc_id=doc_id,
                                                                data_type=data_type)
 
-            self.Experiment.DataIO.OpinionFormatter.save_to_file(collection=collection,
-                                                                 filepath=filepath)
+            self._DataIO.OpinionFormatter.save_to_file(collection=collection,
+                                                       filepath=filepath)
 
 
 

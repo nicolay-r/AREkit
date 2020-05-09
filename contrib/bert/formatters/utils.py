@@ -1,4 +1,4 @@
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 
 
 def get_output_dir(experiment):

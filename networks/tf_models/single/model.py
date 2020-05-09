@@ -1,4 +1,4 @@
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.model.evaluator import CustomOpinionBasedModelEvaluator
 from arekit.common.experiment.data_type import DataType
 
@@ -85,8 +85,10 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
         log.write_log(data_io=self.__experiment.DataIO, log_names=keys, log_values=values)
+        # TODO. using scaler for casting
         self.get_text_opinions_collection_helper(DataType.Train).debug_labels_statistic()
         self.get_text_opinions_collection_helper(DataType.Train).debug_unique_relations_statistic()
+        # TODO. using scaler for casting
         self.get_text_opinions_collection_helper(DataType.Test).debug_labels_statistic()
         self.get_text_opinions_collection_helper(DataType.Test).debug_unique_relations_statistic()
         self.get_bags_collection_helper(DataType.Train).print_log_statistics()

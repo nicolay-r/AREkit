@@ -11,13 +11,14 @@ from arekit.common.labels.pair import LabelPair
 
 logger = logging.getLogger(__name__)
 
-
+# TODO. Remove
 class PairedLabelsHelper(LabelsHelper):
 
     PredictLabel = False
 
     @staticmethod
     def get_classes_count():
+        # TODO. considering scale factor
         return 9
 
     @staticmethod

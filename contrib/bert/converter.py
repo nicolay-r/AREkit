@@ -1,6 +1,6 @@
 import collections
 
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.experiment.scales.base import BaseLabelScaler
@@ -48,14 +48,14 @@ def iter_eval_collections(formatter_type,
 
     for news_id in bert_results.iter_news_ids():
 
-        collection = experiment.create_opinion_collection()
+        collection = experiment.OpinionOperations.create_opinion_collection()
         assert(isinstance(collection, OpinionCollection))
 
         linked_iter = bert_results.iter_linked_opinions(news_id=news_id,
                                                         bert_opinions=bert_test_opinions)
 
         collection = compose_opinion_collection(
-            create_collection_func=experiment.create_opinion_collection,
+            create_collection_func=experiment.OpinionOperations.create_opinion_collection,
             opinions_iter=__iter_opinions(linked_iter=linked_iter,
                                           label_calculation_mode=label_calculation_mode))
 

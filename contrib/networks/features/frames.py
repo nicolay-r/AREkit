@@ -16,6 +16,8 @@ class FrameFeatures(object):
             frames.append(index)
         return frames
 
+
+    # TODO. Using Scaler for label casting
     @staticmethod
     def compose_frame_roles(text_opinion, size, frames_collection, filler):
 
@@ -36,6 +38,7 @@ class FrameFeatures(object):
 
     # region private methods
 
+    # TODO. Using Scaler for label casting
     @staticmethod
     def __extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_collection):
         assert(isinstance(text_frame_variant, TextFrameVariant))
@@ -44,13 +47,16 @@ class FrameFeatures(object):
         polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)
 
         if polarity is None:
+            # TODO. Using Scaler for label casting
             return NeutralLabel().to_uint()
 
         assert(isinstance(polarity, FramePolarity))
 
         if text_frame_variant.IsInverted:
+            # TODO. Using Scaler for label casting
             return FrameFeatures.__create_inverted_label(polarity.Label).to_uint()
 
+        # TODO. Using Scaler for label casting
         return polarity.Label.to_uint()
 
     @staticmethod
