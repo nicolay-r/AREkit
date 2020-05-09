@@ -21,13 +21,13 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             annot_name=annot_name
         )
 
-        self.__data_io = data_io
-        self.__rusentrel_news_ids = rusentrel_news_ids
+        self._data_io = data_io
+        self._rusentrel_news_ids = rusentrel_news_ids
         self.__eval_on_rusentrel_docs_key = True
 
     def __iter_doc_ids_to_compare(self, doc_ids):
         if self.__eval_on_rusentrel_docs_key:
-            return [doc_id for doc_id in doc_ids if doc_id in self.__rusentrel_news_ids]
+            return [doc_id for doc_id in doc_ids if doc_id in self._rusentrel_news_ids]
 
         return doc_ids
 
@@ -37,7 +37,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
         return RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
-                                                          synonyms=self.__data_io.SynonymsCollection)
+                                                          synonyms=self._data_io.SynonymsCollection)
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
         assert(isinstance(data_type, unicode))
@@ -47,11 +47,11 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         opinions_cmp_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
             doc_ids=self.__iter_doc_ids_to_compare(doc_ids),
             read_etalon_collection_func=lambda doc_id: self.read_etalon_opinion_collection(doc_id=doc_id),
-            read_result_collection_func=lambda doc_id: self.__data_io.OpinionFormatter.load_from_file(
+            read_result_collection_func=lambda doc_id: self._data_io.OpinionFormatter.load_from_file(
                 filepath=self.create_result_opinion_collection_filepath(data_type=data_type,
                                                                         doc_id=doc_id,
                                                                         epoch_index=epoch_index),
-                synonyms=self.__data_io.SynonymsCollection))
+                synonyms=self._data_io.SynonymsCollection))
 
         for opinions_cmp in opinions_cmp_iter:
             yield opinions_cmp
@@ -66,11 +66,11 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         if not os.path.exists(filepath):
             return None
 
-        return self.__data_io.OpinionFormatter.load_from_file(filepath=filepath,
-                                                              synonyms=self.__data_io.SynonymsCollection)
+        return self._data_io.OpinionFormatter.load_from_file(filepath=filepath,
+                                                             synonyms=self._data_io.SynonymsCollection)
 
     def create_opinion_collection(self, opinions=None):
         assert(isinstance(opinions, list) or opinions is None)
         return OpinionCollection(opinions=[] if opinions is None else opinions,
-                                 synonyms=self.__data_io.SynonymsCollection)
+                                 synonyms=self._data_io.SynonymsCollection)
 

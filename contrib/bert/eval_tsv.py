@@ -37,7 +37,7 @@ def evaluate_bert_model(experiment, data_type):
 
     bert_evaluator = BERTModelEvaluator(
         evaluator=TwoClassEvaluator(synonyms=experiment.DataIO.SynonymsCollection),
-        experiment=experiment)
+        opin_ops=experiment.OpinionOperations)
 
     doc_ids = experiment.DocumentOperations.iter_news_indices(data_type=data_type)
     result = bert_evaluator.evaluate(data_type=data_type,
