@@ -1,6 +1,5 @@
 import pandas as pd
 from arekit.common.labels.base import Label
-from arekit.common.opinions.base import Opinion
 
 
 class DocumentCompareTable:
@@ -45,23 +44,3 @@ class DocumentCompareTable:
 
     def __len__(self):
         return len(self.__cmp_table)
-
-    def iter_opinions(self, str_to_label_func):
-        assert(callable(str_to_label_func))
-
-        for i in xrange(len(self.__cmp_table)):
-
-            res = self.__cmp_table.iloc[i][self.C_RES]
-            if not isinstance(res, str):
-                # TODO. Support this later.
-                continue
-
-            sentiment = str_to_label_func(res)
-
-            o = Opinion(source_value=self.__cmp_table.iloc[i][self.C_WHO].decode('utf-8'),
-                        target_value=self.__cmp_table.iloc[i][self.C_TO].decode('utf-8'),
-                        sentiment=sentiment)
-
-            orig = str_to_label_func(self.__cmp_table.iloc[i][self.C_ORIG].decode('utf-8'))
-
-            yield o, orig, bool(self.__cmp_table.iloc[i][self.C_CMP])

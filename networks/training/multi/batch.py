@@ -10,6 +10,7 @@ class MultiInstanceBatch(MiniBatch):
     def __init__(self, bags, batch_id=None):
         super(MultiInstanceBatch, self).__init__(bags, batch_id)
 
+    # TODO. Provide scaler
     def to_network_input(self):
         result = OrderedDict()
 

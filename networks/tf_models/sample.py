@@ -1,4 +1,4 @@
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.helper import TextOpinionHelper
@@ -6,6 +6,7 @@ from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.contrib.networks.sample import InputSample
 
 
+# TODO. Provide experiment.
 def create_input_sample(text_opinion, frames_collection, synonyms_collection, config):
     """
     Creates an input for Neural Network model

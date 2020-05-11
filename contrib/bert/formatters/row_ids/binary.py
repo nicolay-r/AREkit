@@ -1,5 +1,5 @@
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
 
@@ -9,7 +9,7 @@ class BinaryIDFormatter(BaseIDFormatter):
     Considered that label of opinion IS A PART OF id.
     """
 
-    Label = u'l'
+    LABEL = u'l{}' + BaseIDFormatter.SEPARATOR
 
     @staticmethod
     def create_sample_id(opinion_provider, linked_opinions, index_in_linked, label_scaler):
@@ -23,23 +23,18 @@ class BinaryIDFormatter(BaseIDFormatter):
             linked_opinions=linked_opinions,
             index_in_linked=index_in_linked)
 
-        template = BaseIDFormatter.SEPARATOR.join([u"{multiple}",
-                                                   BinaryIDFormatter.Label + u"{label}"])
+        template = u''.join([u"{}", BinaryIDFormatter.LABEL])
 
-        return template.format(multiple=o_id,
-                               label=label_scaler.label_to_uint(linked_opinions.get_linked_label()))
-
-    @staticmethod
-    def convert_sample_id_to_opinion_id(sample_id):
-        return sample_id[:sample_id.index(BinaryIDFormatter.Label)]
+        return template.format(o_id,
+                               label_scaler.label_to_uint(linked_opinions.get_linked_label()))
 
     @staticmethod
-    def parse_label_in_sample_id(row_id):
-        assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(BinaryIDFormatter.Label) + 1:len(row_id)])
+    def parse_label_in_sample_id(sample_id):
+        assert(isinstance(sample_id, unicode))
+        return BinaryIDFormatter._parse(row_id=sample_id, pattern=BinaryIDFormatter.LABEL)
 
     @staticmethod
-    def parse_index_in_sample_id(row_id):
-        assert(isinstance(row_id, unicode))
-        return int(row_id[row_id.index(BaseIDFormatter.INDEX[0]) + 1:row_id.index(BaseIDFormatter.SEPARATOR)])
+    def parse_index_in_sample_id(sample_id):
+        assert(isinstance(sample_id, unicode))
+        return BinaryIDFormatter._parse(row_id=sample_id, pattern=BinaryIDFormatter.INDEX)
 

@@ -38,8 +38,8 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
         # TODO. exp_io.read_parsed_news.
         # TODO. exp_io.read_etalon_opinion_collection()
 
-        collection = self.Experiment.read_etalon_opinion_collection(doc_id)
-        return self.Experiment.create_opinon_collection(
+        collection = self._OpinOps.read_etalon_opinion_collection(doc_id)
+        return self._OpinOps.create_opinon_collection(
             opinions=list(self.__iter_opinion_as_neutral(collection)))
 
     # endregion
@@ -62,7 +62,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
                                           data_type=data_type,
                                           logger=logger)
 
-            self.Experiment.DataIO.OpinionFormatter.save_to_file(
+            self._DataIO.OpinionFormatter.save_to_file(
                 collection=self.__create_opinions_for_classification(doc_id),
                 filepath=filepath)
 

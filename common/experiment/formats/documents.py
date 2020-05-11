@@ -1,4 +1,7 @@
 class DocumentOperations(object):
+    """
+    Provides operations with documents
+    """
 
     def read_news(self, doc_id):
         raise NotImplementedError()

@@ -1,4 +1,3 @@
-import random
 from collections import OrderedDict
 from os import path
 
@@ -6,12 +5,14 @@ import numpy as np
 import pandas as pd
 
 import io_utils
+
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
+
 from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
 from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.sample.label.base import BertLabelProvider
@@ -110,7 +111,7 @@ class BaseSampleFormatter(object):
         assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
 
-        text_opinion = linked_wrap.get_by_index(index_in_linked)
+        text_opinion = linked_wrap[index_in_linked]
 
         parsed_news, sentence_ind = opinion_provider.get_opinion_location(text_opinion)
         s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
@@ -123,16 +124,19 @@ class BaseSampleFormatter(object):
             index_in_linked=index_in_linked,
             label_scaler=self.__label_provider.LabelScaler)
 
+        expected_label = linked_wrap.get_linked_label()
+
         if self.__is_train():
             row[self.LABEL] = self.__label_provider.calculate_output_label(
-                expected_label=linked_wrap.get_linked_label(),
+                expected_label=expected_label,
                 etalon_label=etalon_label)
 
         terms = list(parsed_news.iter_sentence_terms(sentence_ind))
         self.__text_provider.add_text_in_row(row=row,
                                              sentence_terms=terms,
                                              s_ind=s_ind,
-                                             t_ind=t_ind)
+                                             t_ind=t_ind,
+                                             expected_label=expected_label)
 
         row[self.S_IND] = s_ind
         row[self.T_IND] = t_ind
@@ -227,7 +231,7 @@ class BaseSampleFormatter(object):
         self.__df = pd.read_csv(filepath, sep='\t')
 
     def extract_ids(self):
-        return self.__df[self.ID].tolist()
+        return self.__df[self.ID].astype(unicode).tolist()
 
     @staticmethod
     def extract_row_id(opinion_row):
@@ -249,4 +253,4 @@ class BaseSampleFormatter(object):
         return filepath
 
     def __len__(self):
-        return len(self.__df)
+        return len(self.__df.index)

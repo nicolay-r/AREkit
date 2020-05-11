@@ -3,8 +3,8 @@ from os import path
 import pandas as pd
 
 import io_utils
-from arekit.common.experiment.base import BaseExperiment
-from arekit.common.linked_text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.linked.data import LinkedDataWrapper
 from arekit.common.opinions.base import Opinion
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
@@ -33,25 +33,31 @@ class BertResults(object):
         filepath = self.__get_filepath(data_type=data_type,
                                        experiment=experiment)
 
-        self.__df = pd.read_csv(filepath, sep='\t', header=None)
-
-        assert(len(ids_values) == len(self.__df))
-        self.__df[self.ID] = self._get_column_header()
+        self.__df = pd.read_csv(filepath,
+                                sep='\t',
+                                index_col=False,
+                                header=None)
+        self.__df.columns = self._get_column_header()
+        self.__df.insert(0, self.ID, ids_values)
+        self.__df.set_index(self.ID)
 
     def iter_news_ids(self):
         sample_row_ids = self.__df[self.ID].tolist()
-        all_news = [self.__ids_formatter.parse_news_in_sample_id(row_id) for row_id in sample_row_ids]
+        all_news = [self.__ids_formatter.parse_news_in_sample_id(sample_id) for sample_id in sample_row_ids]
         for news_id in set(all_news):
             yield news_id
 
-    def iter_wrapped_linked_text_opinions(self, news_id, bert_opinions):
+    def iter_linked_opinions(self, news_id, bert_opinions):
         assert(isinstance(news_id, int))
         assert(isinstance(bert_opinions, BertOpinionsFormatter))
 
-        for linked_df in self._iter_linked_opinions_df(news_id=news_id):
+        for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
-            opinions = list(self._to_opinions(linked_df=linked_df, bert_opinions=bert_opinions))
-            yield LinkedTextOpinionsWrapper(linked_text_opinions=opinions)
+
+            opinions_iter = self._iter_by_opinions(linked_df=linked_df,
+                                                   bert_opinions=bert_opinions)
+
+            yield LinkedDataWrapper(linked_data=opinions_iter)
 
     # endregion
 
@@ -60,7 +66,7 @@ class BertResults(object):
     def _get_column_header(self):
         raise NotImplementedError()
 
-    def _to_opinions(self, linked_df, bert_opinions):
+    def _iter_by_opinions(self, linked_df, bert_opinions):
         """
         lined_df: DataFrame
             describes a linked opinions in dataframe (related rows)
@@ -68,16 +74,18 @@ class BertResults(object):
         """
         raise NotImplementedError()
 
-    def _iter_linked_opinions_df(self, news_id):
-        news_id_pattern = self.__ids_formatter.create_news_id_pattern(news_id=news_id)
-        news_samples_df = self.__df[self.__df[self.ID].str.contains(news_id_pattern)]
+    def __iter_linked_opinions_df(self, news_id):
+        news_id_pattern = self.__ids_formatter.create_pattern(id_value=news_id,
+                                                              p_type=BaseIDFormatter.NEWS)
+        n_df = self.__df[self.__df[self.ID].str.contains(news_id_pattern)]
 
         opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
-                       for opinion_id in news_samples_df[self.ID]]
+                       for opinion_id in n_df[self.ID]]
 
-        for opinion_id in opinion_ids:
-            opin_id_pattern = self.__ids_formatter.create_opinion_id_pattern(opinion_id)
-            linked_opins_df = news_samples_df[news_samples_df[self.ID].str.contains(opin_id_pattern)]
+        for opinion_id in set(opinion_ids):
+            opin_id_pattern = self.__ids_formatter.create_pattern(id_value=opinion_id,
+                                                                  p_type=BaseIDFormatter.OPINION)
+            linked_opins_df = n_df[n_df[self.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
     def _compose_opinion_by_opinion_id(self, sample_id, bert_opinions, calc_label_func):
@@ -102,7 +110,7 @@ class BertResults(object):
 
         fname = generate_filename(data_type=data_type,
                                   experiment=experiment,
-                                  prefix=u'samples')
+                                  prefix=u'result')
 
         filepath = path.join(get_output_dir(experiment=experiment), fname)
 
@@ -113,4 +121,4 @@ class BertResults(object):
     # endregion
 
     def __len__(self):
-        return len(self.__df)
+        return len(self.__df.index)

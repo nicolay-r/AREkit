@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.labels.base import Label
 
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 from arekit.contrib.bert.formatters.result.base import BertResults
@@ -19,25 +18,24 @@ class BertMultipleResults(BertResults):
     # region protected methods
 
     def _get_column_header(self):
-        return self.__labels_scaler.ordered_suppoted_labels()
+        return [label.to_str() for label in self.__labels_scaler.ordered_suppoted_labels()]
 
     def __calculate_label(self, row):
         """
         Using a single row (probabilities by each class)
         """
         labels_prob = [row[label] for label in self._get_column_header()]
+        return self.__labels_scaler.uint_to_label(value=np.argmax(labels_prob))
 
-        return Label.from_uint(np.argmax(labels_prob))
-
-    def _to_opinions(self, linked_df, bert_opinions):
+    def _iter_by_opinions(self, linked_df, bert_opinions):
         assert(isinstance(linked_df, pd.DataFrame))
         assert(isinstance(bert_opinions, BertOpinionsFormatter))
 
-        for sample_row in linked_df.iterrows():
+        for index, series in linked_df.iterrows():
             yield self._compose_opinion_by_opinion_id(
-                sample_id=sample_row[self.ID],
+                sample_id=series[self.ID],
                 bert_opinions=bert_opinions,
-                calc_label_func=lambda: self.__calculate_label(sample_row))
+                calc_label_func=lambda: self.__calculate_label(series))
 
     # endregion
 

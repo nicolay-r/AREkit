@@ -1,13 +1,14 @@
 import logging
 
 from arekit.common.frames.collection import FramesCollection
+from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+# TODO. Remove paired
 from arekit.common.model.labeling.paired import PairedLabelsHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 
-from arekit.common.experiment.base import BaseExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.networks.tf_models.single.embedding.entities import generate_entity_embeddings
 from arekit.networks.tf_models.single.embedding.frames import init_frames_embedding
 from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
@@ -43,7 +44,7 @@ class SingleInstanceModelExperimentInitializer(object):
 
         self.__synonyms = experiment.DataIO.SynonymsCollection
 
-        self.__labels_helper = SingleLabelsHelper() if config.ClassesCount == 3 else PairedLabelsHelper()
+        self.__labels_helper = SingleLabelsHelper() if config.ClassesCount == 3 else PairedLabelsHelper()  # TODO. Remove paired
 
         self.__text_opinion_collections = self.__create_collection(
             lambda data_type: extract_text_opinions_and_parse_news(experiment=experiment,

@@ -1,7 +1,7 @@
 import numpy as np
 
+from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.linked_text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.networks.training.single.bags.bag import Bag
 from arekit.contrib.networks.sample import InputSample
 

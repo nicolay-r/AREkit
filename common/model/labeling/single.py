@@ -10,8 +10,10 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 
 class SingleLabelsHelper(LabelsHelper):
 
+    # TODO. Remove static (useless, might me removed)
     @staticmethod
     def get_classes_count():
+        # TODO. Should depends on scale factor.
         return 3
 
     @staticmethod
@@ -23,6 +25,7 @@ class SingleLabelsHelper(LabelsHelper):
         if label_creation_mode == LabelCalculationMode.FIRST_APPEARED:
             label = text_opinion_labels[0]
         if label_creation_mode == LabelCalculationMode.AVERAGE:
+            # TODO. Utilize sclale for to_int call
             forwards = [l.to_int() for l in text_opinion_labels]
             label = Label.from_int(np.sign(sum(forwards)))
 
