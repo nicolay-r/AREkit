@@ -29,7 +29,6 @@ class BaseLabelScaler(object):
     def __itol(value, d):
         assert(isinstance(value, int))
         assert(isinstance(d, OrderedDict))
-        assert(value >= 0)
         for label, v in d.iteritems():
             if v == value:
                 return label
