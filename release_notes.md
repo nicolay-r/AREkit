@@ -1,5 +1,6 @@
 ## v0.20.4-rc
 Updates:
+* Added labels-scaler, and labels casing (to int or uint) now depends on scaler;
 * Added bert exporter in contribution folder: with related formatters according to the following 
 [paper](https://www.aclweb.org/anthology/N19-1035.pdf): 
     * **NLI** -- (Natural language inference) format, assumes to provide an additional sentence, which describes 
