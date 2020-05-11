@@ -27,6 +27,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         super(SingleInstanceTensorflowModel, self).__init__(
             nn_io=experiment.DataIO.ModelIO,
             network=network,
+            label_scaler=experiment.DataIO.LabelsScaler,
             callback=callback)
 
         self.__config = config

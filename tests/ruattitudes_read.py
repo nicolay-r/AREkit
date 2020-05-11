@@ -25,8 +25,7 @@ for news in reader.iter_news(stemmer):
             s = u"{src}->{target} ({label}) (t:[{src_type},{target_type}])".format(
                 src=src.get_value(),
                 target=target.get_value(),
-                # TODO. Utilize to str
-                label=str(ref_opinion.Sentiment.to_int()),
+                label=str(ref_opinion.Sentiment.to_str()),
                 src_type=src.Type,
                 target_type=target.Type).encode('utf-8')
             logger.debug(s)

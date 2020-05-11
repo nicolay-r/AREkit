@@ -4,7 +4,8 @@ import tensorflow as tf
 import numpy as np
 import logging
 
-from arekit.common.labels.base import Label
+from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.networks.training.single.bags.bag import Bag
 from arekit.common.experiment.data_type import DataType
 from arekit.networks.nn import NeuralNetwork
@@ -30,13 +31,17 @@ def init_config(config):
     return config
 
 
-def create_minibatch(config):
+def create_minibatch(config, label_scaler):
     assert(isinstance(config, DefaultNetworkConfig))
+    assert(isinstance(label_scaler, BaseLabelScaler))
+
+    l_min = min([label_scaler.label_to_uint(l) for l in label_scaler.ordered_suppoted_labels()])
+    l_max = max([label_scaler.label_to_uint(l) for l in label_scaler.ordered_suppoted_labels()])
 
     bags = []
     for i in range(config.BagsPerMinibatch):
-        # TODO. Fix
-        label = Label.from_uint(random.randint(0, 2))
+        uint_label = random.randint(l_min, l_max)
+        label = label_scaler.uint_to_label(uint_label)
         bag = Bag(label)
         for j in range(config.BagSize):
             bag.add_sample(InputSample._generate_test(config))
@@ -52,18 +57,19 @@ def test_ctx_feed(network, network_config, create_minibatch_func, logger,
     assert(isinstance(network_config, DefaultNetworkConfig))
     assert(callable(create_minibatch_func))
 
+    label_scaler = ThreeLabelScaler()
     config = init_config(network_config)
     # Init network.
     network.compile(config=config, reset_graph=True)
-    minibatch = create_minibatch_func(config)
+    minibatch = create_minibatch_func(config=config,
+                                      label_scaler=label_scaler)
 
     network_optimiser = config.Optimiser.minimize(network.Cost)
     with init_session() as sess:
         # Save graph
         writer = tf.summary.FileWriter("output", sess.graph)
         # Init feed dict
-        # TODO. Provide scaler (init scaler before)
-        feed_dict = network.create_feed_dict(input=minibatch.to_network_input(),
+        feed_dict = network.create_feed_dict(input=minibatch.to_network_input(label_scaler=label_scaler),
                                              data_type=DataType.Train)
 
         hidden_list = list(network.iter_hidden_parameters())

@@ -1,5 +1,4 @@
 from arekit.common.labels.base import Label
-from arekit.common.labels.pair import LabelPair
 from arekit.contrib.networks.sample import InputSample
 
 
@@ -10,8 +9,7 @@ class Bag:
     """
 
     def __init__(self, label):
-        assert(isinstance(label, LabelPair) or
-               isinstance(label, Label))
+        assert(isinstance(label, Label))
         self.__samples = []
         self.__label = label
 

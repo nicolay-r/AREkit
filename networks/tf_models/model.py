@@ -5,6 +5,7 @@ import tensorflow as tf
 
 from tensorflow.python.training.saver import Saver
 
+from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.base import BaseModel
 from arekit.common.model.eval.base import BaseModelEvaluator
@@ -34,10 +35,10 @@ class TensorflowModel(BaseModel):
     SaveTensorflowModelStateOnFit = False
     FeedDictShow = False
 
-    # TODO. Provide scaler
-    def __init__(self, nn_io, network, callback=None):
+    def __init__(self, nn_io, network, label_scaler, callback=None):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
+        assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(callback, Callback) or callback is None)
         super(TensorflowModel, self).__init__(io=nn_io)
 
@@ -46,6 +47,7 @@ class TensorflowModel(BaseModel):
         self.__optimiser = None
         self.__network = network
         self.__callback = callback
+        self.__label_scaler = label_scaler
         self.__current_epoch_index = 0
 
     # region Properties
@@ -222,9 +224,6 @@ class TensorflowModel(BaseModel):
     def get_evaluator(self):
         raise NotImplementedError()
 
-    def get_labels_helper(self):
-        raise NotImplementedError()
-
     def get_gpu_memory_fraction(self):
         raise NotImplementedError()
 
@@ -242,8 +241,7 @@ class TensorflowModel(BaseModel):
         assert(isinstance(minibatch, MiniBatch))
         assert(isinstance(data_type, unicode))
 
-        # TODO. Provide scaler (pass in class __init__)
-        network_input = minibatch.to_network_input()
+        network_input = minibatch.to_network_input(label_scaler=self.__label_scaler)
         if self.FeedDictShow:
             MiniBatch.debug_output(network_input)
 
@@ -344,8 +342,7 @@ class TensorflowModel(BaseModel):
             # apply labeling
             for bag_index, bag in enumerate(minibatch.iter_by_bags()):
 
-                label = self.get_labels_helper().create_label_from_uint(
-                    label_uint=int(uint_labels[bag_index]))
+                label = self.__label_scaler.uint_to_label(value=int(uint_labels[bag_index]))
 
                 for sample in bag:
                     if sample.TextOpinionID < 0:

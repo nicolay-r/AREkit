@@ -2,7 +2,7 @@ import datetime
 
 import tensorflow as tf
 from arekit.common.embeddings.base import Embedding
-from arekit.common.model.labeling.base import LabelCalculationMode
+from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
@@ -17,8 +17,7 @@ class DefaultNetworkConfig(object):
     __dropout_keep_prob = 0.5
     __embedding_dropout_keep_prob = 1.0
 
-    # TODO. setup classes count using experiment settings.
-    __classes_count = 9
+    __classes_count = None
     __default_pos_tagger = POSMystemWrapper(MystemWrapper().MystemInstance)
     __terms_per_context = 50
     __synonyms_per_context = 3
@@ -58,8 +57,6 @@ class DefaultNetworkConfig(object):
 
     def __init__(self):
         self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
-
-        # TODO. setup classes count using experiment settings.
 
     # region properties
 

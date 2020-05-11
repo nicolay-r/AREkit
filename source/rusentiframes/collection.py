@@ -79,6 +79,7 @@ class RuSentiFramesCollection(FramesCollection):
         if self.__state_key not in self.__data[frame_id][self.__frames_key]:
             return []
 
+        # TODO. Refactor label.from_str. (provide label scaler)
         return [FrameState(role=args[0], label=Label.from_str(args[1]), prob=args[2])
                 for args in self.__data[frame_id][self.__frames_key][self.__state_key]]
 
@@ -127,6 +128,7 @@ class RuSentiFramesCollection(FramesCollection):
     def __frame_polarity_from_args(args):
         return RuSentiFramesFramePolarity(role_src=args[0],
                                           role_dest=args[1],
+                                          # TODO. Refactor. (Provide label scaler)
                                           label=Label.from_str(args[2]),
                                           prob=args[3])
 

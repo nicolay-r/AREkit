@@ -5,6 +5,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.linked.data import LinkedDataWrapper
+from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -46,6 +47,8 @@ def iter_eval_collections(formatter_type,
 
     assert(len(bert_results) == len(bert_test_samples))
 
+    labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
+
     for news_id in bert_results.iter_news_ids():
 
         collection = experiment.OpinionOperations.create_opinion_collection()
@@ -57,26 +60,30 @@ def iter_eval_collections(formatter_type,
         collection = compose_opinion_collection(
             create_collection_func=experiment.OpinionOperations.create_opinion_collection,
             opinions_iter=__iter_opinions(linked_iter=linked_iter,
+                                          labels_helper=labels_helper,
                                           label_calculation_mode=label_calculation_mode))
 
         yield news_id, collection
 
 
-def __iter_opinions(linked_iter, label_calculation_mode):
+def __iter_opinions(linked_iter, label_calculation_mode, labels_helper):
     assert(isinstance(linked_iter, collections.Iterable))
+    assert(isinstance(labels_helper, LabelsHelper))
     assert(isinstance(label_calculation_mode, unicode))
 
     for linked_opinions in linked_iter:
         yield __to_doc_opinion(linked_wrap=linked_opinions,
+                               labels_helper=labels_helper,
                                label_calculation_mode=label_calculation_mode)
 
 
-def __to_doc_opinion(linked_wrap, label_calculation_mode):
+def __to_doc_opinion(linked_wrap, labels_helper, label_calculation_mode):
     assert(isinstance(linked_wrap, LinkedDataWrapper))
+    assert(isinstance(labels_helper, LabelsHelper))
     assert(isinstance(label_calculation_mode, unicode))
 
-    label = SingleLabelsHelper.create_label_from_text_opinions(
-        text_opinion_labels=[opinion.Sentiment for opinion in linked_wrap],
+    label = labels_helper.aggregate_labels(
+        labels_list=[opinion.Sentiment for opinion in linked_wrap],
         label_creation_mode=label_calculation_mode)
 
     return Opinion(source_value=linked_wrap[0].SourceValue,

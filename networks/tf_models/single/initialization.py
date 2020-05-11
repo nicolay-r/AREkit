@@ -1,9 +1,8 @@
 import logging
 
+from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
-# TODO. Remove paired
-from arekit.common.model.labeling.paired import PairedLabelsHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
@@ -44,7 +43,8 @@ class SingleInstanceModelExperimentInitializer(object):
 
         self.__synonyms = experiment.DataIO.SynonymsCollection
 
-        self.__labels_helper = SingleLabelsHelper() if config.ClassesCount == 3 else PairedLabelsHelper()  # TODO. Remove paired
+        self.__labels_scaler = experiment.DataIO.LabelsScaler
+        self.__labels_helper = SingleLabelsHelper(label_scaler=self.__labels_scaler)
 
         self.__text_opinion_collections = self.__create_collection(
             lambda data_type: extract_text_opinions_and_parse_news(experiment=experiment,
@@ -99,6 +99,10 @@ class SingleInstanceModelExperimentInitializer(object):
     # region Properties
 
     @property
+    def _LabelsScaler(self):
+        return self.__labels_scaler
+
+    @property
     def BagsCollections(self):
         return self.__bags_collection
 
@@ -120,16 +124,19 @@ class SingleInstanceModelExperimentInitializer(object):
 
     # endregion
 
+    # TODO. Refactor this.
     @staticmethod
     def create_bags_collection(text_opinions_collection,
                                frames_collection,
                                synonyms_collection,
                                data_type,
-                               config):
+                               config,
+                               label_scaler):
         assert(isinstance(text_opinions_collection, LabeledLinkedTextOpinionCollection))
         assert(isinstance(frames_collection, FramesCollection))
         assert(isinstance(synonyms_collection, SynonymsCollection))
         assert(isinstance(config, DefaultNetworkConfig))
+        assert(isinstance(label_scaler, BaseLabelScaler))
 
         collection = BagsCollection.from_linked_text_opinions(
             text_opinions_collection,
@@ -141,6 +148,7 @@ class SingleInstanceModelExperimentInitializer(object):
                 text_opinion=r,
                 frames_collection=frames_collection,
                 synonyms_collection=synonyms_collection,
+                label_scaler=label_scaler,
                 config=config))
 
         return collection

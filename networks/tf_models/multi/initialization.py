@@ -11,8 +11,9 @@ class MultiInstanceModeExperimentInitializer(SingleInstanceModelExperimentInitia
             experiment=experiment,
             config=config)
 
+    # TODO. Refactor this.
     @staticmethod
-    def create_bags_collection(text_opinions_collection, frames_collection, synonyms_collection, data_type, config):
+    def create_bags_collection(text_opinions_collection, frames_collection, synonyms_collection, data_type, config, label_scaler):
         return MultiInstanceBagsCollection.from_linked_text_opinions(
             text_opinions_collection,
             max_bag_size=config.BagSize,
@@ -23,4 +24,5 @@ class MultiInstanceModeExperimentInitializer(SingleInstanceModelExperimentInitia
                 text_opinion=opinion,
                 frames_collection=frames_collection,
                 synonyms_collection=synonyms_collection,
-                config=config))
+                config=config,
+                label_scaler=label_scaler))

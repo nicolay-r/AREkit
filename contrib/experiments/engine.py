@@ -84,7 +84,6 @@ def run_testing(full_model_name,
         data_io.CVFoldingAlgorithm.set_iteration_index(cv_index)
 
         # Initialize config
-        # TODO. using scaler for casting
         config = create_config()
         assert(isinstance(config, DefaultNetworkConfig))
 
@@ -92,6 +91,8 @@ def run_testing(full_model_name,
         network = create_network()
 
         # Setup config
+        config.modify_classes_count(value=experiment.DataIO.LabelsScaler.classes_count())
+
         if common_config_modification_func is not None:
             common_config_modification_func(config=config)
         if custom_config_modification_func is not None:

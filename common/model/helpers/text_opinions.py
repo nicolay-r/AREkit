@@ -30,14 +30,13 @@ class LabeledLinkedTextOpinionCollectionHelper:
 
             yield collection, news_id
 
-    # TODO. using scaler for casting
     def debug_labels_statistic(self):
         norm, stat = self.get_statistic()
         total = len(self.__collection)
         print "Extracted relation collection: {}".format(self.__name)
         print "\tTotal: {}".format(total)
         for i, value in enumerate(norm):
-            label = self.__labels_helper.create_label_from_uint(i)
+            label = self.__labels_helper.label_from_uint(i)
             print "\t{}: {:.2f}%\t({} relations)".format(label.to_str(), value, stat[i])
 
     def debug_unique_relations_statistic(self):
@@ -49,13 +48,11 @@ class LabeledLinkedTextOpinionCollectionHelper:
             print "\t{} -- {} ({:.2f}%)".format(key, value, 100.0 * value / total)
             total += value
 
-    # TODO. using scaler for casting
     def get_statistic(self):
         stat = [0] * self.__labels_helper.get_classes_count()
         for text_opinion in self.__collection:
             assert(isinstance(text_opinion, TextOpinion))
-            # TODO. using scaler for casting
-            stat[text_opinion.Sentiment.to_uint()] += 1
+            stat[self.__labels_helper.label_to_uint(text_opinion.Sentiment)] += 1
 
         total = sum(stat)
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
@@ -64,6 +61,16 @@ class LabeledLinkedTextOpinionCollectionHelper:
     # endregion
 
     # region private methods
+
+    def __get_group_statistic(self):
+        statistic = {}
+        for linked_wrap in self.__collection.iter_wrapped_linked_text_opinions():
+            key = len(linked_wrap)
+            if key not in statistic:
+                statistic[key] = 1
+            else:
+                statistic[key] += 1
+        return statistic
 
     def __iter_opinions(self, news_id, label_mode):
         assert(isinstance(news_id, int))
@@ -75,9 +82,15 @@ class LabeledLinkedTextOpinionCollectionHelper:
             if linked_wrap.RelatedNewsID != news_id:
                 continue
 
-            label = self.__labels_helper.create_label_from_text_opinions(
-                text_opinion_labels=linked_wrap,
+            # TODO. This is complex and all about the same as helper may do
+            # TODO. This is already written in BERT also
+
+            label = self.__labels_helper.aggregate_labels(
+                labels_list=[opinion.Sentiment for opinion in linked_wrap],
                 label_creation_mode=label_mode)
+
+            # TODO. This is complex and all about the same as helper may do
+            # TODO. This is already written in BERT also
 
             opinions_it = self.__labels_helper.iter_opinions_from_text_opinion_and_label(
                 text_opinion=linked_wrap.FirstOpinion,
@@ -85,16 +98,6 @@ class LabeledLinkedTextOpinionCollectionHelper:
 
             for opinion in opinions_it:
                 yield opinion
-
-    def __get_group_statistic(self):
-        statistic = {}
-        for linked_wrap in self.__collection.iter_wrapped_linked_text_opinions():
-            key = len(linked_wrap)
-            if key not in statistic:
-                statistic[key] = 1
-            else:
-                statistic[key] += 1
-        return statistic
 
     # endregion
 

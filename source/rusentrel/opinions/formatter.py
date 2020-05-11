@@ -56,6 +56,7 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionFormatter):
 
             source_value = args[0].strip()
             target_value = args[1].strip()
+            # TODO. Refactor. (Provide label scaler)
             sentiment = Label.from_str(args[2].strip())
 
             o = Opinion(source_value=source_value,
