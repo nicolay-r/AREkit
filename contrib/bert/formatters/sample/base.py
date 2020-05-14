@@ -34,6 +34,7 @@ class BaseSampleFormatter(object):
     """
     Fields
     """
+    ROW_ID = 'row_id'
     ID = 'id'
     LABEL = 'label'
     S_IND = 's_ind'
@@ -68,7 +69,8 @@ class BaseSampleFormatter(object):
             [id, label, type, text_a]
         """
         dtypes_list = []
-        dtypes_list.append((self.ID, 'int32'))
+        dtypes_list.append((self.ROW_ID, 'int32'))
+        dtypes_list.append((self.ID, unicode))
 
         # insert labels
         if self.__is_train():
@@ -76,7 +78,7 @@ class BaseSampleFormatter(object):
 
         # insert text columns
         for col_name in self.__text_provider.iter_columns():
-            dtypes_list.append((col_name, 'float64'))
+            dtypes_list.append((col_name, unicode))
 
         # insert indices
         dtypes_list.append((self.S_IND, 'int32'))
@@ -178,15 +180,19 @@ class BaseSampleFormatter(object):
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
-    # endregion
+    def __fill_with_blank_rows(self, rows_count):
+        assert(isinstance(rows_count, int))
+        self.__df[self.ROW_ID] = range(rows_count)
+        self.__df.set_index(self.ROW_ID, inplace=True)
 
-    def to_samples(self, opinion_provider):
+    def __set_value(self, row_ind, column, value):
+        self.__df.at[row_ind, column] = value
+
+    def __iter_by_rows(self, opinion_provider):
         """
-        Converts text_opinions into samples by filling related df.
+        Iterate by rows that is assumes to be added as samples, using opinion_provider information
         """
         assert(isinstance(opinion_provider, OpinionProvider))
-
-        added = 0
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(
             balance=self.__is_train(),
@@ -195,21 +201,36 @@ class BaseSampleFormatter(object):
         for linked_wrap in linked_iter:
 
             for i in range(len(linked_wrap)):
+
                 rows_it = self.__provide_rows(
                     opinion_provider=opinion_provider,
                     linked_wrap=linked_wrap,
                     index_in_linked=i)
 
                 for row in rows_it:
-                    self.__df = self.__df.append(row, ignore_index=True)
+                    yield row
 
-                added += 1
+    # endregion
 
-            print "Samples ('{}') added: {}/{} ({}%)".format(
-                self.__data_type,
-                added,
-                opinion_provider.opinions_count(),
-                round(100 * float(added) / opinion_provider.opinions_count(), 2))
+    def to_samples(self, opinion_provider):
+        """
+        Converts text_opinions into samples by filling related df.
+        """
+        assert(isinstance(opinion_provider, OpinionProvider))
+
+        rows_count = sum(1 for _ in self.__iter_by_rows(opinion_provider))
+        self.__fill_with_blank_rows(rows_count=rows_count)
+
+        for row_index, row in enumerate(self.__iter_by_rows(opinion_provider)):
+            for column, value in row.iteritems():
+                self.__set_value(row_ind=row_index,
+                                 column=column,
+                                 value=value)
+
+            current_work = row_index + 1
+            total_work = rows_count
+            percent = round(100 * float(current_work) / total_work, 2)
+            print "Samples ('{}') added: {}/{} ({}%)".format(self.__data_type, current_work, total_work, percent)
 
     def to_tsv_by_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
@@ -220,7 +241,9 @@ class BaseSampleFormatter(object):
         self.__df.to_csv(filepath,
                          sep='\t',
                          encoding='utf-8',
+                         columns=[c for c in self.__df.columns if c != self.ROW_ID],
                          index=False,
+                         float_format="%.0f",
                          header=not self.__is_train())
 
     def from_tsv(self, experiment):
