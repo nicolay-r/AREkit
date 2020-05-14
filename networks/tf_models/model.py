@@ -17,7 +17,7 @@ from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.networks.tf_models.predict_log import NetworkInputDependentVariables
-from arekit.networks.training.single.batch import MiniBatch
+from arekit.networks.training.batch.batch import MiniBatch
 
 logger = logging.getLogger(__name__)
 

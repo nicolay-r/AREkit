@@ -2,27 +2,22 @@ import collections
 
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.labels.base import NeutralLabel, Label
-from arekit.common.linked.data import LinkedDataWrapper
+from arekit.common.frame_variants.parse import FrameVariantsParser
+from arekit.common.labels.base import NeutralLabel
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.labeling.base import LabelsHelper
-from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.news import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.text_opinions.end_type import EntityEndType
-from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.data_type import DataType
-from arekit.common.frame_variants.parse import FrameVariantsParser
 from arekit.processing.text.token import Token
-
 
 NewsTermsShow = False
 NewsTermsStatisticShow = False

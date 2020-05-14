@@ -6,10 +6,10 @@ import logging
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.scales.three import ThreeLabelScaler
-from arekit.networks.training.single.bags.bag import Bag
+from arekit.networks.training.bags.bag import Bag
 from arekit.common.experiment.data_type import DataType
 from arekit.networks.nn import NeuralNetwork
-from arekit.networks.training.single.batch import MiniBatch
+from arekit.networks.training.batch.batch import MiniBatch
 from arekit.tests.ctx_compile import contexts_supported
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig

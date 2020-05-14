@@ -3,8 +3,8 @@ from collections import OrderedDict
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.networks.debug import DebugKeys
 from arekit.common.model.sample import InputSampleBase
-from arekit.networks.training.single.bags.bag import Bag
-from arekit.networks.training.single.batch import MiniBatch
+from arekit.networks.training.bags.bag import Bag
+from arekit.networks.training.batch.batch import MiniBatch
 
 
 class MultiInstanceBatch(MiniBatch):

@@ -5,8 +5,9 @@ from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.networks.training.single.bags.bag import Bag
-from arekit.networks.training.single.bags.collection import BagsCollection
+
+from arekit.networks.training.bags.bag import Bag
+from arekit.networks.training.bags.collection.base import BagsCollection
 
 
 class MultiInstanceBagsCollection(BagsCollection):

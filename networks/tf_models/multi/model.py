@@ -1,5 +1,5 @@
 from arekit.networks.tf_models.multi.initialization import MultiInstanceModeExperimentInitializer
-from arekit.networks.training.multi.batch import MultiInstanceBatch
+from arekit.networks.training.batch.multi.batch import MultiInstanceBatch
 from arekit.networks.tf_models.single.model import SingleInstanceTensorflowModel
 
 
