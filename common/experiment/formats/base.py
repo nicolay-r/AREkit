@@ -60,9 +60,9 @@ class BaseExperiment(object):
     # region private methods
 
     def __init_annotator(self):
-        if isinstance(self.__data_io.LabelsScaler, ThreeLabelScaler):
-            return TwoScaleNeutralAnnotator()
         if isinstance(self.__data_io.LabelsScaler, TwoLabelScaler):
+            return TwoScaleNeutralAnnotator()
+        if isinstance(self.__data_io.LabelsScaler, ThreeLabelScaler):
             return ThreeScaleNeutralAnnotator()
 
     # endregion

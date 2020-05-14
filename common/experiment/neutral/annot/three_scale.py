@@ -52,7 +52,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         def __parse_news(doc_id):
             assert(isinstance(doc_id, int))
             news = self._DocOps.read_news(doc_id=doc_id)
-            return news.parse(options=self._OpinOps.create_parse_options())
+            return news.parse(options=self._DocOps.create_parse_options())
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self._DataIO.SynonymsCollection,

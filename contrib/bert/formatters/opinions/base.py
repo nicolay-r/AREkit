@@ -1,7 +1,6 @@
 from collections import OrderedDict
 from os import path
 
-import numpy as np
 import pandas as pd
 
 import io_utils
