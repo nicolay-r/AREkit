@@ -28,8 +28,8 @@ class BaseIDFormatter(object):
                              BaseIDFormatter.OPINION,
                              BaseIDFormatter.INDEX])
 
-        return template.format(linked_opinions.FirstOpinion.NewsID,
-                               linked_opinions.FirstOpinion.TextOpinionID,
+        return template.format(linked_opinions.First.NewsID,
+                               linked_opinions.First.TextOpinionID,
                                index_in_linked)
 
     @staticmethod

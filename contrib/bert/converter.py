@@ -1,13 +1,8 @@
-import collections
-
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.linked.data import LinkedDataWrapper
-from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
-from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 
 from arekit.contrib.bert.encoder import BertEncoder
@@ -59,36 +54,11 @@ def iter_eval_collections(formatter_type,
 
         collection = compose_opinion_collection(
             create_collection_func=experiment.OpinionOperations.create_opinion_collection,
-            opinions_iter=__iter_opinions(linked_iter=linked_iter,
-                                          labels_helper=labels_helper,
-                                          label_calculation_mode=label_calculation_mode))
+            wrapped_linked_opinion_iter=linked_iter,
+            labels_helper=labels_helper,
+            label_calc_mode=label_calculation_mode)
 
         yield news_id, collection
-
-
-def __iter_opinions(linked_iter, label_calculation_mode, labels_helper):
-    assert(isinstance(linked_iter, collections.Iterable))
-    assert(isinstance(labels_helper, LabelsHelper))
-    assert(isinstance(label_calculation_mode, unicode))
-
-    for linked_opinions in linked_iter:
-        yield __to_doc_opinion(linked_wrap=linked_opinions,
-                               labels_helper=labels_helper,
-                               label_calculation_mode=label_calculation_mode)
-
-
-def __to_doc_opinion(linked_wrap, labels_helper, label_calculation_mode):
-    assert(isinstance(linked_wrap, LinkedDataWrapper))
-    assert(isinstance(labels_helper, LabelsHelper))
-    assert(isinstance(label_calculation_mode, unicode))
-
-    label = labels_helper.aggregate_labels(
-        labels_list=[opinion.Sentiment for opinion in linked_wrap],
-        label_creation_mode=label_calculation_mode)
-
-    return Opinion(source_value=linked_wrap[0].SourceValue,
-                   target_value=linked_wrap[0].TargetValue,
-                   sentiment=label)
 
 
 def __read_results(formatter_type, data_type, experiment, ids_values, labels_scaler):

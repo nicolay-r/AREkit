@@ -143,8 +143,13 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
 
     # region iter methods
 
-    def iter_wrapped_linked_text_opinions(self):
+    def iter_wrapped_linked_text_opinions(self, news_id=None):
+        assert(isinstance(news_id, int) or news_id is None)
+
         for linked_wrap in self.__iter_by_linked_text_opinions():
+            if news_id is not None and linked_wrap.RelatedNewsID != news_id:
+                continue
+
             yield linked_wrap
 
     def __iter_by_linked_text_opinions(self):

@@ -49,11 +49,11 @@ class BertOpinionsFormatter(object):
         row = OrderedDict()
 
         src_value = TextOpinionHelper.extract_entity_value(
-            text_opinion=linked_wrapper.FirstOpinion,
+            text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Source)
 
         target_value = TextOpinionHelper.extract_entity_value(
-            text_opinion=linked_wrapper.FirstOpinion,
+            text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Target)
 
         row[BertOpinionsFormatter.ID] = MultipleIDFormatter.create_opinion_id(

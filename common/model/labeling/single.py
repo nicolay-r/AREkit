@@ -1,12 +1,7 @@
 import numpy as np
 
-from arekit.common.labels.base import Label
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.labeling.modes import LabelCalculationMode
-from arekit.common.opinions.base import Opinion
-from arekit.common.text_opinions.end_type import EntityEndType
-from arekit.common.text_opinions.helper import TextOpinionHelper
-from arekit.common.text_opinions.text_opinion import TextOpinion
 
 
 class SingleLabelsHelper(LabelsHelper):
@@ -27,16 +22,4 @@ class SingleLabelsHelper(LabelsHelper):
             label = self._label_scaler.int_to_label(np.sign(sum(int_labels)))
 
         return label
-
-    @staticmethod
-    def iter_opinions_from_text_opinion_and_label(text_opinion, label):
-        assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(label, Label))
-
-        source = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Source)
-        target = TextOpinionHelper.extract_entity_value(text_opinion, EntityEndType.Target)
-
-        yield Opinion(source_value=source,
-                      target_value=target,
-                      sentiment=label)
 

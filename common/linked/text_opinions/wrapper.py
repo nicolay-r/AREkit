@@ -1,4 +1,7 @@
 from arekit.common.linked.data import LinkedDataWrapper
+from arekit.common.opinions.base import Opinion
+from arekit.common.text_opinions.end_type import EntityEndType
+from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
 
@@ -8,17 +11,27 @@ class LinkedTextOpinionsWrapper(LinkedDataWrapper):
         super(LinkedTextOpinionsWrapper, self).__init__(linked_data=linked_text_opinions)
 
     @property
-    def FirstOpinion(self):
-        text_opinion = self[0]
-        assert(isinstance(text_opinion, TextOpinion))
-        return text_opinion
+    def First(self):
+        first = super(LinkedTextOpinionsWrapper, self).First
+        assert(isinstance(first, TextOpinion))
+        return first
 
     @property
     def RelatedNewsID(self):
-        return self.FirstOpinion.NewsID
+        return self.First.NewsID
+
+    @staticmethod
+    def _aggregate_by_first(item, label):
+        assert(isinstance(item, TextOpinion))
+        source = TextOpinionHelper.extract_entity_value(item, EntityEndType.Source)
+        target = TextOpinionHelper.extract_entity_value(item, EntityEndType.Target)
+
+        return Opinion(source_value=source,
+                       target_value=target,
+                       sentiment=label)
 
     def get_linked_label(self):
-        return self.FirstOpinion.Sentiment
+        return self.First.Sentiment
 
     def get_prior_opinion_by_index(self, index):
         assert(isinstance(index, int))

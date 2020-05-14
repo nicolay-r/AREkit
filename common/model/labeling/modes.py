@@ -13,6 +13,4 @@ class LabelCalculationMode:
     @staticmethod
     def iter_supported():
         for var_name in dir(LabelCalculationMode):
-            if not var_name.startswith('I_'):
-                continue
             yield getattr(LabelCalculationMode, var_name)

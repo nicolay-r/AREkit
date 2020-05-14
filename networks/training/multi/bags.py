@@ -51,7 +51,7 @@ class MultiInstanceBagsCollection(BagsCollection):
 
         for linked_wrap in text_opinion_collection.iter_wrapped_linked_text_opinions():
 
-            bags.append(Bag(label=linked_wrap.FirstOpinion.Sentiment))
+            bags.append(Bag(label=linked_wrap.First.Sentiment))
 
             for o_ind, opinion in enumerate(linked_wrap):
                 assert(isinstance(opinion, TextOpinion))

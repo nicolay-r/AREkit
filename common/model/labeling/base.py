@@ -20,5 +20,5 @@ class LabelsHelper(object):
         raise NotImplementedError()
 
     @staticmethod
-    def iter_opinions_from_text_opinion_and_label(text_opinion, label):
+    def compose_opinion(text_opinion, label):
         raise NotImplementedError()

@@ -149,7 +149,7 @@ class BaseSampleFormatter(object):
         """
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
-        origin = linked_wrap.FirstOpinion
+        origin = linked_wrap.First
         if isinstance(self.__row_ids_formatter, BinaryIDFormatter):
             """
             Enumerate all opinions as if it would be with the different label types.

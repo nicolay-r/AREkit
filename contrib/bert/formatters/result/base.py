@@ -4,7 +4,7 @@ import pandas as pd
 
 import io_utils
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.linked.data import LinkedDataWrapper
+from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
@@ -57,7 +57,7 @@ class BertResults(object):
             opinions_iter = self._iter_by_opinions(linked_df=linked_df,
                                                    bert_opinions=bert_opinions)
 
-            yield LinkedDataWrapper(linked_data=opinions_iter)
+            yield LinkedOpinionWrapper(linked_data=opinions_iter)
 
     # endregion
 

@@ -31,7 +31,7 @@ class BagsCollection:
         bags = []
 
         for linked_wrap in text_opinion_collection.iter_wrapped_linked_text_opinions():
-            bags.append(Bag(linked_wrap.FirstOpinion.Sentiment))
+            bags.append(Bag(linked_wrap.First.Sentiment))
             for opinion in linked_wrap:
                 assert(isinstance(opinion, TextOpinion))
 
