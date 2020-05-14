@@ -23,6 +23,7 @@ from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
 from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
 
 
+# TODO. Inherit from base.
 class BaseSampleFormatter(object):
     """
     Custom Processor with the following fields
@@ -180,14 +181,17 @@ class BaseSampleFormatter(object):
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
+    # TODO. To base
     def __fill_with_blank_rows(self, rows_count):
         assert(isinstance(rows_count, int))
         self.__df[self.ROW_ID] = range(rows_count)
         self.__df.set_index(self.ROW_ID, inplace=True)
 
+    # TODO. To base
     def __set_value(self, row_ind, column, value):
         self.__df.at[row_ind, column] = value
 
+    # TODO. Make protected
     def __iter_by_rows(self, opinion_provider):
         """
         Iterate by rows that is assumes to be added as samples, using opinion_provider information
@@ -212,7 +216,10 @@ class BaseSampleFormatter(object):
 
     # endregion
 
-    def to_samples(self, opinion_provider):
+    # TODO. To Base
+    # TODO. To Base
+    # TODO. To Base
+    def format(self, opinion_provider):
         """
         Converts text_opinions into samples by filling related df.
         """

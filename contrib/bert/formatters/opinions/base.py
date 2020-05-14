@@ -15,8 +15,10 @@ from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
 from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
 
 
+# TODO. Inherit from base.
 class BertOpinionsFormatter(object):
 
+    ROW_ID = 'row_id'
     ID = 'id'
     SOURCE = 'source'
     TARGET = 'target'
@@ -31,9 +33,10 @@ class BertOpinionsFormatter(object):
     @staticmethod
     def __create_empty_df():
         dtypes_list = []
-        dtypes_list.append((BertOpinionsFormatter.ID, 'int32'))
-        dtypes_list.append((BertOpinionsFormatter.SOURCE, 'string'))
-        dtypes_list.append((BertOpinionsFormatter.TARGET, 'string'))
+        dtypes_list.append((BertOpinionsFormatter.ROW_ID, 'int32'))
+        dtypes_list.append((BertOpinionsFormatter.ID, unicode))
+        dtypes_list.append((BertOpinionsFormatter.SOURCE, unicode))
+        dtypes_list.append((BertOpinionsFormatter.TARGET, unicode))
 
         data = np.empty(0, dtype=np.dtype(dtypes_list))
         return pd.DataFrame(data)
@@ -65,6 +68,29 @@ class BertOpinionsFormatter(object):
 
         return row
 
+    # TODO. Make protected
+    @staticmethod
+    def __iter_by_rows(opinion_provider):
+        assert(isinstance(opinion_provider, OpinionProvider))
+
+        linked_iter = opinion_provider.iter_linked_opinion_wrappers(balance=False,
+                                                                    supported_labels=None)
+
+        for linked_wrapper in linked_iter:
+            yield BertOpinionsFormatter.__create_opinion_row(
+                opinion_provider=opinion_provider,
+                linked_wrapper=linked_wrapper)
+
+    # TODO. To Base
+    def __set_value(self, row_ind, column, value):
+        self.__df.at[row_ind, column] = value
+
+    # TODO. To Base
+    def __fill_with_blank_rows(self, rows_count):
+        assert(isinstance(rows_count, int))
+        self.__df[self.ROW_ID] = range(rows_count)
+        self.__df.set_index(self.ROW_ID, inplace=True)
+
     # endregion
 
     def provide_opinion_info_by_opinion_id(self, opinion_id):
@@ -79,20 +105,25 @@ class BertOpinionsFormatter(object):
 
         return news_id, source, target
 
+    # TODO. To Base
+    # TODO. To Base
+    # TODO. To Base
     def format(self, opinion_provider):
         assert(isinstance(opinion_provider, OpinionProvider))
 
-        print "Adding opinions ('{}') ... ".format(self.__data_type)
+        rows_count = sum(1 for _ in self.__iter_by_rows(opinion_provider))
 
-        linked_iter = opinion_provider.iter_linked_opinion_wrappers(
-            balance=False,
-            supported_labels=None)
+        self.__fill_with_blank_rows(rows_count)
+        for row_index, row in enumerate(self.__iter_by_rows(opinion_provider)):
+            for column, value in row.iteritems():
+                self.__set_value(row_ind=row_index,
+                                 column=column,
+                                 value=value)
 
-        for linked_wrapper in linked_iter:
-            row = BertOpinionsFormatter.__create_opinion_row(
-                opinion_provider=opinion_provider,
-                linked_wrapper=linked_wrapper)
-            self.__df = self.__df.append(row, ignore_index=True)
+            current_work = row_index + 1
+            total_work = rows_count
+            percent = round(100 * float(current_work) / total_work, 2)
+            print "Opinions ('{}') added: {}/{} ({}%)".format(self.__data_type, current_work, total_work, percent)
 
     def to_tsv_by_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))

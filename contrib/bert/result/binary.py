@@ -2,9 +2,9 @@ import pandas as pd
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.contrib.bert.formatters.result.base import BertResults
 from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
 from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
+from arekit.contrib.bert.result.base import BertResults
 
 
 class BertBinaryResults(BertResults):

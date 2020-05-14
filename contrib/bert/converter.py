@@ -7,9 +7,9 @@ from arekit.common.opinions.collection import OpinionCollection
 
 from arekit.contrib.bert.encoder import BertEncoder
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.contrib.bert.formatters.result.base import BertResults
-from arekit.contrib.bert.formatters.result.binary import BertBinaryResults
-from arekit.contrib.bert.formatters.result.multiple import BertMultipleResults
+from arekit.contrib.bert.result.base import BertResults
+from arekit.contrib.bert.result.binary import BertBinaryResults
+from arekit.contrib.bert.result.multiple import BertMultipleResults
 from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
 
 
