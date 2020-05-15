@@ -18,7 +18,12 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
     Paper: https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, prepare_model_root):
+    def __init__(self, data_io, prepare_model_root, ra_instance=None):
+        """
+        ra_instance: dict
+            precomputed ru_attitudes (in memory)
+        """
+        assert(isinstance(ra_instance, dict) or ra_instance is None)
 
         rusentrel_news_inds = RuSentRelExperiment.get_rusentrel_inds()
 
@@ -37,11 +42,12 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
             doc_ops=doc_ops,
             prepare_model_root=prepare_model_root)
 
-        logger.debug("Loading RuAttitudes collection in memory, please wait ...")
-        ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(data_io.Stemmer)
+        ru_attitudes = ra_instance
+        if ra_instance is None:
+            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(data_io.Stemmer)
+
         doc_ops.set_ru_attitudes(ru_attitudes)
         opin_ops.set_ru_attitudes(ru_attitudes)
-
 
     @staticmethod
     def read_ruattitudes_in_memory(stemmer, doc_ids_set=None):
@@ -55,6 +61,8 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         """
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
+
+        logger.debug("Loading RuAttitudes collection in memory, please wait ...")
 
         d = {}
 
