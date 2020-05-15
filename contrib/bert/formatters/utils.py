@@ -11,7 +11,7 @@ def generate_filename(data_type, experiment, prefix):
     assert(isinstance(prefix, unicode))
     assert(isinstance(experiment, BaseExperiment))
 
-    return u"{prefix}-{data_type}-{cv_index}.csv".format(
+    return u"{prefix}-{data_type}-{cv_index}.tsv.gz".format(
         prefix=prefix,
         data_type=data_type,
         cv_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex)

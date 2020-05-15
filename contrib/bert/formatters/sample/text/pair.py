@@ -61,6 +61,7 @@ class PairTextProvider(SingleTextProvider):
             subject=self.SUBJECT,
             object=self.OBJECT,
             context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
+            # TODO. Utilze label formatter (using existed).
             label=expected_label.to_str())
 
         return row

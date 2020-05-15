@@ -18,6 +18,7 @@ class BertMultipleResults(BertResults):
     # region protected methods
 
     def _get_column_header(self):
+        # TODO. Provide formatter str (or expand existed labels formatter).
         return [label.to_str() for label in self.__labels_scaler.ordered_suppoted_labels()]
 
     def __calculate_label(self, row):

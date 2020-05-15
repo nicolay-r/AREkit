@@ -101,6 +101,7 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
                         encoding='utf-8',
                         columns=[c for c in self._df.columns if c != self.ROW_ID],
                         index=False,
+                        compression='gzip',
                         header=False)
 
     def from_tsv(self, experiment):
@@ -112,11 +113,13 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
         self._df = pd.read_csv(filepath,
                                sep='\t',
                                header=None,
+                               compression='gzip',
                                names=[self.ID, self.SOURCE, self.TARGET])
 
     def get_ids(self):
         return self._df.iloc[0].tolist()
 
+    # TODO. TO BASE.
     @staticmethod
     def get_filepath(data_type, experiment):
         assert(isinstance(experiment, BaseExperiment))

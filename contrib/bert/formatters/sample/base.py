@@ -209,19 +209,22 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
                                      experiment=experiment)
 
         self._df.to_csv(filepath,
-                         sep='\t',
-                         encoding='utf-8',
-                         columns=[c for c in self._df.columns if c != self.ROW_ID],
-                         index=False,
-                         float_format="%.0f",
-                         header=not self.__is_train())
+                        sep='\t',
+                        encoding='utf-8',
+                        columns=[c for c in self._df.columns if c != self.ROW_ID],
+                        index=False,
+                        float_format="%.0f",
+                        compression='gzip',
+                        header=not self.__is_train())
 
     def from_tsv(self, experiment):
 
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
 
-        self._df = pd.read_csv(filepath, sep='\t')
+        self._df = pd.read_csv(filepath,
+                               compression='gzip',
+                               sep='\t')
 
     def extract_ids(self):
         return self._df[self.ID].astype(unicode).tolist()
@@ -231,6 +234,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         assert(isinstance(opinion_row, list))
         return unicode(opinion_row[0])
 
+    # TODO. TO BASE.
     @staticmethod
     def get_filepath(data_type, experiment):
         assert(isinstance(experiment, BaseExperiment))
