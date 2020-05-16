@@ -37,7 +37,7 @@ class LabeledLinkedTextOpinionCollectionHelper:
         print "\tTotal: {}".format(total)
         for i, value in enumerate(norm):
             label = self.__labels_helper.label_from_uint(i)
-            print "\t{}: {:.2f}%\t({} relations)".format(label.to_str(), value, stat[i])
+            print "\t{}: {:.2f}%\t({} relations)".format(label.to_class_str(), value, stat[i])
 
     def debug_unique_relations_statistic(self):
         statistic = self.__get_group_statistic()

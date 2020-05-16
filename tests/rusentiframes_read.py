@@ -27,12 +27,12 @@ for frame_id in frames.iter_frames_ids():
         logger.info(u"Role: {}".format(u" -- ".join([role.Source, role.Description])).encode('utf-8'))
     # states
     for state in frames.get_frame_states(frame_id):
-        logger.info(u"State: {}".format(u",".join([state.Role, state.Label.to_str(), str(state.Prob)])).encode('utf-8'))
+        logger.info(u"State: {}".format(u",".join([state.Role, state.Label.to_class_str(), str(state.Prob)])).encode('utf-8'))
     # polarity
     for polarity in frames.get_frame_polarities(frame_id):
         logger.info(u"Polarity: {}".format(u",".join([polarity.Source,
                                                       polarity.Destination,
-                                                      polarity.Label.to_str()])).encode('utf-8'))
+                                                      polarity.Label.to_class_str()])).encode('utf-8'))
 
     has_a0_a1_pol = frames.try_get_frame_polarity(frame_id, role_src=u"a0", role_dest=u"a1")
     logger.info(u"Has a0->a1 polarity: {}".format(has_a0_a1_pol is not None).encode('utf-8'))

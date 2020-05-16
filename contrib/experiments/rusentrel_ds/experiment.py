@@ -5,9 +5,8 @@ from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
 from arekit.processing.lemmatization.base import Stemmer
-
+from arekit.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.source.ruattitudes.reader import RuAttitudesFormatReader
 
 logger = logging.getLogger(__name__)
 
@@ -66,7 +65,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         d = {}
 
-        for news in RuAttitudesFormatReader.iter_news(stemmer=stemmer):
+        for news in RuAttitudesCollection.iter_news(stemmer=stemmer):
             assert(isinstance(news, RuAttitudesNews))
 
             if doc_ids_set is not None and news.ID not in doc_ids_set:

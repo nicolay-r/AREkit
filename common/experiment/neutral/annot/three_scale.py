@@ -8,6 +8,7 @@ from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +23,9 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self):
-        super(ThreeScaleNeutralAnnotator, self).__init__(
-            annot_name=u"neutral_3_scale")
+        super(ThreeScaleNeutralAnnotator, self).__init__(annot_name=u"neutral_3_scale")
         self.__algo = None
+        self.__labels_fmt = ThreeScaleLabelsFormatter()
 
     # region private methods
 
@@ -72,7 +73,8 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
                                                                data_type=data_type)
 
             self._DataIO.OpinionFormatter.save_to_file(collection=collection,
-                                                       filepath=filepath)
+                                                       filepath=filepath,
+                                                       labels_formatter=self.__labels_fmt)
 
 
 

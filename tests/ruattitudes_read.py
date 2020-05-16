@@ -2,17 +2,15 @@
 import logging
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.source.ruattitudes.reader import RuAttitudesFormatReader
+from arekit.source.ruattitudes.collection import RuAttitudesCollection
 
 
 stemmer = MystemWrapper()
-reader = RuAttitudesFormatReader()
-
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # iterating through collection
-for news in reader.iter_news(stemmer):
+for news in RuAttitudesCollection.iter_news(stemmer):
     logger.debug(u"News: {}".format(news.ID))
     for sentence in news.iter_sentences():
         # text
@@ -25,7 +23,7 @@ for news in reader.iter_news(stemmer):
             s = u"{src}->{target} ({label}) (t:[{src_type},{target_type}])".format(
                 src=src.get_value(),
                 target=target.get_value(),
-                label=str(ref_opinion.Sentiment.to_str()),
+                label=str(ref_opinion.Sentiment.to_class_str()),
                 src_type=src.Type,
                 target_type=target.Type).encode('utf-8')
             logger.debug(s)

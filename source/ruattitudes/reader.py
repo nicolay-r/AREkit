@@ -4,7 +4,6 @@ from arekit.common.text_object import TextObject
 from arekit.common.text_opinions.base import RefOpinion
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.processing.text.parser import TextParser
-from arekit.source.ruattitudes.io_utils import RuAttitudesIOUtils, RuAttitudesVersions
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
@@ -26,21 +25,10 @@ class RuAttitudesFormatReader(object):
     def __iter__(self):
         pass
 
-    @staticmethod
-    def iter_news(stemmer=None, version=RuAttitudesVersions.V11):
-
-        it = RuAttitudesIOUtils.iter_from_zip(
-            inner_path=RuAttitudesIOUtils.get_collection_filepath(),
-            process_func=lambda input_file: RuAttitudesFormatReader.__iter_news(input_file, stemmer),
-            version=version)
-
-        for news in it:
-            yield news
-
     # region private methods
 
     @staticmethod
-    def __iter_news(input_file, stemmer=None):
+    def iter_news(input_file, stemmer=None):
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         reset = False

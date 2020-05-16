@@ -25,23 +25,24 @@ def init_session():
 
 def init_config(config):
     assert(isinstance(config, DefaultNetworkConfig))
+    config.modify_classes_count(3)
     config.set_term_embedding(np.zeros((100, 100)))
     config.set_class_weights([1] * config.ClassesCount)
     config.notify_initialization_completed()
     return config
 
 
-def create_minibatch(config, label_scaler):
+def create_minibatch(config, labels_scaler):
     assert(isinstance(config, DefaultNetworkConfig))
-    assert(isinstance(label_scaler, BaseLabelScaler))
+    assert(isinstance(labels_scaler, BaseLabelScaler))
 
-    l_min = min([label_scaler.label_to_uint(l) for l in label_scaler.ordered_suppoted_labels()])
-    l_max = max([label_scaler.label_to_uint(l) for l in label_scaler.ordered_suppoted_labels()])
+    l_min = min([labels_scaler.label_to_uint(l) for l in labels_scaler.ordered_suppoted_labels()])
+    l_max = max([labels_scaler.label_to_uint(l) for l in labels_scaler.ordered_suppoted_labels()])
 
     bags = []
     for i in range(config.BagsPerMinibatch):
         uint_label = random.randint(l_min, l_max)
-        label = label_scaler.uint_to_label(uint_label)
+        label = labels_scaler.uint_to_label(uint_label)
         bag = Bag(label)
         for j in range(config.BagSize):
             bag.add_sample(InputSample._generate_test(config))
@@ -57,19 +58,19 @@ def test_ctx_feed(network, network_config, create_minibatch_func, logger,
     assert(isinstance(network_config, DefaultNetworkConfig))
     assert(callable(create_minibatch_func))
 
-    label_scaler = ThreeLabelScaler()
+    labels_scaler = ThreeLabelScaler()
     config = init_config(network_config)
     # Init network.
     network.compile(config=config, reset_graph=True)
     minibatch = create_minibatch_func(config=config,
-                                      label_scaler=label_scaler)
+                                      labels_scaler=labels_scaler)
 
     network_optimiser = config.Optimiser.minimize(network.Cost)
     with init_session() as sess:
         # Save graph
         writer = tf.summary.FileWriter("output", sess.graph)
         # Init feed dict
-        feed_dict = network.create_feed_dict(input=minibatch.to_network_input(label_scaler=label_scaler),
+        feed_dict = network.create_feed_dict(input=minibatch.to_network_input(label_scaler=labels_scaler),
                                              data_type=DataType.Train)
 
         hidden_list = list(network.iter_hidden_parameters())

@@ -18,10 +18,10 @@ class BagsCollectionHelper:
     def __print_label_statistics(self):
         labels_dict = {}
         for bag in self.__bags_collection:
-            ls = bag.BagLabel.to_str()
-            if ls not in labels_dict:
-                labels_dict[ls] = 0
-            labels_dict[ls] += 1
+            str_label = bag.BagLabel.to_class_str()
+            if str_label not in labels_dict:
+                labels_dict[str_label] = 0
+            labels_dict[str_label] += 1
 
         items = list(labels_dict.iteritems())
         total = sum([class_count for class_count in labels_dict.itervalues()])
