@@ -4,11 +4,12 @@ import tensorflow as tf
 import numpy as np
 import logging
 
-from arekit.common.labels.base import Label
-from arekit.networks.training.single.bags.bag import Bag
+from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.experiment.scales.three import ThreeLabelScaler
+from arekit.networks.training.bags.bag import Bag
 from arekit.common.experiment.data_type import DataType
 from arekit.networks.nn import NeuralNetwork
-from arekit.networks.training.single.batch import MiniBatch
+from arekit.networks.training.batch.batch import MiniBatch
 from arekit.tests.ctx_compile import contexts_supported
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -24,19 +25,24 @@ def init_session():
 
 def init_config(config):
     assert(isinstance(config, DefaultNetworkConfig))
+    config.modify_classes_count(3)
     config.set_term_embedding(np.zeros((100, 100)))
     config.set_class_weights([1] * config.ClassesCount)
     config.notify_initialization_completed()
     return config
 
 
-def create_minibatch(config):
+def create_minibatch(config, labels_scaler):
     assert(isinstance(config, DefaultNetworkConfig))
+    assert(isinstance(labels_scaler, BaseLabelScaler))
+
+    l_min = min([labels_scaler.label_to_uint(l) for l in labels_scaler.ordered_suppoted_labels()])
+    l_max = max([labels_scaler.label_to_uint(l) for l in labels_scaler.ordered_suppoted_labels()])
 
     bags = []
     for i in range(config.BagsPerMinibatch):
-        # TODO. Fix
-        label = Label.from_uint(random.randint(0, 2))
+        uint_label = random.randint(l_min, l_max)
+        label = labels_scaler.uint_to_label(uint_label)
         bag = Bag(label)
         for j in range(config.BagSize):
             bag.add_sample(InputSample._generate_test(config))
@@ -52,18 +58,19 @@ def test_ctx_feed(network, network_config, create_minibatch_func, logger,
     assert(isinstance(network_config, DefaultNetworkConfig))
     assert(callable(create_minibatch_func))
 
+    labels_scaler = ThreeLabelScaler()
     config = init_config(network_config)
     # Init network.
     network.compile(config=config, reset_graph=True)
-    minibatch = create_minibatch_func(config)
+    minibatch = create_minibatch_func(config=config,
+                                      labels_scaler=labels_scaler)
 
     network_optimiser = config.Optimiser.minimize(network.Cost)
     with init_session() as sess:
         # Save graph
         writer = tf.summary.FileWriter("output", sess.graph)
         # Init feed dict
-        # TODO. Provide scaler (init scaler before)
-        feed_dict = network.create_feed_dict(input=minibatch.to_network_input(),
+        feed_dict = network.create_feed_dict(input=minibatch.to_network_input(label_scaler=labels_scaler),
                                              data_type=DataType.Train)
 
         hidden_list = list(network.iter_hidden_parameters())

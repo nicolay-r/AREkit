@@ -1,5 +1,5 @@
 from arekit.networks.tf_models.multi.initialization import MultiInstanceModeExperimentInitializer
-from arekit.networks.training.multi.batch import MultiInstanceBatch
+from arekit.networks.training.batch.multi.batch import MultiInstanceBatch
 from arekit.networks.tf_models.single.model import SingleInstanceTensorflowModel
 
 
@@ -10,6 +10,7 @@ class MultiInstanceTensorflowModel(SingleInstanceTensorflowModel):
     """
 
     def create_batch_by_bags_group(self, bags_group):
+        # TODO. OK, will be nested from BaseBagsCollection
         return MultiInstanceBatch(bags_group)
 
     def create_model_init_helper(self):

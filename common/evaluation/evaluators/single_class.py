@@ -14,17 +14,6 @@ class SentimentLabel(Label):
     def __init__(self):
         pass
 
-    def to_str(self):
-        return 'sent'
-
-    # TODO. Should be removed
-    def to_int(self):
-        return int(3)
-
-    # TODO. Should be removed
-    def to_uint(self):
-        return int(3)
-
 
 class SingleClassEvaluator(BaseEvaluator):
 

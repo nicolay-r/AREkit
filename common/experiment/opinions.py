@@ -2,10 +2,14 @@ import collections
 
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.frame_variants.parse import FrameVariantsParser
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.news import News
 from arekit.common.opinions.base import Opinion
@@ -13,11 +17,7 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.data_type import DataType
-from arekit.common.frame_variants.parse import FrameVariantsParser
 from arekit.processing.text.token import Token
-
 
 NewsTermsShow = False
 NewsTermsStatisticShow = False
@@ -152,22 +152,32 @@ def extract_text_opinions_and_parse_news(experiment,
 
 
 def compose_opinion_collection(create_collection_func,
-                               opinions_iter):
+                               wrapped_linked_opinion_iter,
+                               labels_helper,
+                               label_calc_mode):
     assert(callable(create_collection_func))
-    assert(isinstance(opinions_iter, collections.Iterable))
+    assert(isinstance(wrapped_linked_opinion_iter, collections.Iterable))
+    assert(isinstance(labels_helper, LabelsHelper))
 
     collection = create_collection_func()
     assert(isinstance(collection, OpinionCollection))
 
-    for opinion in opinions_iter:
-        assert(isinstance(opinion, Opinion))
+    for linked_opins in wrapped_linked_opinion_iter:
 
-        if isinstance(opinion.Sentiment, NeutralLabel):
-            return
+        label = labels_helper.aggregate_labels(
+            labels_list=[opinion.Sentiment for opinion in linked_opins],
+            label_creation_mode=label_calc_mode)
 
-        if collection.has_synonymous_opinion(opinion):
-            return
+        agg_opinion = linked_opins.aggregate_data(label=label)
 
-        collection.add_opinion(opinion)
+        assert(isinstance(agg_opinion, Opinion))
+
+        if isinstance(agg_opinion.Sentiment, NeutralLabel):
+            continue
+
+        if collection.has_synonymous_opinion(agg_opinion):
+            continue
+
+        collection.add_opinion(agg_opinion)
 
     return collection

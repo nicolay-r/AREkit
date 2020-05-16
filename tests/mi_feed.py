@@ -1,16 +1,18 @@
 import logging
 import ctx_feed
+from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import PositiveLabel
 from arekit.contrib.networks.multi.configurations.max_pooling import MaxPoolingOverSentencesConfig
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
-from arekit.networks.training.single.bags.bag import Bag
+from arekit.networks.training.bags.bag import Bag
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-from arekit.networks.training.multi.batch import MultiInstanceBatch
+from arekit.networks.training.batch.multi.batch import MultiInstanceBatch
 
 
-def create_minibatch(config):
+def create_minibatch(config, labels_scaler):
     assert(isinstance(config, DefaultNetworkConfig))
+    assert(isinstance(labels_scaler, BaseLabelScaler))
     bags = []
     label = PositiveLabel()
     empty_sample = InputSample.create_empty(config)

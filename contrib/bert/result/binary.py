@@ -2,9 +2,9 @@ import pandas as pd
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.contrib.bert.formatters.result.base import BertResults
-from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
-from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
+from arekit.contrib.bert.providers.row_ids.base import BaseIDProvider
+from arekit.contrib.bert.providers.row_ids.binary import BinaryIDProvider
+from arekit.contrib.bert.result.base import BertResults
 
 
 class BertBinaryResults(BertResults):
@@ -14,13 +14,13 @@ class BertBinaryResults(BertResults):
 
     def __init__(self, labels_scaler):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertBinaryResults, self).__init__(ids_formatter=BinaryIDFormatter())
+        super(BertBinaryResults, self).__init__(ids_formatter=BinaryIDProvider())
         self.__labels_scaler = labels_scaler
 
     @property
     def _IdsFormatter(self):
         formatter = super(BertBinaryResults, self)._IdsFormatter
-        assert(isinstance(formatter, BinaryIDFormatter))
+        assert(isinstance(formatter, BinaryIDProvider))
         return formatter
 
     def _get_column_header(self):
@@ -44,7 +44,7 @@ class BertBinaryResults(BertResults):
 
         for opinion_ind in self.__iter_linked_opinion_indices(linked_df=linked_df):
             ind_pattern = self._IdsFormatter.create_pattern(id_value=opinion_ind,
-                                                            p_type=BaseIDFormatter.INDEX)
+                                                            p_type=BaseIDProvider.INDEX)
             opinion_df = linked_df[linked_df[self.ID].str.contains(ind_pattern)]
 
             yield self._compose_opinion_by_opinion_id(

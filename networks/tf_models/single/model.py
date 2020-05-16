@@ -7,7 +7,7 @@ from arekit.networks.callback import Callback
 from arekit.networks.tf_models.single.initialization import SingleInstanceModelExperimentInitializer
 from arekit.networks.tf_models.model import TensorflowModel
 from arekit.networks.nn import NeuralNetwork
-from arekit.networks.training.single.batch import MiniBatch
+from arekit.networks.training.batch.batch import MiniBatch
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
@@ -27,6 +27,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         super(SingleInstanceTensorflowModel, self).__init__(
             nn_io=experiment.DataIO.ModelIO,
             network=network,
+            label_scaler=experiment.DataIO.LabelsScaler,
             callback=callback)
 
         self.__config = config

@@ -1,10 +1,6 @@
 from collections import OrderedDict
-from os import path
 
-import numpy as np
 import pandas as pd
-
-import io_utils
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
@@ -13,17 +9,18 @@ from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.formats.base import BaseExperiment
 
-from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
-from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
-from arekit.contrib.bert.formatters.sample.label.base import BertLabelProvider
-from arekit.contrib.bert.formatters.sample.label.binary import BertBinaryLabelProvider
-from arekit.contrib.bert.formatters.sample.label.multiple import BertMultipleLabelProvider
-from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
-from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
-from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
+from arekit.contrib.bert.providers.label.base import BertLabelProvider
+from arekit.contrib.bert.providers.label.binary import BertBinaryLabelProvider
+from arekit.contrib.bert.providers.label.multiple import BertMultipleLabelProvider
+from arekit.contrib.bert.providers.row_ids.binary import BinaryIDProvider
+from arekit.contrib.bert.providers.row_ids.multiple import MultipleIDProvider
+from arekit.contrib.bert.providers.text.single import SingleTextProvider
+
+from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
+from arekit.contrib.bert.providers.opinions import OpinionProvider
 
 
-class BaseSampleFormatter(object):
+class BaseSampleFormatter(BaseBertRowsFormatter):
     """
     Custom Processor with the following fields
 
@@ -43,32 +40,36 @@ class BaseSampleFormatter(object):
         assert(isinstance(label_provider, BertLabelProvider))
         assert(isinstance(text_provider, SingleTextProvider))
 
-        self.__data_type = data_type
-        # self.__id_col_index = self.__df.column.get_loc[BaseSampleFormatter.ID]
         self.__label_provider = label_provider
         self.__text_provider = text_provider
-        self.__df = self.__create_empty_df()
         self.__row_ids_formatter = self.__create_row_ids_formatter(label_provider)
+
+        super(BaseSampleFormatter, self).__init__(data_type=data_type)
+
+    @staticmethod
+    def formatter_type_log_name():
+        return "Sample"
 
     # region Private methods
 
     @staticmethod
     def __create_row_ids_formatter(label_provider):
         if isinstance(label_provider, BertBinaryLabelProvider):
-            return BinaryIDFormatter()
+            return BinaryIDProvider()
         if isinstance(label_provider, BertMultipleLabelProvider):
-            return MultipleIDFormatter()
+            return MultipleIDProvider()
 
     def __is_train(self):
-        return self.__data_type == DataType.Train
+        return self._data_type == DataType.Train
 
-    def __get_columns_list_with_types(self):
+    def _get_columns_list_with_types(self):
         """
         Composing df with the following columns:
             [id, label, type, text_a]
         """
-        dtypes_list = []
-        dtypes_list.append((self.ID, 'int32'))
+        dtypes_list = super(BaseSampleFormatter, self)._get_columns_list_with_types()
+
+        dtypes_list.append((self.ID, unicode))
 
         # insert labels
         if self.__is_train():
@@ -76,17 +77,13 @@ class BaseSampleFormatter(object):
 
         # insert text columns
         for col_name in self.__text_provider.iter_columns():
-            dtypes_list.append((col_name, 'float64'))
+            dtypes_list.append((col_name, unicode))
 
         # insert indices
         dtypes_list.append((self.S_IND, 'int32'))
         dtypes_list.append((self.T_IND, 'int32'))
 
         return dtypes_list
-
-    def __create_empty_df(self):
-        data = np.empty(0, dtype=np.dtype(self.__get_columns_list_with_types()))
-        return pd.DataFrame(data)
 
     @staticmethod
     def __get_opinion_end_indices(parsed_news, text_opinion):
@@ -149,8 +146,8 @@ class BaseSampleFormatter(object):
         """
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
-        origin = linked_wrap.FirstOpinion
-        if isinstance(self.__row_ids_formatter, BinaryIDFormatter):
+        origin = linked_wrap.First
+        if isinstance(self.__row_ids_formatter, BinaryIDProvider):
             """
             Enumerate all opinions as if it would be with the different label types.
             """
@@ -160,7 +157,7 @@ class BaseSampleFormatter(object):
                                         index_in_linked=index_in_linked,
                                         etalon_label=origin.Sentiment)
 
-        if isinstance(self.__row_ids_formatter, MultipleIDFormatter):
+        if isinstance(self.__row_ids_formatter, MultipleIDProvider):
             yield self.__create_row(opinion_provider=opinion_provider,
                                     linked_wrap=linked_wrap,
                                     index_in_linked=index_in_linked,
@@ -178,15 +175,11 @@ class BaseSampleFormatter(object):
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
-    # endregion
-
-    def to_samples(self, opinion_provider):
+    def _iter_by_rows(self, opinion_provider):
         """
-        Converts text_opinions into samples by filling related df.
+        Iterate by rows that is assumes to be added as samples, using opinion_provider information
         """
         assert(isinstance(opinion_provider, OpinionProvider))
-
-        added = 0
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(
             balance=self.__is_train(),
@@ -195,62 +188,48 @@ class BaseSampleFormatter(object):
         for linked_wrap in linked_iter:
 
             for i in range(len(linked_wrap)):
+
                 rows_it = self.__provide_rows(
                     opinion_provider=opinion_provider,
                     linked_wrap=linked_wrap,
                     index_in_linked=i)
 
                 for row in rows_it:
-                    self.__df = self.__df.append(row, ignore_index=True)
+                    yield row
 
-                added += 1
-
-            print "Samples ('{}') added: {}/{} ({}%)".format(
-                self.__data_type,
-                added,
-                opinion_provider.opinions_count(),
-                round(100 * float(added) / opinion_provider.opinions_count(), 2))
+    # endregion
 
     def to_tsv_by_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
 
-        filepath = self.get_filepath(data_type=self.__data_type,
+        filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
 
-        self.__df.to_csv(filepath,
-                         sep='\t',
-                         encoding='utf-8',
-                         index=False,
-                         header=not self.__is_train())
+        self._df.to_csv(filepath,
+                        sep='\t',
+                        encoding='utf-8',
+                        columns=[c for c in self._df.columns if c != self.ROW_ID],
+                        index=False,
+                        float_format="%.0f",
+                        compression='gzip',
+                        header=not self.__is_train())
 
     def from_tsv(self, experiment):
 
-        filepath = self.get_filepath(data_type=self.__data_type,
+        filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
 
-        self.__df = pd.read_csv(filepath, sep='\t')
+        self._df = pd.read_csv(filepath,
+                               compression='gzip',
+                               sep='\t')
 
     def extract_ids(self):
-        return self.__df[self.ID].astype(unicode).tolist()
+        return self._df[self.ID].astype(unicode).tolist()
 
     @staticmethod
     def extract_row_id(opinion_row):
         assert(isinstance(opinion_row, list))
         return unicode(opinion_row[0])
 
-    @staticmethod
-    def get_filepath(data_type, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-
-        fname = generate_filename(data_type=data_type,
-                                  experiment=experiment,
-                                  prefix=u'samples')
-
-        filepath = path.join(get_output_dir(experiment=experiment), fname)
-
-        io_utils.create_dir_if_not_exists(filepath)
-
-        return filepath
-
     def __len__(self):
-        return len(self.__df.index)
+        return len(self._df.index)

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
+from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.text_object import TextObject
 from arekit.common.text_opinions.base import RefOpinion
-from arekit.common.labels.base import Label
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.processing.text.parser import TextParser
-from arekit.source.ruattitudes.io_utils import RuAttitudesIOUtils, RuAttitudesVersions
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
@@ -26,21 +25,10 @@ class RuAttitudesFormatReader(object):
     def __iter__(self):
         pass
 
-    @staticmethod
-    def iter_news(stemmer=None, version=RuAttitudesVersions.V11):
-
-        it = RuAttitudesIOUtils.iter_from_zip(
-            inner_path=RuAttitudesIOUtils.get_collection_filepath(),
-            process_func=lambda input_file: RuAttitudesFormatReader.__iter_news(input_file, stemmer),
-            version=version)
-
-        for news in it:
-            yield news
-
     # region private methods
 
     @staticmethod
-    def __iter_news(input_file, stemmer=None):
+    def iter_news(input_file, stemmer=None):
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         reset = False
@@ -53,6 +41,8 @@ class RuAttitudesFormatReader(object):
         s_index = 0
         news_index = None
 
+        label_scaler = ThreeLabelScaler()
+
         for line in input_file.readlines():
             line = line.decode('utf-8')
 
@@ -64,7 +54,9 @@ class RuAttitudesFormatReader(object):
                 objects_list.append(object)
 
             if RuAttitudesFormatReader.OPINION_KEY in line:
-                opinion = RuAttitudesFormatReader.__parse_opinion(line, objects_list=objects_list)
+                opinion = RuAttitudesFormatReader.__parse_opinion(line=line,
+                                                                  objects_list=objects_list,
+                                                                  label_scaler=label_scaler)
                 opinions_list.append(opinion)
 
             if RuAttitudesFormatReader.FRAMEVAR_TITLE in line:
@@ -127,14 +119,15 @@ class RuAttitudesFormatReader(object):
         assert(len(sentences) == 0)
 
     @staticmethod
-    def __parse_opinion(line, objects_list):
+    def __parse_opinion(line, objects_list, label_scaler):
         assert(isinstance(objects_list, list))
+        assert(isinstance(label_scaler, ThreeLabelScaler))
 
         line = line[len(RuAttitudesFormatReader.OPINION_KEY):]
 
         s_from = line.index(u'b:(')
         s_to = line.index(u')', s_from)
-        label = Label.from_int(int(line[s_from+3:s_to]))
+        label = label_scaler.int_to_label(int(line[s_from+3:s_to]))
 
         o_from = line.index(u'oi:[')
         o_to = line.index(u']', o_from)

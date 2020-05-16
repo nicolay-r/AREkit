@@ -1,26 +1,24 @@
+from arekit.common.experiment.scales.base import BaseLabelScaler
+
+
 class LabelsHelper(object):
 
-    @staticmethod
-    def create_label_from_uint(label_uint):
+    def __init__(self, label_scaler):
+        assert(isinstance(label_scaler, BaseLabelScaler))
+        self._label_scaler = label_scaler
+
+    def label_from_uint(self, value):
+        return self._label_scaler.uint_to_label(value=value)
+
+    def label_to_uint(self, label):
+        return self._label_scaler.label_to_uint(value=label)
+
+    def get_classes_count(self):
+        return len(self._label_scaler.ordered_suppoted_labels())
+
+    def aggregate_labels(self, labels_list, label_creation_mode):
         raise NotImplementedError()
 
     @staticmethod
-    def create_label_from_text_opinions(text_opinion_labels, label_creation_mode):
+    def compose_opinion(text_opinion, label):
         raise NotImplementedError()
-
-    @staticmethod
-    def create_label_from_opinions(forward, backward):
-        raise NotImplementedError()
-
-    @staticmethod
-    def iter_opinions_from_text_opinion_and_label(text_opinion, label):
-        raise NotImplementedError()
-
-    @staticmethod
-    def get_classes_count():
-        raise NotImplementedError()
-
-
-class LabelCalculationMode:
-    FIRST_APPEARED = u'take_first_appeared'
-    AVERAGE = u'average'

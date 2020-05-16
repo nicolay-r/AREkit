@@ -6,8 +6,8 @@ from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.contrib.networks.sample import InputSample
 
 
-# TODO. Provide experiment.
-def create_input_sample(text_opinion, frames_collection, synonyms_collection, config):
+# TODO. Move to bags (BaseBagsCollection, which should be added).
+def create_input_sample(text_opinion, frames_collection, synonyms_collection, config, label_scaler):
     """
     Creates an input for Neural Network model
     """
@@ -26,4 +26,5 @@ def create_input_sample(text_opinion, frames_collection, synonyms_collection, co
         parsed_news=parsed_news_collection.get_by_news_id(text_opinion.NewsID),
         config=config,
         frames_collection=frames_collection,
-        synonyms_collection=synonyms_collection)
+        synonyms_collection=synonyms_collection,
+        label_scaler=label_scaler)

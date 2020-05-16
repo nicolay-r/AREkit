@@ -1,8 +1,8 @@
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
+from arekit.contrib.bert.providers.opinions import OpinionProvider
 
 
-class BaseIDFormatter(object):
+class BaseIDProvider(object):
     """
     Opinion in text is a sequence of opinions in context
     o1, o2, o3, ..., on
@@ -24,12 +24,12 @@ class BaseIDFormatter(object):
         assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
 
-        template = u''.join([BaseIDFormatter.NEWS,
-                             BaseIDFormatter.OPINION,
-                             BaseIDFormatter.INDEX])
+        template = u''.join([BaseIDProvider.NEWS,
+                             BaseIDProvider.OPINION,
+                             BaseIDProvider.INDEX])
 
-        return template.format(linked_opinions.FirstOpinion.NewsID,
-                               linked_opinions.FirstOpinion.TextOpinionID,
+        return template.format(linked_opinions.First.NewsID,
+                               linked_opinions.First.TextOpinionID,
                                index_in_linked)
 
     @staticmethod
@@ -47,7 +47,7 @@ class BaseIDFormatter(object):
     @staticmethod
     def convert_sample_id_to_opinion_id(sample_id):
         assert(isinstance(sample_id, unicode))
-        return sample_id[:sample_id.index(BaseIDFormatter.INDEX[0])] + BaseIDFormatter.INDEX.format(0)
+        return sample_id[:sample_id.index(BaseIDProvider.INDEX[0])] + BaseIDProvider.INDEX.format(0)
 
     # region 'parse' methods
 
@@ -56,18 +56,18 @@ class BaseIDFormatter(object):
         assert(isinstance(pattern, unicode))
 
         _from = row_id.index(pattern[0]) + 1
-        _to = row_id.index(BaseIDFormatter.SEPARATOR, _from, len(row_id))
+        _to = row_id.index(BaseIDProvider.SEPARATOR, _from, len(row_id))
 
         return int(row_id[_from:_to])
 
     @staticmethod
     def parse_opinion_in_opinion_id(opinion_id):
         assert(isinstance(opinion_id, unicode))
-        return BaseIDFormatter._parse(opinion_id, BaseIDFormatter.OPINION)
+        return BaseIDProvider._parse(opinion_id, BaseIDProvider.OPINION)
 
     @staticmethod
     def parse_news_in_sample_id(opinion_id):
         assert(isinstance(opinion_id, unicode))
-        return BaseIDFormatter._parse(opinion_id, BaseIDFormatter.NEWS)
+        return BaseIDProvider._parse(opinion_id, BaseIDProvider.NEWS)
 
     # endregion

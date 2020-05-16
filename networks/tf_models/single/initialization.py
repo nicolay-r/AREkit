@@ -1,28 +1,21 @@
 import logging
 
-from arekit.common.frames.collection import FramesCollection
-from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
-# TODO. Remove paired
-from arekit.common.model.labeling.paired import PairedLabelsHelper
-from arekit.common.model.labeling.single import SingleLabelsHelper
-from arekit.common.synonyms import SynonymsCollection
-from arekit.common.parsed_news.collection import ParsedNewsCollection
-
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
+from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
+from arekit.common.model.labeling.single import SingleLabelsHelper
+from arekit.common.parsed_news.collection import ParsedNewsCollection
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.networks.embedding.input import create_term_embedding_matrix
+from arekit.networks.tf_models.sample import create_input_sample
 from arekit.networks.tf_models.single.embedding.entities import generate_entity_embeddings
 from arekit.networks.tf_models.single.embedding.frames import init_frames_embedding
-from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
 from arekit.networks.tf_models.single.embedding.tokens import create_tokens_embedding
 from arekit.networks.tf_models.single.embedding.words import init_custom_words_embedding
 from arekit.networks.tf_models.single.helpers.bags import BagsCollectionHelper
-from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
-from arekit.networks.tf_models.sample import create_input_sample
-from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-
-from arekit.networks.training.single.bags.collection import BagsCollection
-from arekit.networks.embedding.input import create_term_embedding_matrix
-from arekit.common.experiment.data_type import DataType
-
+from arekit.networks.training.bags.collection.single import SingleBagsCollection
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +37,8 @@ class SingleInstanceModelExperimentInitializer(object):
 
         self.__synonyms = experiment.DataIO.SynonymsCollection
 
-        self.__labels_helper = SingleLabelsHelper() if config.ClassesCount == 3 else PairedLabelsHelper()  # TODO. Remove paired
+        self.__labels_scaler = experiment.DataIO.LabelsScaler
+        self.__labels_helper = SingleLabelsHelper(label_scaler=self.__labels_scaler)
 
         self.__text_opinion_collections = self.__create_collection(
             lambda data_type: extract_text_opinions_and_parse_news(experiment=experiment,
@@ -73,11 +67,10 @@ class SingleInstanceModelExperimentInitializer(object):
                 frame_embedding=config.FrameEmbedding)
         config.set_term_embedding(term_embedding)
 
+        self.__frames_collection = experiment.DataIO.FramesCollection
+
         self.__bags_collection = self.__create_collection(
             lambda data_type: self.create_bags_collection(
-                text_opinions_collection=self.__text_opinion_collections[data_type],
-                frames_collection=experiment.DataIO.FramesCollection,
-                synonyms_collection=self.__synonyms,
                 data_type=data_type,
                 config=config))
 
@@ -99,6 +92,10 @@ class SingleInstanceModelExperimentInitializer(object):
     # region Properties
 
     @property
+    def _LabelsScaler(self):
+        return self.__labels_scaler
+
+    @property
     def BagsCollections(self):
         return self.__bags_collection
 
@@ -118,34 +115,37 @@ class SingleInstanceModelExperimentInitializer(object):
     def LabelsHelper(self):
         return self.__labels_helper
 
+    @property
+    def _BagCollectionType(self):
+        return SingleBagsCollection
+
     # endregion
 
-    @staticmethod
-    def create_bags_collection(text_opinions_collection,
-                               frames_collection,
-                               synonyms_collection,
-                               data_type,
-                               config):
-        assert(isinstance(text_opinions_collection, LabeledLinkedTextOpinionCollection))
-        assert(isinstance(frames_collection, FramesCollection))
-        assert(isinstance(synonyms_collection, SynonymsCollection))
+    def _create_empty_sample_func(self, config):
+        return None
+
+    def create_bags_collection(self, data_type, config):
         assert(isinstance(config, DefaultNetworkConfig))
 
-        collection = BagsCollection.from_linked_text_opinions(
-            text_opinions_collection,
+        collection = self._BagCollectionType.from_linked_text_opinions(
+            self.__text_opinion_collections[data_type],
             data_type=data_type,
             bag_size=config.BagSize,
             shuffle=True,
-            create_empty_sample_func=None,
-            create_sample_func=lambda r: create_input_sample(
-                text_opinion=r,
-                frames_collection=frames_collection,
-                synonyms_collection=synonyms_collection,
-                config=config))
+            create_empty_sample_func=self._create_empty_sample_func,
+            create_sample_func=lambda text_opinion: self.__create_sample(text_opinion, config))
 
         return collection
 
     # region private methods
+
+    def __create_sample(self, text_opinion, config):
+        assert(isinstance(config, DefaultNetworkConfig))
+        return create_input_sample(text_opinion=text_opinion,
+                                   frames_collection=self.__frames_collection,
+                                   synonyms_collection=self.__synonyms,
+                                   label_scaler=self.__labels_scaler,
+                                   config=config)
 
     @staticmethod
     def __create_collection(collection_by_data_type_func):

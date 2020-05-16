@@ -2,15 +2,12 @@ import numpy as np
 
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.networks.training.single.bags.bag import Bag
 from arekit.contrib.networks.sample import InputSample
+from arekit.networks.training.bags.bag import Bag
+from arekit.networks.training.bags.collection.base import BagsCollection
 
 
-class BagsCollection:
-
-    def __init__(self, bags):
-        assert(isinstance(bags, list))
-        self.__bags = bags
+class SingleBagsCollection(BagsCollection):
 
     # region classmethods
 
@@ -31,7 +28,7 @@ class BagsCollection:
         bags = []
 
         for linked_wrap in text_opinion_collection.iter_wrapped_linked_text_opinions():
-            bags.append(Bag(linked_wrap.FirstOpinion.Sentiment))
+            bags.append(Bag(linked_wrap.First.Sentiment))
             for opinion in linked_wrap:
                 assert(isinstance(opinion, TextOpinion))
 
@@ -101,36 +98,25 @@ class BagsCollection:
                 bags_list=bags_list,
                 text_opinion_ids_set=text_opinion_ids_set)
 
-        groups_count = len(self.__bags) / bags_per_group
+        groups_count = len(self._bags) / bags_per_group
         end = 0
         for index in xrange(groups_count):
 
             begin = index * bags_per_group
             end = begin + bags_per_group
-            bags = self.__bags[begin:end]
+            bags = self._bags[begin:end]
 
             if __check(bags):
                 yield bags
 
         last_group = []
         while len(last_group) != bags_per_group:
-            if not end < len(self.__bags):
+            if not end < len(self._bags):
                 end = 0
-            last_group.append(self.__bags[end])
+            last_group.append(self._bags[end])
             end += 1
 
         if __check(last_group):
             yield last_group
-
-    # endregion
-
-    # region overriden methods
-
-    def __iter__(self):
-        for bag in self.__bags:
-            yield bag
-
-    def __len__(self):
-        return len(self.__bags)
 
     # endregion

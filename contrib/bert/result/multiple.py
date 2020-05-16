@@ -4,21 +4,22 @@ import pandas as pd
 from arekit.common.experiment.scales.base import BaseLabelScaler
 
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.contrib.bert.formatters.result.base import BertResults
-from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
+from arekit.contrib.bert.providers.row_ids.multiple import MultipleIDProvider
+from arekit.contrib.bert.result.base import BertResults
 
 
 class BertMultipleResults(BertResults):
 
     def __init__(self, labels_scaler):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertMultipleResults, self).__init__(ids_formatter=MultipleIDFormatter())
+        super(BertMultipleResults, self).__init__(ids_formatter=MultipleIDProvider())
         self.__labels_scaler = labels_scaler
 
     # region protected methods
 
     def _get_column_header(self):
-        return [label.to_str() for label in self.__labels_scaler.ordered_suppoted_labels()]
+        return [str(self.__labels_scaler.label_to_uint(label))
+                for label in self.__labels_scaler.ordered_suppoted_labels()]
 
     def __calculate_label(self, row):
         """

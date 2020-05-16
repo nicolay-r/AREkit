@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from arekit.common.labels.base import Label
-from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
+from arekit.contrib.bert.providers.text.single import SingleTextProvider
 
 
 class PairTextProvider(SingleTextProvider):
@@ -61,6 +61,7 @@ class PairTextProvider(SingleTextProvider):
             subject=self.SUBJECT,
             object=self.OBJECT,
             context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
-            label=expected_label.to_str())
+            # TODO. Utilze label formatter (using existed).
+            label=expected_label.to_class_str())
 
         return row

@@ -39,7 +39,7 @@ for doc_id in RuSentRelIOUtils.iter_collection_indices():
         logger.info(u"\t{}->{} ({}) [synonym groups opinion: {}->{}]".format(
             opinion.SourceValue,
             opinion.TargetValue,
-            opinion.Sentiment.to_str(),
+            opinion.Sentiment.to_class_str(),
             # Considering synonyms.
             synonyms.get_synonym_group_index(opinion.SourceValue),
             synonyms.get_synonym_group_index(opinion.TargetValue)).encode('utf-8'))

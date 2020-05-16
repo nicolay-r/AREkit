@@ -1,9 +1,11 @@
 import json
 
-from arekit.common.labels.base import Label, PositiveLabel, NegativeLabel
 from arekit.common.frames.collection import FramesCollection
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.source.rusentiframes.effect import FrameEffect
 from arekit.source.rusentiframes.io_utils import RuSentiFramesIOUtils, RuSentiFramesVersions
+from arekit.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
+    RuSentiFramesEffectLabelsFormatter
 from arekit.source.rusentiframes.polarity import RuSentiFramesFramePolarity
 from arekit.source.rusentiframes.role import FrameRole
 from arekit.source.rusentiframes.state import FrameState
@@ -16,8 +18,12 @@ class RuSentiFramesCollection(FramesCollection):
     __state_key = u"state"
     __effect_key = u"effect"
 
-    def __init__(self, data):
+    def __init__(self, data, labels_fmt, effect_labels_fmt):
         assert(isinstance(data, dict))
+        assert(isinstance(labels_fmt, StringLabelsFormatter))
+        assert(isinstance(effect_labels_fmt, StringLabelsFormatter))
+        self.__labels_fmt = labels_fmt
+        self.__effect_labels_fmt = effect_labels_fmt
         self.__data = data
 
     # region classmethods
@@ -26,13 +32,18 @@ class RuSentiFramesCollection(FramesCollection):
     def read_collection(cls, version=RuSentiFramesVersions.V10):
         return RuSentiFramesIOUtils.read_from_zip(
             inner_path=RuSentiFramesIOUtils.get_collection_filepath(),
-            process_func=lambda input_file: cls.__from_json(input_file),
+            process_func=lambda input_file: cls.__from_json(
+                input_file=input_file,
+                labels_fmt=RuSentiFramesLabelsFormatter(),
+                effect_labels_fmt=RuSentiFramesEffectLabelsFormatter()),
             version=version)
 
     @classmethod
-    def __from_json(cls, input_file):
+    def __from_json(cls, input_file, labels_fmt, effect_labels_fmt):
         data = json.load(input_file)
-        return cls(data)
+        return cls(data=data,
+                   labels_fmt=labels_fmt,
+                   effect_labels_fmt=effect_labels_fmt)
 
     # endregion
 
@@ -79,7 +90,7 @@ class RuSentiFramesCollection(FramesCollection):
         if self.__state_key not in self.__data[frame_id][self.__frames_key]:
             return []
 
-        return [FrameState(role=args[0], label=Label.from_str(args[1]), prob=args[2])
+        return [FrameState(role=args[0], label=self.__labels_fmt.str_to_label(args[1]), prob=args[2])
                 for args in self.__data[frame_id][self.__frames_key][self.__state_key]]
 
     def get_frame_titles(self, frame_id):
@@ -100,7 +111,7 @@ class RuSentiFramesCollection(FramesCollection):
         if self.__effect_key not in self.__data[frame_id][self.__frames_key]:
             return []
 
-        return [FrameEffect(role=args[0], label=self.__effect_label(args[1]), prob=args[2])
+        return [FrameEffect(role=args[0], label=self.__effect_labels_fmt.str_to_label(args[1]), prob=args[2])
                 for args in self.__data[frame_id][self.__frames_key][self.__effect_key]]
 
     # endregion
@@ -123,21 +134,10 @@ class RuSentiFramesCollection(FramesCollection):
     def __check_has_frame_polarity_key(self, frame_id):
         return self.__polarity_key in self.__data[frame_id][self.__frames_key]
 
-    @staticmethod
-    def __frame_polarity_from_args(args):
+    def __frame_polarity_from_args(self, args):
         return RuSentiFramesFramePolarity(role_src=args[0],
                                           role_dest=args[1],
-                                          label=Label.from_str(args[2]),
+                                          label=self.__labels_fmt.str_to_label(args[2]),
                                           prob=args[3])
-
-    @staticmethod
-    def __effect_label(value):
-        assert(isinstance(value, unicode))
-        if value == u'+':
-            return PositiveLabel()
-        elif value == u'-':
-            return NegativeLabel()
-        else:
-            raise Exception("Not supported label type: '{}'".format(value))
 
     # endregion

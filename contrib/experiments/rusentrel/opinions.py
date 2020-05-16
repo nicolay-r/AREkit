@@ -5,6 +5,7 @@ from arekit.common.experiment.data_io import DataIO
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOperations
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 
@@ -18,12 +19,12 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             model_root=data_io.get_model_root(),
             experiments_dir=data_io.get_experiments_dir(),
             folding_algo=data_io.CVFoldingAlgorithm,
-            annot_name_func=annot_name_func
-        )
+            annot_name_func=annot_name_func)
 
         self._data_io = data_io
         self._rusentrel_news_ids = rusentrel_news_ids
         self.__eval_on_rusentrel_docs_key = True
+        self.__result_labels_fmt = RuSentRelLabelsFormatter()
 
     def __iter_doc_ids_to_compare(self, doc_ids):
         if self.__eval_on_rusentrel_docs_key:
@@ -51,7 +52,8 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
                 filepath=self.create_result_opinion_collection_filepath(data_type=data_type,
                                                                         doc_id=doc_id,
                                                                         epoch_index=epoch_index),
-                synonyms=self._data_io.SynonymsCollection))
+                synonyms=self._data_io.SynonymsCollection,
+                labels_formatter=self.__result_labels_fmt))
 
         for opinions_cmp in opinions_cmp_iter:
             yield opinions_cmp

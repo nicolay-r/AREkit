@@ -1,4 +1,5 @@
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
+from arekit.common.evaluation.evaluators.utils import label_to_str
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
@@ -36,8 +37,8 @@ class BaseEvaluator(object):
 
             cmp_table.loc[r_ind] = [o_etalon.SourceValue.encode('utf-8'),
                                     o_etalon.TargetValue.encode('utf-8'),
-                                    o_etalon.Sentiment.to_str(),
-                                    None if not has_opinion else o_test.Sentiment.to_str(),
+                                    label_to_str(o_etalon.Sentiment),
+                                    None if not has_opinion else label_to_str(o_test.Sentiment),
                                     comparison]
             r_ind += 1
 
@@ -48,7 +49,7 @@ class BaseEvaluator(object):
                 continue
             cmp_table.loc[r_ind] = [o_test.SourceValue.encode('utf-8'),
                                     o_test.TargetValue.encode('utf-8'),
-                                    None, o_test.Sentiment.to_str(), False]
+                                    None, label_to_str(o_test.Sentiment), False]
             r_ind += 1
 
         return DocumentCompareTable(cmp_table=cmp_table)

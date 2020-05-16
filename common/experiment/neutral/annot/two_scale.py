@@ -1,7 +1,9 @@
 import logging
 
-import utils
+import arekit.common.experiment.neutral.annot.utils
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
+
+from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -18,8 +20,8 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
     """
 
     def __init__(self):
-        super(TwoScaleNeutralAnnotator, self).__init__(
-            annot_name=u"neutral_2_scale")
+        super(TwoScaleNeutralAnnotator, self).__init__(annot_name=u"neutral_2_scale")
+        self.__labels_fmt = ThreeScaleLabelsFormatter()
 
     # region static methods
 
@@ -58,12 +60,13 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
 
         for doc_id, filepath in filtered_iter:
 
-            utils.notify_newfile_creation(filepath=filepath,
-                                          data_type=data_type,
-                                          logger=logger)
+            arekit.common.experiment.neutral.annot.utils.notify_newfile_creation(filepath=filepath,
+                                                                                 data_type=data_type,
+                                                                                 logger=logger)
 
             self._DataIO.OpinionFormatter.save_to_file(
                 collection=self.__create_opinions_for_classification(doc_id),
-                filepath=filepath)
+                filepath=filepath,
+                labels_formatter=self.__labels_fmt)
 
     # endregion

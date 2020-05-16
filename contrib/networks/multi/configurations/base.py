@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from arekit.common.model.labeling.base import LabelCalculationMode
+from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
 

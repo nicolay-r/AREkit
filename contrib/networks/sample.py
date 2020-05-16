@@ -4,6 +4,7 @@ import random
 import numpy as np
 
 from arekit.common.entities.base import Entity
+from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.synonyms import SynonymsCollection
@@ -144,12 +145,13 @@ class InputSample(InputSampleBase):
                    text_opinion_id=-1)
 
     @classmethod
-    def from_text_opinion(cls, text_opinion, parsed_news, frames_collection, synonyms_collection, config):
+    def from_text_opinion(cls, text_opinion, parsed_news, frames_collection, synonyms_collection, config, label_scaler):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(frames_collection, FramesCollection))
         assert(isinstance(synonyms_collection, SynonymsCollection))
+        assert(isinstance(label_scaler, BaseLabelScaler))
 
         sentence_index = TextOpinionHelper.extract_entity_sentence_index(
             text_opinion=text_opinion,
@@ -192,7 +194,8 @@ class InputSample(InputSampleBase):
             text_opinion=text_opinion,
             size=len(x_indices),
             frames_collection=frames_collection,
-            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
+            filler=cls.FRAME_SENT_ROLES_PAD_VALUE,
+            label_scaler=label_scaler)
 
         x_feature = IndicesFeature.from_vector_to_be_fitted(
             value_vector=x_indices,
