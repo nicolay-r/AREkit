@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from arekit.common.labels.base import Label
-from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
+from arekit.contrib.bert.providers.text.single import SingleTextProvider
 
 
 class PairTextProvider(SingleTextProvider):

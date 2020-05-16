@@ -1,18 +1,15 @@
 from collections import OrderedDict
-from os import path
 
 import pandas as pd
 
-import io_utils
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
-from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
-from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
-from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
+from arekit.contrib.bert.providers.opinions import OpinionProvider
+from arekit.contrib.bert.providers.row_ids.multiple import MultipleIDProvider
 
 
 class BertOpinionsFormatter(BaseBertRowsFormatter):
@@ -55,7 +52,7 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
             text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Target)
 
-        row[BertOpinionsFormatter.ID] = MultipleIDFormatter.create_opinion_id(
+        row[BertOpinionsFormatter.ID] = MultipleIDProvider.create_opinion_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrapper,
             index_in_linked=0)
@@ -118,20 +115,4 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
 
     def get_ids(self):
         return self._df.iloc[0].tolist()
-
-    # TODO. TO BASE.
-    @staticmethod
-    def get_filepath(data_type, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(data_type, unicode))
-
-        fname = generate_filename(data_type=data_type,
-                                  experiment=experiment,
-                                  prefix=u'opinions')
-
-        filepath = path.join(get_output_dir(experiment=experiment), fname)
-
-        io_utils.create_dir_if_not_exists(filepath)
-
-        return filepath
 

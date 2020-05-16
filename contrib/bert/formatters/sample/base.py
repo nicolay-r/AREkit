@@ -1,9 +1,6 @@
 from collections import OrderedDict
-from os import path
 
 import pandas as pd
-
-import io_utils
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
@@ -11,16 +8,16 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
 
-from arekit.contrib.bert.formatters.row_ids.binary import BinaryIDFormatter
-from arekit.contrib.bert.formatters.row_ids.multiple import MultipleIDFormatter
-from arekit.contrib.bert.formatters.sample.label.base import BertLabelProvider
-from arekit.contrib.bert.formatters.sample.label.binary import BertBinaryLabelProvider
-from arekit.contrib.bert.formatters.sample.label.multiple import BertMultipleLabelProvider
-from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
-from arekit.contrib.bert.formatters.sample.text.single import SingleTextProvider
-from arekit.contrib.bert.formatters.utils import get_output_dir, generate_filename
+from arekit.contrib.bert.providers.label.base import BertLabelProvider
+from arekit.contrib.bert.providers.label.binary import BertBinaryLabelProvider
+from arekit.contrib.bert.providers.label.multiple import BertMultipleLabelProvider
+from arekit.contrib.bert.providers.row_ids.binary import BinaryIDProvider
+from arekit.contrib.bert.providers.row_ids.multiple import MultipleIDProvider
+from arekit.contrib.bert.providers.text.single import SingleTextProvider
+
+from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
+from arekit.contrib.bert.providers.opinions import OpinionProvider
 
 
 class BaseSampleFormatter(BaseBertRowsFormatter):
@@ -58,9 +55,9 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
     @staticmethod
     def __create_row_ids_formatter(label_provider):
         if isinstance(label_provider, BertBinaryLabelProvider):
-            return BinaryIDFormatter()
+            return BinaryIDProvider()
         if isinstance(label_provider, BertMultipleLabelProvider):
-            return MultipleIDFormatter()
+            return MultipleIDProvider()
 
     def __is_train(self):
         return self._data_type == DataType.Train
@@ -150,7 +147,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
         origin = linked_wrap.First
-        if isinstance(self.__row_ids_formatter, BinaryIDFormatter):
+        if isinstance(self.__row_ids_formatter, BinaryIDProvider):
             """
             Enumerate all opinions as if it would be with the different label types.
             """
@@ -160,7 +157,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
                                         index_in_linked=index_in_linked,
                                         etalon_label=origin.Sentiment)
 
-        if isinstance(self.__row_ids_formatter, MultipleIDFormatter):
+        if isinstance(self.__row_ids_formatter, MultipleIDProvider):
             yield self.__create_row(opinion_provider=opinion_provider,
                                     linked_wrap=linked_wrap,
                                     index_in_linked=index_in_linked,
@@ -233,21 +230,6 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
     def extract_row_id(opinion_row):
         assert(isinstance(opinion_row, list))
         return unicode(opinion_row[0])
-
-    # TODO. TO BASE.
-    @staticmethod
-    def get_filepath(data_type, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-
-        fname = generate_filename(data_type=data_type,
-                                  experiment=experiment,
-                                  prefix=u'samples')
-
-        filepath = path.join(get_output_dir(experiment=experiment), fname)
-
-        io_utils.create_dir_if_not_exists(filepath)
-
-        return filepath
 
     def __len__(self):
         return len(self._df.index)

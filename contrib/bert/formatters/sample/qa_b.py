@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
-
-from arekit.contrib.bert.formatters.sample.label.binary import BertBinaryLabelProvider
-from arekit.contrib.bert.formatters.sample.text.pair import PairTextProvider
+from arekit.contrib.bert.providers.label.binary import BertBinaryLabelProvider
+from arekit.contrib.bert.providers.text.pair import PairTextProvider
 
 
 class QaBinarySampleFormatter(BaseSampleFormatter):

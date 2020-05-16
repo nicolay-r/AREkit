@@ -1,15 +1,15 @@
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
-from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
+from arekit.contrib.bert.providers.opinions import OpinionProvider
+from arekit.contrib.bert.providers.row_ids.base import BaseIDProvider
 
 
-class BinaryIDFormatter(BaseIDFormatter):
+class BinaryIDProvider(BaseIDProvider):
     """
     Considered that label of opinion IS A PART OF id.
     """
 
-    LABEL = u'l{}' + BaseIDFormatter.SEPARATOR
+    LABEL = u'l{}' + BaseIDProvider.SEPARATOR
 
     @staticmethod
     def create_sample_id(opinion_provider, linked_opinions, index_in_linked, label_scaler):
@@ -18,12 +18,12 @@ class BinaryIDFormatter(BaseIDFormatter):
         assert(isinstance(index_in_linked, int))
         assert(isinstance(label_scaler, BaseLabelScaler))
 
-        o_id = BaseIDFormatter.create_opinion_id(
+        o_id = BaseIDProvider.create_opinion_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_opinions,
             index_in_linked=index_in_linked)
 
-        template = u''.join([u"{}", BinaryIDFormatter.LABEL])
+        template = u''.join([u"{}", BinaryIDProvider.LABEL])
 
         return template.format(o_id,
                                label_scaler.label_to_uint(linked_opinions.get_linked_label()))
@@ -31,10 +31,10 @@ class BinaryIDFormatter(BaseIDFormatter):
     @staticmethod
     def parse_label_in_sample_id(sample_id):
         assert(isinstance(sample_id, unicode))
-        return BinaryIDFormatter._parse(row_id=sample_id, pattern=BinaryIDFormatter.LABEL)
+        return BinaryIDProvider._parse(row_id=sample_id, pattern=BinaryIDProvider.LABEL)
 
     @staticmethod
     def parse_index_in_sample_id(sample_id):
         assert(isinstance(sample_id, unicode))
-        return BinaryIDFormatter._parse(row_id=sample_id, pattern=BinaryIDFormatter.INDEX)
+        return BinaryIDProvider._parse(row_id=sample_id, pattern=BinaryIDProvider.INDEX)
 

@@ -1,14 +1,11 @@
-from os import path
-
 import pandas as pd
 
-import io_utils
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
+from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.contrib.bert.formatters.row_ids.base import BaseIDFormatter
-from arekit.contrib.bert.formatters.utils import generate_filename, get_output_dir
+from arekit.contrib.bert.providers.row_ids.base import BaseIDProvider
 
 
 class BertResults(object):
@@ -16,7 +13,7 @@ class BertResults(object):
     ID = 'id'
 
     def __init__(self, ids_formatter):
-        assert(isinstance(ids_formatter, BaseIDFormatter))
+        assert(isinstance(ids_formatter, BaseIDProvider))
         self.__ids_formatter = ids_formatter
         self.__df = None
 
@@ -76,7 +73,7 @@ class BertResults(object):
 
     def __iter_linked_opinions_df(self, news_id):
         news_id_pattern = self.__ids_formatter.create_pattern(id_value=news_id,
-                                                              p_type=BaseIDFormatter.NEWS)
+                                                              p_type=BaseIDProvider.NEWS)
         n_df = self.__df[self.__df[self.ID].str.contains(news_id_pattern)]
 
         opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
@@ -84,7 +81,7 @@ class BertResults(object):
 
         for opinion_id in set(opinion_ids):
             opin_id_pattern = self.__ids_formatter.create_pattern(id_value=opinion_id,
-                                                                  p_type=BaseIDFormatter.OPINION)
+                                                                  p_type=BaseIDProvider.OPINION)
             linked_opins_df = n_df[n_df[self.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
@@ -107,16 +104,9 @@ class BertResults(object):
     @staticmethod
     def __get_filepath(data_type, experiment):
         assert(isinstance(experiment, BaseExperiment))
-
-        fname = generate_filename(data_type=data_type,
-                                  experiment=experiment,
-                                  prefix=u'result')
-
-        filepath = path.join(get_output_dir(experiment=experiment), fname)
-
-        io_utils.create_dir_if_not_exists(filepath)
-
-        return filepath
+        return BaseBertRowsFormatter.get_filepath_static(data_type=data_type,
+                                                         experiment=experiment,
+                                                         prefix=u"result")
 
     # endregion
 

@@ -1,7 +1,11 @@
+from os import path
+
 import numpy as np
 import pandas as pd
 
-from arekit.contrib.bert.formatters.opinions.provider import OpinionProvider
+import io_utils
+from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.contrib.bert.providers.opinions import OpinionProvider
 
 
 class BaseBertRowsFormatter(object):
@@ -69,3 +73,40 @@ class BaseBertRowsFormatter(object):
                 t=total_work,
                 p=percent)
 
+    def get_filepath(self, data_type, experiment):
+        return self.get_filepath_static(data_type=data_type,
+                                        experiment=experiment,
+                                        prefix=self.formatter_type_log_name())
+
+    @staticmethod
+    def get_filepath_static(data_type, experiment, prefix):
+        assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(data_type, unicode))
+        assert(isinstance(prefix, unicode))
+
+        filename = BaseBertRowsFormatter.__generate_filename(data_type=data_type,
+                                                             experiment=experiment,
+                                                             prefix=prefix)
+
+        out_dir = BaseBertRowsFormatter.__get_output_dir(experiment=experiment)
+
+        filepath = path.join(out_dir, filename)
+        io_utils.create_dir_if_not_exists(filepath)
+
+        return filepath
+
+    @staticmethod
+    def __generate_filename(data_type, experiment, prefix):
+        assert(isinstance(data_type, unicode))
+        assert(isinstance(prefix, unicode))
+        assert(isinstance(experiment, BaseExperiment))
+
+        return u"{prefix}-{data_type}-{cv_index}.tsv.gz".format(
+            prefix=prefix,
+            data_type=data_type,
+            cv_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex)
+
+    @staticmethod
+    def __get_output_dir(experiment):
+        assert(isinstance(experiment, BaseExperiment))
+        return experiment.DataIO.get_model_root()
