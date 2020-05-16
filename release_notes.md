@@ -1,5 +1,6 @@
 ## v0.20.4-rc
 Updates:
+* Labels conversion `to_str` and `from_str` now a part of external formatters (unique for each source, experiment, etc.).
 * Added labels-scaler, and labels casing (to int or uint) now depends on scaler;
 * Added bert exporter in contribution folder: with related formatters according to the following 
 [paper](https://www.aclweb.org/anthology/N19-1035.pdf): 
