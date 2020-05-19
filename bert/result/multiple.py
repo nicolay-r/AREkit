@@ -1,11 +1,10 @@
 import numpy as np
 import pandas as pd
 
+from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
+from arekit.bert.providers.row_ids.multiple import MultipleIDProvider
+from arekit.bert.result.base import BertResults
 from arekit.common.experiment.scales.base import BaseLabelScaler
-
-from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.contrib.bert.providers.row_ids.multiple import MultipleIDProvider
-from arekit.contrib.bert.result.base import BertResults
 
 
 class BertMultipleResults(BertResults):

@@ -1,3 +1,8 @@
+from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
+from arekit.bert.formatters.sample.formats import SampleFormatters
+from arekit.bert.result.base import BertResults
+from arekit.bert.result.binary import BertBinaryResults
+from arekit.bert.result.multiple import BertMultipleResults
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.opinions import compose_opinion_collection
@@ -5,12 +10,7 @@ from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.collection import OpinionCollection
 
-from arekit.contrib.bert.encoder import BertEncoder
-from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.contrib.bert.result.base import BertResults
-from arekit.contrib.bert.result.binary import BertBinaryResults
-from arekit.contrib.bert.result.multiple import BertMultipleResults
-from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
+from arekit.bert.encoder import BertEncoder
 
 
 def iter_eval_collections(formatter_type,

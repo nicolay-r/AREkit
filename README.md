@@ -1,4 +1,4 @@
-# AREkit 0.20.4
+# AREkit 0.20.5
 
 ![](logo.png)
 
@@ -24,6 +24,9 @@ stemmer;
 * [Networks](networks) directory -- Provides both neural network model implementation (in Tensorflow) 
 intended for the automatic sentiment relation extraction (RE)
 on document level.
+
+* [Bert](bert) directory -- Tsv encoders for the related task which is assumes to be applied for experiments with 
+BERT language model. 
 
 * **Services** directory -- application in News Processing [N/A, TODO]
 

@@ -2,14 +2,14 @@ from collections import OrderedDict
 
 import pandas as pd
 
+from arekit.bert.formatters.base import BaseBertRowsFormatter
+from arekit.bert.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
-from arekit.contrib.bert.providers.opinions import OpinionProvider
-from arekit.contrib.bert.providers.row_ids.multiple import MultipleIDProvider
+from arekit.bert.providers.opinions import OpinionProvider
 
 
 class BertOpinionsFormatter(BaseBertRowsFormatter):

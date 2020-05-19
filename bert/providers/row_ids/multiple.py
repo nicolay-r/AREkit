@@ -1,4 +1,4 @@
-from arekit.contrib.bert.providers.row_ids.base import BaseIDProvider
+from arekit.bert.providers.row_ids.base import BaseIDProvider
 
 
 class MultipleIDProvider(BaseIDProvider):

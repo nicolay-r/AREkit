@@ -1,3 +1,9 @@
+## v0.20.5-rc
+
+Minor changes (light refactoring):
+
+* Bert now moved into separated folder from `contrib` directory.
+
 ## v0.20.4-rc
 Updates:
 * Labels conversion `to_str` and `from_str` now a part of external formatters (unique for each source, experiment, etc.).

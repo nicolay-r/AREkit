@@ -1,7 +1,7 @@
+from arekit.bert.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.contrib.bert.providers.opinions import OpinionProvider
-from arekit.contrib.bert.providers.row_ids.base import BaseIDProvider
+from arekit.bert.providers.opinions import OpinionProvider
 
 
 class BinaryIDProvider(BaseIDProvider):
