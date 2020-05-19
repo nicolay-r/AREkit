@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 import pandas as pd
 
+from arekit.bert.formatters.base import BaseBertRowsFormatter
 from arekit.bert.providers.label.base import BertLabelProvider
 from arekit.bert.providers.label.multiple import BertMultipleLabelProvider
 from arekit.bert.providers.row_ids.binary import BinaryIDProvider
@@ -47,7 +48,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
     @staticmethod
     def formatter_type_log_name():
-        return "Sample"
+        return u"sample"
 
     # region Private methods
 
