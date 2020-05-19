@@ -1,8 +1,7 @@
 import collections
 
 from arekit.common.entities.base import Entity
-from arekit.common.parsed_news.term_position import TermPosition
-from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.common.parsed_news.term_position import TermPosition, TermPositionTypes
 from arekit.processing.text.parsed import ParsedText
 
 
@@ -16,8 +15,9 @@ class ParsedNews(object):
     It allows:
         - Expand parsed sentences with other objects:
             modify_parsed_sentences(func)
-        - Modify entity type values as follows:
-            modify_entity_types(func)
+
+    Limitations:
+        IN MEMORY implementation (`add` method)
     """
 
     def __init__(self, news_id, parsed_sentences):
@@ -30,7 +30,9 @@ class ParsedNews(object):
 
         self.__news_id = news_id
         self.__parsed_sentences = list(parsed_sentences)
-        self.__entity_positions = self.__init_positions()
+        self.__entity_positions = None
+
+        self.__init_entity_positions()
 
     # region properties
 
@@ -42,49 +44,71 @@ class ParsedNews(object):
 
     # region private methods
 
-    def __init_positions(self):
+    @staticmethod
+    def __is_entity(term):
+        return isinstance(term, Entity)
+
+    def __init_entity_positions(self):
+        self.__entity_positions = self.__calculate_positions(term_check=lambda term: ParsedNews.__is_entity(term))
+
+    def __calculate_positions(self, term_check):
+        assert(callable(term_check))
+
         positions = {}
-        dl_term_index = 0
+        t_ind_in_doc = 0
 
-        for s_index, sentence in enumerate(self.__parsed_sentences):
-            for sl_term_index, term in enumerate(sentence.iter_raw_terms()):
+        for s_ind, t_ind_in_sent, term in self.__iter_all_raw_terms():
 
-                if isinstance(term, Entity):
-                    positions[term.IdInDocument] = TermPosition(doc_level_ind=dl_term_index,
-                                                                s_level_ind=sl_term_index,
-                                                                s_ind=s_index)
-                dl_term_index += 1
+            if term_check(term):
+                positions[term.IdInDocument] = TermPosition(term_ind_in_doc=t_ind_in_doc,
+                                                            term_ind_in_sent=t_ind_in_sent,
+                                                            s_ind=s_ind)
+
+            t_ind_in_doc += 1
 
         return positions
 
-    def __iter_all_entities(self):
-        for sentence in self.__parsed_sentences:
-            for term in sentence.iter_raw_terms():
-                if isinstance(term, Entity):
+    def __iter_all_raw_terms(self, term_check=None, term_only=False):
+        assert(callable(term_check) or term_check is None)
+        assert(isinstance(term_only, bool))
+
+        for s_ind, sentence in enumerate(self.__parsed_sentences):
+            for ind_in_sent, term in self.__iter_sentence_raw_terms(sentence, term_check=term_check):
+
+                if term_only:
                     yield term
+                else:
+                    yield s_ind, ind_in_sent, term
+
+    @staticmethod
+    def __iter_sentence_raw_terms(sentence, term_check):
+        assert(isinstance(sentence, ParsedText))
+        assert(callable(term_check) or term_check is None)
+
+        for ind_in_sent, term in enumerate(sentence.iter_raw_terms()):
+
+            if term_check is not None:
+                if not term_check(term):
+                    continue
+
+            yield ind_in_sent, term
 
     # endregion
 
     # region public 'get' methods
 
-    def get_entity_sentence_level_term_index(self, id_in_document):
-        position = self.__entity_positions[id_in_document]
-        return position.SentenceLevelIndex
-
-    def get_entity_document_level_term_index(self, id_in_document):
-        position = self.__entity_positions[id_in_document]
-        return position.DocLevelIndex
-
-    def get_entity_sentence_index(self, id_in_document):
-        position = self.__entity_positions[id_in_document]
-        return position.SentenceIndex
+    def get_entity_position(self, id_in_document):
+        """
+        returns: TermPosition
+        """
+        return self.__entity_positions[id_in_document]
 
     def get_entity_value(self, id_in_document):
         position = self.__entity_positions[id_in_document]
         assert(isinstance(position, TermPosition))
-        sentence = self.__parsed_sentences[position.SentenceIndex]
+        sentence = self.__parsed_sentences[position.get_index(position_type=TermPositionTypes.SentenceIndex)]
         assert(isinstance(sentence, ParsedText))
-        entity = sentence.get_term(position.SentenceLevelIndex)
+        entity = sentence.get_term(position.get_index(position_type=TermPositionTypes.IndexInSentence))
         assert(isinstance(entity, Entity))
         return entity.Value
 
@@ -100,51 +124,25 @@ class ParsedNews(object):
             assert(isinstance(updated, ParsedText))
             self.__parsed_sentences[s_index] = updated
 
-        self.__entity_positions = self.__init_positions()
-
-    def modify_entity_types(self, value_to_type_func):
-        assert(callable(value_to_type_func))
-        for e in self.__iter_all_entities():
-
-            value = value_to_type_func(e.Value)
-
-            if value is None:
-                continue
-
-            e.modify_type(value)
+        self.__init_entity_positions()
 
     # endregion
 
     # region public 'iter' methods
 
     def iter_terms(self):
-        for sentence in self.__parsed_sentences:
-            assert(isinstance(sentence, ParsedText))
-            for term in sentence.iter_raw_terms():
-                yield term
-
-    def iter_sentence_frame_variants_with_indices(self, sentence_index):
-        assert(isinstance(sentence_index, int))
-        sentence = self.__parsed_sentences[sentence_index]
-        assert(isinstance(sentence, ParsedText))
-        for index, term in enumerate(sentence.iter_raw_terms()):
-            if isinstance(term, TextFrameVariant):
-                yield index, term
-
-    def iter_sentence_entities_with_indices(self, sentence_index):
-        assert(isinstance(sentence_index, int))
-        sentence = self.__parsed_sentences[sentence_index]
-        assert(isinstance(sentence, ParsedText))
-        for index, term in enumerate(sentence.iter_raw_terms()):
-            if isinstance(term, Entity):
-                yield index, term
-
-    def iter_sentence_terms(self, sentence_index):
-        assert(isinstance(sentence_index, int))
-        sentence = self.__parsed_sentences[sentence_index]
-        assert(isinstance(sentence, ParsedText))
-        for term in sentence.iter_raw_terms():
+        for term in self.__iter_all_raw_terms(term_only=True):
             yield term
+
+    def iter_sentence_terms(self, sentence_index, term_check=None):
+        assert(isinstance(sentence_index, int))
+        assert(callable(term_check) or term_check is None)
+
+        it = self.__iter_sentence_raw_terms(sentence=self.__parsed_sentences[sentence_index],
+                                            term_check=term_check)
+
+        for ind_in_sent, term in it:
+            yield ind_in_sent, term
 
     def __iter__(self):
         for sentence in self.__parsed_sentences:

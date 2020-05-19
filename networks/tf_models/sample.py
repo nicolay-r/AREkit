@@ -17,6 +17,7 @@ def create_input_sample(text_opinion, frames_collection, synonyms_collection, co
     text_opinion_collection = text_opinion.Owner
     assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
 
+    # TODO. Use local collection (in single.py)
     parsed_news_collection = text_opinion_collection.RelatedParsedNewsCollection
     assert(isinstance(parsed_news_collection, ParsedNewsCollection))
 

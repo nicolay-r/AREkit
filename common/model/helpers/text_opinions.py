@@ -20,7 +20,7 @@ class LabeledLinkedTextOpinionCollectionHelper:
         assert(callable(create_collection_func))
         assert(isinstance(label_calc_mode, unicode))
 
-        for news_id in self.__collection.iter_unique_news_ids():
+        for news_id in self.__collection.get_unique_news_ids():
 
             collection = compose_opinion_collection(
                 create_collection_func=create_collection_func,

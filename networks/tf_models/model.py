@@ -145,7 +145,7 @@ class TensorflowModel(BaseModel):
 
         eval_result = evaluator.evaluate(
             data_type=dest_data_type,
-            doc_ids=text_opinions.iter_unique_news_ids(),
+            doc_ids=text_opinions.get_unique_news_ids(),
             epoch_index=self.__current_epoch_index)
 
         text_opinions.reset_labels()
@@ -315,7 +315,7 @@ class TensorflowModel(BaseModel):
         text_opinion_ids_set = None
         if doc_ids_set is not None:
             __text_opinion_ids = [text_opinion.TextOpinionID for text_opinion in
-                                  text_opinions.iter_text_opinons_in_doc_ids_set(doc_ids_set)]
+                                  doc_ids_set.intersection(text_opinions)]
             text_opinion_ids_set = set(__text_opinion_ids)
 
         bags_group_it = self.get_bags_collection(dest_data_type).iter_by_groups(

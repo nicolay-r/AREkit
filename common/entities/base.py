@@ -18,7 +18,3 @@ class Entity(object):
     @property
     def Type(self):
         return self.__type
-
-    def modify_type(self, e_type):
-        assert(isinstance(e_type, unicode))
-        self.__type = e_type

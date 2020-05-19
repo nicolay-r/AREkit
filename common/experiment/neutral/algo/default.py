@@ -8,7 +8,9 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
+from arekit.common.parsed_news.term_position import TermPositionTypes
 from arekit.common.synonyms import SynonymsCollection
+from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 
 
@@ -58,21 +60,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         assert(isinstance(entity_value, unicode))
         return entity_value in self.__ignored_entity_values
 
-    # TODO. leave single func with the param e -> index.
-    # TODO: Remove this.
-    def __get_distance_in_terms_between_entities(self, n_id, e1, e2):
-        assert(isinstance(e1, Entity))
-        assert(isinstance(e2, Entity))
-
-        parsed_news = self.__pnc.get_by_news_id(n_id)
-
-        assert(isinstance(parsed_news, ParsedNews))
-
-        erp1 = parsed_news.get_entity_document_level_term_index(e1.IdInDocument)
-        erp2 = parsed_news.get_entity_document_level_term_index(e2.IdInDocument)
-        return abs(erp1 - erp2)
-
-    # TODO: Leave sigle func with the param e -> index.
+    # TODO: Leave single func with the param e -> index.
     def __get_distance_in_sentences_between_entities(self, n_id, e1, e2):
         """
         distance_type: string
@@ -84,8 +72,10 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
 
         assert(isinstance(parsed_news, ParsedNews))
 
-        e1_ind = parsed_news.get_entity_sentence_index(e1.IdInDocument)
-        e2_ind = parsed_news.get_entity_sentence_index(e2.IdInDocument)
+        # TODO. Utilize helper.
+        # TODO. Simplify
+        e1_ind = parsed_news.get_entity_position(e1.IdInDocument).get_index(position_type=TermPositionTypes.SentenceIndex)
+        e2_ind = parsed_news.get_entity_position(e2.IdInDocument).get_index(position_type=TermPositionTypes.SentenceIndex)
         return abs(e1_ind - e2_ind)
 
     def __create_opinions_between_entities(self, relevant_pairs, entities_collection):
@@ -134,6 +124,8 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
             for e2 in entities_collection:
                 assert(isinstance(e2, Entity))
 
+                # TODO. In separated method
+
                 if e1.IdInDocument == e2.IdInDocument:
                     continue
 
@@ -152,7 +144,10 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
                 if s_dist > 0:
                     continue
 
-                t_dist = self.__get_distance_in_terms_between_entities(n_id=news_id, e1=e1, e2=e2)
+                t_dist = TextOpinionHelper.calculate_distance_between_entities_in_terms(
+                    parsed_news=self.__pnc.get_by_news_id(news_id),
+                    e1=e1,
+                    e2=e2)
 
                 if t_dist > 10:
                     continue
