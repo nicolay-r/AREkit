@@ -5,11 +5,9 @@ from arekit.common.parsed_news.collection import ParsedNewsCollection
 class TextOpinionCollection(object):
     """
     Collection of text-level opinions across many news/documents
-
-    Limitations:
-        IN MEMORY implemenatation.
     """
 
+    # TODO. Parsed news collection (remove)
     def __init__(self, parsed_news_collection, text_opinions):
         """
         parsed_news_collection: ParsedNewsCollection
@@ -21,11 +19,14 @@ class TextOpinionCollection(object):
                parsed_news_collection is None)
         assert(isinstance(text_opinions, list))
 
+        # TODO. This should be removed
         self.__parsed_news_collection = parsed_news_collection
         self.__text_opinions = text_opinions
 
     # region property
 
+    # TODO. This should be removed
+    # TODO. This should be a part of Dataset class
     @property
     def RelatedParsedNewsCollection(self):
         return self.__parsed_news_collection
@@ -41,21 +42,8 @@ class TextOpinionCollection(object):
     def remove_last_registered_text_opinion(self):
         del self.__text_opinions[-1]
 
-    def iter_unique_news_ids(self):
-        unique_news_ids = set()
-
-        for text_opinion in self.__text_opinions:
-            assert(isinstance(text_opinion, TextOpinion))
-            id = text_opinion.NewsID
-            if id not in unique_news_ids:
-                unique_news_ids.add(id)
-                yield id
-
-    def iter_text_opinons_in_doc_ids_set(self, doc_ids_set):
-        assert(isinstance(doc_ids_set, set))
-        for text_opinion in self.__text_opinions:
-            if text_opinion.NewsID in doc_ids_set:
-                yield text_opinion
+    def get_unique_news_ids(self):
+        return set(map(lambda text_opinion: text_opinion.NewsID, self))
 
     # endregion
 

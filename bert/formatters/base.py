@@ -19,7 +19,7 @@ class BaseBertRowsFormatter(object):
 
     @staticmethod
     def formatter_type_log_name():
-        return ""
+        return u""
 
     # region protected methods
 

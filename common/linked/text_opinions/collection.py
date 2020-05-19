@@ -12,6 +12,8 @@ from arekit.common.text_opinions.collection import TextOpinionCollection
 logger = logging.getLogger(__name__)
 
 
+# TODO. Separate "Labeled": Create a different class that is
+# TODO. considered to receive LinkedTextOpinionCollection instance in __init__
 class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
     """
     Describes text opinions with a position precision and forward connection
@@ -23,8 +25,11 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
 
     NO_NEXT_OPINION = None
 
+    # TODO. Parsed news collection (remove)
     def __init__(self, parsed_news_collection):
+        # TODO. Parsed news collection (remove)
         assert(isinstance(parsed_news_collection, ParsedNewsCollection))
+        # TODO. Parsed news collection (remove)
         super(LabeledLinkedTextOpinionCollection, self).__init__(
             parsed_news_collection=parsed_news_collection,
             text_opinions=[])
@@ -32,6 +37,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         # list describes that has i'th relation continuation in text.
         self.__next_opinion_id = []
         # provides original label by text_opinion_id
+        # TODO. Relate to labeling
         self.__text_opinion_labels = []
         # labeling defined
         self.__labels_defined = []
@@ -73,6 +79,7 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
 
         return discarded
 
+    # TODO. Private
     def set_none_for_last_text_opinion(self):
         self.__next_opinion_id[-1] = self.NO_NEXT_OPINION
 
@@ -80,25 +87,30 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
         assert(isinstance(text_opinion, TextOpinion))
         super(LabeledLinkedTextOpinionCollection, self).register_text_opinion(text_opinion)
         self.__next_opinion_id.append(text_opinion.TextOpinionID + 1)
+        # TODO. Relate to labeling
         self.__text_opinion_labels.append(text_opinion.Sentiment)
         self.__labels_defined.append(True)
 
     def remove_last_registered_text_opinion(self):
         super(LabeledLinkedTextOpinionCollection, self).remove_last_registered_text_opinion()
         del self.__next_opinion_id[-1]
+        # TODO. Relate to labeling
         del self.__text_opinion_labels[-1]
         del self.__labels_defined[-1]
 
     # region public `check` methods
 
+    # TODO. Related to Labeling
     def check_all_text_opinions_has_labels(self):
         return not (False in self.__labels_defined)
 
+    # TODO. Related to Labeling
     def check_all_text_opinions_without_labels(self):
         return not (True in self.__labels_defined)
 
     # endregion
 
+    # TODO. Related to Labeling
     def apply_label(self, label, text_opinion_id):
         assert(isinstance(text_opinion_id, int))
 
@@ -116,15 +128,22 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
 
     # region public `get` methods
 
+    # TODO. Remove
+    # TODO. Remove
+    # TODO. Remove
     def get_labels_defined_count(self):
         return self.__labels_defined.count(True)
 
+    # TODO. Remove
+    # TODO. Remove
+    # TODO. Remove
     def get_original_label(self, text_opinion_id):
         assert(isinstance(text_opinion_id, int))
         return self.__text_opinion_labels[text_opinion_id]
 
     # endregion
 
+    # TODO. Related to Labeling
     def reset_labels(self):
         for text_opinion in self:
             text_opinion.set_label(self.__text_opinion_labels[text_opinion.TextOpinionID])

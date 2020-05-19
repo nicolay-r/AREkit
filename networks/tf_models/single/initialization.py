@@ -160,6 +160,8 @@ class SingleInstanceModelExperimentInitializer(object):
     def __iter_all_parsed_collections(self):
         for collection in self.__text_opinion_collections.itervalues():
             assert(isinstance(collection, LabeledLinkedTextOpinionCollection))
+            # TODO. Parsed news collection (remove)
+            # TODO. Utilize a locally composed collection
             yield collection.RelatedParsedNewsCollection
 
     def __iter_all_terms(self, term_check_func):

@@ -1,5 +1,6 @@
 import pandas as pd
 
+from arekit.bert.formatters.base import BaseBertRowsFormatter
 from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
 from arekit.bert.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.formats.base import BaseExperiment

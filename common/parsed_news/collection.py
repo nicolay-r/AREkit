@@ -6,9 +6,6 @@ class ParsedNewsCollection(object):
     """
     This collection stores processed news (parsed),
     which could be indentified by news_id.
-
-    Limitations:
-        IN MEMORY implementation (`add` method)
     """
 
     def __init__(self):

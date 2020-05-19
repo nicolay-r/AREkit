@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 import pandas as pd
 
+from arekit.bert.formatters.base import BaseBertRowsFormatter
 from arekit.bert.providers.label.base import BertLabelProvider
 from arekit.bert.providers.label.multiple import BertMultipleLabelProvider
 from arekit.bert.providers.row_ids.binary import BinaryIDProvider
@@ -11,6 +12,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.parsed_news.base import ParsedNews
+from arekit.common.parsed_news.term_position import TermPositionTypes
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.formats.base import BaseExperiment
 
@@ -47,7 +49,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
     @staticmethod
     def formatter_type_log_name():
-        return "Sample"
+        return u"sample"
 
     # region Private methods
 
@@ -89,8 +91,11 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(text_opinion, TextOpinion))
 
-        s_ind = parsed_news.get_entity_sentence_level_term_index(text_opinion.SourceId)
-        t_ind = parsed_news.get_entity_sentence_level_term_index(text_opinion.TargetId)
+        s_ind = parsed_news.get_entity_position(text_opinion.SourceId).get_index(
+            position_type=TermPositionTypes.IndexInSentence)
+
+        t_ind = parsed_news.get_entity_position(text_opinion.TargetId).get_index(
+            position_type=TermPositionTypes.IndexInSentence)
 
         return (s_ind, t_ind)
 
