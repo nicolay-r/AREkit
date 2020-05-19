@@ -1,17 +1,17 @@
-from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
+from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
+from arekit.bert.formatters.sample.base import BaseSampleFormatter
+from arekit.bert.formatters.sample.formats import SampleFormatters
+from arekit.bert.providers.label.multiple import BertMultipleLabelProvider
+from arekit.bert.providers.text.single import SingleTextProvider
+from arekit.bert.providers.opinions import OpinionProvider
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.bert.providers.label.multiple import BertMultipleLabelProvider
-from arekit.contrib.bert.providers.opinions import OpinionProvider
 
-from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
-from arekit.contrib.bert.formatters.sample.formats import SampleFormatters
-from arekit.contrib.bert.formatters.sample.nli_b import NliBinarySampleFormatter
-from arekit.contrib.bert.formatters.sample.nli_m import NliMultipleSampleFormatter
-from arekit.contrib.bert.formatters.sample.qa_b import QaBinarySampleFormatter
-from arekit.contrib.bert.formatters.sample.qa_m import QaMultipleSampleFormatter
-from arekit.contrib.bert.providers.text.single import SingleTextProvider
+from arekit.contrib.bert_samplers.nli_b import NliBinarySampleFormatter
+from arekit.contrib.bert_samplers.nli_m import NliMultipleSampleFormatter
+from arekit.contrib.bert_samplers.qa_b import QaBinarySampleFormatter
+from arekit.contrib.bert_samplers.qa_m import QaMultipleSampleFormatter
 
 
 class BertEncoder(object):

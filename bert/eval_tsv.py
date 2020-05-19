@@ -1,9 +1,9 @@
+from arekit.bert.evaluation.opinion_based import BERTModelEvaluator
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.experiment.formats.base import BaseExperiment
 
-from arekit.contrib.bert.converter import iter_eval_collections
-from arekit.contrib.bert.evaluation.opinion_based import BERTModelEvaluator
+from arekit.bert.converter import iter_eval_collections
 
 
 EPOCH_INDEX_PLACEHOLER = 0

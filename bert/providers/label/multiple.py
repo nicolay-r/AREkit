@@ -1,5 +1,5 @@
+from arekit.bert.providers.label.base import BertLabelProvider
 from arekit.common.labels.base import Label
-from arekit.contrib.bert.providers.label.base import BertLabelProvider
 
 
 class BertMultipleLabelProvider(BertLabelProvider):

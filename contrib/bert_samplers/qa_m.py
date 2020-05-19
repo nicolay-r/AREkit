@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from arekit.contrib.bert.formatters.sample.base import BaseSampleFormatter
-from arekit.contrib.bert.providers.label.multiple import BertMultipleLabelProvider
-from arekit.contrib.bert.providers.text.pair import PairTextProvider
+from arekit.bert.formatters.sample.base import BaseSampleFormatter
+from arekit.bert.providers.label.multiple import BertMultipleLabelProvider
+from arekit.bert.providers.text.pair import PairTextProvider
 
 
 class QaMultipleSampleFormatter(BaseSampleFormatter):

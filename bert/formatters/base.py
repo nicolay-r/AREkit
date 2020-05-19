@@ -5,7 +5,7 @@ import pandas as pd
 
 import io_utils
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.contrib.bert.providers.opinions import OpinionProvider
+from arekit.bert.providers.opinions import OpinionProvider
 
 
 class BaseBertRowsFormatter(object):
