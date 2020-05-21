@@ -70,7 +70,7 @@ class BaseExperiment(object):
             frame_variant_collection=self.DataIO.FrameVariantCollection)
 
         for parsed_news in it:
-            if not parsed_collection.contains_id(parsed_news.RelatedNewsID):
+            if parsed_news.RelatedNewsID not in parsed_collection:
                 parsed_collection.add(parsed_news)
                 continue
             logging.info("Warning: Skipping document with id={}".format(parsed_news.RelatedNewsID))

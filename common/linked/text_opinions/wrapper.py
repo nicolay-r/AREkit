@@ -23,6 +23,11 @@ class LinkedTextOpinionsWrapper(LinkedDataWrapper):
     @staticmethod
     def _aggregate_by_first(item, label):
         assert(isinstance(item, TextOpinion))
+
+        # TODO: to opinion converter func.
+        # TODO: Move from here, as this is a fundamential transformation.
+        # TODO: Maybe in opinion helper.
+
         source = TextOpinionHelper.extract_entity_value(item, EntityEndType.Source)
         target = TextOpinionHelper.extract_entity_value(item, EntityEndType.Target)
 

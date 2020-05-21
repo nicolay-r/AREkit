@@ -19,6 +19,7 @@ class SingleBagsCollection(BagsCollection):
             bag_size,
             create_sample_func,
             create_empty_sample_func,
+            text_opinion_helper,
             shuffle):
         assert(isinstance(bag_size, int) and bag_size > 0)
         assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))

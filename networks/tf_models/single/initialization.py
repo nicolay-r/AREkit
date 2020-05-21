@@ -141,6 +141,7 @@ class SingleInstanceModelExperimentInitializer(object):
             bag_size=config.BagSize,
             shuffle=True,
             create_empty_sample_func=self._create_empty_sample_func,
+            text_opinion_helper=self.__text_opinion_helpers[data_type],
             create_sample_func=lambda text_opinion: self.__create_input_sample(text_opinion=text_opinion,
                                                                                config=config,
                                                                                data_type=data_type))

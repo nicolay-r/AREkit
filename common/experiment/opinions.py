@@ -74,7 +74,10 @@ def extract_text_opinions(experiment,
             for linked_wrap in news.iter_wrapped_linked_text_opinions(opinions=opinions):
                 text_opinions.try_add_linked_text_opinions(
                     linked_text_opinions=linked_wrap,
-                    check_opinion_correctness=lambda text_opinion: __check_text_opinion(text_opinion, terms_per_context))
+                    check_opinion_correctness=lambda text_opinion: __check_text_opinion(
+                        text_opinion=text_opinion,
+                        text_opinion_helper=text_opinion_helper,
+                        terms_per_context=terms_per_context))
 
     return text_opinions
 

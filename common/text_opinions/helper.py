@@ -31,14 +31,9 @@ class TextOpinionHelper(object):
         return parsed_news.get_entity_value(id)
 
     def extract_entity_position(self, text_opinion, end_type, position_type=None):
-        return self.__get_entity_position_2(text_opinion=text_opinion,
-                                            end_type=end_type,
-                                            position_type=position_type)
-
-    @staticmethod
-    def extract_entity_sentence_index(text_opinion, end_type):
-        entity_position = TextOpinionHelper.__get_entity_position(text_opinion, end_type)
-        return entity_position.get_index(TermPositionTypes.SentenceIndex)
+        return self.__get_entity_position(text_opinion=text_opinion,
+                                          end_type=end_type,
+                                          position_type=position_type)
 
     # endregion
 
@@ -87,13 +82,13 @@ class TextOpinionHelper(object):
     def check_ends_has_same_sentence_index(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
 
-        pos1 = self.__get_entity_position_2(text_opinion=text_opinion,
-                                            end_type=EntityEndType.Source,
-                                            position_type=TermPositionTypes.SentenceIndex)
+        pos1 = self.__get_entity_position(text_opinion=text_opinion,
+                                          end_type=EntityEndType.Source,
+                                          position_type=TermPositionTypes.SentenceIndex)
 
-        pos2 = self.__get_entity_position_2(text_opinion=text_opinion,
-                                            end_type=EntityEndType.Target,
-                                            position_type=TermPositionTypes.SentenceIndex)
+        pos2 = self.__get_entity_position(text_opinion=text_opinion,
+                                          end_type=EntityEndType.Target,
+                                          position_type=TermPositionTypes.SentenceIndex)
 
         return pos1 == pos2
 
@@ -121,18 +116,11 @@ class TextOpinionHelper(object):
 
     # region private methods
 
-    def __get_entity_position_2(self, text_opinion, end_type, position_type=None):
+    def __get_entity_position(self, text_opinion, end_type, position_type=None):
+        assert(isinstance(text_opinion, TextOpinion))
         end_id = TextOpinionHelper.__get_end_id(text_opinion, end_type)
         parsed_news = self.__parsed_news_collection.get_by_news_id(text_opinion.NewsID)
         return parsed_news.get_entity_position(end_id, position_type)
-
-    # TODO. Should be removed.
-    # TODO. Should be removed.
-    # TODO. Should be removed.
-    @staticmethod
-    def __get_entity_position(text_opinion, end_type):
-        parsed_news, _id = TextOpinionHelper.__get(text_opinion, end_type)
-        return parsed_news.get_entity_position(_id)
 
     @staticmethod
     def __calc_distance(pos1, pos2, position_type=TermPositionTypes.IndexInDocument):

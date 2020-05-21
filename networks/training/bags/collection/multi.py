@@ -1,7 +1,7 @@
 import numpy as np
 
+from arekit.common.linked.base import is_context_continued
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
-from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.text_opinions.text_opinion import TextOpinion
@@ -24,12 +24,14 @@ class MultiInstanceBagsCollection(BagsCollection):
             max_bag_size,
             create_sample_func,
             create_empty_sample_func,
+            text_opinion_helper,
             shuffle):
         assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
         assert(isinstance(data_type, unicode))
         assert(isinstance(max_bag_size, int) and max_bag_size > 0)
         assert(callable(create_sample_func))
         assert(callable(create_empty_sample_func))
+        assert(isinstance(text_opinion_helper, TextOpinionHelper))
         assert(isinstance(shuffle, bool))
 
         def last_bag():
@@ -42,11 +44,6 @@ class MultiInstanceBagsCollection(BagsCollection):
 
         def is_empty_last_bag():
             return len(last_bag()) == 0
-
-        def is_context_continued(c_rel, p_rel):
-            end_type = EntityEndType.Source
-            return TextOpinionHelper.extract_entity_sentence_index(p_rel, end_type=end_type) + 1 == \
-                   TextOpinionHelper.extract_entity_sentence_index(c_rel, end_type=end_type)
 
         bags = []
 
@@ -64,7 +61,10 @@ class MultiInstanceBagsCollection(BagsCollection):
 
                 prior_opinion = linked_wrap.get_prior_opinion_by_index(index=o_ind)
                 if prior_opinion is not None and not is_empty_last_bag():
-                    if not is_context_continued(c_rel=opinion, p_rel=prior_opinion):
+                    is_continued = is_context_continued(text_opinion_helper=text_opinion_helper,
+                                                        cur_opinion=opinion,
+                                                        prev_opinion=prior_opinion)
+                    if not is_continued:
                         complete_last_bag()
                         bags.append(Bag(label=opinion.Sentiment))
 

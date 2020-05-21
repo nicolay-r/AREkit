@@ -11,6 +11,7 @@ class BagsCollection(object):
                                   bag_size,
                                   create_sample_func,
                                   create_empty_sample_func,
+                                  text_opinion_helper,
                                   shuffle):
         raise NotImplementedError()
 
