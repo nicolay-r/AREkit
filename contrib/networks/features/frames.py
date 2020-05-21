@@ -8,25 +8,37 @@ from arekit.common.text_opinions.helper import TextOpinionHelper
 
 class FrameFeatures(object):
 
-    @staticmethod
-    def compose_frames(text_opinion):
+    def __init__(self, text_opinion_helper):
+        assert(isinstance(text_opinion_helper, TextOpinionHelper))
+        self.__text_opinion_helper = text_opinion_helper
+
+    def __iter_frame_variants(self, text_opinion):
+        it = self.__text_opinion_helper.iter_terms_in_related_sentence(
+            text_opinion=text_opinion,
+            return_ind_in_sent=True,
+            term_check=lambda term: isinstance(term, TextFrameVariant))
+
+        for s_ind, frame_variant in it:
+            yield s_ind, frame_variant
+
+    def compose_frames(self, text_opinion):
+        """
+        NOTE: We utilize in reverse mode to prevent a case of zero-based frame by the beginning.
+        """
         frames = []
-        # TODO. Duplicates iteration (FIX)
-        indices = list(TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion))
-        # NOTE: We utilize in reverse mode to prevent a case of zero-based frame by the beginning.
+        indices = list(self.__iter_frame_variants(text_opinion))
+
         for index, _ in reversed(indices):
             frames.append(index)
+
         return frames
 
-
-    @staticmethod
-    def compose_frame_roles(text_opinion, size, frames_collection, filler, label_scaler):
+    def compose_frame_roles(self, text_opinion, size, frames_collection, filler, label_scaler):
         assert(isinstance(label_scaler, BaseLabelScaler))
 
         result = [filler] * size
 
-        # TODO. Duplicates iteration (FIX)
-        for index, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion):
+        for index, variant in self.__iter_frame_variants(text_opinion):
 
             if index >= len(result):
                 continue

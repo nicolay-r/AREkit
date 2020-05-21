@@ -4,6 +4,7 @@ from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
+from arekit.common.parsed_news.term_position import TermPositionTypes
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
@@ -20,6 +21,7 @@ class OpinionProvider(object):
         self.__text_opinions = text_opinions
         self.__data_type = data_type
         self.__parsed_news_collection = parsed_news_collection
+        self.__text_opinion_helper = TextOpinionHelper(parsed_news_collection)
 
     @classmethod
     def from_experiment(cls, experiment, data_type):
@@ -92,14 +94,13 @@ class OpinionProvider(object):
     def get_opinion_location(self, text_opinion):
 
         # Determining text_a by text_opinion end.
-        s_ind = TextOpinionHelper.extract_entity_sentence_index(
+        s_ind = self.__text_opinion_helper.extract_entity_position(
             text_opinion=text_opinion,
-            end_type=EntityEndType.Source)
+            end_type=EntityEndType.Source,
+            position_type=TermPositionTypes.SentenceIndex)
 
         # Extract specific document by text_opinion.NewsID
-        pn = self.__parsed_news_collection.get_by_news_id(text_opinion.NewsID)
-        assert(isinstance(pn, ParsedNews))
+        parsed_news = self.__parsed_news_collection.get_by_news_id(text_opinion.NewsID)
+        assert(isinstance(parsed_news, ParsedNews))
 
-        # TODO. OK (Create helper instance)
-
-        return pn, s_ind
+        return parsed_news, s_ind

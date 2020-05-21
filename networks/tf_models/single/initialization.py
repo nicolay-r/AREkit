@@ -166,7 +166,8 @@ class SingleInstanceModelExperimentInitializer(object):
             config=config,
             frames_collection=self.__frames_collection,
             synonyms_collection=self.__synonyms,
-            label_scaler=self.__labels_scaler)
+            label_scaler=self.__labels_scaler,
+            text_opinion_helper=self.__text_opinion_helpers[data_type])
 
     @staticmethod
     def __create_collection(collection_by_data_type_func):
