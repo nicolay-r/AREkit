@@ -1,5 +1,5 @@
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
+from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
@@ -27,7 +27,7 @@ class OpinionProvider(object):
 
         pnc = experiment.create_parsed_collection(data_type)
 
-        text_opinions = extract_text_opinions_and_parse_news(
+        text_opinions = extract_text_opinions(
             experiment=experiment,
             data_type=data_type,
             terms_per_context=50,
@@ -99,5 +99,7 @@ class OpinionProvider(object):
         # Extract specific document by text_opinion.NewsID
         pn = self.__parsed_news_collection.get_by_news_id(text_opinion.NewsID)
         assert(isinstance(pn, ParsedNews))
+
+        # TODO. OK (Create helper instance)
 
         return pn, s_ind

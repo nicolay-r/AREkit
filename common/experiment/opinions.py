@@ -38,11 +38,11 @@ def __check_text_opinion(text_opinion, terms_per_context):
 
 # endregions
 
-def extract_text_opinions_and_parse_news(experiment,
-                                         data_type,
-                                         # TODO. Remove
-                                         parsed_news_collection,
-                                         terms_per_context):
+def extract_text_opinions(experiment,
+                          data_type,
+                          # TODO. Remove
+                          parsed_news_collection,
+                          terms_per_context):
     """
     Extracting text-level opinions based on doc-level opinions in documents,
     obtained by information in experiment.

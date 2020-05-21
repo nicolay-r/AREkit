@@ -2,7 +2,7 @@ import logging
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
+from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.parsed_news.collection import ParsedNewsCollection
@@ -43,11 +43,15 @@ class SingleInstanceModelExperimentInitializer(object):
         self.__labels_scaler = experiment.DataIO.LabelsScaler
         self.__labels_helper = SingleLabelsHelper(label_scaler=self.__labels_scaler)
 
+        self.__text_opinion_helpers = self.__create_collection(
+            lambda data_type: TextOpinionHelper(parsed_news_collection=self.__pncs[data_type])
+        )
+
         self.__text_opinion_collections = self.__create_collection(
-            lambda data_type: extract_text_opinions_and_parse_news(experiment=experiment,
-                                                                   data_type=data_type,
-                                                                   terms_per_context=config.TermsPerContext,
-                                                                   parsed_news_collection=self.__pncs[data_type]))
+            lambda data_type: extract_text_opinions(experiment=experiment,
+                                                    data_type=data_type,
+                                                    terms_per_context=config.TermsPerContext,
+                                                    parsed_news_collection=self.__pncs[data_type]))
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,
@@ -151,7 +155,7 @@ class SingleInstanceModelExperimentInitializer(object):
         """
         assert(isinstance(data_type, unicode))
         assert(isinstance(config, DefaultNetworkConfig))
-        assert(TextOpinionHelper.check_ends_has_same_sentence_index(text_opinion))
+        assert(self.__text_opinion_helpers[data_type].check_ends_has_same_sentence_index(text_opinion))
 
         parsed_news_collection = self.__pncs[data_type]
 

@@ -22,6 +22,10 @@ class TextOpinionHelper(object):
         parsed news, positions, text_opinions
     """
 
+    def __init__(self, parsed_news_collection):
+        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
+        self.__parsed_news_collection = parsed_news_collection
+
     # region public 'extract' methods
 
     @staticmethod
@@ -83,15 +87,26 @@ class TextOpinionHelper(object):
         pos2 = TextOpinionHelper.__get_entity_position(text_opinion=text_opinion,
                                                        end_type=EntityEndType.Target)
 
-        return TextOpinionHelper.__calc_distance_in_terms(pos1=pos1, pos2=pos2)
+        return TextOpinionHelper.__calc_distance(pos1=pos1, pos2=pos2)
 
-    @staticmethod
-    def calculate_distance_between_entities_in_terms(parsed_news, e1, e2):
-        assert(isinstance(parsed_news, ParsedNews))
+    def calculate_distance_between_entities_in_sentences(self, news_id, e1, e2):
+        assert(isinstance(news_id, int))
         assert(isinstance(e1, Entity))
         assert(isinstance(e2, Entity))
 
-        return TextOpinionHelper.__calc_distance_in_terms(
+        parsed_news = self.__parsed_news_collection.get_by_news_id(news_id)
+        return TextOpinionHelper.__calc_distance(
+            pos1=parsed_news.get_entity_position(e1.IdInDocument),
+            pos2=parsed_news.get_entity_position(e2.IdInDocument),
+            position_type=TermPositionTypes.SentenceIndex)
+
+    def calculate_distance_between_entities_in_terms(self, news_id, e1, e2):
+        assert(isinstance(news_id, int))
+        assert(isinstance(e1, Entity))
+        assert(isinstance(e2, Entity))
+
+        parsed_news = self.__parsed_news_collection.get_by_news_id(news_id)
+        return TextOpinionHelper.__calc_distance(
             pos1=parsed_news.get_entity_position(e1.IdInDocument),
             pos2=parsed_news.get_entity_position(e2.IdInDocument))
 
@@ -99,12 +114,14 @@ class TextOpinionHelper(object):
 
     # region public 'check' methods
 
-    @staticmethod
-    def check_ends_has_same_sentence_index(text_opinion):
+    def check_ends_has_same_sentence_index(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
 
-        pos1 = TextOpinionHelper.__get_entity_position(text_opinion, EntityEndType.Source)
-        pos2 = TextOpinionHelper.__get_entity_position(text_opinion, EntityEndType.Target)
+        pos1 = self.__get_entity_position_2(text_opinion=text_opinion,
+                                            end_type=EntityEndType.Source)
+
+        pos2 = self.__get_entity_position_2(text_opinion=text_opinion,
+                                            end_type=EntityEndType.Target)
 
         return pos1.get_index(TermPositionTypes.SentenceIndex) == \
                pos2.get_index(TermPositionTypes.SentenceIndex)
@@ -125,19 +142,25 @@ class TextOpinionHelper(object):
 
     # region private methods
 
+    def __get_entity_position_2(self, text_opinion, end_type):
+        id = TextOpinionHelper.__get_end_id(text_opinion, end_type)
+        return self.__parsed_news_collection.get_by_news_id(news_id=id)
+
+    # TODO. Should be removed.
     @staticmethod
     def __get_entity_position(text_opinion, end_type):
         parsed_news, _id = TextOpinionHelper.__get(text_opinion, end_type)
         return parsed_news.get_entity_position(_id)
 
     @staticmethod
-    def __calc_distance_in_terms(pos1, pos2):
+    def __calc_distance(pos1, pos2, position_type=TermPositionTypes.IndexInDocument):
         assert(isinstance(pos1, TermPosition))
         assert(isinstance(pos2, TermPosition))
 
-        return abs(pos1.get_index(TermPositionTypes.IndexInDocument) -
-                   pos2.get_index(TermPositionTypes.IndexInDocument))
+        return abs(pos1.get_index(position_type) -
+                   pos2.get_index(position_type))
 
+    # TODO. Should be removed.
     @staticmethod
     def __get(text_opinion, end_type):
         owner = text_opinion.Owner

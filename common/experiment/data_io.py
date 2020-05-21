@@ -20,6 +20,10 @@ class DataIO(object):
         return self.__labels_scale
 
     @property
+    def DistanceInTermsBetweenOpinionEndsBound(self):
+        return 10
+
+    @property
     def Stemmer(self):
         raise NotImplementedError()
 
