@@ -50,15 +50,11 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
                                                            opin_ops=opin_ops,
                                                            doc_ops=doc_ops)
 
-        def __parse_news(doc_id):
-            assert(isinstance(doc_id, int))
-            news = self._DocOps.read_news(doc_id=doc_id)
-            return news.parse(options=self._DocOps.create_parse_options())
-
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self._DataIO.SynonymsCollection,
-            create_parsed_news_func=lambda doc_id: __parse_news(doc_id),
+            iter_parsed_news=lambda doc_id: self._DocOps.iter_parsed_news(doc_id, None),
             iter_news_ids=self.iter_doc_ids_to_compare(),
+            dist_in_terms_bound=data_io.DistanceInTermsBetweenOpinionEndsBound,
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
     def create_collection(self, data_type):

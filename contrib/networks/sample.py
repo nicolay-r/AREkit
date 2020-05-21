@@ -7,6 +7,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.parsed_news.base import ParsedNews
+from arekit.common.parsed_news.term_position import TermPositionTypes
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.text_opinions.end_type import EntityEndType
@@ -145,13 +146,15 @@ class InputSample(InputSampleBase):
                    text_opinion_id=-1)
 
     @classmethod
-    def from_text_opinion(cls, text_opinion, parsed_news, frames_collection, synonyms_collection, config, label_scaler):
+    def from_text_opinion(cls, text_opinion, parsed_news, frames_collection, synonyms_collection, config, label_scaler,
+                          text_opinion_helper):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(frames_collection, FramesCollection))
         assert(isinstance(synonyms_collection, SynonymsCollection))
         assert(isinstance(label_scaler, BaseLabelScaler))
+        assert(isinstance(text_opinion_helper, TextOpinionHelper))
 
         sentence_index = TextOpinionHelper.extract_entity_sentence_index(
             text_opinion=text_opinion,
@@ -159,23 +162,35 @@ class InputSample(InputSampleBase):
 
         terms = list(parsed_news.iter_sentence_terms(sentence_index))
 
-        subj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(
-            text_opinion=text_opinion,
-            end_type=EntityEndType.Source)
-
-        obj_ind = TextOpinionHelper.extract_entity_sentence_level_term_index(
-            text_opinion=text_opinion,
-            end_type=EntityEndType.Target)
-
-        syn_subj_inds = TextOpinionHelper.extract_entity_sentence_level_synonym_indices(
+        subj_ind = text_opinion_helper.extract_entity_position(
             text_opinion=text_opinion,
             end_type=EntityEndType.Source,
-            synonyms=synonyms_collection)
+            position_type=TermPositionTypes.IndexInSentence)
 
-        syn_obj_inds = TextOpinionHelper.extract_entity_sentence_level_synonym_indices(
+        obj_ind = text_opinion_helper.extract_entity_position(
             text_opinion=text_opinion,
             end_type=EntityEndType.Target,
-            synonyms=synonyms_collection)
+            position_type=TermPositionTypes.IndexInSentence)
+
+        subj_value = text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
+                                                              end_type=EntityEndType.Source)
+
+        obj_value = text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
+                                                             end_type=EntityEndType.Target)
+
+        syn_subj_inds = list(text_opinion_helper.iter_terms_in_related_sentence(
+            text_opinion=text_opinion,
+            return_ind_in_sent=False,
+            term_check=lambda term: cls.__is_synonym_entity(term=term,
+                                                            e_value=subj_value,
+                                                            synonyms=synonyms_collection)))
+
+        syn_obj_inds = list(text_opinion_helper.iter_terms_in_related_sentence(
+            text_opinion=text_opinion,
+            return_ind_in_sent=False,
+            term_check=lambda term: cls.__is_synonym_entity(term=term,
+                                                            e_value=obj_value,
+                                                            synonyms=synonyms_collection)))
 
         x_indices = indices.iter_embedding_indices_for_terms(
             terms=terms,
@@ -190,7 +205,9 @@ class InputSample(InputSampleBase):
 
         x_indices = list(x_indices)
 
-        frame_sent_roles = FrameFeatures.compose_frame_roles(
+        frame_features = FrameFeatures(text_opinion_helper)
+
+        frame_sent_roles = frame_features.compose_frame_roles(
             text_opinion=text_opinion,
             size=len(x_indices),
             frames_collection=frames_collection,
@@ -226,7 +243,7 @@ class InputSample(InputSampleBase):
             filler=cls.TERM_TYPE_PAD_VALUE)
 
         frames_feature = PointersFeature.create_shifted_and_fit(
-            original_value=FrameFeatures.compose_frames(text_opinion),
+            original_value=frame_features.compose_frames(text_opinion),
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=cls.FRAMES_PAD_VALUE,
@@ -285,6 +302,22 @@ class InputSample(InputSampleBase):
     # endregion
 
     # region private methods
+
+    @staticmethod
+    def __is_synonym_entity(term, e_value, synonyms):
+
+        if not isinstance(term, Entity):
+            return False
+
+        e_group_index = synonyms.get_synonym_group_index(e_value)
+
+        if not synonyms.contains_synonym_value(term.Value):
+            if e_value != term.Value:
+                return False
+        elif e_group_index != synonyms.get_synonym_group_index(term.Value):
+            return False
+
+        return True
 
     @staticmethod
     def __create_term_types(terms):

@@ -24,8 +24,9 @@ class InputSampleBase(object):
     # endregion
 
     @staticmethod
-    def check_ability_to_create_sample(window_size, text_opinion):
-        return abs(TextOpinionHelper.calculate_distance_between_text_opinion_ends_in_terms(text_opinion)) < window_size
+    def check_ability_to_create_sample(window_size, text_opinion, text_opinion_helper):
+        assert(isinstance(text_opinion_helper, TextOpinionHelper))
+        return text_opinion_helper.calculate_distance_between_text_opinion_ends_in_terms(text_opinion) < window_size
 
     def __iter__(self):
         for key, value in self.__values.iteritems():

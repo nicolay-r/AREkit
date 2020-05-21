@@ -2,14 +2,14 @@ import logging
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
-from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.parsed_news.collection import ParsedNewsCollection
+from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.contrib.networks.sample import InputSample
 from arekit.networks.embedding.input import create_term_embedding_matrix
-from arekit.networks.tf_models.sample import create_input_sample
 from arekit.networks.tf_models.single.embedding.entities import generate_entity_embeddings
 from arekit.networks.tf_models.single.embedding.frames import init_frames_embedding
 from arekit.networks.tf_models.single.embedding.tokens import create_tokens_embedding
@@ -35,15 +35,23 @@ class SingleInstanceModelExperimentInitializer(object):
             use_types=config.UseEntityTypesInEmbedding,
             word_embedding=word_embedding)
 
+        self.__pncs = self.__create_collection(
+            lambda data_type: experiment.create_parsed_collection(data_type))
+
         self.__synonyms = experiment.DataIO.SynonymsCollection
 
         self.__labels_scaler = experiment.DataIO.LabelsScaler
         self.__labels_helper = SingleLabelsHelper(label_scaler=self.__labels_scaler)
 
+        self.__text_opinion_helpers = self.__create_collection(
+            lambda data_type: TextOpinionHelper(parsed_news_collection=self.__pncs[data_type])
+        )
+
         self.__text_opinion_collections = self.__create_collection(
-            lambda data_type: extract_text_opinions_and_parse_news(experiment=experiment,
-                                                                   data_type=data_type,
-                                                                   terms_per_context=config.TermsPerContext))
+            lambda data_type: extract_text_opinions(experiment=experiment,
+                                                    data_type=data_type,
+                                                    terms_per_context=config.TermsPerContext,
+                                                    parsed_news_collection=self.__pncs[data_type]))
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,
@@ -133,19 +141,33 @@ class SingleInstanceModelExperimentInitializer(object):
             bag_size=config.BagSize,
             shuffle=True,
             create_empty_sample_func=self._create_empty_sample_func,
-            create_sample_func=lambda text_opinion: self.__create_sample(text_opinion, config))
+            create_sample_func=lambda text_opinion: self.__create_input_sample(text_opinion=text_opinion,
+                                                                               config=config,
+                                                                               data_type=data_type))
 
         return collection
 
     # region private methods
 
-    def __create_sample(self, text_opinion, config):
+    def __create_input_sample(self, text_opinion, data_type, config):
+        """
+        Creates an input for Neural Network model
+        """
+        assert(isinstance(data_type, unicode))
         assert(isinstance(config, DefaultNetworkConfig))
-        return create_input_sample(text_opinion=text_opinion,
-                                   frames_collection=self.__frames_collection,
-                                   synonyms_collection=self.__synonyms,
-                                   label_scaler=self.__labels_scaler,
-                                   config=config)
+        assert(self.__text_opinion_helpers[data_type].check_ends_has_same_sentence_index(text_opinion))
+
+        parsed_news_collection = self.__pncs[data_type]
+
+        # TODO. This sample should be a parameter of a model.
+        return InputSample.from_text_opinion(
+            text_opinion=text_opinion,
+            parsed_news=parsed_news_collection.get_by_news_id(text_opinion.NewsID),
+            config=config,
+            frames_collection=self.__frames_collection,
+            synonyms_collection=self.__synonyms,
+            label_scaler=self.__labels_scaler,
+            text_opinion_helper=self.__text_opinion_helpers[data_type])
 
     @staticmethod
     def __create_collection(collection_by_data_type_func):
@@ -157,15 +179,9 @@ class SingleInstanceModelExperimentInitializer(object):
 
         return collection
 
-    def __iter_all_parsed_collections(self):
-        for collection in self.__text_opinion_collections.itervalues():
-            assert(isinstance(collection, LabeledLinkedTextOpinionCollection))
-            # TODO. Parsed news collection (remove)
-            # TODO. Utilize a locally composed collection
-            yield collection.RelatedParsedNewsCollection
-
+    # TODO. Simplify (parsed_news already provides filter)
     def __iter_all_terms(self, term_check_func):
-        for pnc in self.__iter_all_parsed_collections():
+        for pnc in self.__pncs.itervalues():
             assert(isinstance(pnc, ParsedNewsCollection))
             for news_ID in pnc.iter_news_ids():
                 for term in pnc.iter_news_terms(news_ID):

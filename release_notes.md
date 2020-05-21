@@ -1,8 +1,12 @@
 ## v0.20.5-rc
 
+Collection of parsed news become dispatched from text opinions collection.
+
 Minor changes (light refactoring):
 
 * Bert now moved into separated folder from `contrib` directory.
+* frame_variants moved to `frames` directory.
+* Frame variants labeling in news now performed during `parse` operation.
 
 ## v0.20.4-rc
 Updates:

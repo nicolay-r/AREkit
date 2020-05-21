@@ -1,9 +1,10 @@
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.opinions import extract_text_opinions_and_parse_news
+from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
+from arekit.common.parsed_news.term_position import TermPositionTypes
 from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
@@ -13,23 +14,30 @@ class OpinionProvider(object):
     TextOpinion iterator + balancing.
     """
 
-    def __init__(self, data_type, text_opinions):
+    def __init__(self, data_type, text_opinions, parsed_news_collection):
         assert(isinstance(data_type, unicode))
         assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
+        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
         self.__text_opinions = text_opinions
         self.__data_type = data_type
+        self.__parsed_news_collection = parsed_news_collection
+        self.__text_opinion_helper = TextOpinionHelper(parsed_news_collection)
 
     @classmethod
     def from_experiment(cls, experiment, data_type):
         assert(isinstance(experiment, BaseExperiment))
 
-        text_opinions = extract_text_opinions_and_parse_news(
+        pnc = experiment.create_parsed_collection(data_type)
+
+        text_opinions = extract_text_opinions(
             experiment=experiment,
             data_type=data_type,
-            terms_per_context=50)
+            terms_per_context=50,
+            parsed_news_collection=pnc)
 
         return cls(data_type=data_type,
-                   text_opinions=text_opinions)
+                   text_opinions=text_opinions,
+                   parsed_news_collection=pnc)
 
     def opinions_count(self):
         return len(self.__text_opinions)
@@ -85,16 +93,14 @@ class OpinionProvider(object):
 
     def get_opinion_location(self, text_opinion):
 
-        pnc = self.__text_opinions.RelatedParsedNewsCollection
-        assert(isinstance(pnc, ParsedNewsCollection))
-
         # Determining text_a by text_opinion end.
-        s_ind = TextOpinionHelper.extract_entity_sentence_index(
+        s_ind = self.__text_opinion_helper.extract_entity_position(
             text_opinion=text_opinion,
-            end_type=EntityEndType.Source)
+            end_type=EntityEndType.Source,
+            position_type=TermPositionTypes.SentenceIndex)
 
         # Extract specific document by text_opinion.NewsID
-        pn = pnc.get_by_news_id(text_opinion.NewsID)
-        assert(isinstance(pn, ParsedNews))
+        parsed_news = self.__parsed_news_collection.get_by_news_id(text_opinion.NewsID)
+        assert(isinstance(parsed_news, ParsedNews))
 
-        return pn, s_ind
+        return parsed_news, s_ind

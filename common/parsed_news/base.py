@@ -97,11 +97,19 @@ class ParsedNews(object):
 
     # region public 'get' methods
 
-    def get_entity_position(self, id_in_document):
+    def get_entity_position(self, id_in_document, position_type=None):
         """
-        returns: TermPosition
+        returns: TermPosition or int
         """
-        return self.__entity_positions[id_in_document]
+        assert(isinstance(position_type, TermPositionTypes) or position_type is None)
+
+        e_pos = self.__entity_positions[id_in_document]
+        assert(isinstance(e_pos, TermPosition))
+
+        if position_type is None:
+            return e_pos
+
+        return e_pos.get_index(position_type)
 
     def get_entity_value(self, id_in_document):
         position = self.__entity_positions[id_in_document]

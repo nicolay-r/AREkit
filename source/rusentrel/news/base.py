@@ -156,7 +156,7 @@ class RuSentRelNews(News):
         for entries in self.__iter_rusentrel_text_opinion_entries(opinions=opinions):
             yield LinkedTextOpinionsWrapper(linked_text_opinions=[self.__entry_to_text_opinion(entry) for entry in entries])
 
-    def parse(self, options):
+    def _parse_core(self, options):
         assert(isinstance(options, RuSentRelNewsParseOptions))
         parsed_sentences_iter = self.__iter_parsed_sentences(options)
         return ParsedNews(news_id=self.ID,

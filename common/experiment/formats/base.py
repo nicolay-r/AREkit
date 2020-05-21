@@ -1,3 +1,4 @@
+import logging
 from os import path
 
 from arekit.common.experiment.data_io import DataIO
@@ -7,6 +8,9 @@ from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutral
 from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnnotator
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.scales.two import TwoLabelScaler
+from arekit.common.parsed_news.collection import ParsedNewsCollection
+
+logger = logging.getLogger(__name__)
 
 
 class BaseExperiment(object):
@@ -56,6 +60,20 @@ class BaseExperiment(object):
         return self.__doc_operations
 
     # endregion
+
+    def create_parsed_collection(self, data_type):
+        assert(isinstance(data_type, unicode))
+        parsed_collection = ParsedNewsCollection()
+
+        it = self.DocumentOperations.iter_parsed_news(
+            data_type=data_type,
+            frame_variant_collection=self.DataIO.FrameVariantCollection)
+
+        for parsed_news in it:
+            if not parsed_collection.contains_id(parsed_news.RelatedNewsID):
+                parsed_collection.add(parsed_news)
+                continue
+            logging.info("Warning: Skipping document with id={}".format(parsed_news.RelatedNewsID))
 
     # region private methods
 

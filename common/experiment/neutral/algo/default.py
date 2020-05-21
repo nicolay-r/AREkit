@@ -6,12 +6,9 @@ from arekit.common.experiment.neutral.algo.base import BaseNeutralAnnotationAlgo
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.parsed_news.term_position import TermPositionTypes
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text_opinions.helper import TextOpinionHelper
-from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 
 
 class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
@@ -20,33 +17,34 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
     within a sentence which are not a part of sentiment.
     """
 
-    class DistanceType:
-        InTerms = 'in_terms'
-        InSentences = 'in_sentences'
-
     def __init__(self,
                  synonyms,
-                 create_parsed_news_func,
+                 iter_parsed_news,
                  iter_news_ids,
+                 dist_in_terms_bound,
                  ignored_entity_values=None):
         """
         create_opinion_func:
             func (source_value, target_value, sentiment) -> Opinion
         create_opinion_collection_func:
             func () -> OpinionCollection
+        dist_in_terms_bound: int
+            max allowed distance in term (less than passed value)
         """
         assert(isinstance(synonyms, SynonymsCollection))
-        assert(callable(create_parsed_news_func))
         assert(isinstance(iter_news_ids, collections.Iterable))
         assert(isinstance(ignored_entity_values, list) or ignored_entity_values is None)
+        assert(isinstance(dist_in_terms_bound, int))
 
         self.__synonyms = synonyms
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
 
         self.__pnc = ParsedNewsCollection()
-        for doc_id in RuSentRelIOUtils.iter_collection_indices():
-            parsed_news = create_parsed_news_func(doc_id)
+        for parsed_news in iter_parsed_news:
             self.__pnc.add(parsed_news)
+
+        self.__text_opinion_helper = TextOpinionHelper(parsed_news_collection=self.__pnc)
+        self.__dist_in_terms_bound = dist_in_terms_bound
 
     # region private methods
 
@@ -59,24 +57,6 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
     def __is_ignored_entity_value(self, entity_value):
         assert(isinstance(entity_value, unicode))
         return entity_value in self.__ignored_entity_values
-
-    # TODO: Leave single func with the param e -> index.
-    def __get_distance_in_sentences_between_entities(self, n_id, e1, e2):
-        """
-        distance_type: string
-        """
-        assert(isinstance(e1, Entity))
-        assert(isinstance(e2, Entity))
-
-        parsed_news = self.__pnc.get_by_news_id(n_id)
-
-        assert(isinstance(parsed_news, ParsedNews))
-
-        # TODO. Utilize helper.
-        # TODO. Simplify
-        e1_ind = parsed_news.get_entity_position(e1.IdInDocument).get_index(position_type=TermPositionTypes.SentenceIndex)
-        e2_ind = parsed_news.get_entity_position(e2.IdInDocument).get_index(position_type=TermPositionTypes.SentenceIndex)
-        return abs(e1_ind - e2_ind)
 
     def __create_opinions_between_entities(self, relevant_pairs, entities_collection):
         assert(isinstance(entities_collection, EntityCollection))
@@ -110,6 +90,45 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
 
         return neutral_opinions
 
+    def __try_create_pair_key(self, news_id, e1, e2, sentiment_opinions):
+        assert(isinstance(news_id, int))
+        assert(isinstance(e1, Entity))
+        assert(isinstance(e2, Entity))
+
+        if e1.IdInDocument == e2.IdInDocument:
+            return
+
+        if self.__is_ignored_entity_value(entity_value=e1.Value):
+            return
+        if self.__is_ignored_entity_value(entity_value=e2.Value):
+            return
+
+        g1 = self.__synonyms.get_synonym_group_index(e1.Value)
+        g2 = self.__synonyms.get_synonym_group_index(e2.Value)
+        if g1 == g2:
+            return
+
+        s_dist = self.__text_opinion_helper.calculate_distance_between_entities_in_sentences(
+            news_id=news_id, e1=e1, e2=e2)
+
+        if s_dist > 0:
+            return
+
+        t_dist = self.__text_opinion_helper.calculate_distance_between_entities_in_terms(
+            news_id=news_id, e1=e1, e2=e2)
+
+        if t_dist > self.__dist_in_terms_bound:
+            return
+
+        if sentiment_opinions is not None:
+            o = Opinion(source_value=e1.Value,
+                        target_value=e2.Value,
+                        sentiment=NeutralLabel())
+            if sentiment_opinions.has_synonymous_opinion(opinion=o):
+                return
+
+        return self.__create_key_by_entity_pair(e1=e1, e2=e2)
+
     # endregion
 
     def make_neutrals(self, news_id, entities_collection, sentiment_opinions=None):
@@ -124,42 +143,11 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
             for e2 in entities_collection:
                 assert(isinstance(e2, Entity))
 
-                # TODO. In separated method
+                key = self.__try_create_pair_key(news_id=news_id, e1=e1, e2=e2, sentiment_opinions=sentiment_opinions)
 
-                if e1.IdInDocument == e2.IdInDocument:
+                if key is None:
                     continue
 
-                if self.__is_ignored_entity_value(entity_value=e1.Value):
-                    continue
-                if self.__is_ignored_entity_value(entity_value=e2.Value):
-                    continue
-
-                g1 = self.__synonyms.get_synonym_group_index(e1.Value)
-                g2 = self.__synonyms.get_synonym_group_index(e2.Value)
-                if g1 == g2:
-                    continue
-
-                s_dist = self.__get_distance_in_sentences_between_entities(n_id=news_id, e1=e1, e2=e2)
-
-                if s_dist > 0:
-                    continue
-
-                t_dist = TextOpinionHelper.calculate_distance_between_entities_in_terms(
-                    parsed_news=self.__pnc.get_by_news_id(news_id),
-                    e1=e1,
-                    e2=e2)
-
-                if t_dist > 10:
-                    continue
-
-                if sentiment_opinions is not None:
-                    o = Opinion(source_value=e1.Value,
-                                target_value=e2.Value,
-                                sentiment=NeutralLabel())
-                    if sentiment_opinions.has_synonymous_opinion(opinion=o):
-                        continue
-
-                key = self.__create_key_by_entity_pair(e1=e1, e2=e2)
                 relevant_pairs[key] = 0
 
         opinions = self.__create_opinions_between_entities(
