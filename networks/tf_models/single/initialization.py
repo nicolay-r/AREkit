@@ -178,6 +178,7 @@ class SingleInstanceModelExperimentInitializer(object):
 
         return collection
 
+    # TODO. Simplify (parsed_news already provides filter)
     def __iter_all_terms(self, term_check_func):
         for pnc in self.__pncs.itervalues():
             assert(isinstance(pnc, ParsedNewsCollection))

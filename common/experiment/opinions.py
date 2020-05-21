@@ -10,6 +10,7 @@ from arekit.common.model.sample import InputSampleBase
 from arekit.common.news import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
 # region private methods
@@ -29,8 +30,10 @@ def __iter_opinion_collections(opin_operations, doc_id, data_type):
         yield opin_operations.read_etalon_opinion_collection(doc_id=doc_id)
 
 
-def __check_text_opinion(text_opinion, terms_per_context):
+def __check_text_opinion(text_opinion, text_opinion_helper, terms_per_context):
     assert(isinstance(text_opinion, TextOpinion))
+    assert(isinstance(text_opinion_helper, TextOpinionHelper))
+
     return InputSampleBase.check_ability_to_create_sample(
         window_size=terms_per_context,
         text_opinion=text_opinion)
@@ -56,6 +59,7 @@ def extract_text_opinions(experiment,
     assert(terms_per_context > 0)
 
     text_opinions = LabeledLinkedTextOpinionCollection(parsed_news_collection=parsed_news_collection)
+    text_opinion_helper = TextOpinionHelper(parsed_news_collection=parsed_news_collection)
 
     for doc_id in parsed_news_collection.iter_news_ids():
 

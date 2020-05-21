@@ -11,6 +11,7 @@ class FrameFeatures(object):
     @staticmethod
     def compose_frames(text_opinion):
         frames = []
+        # TODO. Duplicates iteration (FIX)
         indices = list(TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion))
         # NOTE: We utilize in reverse mode to prevent a case of zero-based frame by the beginning.
         for index, _ in reversed(indices):
@@ -24,6 +25,7 @@ class FrameFeatures(object):
 
         result = [filler] * size
 
+        # TODO. Duplicates iteration (FIX)
         for index, variant in TextOpinionHelper.iter_frame_variants_with_indices_in_sentence(text_opinion):
 
             if index >= len(result):

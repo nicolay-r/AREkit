@@ -1,5 +1,4 @@
 from arekit.common.entities.base import Entity
-from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.parsed_news.term_position import TermPosition, TermPositionTypes
 from arekit.common.synonyms import SynonymsCollection
@@ -77,17 +76,20 @@ class TextOpinionHelper(object):
 
     # region public 'calculate' methods
 
-    @staticmethod
-    def calculate_distance_between_text_opinion_ends_in_terms(text_opinion):
+    def calculate_distance_between_text_opinion_ends_in_terms(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
 
-        pos1 = TextOpinionHelper.__get_entity_position(text_opinion=text_opinion,
-                                                       end_type=EntityEndType.Source)
+        parsed_news = self.__parsed_news_collection.get_by_news_id(text_opinion)
 
-        pos2 = TextOpinionHelper.__get_entity_position(text_opinion=text_opinion,
-                                                       end_type=EntityEndType.Target)
+        e1_id = self.__get_end_id(text_opinion=text_opinion,
+                                  end_type=EntityEndType.Source)
 
-        return TextOpinionHelper.__calc_distance(pos1=pos1, pos2=pos2)
+        e2_id = self.__get_end_id(text_opinion=text_opinion,
+                                  end_type=EntityEndType.Target)
+
+        return TextOpinionHelper.__calc_distance(
+            pos1=parsed_news.get_entity_position(id_in_document=e1_id),
+            pos2=parsed_news.get_entity_position(id_in_document=e2_id))
 
     def calculate_distance_between_entities_in_sentences(self, news_id, e1, e2):
         assert(isinstance(news_id, int))
