@@ -13,23 +13,29 @@ class OpinionProvider(object):
     TextOpinion iterator + balancing.
     """
 
-    def __init__(self, data_type, text_opinions):
+    def __init__(self, data_type, text_opinions, parsed_news_collection):
         assert(isinstance(data_type, unicode))
         assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
+        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
         self.__text_opinions = text_opinions
         self.__data_type = data_type
+        self.__parsed_news_collection = parsed_news_collection
 
     @classmethod
     def from_experiment(cls, experiment, data_type):
         assert(isinstance(experiment, BaseExperiment))
 
+        pnc = experiment.create_parsed_collection(data_type)
+
         text_opinions = extract_text_opinions_and_parse_news(
             experiment=experiment,
             data_type=data_type,
-            terms_per_context=50)
+            terms_per_context=50,
+            parsed_news_collection=pnc)
 
         return cls(data_type=data_type,
-                   text_opinions=text_opinions)
+                   text_opinions=text_opinions,
+                   parsed_news_collection=pnc)
 
     def opinions_count(self):
         return len(self.__text_opinions)
@@ -85,16 +91,13 @@ class OpinionProvider(object):
 
     def get_opinion_location(self, text_opinion):
 
-        pnc = self.__text_opinions.RelatedParsedNewsCollection
-        assert(isinstance(pnc, ParsedNewsCollection))
-
         # Determining text_a by text_opinion end.
         s_ind = TextOpinionHelper.extract_entity_sentence_index(
             text_opinion=text_opinion,
             end_type=EntityEndType.Source)
 
         # Extract specific document by text_opinion.NewsID
-        pn = pnc.get_by_news_id(text_opinion.NewsID)
+        pn = self.__parsed_news_collection.get_by_news_id(text_opinion.NewsID)
         assert(isinstance(pn, ParsedNews))
 
         return pn, s_ind
