@@ -114,7 +114,7 @@ class TextOpinionHelper(object):
         for ind_in_sent, term in it:
             if return_ind_in_sent:
                 yield ind_in_sent, term
-            else
+            else:
                 yield term
 
     # endregion

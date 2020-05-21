@@ -157,12 +157,8 @@ class SingleInstanceModelExperimentInitializer(object):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(self.__text_opinion_helpers[data_type].check_ends_has_same_sentence_index(text_opinion))
 
-        parsed_news_collection = self.__pncs[data_type]
-
-        # TODO. This sample should be a parameter of a model.
         return InputSample.from_text_opinion(
             text_opinion=text_opinion,
-            parsed_news=parsed_news_collection.get_by_news_id(text_opinion.NewsID),
             config=config,
             frames_collection=self.__frames_collection,
             synonyms_collection=self.__synonyms,

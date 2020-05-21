@@ -146,21 +146,18 @@ class InputSample(InputSampleBase):
                    text_opinion_id=-1)
 
     @classmethod
-    def from_text_opinion(cls, text_opinion, parsed_news, frames_collection, synonyms_collection, config, label_scaler,
+    def from_text_opinion(cls, text_opinion, frames_collection, synonyms_collection, config, label_scaler,
                           text_opinion_helper):
         assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(frames_collection, FramesCollection))
         assert(isinstance(synonyms_collection, SynonymsCollection))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
 
-        sentence_index = TextOpinionHelper.extract_entity_sentence_index(
+        terms = list(text_opinion_helper.iter_terms_in_related_sentence(
             text_opinion=text_opinion,
-            end_type=EntityEndType.Source)
-
-        terms = list(parsed_news.iter_sentence_terms(sentence_index))
+            return_ind_in_sent=False))
 
         subj_ind = text_opinion_helper.extract_entity_position(
             text_opinion=text_opinion,
