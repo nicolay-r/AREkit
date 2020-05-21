@@ -71,7 +71,7 @@ class RuAttitudesNews(News):
         for opinion in opinions:
             yield LinkedTextOpinionsWrapper(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
 
-    def parse(self, options):
+    def _parse_core(self, options):
         return ParsedNews(news_id=self.ID, parsed_sentences=self.__iter_parsed_sentences())
 
     # endregion
