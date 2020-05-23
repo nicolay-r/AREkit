@@ -1,7 +1,7 @@
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.labels.base import Label
-from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.parsed_news.term_position import TermPositionTypes
@@ -17,7 +17,7 @@ class OpinionProvider(object):
 
     def __init__(self, data_type, text_opinions, parsed_news_collection):
         assert(isinstance(data_type, unicode))
-        assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
+        assert(isinstance(text_opinions, LinkedTextOpinionCollection))
         assert(isinstance(parsed_news_collection, ParsedNewsCollection))
         self.__text_opinions = text_opinions
         self.__data_type = data_type

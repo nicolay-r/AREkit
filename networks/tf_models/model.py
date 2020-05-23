@@ -6,7 +6,7 @@ import tensorflow as tf
 from tensorflow.python.training.saver import Saver
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
 from arekit.common.model.eval.base import BaseModelEvaluator
 from arekit.common.experiment.data_type import DataType
@@ -116,39 +116,39 @@ class TensorflowModel(BaseModel):
         self.fit(epochs_count=epochs_count)
         self.dispose_session()
 
-    def before_labeling_func_application(self, text_opinions):
-        assert(text_opinions.check_all_text_opinions_without_labels())
+    @staticmethod
+    def before_labeling_func_application(labeled_collection):
+        assert(isinstance(labeled_collection, LabeledCollection))
+        assert(labeled_collection.check_all_text_opinions_without_labels())
 
-    def after_labeling_func_application(self, text_opinions):
-        assert(text_opinions.check_all_text_opinions_has_labels())
+    @staticmethod
+    def after_labeling_func_application(labeled_collection):
+        assert(isinstance(labeled_collection, LabeledCollection))
+        assert(labeled_collection.check_all_text_opinions_has_labels())
 
-    def predict_core(self,
-                     dest_data_type,
-                     labeling_callback,
-                     doc_ids_set):
-        assert(isinstance(dest_data_type, unicode))
+    def predict_core(self, data_type, labeling_callback):
+        assert(isinstance(data_type, unicode))
         assert(callable(labeling_callback))
-        assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
-        text_opinions = self.get_text_opinions_collection(dest_data_type)
-        assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
+        labeled_collection = self.get_labeling_collection(data_type)
+        assert(isinstance(labeled_collection, LabeledCollection))
 
-        text_opinions.reset_labels()
+        labeled_collection.reset_labels()
 
         # Predict.
-        self.before_labeling_func_application(text_opinions)
-        predict_log = labeling_callback(text_opinions, dest_data_type, doc_ids_set)
-        self.after_labeling_func_application(text_opinions)
+        self.before_labeling_func_application(labeled_collection)
+        predict_log = labeling_callback()
+        self.after_labeling_func_application(labeled_collection)
 
         evaluator = self.get_evaluator()
         assert(isinstance(evaluator, BaseModelEvaluator))
 
         eval_result = evaluator.evaluate(
-            data_type=dest_data_type,
-            doc_ids=text_opinions.get_unique_news_ids(),
+            data_type=data_type,
+            doc_ids=labeled_collection.get_unique_news_ids(),
             epoch_index=self.__current_epoch_index)
 
-        text_opinions.reset_labels()
+        labeled_collection.reset_labels()
 
         return eval_result, predict_log
 
@@ -202,9 +202,10 @@ class TensorflowModel(BaseModel):
         """
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
-        eval_result, predict_log = self.predict_core(dest_data_type=dest_data_type,
-                                                     labeling_callback=self.__text_opinions_labeling,
-                                                     doc_ids_set=doc_ids_set)
+        eval_result, predict_log = self.predict_core(
+            data_type=dest_data_type,
+            labeling_callback=lambda: self.__text_opinions_labeling(data_type=dest_data_type,
+                                                                    doc_ids_set=doc_ids_set))
         return eval_result, predict_log
 
     def get_hidden_parameters(self):
@@ -230,7 +231,7 @@ class TensorflowModel(BaseModel):
     def create_batch_by_bags_group(self, bags_group):
         raise NotImplementedError()
 
-    def get_text_opinions_collection(self, data_type):
+    def get_labeling_collection(self, data_type):
         raise NotImplementedError()
 
     def get_bags_collection(self, data_type):
@@ -297,13 +298,15 @@ class TensorflowModel(BaseModel):
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess
 
-    def __text_opinions_labeling(self, text_opinions, dest_data_type, doc_ids_set):
+    def __text_opinions_labeling(self, data_type, doc_ids_set):
         """
         Provides algorithm of opinions labeling according to model results.
         """
-        assert(isinstance(text_opinions, LabeledLinkedTextOpinionCollection))
-        assert(isinstance(dest_data_type, unicode))
+        assert(isinstance(data_type, unicode))
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
+
+        labeled_collection = self.get_labeling_collection(data_type)
+        assert(isinstance(labeled_collection, LabeledCollection))
 
         predict_log = NetworkInputDependentVariables()
         idh_names = []
@@ -315,17 +318,17 @@ class TensorflowModel(BaseModel):
         text_opinion_ids_set = None
         if doc_ids_set is not None:
             __text_opinion_ids = [text_opinion.TextOpinionID for text_opinion in
-                                  doc_ids_set.intersection(text_opinions)]
+                                  doc_ids_set.intersection(labeled_collection.iter_text_opinions())]
             text_opinion_ids_set = set(__text_opinion_ids)
 
-        bags_group_it = self.get_bags_collection(dest_data_type).iter_by_groups(
+        bags_group_it = self.get_bags_collection(data_type).iter_by_groups(
             bags_per_group=self.Config.BagsPerMinibatch,
             text_opinion_ids_set=text_opinion_ids_set)
 
         for bags_group in bags_group_it:
 
             minibatch = self.create_batch_by_bags_group(bags_group)
-            feed_dict = self.create_feed_dict(minibatch, data_type=dest_data_type)
+            feed_dict = self.create_feed_dict(minibatch, data_type=data_type)
 
             result = self.Session.run([self.Network.Labels] + idh_tensors, feed_dict=feed_dict)
             uint_labels = result[0]
@@ -347,7 +350,7 @@ class TensorflowModel(BaseModel):
                 for sample in bag:
                     if sample.TextOpinionID < 0:
                         continue
-                    text_opinions.apply_label(label, sample.TextOpinionID)
+                    labeled_collection.apply_label(label, sample.TextOpinionID)
 
         return predict_log
 

@@ -54,8 +54,8 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def get_bags_collection(self, data_type):
         return self.__init_helper.BagsCollections[data_type]
 
-    def get_text_opinions_collection(self, data_type):
-        return self.__init_helper.TextOpinionCollections[data_type]
+    def get_labeling_collection(self, data_type):
+        return self.__init_helper.LabeledCollection[data_type]
 
     def get_gpu_memory_fraction(self):
         return self.__config.GPUMemoryFraction
@@ -86,10 +86,8 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
         log.write_log(data_io=self.__experiment.DataIO, log_names=keys, log_values=values)
-        # TODO. using scaler for casting
         self.get_text_opinions_collection_helper(DataType.Train).debug_labels_statistic()
         self.get_text_opinions_collection_helper(DataType.Train).debug_unique_relations_statistic()
-        # TODO. using scaler for casting
         self.get_text_opinions_collection_helper(DataType.Test).debug_labels_statistic()
         self.get_text_opinions_collection_helper(DataType.Test).debug_unique_relations_statistic()
         self.get_bags_collection_helper(DataType.Train).print_log_statistics()

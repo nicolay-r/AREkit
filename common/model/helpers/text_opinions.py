@@ -1,5 +1,5 @@
 from arekit.common.experiment.opinions import compose_opinion_collection
-from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
@@ -8,7 +8,7 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 class LabeledLinkedTextOpinionCollectionHelper:
 
     def __init__(self, collection, labels_helper, text_opinion_helper, name):
-        assert(isinstance(collection, LabeledLinkedTextOpinionCollection))
+        assert(isinstance(collection, LinkedTextOpinionCollection))
         assert(isinstance(labels_helper, LabelsHelper))
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
         assert(isinstance(name, unicode))

@@ -1,6 +1,6 @@
 import numpy as np
 
-from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.training.bags.bag import Bag
@@ -22,7 +22,7 @@ class SingleBagsCollection(BagsCollection):
             text_opinion_helper,
             shuffle):
         assert(isinstance(bag_size, int) and bag_size > 0)
-        assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
+        assert(isinstance(text_opinion_collection, LinkedTextOpinionCollection))
         assert(callable(create_sample_func))
         assert(isinstance(shuffle, bool))
 

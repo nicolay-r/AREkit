@@ -11,10 +11,6 @@ class LinkedDataWrapper(object):
     def First(self):
         return self[0]
 
-    @property
-    def _LikedData(self):
-        return self.__linked_data
-
     def _get_data_label(self, item):
         raise NotImplementedError()
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 from arekit.common.linked.base import is_context_continued
-from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.text_opinions.text_opinion import TextOpinion
@@ -26,7 +26,7 @@ class MultiInstanceBagsCollection(BagsCollection):
             create_empty_sample_func,
             text_opinion_helper,
             shuffle):
-        assert(isinstance(text_opinion_collection, LabeledLinkedTextOpinionCollection))
+        assert(isinstance(text_opinion_collection, LinkedTextOpinionCollection))
         assert(isinstance(data_type, unicode))
         assert(isinstance(max_bag_size, int) and max_bag_size > 0)
         assert(callable(create_sample_func))

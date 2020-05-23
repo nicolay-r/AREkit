@@ -3,6 +3,7 @@ import logging
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.opinions import extract_text_opinions
+from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.parsed_news.collection import ParsedNewsCollection
@@ -53,6 +54,10 @@ class SingleInstanceModelExperimentInitializer(object):
                                                     terms_per_context=config.TermsPerContext,
                                                     iter_doc_ids=self.__pncs[data_type].iter_news_ids(),
                                                     text_opinion_helper=self.__text_opinion_helpers[data_type]))
+
+        self.__labeled_collections = self.__create_collection(
+            lambda data_type: LabeledCollection(collection=self.__text_opinion_collections[data_type])
+        )
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,
@@ -114,8 +119,8 @@ class SingleInstanceModelExperimentInitializer(object):
         return self.__bags_collection_helpers
 
     @property
-    def TextOpinionCollections(self):
-        return self.__text_opinion_collections
+    def LabeledCollection(self):
+        return self.__labeled_collections
 
     @property
     def TextOpinionCollectionHelpers(self):

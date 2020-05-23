@@ -5,7 +5,7 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.linked.data import LinkedDataWrapper
-from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.news import News
@@ -63,7 +63,7 @@ def extract_text_opinions(experiment,
     assert(isinstance(text_opinion_helper, TextOpinionHelper))
     assert(terms_per_context > 0)
 
-    text_opinions = LabeledLinkedTextOpinionCollection()
+    linked_text_opinions = LinkedTextOpinionCollection()
 
     for doc_id in iter_doc_ids:
 
@@ -76,14 +76,14 @@ def extract_text_opinions(experiment,
 
         for opinions in opinions_it:
             for linked_wrap in news.iter_wrapped_linked_text_opinions(opinions=opinions):
-                text_opinions.try_add_linked_text_opinions(
+                linked_text_opinions.try_add_linked_text_opinions(
                     linked_text_opinions=linked_wrap,
                     check_opinion_correctness=lambda text_opinion: __check_text_opinion(
                         text_opinion=text_opinion,
                         text_opinion_helper=text_opinion_helper,
                         terms_per_context=terms_per_context))
 
-    return text_opinions
+    return linked_text_opinions
 
 
 def compose_opinion_collection(create_collection_func,

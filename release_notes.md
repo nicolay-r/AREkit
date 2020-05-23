@@ -2,6 +2,7 @@
 
 Collection of parsed news become dispatched from text opinions collection.
 * Removed dependency from `RelatedParsedNewCollection` in TextOpinionCollection.
+* Labeling now separated from LinkedTextOpinion collection.
 
 Minor changes (light refactoring):
 
