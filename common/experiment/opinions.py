@@ -42,7 +42,24 @@ def __check_text_opinion(text_opinion, text_opinion_helper, terms_per_context):
         text_opinion=text_opinion)
 
 
+def __iter_linked_wraps(experiment, data_type, iter_doc_ids):
+
+    for doc_id in iter_doc_ids:
+
+        news = experiment.DocumentOperations.read_news(doc_id=doc_id)
+        assert(isinstance(news, News))
+
+        opinions_it = __iter_opinion_collections(opin_operations=experiment.OpinionOperations,
+                                                 doc_id=doc_id,
+                                                 data_type=data_type)
+
+        for opinions in opinions_it:
+            for linked_wrap in news.iter_wrapped_linked_text_opinions(opinions=opinions):
+                yield linked_wrap
+
+
 # endregions
+
 
 def extract_text_opinions(experiment,
                           data_type,
@@ -65,23 +82,13 @@ def extract_text_opinions(experiment,
 
     linked_text_opinions = LinkedTextOpinionCollection()
 
-    for doc_id in iter_doc_ids:
-
-        news = experiment.DocumentOperations.read_news(doc_id=doc_id)
-        assert(isinstance(news, News))
-
-        opinions_it = __iter_opinion_collections(opin_operations=experiment.OpinionOperations,
-                                                 doc_id=doc_id,
-                                                 data_type=data_type)
-
-        for opinions in opinions_it:
-            for linked_wrap in news.iter_wrapped_linked_text_opinions(opinions=opinions):
-                linked_text_opinions.try_add_linked_text_opinions(
-                    linked_text_opinions=linked_wrap,
-                    check_opinion_correctness=lambda text_opinion: __check_text_opinion(
-                        text_opinion=text_opinion,
-                        text_opinion_helper=text_opinion_helper,
-                        terms_per_context=terms_per_context))
+    for linked_wrap in __iter_linked_wraps(experiment, data_type=data_type, iter_doc_ids=iter_doc_ids):
+        linked_text_opinions.try_add_linked_text_opinions(
+            linked_text_opinions=linked_wrap,
+            check_opinion_correctness=lambda text_opinion: __check_text_opinion(
+                text_opinion=text_opinion,
+                text_opinion_helper=text_opinion_helper,
+                terms_per_context=terms_per_context))
 
     return linked_text_opinions
 

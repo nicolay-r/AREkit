@@ -52,8 +52,9 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self._DataIO.SynonymsCollection,
-            iter_parsed_news=lambda doc_id: self._DocOps.iter_parsed_news(doc_id, None),
-            iter_news_ids=self.iter_doc_ids_to_compare(),
+            iter_parsed_news=self._DocOps.iter_parsed_news(
+                doc_inds=self.iter_doc_ids_to_compare(),
+                frame_variant_collection=None),
             dist_in_terms_bound=data_io.DistanceInTermsBetweenOpinionEndsBound,
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 

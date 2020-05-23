@@ -1,7 +1,9 @@
+import logging
+
 from arekit.common.text_opinions.collection import TextOpinionCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
-from io_utils import logger
+logger = logging.getLogger(__name__)
 
 
 class LabeledCollection:

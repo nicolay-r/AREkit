@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from arekit.common.text_opinions.enums import DistanceType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 
@@ -26,7 +27,7 @@ class InputSampleBase(object):
     @staticmethod
     def check_ability_to_create_sample(window_size, text_opinion, text_opinion_helper):
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
-        return text_opinion_helper.calc_dist_between_text_opinion_ends_in_terms(text_opinion) < window_size
+        return text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InTerms) < window_size
 
     def __iter__(self):
         for key, value in self.__values.iteritems():

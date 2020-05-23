@@ -21,7 +21,7 @@ class DataIO(object):
 
     @property
     def DistanceInTermsBetweenOpinionEndsBound(self):
-        return 10
+        raise NotImplementedError()
 
     @property
     def Stemmer(self):

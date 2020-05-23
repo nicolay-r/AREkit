@@ -21,7 +21,6 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
     def __init__(self,
                  synonyms,
                  iter_parsed_news,
-                 iter_news_ids,
                  dist_in_terms_bound,
                  ignored_entity_values=None):
         """
@@ -33,17 +32,13 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
             max allowed distance in term (less than passed value)
         """
         assert(isinstance(synonyms, SynonymsCollection))
-        assert(isinstance(iter_news_ids, collections.Iterable))
         assert(isinstance(ignored_entity_values, list) or ignored_entity_values is None)
         assert(isinstance(dist_in_terms_bound, int))
 
         self.__synonyms = synonyms
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
 
-        self.__pnc = ParsedNewsCollection()
-        for parsed_news in iter_parsed_news:
-            self.__pnc.add(parsed_news)
-
+        self.__pnc = ParsedNewsCollection(parsed_news_it=iter_parsed_news)
         self.__text_opinion_helper = TextOpinionHelper(parsed_news_collection=self.__pnc)
         self.__dist_in_terms_bound = dist_in_terms_bound
 

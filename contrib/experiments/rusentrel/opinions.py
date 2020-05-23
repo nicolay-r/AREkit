@@ -4,6 +4,8 @@ import os
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOperations
+from arekit.common.labels.base import NeutralLabel
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
@@ -25,6 +27,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         self._rusentrel_news_ids = rusentrel_news_ids
         self.__eval_on_rusentrel_docs_key = True
         self.__result_labels_fmt = RuSentRelLabelsFormatter()
+        self.__neutral_labels_fmt = NeutralLabelsFormatter()
 
     def __iter_doc_ids_to_compare(self, doc_ids):
         if self.__eval_on_rusentrel_docs_key:
@@ -69,10 +72,19 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             return None
 
         return self._data_io.OpinionFormatter.load_from_file(filepath=filepath,
-                                                             synonyms=self._data_io.SynonymsCollection)
+                                                             synonyms=self._data_io.SynonymsCollection,
+                                                             labels_formatter=self.__neutral_labels_fmt)
 
     def create_opinion_collection(self, opinions=None):
         assert(isinstance(opinions, list) or opinions is None)
         return OpinionCollection(opinions=[] if opinions is None else opinions,
                                  synonyms=self._data_io.SynonymsCollection)
+
+
+class NeutralLabelsFormatter(StringLabelsFormatter):
+
+    def __init__(self):
+        stol = {u'neu': NeutralLabel()}
+        super(NeutralLabelsFormatter, self).__init__(stol=stol)
+
 

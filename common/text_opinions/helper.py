@@ -53,11 +53,11 @@ class TextOpinionHelper(object):
 
     # region public 'calculate' methods
 
-    def calc_dist_between_text_opinion_ends_in_terms(self, text_opinion, distance_type):
+    def calc_dist_between_text_opinion_ends(self, text_opinion, distance_type):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(distance_type, DistanceType))
 
-        parsed_news = self.__parsed_news_collection.get_by_news_id(text_opinion)
+        parsed_news = self.__parsed_news_collection.get_by_news_id(news_id=text_opinion.NewsID)
 
         e1_id = self.__get_end_id(text_opinion=text_opinion,
                                   end_type=EntityEndType.Source)

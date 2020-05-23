@@ -63,17 +63,12 @@ class BaseExperiment(object):
 
     def create_parsed_collection(self, data_type):
         assert(isinstance(data_type, unicode))
-        parsed_collection = ParsedNewsCollection()
 
-        it = self.DocumentOperations.iter_parsed_news(
-            data_type=data_type,
+        parsed_news_it = self.DocumentOperations.iter_parsed_news(
+            doc_inds=self.DocumentOperations.iter_news_indices(data_type),
             frame_variant_collection=self.DataIO.FrameVariantCollection)
 
-        for parsed_news in it:
-            if parsed_news.RelatedNewsID not in parsed_collection:
-                parsed_collection.add(parsed_news)
-                continue
-            logging.info("Warning: Skipping document with id={}".format(parsed_news.RelatedNewsID))
+        return ParsedNewsCollection(parsed_news_it)
 
     # region private methods
 

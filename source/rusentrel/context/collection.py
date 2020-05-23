@@ -19,7 +19,6 @@ class RuSentRelTextOpinionCollection(TextOpinionCollection):
 
     def __init__(self, text_opinions):
         super(RuSentRelTextOpinionCollection, self).__init__(
-            parsed_news_collection=None,
             text_opinions=text_opinions)
 
     @classmethod
