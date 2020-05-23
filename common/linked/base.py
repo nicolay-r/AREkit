@@ -1,5 +1,5 @@
 from arekit.common.parsed_news.term_position import TermPositionTypes
-from arekit.common.text_opinions.end_type import EntityEndType
+from arekit.common.text_opinions.enums import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 

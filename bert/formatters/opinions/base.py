@@ -3,13 +3,11 @@ from collections import OrderedDict
 import pandas as pd
 
 from arekit.bert.formatters.base import BaseBertRowsFormatter
-from arekit.bert.providers.row_ids.multiple import MultipleIDProvider
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.common.text_opinions.end_type import EntityEndType
-from arekit.common.text_opinions.helper import TextOpinionHelper
-
-from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.bert.providers.opinions import OpinionProvider
+from arekit.bert.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.text_opinions.enums import EntityEndType
 
 
 class BertOpinionsFormatter(BaseBertRowsFormatter):
@@ -44,11 +42,11 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
 
         row = OrderedDict()
 
-        src_value = TextOpinionHelper.extract_entity_value(
+        src_value = opinion_provider.get_entity_value(
             text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Source)
 
-        target_value = TextOpinionHelper.extract_entity_value(
+        target_value = opinion_provider.get_entity_value(
             text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Target)
 

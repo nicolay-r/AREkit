@@ -5,7 +5,6 @@ import cPickle as pickle
 
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.text_opinions.collection import TextOpinionCollection
 
 
@@ -25,14 +24,8 @@ class LabeledLinkedTextOpinionCollection(TextOpinionCollection):
 
     NO_NEXT_OPINION = None
 
-    # TODO. Parsed news collection (remove)
-    def __init__(self, parsed_news_collection):
-        # TODO. Parsed news collection (remove)
-        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
-        # TODO. Parsed news collection (remove)
-        super(LabeledLinkedTextOpinionCollection, self).__init__(
-            parsed_news_collection=parsed_news_collection,
-            text_opinions=[])
+    def __init__(self):
+        super(LabeledLinkedTextOpinionCollection, self).__init__(text_opinions=[])
 
         # list describes that has i'th relation continuation in text.
         self.__next_opinion_id = []

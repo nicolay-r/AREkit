@@ -1,5 +1,4 @@
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.parsed_news.collection import ParsedNewsCollection
 
 
 class TextOpinionCollection(object):
@@ -7,31 +6,16 @@ class TextOpinionCollection(object):
     Collection of text-level opinions across many news/documents
     """
 
-    # TODO. Parsed news collection (remove)
-    def __init__(self, parsed_news_collection, text_opinions):
+    def __init__(self, text_opinions):
         """
         parsed_news_collection: ParsedNewsCollection
             utilized as reference only (for Helper)
         text_opinions: list
             list of TextOpinion
         """
-        assert(isinstance(parsed_news_collection, ParsedNewsCollection) or
-               parsed_news_collection is None)
         assert(isinstance(text_opinions, list))
 
-        # TODO. This should be removed
-        self.__parsed_news_collection = parsed_news_collection
         self.__text_opinions = text_opinions
-
-    # region property
-
-    # TODO. This should be removed
-    # TODO. This should be a part of Dataset class
-    @property
-    def RelatedParsedNewsCollection(self):
-        return self.__parsed_news_collection
-
-    # endregion
 
     # region public methods
 

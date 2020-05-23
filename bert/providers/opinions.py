@@ -5,8 +5,9 @@ from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpini
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.parsed_news.term_position import TermPositionTypes
-from arekit.common.text_opinions.end_type import EntityEndType
+from arekit.common.text_opinions.enums import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.text_opinions.text_opinion import TextOpinion
 
 
 class OpinionProvider(object):
@@ -28,12 +29,14 @@ class OpinionProvider(object):
         assert(isinstance(experiment, BaseExperiment))
 
         pnc = experiment.create_parsed_collection(data_type)
+        assert(isinstance(pnc, ParsedNewsCollection))
 
         text_opinions = extract_text_opinions(
             experiment=experiment,
             data_type=data_type,
             terms_per_context=50,
-            parsed_news_collection=pnc)
+            iter_doc_ids=pnc.iter_news_ids(),
+            text_opinion_helper=TextOpinionHelper(pnc))
 
         return cls(data_type=data_type,
                    text_opinions=text_opinions,
@@ -92,6 +95,7 @@ class OpinionProvider(object):
             yield linked_wrap
 
     def get_opinion_location(self, text_opinion):
+        assert(isinstance(text_opinion, TextOpinion))
 
         # Determining text_a by text_opinion end.
         s_ind = self.__text_opinion_helper.extract_entity_position(
@@ -104,3 +108,10 @@ class OpinionProvider(object):
         assert(isinstance(parsed_news, ParsedNews))
 
         return parsed_news, s_ind
+
+    def get_entity_value(self, text_opinion, end_type):
+        assert(isinstance(text_opinion, TextOpinion))
+        assert(isinstance(end_type, EntityEndType))
+
+        return self.__text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
+                                                               end_type=end_type)

@@ -15,12 +15,12 @@ class LinkedDataWrapper(object):
     def _LikedData(self):
         return self.__linked_data
 
-    @staticmethod
-    def _aggregate_by_first(item, label):
+    def _get_data_label(self, item):
         raise NotImplementedError()
 
-    def aggregate_data(self, label):
-        return self._aggregate_by_first(item=self.First, label=label)
+    def iter_labels(self):
+        for item in self.__linked_data:
+            yield self._get_data_label(item)
 
     def __getitem__(self, item):
         assert(isinstance(item, int))

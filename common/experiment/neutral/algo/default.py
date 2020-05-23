@@ -8,6 +8,7 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.synonyms import SynonymsCollection
+from arekit.common.text_opinions.enums import DistanceType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 
@@ -108,14 +109,14 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         if g1 == g2:
             return
 
-        s_dist = self.__text_opinion_helper.calculate_distance_between_entities_in_sentences(
-            news_id=news_id, e1=e1, e2=e2)
+        s_dist = self.__text_opinion_helper.calc_dist_between_entities(
+            news_id=news_id, e1=e1, e2=e2, distance_type=DistanceType.InSentences)
 
         if s_dist > 0:
             return
 
-        t_dist = self.__text_opinion_helper.calculate_distance_between_entities_in_terms(
-            news_id=news_id, e1=e1, e2=e2)
+        t_dist = self.__text_opinion_helper.calc_dist_between_entities(
+            news_id=news_id, e1=e1, e2=e2, distance_type=DistanceType.InTerms)
 
         if t_dist > self.__dist_in_terms_bound:
             return

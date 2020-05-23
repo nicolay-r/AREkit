@@ -1,6 +1,7 @@
 ## v0.20.5-rc
 
 Collection of parsed news become dispatched from text opinions collection.
+* Removed dependency from `RelatedParsedNewCollection` in TextOpinionCollection.
 
 Minor changes (light refactoring):
 

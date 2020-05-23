@@ -1,17 +1,20 @@
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.labeling.base import LabelsHelper
+from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
 
 class LabeledLinkedTextOpinionCollectionHelper:
 
-    def __init__(self, collection, labels_helper, name):
+    def __init__(self, collection, labels_helper, text_opinion_helper, name):
         assert(isinstance(collection, LabeledLinkedTextOpinionCollection))
         assert(isinstance(labels_helper, LabelsHelper))
+        assert(isinstance(text_opinion_helper, TextOpinionHelper))
         assert(isinstance(name, unicode))
         self.__collection = collection
         self.__labels_helper = labels_helper
+        self.__text_opinion_helper = text_opinion_helper
         self.__name = name
 
     # region public methods
@@ -24,8 +27,9 @@ class LabeledLinkedTextOpinionCollectionHelper:
 
             collection = compose_opinion_collection(
                 create_collection_func=create_collection_func,
-                wrapped_linked_opinion_iter=self.__collection.iter_wrapped_linked_text_opinions(news_id=news_id),
+                linked_data_iter=self.__collection.iter_wrapped_linked_text_opinions(news_id=news_id),
                 labels_helper=self.__labels_helper,
+                to_opinion_func=self.__text_opinion_helper.to_opinion,
                 label_calc_mode=label_calc_mode)
 
             yield collection, news_id

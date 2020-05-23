@@ -51,7 +51,8 @@ class SingleInstanceModelExperimentInitializer(object):
             lambda data_type: extract_text_opinions(experiment=experiment,
                                                     data_type=data_type,
                                                     terms_per_context=config.TermsPerContext,
-                                                    parsed_news_collection=self.__pncs[data_type]))
+                                                    iter_doc_ids=self.__pncs[data_type].iter_news_ids(),
+                                                    text_opinion_helper=self.__text_opinion_helpers[data_type]))
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,
@@ -90,6 +91,7 @@ class SingleInstanceModelExperimentInitializer(object):
             lambda data_type: LabeledLinkedTextOpinionCollectionHelper(
                 collection=self.__text_opinion_collections[data_type],
                 labels_helper=self.__labels_helper,
+                text_opinion_helper=self.__text_opinion_helpers[data_type],
                 name=data_type))
 
         norm, _ = self.__text_opinion_collection_helpers[DataType.Train].get_statistic()

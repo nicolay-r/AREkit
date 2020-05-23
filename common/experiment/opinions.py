@@ -4,6 +4,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.labels.base import NeutralLabel
+from arekit.common.linked.data import LinkedDataWrapper
 from arekit.common.linked.text_opinions.collection import LabeledLinkedTextOpinionCollection
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.sample import InputSampleBase
@@ -14,6 +15,7 @@ from arekit.common.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
 # region private methods
+
 
 def __iter_opinion_collections(opin_operations, doc_id, data_type):
     assert(isinstance(opin_operations, OpinionOperations))
@@ -36,6 +38,7 @@ def __check_text_opinion(text_opinion, text_opinion_helper, terms_per_context):
 
     return InputSampleBase.check_ability_to_create_sample(
         window_size=terms_per_context,
+        text_opinion_helper=text_opinion_helper,
         text_opinion=text_opinion)
 
 
@@ -43,8 +46,8 @@ def __check_text_opinion(text_opinion, text_opinion_helper, terms_per_context):
 
 def extract_text_opinions(experiment,
                           data_type,
-                          # TODO. Remove
-                          parsed_news_collection,
+                          iter_doc_ids,
+                          text_opinion_helper,
                           terms_per_context):
     """
     Extracting text-level opinions based on doc-level opinions in documents,
@@ -56,12 +59,13 @@ def extract_text_opinions(experiment,
     assert(isinstance(experiment, BaseExperiment))
     assert(isinstance(data_type, unicode))
     assert(isinstance(terms_per_context, int))
+    assert(isinstance(iter_doc_ids, collections.Iterable))
+    assert(isinstance(text_opinion_helper, TextOpinionHelper))
     assert(terms_per_context > 0)
 
-    text_opinions = LabeledLinkedTextOpinionCollection(parsed_news_collection=parsed_news_collection)
-    text_opinion_helper = TextOpinionHelper(parsed_news_collection=parsed_news_collection)
+    text_opinions = LabeledLinkedTextOpinionCollection()
 
-    for doc_id in parsed_news_collection.iter_news_ids():
+    for doc_id in iter_doc_ids:
 
         news = experiment.DocumentOperations.read_news(doc_id=doc_id)
         assert(isinstance(news, News))
@@ -83,23 +87,29 @@ def extract_text_opinions(experiment,
 
 
 def compose_opinion_collection(create_collection_func,
-                               wrapped_linked_opinion_iter,
+                               linked_data_iter,
                                labels_helper,
+                               to_opinion_func,
                                label_calc_mode):
+    """
+    to_opinion_func: (item, label) -> opinion
+    """
     assert(callable(create_collection_func))
-    assert(isinstance(wrapped_linked_opinion_iter, collections.Iterable))
+    assert(isinstance(linked_data_iter, collections.Iterable))
     assert(isinstance(labels_helper, LabelsHelper))
+    assert(callable(to_opinion_func))
 
     collection = create_collection_func()
     assert(isinstance(collection, OpinionCollection))
 
-    for linked_opins in wrapped_linked_opinion_iter:
+    for linked in linked_data_iter:
+        assert(isinstance(linked, LinkedDataWrapper))
 
-        label = labels_helper.aggregate_labels(
-            labels_list=[opinion.Sentiment for opinion in linked_opins],
+        agg_label = labels_helper.aggregate_labels(
+            labels_list=list(linked.iter_labels()),
             label_creation_mode=label_calc_mode)
 
-        agg_opinion = linked_opins.aggregate_data(label=label)
+        agg_opinion = to_opinion_func(linked.First, agg_label)
 
         assert(isinstance(agg_opinion, Opinion))
 
