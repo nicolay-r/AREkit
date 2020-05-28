@@ -1,7 +1,7 @@
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.model.labeling.base import LabelsHelper
-from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
 

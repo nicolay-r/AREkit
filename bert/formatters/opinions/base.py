@@ -7,7 +7,7 @@ from arekit.bert.providers.opinions import OpinionProvider
 from arekit.bert.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.common.text_opinions.enums import EntityEndType
+from arekit.common.dataset.text_opinions.enums import EntityEndType
 
 
 class BertOpinionsFormatter(BaseBertRowsFormatter):

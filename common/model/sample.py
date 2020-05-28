@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
-from arekit.common.text_opinions.enums import DistanceType
-from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.dataset.text_opinions.enums import DistanceType
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 
 class InputSampleBase(object):

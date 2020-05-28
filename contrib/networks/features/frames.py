@@ -3,7 +3,7 @@ from arekit.common.frames.collection import FramesCollection
 from arekit.common.frames.polarity import FramePolarity
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.text_frame_variant import TextFrameVariant
-from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 
 class FrameFeatures(object):

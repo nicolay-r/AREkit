@@ -6,7 +6,6 @@ from arekit.bert.providers.text.single import SingleTextProvider
 from arekit.bert.providers.opinions import OpinionProvider
 
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.data_type import DataType
 
 from arekit.contrib.bert_samplers.nli_b import NliBinarySampleFormatter
 from arekit.contrib.bert_samplers.nli_m import NliMultipleSampleFormatter

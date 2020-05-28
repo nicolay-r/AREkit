@@ -9,7 +9,6 @@ from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
-from arekit.common.model.eval.base import BaseModelEvaluator
 from arekit.common.experiment.data_type import DataType
 from arekit.common.model.evaluator import CustomOpinionBasedModelEvaluator
 

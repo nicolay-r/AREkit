@@ -4,12 +4,9 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.parsed_news.term_position import TermPosition, TermPositionTypes
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.text_opinions.enums import EntityEndType, DistanceType
+from arekit.common.dataset.text_opinions.enums import EntityEndType, DistanceType
 
 
-# TODO. MOVE as written below
-# TODO. This should be moved into dataset dir
-# TODO. As helper
 class TextOpinionHelper(object):
     """
     This class provides a helper functions for TextOpinions, which become a part of TextOpinionCollection.

@@ -1,5 +1,4 @@
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.model.evaluator import CustomOpinionBasedModelEvaluator
 from arekit.common.experiment.data_type import DataType
 
 from arekit.networks.tf_models.single import log
