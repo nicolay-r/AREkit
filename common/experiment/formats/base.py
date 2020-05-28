@@ -2,6 +2,7 @@ import logging
 from os import path
 
 from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutralAnnotator
@@ -62,7 +63,7 @@ class BaseExperiment(object):
     # endregion
 
     def create_parsed_collection(self, data_type):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
 
         parsed_news_it = self.DocumentOperations.iter_parsed_news(
             doc_inds=self.DocumentOperations.iter_news_indices(data_type),

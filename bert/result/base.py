@@ -24,7 +24,7 @@ class BertResults(object):
     # region public methods
 
     def from_tsv(self, data_type, experiment, ids_values):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
         assert(isinstance(experiment, BaseExperiment))
 
         filepath = self.__get_filepath(data_type=data_type,

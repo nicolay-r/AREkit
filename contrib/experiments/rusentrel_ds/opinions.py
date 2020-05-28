@@ -1,3 +1,4 @@
+from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.source.ruattitudes.news.helper import RuAttitudesNewsHelper
@@ -37,7 +38,7 @@ class RuSentrelWithRuAttitudesOpinionOperations(RuSentrelOpinionOperations):
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
 
         if doc_id not in self._rusentrel_news_ids:
             return self.__get_opinions_in_news(doc_id=doc_id)

@@ -73,7 +73,7 @@ def iter_eval_collections(formatter_type,
 def __read_results(formatter_type, data_type, experiment, ids_values, labels_scaler):
     assert(isinstance(formatter_type, unicode))
     assert(isinstance(experiment, BaseExperiment))
-    assert(isinstance(data_type, unicode))
+    assert(isinstance(data_type, DataType))
     assert(isinstance(ids_values, list))
     assert(isinstance(labels_scaler, BaseLabelScaler))
 

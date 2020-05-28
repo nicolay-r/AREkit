@@ -46,7 +46,7 @@ class OpinionOperations(object):
 
     def create_neutral_opinion_collection_filepath(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
 
         output_dir = self.__experiments_dir
 
@@ -56,6 +56,6 @@ class OpinionOperations(object):
 
         filename = u"art{doc_id}.neut.{d_type}.txt".format(
             doc_id=doc_id,
-            d_type=self.__data_type_to_string(data_type))
+            d_type=self.__data_type_to_string(data_type=data_type))
 
         return join(root, filename)

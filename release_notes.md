@@ -9,6 +9,7 @@ Minor changes (light refactoring):
 * Bert now moved into separated folder from `contrib` directory.
 * frame_variants moved to `frames` directory.
 * Frame variants labeling in news now performed during `parse` operation.
+* `DataType` now enumeration. List of Supported data-types now a part of experiment
 
 ## v0.20.4-rc
 Updates:

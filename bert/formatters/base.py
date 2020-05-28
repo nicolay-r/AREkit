@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 import io_utils
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.bert.providers.opinions import OpinionProvider
 
@@ -13,7 +14,7 @@ class BaseBertRowsFormatter(object):
     ROW_ID = 'row_id'
 
     def __init__(self, data_type):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
         self._data_type = data_type
         self._df = self.__create_empty_df()
 
@@ -81,7 +82,7 @@ class BaseBertRowsFormatter(object):
     @staticmethod
     def get_filepath_static(data_type, experiment, prefix):
         assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
         assert(isinstance(prefix, unicode))
 
         filename = BaseBertRowsFormatter.__generate_filename(data_type=data_type,
@@ -97,7 +98,7 @@ class BaseBertRowsFormatter(object):
 
     @staticmethod
     def __generate_filename(data_type, experiment, prefix):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
         assert(isinstance(prefix, unicode))
         assert(isinstance(experiment, BaseExperiment))
 

@@ -30,6 +30,8 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     # region private methods
 
     def __create_opinions_for_extraction(self, doc_id, data_type):
+        assert(isinstance(data_type, DataType))
+
         news = self._DocOps.read_news(doc_id=doc_id)
         opinions = self._OpinOps.read_etalon_opinion_collection(doc_id=doc_id)
         collection = self.__algo.make_neutrals(
@@ -59,7 +61,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
     def create_collection(self, data_type):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
 
         filtered_iter = self.filter_non_created_doc_ids(data_type=data_type,
                                                         all_doc_ids=self.iter_doc_ids_to_compare())

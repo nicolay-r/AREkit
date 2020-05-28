@@ -13,6 +13,7 @@ class RuSentrelDocumentOperations(CVBasedDocumentOperations):
     Limitations: Supported only train/test collections format
     """
 
+
     def __init__(self, data_io):
         assert(isinstance(data_io, DataIO))
         super(RuSentrelDocumentOperations, self).__init__(folding_algo=data_io.CVFoldingAlgorithm)
@@ -28,6 +29,10 @@ class RuSentrelDocumentOperations(CVBasedDocumentOperations):
             return RuSentRelIOUtils.iter_test_indices()
         else:
             raise NotImplementedError("DataType '{}' is not supported".format(data_type))
+
+    def iter_suppoted_data_types(self):
+        yield DataType.Train
+        yield DataType.Test
 
     def get_data_indices_to_fold(self):
         return list(itertools.chain(RuSentRelIOUtils.iter_train_indices(),

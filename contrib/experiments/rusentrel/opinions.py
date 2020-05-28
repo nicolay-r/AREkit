@@ -3,6 +3,7 @@ import os
 
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOperations
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
@@ -44,7 +45,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
                                                           synonyms=self._data_io.SynonymsCollection)
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
         assert(isinstance(doc_ids, collections.Iterable))
         assert(isinstance(epoch_index, int))
 
@@ -62,7 +63,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             yield opinions_cmp
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
 
         filepath = self.create_neutral_opinion_collection_filepath(
             doc_id=doc_id,

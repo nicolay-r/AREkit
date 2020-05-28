@@ -20,7 +20,7 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 def __iter_opinion_collections(opin_operations, doc_id, data_type):
     assert(isinstance(opin_operations, OpinionOperations))
     assert(isinstance(doc_id, int))
-    assert(isinstance(data_type, unicode))
+    assert(isinstance(data_type, DataType))
 
     neutral = opin_operations.read_neutral_opinion_collection(doc_id=doc_id,
                                                               data_type=data_type)
@@ -74,7 +74,7 @@ def extract_text_opinions(experiment,
     1. Assumes to provide the same label (doc level opinion) onto related text-level opinions.
     """
     assert(isinstance(experiment, BaseExperiment))
-    assert(isinstance(data_type, unicode))
+    assert(isinstance(data_type, DataType))
     assert(isinstance(terms_per_context, int))
     assert(isinstance(iter_doc_ids, collections.Iterable))
     assert(isinstance(text_opinion_helper, TextOpinionHelper))

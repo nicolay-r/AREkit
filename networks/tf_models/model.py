@@ -127,7 +127,7 @@ class TensorflowModel(BaseModel):
         assert(labeled_collection.check_all_text_opinions_has_labels())
 
     def predict_core(self, data_type, labeling_callback):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
         assert(callable(labeling_callback))
 
         labeled_collection = self.get_labeling_collection(data_type)
@@ -240,7 +240,7 @@ class TensorflowModel(BaseModel):
     def create_feed_dict(self, minibatch, data_type):
         assert(isinstance(self.Network, NeuralNetwork))
         assert(isinstance(minibatch, MiniBatch))
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
 
         network_input = minibatch.to_network_input(label_scaler=self.__label_scaler)
         if self.FeedDictShow:
@@ -302,7 +302,7 @@ class TensorflowModel(BaseModel):
         """
         Provides algorithm of opinions labeling according to model results.
         """
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
         labeled_collection = self.get_labeling_collection(data_type)

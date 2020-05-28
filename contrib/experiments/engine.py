@@ -4,6 +4,7 @@ import logging
 
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.callback import Callback
@@ -65,12 +66,13 @@ def run_testing(full_model_name,
 
     experiment = create_experiment(data_io=data_io,
                                    prepare_model_root=True)
+    assert(isinstance(experiment, BaseExperiment))
 
     # TODO. This should be intialized automatically somewhere else.
     data_io.CVFoldingAlgorithm.set_cv_count(cv_count)
 
     # Initialize data_io
-    for data_type in DataType.iter_supported():
+    for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
         experiment.NeutralAnnotator.create_collection(data_type=data_type)
 
     callback = data_io.Callback

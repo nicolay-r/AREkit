@@ -3,6 +3,9 @@ class DocumentOperations(object):
     Provides operations with documents
     """
 
+    def iter_suppoted_data_types(self):
+        raise NotImplementedError()
+
     def read_news(self, doc_id):
         raise NotImplementedError()
 
