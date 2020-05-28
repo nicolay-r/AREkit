@@ -28,16 +28,12 @@ class SingleInstanceTensorflowModel(TensorflowModel):
             nn_io=experiment.DataIO.ModelIO,
             network=network,
             label_scaler=experiment.DataIO.LabelsScaler,
+            evaluator=experiment.DataIO.Evaluator,
             callback=callback)
 
         self.__config = config
         self.__experiment = experiment
         self.__init_helper = self.create_model_init_helper()
-
-        # TODO. To base model.
-        self.__evaluator = CustomOpinionBasedModelEvaluator(
-            evaluator=experiment.DataIO.Evaluator,
-            model=self)
 
         self.__print_statistic()
 
@@ -62,9 +58,6 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     def get_labels_helper(self):
         return self.__init_helper.LabelsHelper
-
-    def get_evaluator(self):
-        return self.__evaluator
 
     def create_batch_by_bags_group(self, bags_group):
         return MiniBatch(bags_group)
