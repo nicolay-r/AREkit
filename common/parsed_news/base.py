@@ -138,8 +138,8 @@ class ParsedNews(object):
 
     # region public 'iter' methods
 
-    def iter_terms(self):
-        for term in self.__iter_all_raw_terms(term_only=True):
+    def iter_terms(self, term_check=None):
+        for term in self.__iter_all_raw_terms(term_only=True, term_check=term_check):
             yield term
 
     def iter_sentence_terms(self, sentence_index, term_check=None):

@@ -21,10 +21,10 @@ class BertEncoder(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(sample_formatter, unicode))
 
-        for data_type in DataType.iter_supported():
+        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             experiment.NeutralAnnotator.create_collection(data_type)
 
-        for data_type in DataType.iter_supported():
+        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)
 
             opnion_formatter = BertOpinionsFormatter(data_type=data_type)

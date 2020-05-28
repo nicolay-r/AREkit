@@ -1,6 +1,7 @@
 from arekit.bert.evaluation.opinion_based import BERTModelEvaluator
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 
 from arekit.bert.converter import iter_eval_collections
@@ -33,7 +34,7 @@ def eval_tsv(formatter_type, data_type, experiment, label_calculation_mode):
 
 def evaluate_bert_model(experiment, data_type):
     assert(isinstance(experiment, BaseExperiment))
-    assert(isinstance(data_type, unicode))
+    assert(isinstance(data_type, DataType))
 
     bert_evaluator = BERTModelEvaluator(
         evaluator=TwoClassEvaluator(synonyms=experiment.DataIO.SynonymsCollection),

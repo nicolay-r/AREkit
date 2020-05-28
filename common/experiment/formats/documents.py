@@ -3,6 +3,9 @@ class DocumentOperations(object):
     Provides operations with documents
     """
 
+    def iter_suppoted_data_types(self):
+        raise NotImplementedError()
+
     def read_news(self, doc_id):
         raise NotImplementedError()
 
@@ -12,8 +15,8 @@ class DocumentOperations(object):
     def iter_news_indices(self, data_type):
         raise NotImplementedError()
 
-    def iter_parsed_news(self, data_type, frame_variant_collection):
-        for doc_id in self.iter_news_indices(data_type):
+    def iter_parsed_news(self, doc_inds, frame_variant_collection):
+        for doc_id in doc_inds:
             yield self.__parse_news(doc_id=doc_id,
                                     frame_variant_collection=frame_variant_collection)
 

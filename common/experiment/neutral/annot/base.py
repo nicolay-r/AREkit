@@ -41,8 +41,9 @@ class BaseNeutralAnnotator(object):
 
     # region private methods
 
+    # TODO. Supported is considered by experiment.
     def __iter_all_doc_ids(self):
-        for data_type in DataType.iter_supported():
+        for data_type in self._DocOps.iter_suppoted_data_types():
             for doc_id in self._DocOps.iter_news_indices(data_type):
                 yield doc_id
 
@@ -70,6 +71,7 @@ class BaseNeutralAnnotator(object):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
+        assert(data_io.CVFoldingAlgorithm.CVCount is not None)
 
         self.__doc_ops = doc_ops
         self.__opin_ops = opin_ops

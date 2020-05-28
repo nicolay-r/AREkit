@@ -8,9 +8,17 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.model.labeling.single import SingleLabelsHelper
+from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 
 from arekit.bert.encoder import BertEncoder
+
+
+def __to_label(item, label):
+    assert(isinstance(item, Opinion))
+    return Opinion(source_value=item.SourceValue,
+                   target_value=item.TargetValue,
+                   sentiment=label)
 
 
 def iter_eval_collections(formatter_type,
@@ -54,8 +62,9 @@ def iter_eval_collections(formatter_type,
 
         collection = compose_opinion_collection(
             create_collection_func=experiment.OpinionOperations.create_opinion_collection,
-            wrapped_linked_opinion_iter=linked_iter,
+            linked_data_iter=linked_iter,
             labels_helper=labels_helper,
+            to_opinion_func=__to_label,
             label_calc_mode=label_calculation_mode)
 
         yield news_id, collection
@@ -64,7 +73,7 @@ def iter_eval_collections(formatter_type,
 def __read_results(formatter_type, data_type, experiment, ids_values, labels_scaler):
     assert(isinstance(formatter_type, unicode))
     assert(isinstance(experiment, BaseExperiment))
-    assert(isinstance(data_type, unicode))
+    assert(isinstance(data_type, DataType))
     assert(isinstance(ids_values, list))
     assert(isinstance(labels_scaler, BaseLabelScaler))
 

@@ -35,18 +35,18 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
             annot_name_func=lambda: self.NeutralAnnotator.AnnotatorName,
             rusentrel_news_inds=rusentrel_news_inds)
 
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(
-            data_io=data_io,
-            opin_ops=opin_ops,
-            doc_ops=doc_ops,
-            prepare_model_root=prepare_model_root)
-
         ru_attitudes = ra_instance
         if ra_instance is None:
             ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(data_io.Stemmer)
 
         doc_ops.set_ru_attitudes(ru_attitudes)
         opin_ops.set_ru_attitudes(ru_attitudes)
+
+        super(RuSentRelWithRuAttitudesExperiment, self).__init__(
+            data_io=data_io,
+            opin_ops=opin_ops,
+            doc_ops=doc_ops,
+            prepare_model_root=prepare_model_root)
 
     @staticmethod
     def read_ruattitudes_in_memory(stemmer, doc_ids_set=None):

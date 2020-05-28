@@ -49,7 +49,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
     # region public methods
 
     def create_collection(self, data_type):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
 
         if data_type == DataType.Train:
             return

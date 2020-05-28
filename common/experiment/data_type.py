@@ -1,14 +1,11 @@
-class DataType:
+from enum import Enum
+
+
+class DataType(Enum):
     """
     Describes collection types that supportes in
     current implementation, and provides by collections.
     """
 
-    Train = u"train"
-
-    Test = u"test"
-
-    @staticmethod
-    def iter_supported():
-        yield DataType.Train
-        yield DataType.Test
+    Train = 1
+    Test = 2
