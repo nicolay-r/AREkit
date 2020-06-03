@@ -11,9 +11,9 @@ class StringLabelsFormatter(object):
         assert(isinstance(value, unicode))
         return self.__stol[value]
 
-    def label_to_str(self, value):
-        assert(isinstance(value, Label))
-        for label, v in self.__stol.iteritems():
-            if v == value:
-                return label
+    def label_to_str(self, label):
+        assert(isinstance(label, Label))
+        for value, l in self.__stol.iteritems():
+            if l == label:
+                return value
 
