@@ -21,7 +21,9 @@ class PairTextProvider(SingleTextProvider):
         labels_formatter: StringLabelsFormatter
         """
         assert(isinstance(text_b_template, unicode))
-        assert(isinstance(labels_formatter, StringLabelsFormatter)) super(PairTextProvider, self).__init__() self.__text_b_template = text_b_template
+        assert(isinstance(labels_formatter, StringLabelsFormatter))
+        super(PairTextProvider, self).__init__()
+        self.__text_b_template = text_b_template
         self.__labels_formatter = labels_formatter
 
     def get_text_template(self):
