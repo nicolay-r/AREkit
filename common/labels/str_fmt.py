@@ -1,3 +1,6 @@
+from arekit.common.labels.base import Label
+
+
 class StringLabelsFormatter(object):
 
     def __init__(self, stol):
@@ -9,7 +12,7 @@ class StringLabelsFormatter(object):
         return self.__stol[value]
 
     def label_to_str(self, value):
-        assert(isinstance(value, int))
+        assert(isinstance(value, Label))
         for label, v in self.__stol.iteritems():
             if v == value:
                 return label
