@@ -19,7 +19,6 @@ class BertLabelProvider(object):
     def OutputLabels(self):
         raise NotImplementedError()
 
-    @staticmethod
-    def calculate_output_label(expected_label, etalon_label):
+    def calculate_output_label(self, expected_label, etalon_label):
         raise NotImplementedError()
 
