@@ -90,8 +90,8 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
     def to_tsv_by_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
 
-        filepath = BertOpinionsFormatter.get_filepath(data_type=self._data_type,
-                                                      experiment=experiment)
+        filepath = self.get_filepath(data_type=self._data_type,
+                                     experiment=experiment)
 
         self._df.to_csv(filepath,
                         sep='\t',
@@ -104,8 +104,8 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
     def from_tsv(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
 
-        filepath = BertOpinionsFormatter.get_filepath(data_type=self._data_type,
-                                                      experiment=experiment)
+        filepath = self.get_filepath(data_type=self._data_type,
+                                     experiment=experiment)
 
         self._df = pd.read_csv(filepath,
                                sep='\t',
