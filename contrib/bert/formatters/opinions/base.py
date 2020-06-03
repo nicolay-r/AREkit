@@ -25,7 +25,7 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
 
     @staticmethod
     def formatter_type_log_name():
-        return "Opinion"
+        return u"opinion"
 
     def _get_columns_list_with_types(self):
         dtypes_list = super(BertOpinionsFormatter, self)._get_columns_list_with_types()

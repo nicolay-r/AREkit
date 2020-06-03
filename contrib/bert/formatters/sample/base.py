@@ -48,7 +48,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
     @staticmethod
     def formatter_type_log_name():
-        return "Sample"
+        return u"sample"
 
     # region Private methods
 
