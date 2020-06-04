@@ -1,4 +1,4 @@
-class Label:
+class Label(object):
 
     def __eq__(self, other):
         assert(isinstance(other, Label))

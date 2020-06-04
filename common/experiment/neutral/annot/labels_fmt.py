@@ -1,4 +1,4 @@
-from arekit.common.labels.base import NegativeLabel, PositiveLabel
+from arekit.common.labels.base import NegativeLabel, PositiveLabel, NeutralLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
@@ -8,6 +8,6 @@ class ThreeScaleLabelsFormatter(StringLabelsFormatter):
 
         stol = {u'neg': NegativeLabel(),
                 u'pos': PositiveLabel(),
-                u'neu': PositiveLabel()}
+                u'neu': NeutralLabel()}
 
         super(ThreeScaleLabelsFormatter, self).__init__(stol=stol)
