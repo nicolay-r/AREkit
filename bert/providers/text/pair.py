@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.bert.providers.text.single import SingleTextProvider
 from arekit.common.labels.base import Label
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
 class PairTextProvider(SingleTextProvider):
@@ -12,15 +13,17 @@ class PairTextProvider(SingleTextProvider):
 
     TEXT_B = "text_b"
 
-    def __init__(self, text_b_template):
+    def __init__(self, text_b_template, labels_formatter):
         """
         text_b_template: unicode
             assumes to include {subject}, {object}, and {context} in related template,
             and {label} (optional)
         """
         assert(isinstance(text_b_template, unicode))
+        assert(isinstance(labels_formatter, StringLabelsFormatter))
         super(PairTextProvider, self).__init__()
         self.__text_b_template = text_b_template
+        self.__labels_formatter = labels_formatter
 
     def get_text_template(self):
         raise NotImplementedError()
@@ -61,7 +64,6 @@ class PairTextProvider(SingleTextProvider):
             subject=self.SUBJECT,
             object=self.OBJECT,
             context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
-            # TODO. Utilze label formatter (using existed).
-            label=expected_label.to_class_str())
+            label=self.__labels_formatter.label_to_str(expected_label))
 
         return row
