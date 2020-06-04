@@ -13,7 +13,7 @@ class SampleFormatters(object):
     paper: https://www.aclweb.org/anthology/N19-1035.pdf
     """
     QA_M = u"qa_m"
-    NLI_M = u'nli_b'
+    NLI_M = u'nli_m'
 
     QA_B = u"qa_b"
     NLI_B = u"nli_b"

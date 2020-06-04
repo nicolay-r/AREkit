@@ -20,7 +20,6 @@ logging.basicConfig(level=logging.DEBUG)
 stemmer = MystemWrapper()
 
 # Reading synonyms collection.
-# TODO. Read from zip archive
 synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer)
 
 for doc_id in RuSentRelIOUtils.iter_collection_indices():

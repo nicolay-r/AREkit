@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
-from arekit.common.text_opinions.enums import DistanceType
-from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.dataset.text_opinions.enums import DistanceType
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 
 class InputSampleBase(object):
@@ -26,8 +26,18 @@ class InputSampleBase(object):
 
     @staticmethod
     def check_ability_to_create_sample(window_size, text_opinion, text_opinion_helper):
+        """
+        Main text_opinion filtering rules
+        """
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
-        return text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InTerms) < window_size
+
+        if text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InTerms) < window_size:
+            return True
+
+        if text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InSentences) == 0:
+            return True
+
+        return False
 
     def __iter__(self):
         for key, value in self.__values.iteritems():

@@ -1,5 +1,6 @@
 from arekit.common.text_opinions.base import RefOpinion
 from arekit.common.labels.base import Label
+from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 
 
@@ -28,6 +29,15 @@ class RuSentRelTextOpinion(RefOpinion):
         self.__entity_source_ID = e_source_doc_level_id
         self.__entity_target_ID = e_target_doc_level_id
         self.__entity_by_id_func = doc_entities.get_entity_by_id
+
+    def to_text_opinion(self):
+        return TextOpinion(
+            news_id=self.RuSentRelNewsId,
+            source_id=self.SourceId,
+            target_id=self.TargetId,
+            label=self.Sentiment,
+            owner=None,
+            text_opinion_id=None)
 
     # region properties
 

@@ -3,7 +3,7 @@ import numpy as np
 from arekit.common.experiment.data_type import DataType
 from arekit.common.linked.base import is_context_continued
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
-from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.text_opinions.text_opinion import TextOpinion
 

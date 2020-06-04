@@ -5,11 +5,12 @@ import tensorflow as tf
 
 from tensorflow.python.training.saver import Saver
 
+from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
-from arekit.common.model.eval.base import BaseModelEvaluator
 from arekit.common.experiment.data_type import DataType
+from arekit.common.model.evaluator import CustomOpinionBasedModelEvaluator
 
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
@@ -35,10 +36,11 @@ class TensorflowModel(BaseModel):
     SaveTensorflowModelStateOnFit = False
     FeedDictShow = False
 
-    def __init__(self, nn_io, network, label_scaler, callback=None):
+    def __init__(self, nn_io, network, label_scaler, evaluator, callback=None):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(label_scaler, BaseLabelScaler))
+        assert(isinstance(evaluator, BaseEvaluator) or evaluator is None)
         assert(isinstance(callback, Callback) or callback is None)
         super(TensorflowModel, self).__init__(io=nn_io)
 
@@ -49,6 +51,7 @@ class TensorflowModel(BaseModel):
         self.__callback = callback
         self.__label_scaler = label_scaler
         self.__current_epoch_index = 0
+        self.__evaluator = CustomOpinionBasedModelEvaluator(evaluator=evaluator, model=self)
 
     # region Properties
 
@@ -140,10 +143,7 @@ class TensorflowModel(BaseModel):
         predict_log = labeling_callback()
         self.after_labeling_func_application(labeled_collection)
 
-        evaluator = self.get_evaluator()
-        assert(isinstance(evaluator, BaseModelEvaluator))
-
-        eval_result = evaluator.evaluate(
+        eval_result = self.__evaluator.evaluate(
             data_type=data_type,
             doc_ids=labeled_collection.get_unique_news_ids(),
             epoch_index=self.__current_epoch_index)
@@ -223,7 +223,7 @@ class TensorflowModel(BaseModel):
         self.set_optimiser_value(optimiser)
 
     def get_evaluator(self):
-        raise NotImplementedError()
+        self.__evaluator
 
     def get_gpu_memory_fraction(self):
         raise NotImplementedError()

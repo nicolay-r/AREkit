@@ -12,49 +12,31 @@ logger = logging.getLogger(__name__)
 
 class RuSentRelTextOpinionCollection(TextOpinionCollection):
     """
-    Collection of a text-level opinions for RuSentRel dataset.
+    Collection of a text-level opinions for RuSentRel source.
     """
 
     # region constructors
 
     def __init__(self, text_opinions):
-        super(RuSentRelTextOpinionCollection, self).__init__(
-            text_opinions=text_opinions)
+        super(RuSentRelTextOpinionCollection, self).__init__(text_opinions=text_opinions)
 
     @classmethod
     def from_opinions(cls,
                       rusentrel_news_id,
                       doc_entities,
                       opinions,
-                      check_text_opinion_correctness,
                       debug=False):
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(opinions, OpinionCollection))
         text_opinions = []
         for opinion in opinions:
             text_opinions.extend(
-                cls.__from_opinion(
-                    rusentrel_news_id=rusentrel_news_id,
-                    doc_entities=doc_entities,
-                    opinion=opinion,
-                    check_text_opinion_correctness=check_text_opinion_correctness,
-                    debug=debug))
+                cls.__from_opinion(rusentrel_news_id=rusentrel_news_id,
+                                   doc_entities=doc_entities,
+                                   opinion=opinion,
+                                   debug=debug))
 
         return cls(text_opinions)
-
-    @classmethod
-    def from_opinion(cls,
-                     rusentrel_news_id,
-                     doc_entities,
-                     opinion,
-                     check_text_opinion_correctness,
-                     debug=False):
-        return cls(RuSentRelTextOpinionCollection.__from_opinion(
-            rusentrel_news_id=rusentrel_news_id,
-            doc_entities=doc_entities,
-            opinion=opinion,
-            check_text_opinion_correctness=check_text_opinion_correctness,
-            debug=debug))
 
     # endregion
 
@@ -65,13 +47,10 @@ class RuSentRelTextOpinionCollection(TextOpinionCollection):
             rusentrel_news_id,
             doc_entities,
             opinion,
-            check_text_opinion_correctness,
             debug=False):
         assert(isinstance(rusentrel_news_id, int))
         assert(isinstance(doc_entities, RuSentRelDocumentEntityCollection))
         assert(isinstance(opinion, Opinion))
-        assert(callable(check_text_opinion_correctness) or
-               check_text_opinion_correctness is None)
 
         source_entities = doc_entities.try_get_entities(
             opinion.SourceValue, group_key=RuSentRelDocumentEntityCollection.KeyType.BY_SYNONYMS)
@@ -102,10 +81,6 @@ class RuSentRelTextOpinionCollection(TextOpinionCollection):
                     e_target_doc_level_id=target_entity.IdInDocument,
                     sentiment=opinion.Sentiment,
                     doc_entities=doc_entities)
-
-                if check_text_opinion_correctness is not None:
-                    if not check_text_opinion_correctness(text_opinion):
-                        continue
 
                 text_opinions.append(text_opinion)
 

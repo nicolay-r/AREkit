@@ -5,15 +5,12 @@ from arekit.common.news import News
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.synonyms import SynonymsCollection
-from arekit.common.text_opinions.text_opinion import TextOpinion
 
 from arekit.processing.text.parser import TextParser
 
 from arekit.source.rusentrel.context.collection import RuSentRelTextOpinionCollection
-from arekit.source.rusentrel.context.opinion import RuSentRelTextOpinion
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
-from arekit.source.rusentrel.news.helper import RuSentRelNewsHelper
 from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 from arekit.source.rusentrel.sentence import RuSentRelSentence
@@ -29,7 +26,6 @@ class RuSentRelNews(News):
 
         self.__sentences = sentences
         self.__entities = entities
-        self.__helper = RuSentRelNewsHelper(self)
 
     # region properties
 
@@ -40,10 +36,6 @@ class RuSentRelNews(News):
     @property
     def DocEntities(self):
         return self.__entities
-
-    @property
-    def Helper(self):
-        return self.__helper
 
     # endregion
 
@@ -154,7 +146,7 @@ class RuSentRelNews(News):
     def iter_wrapped_linked_text_opinions(self, opinions):
         assert(isinstance(opinions, OpinionCollection))
         for entries in self.__iter_rusentrel_text_opinion_entries(opinions=opinions):
-            yield LinkedTextOpinionsWrapper(linked_text_opinions=[self.__entry_to_text_opinion(entry) for entry in entries])
+            yield LinkedTextOpinionsWrapper(linked_text_opinions=[entry.to_text_opinion() for entry in entries])
 
     def _parse_core(self, options):
         assert(isinstance(options, RuSentRelNewsParseOptions))
@@ -177,38 +169,16 @@ class RuSentRelNews(News):
                                                keep_tokens=options.KeepTokens,
                                                stemmer=options.Stemmer)
 
-    @staticmethod
-    def __entry_to_text_opinion(entry):
-        """
-        Text Level Opinion -> Text Opinion
-        """
-        assert(isinstance(entry, RuSentRelTextOpinion))
-
-        return TextOpinion(
-            news_id=entry.RuSentRelNewsId,
-            source_id=entry.SourceId,
-            target_id=entry.TargetId,
-            label=entry.Sentiment,
-            owner=None,
-            text_opinion_id=None)
-
     def __iter_rusentrel_text_opinion_entries(self, opinions):
         """
         Document Level Opinions -> Linked Text Level Opinions
         """
         assert(isinstance(opinions, OpinionCollection))
 
-        def same_sentence_text_opinions(opinion):
-            return abs(self.Helper.get_sentence_index_by_entity(opinion.SourceEntity) -
-                       self.Helper.get_sentence_index_by_entity(opinion.TargetEntity)) == 0
-
         for opinion in opinions:
-
-            yield RuSentRelTextOpinionCollection.from_opinion(
-                rusentrel_news_id=self.ID,
-                doc_entities=self.DocEntities,
-                opinion=opinion,
-                check_text_opinion_correctness=same_sentence_text_opinions)
+            yield RuSentRelTextOpinionCollection.from_opinions(rusentrel_news_id=self.ID,
+                                                               doc_entities=self.DocEntities,
+                                                               opinions=[opinion])
 
     # endregion
 

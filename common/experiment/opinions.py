@@ -11,8 +11,9 @@ from arekit.common.model.sample import InputSampleBase
 from arekit.common.news import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
+
 
 # region private methods
 

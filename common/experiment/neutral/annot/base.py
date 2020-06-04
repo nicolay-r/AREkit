@@ -1,7 +1,6 @@
 import logging
 import utils
 from arekit.common.experiment.data_io import DataIO
-from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 
@@ -41,7 +40,6 @@ class BaseNeutralAnnotator(object):
 
     # region private methods
 
-    # TODO. Supported is considered by experiment.
     def __iter_all_doc_ids(self):
         for data_type in self._DocOps.iter_suppoted_data_types():
             for doc_id in self._DocOps.iter_news_indices(data_type):

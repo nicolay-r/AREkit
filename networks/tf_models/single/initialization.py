@@ -8,7 +8,7 @@ from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.text_opinions.helper import TextOpinionHelper
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample

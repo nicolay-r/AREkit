@@ -3,7 +3,6 @@ import gc
 import logging
 
 from arekit.common.experiment.data_io import DataIO
-from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
