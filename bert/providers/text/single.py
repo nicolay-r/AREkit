@@ -35,7 +35,7 @@ class SingleTextProvider(object):
                 else:
                     yield SingleTextProvider.ENTITY
             elif isinstance(term, Token):
-                yield term.get_original_value()
+                yield term.get_meta_value()
 
     @staticmethod
     def _process_text(text):

@@ -14,5 +14,6 @@ class RuSentRelNewsParseOptions(object):
         return self.__stemmer
 
     @property
+    # TODO. Tokens hiding actually discarded
     def KeepTokens(self):
         return self.__keep_tokens

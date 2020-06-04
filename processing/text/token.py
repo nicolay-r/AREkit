@@ -6,11 +6,11 @@ class Token:
     def __init__(self, term, token_value):
         assert(isinstance(term, unicode))
         assert(isinstance(token_value, unicode))
-        self.__term = term
+        self.__meta_value = term
         self.__token_value = token_value
 
-    def get_original_value(self):
-        return self.__term
+    def get_meta_value(self):
+        return self.__meta_value
 
     def get_token_value(self):
         return self.__token_value

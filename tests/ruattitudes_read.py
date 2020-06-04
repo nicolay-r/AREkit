@@ -2,6 +2,7 @@
 import logging
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.text.enums import TermFormat
 from arekit.source.ruattitudes.collection import RuAttitudesCollection
 
 
@@ -14,7 +15,7 @@ for news in RuAttitudesCollection.iter_news(stemmer):
     logger.debug(u"News: {}".format(news.ID))
     for sentence in news.iter_sentences():
         # text
-        logger.debug(u" ".join(sentence.ParsedText.Terms).encode('utf-8'))
+        logger.debug(u" ".join(sentence.ParsedText.iter_terms(TermFormat.Raw)).encode('utf-8'))
         # objects
         logger.debug(u",".join([object.get_value() for object in sentence.iter_objects()]))
         # attitudes

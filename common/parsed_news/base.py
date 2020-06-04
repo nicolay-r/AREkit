@@ -2,6 +2,7 @@ import collections
 
 from arekit.common.entities.base import Entity
 from arekit.common.parsed_news.term_position import TermPosition, TermPositionTypes
+from arekit.processing.text.enums import TermFormat
 from arekit.processing.text.parsed import ParsedText
 
 
@@ -85,7 +86,7 @@ class ParsedNews(object):
         assert(isinstance(sentence, ParsedText))
         assert(callable(term_check) or term_check is None)
 
-        for ind_in_sent, term in enumerate(sentence.iter_raw_terms()):
+        for ind_in_sent, term in enumerate(sentence.iter_terms(TermFormat.Row)):
 
             if term_check is not None:
                 if not term_check(term):
@@ -116,7 +117,8 @@ class ParsedNews(object):
         assert(isinstance(position, TermPosition))
         sentence = self.__parsed_sentences[position.get_index(position_type=TermPositionTypes.SentenceIndex)]
         assert(isinstance(sentence, ParsedText))
-        entity = sentence.get_term(position.get_index(position_type=TermPositionTypes.IndexInSentence))
+        entity = sentence.get_item(position.get_index(position_type=TermPositionTypes.IndexInSentence),
+                                   term_format=TermFormat.Raw)
         assert(isinstance(entity, Entity))
         return entity.Value
 
