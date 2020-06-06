@@ -4,6 +4,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.entities.entity_mask import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 from arekit.common.labels.base import Label
+from arekit.common.synonyms import SynonymsCollection
 from arekit.processing.text.token import Token
 
 
@@ -12,17 +13,34 @@ class SingleTextProvider(object):
     TEXT_A = u'text_a'
     TERMS_SEPARATOR = u" "
 
-    def __init__(self, entities_formatter):
+    def __init__(self, entities_formatter, synonyms):
         assert(isinstance(entities_formatter, StringEntitiesFormatter))
+        assert(isinstance(synonyms, SynonymsCollection))
         self._entities_formatter = entities_formatter
+        self.__synonyms = synonyms
 
     def iter_columns(self):
         yield SingleTextProvider.TEXT_A
 
+    # TODO. Future: move to core (since 20.1.5 version)
     def _iterate_sentence_terms(self, sentence_terms, s_ind=None, t_ind=None):
+
+        def __syn_group(index):
+            if index is None:
+                return None
+
+            term = sentence_terms[index]
+            if not self.__synonyms.contains_synonym_value(term):
+                return None
+
+            return self.__synonyms.get_synonym_group_index(term)
+
         assert(isinstance(sentence_terms, list))
         assert(isinstance(s_ind, int) or s_ind is None)
         assert(isinstance(t_ind, int) or t_ind is None)
+
+        s_group = __syn_group(s_ind)
+        t_group = __syn_group(t_ind)
 
         for i, term in enumerate(sentence_terms):
 
@@ -33,6 +51,10 @@ class SingleTextProvider(object):
                     yield self._entities_formatter.to_string(EntityType.Subject)
                 elif i == t_ind:
                     yield self._entities_formatter.to_string(EntityType.Object)
+                elif __syn_group(i) == s_group:
+                    yield self._entities_formatter.to_string(EntityType.SynonymSubject)
+                elif __syn_group(i) == t_group:
+                    yield self._entities_formatter.to_string(EntityType.SynonymObject)
                 else:
                     yield self._entities_formatter.to_string(EntityType.Other)
             elif isinstance(term, Token):

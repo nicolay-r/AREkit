@@ -14,7 +14,7 @@ class PairTextProvider(SingleTextProvider):
 
     TEXT_B = u"text_b"
 
-    def __init__(self, text_b_template, labels_formatter, entities_formatter):
+    def __init__(self, text_b_template, labels_formatter, entities_formatter, synonyms):
         """
         text_b_template: unicode
             assumes to include {subject}, {object}, and {context} in related template,
@@ -24,7 +24,9 @@ class PairTextProvider(SingleTextProvider):
         """
         assert(isinstance(text_b_template, unicode))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        super(PairTextProvider, self).__init__(entities_formatter)
+        super(PairTextProvider, self).__init__(
+            entities_formatter=entities_formatter,
+            synonyms=synonyms)
         self.__text_b_template = text_b_template
         self.__labels_formatter = labels_formatter
 
