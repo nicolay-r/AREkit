@@ -47,7 +47,9 @@ class PairTextProvider(SingleTextProvider):
                                                       t_ind=t_ind,
                                                       expected_label=expected_label)
 
-        inner_context = list(self._iterate_sentence_terms(sentence_terms[s_ind+1:t_ind]))
+        l = min(s_ind, t_ind) + 1
+        r = max(s_ind, t_ind)
+        inner_context = list(self._iterate_sentence_terms(sentence_terms[l:r]))
 
         row[self.TEXT_B] = self.__text_b_template.format(
             subject=self._entities_formatter.to_string(EntityType.Subject),
