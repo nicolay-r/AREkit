@@ -104,6 +104,8 @@ class BaseBertRowsFormatter(object):
         return u"{prefix}-{data_type}-{cv_index}.tsv.gz".format(
             prefix=prefix,
             data_type=data_type,
+            # TODO. experiment should be eleminated!!!!!!
+            # TODO. Use just passed IterationIndex instead!!!!
             cv_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex)
 
     @staticmethod

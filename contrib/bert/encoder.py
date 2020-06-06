@@ -2,6 +2,7 @@ from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.bert.formatters.str_entity_fmt import RussianEntitiesFormatter
 from arekit.contrib.bert.providers.label.multiple import BertMultipleLabelProvider
 from arekit.contrib.bert.providers.opinions import OpinionProvider
 
@@ -42,9 +43,10 @@ class BertEncoder(object):
         assert(isinstance(formatter_type, unicode))
 
         if formatter_type == SampleFormatters.CLASSIF_M:
-            return BaseSampleFormatter(data_type=data_type,
-                                       label_provider=BertMultipleLabelProvider(label_scaler=label_scaler),
-                                       text_provider=SingleTextProvider())
+            return BaseSampleFormatter(
+                data_type=data_type,
+                label_provider=BertMultipleLabelProvider(label_scaler=label_scaler),
+                text_provider=SingleTextProvider(entities_formatter=RussianEntitiesFormatter()))
         if formatter_type == SampleFormatters.NLI_M:
             return NliMultipleSampleFormatter(data_type=data_type,
                                               label_scaler=label_scaler)
