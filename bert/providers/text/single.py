@@ -2,6 +2,7 @@ from collections import OrderedDict
 from arekit.bert.providers.text.terms_formatter import iterate_sentence_terms
 from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
 from arekit.common.labels.base import Label
+from arekit.common.synonyms import SynonymsCollection
 
 
 class SingleTextProvider(object):
@@ -9,9 +10,11 @@ class SingleTextProvider(object):
     TEXT_A = u'text_a'
     TERMS_SEPARATOR = u" "
 
-    def __init__(self, entities_formatter):
+    def __init__(self, entities_formatter, synonyms):
         assert (isinstance(entities_formatter, StringEntitiesFormatter))
+        assert(isinstance(synonyms, SynonymsCollection))
         self._entities_formatter = entities_formatter
+        self._synonyms = synonyms
 
     def iter_columns(self):
         yield SingleTextProvider.TEXT_A
@@ -25,6 +28,8 @@ class SingleTextProvider(object):
         assert(isinstance(row, OrderedDict))
         assert(isinstance(expected_label, Label))
         text = self.TERMS_SEPARATOR.join(iterate_sentence_terms(sentence_terms,
+                                                                entities_formatter=self._entities_formatter,
+                                                                synonyms=self._synonyms,
                                                                 s_ind=s_ind,
                                                                 t_ind=t_ind))
         row[self.TEXT_A] = self._process_text(text)
