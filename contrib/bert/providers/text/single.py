@@ -29,11 +29,13 @@ class SingleTextProvider(object):
             if index is None:
                 return None
 
-            term = sentence_terms[index]
-            if not self.__synonyms.contains_synonym_value(term):
+            entity = sentence_terms[index]
+            assert(isinstance(entity, Entity))
+
+            if not self.__synonyms.contains_synonym_value(entity.Value):
                 return None
 
-            return self.__synonyms.get_synonym_group_index(term)
+            return self.__synonyms.get_synonym_group_index(entity.Value)
 
         assert(isinstance(sentence_terms, list))
         assert(isinstance(s_ind, int) or s_ind is None)
