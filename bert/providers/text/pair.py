@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.bert.providers.text.single import SingleTextProvider
+from arekit.bert.providers.text.terms_mapper import iterate_sentence_terms
+from arekit.common.entities.types import EntityType
 from arekit.common.labels.base import Label
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
@@ -11,17 +13,20 @@ class PairTextProvider(SingleTextProvider):
     Considered to utilize an inner part in context, between opinion participants.
     """
 
-    TEXT_B = "text_b"
+    TEXT_B = u"text_b"
 
-    def __init__(self, text_b_template, labels_formatter):
+    def __init__(self, text_b_template, labels_formatter, entities_formatter, synonyms):
         """
         text_b_template: unicode
             assumes to include {subject}, {object}, and {context} in related template,
             and {label} (optional)
+        labels_formatter: StringLabelsFormatter
+        entities_formatter: StringEntitiesFormatter
         """
         assert(isinstance(text_b_template, unicode))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        super(PairTextProvider, self).__init__()
+        super(PairTextProvider, self).__init__(entities_formatter=entities_formatter,
+                                               synonyms=synonyms)
         self.__text_b_template = text_b_template
         self.__labels_formatter = labels_formatter
 
@@ -33,36 +38,22 @@ class PairTextProvider(SingleTextProvider):
             yield col_name
         yield self.TEXT_B
 
-    def __get_inner_part_of_text(self, terms):
-
-        reading_inner_part = False
-        for term in terms:
-            if term == self.OBJECT or term == self.SUBJECT:
-                if not reading_inner_part:
-                    reading_inner_part = True
-                else:
-                    yield term
-                    break
-
-            if reading_inner_part:
-                yield term
-
     def add_text_in_row(self, row, sentence_terms, s_ind, t_ind, expected_label):
         assert(isinstance(expected_label, Label))
 
-        super(PairTextProvider, self).add_text_in_row(
-            row=row,
-            sentence_terms=sentence_terms,
-            s_ind=s_ind,
-            t_ind=t_ind,
-            expected_label=expected_label)
+        super(PairTextProvider, self).add_text_in_row(row=row,
+                                                      sentence_terms=sentence_terms,
+                                                      s_ind=s_ind,
+                                                      t_ind=t_ind,
+                                                      expected_label=expected_label)
 
-        terms = row[self.TEXT_A].split(self.TERMS_SEPARATOR)
-        inner_context = list(self.__get_inner_part_of_text(terms))
+        self._mapper.set_s_ind(s_ind)
+        self._mapper.set_t_ind(t_ind)
+        inner_context = list(self._mapper.iter_mapped(sentence_terms[s_ind+1:t_ind]))
 
         row[self.TEXT_B] = self.__text_b_template.format(
-            subject=self.SUBJECT,
-            object=self.OBJECT,
+            subject=self._entities_formatter.to_string(EntityType.Subject),
+            object=self._entities_formatter.to_string(EntityType.Object),
             context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
             label=self.__labels_formatter.label_to_str(expected_label))
 

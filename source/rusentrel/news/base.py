@@ -166,6 +166,7 @@ class RuSentRelNews(News):
                 iter_subs=sentence.iter_entity_with_local_bounds())
 
             yield TextParser.parse_string_list(string_iter=string_iter,
+                                               # TODO. Tokens hiding actually discarded
                                                keep_tokens=options.KeepTokens,
                                                stemmer=options.Stemmer)
 

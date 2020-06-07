@@ -71,7 +71,7 @@ class News(object):
                 print "Word:    '{}'".format(term.encode('utf-8'))
             elif isinstance(term, Token):
                 print "Token:   '{}' ('{}')".format(term.get_token_value().encode('utf-8'),
-                                                    term.get_original_value().encode('utf-8'))
+                                                    term.get_meta_value().encode('utf-8'))
             elif isinstance(term, Entity):
                 print "Entity:  '{}'".format(term.Value.encode('utf-8'))
             else:

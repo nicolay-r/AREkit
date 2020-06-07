@@ -1,3 +1,4 @@
+# TODO. This should depend on a base str_entity_formatter
 class EntityMasks:
 
     ANY_ENTITY_MASK = u"ENTITY"

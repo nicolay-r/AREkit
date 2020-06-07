@@ -6,6 +6,7 @@ from arekit.common.languages.ru.mods import RussianLanguageMods
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.languages.mods import BaseLanguageMods
 from arekit.common.frame_variants.search import FrameVariantsSearcher
+from arekit.processing.text.enums import TermFormat
 from arekit.processing.text.parsed import ParsedText
 
 
@@ -50,7 +51,7 @@ class FrameVariantsParser(object):
             return parsed_text
 
         updated_terms = FrameVariantsParser.__insert_frame_variants_into_raw_terms_list(
-            raw_terms_list=list(parsed_text.iter_raw_terms()),
+            raw_terms_list=list(parsed_text.iter_terms(TermFormat.Raw)),
             frame_variants_iter=frame_variants_iter)
 
         return parsed_text.copy_modified(terms=updated_terms)

@@ -1,0 +1,49 @@
+import collections
+
+from arekit.common.entities.base import Entity
+from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.processing.text.token import Token
+
+
+class TextTermsMapper(object):
+
+    def iter_mapped(self, terms):
+        """ Performs mapping operation of each terms in a sequence
+        """
+        assert(isinstance(terms, collections.Iterable))
+
+        self._before_mapping()
+
+        for i, term in enumerate(terms):
+
+            if isinstance(term, unicode):
+                m_term = self.map_word(i, term)
+            elif isinstance(term, Token):
+                m_term = self.map_token(i, term)
+            elif isinstance(term, TextFrameVariant):
+                m_term = self.map_text_frame_variant(i, term)
+            elif isinstance(term, Entity):
+                m_term = self.map_entity(i, term)
+            else:
+                raise Exception("Unsuported type {}".format(term))
+
+            yield m_term
+
+        self._after_mapping()
+
+    def _before_mapping(self):
+        pass
+
+    def _after_mapping(self):
+
+    def map_word(self, w_ind, word):
+        raise NotImplementedError()
+
+    def map_token(self, t_ind, token):
+        raise NotImplementedError()
+
+    def map_text_frame_variant(self, fv_ind, text_frame_variant):
+        raise NotImplementedError()
+
+    def map_entity(self, e_ind, entity):
+        raise NotImplementedError()

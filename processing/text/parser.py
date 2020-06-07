@@ -21,12 +21,14 @@ class TextParser:
     def __init__(self):
         pass
 
+    # TODO. Tokens hiding actually discarded
     @staticmethod
     def parse(text, keep_tokens=False, stemmer=None):
         assert(isinstance(text, unicode))
         terms = TextParser.__parse_core(text, keep_tokens)
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
+    # TODO. Tokens hiding actually discarded
     @staticmethod
     def parse_string_list(string_iter, keep_tokens=False, stemmer=None):
         assert(isinstance(string_iter, collections.Iterable))
@@ -42,7 +44,7 @@ class TextParser:
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
     @staticmethod
-    def from_string(str, separator=u' ', keep_tokens=True, stemmer=None):
+    def from_string(str, separator=u' ', stemmer=None):
 
         def __term_or_token(term):
             token = TextParser.__try_term_as_token(term)
@@ -51,7 +53,8 @@ class TextParser:
         assert(isinstance(str, unicode))
         terms = [word.strip(u' ') for word in str.split(separator)]
         terms = [__term_or_token(t) for t in terms]
-        return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
+        # TODO. Tokens hiding actually discarded
+        return ParsedText(terms, hide_tokens=True, stemmer=stemmer)
 
     # region private methods
 
@@ -158,7 +161,7 @@ class TextParser:
         for term in terms:
             if isinstance(term, Token):
                 logger.debug(u'"TOKEN: {}, {}" '.format(
-                    term.get_original_value(),
+                    term.get_meta_value(),
                     term.get_token_value()))
             else:
                 logger.debug(u'"WORD: {}" '.format(term))

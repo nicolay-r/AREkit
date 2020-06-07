@@ -1,6 +1,8 @@
 import logging
 import socket
 import sys
+
+from arekit.processing.text.enums import TermFormat
 from arekit.processing.text.parsed import ParsedText
 from syntaxnet.annot import Word
 from syntaxnet.conll import ConllFormatStreamParser
@@ -23,8 +25,7 @@ class SyntaxNetParserWrapper:
     def parse(self, parsed_sentence, raw_output=False, debug=False):
         assert(isinstance(parsed_sentence, ParsedText))
 
-        parsed_sentence.unhide_token_values()
-        text = u" ".join(parsed_sentence.Terms)
+        text = u" ".join(parsed_sentence.iter_terms(term_format=TermFormat.Raw))
 
         if debug:
             logger.info("------------------")

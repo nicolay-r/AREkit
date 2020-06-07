@@ -6,6 +6,7 @@ from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_object import TextObject
 from arekit.common.text_opinions.base import RefOpinion
 from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.processing.text.enums import TermFormat
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
@@ -137,7 +138,7 @@ class RuAttitudesNews(News):
                                                 s_to_doc_id=s_to_doc_id)
 
         terms_with_entities_iter = utils.iter_text_with_substitutions(
-            text=list(sentence.ParsedText.iter_raw_terms()),
+            text=list(sentence.ParsedText.iter_terms(TermFormat.Raw)),
             iter_subs=subs_iter)
 
         return sentence.ParsedText.copy_modified(terms=list(terms_with_entities_iter))
