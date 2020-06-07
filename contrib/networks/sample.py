@@ -3,6 +3,7 @@ import random
 
 import numpy as np
 
+import arekit.networks.mappers.pos
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.frames.collection import FramesCollection
@@ -19,6 +20,7 @@ from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
 from arekit.networks.embedding import indices
+from arekit.networks.mappers.terms import IndicingTextTermsMapper
 
 
 class InputSample(InputSampleBase):
@@ -186,8 +188,7 @@ class InputSample(InputSampleBase):
                                                             e_value=obj_value,
                                                             synonyms=synonyms_collection)))
 
-        x_indices = indices.iter_embedding_indices_for_terms(
-            terms=terms,
+        term_ind_mapper = IndicingTextTermsMapper(
             syn_subj_indices=set(syn_subj_inds),
             syn_obj_indices=set(syn_obj_inds),
             term_embedding_matrix=config.TermEmbeddingMatrix,
@@ -196,6 +197,8 @@ class InputSample(InputSampleBase):
             token_embedding=config.TokenEmbedding,
             frames_embedding=config.FrameEmbedding,
             use_entity_types=config.UseEntityTypesInEmbedding)
+
+        x_indices = term_ind_mapper.iter_mapped(terms)
 
         x_indices = list(x_indices)
 
@@ -216,7 +219,7 @@ class InputSample(InputSampleBase):
             filler=cls.X_PAD_VALUE)
 
         pos_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=indices.iter_pos_indices_for_terms(terms=terms, pos_tagger=config.PosTagger),
+            value_vector=arekit.networks.mappers.pos.iter_pos_indices_for_terms(terms=terms, pos_tagger=config.PosTagger),
             e1_in=subj_ind,
             e2_in=obj_ind,
             expected_size=config.TermsPerContext,

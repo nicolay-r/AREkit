@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from arekit.bert.providers.text.terms_formatter import iterate_sentence_terms
+from arekit.bert.providers.text.terms_mapper import StringTextTermsMapper
 from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
 from arekit.common.labels.base import Label
 from arekit.common.synonyms import SynonymsCollection
@@ -15,6 +15,8 @@ class SingleTextProvider(object):
         assert(isinstance(synonyms, SynonymsCollection))
         self._entities_formatter = entities_formatter
         self._synonyms = synonyms
+        self._mapper = StringTextTermsMapper(entities_formatter=entities_formatter,
+                                             synonyms=synonyms)
 
     def iter_columns(self):
         yield SingleTextProvider.TEXT_A
@@ -27,9 +29,9 @@ class SingleTextProvider(object):
     def add_text_in_row(self, row, sentence_terms, s_ind, t_ind, expected_label):
         assert(isinstance(row, OrderedDict))
         assert(isinstance(expected_label, Label))
-        text = self.TERMS_SEPARATOR.join(iterate_sentence_terms(sentence_terms,
-                                                                entities_formatter=self._entities_formatter,
-                                                                synonyms=self._synonyms,
-                                                                s_ind=s_ind,
-                                                                t_ind=t_ind))
+
+        self._mapper.set_s_ind(s_ind)
+        self._mapper.set_t_ind(t_ind)
+        text = self.TERMS_SEPARATOR.join(self._mapper.iter_mapped(sentence_terms))
+
         row[self.TEXT_A] = self._process_text(text)

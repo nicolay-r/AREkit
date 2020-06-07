@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from arekit.bert.providers.text.single import SingleTextProvider
-from arekit.bert.providers.text.terms_formatter import iterate_sentence_terms
+from arekit.bert.providers.text.terms_mapper import iterate_sentence_terms
 from arekit.common.entities.types import EntityType
 from arekit.common.labels.base import Label
 from arekit.common.labels.str_fmt import StringLabelsFormatter
@@ -47,9 +47,9 @@ class PairTextProvider(SingleTextProvider):
                                                       t_ind=t_ind,
                                                       expected_label=expected_label)
 
-        inner_context = list(iterate_sentence_terms(sentence_terms[s_ind+1:t_ind],
-                                                    entities_formatter=self._entities_formatter,
-                                                    synonyms=self._synonyms))
+        self._mapper.set_s_ind(s_ind)
+        self._mapper.set_t_ind(t_ind)
+        inner_context = list(self._mapper.iter_mapped(sentence_terms[s_ind+1:t_ind]))
 
         row[self.TEXT_B] = self.__text_b_template.format(
             subject=self._entities_formatter.to_string(EntityType.Subject),
