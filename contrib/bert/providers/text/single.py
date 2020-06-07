@@ -5,6 +5,7 @@ from arekit.common.entities.entity_mask import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 from arekit.common.labels.base import Label
 from arekit.common.synonyms import SynonymsCollection
+from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.processing.text.token import Token
 
 
@@ -47,6 +48,7 @@ class SingleTextProvider(object):
         for i, term in enumerate(sentence_terms):
 
             if isinstance(term, unicode):
+                assert(i != s_ind and i != t_ind)
                 yield term
             elif isinstance(term, Entity):
                 if i == s_ind:
@@ -61,6 +63,10 @@ class SingleTextProvider(object):
                     yield self._entities_formatter.to_string(EntityType.Other)
             elif isinstance(term, Token):
                 yield term.get_original_value()
+            elif isinstance(term, TextFrameVariant):
+                yield term.Variant.get_value()
+            else:
+                raise Exception("Term type is not supported: {}".format(type(term)))
 
     @staticmethod
     def _process_text(text):
