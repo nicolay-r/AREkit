@@ -2,6 +2,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 from arekit.common.synonyms import SynonymsCollection
+from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.processing.text.token import Token
 
 
@@ -44,4 +45,7 @@ def iterate_sentence_terms(sentence_terms, entities_formatter, synonyms, s_ind=N
                 yield entities_formatter.to_string(EntityType.Other)
         elif isinstance(term, Token):
             yield term.get_meta_value()
-
+        elif isinstance(term, TextFrameVariant):
+            yield term.Variant.get_value()
+        else:
+            raise Exception("Term type is not supported: {}".format(type(term)))
