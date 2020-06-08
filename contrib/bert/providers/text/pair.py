@@ -52,8 +52,8 @@ class PairTextProvider(SingleTextProvider):
         inner_context = list(self._iterate_sentence_terms(sentence_terms[l:r]))
 
         row[self.TEXT_B] = self.__text_b_template.format(
-            subject=self._entities_formatter.to_string(EntityType.Subject),
-            object=self._entities_formatter.to_string(EntityType.Object),
+            subject=self._entities_formatter.to_string(original_value=None, entity_type=EntityType.Subject),
+            object=self._entities_formatter.to_string(original_value=None, entity_type=EntityType.Object),
             context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
             label=self.__labels_formatter.label_to_str(expected_label))
 

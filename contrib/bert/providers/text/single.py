@@ -17,6 +17,7 @@ class SingleTextProvider(object):
     def __init__(self, entities_formatter, synonyms):
         assert(isinstance(entities_formatter, StringEntitiesFormatter))
         assert(isinstance(synonyms, SynonymsCollection))
+
         self._entities_formatter = entities_formatter
         self.__synonyms = synonyms
 
@@ -52,15 +53,15 @@ class SingleTextProvider(object):
                 yield term
             elif isinstance(term, Entity):
                 if i == s_ind:
-                    yield self._entities_formatter.to_string(EntityType.Subject)
+                    yield self._entities_formatter.to_string(term, EntityType.Subject)
                 elif i == t_ind:
-                    yield self._entities_formatter.to_string(EntityType.Object)
+                    yield self._entities_formatter.to_string(term, EntityType.Object)
                 elif __syn_group(i) == s_group:
-                    yield self._entities_formatter.to_string(EntityType.SynonymSubject)
+                    yield self._entities_formatter.to_string(term, EntityType.SynonymSubject)
                 elif __syn_group(i) == t_group:
-                    yield self._entities_formatter.to_string(EntityType.SynonymObject)
+                    yield self._entities_formatter.to_string(term, EntityType.SynonymObject)
                 else:
-                    yield self._entities_formatter.to_string(EntityType.Other)
+                    yield self._entities_formatter.to_string(term, EntityType.Other)
             elif isinstance(term, Token):
                 yield term.get_original_value()
             elif isinstance(term, TextFrameVariant):
