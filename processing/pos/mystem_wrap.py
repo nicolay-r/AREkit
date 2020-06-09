@@ -1,13 +1,20 @@
+# -*- coding: utf-8 -*-
+from arekit.common.languages.ru.cases import RussianCases, RussianCasesService
+from arekit.common.languages.ru.number import RussianNumberType, RussianNumberTypeService
+from arekit.processing.pos.russian import RussianPOSTagger
 from arekit.processing.pos.base import POSTagger
 from pymystem3 import Mystem
 
 
-class POSMystemWrapper(POSTagger):
+class POSMystemWrapper(RussianPOSTagger):
 
     PosAdjective = u"A"
     PosNoun = u"S"
     PosVerb = u"V"
+    _ArgsSeparator = ','
+    _GrammarKey = 'gr'
 
+    # TODO. POS names implement as enum and move into the language folder (root, not russian)
     __pos_names = [PosNoun,
                    u"ADV",
                    u"ADVPRO",
@@ -39,12 +46,15 @@ class POSMystemWrapper(POSTagger):
 
     # region private methods
 
-    def __get_term_pos(self, analysis):
+    def __extract_from_analysis(self, analysis, func):
         """
         part of speech description:
             https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
+        func: f(args) -> out
         returns: str or None
         """
+        assert(callable(func))
+
         if 'analysis' not in analysis:
             return self.Unknown
 
@@ -52,14 +62,41 @@ class POSMystemWrapper(POSTagger):
         if len(info) == 0:
             return self.Unknown
 
-        return self.__get_pos(info[0])
+        return func(info[0])
 
     @staticmethod
-    def __get_pos(a):
-        pos = a['gr'].split(',')[0]
+    def __get_pos(arguments):
+        pos = arguments[POSMystemWrapper._GrammarKey].split(POSMystemWrapper._ArgsSeparator)[0]
         if '=' in pos:
             pos = pos.split('=')[0]
         return pos
+
+    @staticmethod
+    def __get_russian_case(arguments):
+        all_params = set(POSMystemWrapper.__iter_params(arguments))
+
+        for key, case in RussianCasesService.iter_rus_mystem_tags():
+            if key in all_params:
+                return case
+
+        return RussianCases.UNKN
+
+    @staticmethod
+    def __get_number(arguments):
+        all_params = set(POSMystemWrapper.__iter_params(arguments))
+
+        for key, case in RussianNumberTypeService.iter_rus_mystem_tags():
+            if key in all_params:
+                return case
+
+        return RussianNumberType.UNKN
+
+    @staticmethod
+    def __iter_params(arguments):
+        params = arguments[POSMystemWrapper._GrammarKey].split(POSMystemWrapper._ArgsSeparator)
+        for optionally_combined in params:
+            for param in optionally_combined.split('='):
+                yield param
 
     # endregion
 
@@ -70,7 +107,7 @@ class POSMystemWrapper(POSTagger):
         pos_list = []
         for term in terms:
             analyzed = self.__mystem.analyze(term)
-            pos = self.__get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
+            pos = self.__extract_from_analysis(analyzed[0], self.__get_pos) if len(analyzed) > 0 else self.Unknown
             pos_list.append(pos)
 
         return pos_list
@@ -78,7 +115,33 @@ class POSMystemWrapper(POSTagger):
     def get_term_pos(self, term):
         assert(isinstance(term, unicode))
         analyzed = self.__mystem.analyze(term)
-        return self.__get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
+        return self.__extract_from_analysis(analyzed[0], self.__get_pos) \
+            if len(analyzed) > 0 else self.Unknown
+
+    def get_terms_russian_cases(self, text):
+        """ list of part of speech according to the certain word in text
+        """
+        assert(isinstance(text, unicode))
+        cases = []
+
+        analyzed = self.__mystem.analyze(text)
+        for a in analyzed:
+            pos = self.__extract_from_analysis(a, self.__get_russian_case) if len(analyzed) > 0 else RussianCases.Unknown
+            cases.append(pos)
+
+        return cases
+
+    def get_term_russian_case(self, term):
+        assert(isinstance(term, unicode))
+        analyzed = self.__mystem.analyze(term)
+        return self.__extract_from_analysis(analyzed[0], self.__get_russian_case) \
+            if len(analyzed) > 0 else RussianCases.UNKN
+
+    def get_term_number(self, term):
+        assert(isinstance(term, unicode))
+        analyzed = self.__mystem.analyze(term)
+        return self.__extract_from_analysis(analyzed[0], self.__get_number) \
+            if len(analyzed) > 0 else RussianNumberType.UNKN
 
     def pos_to_int(self, pos):
         assert(isinstance(pos, unicode))
