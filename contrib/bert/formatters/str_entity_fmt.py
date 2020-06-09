@@ -36,14 +36,14 @@ class RussianEntitiesFormatter(StringEntitiesFormatter):
         self.__pos_tagger = pos_tagger
 
     def to_string(self, original_value, entity_type):
-        assert(isinstance(original_value, Entity) or original_value is None)
+        assert(isinstance(original_value, Entity))
         assert(isinstance(entity_type, EntityType))
 
         template = None
         cases_map = None
 
         if (entity_type == EntityType.Object) or (entity_type == EntityType.SynonymObject):
-            template =  u"объект"
+            template = u"объект"
             cases_map = self.obj_subj_cases_map
         elif (entity_type == EntityType.Subject) or (entity_type == EntityType.SynonymSubject):
             template = u"субъект"
@@ -52,7 +52,7 @@ class RussianEntitiesFormatter(StringEntitiesFormatter):
             template = u"сущност"
             cases_map = self.entity_cases_map
 
-        return self.__get_correct_declention(value=original_value,
+        return self.__get_correct_declention(value=original_value.Value,
                                              template=template,
                                              cases_map=cases_map)
 

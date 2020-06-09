@@ -17,7 +17,7 @@ class PairTextProvider(SingleTextProvider):
     def __init__(self, text_b_template, labels_formatter, entities_formatter, synonyms):
         """
         text_b_template: unicode
-            assumes to include {subject}, {object}, and {context} in related template,
+            assumes to include {context} in related template,
             and {label} (optional)
         labels_formatter: StringLabelsFormatter
         entities_formatter: StringEntitiesFormatter
@@ -52,8 +52,6 @@ class PairTextProvider(SingleTextProvider):
         inner_context = list(self._iterate_sentence_terms(sentence_terms[l:r]))
 
         row[self.TEXT_B] = self.__text_b_template.format(
-            subject=self._entities_formatter.to_string(original_value=None, entity_type=EntityType.Subject),
-            object=self._entities_formatter.to_string(original_value=None, entity_type=EntityType.Object),
             context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
             label=self.__labels_formatter.label_to_str(expected_label))
 
