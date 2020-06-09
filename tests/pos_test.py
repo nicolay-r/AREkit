@@ -11,6 +11,8 @@ mw = POSMystemWrapper(mystem=Mystem(entire_input=False))
 
 term = u"книгами"
 print term
-print mw.get_term_russian_case(term)
+print mw.get_term_case(term)
 print mw.get_term_number(term)
+print mw.get_term_pos(term)
+
 

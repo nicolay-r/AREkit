@@ -6,6 +6,6 @@ class RussianPOSTagger(POSTagger):
     """ Provides cases support ('падежи')
     """
 
-    def get_term_russian_case(self, term):
+    def get_term_case(self, term):
         raise NotImplementedError()
 

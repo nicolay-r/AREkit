@@ -88,7 +88,7 @@ def iter_pos_indices_for_terms(terms, pos_tagger):
 
     for index, term in enumerate(terms):
         if isinstance(term, Token):
-            pos = pos_tagger.Empty
+            pos = pos_tagger.get_pos_as_unknown()
         elif isinstance(term, unicode):
             pos = pos_tagger.get_term_pos(term)
         else:
