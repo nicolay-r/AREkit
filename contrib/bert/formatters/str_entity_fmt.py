@@ -64,8 +64,8 @@ class RussianEntitiesFormatter(StringEntitiesFormatter):
         num = self.__pos_tagger.get_term_number(value)
         case = self.__pos_tagger.get_term_case(value)
 
+        assert(isinstance(num, RussianNumberType))
         assert(isinstance(case, RussianCases))
-        assert(isinstance(case, RussianNumberType))
 
         if num == RussianNumberType.UNKN or num == RussianNumberType.Single:
             num_int = 0

@@ -1,3 +1,4 @@
+import logging
 from os import path
 
 import numpy as np
@@ -6,6 +7,9 @@ import pandas as pd
 import io_utils
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.bert.providers.opinions import OpinionProvider
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseBertRowsFormatter(object):
@@ -55,6 +59,7 @@ class BaseBertRowsFormatter(object):
 
         rows_count = sum(1 for _ in self._iter_by_rows(opinion_provider))
 
+        p_prev = 0
         self.__fill_with_blank_rows(rows_count)
         for row_index, row in enumerate(self._iter_by_rows(opinion_provider)):
             for column, value in row.iteritems():
@@ -66,12 +71,14 @@ class BaseBertRowsFormatter(object):
             total_work = rows_count
             percent = round(100 * float(current_work) / total_work, 2)
 
-            print "{f_type} ('{d_type}') added: {c}/{t} ({p}%)".format(
-                f_type=self.formatter_type_log_name(),
-                d_type=self._data_type,
-                c=current_work,
-                t=total_work,
-                p=percent)
+            if percent - p_prev > 5 or (current_work == total_work):
+                logging.info("{f_type} ('{d_type}') added: {c}/{t} ({p}%)".format(
+                    f_type=self.formatter_type_log_name(),
+                    d_type=self._data_type,
+                    c=current_work,
+                    t=total_work,
+                    p=percent))
+                p_prev = percent
 
     def get_filepath(self, data_type, experiment):
         return self.get_filepath_static(data_type=data_type,
