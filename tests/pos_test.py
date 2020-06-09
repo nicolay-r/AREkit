@@ -9,7 +9,7 @@ mw = POSMystemWrapper(mystem=Mystem(entire_input=False))
 # cases = mw.get_terms_russian_cases(terms)
 # print cases
 
-term = u"Путинами"
+term = u"книгами"
 print term
 print mw.get_term_russian_case(term)
 print mw.get_term_number(term)
