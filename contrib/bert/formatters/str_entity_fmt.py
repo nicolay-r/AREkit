@@ -15,7 +15,7 @@ class RussianEntitiesFormatter(StringEntitiesFormatter):
         RussianCases.NOM: [u'', u"ы"],      # именительный
         RussianCases.GEN: [u'а', u'ов'],    # родительный
         RussianCases.DAT: [u'y', u'ам'],    # дательный
-        RussianCases.ACC: [u'', u''],       # винительный
+        RussianCases.ACC: [u'', u'ы'],      # винительный
         RussianCases.INS: [u'ом', u'aми'],  # творительный
         RussianCases.ABL: [u'e', u'ах']     # предложный
     }
