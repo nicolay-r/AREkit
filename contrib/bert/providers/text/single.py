@@ -14,12 +14,19 @@ class SingleTextProvider(object):
     TEXT_A = u'text_a'
     TERMS_SEPARATOR = u" "
 
-    def __init__(self, entities_formatter, synonyms):
+    def __init__(self, entities_formatter, synonyms, support_frame_variants=False):
+        """
+        Note: In BERT encoder, text frame variants assumes to
+        keep the same format as they appeared in cotext,
+        and therefore support_frame_variants=False by default.
+        """
         assert(isinstance(entities_formatter, StringEntitiesFormatter))
         assert(isinstance(synonyms, SynonymsCollection))
+        assert(isinstance(support_frame_variants, bool))
 
         self._entities_formatter = entities_formatter
         self.__synonyms = synonyms
+        self.__support_frame_variants = support_frame_variants
 
     def iter_columns(self):
         yield SingleTextProvider.TEXT_A
@@ -64,7 +71,7 @@ class SingleTextProvider(object):
                     yield self._entities_formatter.to_string(term, EntityType.Other)
             elif isinstance(term, Token):
                 yield term.get_original_value()
-            elif isinstance(term, TextFrameVariant):
+            elif isinstance(term, TextFrameVariant) and self.__support_frame_variants:
                 yield term.Variant.get_value()
             else:
                 raise Exception("Term type is not supported: {}".format(type(term)))

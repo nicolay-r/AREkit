@@ -26,7 +26,8 @@ class OpinionProvider(object):
         text_opinions = extract_text_opinions_and_parse_news(
             experiment=experiment,
             data_type=data_type,
-            terms_per_context=50)
+            terms_per_context=50,
+            parse_frame_variants=False)
 
         return cls(data_type=data_type,
                    text_opinions=text_opinions)

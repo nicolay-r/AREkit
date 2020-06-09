@@ -76,7 +76,7 @@ def __check_text_opinion(text_opinion, terms_per_context):
         text_opinion=text_opinion)
 
 
-def __create_parsed_collection(doc_operations, data_io, data_type):
+def __create_parsed_collection(doc_operations, data_io, data_type, parse_frame_variants):
     assert(isinstance(doc_operations, DocumentOperations))
     assert(isinstance(data_io, DataIO))
     assert(isinstance(data_type, unicode))
@@ -95,10 +95,11 @@ def __create_parsed_collection(doc_operations, data_io, data_type):
         if NewsTermsShow:
             __debug_show_terms(parsed_news)
 
-        parsed_news.modify_parsed_sentences(
-            lambda sentence: FrameVariantsParser.parse_frames_in_parsed_text(
-                frame_variants_collection=data_io.FrameVariantCollection,
-                parsed_text=sentence))
+        if parse_frame_variants:
+            parsed_news.modify_parsed_sentences(
+                lambda sentence: FrameVariantsParser.parse_frames_in_parsed_text(
+                    frame_variants_collection=data_io.FrameVariantCollection,
+                    parsed_text=sentence))
 
         if not parsed_collection.contains_id(doc_id):
             parsed_collection.add(parsed_news)
@@ -112,7 +113,8 @@ def __create_parsed_collection(doc_operations, data_io, data_type):
 
 def extract_text_opinions_and_parse_news(experiment,
                                          data_type,
-                                         terms_per_context):
+                                         terms_per_context,
+                                         parse_frame_variants=True):
     """
     Extracting text-level opinions based on doc-level opinions in documents,
     obtained by information in experiment.
@@ -123,12 +125,14 @@ def extract_text_opinions_and_parse_news(experiment,
     assert(isinstance(experiment, BaseExperiment))
     assert(isinstance(data_type, unicode))
     assert(isinstance(terms_per_context, int))
+    assert(isinstance(parse_frame_variants, bool))
     assert(terms_per_context > 0)
 
     parsed_collection = __create_parsed_collection(
         doc_operations=experiment.DocumentOperations,
         data_io=experiment.DataIO,
-        data_type=data_type)
+        data_type=data_type,
+        parse_frame_variants=parse_frame_variants)
 
     text_opinions = LabeledLinkedTextOpinionCollection(
         parsed_news_collection=parsed_collection)
