@@ -86,7 +86,7 @@ class ParsedNews(object):
         assert(isinstance(sentence, ParsedText))
         assert(callable(term_check) or term_check is None)
 
-        for ind_in_sent, term in enumerate(sentence.iter_terms(TermFormat.Row)):
+        for ind_in_sent, term in enumerate(sentence.iter_terms(TermFormat.Raw)):
 
             if term_check is not None:
                 if not term_check(term):
