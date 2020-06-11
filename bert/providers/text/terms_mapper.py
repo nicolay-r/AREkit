@@ -11,7 +11,7 @@ class StringTextTermsMapper(TextTermsMapper):
 
     def __init__(self, entities_formatter, synonyms):
         assert(isinstance(entities_formatter, StringEntitiesFormatter))
-        assert(isinstance(synonyms, SynonymsCollection))
+        assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
         self.__entities_formatter = entities_formatter
         self.__synonyms = synonyms
         self.__s_ind = None
@@ -23,6 +23,9 @@ class StringTextTermsMapper(TextTermsMapper):
         assert(isinstance(entity, Entity))
 
         if entity is None:
+            return None
+
+        if self.__synonyms is None:
             return None
 
         if not self.__synonyms.contains_synonym_value(entity.Value):

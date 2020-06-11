@@ -12,7 +12,7 @@ class SingleTextProvider(object):
 
     def __init__(self, entities_formatter, synonyms):
         assert (isinstance(entities_formatter, StringEntitiesFormatter))
-        assert(isinstance(synonyms, SynonymsCollection))
+        assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
         self._entities_formatter = entities_formatter
         self._synonyms = synonyms
         self._mapper = StringTextTermsMapper(entities_formatter=entities_formatter,
