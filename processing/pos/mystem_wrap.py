@@ -108,6 +108,19 @@ class POSMystemWrapper(RussianPOSTagger):
         return self.__extract_from_analysis(analyzed[0], self.__get_number) \
             if len(analyzed) > 0 else RussianNumberType.UNKN
 
+    def get_terms_russian_cases(self, text):
+        """ list of part of speech according to the certain word in text
+        """
+        assert(isinstance(text, unicode))
+        cases = []
+
+        analyzed = self.__mystem.analyze(text)
+        for a in analyzed:
+            pos = self.__extract_from_analysis(a, self.__get_russian_case) if len(analyzed) > 0 else RussianCases.Unknown
+            cases.append(pos)
+
+        return cases
+
     def pos_to_int(self, pos):
         assert(isinstance(pos, PartOfSpeechType))
         return int(pos)
