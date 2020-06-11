@@ -1,12 +1,10 @@
-from pymystem3 import Mystem
-
 from arekit.common.entities.entity_mask import StringEntitiesFormatter
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.bert.formatters.str_entity_fmt import RussianEntitiesFormatter
+from arekit.contrib.bert.formatters.str_entity_simple_fmt import RussianEntitiesSimpleFormatter
 from arekit.contrib.bert.providers.label.multiple import BertMultipleLabelProvider
 from arekit.contrib.bert.providers.opinions import OpinionProvider
 
@@ -17,7 +15,6 @@ from arekit.contrib.bert.formatters.sample.nli_m import NliMultipleSampleFormatt
 from arekit.contrib.bert.formatters.sample.qa_b import QaBinarySampleFormatter
 from arekit.contrib.bert.formatters.sample.qa_m import QaMultipleSampleFormatter
 from arekit.contrib.bert.providers.text.single import SingleTextProvider
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 
 class BertEncoder(object):
@@ -30,9 +27,7 @@ class BertEncoder(object):
         for data_type in DataType.iter_supported():
             experiment.NeutralAnnotator.create_collection(data_type)
 
-        # TODO. This should be a part of the initial config
-        entities_formatter = RussianEntitiesFormatter(
-            pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
+        entities_formatter = RussianEntitiesSimpleFormatter()
 
         for data_type in DataType.iter_supported():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)

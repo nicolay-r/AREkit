@@ -7,7 +7,7 @@ from arekit.common.languages.ru.number import RussianNumberType
 from arekit.processing.pos.russian import RussianPOSTagger
 
 
-class RussianEntitiesFormatter(StringEntitiesFormatter):
+class RussianEntitiesCasedFormatter(StringEntitiesFormatter):
 
     # Объект/Субъект
     obj_subj_cases_map = {
