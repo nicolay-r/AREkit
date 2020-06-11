@@ -62,12 +62,13 @@ class BaseExperiment(object):
 
     # endregion
 
-    def create_parsed_collection(self, data_type):
+    def create_parsed_collection(self, data_type, parse_frame_variants=True):
         assert(isinstance(data_type, DataType))
+        assert(isinstance(parse_frame_variants, bool))
 
         parsed_news_it = self.DocumentOperations.iter_parsed_news(
             doc_inds=self.DocumentOperations.iter_news_indices(data_type),
-            frame_variant_collection=self.DataIO.FrameVariantCollection)
+            frame_variant_collection=self.DataIO.FrameVariantCollection if parse_frame_variants else None)
 
         return ParsedNewsCollection(parsed_news_it)
 

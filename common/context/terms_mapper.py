@@ -35,6 +35,7 @@ class TextTermsMapper(object):
         pass
 
     def _after_mapping(self):
+        pass
 
     def map_word(self, w_ind, word):
         raise NotImplementedError()

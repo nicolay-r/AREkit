@@ -87,5 +87,3 @@ class NeutralLabelsFormatter(StringLabelsFormatter):
     def __init__(self):
         stol = {u'neu': NeutralLabel()}
         super(NeutralLabelsFormatter, self).__init__(stol=stol)
-
-

@@ -5,7 +5,7 @@ from arekit.common.entities.types import EntityType
 
 class RussianEntitiesFormatter(StringEntitiesFormatter):
 
-    def to_string(self, entity_type):
+    def to_string(self, original_value, entity_type):
         assert(isinstance(entity_type, EntityType))
 
         if (entity_type == EntityType.Object) or (entity_type == EntityType.SynonymObject):
