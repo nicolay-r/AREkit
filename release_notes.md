@@ -5,6 +5,7 @@ Collection of parsed news become dispatched from text opinions collection.
 * Labeling now separated from LinkedTextOpinion collection.
 * `ParsedText` class has been refactored, removed unused methods. Keep tokens has been discarded.
 * BERT tsv-format-encoders are now in a Factory (at contrib directory)
+* Fixed: `RuSentRelTextOpinion` depends on `TextOpinion` (not straightly from `OpinionRef`).
 
 Minor changes (light refactoring):
 
