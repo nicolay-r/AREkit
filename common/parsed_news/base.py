@@ -117,7 +117,7 @@ class ParsedNews(object):
         assert(isinstance(position, TermPosition))
         sentence = self.__parsed_sentences[position.get_index(position_type=TermPositionTypes.SentenceIndex)]
         assert(isinstance(sentence, ParsedText))
-        entity = sentence.get_item(position.get_index(position_type=TermPositionTypes.IndexInSentence),
+        entity = sentence.get_term(position.get_index(position_type=TermPositionTypes.IndexInSentence),
                                    term_format=TermFormat.Raw)
         assert(isinstance(entity, Entity))
         return entity.Value
