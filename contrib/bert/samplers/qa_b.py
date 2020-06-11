@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import arekit.contrib.bert.utils
 from arekit.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.bert.providers.label.binary import BertBinaryLabelProvider
 from arekit.bert.providers.text.pair import PairTextProvider
