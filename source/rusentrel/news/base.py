@@ -145,8 +145,8 @@ class RuSentRelNews(News):
 
     def iter_wrapped_linked_text_opinions(self, opinions):
         assert(isinstance(opinions, OpinionCollection))
-        for entries in self.__iter_rusentrel_text_opinion_entries(opinions=opinions):
-            yield LinkedTextOpinionsWrapper(linked_text_opinions=[entry.to_text_opinion() for entry in entries])
+        for text_opinions in self.__iter_rusentrel_text_opinions(opinions=opinions):
+            yield LinkedTextOpinionsWrapper(linked_text_opinions=[text_opinion for text_opinion in text_opinions])
 
     def _parse_core(self, options):
         assert(isinstance(options, RuSentRelNewsParseOptions))
@@ -170,7 +170,7 @@ class RuSentRelNews(News):
                                                keep_tokens=options.KeepTokens,
                                                stemmer=options.Stemmer)
 
-    def __iter_rusentrel_text_opinion_entries(self, opinions):
+    def __iter_rusentrel_text_opinions(self, opinions):
         """
         Document Level Opinions -> Linked Text Level Opinions
         """

@@ -144,15 +144,19 @@ class ParsedNews(object):
         for term in self.__iter_all_raw_terms(term_only=True, term_check=term_check):
             yield term
 
-    def iter_sentence_terms(self, sentence_index, term_check=None):
+    def iter_sentence_terms(self, sentence_index, return_id, term_check=None):
         assert(isinstance(sentence_index, int))
+        assert(isinstance(return_id, bool))
         assert(callable(term_check) or term_check is None)
 
         it = self.__iter_sentence_raw_terms(sentence=self.__parsed_sentences[sentence_index],
                                             term_check=term_check)
 
         for ind_in_sent, term in it:
-            yield ind_in_sent, term
+            if return_id:
+                yield ind_in_sent, term
+            else:
+                yield term
 
     def __iter__(self):
         for sentence in self.__parsed_sentences:

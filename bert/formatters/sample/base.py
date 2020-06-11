@@ -132,7 +132,8 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
                 expected_label=expected_label,
                 etalon_label=etalon_label)
 
-        terms = list(parsed_news.iter_sentence_terms(sentence_ind))
+        terms = list(parsed_news.iter_sentence_terms(sentence_index=sentence_ind,
+                                                     return_id=False))
         self.__text_provider.add_text_in_row(row=row,
                                              sentence_terms=terms,
                                              s_ind=s_ind,

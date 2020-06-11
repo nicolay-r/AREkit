@@ -1,5 +1,5 @@
+import collections
 import logging
-from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.collection import TextOpinionCollection
 from arekit.source.rusentrel.context.opinion import RuSentRelTextOpinion
@@ -27,7 +27,7 @@ class RuSentRelTextOpinionCollection(TextOpinionCollection):
                       opinions,
                       debug=False):
         assert(isinstance(rusentrel_news_id, int))
-        assert(isinstance(opinions, OpinionCollection))
+        assert(isinstance(opinions, collections.Iterable))
         text_opinions = []
         for opinion in opinions:
             text_opinions.extend(
