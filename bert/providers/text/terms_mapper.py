@@ -55,15 +55,20 @@ class StringTextTermsMapper(TextTermsMapper):
 
     def map_entity(self, e_ind, entity):
         if e_ind == self.__s_ind:
-            yield self.__entities_formatter.to_string(EntityType.Subject)
+            yield self.__entities_formatter.to_string(original_value=entity,
+                                                      entity_type=EntityType.Subject)
         elif e_ind == self.__t_ind:
-            yield self.__entities_formatter.to_string(EntityType.Object)
+            yield self.__entities_formatter.to_string(original_value=entity,
+                                                      entity_type=EntityType.Object)
         elif self.__syn_group(entity) == self.__s_group:
-            yield self.__entities_formatter.to_string(EntityType.SynonymSubject)
+            yield self.__entities_formatter.to_string(original_value=entity,
+                                                      entity_type=EntityType.SynonymSubject)
         elif self.__syn_group(entity) == self.__t_group:
-            yield self.__entities_formatter.to_string(EntityType.SynonymObject)
+            yield self.__entities_formatter.to_string(original_value=entity,
+                                                      entity_type=EntityType.SynonymObject)
         else:
-            yield self.__entities_formatter.to_string(EntityType.Other)
+            yield self.__entities_formatter.to_string(original_value=entity,
+                                                      entity_type=EntityType.Other)
 
     def map_word(self, w_ind, word):
         return word
