@@ -1,32 +1,28 @@
 from arekit.common.embeddings.base import Embedding
-from arekit.networks.embedding.entity_masks import EntityMasks
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 
 
-def __entity_mask_to_word(mask):
-    if mask == EntityMasks.ANY_ENTITY_MASK:
-        return u"e"
-    elif mask == EntityMasks.OBJ_ENTITY_MASK:
-        return u"object"
-    elif mask == EntityMasks.SUBJ_ENTITY_MASK:
-        return u"subject"
-
-    return None
-
-
-def generate_entity_embeddings(use_types, word_embedding):
-    assert(isinstance(use_types, bool))
+def generate_entity_embeddings(word_embedding,
+                               string_entity_formatter,
+                               string_emb_entity_formatter):
     assert(isinstance(word_embedding, Embedding))
+    assert(isinstance(string_entity_formatter, StringEntitiesFormatter))
+    assert(isinstance(string_emb_entity_formatter, StringEntitiesFormatter))
 
     # Unique start index
     embeddings = {}
 
-    for e_mask in EntityMasks.iter_supported_entity_masks():
-        value = EntityMasks.compose(e_mask=e_mask, e_type=None)
+    for e_type in string_entity_formatter.iter_supported_types():
+        value = string_entity_formatter.to_string(original_value=None,
+                                                  entity_type=e_type)
 
-        if value not in embeddings:
-            mask = __entity_mask_to_word(e_mask)
-            m_ind = word_embedding.try_find_index_by_plain_word(mask)
-            embeddings[value] = word_embedding.get_vector_by_index(m_ind)
+        if value in embeddings:
+            continue
+
+        word = string_emb_entity_formatter.to_string(original_value=None,
+                                                     entity_type=e_type)
+        m_ind = word_embedding.try_find_index_by_plain_word(word)
+        embeddings[value] = word_embedding.get_vector_by_index(m_ind)
 
     return embeddings
 

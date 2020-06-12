@@ -5,6 +5,7 @@ import numpy as np
 
 import arekit.networks.mappers.pos
 from arekit.common.entities.base import Entity
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.model.sample import InputSampleBase
@@ -19,7 +20,6 @@ from arekit.contrib.networks.features.frames import FrameFeatures
 from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
-from arekit.networks.embedding import indices
 from arekit.networks.mappers.terms import IndicingTextTermsMapper
 
 
@@ -145,7 +145,10 @@ class InputSample(InputSampleBase):
                    text_opinion_id=-1)
 
     @classmethod
-    def from_text_opinion(cls, text_opinion, frames_collection, synonyms_collection, config, label_scaler,
+    def from_text_opinion(cls, text_opinion, frames_collection, synonyms_collection,
+                          config,
+                          label_scaler,
+                          string_entity_formatter,
                           text_opinion_helper):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(config, DefaultNetworkConfig))
@@ -153,6 +156,7 @@ class InputSample(InputSampleBase):
         assert(isinstance(synonyms_collection, SynonymsCollection))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
+        assert(isinstance(string_entity_formatter, StringEntitiesFormatter))
 
         terms = list(text_opinion_helper.iter_terms_in_related_sentence(
             text_opinion=text_opinion,
@@ -196,7 +200,7 @@ class InputSample(InputSampleBase):
             custom_word_embedding=config.CustomWordEmbedding,
             token_embedding=config.TokenEmbedding,
             frames_embedding=config.FrameEmbedding,
-            use_entity_types=config.UseEntityTypesInEmbedding)
+            string_entity_formatter=string_entity_formatter)
 
         x_indices = term_ind_mapper.iter_mapped(terms)
 

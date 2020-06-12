@@ -1,6 +1,6 @@
 from arekit.common.context.terms_mapper import TextTermsMapper
 from arekit.common.entities.base import Entity
-from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text_frame_variant import TextFrameVariant

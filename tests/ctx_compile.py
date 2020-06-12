@@ -105,6 +105,11 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
     for config, network in contexts_supported():
+        assert(isinstance(config, DefaultNetworkConfig))
+        config.modify_classes_count(3)
+
         logger.info("Compile: {}".format(type(network)))
+        logger.info("Clases count: {}".format(config.ClassesCount))
+
         init_config(config)
         network.compile(config, reset_graph=True)

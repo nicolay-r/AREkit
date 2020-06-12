@@ -1,4 +1,4 @@
-from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.bert.entity.str_rus_nocased_fmt import RussianEntitiesFormatter
 from arekit.contrib.bert.label.str_rus_fmt import RussianThreeScaleRussianLabelsFormatter

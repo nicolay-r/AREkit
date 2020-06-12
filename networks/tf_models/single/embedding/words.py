@@ -1,5 +1,5 @@
 from arekit.common.embeddings.base import Embedding
-from arekit.networks.embedding.entity_masks import EntityMasks
+from arekit.contrib.networks.entities.str_fmt import StringEntityFormatter
 from arekit.networks.tf_models.single.embedding.custom import create_term_embedding
 
 
@@ -24,8 +24,8 @@ def __iter_custom_words(iter_all_terms_func, config):
                                          isinstance(t, unicode) and
                                          t not in config.WordEmbedding)
 
-    for e_mask in EntityMasks.iter_supported_entity_masks():
-        yield EntityMasks.compose(e_mask=e_mask, e_type=None)
+    for e_mask in StringEntityFormatter.iter_supported_entity_masks():
+        yield StringEntityFormatter.compose(e_mask=e_mask, e_type=None)
 
     for term in all_terms_iter:
         yield term

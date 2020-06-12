@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from arekit.bert.providers.text.terms_mapper import StringTextTermsMapper
-from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.labels.base import Label
 from arekit.common.synonyms import SynonymsCollection
 

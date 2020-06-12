@@ -2,7 +2,7 @@
 from arekit.bert.formatters.sample.base import BaseSampleFormatter
 from arekit.bert.providers.label.multiple import BertMultipleLabelProvider
 from arekit.bert.providers.text.pair import PairTextProvider
-from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.synonyms import SynonymsCollection
 
