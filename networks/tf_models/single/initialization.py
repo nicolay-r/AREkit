@@ -71,6 +71,7 @@ class SingleInstanceModelExperimentInitializer(object):
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,
+                                                       string_entity_formatter=self.__string_entity_formatter,
                                                        word_embedding=word_embedding,
                                                        config=config)
 
