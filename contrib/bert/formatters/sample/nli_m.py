@@ -22,7 +22,7 @@ class NliMultipleSampleFormatter(BaseSampleFormatter):
         assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(entities_formatter, StringEntitiesFormatter))
 
-        text_b_template = u'субъект к объекту в контексте : << {context} >>'
+        text_b_template = u'{subject} к {object} в контексте : << {context} >>'
         super(NliMultipleSampleFormatter, self).__init__(
             data_type=data_type,
             text_provider=PairTextProvider(text_b_template=text_b_template,

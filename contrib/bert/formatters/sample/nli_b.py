@@ -22,7 +22,7 @@ class NliBinarySampleFormatter(BaseSampleFormatter):
         assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(entities_formatter, StringEntitiesFormatter))
 
-        text_b_template = u'Объект к субъекту в контексте << {context} >> -- {label}'
+        text_b_template = u'{subject} к {object} в контексте << {context} >> -- {label}'
         super(NliBinarySampleFormatter, self).__init__(
             data_type=data_type,
             text_provider=PairTextProvider(text_b_template=text_b_template,
