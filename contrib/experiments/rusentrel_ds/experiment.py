@@ -4,7 +4,6 @@ from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperime
 from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
-from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 

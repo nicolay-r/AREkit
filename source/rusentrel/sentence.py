@@ -1,5 +1,5 @@
 from arekit.common.bound import Bound
-from arekit.common.sentence import BaseNewsSentence
+from arekit.common.news.sentence import BaseNewsSentence
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 
 

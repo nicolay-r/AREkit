@@ -2,7 +2,6 @@
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.text_object import TextObject
 from arekit.common.text_opinions.base import RefOpinion
-from arekit.processing.lemmatization.base import Stemmer
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 

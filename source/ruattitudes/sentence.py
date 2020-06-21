@@ -1,4 +1,4 @@
-from arekit.common.sentence import BaseNewsSentence
+from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text_opinions.base import RefOpinion
 
 

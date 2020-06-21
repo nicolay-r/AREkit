@@ -8,7 +8,7 @@ from arekit.common.linked.data import LinkedDataWrapper
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.sample import InputSampleBase
-from arekit.common.news import News
+from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper

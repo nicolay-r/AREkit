@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.common.news import News
+from arekit.common.news.base import News
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 

@@ -1,7 +1,7 @@
 import collections
 
 from arekit.common.entities.base import Entity
-from arekit.common.entities.parser import BaseEntitiesParser
+from arekit.common.news.entities_parser import BaseEntitiesParser
 from arekit.common.text_object import TextObject
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 

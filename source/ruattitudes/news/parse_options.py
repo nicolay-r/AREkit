@@ -1,4 +1,4 @@
-from arekit.common.news_parse_options import NewsParseOptions
+from arekit.common.news.parse_options import NewsParseOptions
 
 
 class RuAttitudesParseOptions(NewsParseOptions):
