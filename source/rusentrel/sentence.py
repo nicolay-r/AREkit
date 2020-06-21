@@ -1,8 +1,9 @@
 from arekit.common.bound import Bound
+from arekit.common.news.sentence import BaseNewsSentence
 from arekit.source.rusentrel.entities.entity import RuSentRelEntity
 
 
-class RuSentRelSentence(object):
+class RuSentRelSentence(BaseNewsSentence):
     """ Represent a raw sentence of rusentrel.
         Provides text could be used to parse then.
         Provides API to store entites.
@@ -13,18 +14,11 @@ class RuSentRelSentence(object):
         assert(isinstance(text, unicode) and len(text) > 0)
         assert(isinstance(char_ind_begin, int))
         assert(isinstance(char_ind_end, int))
-        self.__text = text
+
+        super(RuSentRelSentence, self).__init__(text=text)
         self.__begin = char_ind_begin
         self.__end = char_ind_end
         self.__entities = []
-
-    # region properties
-
-    @property
-    def Text(self):
-        return self.__text
-
-    # endregion
 
     # region public methods
 

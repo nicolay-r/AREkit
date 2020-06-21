@@ -4,9 +4,11 @@ import numpy as np
 from arekit.common.context.terms_mapper import TextTermsMapper
 from arekit.common.embeddings.base import Embedding
 from arekit.common.embeddings.tokens import TokenEmbedding
+from arekit.common.entities.base import Entity
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
+from arekit.common.entities.types import EntityType
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.networks.debug import DebugKeys
-from arekit.networks.embedding.entity_masks import EntityMasks
 from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
 from arekit.processing.text.token import Token
 from arekit.processing.text.tokens import Tokens
@@ -26,13 +28,14 @@ class IndicingTextTermsMapper(TextTermsMapper):
                  custom_word_embedding,
                  token_embedding,
                  frames_embedding,
-                 use_entity_types):
+                 string_entity_formatter):
         assert(isinstance(term_embedding_matrix, np.ndarray))
         assert(isinstance(word_embedding, Embedding))
         assert(isinstance(syn_obj_indices, set))
         assert(isinstance(syn_subj_indices, set))
         assert(isinstance(custom_word_embedding, Embedding))
         assert(isinstance(token_embedding, TokenEmbedding))
+        assert(isinstance(string_entity_formatter, StringEntitiesFormatter))
         assert(isinstance(frames_embedding, Embedding))
 
         self.__word_embedding = word_embedding
@@ -41,7 +44,7 @@ class IndicingTextTermsMapper(TextTermsMapper):
         self.__custom_word_embedding = custom_word_embedding
         self.__token_embedding = token_embedding
         self.__frames_embedding = frames_embedding
-        self.__use_entity_types = use_entity_types
+        self.__string_entities_formatter = string_entity_formatter
 
         self.__embedding_offsets = TermsEmbeddingOffsets(
             words_count=word_embedding.VocabularySize,
@@ -100,11 +103,27 @@ class IndicingTextTermsMapper(TextTermsMapper):
         return self.__embedding_offsets.get_frame_index(
             self.__frames_embedding.try_find_index_by_word(frame_variant.Variant.get_value()))
 
+    def __get_entity_type(self, e_ind, subj_ind_set, obj_ind_set):
+        assert(isinstance(e_ind, int))
+        assert(isinstance(subj_ind_set, set))
+        assert(isinstance(obj_ind_set, set))
+
+        result = EntityType.Other
+        if e_ind in obj_ind_set:
+            result = EntityType.Object
+        elif e_ind in subj_ind_set:
+            result = EntityType.Subject
+
+        return result
+
     def map_entity(self, e_ind, entity):
-        e_mask = EntityMasks.select_mask(index=e_ind,
-                                         subjects_set=self.__syn_subj_indices,
-                                         objects_set=self.__syn_obj_indices)
-        e_value = EntityMasks.compose(e_mask=e_mask,
-                                      e_type=entity.Type if self.__use_entity_types else None)
+        assert(isinstance(entity, Entity))
+        e_type = self.__get_entity_type(e_ind=e_ind,
+                                        subj_ind_set=self.__syn_subj_indices,
+                                        obj_ind_set=self.__syn_obj_indices)
+
+        e_value = self.__string_entities_formatter.to_string(original_value=entity,
+                                                             entity_type=e_type)
+
         return self.__embedding_offsets.get_custom_word_index(
             self.__custom_word_embedding.try_find_index_by_word(e_value))

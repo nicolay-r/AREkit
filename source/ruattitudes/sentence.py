@@ -1,17 +1,19 @@
-from arekit.processing.text.parsed import ParsedText
+from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text_opinions.base import RefOpinion
 
 
-class RuAttitudesSentence(object):
+class RuAttitudesSentence(BaseNewsSentence):
 
-    def __init__(self, is_title, parsed_text, ref_opinions, objects_list, sentence_index):
+    def __init__(self, is_title, text, ref_opinions, objects_list, sentence_index):
         assert(isinstance(is_title, bool))
-        assert(isinstance(parsed_text, ParsedText))
+        assert(isinstance(text, unicode))
         assert(isinstance(ref_opinions, list))
         assert(isinstance(objects_list, list))
         assert(isinstance(sentence_index, int))
+
+        super(RuAttitudesSentence, self).__init__(text=text)
+
         self.__is_title = is_title
-        self.__parsed_text = parsed_text
         self.__ref_opinions = ref_opinions
         self.__objects = objects_list
         self.__sentence_index = sentence_index
@@ -22,10 +24,6 @@ class RuAttitudesSentence(object):
     @property
     def SentenceIndex(self):
         return self.__sentence_index
-
-    @property
-    def ParsedText(self):
-        return self.__parsed_text
 
     @property
     def IsTitle(self):
@@ -76,6 +74,6 @@ class RuAttitudesSentence(object):
             yield opinion
 
     def __len__(self):
-        return len(self.ParsedText)
+        return len(self.Text)
 
     # endregion

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 
 

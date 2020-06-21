@@ -108,13 +108,11 @@ class TextOpinionHelper(object):
         s_index = parsed_news.get_entity_position(id_in_document=id_in_doc,
                                                   position_type=TermPositionTypes.SentenceIndex)
         it = parsed_news.iter_sentence_terms(sentence_index=s_index,
+                                             return_id=return_ind_in_sent,
                                              term_check=term_check)
 
-        for ind_in_sent, term in it:
-            if return_ind_in_sent:
-                yield ind_in_sent, term
-            else:
-                yield term
+        for data in it:
+            yield data
 
     # endregion
 

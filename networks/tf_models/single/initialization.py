@@ -12,6 +12,7 @@ from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
+from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 
 from arekit.networks.embedding.input import create_term_embedding_matrix
 from arekit.networks.tf_models.single.embedding.entities import generate_entity_embeddings
@@ -36,8 +37,11 @@ class SingleInstanceModelExperimentInitializer(object):
         word_embedding.set_stemmer(experiment.DataIO.Stemmer)
         config.set_word_embedding(word_embedding)
 
+        self.__string_entity_formatter = experiment.DataIO.StringEntityFormatter
+
         entity_embeddings = generate_entity_embeddings(
-            use_types=config.UseEntityTypesInEmbedding,
+            string_entity_formatter=self.__string_entity_formatter,
+            string_emb_entity_formatter=StringWordEmbeddingEntityFormatter(),
             word_embedding=word_embedding)
 
         self.__pncs = self.__create_collection(
@@ -67,6 +71,7 @@ class SingleInstanceModelExperimentInitializer(object):
 
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,
+                                                       string_entity_formatter=self.__string_entity_formatter,
                                                        word_embedding=word_embedding,
                                                        config=config)
 
@@ -180,7 +185,8 @@ class SingleInstanceModelExperimentInitializer(object):
             frames_collection=self.__frames_collection,
             synonyms_collection=self.__synonyms,
             label_scaler=self.__labels_scaler,
-            text_opinion_helper=self.__text_opinion_helpers[data_type])
+            text_opinion_helper=self.__text_opinion_helpers[data_type],
+            string_entity_formatter=self.__string_entity_formatter)
 
     @staticmethod
     def __create_collection(data_types, collection_by_dtype_func):

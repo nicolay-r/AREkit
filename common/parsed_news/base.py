@@ -86,7 +86,7 @@ class ParsedNews(object):
         assert(isinstance(sentence, ParsedText))
         assert(callable(term_check) or term_check is None)
 
-        for ind_in_sent, term in enumerate(sentence.iter_terms(TermFormat.Row)):
+        for ind_in_sent, term in enumerate(sentence.iter_terms(TermFormat.Raw)):
 
             if term_check is not None:
                 if not term_check(term):
@@ -117,7 +117,7 @@ class ParsedNews(object):
         assert(isinstance(position, TermPosition))
         sentence = self.__parsed_sentences[position.get_index(position_type=TermPositionTypes.SentenceIndex)]
         assert(isinstance(sentence, ParsedText))
-        entity = sentence.get_item(position.get_index(position_type=TermPositionTypes.IndexInSentence),
+        entity = sentence.get_term(position.get_index(position_type=TermPositionTypes.IndexInSentence),
                                    term_format=TermFormat.Raw)
         assert(isinstance(entity, Entity))
         return entity.Value
@@ -144,15 +144,19 @@ class ParsedNews(object):
         for term in self.__iter_all_raw_terms(term_only=True, term_check=term_check):
             yield term
 
-    def iter_sentence_terms(self, sentence_index, term_check=None):
+    def iter_sentence_terms(self, sentence_index, return_id, term_check=None):
         assert(isinstance(sentence_index, int))
+        assert(isinstance(return_id, bool))
         assert(callable(term_check) or term_check is None)
 
         it = self.__iter_sentence_raw_terms(sentence=self.__parsed_sentences[sentence_index],
                                             term_check=term_check)
 
         for ind_in_sent, term in it:
-            yield ind_in_sent, term
+            if return_id:
+                yield ind_in_sent, term
+            else:
+                yield term
 
     def __iter__(self):
         for sentence in self.__parsed_sentences:

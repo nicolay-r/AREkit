@@ -1,8 +1,8 @@
 from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.bert.formatters.sample.formats import SampleFormatters
 from arekit.bert.result.base import BertResults
 from arekit.bert.result.binary import BertBinaryResults
 from arekit.bert.result.multiple import BertMultipleResults
+
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.opinions import compose_opinion_collection
@@ -11,7 +11,11 @@ from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 
-from arekit.bert.encoder import BertEncoder
+# TODO. This dependency should be removed.
+# TODO. This dependency should be removed.
+# TODO. This dependency should be removed.
+from arekit.contrib.bert.factory import create_bert_sample_formatter
+from arekit.contrib.bert.supported import SampleFormattersService
 
 
 def __to_label(item, label):
@@ -31,7 +35,7 @@ def iter_eval_collections(formatter_type,
 
     data_type = DataType.Test
 
-    bert_test_samples = BertEncoder.create_formatter(data_type=data_type,
+    bert_test_samples = create_bert_sample_formatter(data_type=data_type,
                                                      formatter_type=formatter_type,
                                                      label_scaler=experiment.DataIO.LabelsScaler)
 
@@ -79,11 +83,11 @@ def __read_results(formatter_type, data_type, experiment, ids_values, labels_sca
 
     results = None
 
-    if SampleFormatters.is_binary(formatter_type):
+    if SampleFormattersService.is_binary(formatter_type):
         results = BertBinaryResults(labels_scaler=labels_scaler)
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 
-    if SampleFormatters.is_multiple(formatter_type):
+    if SampleFormattersService.is_multiple(formatter_type):
         results = BertMultipleResults(labels_scaler=labels_scaler)
         results.from_tsv(data_type=data_type, experiment=experiment, ids_values=ids_values)
 

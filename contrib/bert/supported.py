@@ -1,4 +1,7 @@
-class SampleFormatters(object):
+from enum import Enum
+
+
+class BertSampleFormatter(Enum):
     """
     Supported formats
     """
@@ -18,30 +21,33 @@ class SampleFormatters(object):
     QA_B = u"qa_b"
     NLI_B = u"nli_b"
 
+
+class SampleFormattersService(object):
+
     @staticmethod
     def __iter_multiple():
-        yield SampleFormatters.CLASSIF_M
-        yield SampleFormatters.QA_M
-        yield SampleFormatters.NLI_M
+        yield BertSampleFormatter.CLASSIF_M
+        yield BertSampleFormatter.QA_M
+        yield BertSampleFormatter.NLI_M
 
     @staticmethod
     def __iter_binary():
-        yield SampleFormatters.QA_B
-        yield SampleFormatters.NLI_B
+        yield BertSampleFormatter.QA_B
+        yield BertSampleFormatter.NLI_B
 
     @staticmethod
     def is_binary(formatter_type):
-        binary = list(SampleFormatters.__iter_binary())
+        binary = list(BertSampleFormatter.__iter_binary())
         return formatter_type in binary
 
     @staticmethod
     def is_multiple(formatter_type):
-        multiple = list(SampleFormatters.__iter_multiple())
+        multiple = list(BertSampleFormatter.__iter_multiple())
         return formatter_type in multiple
 
     @staticmethod
     def iter_supported():
-        for formatter in SampleFormatters.__iter_binary():
+        for formatter in BertSampleFormatter.__iter_binary():
             yield formatter
-        for formatter in SampleFormatters.__iter_multiple():
+        for formatter in BertSampleFormatter.__iter_multiple():
             yield formatter

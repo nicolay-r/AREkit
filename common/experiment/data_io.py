@@ -32,6 +32,10 @@ class DataIO(object):
         raise NotImplementedError()
 
     @property
+    def StringEntityFormatter(self):
+        raise NotImplementedError()
+
+    @property
     def FramesCollection(self):
         raise NotImplementedError()
 

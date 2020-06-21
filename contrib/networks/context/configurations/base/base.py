@@ -299,10 +299,6 @@ class DefaultNetworkConfig(object):
         return self.__frames_per_context
 
     @property
-    def UseEntityTypesInEmbedding(self):
-        return self.__use_entity_types_in_embedding
-
-    @property
     def UseEntityTypeAsContextFeature(self):
         return self.__use_entity_types_as_context_feature
 
@@ -327,7 +323,6 @@ class DefaultNetworkConfig(object):
             ("base:sentiment_emb_size", self.SentimentEmbeddingSize),
             ("base:dist_embedding_size", self.DistanceEmbeddingSize),
             ("base:text_opinion_label_calc_mode", self.TextOpinionLabelCalculationMode),
-            ("base:use_entity_types_in_embedding", self.UseEntityTypesInEmbedding),
             ("base:use_entity_types_as_context_feature", self.UseEntityTypeAsContextFeature),
             ("base:embedding dropout (keep prob)", self.EmbeddingDropoutKeepProb),
             ("base:optimizer", self.Optimiser),

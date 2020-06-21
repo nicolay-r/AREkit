@@ -1,5 +1,7 @@
 #!/usr/bin/python
 import logging
+
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
 from arekit.tests.ctx_compile import init_config
@@ -7,8 +9,15 @@ from arekit.tests.ctx_feed import contexts_supported
 
 
 def test_mpmi(context_config, context_network):
+    assert(isinstance(context_config, DefaultNetworkConfig))
+
+    context_config.modify_classes_count(3)
+
     logging.info("TEST: {}".format(context_network))
     config = BaseMultiInstanceConfig(context_config)
+
+    config.modify_classes_count(3)
+
     # TODO. Provide other examples.
     network = MaxPoolingOverSentences(context_network=context_network)
     init_config(config)

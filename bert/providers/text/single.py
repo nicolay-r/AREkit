@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from arekit.bert.providers.text.terms_mapper import StringTextTermsMapper
-from arekit.common.entities.str_mask_fmt import StringEntitiesFormatter
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.labels.base import Label
 from arekit.common.synonyms import SynonymsCollection
 
@@ -12,7 +12,7 @@ class SingleTextProvider(object):
 
     def __init__(self, entities_formatter, synonyms):
         assert (isinstance(entities_formatter, StringEntitiesFormatter))
-        assert(isinstance(synonyms, SynonymsCollection))
+        assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
         self._entities_formatter = entities_formatter
         self._synonyms = synonyms
         self._mapper = StringTextTermsMapper(entities_formatter=entities_formatter,
