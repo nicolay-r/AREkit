@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 import collections
 import logging
+
+from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.common.frame_variants.parse import FrameVariantsParser
+from arekit.common.news import News
+from arekit.common.news_parse_options import NewsParseOptions
+from arekit.common.parsed_news.base import ParsedNews
+from arekit.processing.text.news_stat import debug_statistics, debug_show_terms
 from arekit.processing.text.parsed import ParsedText
 from arekit.processing.text.tokens import Tokens
 from arekit.processing.text.token import Token
@@ -28,7 +35,59 @@ class TextParser:
         terms = TextParser.__parse_core(text, keep_tokens)
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
-    # TODO. Tokens hiding actually discarded
+    @staticmethod
+    def parse_news(news, parse_options):
+        assert(isinstance(news, News))
+        assert(isinstance(parse_options, NewsParseOptions))
+
+        parsed_sentences = []
+
+        return_text = True if not parse_options.ParseEntities else False
+        for sentence in news.iter_sentences(return_text=return_text):
+            if parse_options.ParseEntities:
+                text_with_entities = news.EntitiesParser.parse(sentence)
+                parsed_sentence = TextParser.parse_string_list(string_iter=text_with_entities,
+                                                               stemmer=parse_options.Stemmer)
+            else:
+                parsed_sentence = TextParser.parse(text=sentence,
+                                                   stemmer=parse_options.Stemmer)
+
+            parsed_sentences.append(parsed_sentence)
+
+        parsed_news = ParsedNews(news_id=news.ID,
+                                 parsed_sentences=parsed_sentences)
+
+        NewsTermsShow = False
+        NewsTermsStatisticShow = False
+
+        if NewsTermsStatisticShow:
+            debug_statistics(parsed_news)
+        if NewsTermsShow:
+            debug_show_terms(parsed_news)
+
+        if parse_options.ParseFrameVariants:
+            TextParser.__post_processing(parsed_news=parsed_news,
+                                         frame_variant_collection=parse_options.FrameVariantsCollection)
+
+        return ParsedNews(news_id=news.ID,
+                          parsed_sentences=parsed_sentences)
+
+    @staticmethod
+    def __post_processing(parsed_news, frame_variant_collection):
+        """
+        Labeling frame variants in doc sentences.
+        """
+        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(frame_variant_collection, FrameVariantsCollection) or frame_variant_collection is None)
+
+        if frame_variant_collection is None:
+            return
+
+        parsed_news.modify_parsed_sentences(
+            lambda sentence: FrameVariantsParser.parse_frames_in_parsed_text(
+                frame_variants_collection=frame_variant_collection,
+                parsed_text=sentence))
+
     @staticmethod
     def parse_string_list(string_iter, keep_tokens=False, stemmer=None):
         assert(isinstance(string_iter, collections.Iterable))

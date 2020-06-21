@@ -1,21 +1,18 @@
 #!/usr/bin/python
 import logging
-
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.enums import TermFormat
 from arekit.source.ruattitudes.collection import RuAttitudesCollection
+from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
-
-stemmer = MystemWrapper()
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # iterating through collection
-for news in RuAttitudesCollection.iter_news(stemmer):
+for news in RuAttitudesCollection.iter_news():
     logger.debug(u"News: {}".format(news.ID))
-    for sentence in news.iter_sentences():
+    for sentence in news.iter_sentences(return_text=False):
+        assert(isinstance(sentence, RuAttitudesSentence))
         # text
-        logger.debug(u" ".join(sentence.ParsedText.iter_terms(TermFormat.Raw)).encode('utf-8'))
+        logger.debug(sentence.Text.encode('utf-8'))
         # objects
         logger.debug(u",".join([object.get_value() for object in sentence.iter_objects()]))
         # attitudes

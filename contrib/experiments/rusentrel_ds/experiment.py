@@ -37,7 +37,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         ru_attitudes = ra_instance
         if ra_instance is None:
-            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(data_io.Stemmer)
+            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory()
 
         doc_ops.set_ru_attitudes(ru_attitudes)
         opin_ops.set_ru_attitudes(ru_attitudes)
@@ -49,7 +49,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
             prepare_model_root=prepare_model_root)
 
     @staticmethod
-    def read_ruattitudes_in_memory(stemmer, doc_ids_set=None):
+    def read_ruattitudes_in_memory(doc_ids_set=None):
         """
         Performs reading of ruattitude formatted documents and
         selection according to 'doc_ids_set' parameter.
@@ -58,14 +58,13 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
             ids of documents that should be selected.
             'None' corresponds to all the available doc_ids.
         """
-        assert(isinstance(stemmer, Stemmer))
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
         logger.debug("Loading RuAttitudes collection in memory, please wait ...")
 
         d = {}
 
-        for news in RuAttitudesCollection.iter_news(stemmer=stemmer):
+        for news in RuAttitudesCollection.iter_news():
             assert(isinstance(news, RuAttitudesNews))
 
             if doc_ids_set is not None and news.ID not in doc_ids_set:

@@ -44,7 +44,7 @@ for doc_id in RuSentRelIOUtils.iter_collection_indices():
             synonyms.get_synonym_group_index(opinion.TargetValue)).encode('utf-8'))
 
     # Example: Access to the read NEWS collection.
-    for sentence in news.iter_sentences():
+    for sentence in news.iter_sentences(return_text=False):
         assert(isinstance(sentence, RuSentRelSentence))
         # Access to text.
         logger.info(u"\tSentence: '{}'".format(sentence.Text.strip()).encode('utf-8'))

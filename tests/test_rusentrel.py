@@ -4,6 +4,11 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
+from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.processing.text.parser import TextParser
+from arekit.source.rusentiframes.collection import RuSentiFramesCollection
+from arekit.source.rusentiframes.io_utils import RuSentiFramesVersions
+
 sys.path.append('../')
 
 
@@ -76,6 +81,11 @@ class TestTextOpinionsInRuSentrel(unittest.TestCase):
         stemmer = MystemWrapper()
         synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer)
 
+        frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V10)
+        unique_frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
+            variants_with_id=frames_collection.iter_frame_id_and_variants(),
+            stemmer=stemmer)
+
         doc_id = 47
 
         logger.info(u"NewsID: {}".format(doc_id))
@@ -89,9 +99,10 @@ class TestTextOpinionsInRuSentrel(unittest.TestCase):
                                            synonyms=synonyms)
 
         options = RuSentRelNewsParseOptions(stemmer=stemmer,
-                                            keep_tokens=True)
-        parsed_news = news.parse(options,
-                                 frame_variant_collection=None)
+                                            keep_tokens=True,
+                                            frame_variants_collection=unique_frame_variants)
+
+        parsed_news = TextParser.parse_news(news, options)
         assert(isinstance(parsed_news, ParsedNews))
 
         mw = POSMystemWrapper(mystem=Mystem(entire_input=False))

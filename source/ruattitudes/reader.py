@@ -3,7 +3,6 @@ from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.text_object import TextObject
 from arekit.common.text_opinions.base import RefOpinion
 from arekit.processing.lemmatization.base import Stemmer
-from arekit.processing.text.parser import TextParser
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
@@ -28,9 +27,7 @@ class RuAttitudesFormatReader(object):
     # region private methods
 
     @staticmethod
-    def iter_news(input_file, stemmer=None):
-        assert(isinstance(stemmer, Stemmer) or stemmer is None)
-
+    def iter_news(input_file):
         reset = False
         title = None
         title_terms_count = None
@@ -74,26 +71,24 @@ class RuAttitudesFormatReader(object):
 
             if RuAttitudesFormatReader.TITLE_KEY in line:
                 title = RuAttitudesSentence(is_title=True,
-                                            parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
-                                                                                                 is_title=True,
-                                                                                                 stemmer=stemmer),
+                                            text=RuAttitudesFormatReader.__parse_sentence(line, True),
                                             ref_opinions=opinions_list,
                                             objects_list=objects_list,
                                             sentence_index=-1)
                 sentences.append(title)
-                assert(title_terms_count == len(title.ParsedText) or title_terms_count is None)
+                t_len = RuAttitudesFormatReader.__calculate_terms_in_line(line)
+                assert(title_terms_count == t_len or title_terms_count is None)
                 reset = True
 
             if RuAttitudesFormatReader.STEXT_KEY in line and line.index(RuAttitudesFormatReader.STEXT_KEY) == 0:
                 sentence = RuAttitudesSentence(is_title=False,
-                                               parsed_text=RuAttitudesFormatReader.__parse_sentence(line,
-                                                                                                    is_title=False,
-                                                                                                    stemmer=stemmer),
+                                               text=RuAttitudesFormatReader.__parse_sentence(line, False),
                                                ref_opinions=opinions_list,
                                                objects_list=objects_list,
                                                sentence_index=s_index)
                 sentences.append(sentence)
-                assert(text_terms_count == len(sentence.ParsedText) or text_terms_count is None)
+                t_len = RuAttitudesFormatReader.__calculate_terms_in_line(line)
+                assert(text_terms_count == t_len or text_terms_count is None)
                 reset = True
 
             if RuAttitudesFormatReader.NEWS_SEP_KEY in line and title is not None:
@@ -117,6 +112,19 @@ class RuAttitudesFormatReader(object):
             sentences = []
 
         assert(len(sentences) == 0)
+
+    @staticmethod
+    def __calculate_terms_in_line(line):
+        assert(isinstance(line, unicode))
+        return len(line.split(u' '))
+
+    @staticmethod
+    def __parse_sentence(line, is_title):
+        assert(isinstance(is_title, bool))
+
+        key = RuAttitudesFormatReader.STEXT_KEY if not is_title else RuAttitudesFormatReader.TITLE_KEY
+        text = line[len(key):]
+        return text.strip()
 
     @staticmethod
     def __parse_opinion(line, objects_list, label_scaler):
@@ -176,15 +184,6 @@ class RuAttitudesFormatReader(object):
         text_object.set_tag(group_index)
 
         return text_object
-
-    @staticmethod
-    def __parse_sentence(line, is_title, stemmer):
-        assert(isinstance(is_title, bool))
-        assert(isinstance(stemmer, Stemmer) or stemmer is None)
-        key = RuAttitudesFormatReader.STEXT_KEY if not is_title else RuAttitudesFormatReader.TITLE_KEY
-        text = line[len(key):]
-        text = text.strip()
-        return TextParser.from_string(str=text, stemmer=stemmer)
 
     @staticmethod
     def __parse_terms_in_title_count(line):

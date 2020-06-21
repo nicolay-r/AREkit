@@ -1,17 +1,19 @@
+from arekit.common.news_parse_options import NewsParseOptions
 from arekit.processing.lemmatization.base import Stemmer
 
 
-class RuSentRelNewsParseOptions(object):
+class RuSentRelNewsParseOptions(NewsParseOptions):
 
-    def __init__(self, stemmer, keep_tokens):
+    def __init__(self, stemmer, keep_tokens, frame_variants_collection):
         assert(isinstance(stemmer, Stemmer) or isinstance(stemmer, type(None)))
         assert(isinstance(keep_tokens, bool))
-        self.__stemmer = stemmer
-        self.__keep_tokens = keep_tokens
 
-    @property
-    def Stemmer(self):
-        return self.__stemmer
+        super(RuSentRelNewsParseOptions, self).__init__(
+            parse_entities=True,
+            stemmer=stemmer,
+            frame_variants_collection=frame_variants_collection)
+
+        self.__keep_tokens = keep_tokens
 
     @property
     # TODO. Tokens hiding actually discarded
