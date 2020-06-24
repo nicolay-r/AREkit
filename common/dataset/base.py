@@ -1,5 +1,5 @@
 from arekit.common.dataset.doc_ind_mapper import DocumentIndexMapper
-from arekit.common.parsed_news.collection import ParsedNewsCollection
+from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.text_opinions.collection import TextOpinionCollection
 
 

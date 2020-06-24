@@ -2,7 +2,7 @@
 import collections
 import logging
 
-from arekit.common.parsed_news.base import ParsedNews
+from arekit.common.news.parsed.base import ParsedNews
 
 
 class ParsedNewsCollection(object):

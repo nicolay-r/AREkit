@@ -2,9 +2,9 @@ from arekit.common.entities.base import Entity
 from arekit.common.entities.collection import EntityCollection
 from arekit.common.experiment.neutral.algo.base import BaseNeutralAnnotationAlgorithm
 from arekit.common.labels.base import NeutralLabel
+from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.dataset.text_opinions.enums import DistanceType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper

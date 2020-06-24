@@ -1,5 +1,5 @@
 from arekit.common.entities.base import Entity
-from arekit.common.parsed_news.base import ParsedNews
+from arekit.common.news.parsed.base import ParsedNews
 from arekit.processing.text.token import Token
 
 

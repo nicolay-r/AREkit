@@ -2,23 +2,21 @@
 import sys
 import logging
 import unittest
-from pymystem3 import Mystem
-
-from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.processing.text.parser import TextParser
-from arekit.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.source.rusentiframes.io_utils import RuSentiFramesVersions
 
 sys.path.append('../')
 
-
+from pymystem3 import Mystem
+from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.term_position import TermPositionTypes
+from arekit.processing.text.parser import TextParser
+from arekit.source.rusentiframes.collection import RuSentiFramesCollection
+from arekit.source.rusentiframes.io_utils import RuSentiFramesVersions
 from arekit.common.entities.base import Entity
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.parsed_news.base import ParsedNews
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.entities.types import EntityType
-from arekit.common.parsed_news.term_position import TermPositionTypes
 from arekit.contrib.bert.entity.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.lemmatization.mystem import MystemWrapper

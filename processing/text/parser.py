@@ -6,7 +6,7 @@ from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.frame_variants.parse import FrameVariantsParser
 from arekit.common.news.base import News
 from arekit.common.news.parse_options import NewsParseOptions
-from arekit.common.parsed_news.base import ParsedNews
+from arekit.common.news.parsed.base import ParsedNews
 from arekit.processing.text.news_stat import debug_statistics, debug_show_terms
 from arekit.processing.text.parsed import ParsedText
 from arekit.processing.text.tokens import Tokens

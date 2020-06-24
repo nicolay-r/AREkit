@@ -3,11 +3,11 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
-from arekit.common.parsed_news.base import ParsedNews
-from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.parsed_news.term_position import TermPositionTypes
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
+from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.collection import ParsedNewsCollection
+from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.text_opinion import TextOpinion
 
 

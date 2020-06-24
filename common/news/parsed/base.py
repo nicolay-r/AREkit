@@ -1,7 +1,7 @@
 import collections
 
 from arekit.common.entities.base import Entity
-from arekit.common.parsed_news.term_position import TermPosition, TermPositionTypes
+from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.processing.text.enums import TermFormat
 from arekit.processing.text.parsed import ParsedText
 
