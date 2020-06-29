@@ -5,6 +5,7 @@ import unittest
 
 sys.path.append('../')
 
+from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
@@ -13,6 +14,13 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class TestRuAttiudes(unittest.TestCase):
+
+    def test_indices(self):
+        ids = set()
+        for news in RuAttitudesCollection.iter_news():
+            assert(isinstance(news, RuAttitudesNews))
+            assert(news.ID not in ids)
+            ids.add(news.ID)
 
     def test_reading(self):
         # iterating through collection
