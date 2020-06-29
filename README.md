@@ -97,6 +97,17 @@ pip install -r dependencies.txt
 
 ## Research Applications & References
 
+* Attention-Based Neural Networks for Sentiment Attitude Extraction using Distant Supervision 
+[[ACM-DOI]](https://doi.org/10.1145/3405962.3405985)
+    * Rusnachenko Nicolay, Loukachevitch Natalia
+    * WIMS-2020
+
+* Studying Attention Models in Sentiment Attitude Extraction Task 
+[[Springer]](https://doi.org/10.1007/978-3-030-51310-8_15) /
+[[arXiv:2006.11605]](https://arxiv.org/abs/2006.11605)
+    * Rusnachenko Nicolay, Loukachevitch Natalia
+    * NLDB-2020
+
 * Distant Supervision for Sentiment Attitude Extraction
 [[paper-ranlp-proceeding]](http://lml.bas.bg/ranlp2019/proceedings-ranlp-2019.pdf),
 [[poster]](docs/ranlp_2019_poster_portrait.pdf)

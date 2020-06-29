@@ -51,35 +51,39 @@ from arekit.contrib.networks.context.architectures.rnn import RNN
 
 def get_supported():
 
-    return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
-
-            (AttentionEndsAndFramesBiLSTMConfig(), AttentionEndsAndFramesBiLSTM()),
-            (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
-
-            (AttentionSynonymEndsBiLSTMConfig(), AttentionSynonymEndsBiLSTM()),
+    return [# Self-attention
+            (SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
             (AttentionSelfPZhouBiLSTMConfig(), AttentionSelfPZhouBiLSTM()),
             (AttentionSelfZYangBiLSTMConfig(), AttentionSelfZYangBiLSTM()),
 
+            # CNN based
             (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),
+
+            # RNN-based
             (RNNConfig(), RNN()),
             (BiLSTMConfig(), BiLSTM()),
 
+            # RCNN-based models (Recurrent-CNN)
             (RCNNConfig(), RCNN()),
             (AttentionSelfPZhouRCNNConfig(), AttentionSelfPZhouRCNN()),
             (AttentionSelfZYangRCNNConfig(), AttentionSelfZYangRCNN()),
 
+            # IAN (Interactive attention networks)
             (IANFramesConfig(), IANFrames()),
             (IANEndsAndFramesConfig(), IANEndsAndFrames()),
             (IANEndsBasedConfig(), IANEndsBased()),
             (IANSynonymEndsBasedConfig(), IANSynonymEndsBased()),
 
+            # MLP-Attention-based
+            (AttentionEndsAndFramesBiLSTMConfig(), AttentionEndsAndFramesBiLSTM()),
+            (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
+            (AttentionSynonymEndsBiLSTMConfig(), AttentionSynonymEndsBiLSTM()),
             (AttentionEndsAndFramesPCNNConfig(), AttentionEndsAndFramesPCNN()),
             [AttentionEndsAndFramesCNNConfig(), AttentionEndsAndFramesCNN()],
             (AttentionEndsCNNConfig(), AttentionEndsCNN()),
             (AttentionEndsPCNNConfig(), AttentionEndsPCNN()),
             (AttentionSynonymEndsPCNNConfig(), AttentionSynonymEndsPCNN()),
             (AttentionSynonymEndsCNNConfig(), AttentionSynonymEndsCNN()),
-
             (AttentionFramesCNNConfig(), AttentionFramesCNN()),
             (AttentionFramesPCNNConfig(), AttentionFramesPCNN())]
