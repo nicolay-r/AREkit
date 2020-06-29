@@ -69,8 +69,11 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     # region private methods
 
-    def get_text_opinions_collection_helper(self, data_type):
-        return self.__init_helper.TextOpinionCollectionHelpers[data_type]
+    def get_text_opinion_helper(self, data_type):
+        return self.__init_helper.TextOpinionHelpers[data_type]
+
+    def get_text_opinions_collection(self, data_type):
+        return self.__init_helper.TextOpitnionCollections[data_type]
 
     def get_bags_collection_helper(self, data_type):
         return self.__init_helper.BagsCollectionHelpers[data_type]
@@ -78,10 +81,25 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
         log.write_log(data_io=self.__experiment.DataIO, log_names=keys, log_values=values)
-        self.get_text_opinions_collection_helper(DataType.Train).debug_labels_statistic()
-        self.get_text_opinions_collection_helper(DataType.Train).debug_unique_relations_statistic()
-        self.get_text_opinions_collection_helper(DataType.Test).debug_labels_statistic()
-        self.get_text_opinions_collection_helper(DataType.Test).debug_unique_relations_statistic()
+
+        log.debug_labels_statistic(
+            collection=self.get_text_opinions_collection(DataType.Train),
+            name=unicode(DataType.Train),
+            labels_helper=self.get_labels_helper(),
+            stat_func=self.__init_helper.get_statistic)
+        log.debug_unique_relations_statistic(
+            name=unicode(DataType.Train),
+            collection=self.get_text_opinions_collection(DataType.Train))
+
+        log.debug_labels_statistic(
+            collection=self.get_text_opinions_collection(DataType.Test),
+            name=unicode(DataType.Test),
+            labels_helper=self.get_labels_helper(),
+            stat_func=self.__init_helper.get_statistic)
+        log.debug_unique_relations_statistic(
+            name=unicode(DataType.Test),
+            collection=self.get_text_opinions_collection(DataType.Test))
+
         self.get_bags_collection_helper(DataType.Train).print_log_statistics()
         self.get_bags_collection_helper(DataType.Test).print_log_statistics()
 

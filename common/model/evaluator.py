@@ -1,5 +1,7 @@
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
+from arekit.common.experiment.opinions import compose_opinion_collection
+from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
-from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 
 
 class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
@@ -12,11 +14,11 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
         doc_ids_set = set(self.__model.IO.iter_doc_ids_to_compare(doc_ids))
 
-        helper = self.__model.get_text_opinions_collection_helper(data_type)
-        assert(isinstance(helper, LabeledLinkedTextOpinionCollectionHelper))
-
-        collections_iter = helper.iter_converted_to_opinion_collections(
+        collections_iter = self.iter_converted_to_opinion_collections(
+            collection=self.__model.get_text_opinions_collection(data_type),
             create_collection_func=lambda: self.__model.IO.create_opinion_collection(),
+            labels_helper=self.__model.LabelsHelper,
+            text_opinion_helper=self.__model.get_text_opinion_helper(data_type),
             label_calc_mode=self.__model.Config.TextOpinionLabelCalculationMode)
 
         used_doc_ids = []
@@ -39,6 +41,28 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
         print "Data Type: {}".format(data_type)
         print "Collections saved: {}".format(len(used_doc_ids))
         print "News list: [{lst}]".format(lst=", ".join([str(i) for i in used_doc_ids]))
+
+    @staticmethod
+    def iter_converted_to_opinion_collections(collection,
+                                              create_collection_func,
+                                              text_opinion_helper,
+                                              labels_helper,
+                                              label_calc_mode):
+        assert(isinstance(collection, LinkedTextOpinionCollection))
+        assert(isinstance(text_opinion_helper, TextOpinionHelper))
+        assert(callable(create_collection_func))
+        assert(isinstance(label_calc_mode, unicode))
+
+        for news_id in collection.get_unique_news_ids():
+
+            collection = compose_opinion_collection(
+                create_collection_func=create_collection_func,
+                linked_data_iter=collection.iter_wrapped_linked_text_opinions(news_id=news_id),
+                labels_helper=labels_helper,
+                to_opinion_func=text_opinion_helper.to_opinion,
+                label_calc_mode=label_calc_mode)
+
+            yield collection, news_id
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
         return self.__model.IO.iter_opinion_collections_to_compare(

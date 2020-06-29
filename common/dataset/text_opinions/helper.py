@@ -33,6 +33,9 @@ class TextOpinionHelper(object):
                                           position_type=position_type)
 
     def to_opinion(self, text_opinion, label=None):
+        """
+        Converts text_opinion to the document level opinion.
+        """
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(label, Label) or label is None)
 
