@@ -1,153 +1,72 @@
 #!/usr/bin/python
-import sys
 import logging
+import sys
 import unittest
 
 sys.path.append('../')
 
-from pymystem3 import Mystem
-from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.news.parsed.term_position import TermPositionTypes
-from arekit.processing.text.parser import TextParser
-from arekit.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.source.rusentiframes.io_utils import RuSentiFramesVersions
-from arekit.common.entities.base import Entity
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.entities.types import EntityType
-from arekit.contrib.bert.entity.str_rus_cased_fmt import RussianEntitiesCasedFormatter
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
+from arekit.common.bound import Bound
+from arekit.common.opinions.base import Opinion
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.token import Token
+from arekit.source.rusentrel.entities.entity import RuSentRelEntity
+from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
 from arekit.source.rusentrel.news.base import RuSentRelNews
-from arekit.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
+from arekit.source.rusentrel.sentence import RuSentRelSentence
 from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
-class TestTextOpinionsInRuSentrel(unittest.TestCase):
+class TestRuSentRel(unittest.TestCase):
 
-    @staticmethod
-    def __terms_to_str(terms):
-        r = []
-        for t in terms:
-            if isinstance(t, Token):
-                r.append(t.get_token_value())
-            elif isinstance(t, Entity):
-                r.append(u"[{}]".format(t.Value))
-            else:
-                r.append(t)
-        return r
+    def test_reading(self):
 
-    @staticmethod
-    def __process(terms, entities_formatter, s_ind, t_ind):
-        assert(isinstance(entities_formatter, RussianEntitiesCasedFormatter))
-
-        r = []
-        for i, term in enumerate(terms):
-            result = None
-            if isinstance(term, Entity):
-                if i == s_ind:
-                    result = entities_formatter.to_string(term, EntityType.Subject)
-                if i == t_ind:
-                    result = entities_formatter.to_string(term, EntityType.Object)
-                else:
-                    result = entities_formatter.to_string(term, EntityType.Other)
-            elif isinstance(term, Token):
-                result = term.get_token_value()
-            else:
-                result = term
-            r.append(result)
-        return r
-
-    @staticmethod
-    def __is_same_sentence(text_opinion, parsed_news):
-        assert(isinstance(text_opinion, TextOpinion))
-        s_ind = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
-                                                position_type=TermPositionTypes.SentenceIndex)
-        t_ind = parsed_news.get_entity_position(id_in_document=text_opinion.TargetId,
-                                                position_type=TermPositionTypes.SentenceIndex)
-        return s_ind == t_ind
-
-    def test_opinions_in_rusentrel(self):
+        # Initializing logger
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
-
         logging.basicConfig(level=logging.DEBUG)
+
+        # Initializing stemmer
         stemmer = MystemWrapper()
+
+        # Reading synonyms collection.
         synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer)
 
-        frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V10)
-        unique_frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
-            variants_with_id=frames_collection.iter_frame_id_and_variants(),
-            stemmer=stemmer)
+        for doc_id in RuSentRelIOUtils.iter_collection_indices():
 
-        doc_id = 47
+            logger.info(u"NewsID: {}".format(doc_id))
 
-        logger.info(u"NewsID: {}".format(doc_id))
+            news = RuSentRelNews.read_document(doc_id=doc_id,
+                                               synonyms=synonyms)
 
-        opinions = RuSentRelOpinionCollection.load_collection(doc_id,
-                                                              synonyms=synonyms)
+            opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
+                                                                  synonyms=synonyms)
 
-        assert(isinstance(opinions, OpinionCollection))
+            # Example: Access to the read OPINIONS collection.
+            for opinion in opinions:
+                assert(isinstance(opinion, Opinion))
+                logger.info(u"\t{}->{} ({}) [synonym groups opinion: {}->{}]".format(
+                    opinion.SourceValue,
+                    opinion.TargetValue,
+                    opinion.Sentiment.to_class_str(),
+                    # Considering synonyms.
+                    synonyms.get_synonym_group_index(opinion.SourceValue),
+                    synonyms.get_synonym_group_index(opinion.TargetValue)).encode('utf-8'))
 
-        news = RuSentRelNews.read_document(doc_id=doc_id,
-                                           synonyms=synonyms)
-
-        options = RuSentRelNewsParseOptions(stemmer=stemmer,
-                                            keep_tokens=True,
-                                            frame_variants_collection=unique_frame_variants)
-
-        parsed_news = TextParser.parse_news(news, options)
-        assert(isinstance(parsed_news, ParsedNews))
-
-        mw = POSMystemWrapper(mystem=Mystem(entire_input=False))
-
-        entities_formatter = RussianEntitiesCasedFormatter(
-            pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
-
-        for wrap in news.iter_wrapped_linked_text_opinions(opinions):
-
-            if len(wrap) == 0:
-                continue
-
-            text_opinion = wrap.First
-            assert(isinstance(text_opinion, TextOpinion))
-            text_opinion.set_owner(opinions)
-            assert(isinstance(wrap, LinkedTextOpinionsWrapper))
-
-            is_same_sentence = self.__is_same_sentence(text_opinion=text_opinion,
-                                                       parsed_news=parsed_news)
-
-            if not is_same_sentence:
-                continue
-
-            s_index = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
-                                                      position_type=TermPositionTypes.SentenceIndex)
-
-            terms = list(parsed_news.iter_sentence_terms(s_index, return_id=False))
-            str_terms = self.__terms_to_str(terms)
-            str_terms_joined = u" ".join(str_terms).strip()
-
-            s_ind = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
-                                                    position_type=TermPositionTypes.IndexInSentence)
-            t_ind = parsed_news.get_entity_position(id_in_document=text_opinion.TargetId,
-                                                    position_type=TermPositionTypes.IndexInSentence)
-
-            logger.info(str_terms_joined)
-            logger.info("text_opinion: {}->{}".format(text_opinion.SourceId, text_opinion.TargetId))
-            logger.info("[{}] {}->{}".format(s_index, s_ind, t_ind))
-            logger.info("'{}' -> '{}'".format(terms[s_ind], terms[t_ind]))
-            logger.info(str_terms_joined)
-            logger.info(u" ".join(self.__process(terms=terms,
-                                                 entities_formatter=entities_formatter,
-                                                 s_ind=s_ind,
-                                                 t_ind=t_ind)))
-
-            self.assert_(isinstance(terms[s_ind], Entity))
-            self.assert_(isinstance(terms[t_ind], Entity))
+            # Example: Access to the read NEWS collection.
+            for sentence in news.iter_sentences(return_text=False):
+                assert(isinstance(sentence, RuSentRelSentence))
+                # Access to text.
+                logger.info(u"\tSentence: '{}'".format(sentence.Text.strip()).encode('utf-8'))
+                # Access to inner entities.
+                for entity, bound in sentence.iter_entity_with_local_bounds():
+                    assert(isinstance(entity, RuSentRelEntity))
+                    assert(isinstance(bound, Bound))
+                    logger.info(u"\tEntity: {} ({}), text position: ({}-{}), IdInDocument: {}".format(
+                        entity.Value,
+                        entity.Type,
+                        bound.Position,
+                        bound.Position + bound.Length,
+                        entity.IdInDocument).encode('utf-8'))
 
 
 if __name__ == '__main__':
