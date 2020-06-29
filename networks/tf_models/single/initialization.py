@@ -209,14 +209,11 @@ class SingleInstanceModelExperimentInitializer(object):
 
         return collection
 
-    # TODO. Simplify (parsed_news already provides filter)
     def __iter_all_terms(self, term_check_func):
         for pnc in self.__pncs.itervalues():
             assert(isinstance(pnc, ParsedNewsCollection))
             for news_ID in pnc.iter_news_ids():
-                for term in pnc.iter_news_terms(news_ID):
-                    if not term_check_func(term):
-                        continue
+                for term in pnc.iter_news_terms(news_ID, term_check=term_check_func):
                     yield term
 
     # endregion

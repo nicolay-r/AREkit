@@ -34,9 +34,9 @@ class ParsedNewsCollection(object):
         assert(isinstance(news_id, int))
         return self.__by_id[news_id]
 
-    def iter_news_terms(self, news_id):
+    def iter_news_terms(self, news_id, term_check=None):
         assert(isinstance(news_id, int))
-        for term in self.__by_id[news_id].iter_terms():
+        for term in self.__by_id[news_id].iter_terms(term_check=term_check):
             yield term
 
     def iter_news_ids(self):
