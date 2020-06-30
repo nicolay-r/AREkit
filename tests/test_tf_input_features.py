@@ -68,6 +68,7 @@ class TestTfInputFeatures(unittest.TestCase):
                                                           position_type=TermPositionTypes.SentenceIndex)
 
                 terms = list(parsed_news.iter_sentence_terms(s_index, return_id=False))
+
                 s_ind = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
                                                         position_type=TermPositionTypes.IndexInSentence)
                 t_ind = parsed_news.get_entity_position(id_in_document=text_opinion.TargetId,
@@ -78,15 +79,17 @@ class TestTfInputFeatures(unittest.TestCase):
                     e1_in=s_ind,
                     e2_in=t_ind,
                     expected_size=random.randint(50, 60),
-                    filler=TestTfInputFeatures.X_PAD_VALUE)
+                    filler=u"<PAD>")
 
                 cropped_terms = x_feature.ValueVector
                 subj_ind = s_ind - x_feature.StartIndex
                 obj_ind = t_ind - x_feature.StartIndex
 
+                logger.info(len(terms))
                 logger.info(u"Source Index: {}".format(subj_ind))
                 logger.info(u"Target Index: {}".format(obj_ind))
-                print u" ".join([u"'{}'".format(t) for t in terms_to_str(cropped_terms)])
+                s = u" ".join(terms_to_str(cropped_terms))
+                logger.info(u"Result: {}".format(s))
 
                 assert(isinstance(x_feature.ValueVector[subj_ind], Entity))
                 assert(isinstance(x_feature.ValueVector[obj_ind], Entity))
