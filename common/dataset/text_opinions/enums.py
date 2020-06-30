@@ -1,6 +1,6 @@
 from enum import Enum
 
-from arekit.common.parsed_news.term_position import TermPositionTypes
+from arekit.common.news.parsed.term_position import TermPositionTypes
 
 
 class EntityEndType(Enum):

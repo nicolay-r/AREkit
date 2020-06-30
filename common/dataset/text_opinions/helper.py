@@ -1,8 +1,8 @@
 from arekit.common.entities.base import Entity
 from arekit.common.labels.base import Label
+from arekit.common.news.parsed.collection import ParsedNewsCollection
+from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.opinions.base import Opinion
-from arekit.common.parsed_news.collection import ParsedNewsCollection
-from arekit.common.parsed_news.term_position import TermPosition, TermPositionTypes
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.dataset.text_opinions.enums import EntityEndType, DistanceType
 
@@ -33,6 +33,9 @@ class TextOpinionHelper(object):
                                           position_type=position_type)
 
     def to_opinion(self, text_opinion, label=None):
+        """
+        Converts text_opinion to the document level opinion.
+        """
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(label, Label) or label is None)
 

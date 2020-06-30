@@ -19,6 +19,7 @@ Minor changes (light refactoring):
 * `DataType` now enumeration. List of Supported data-types now a part of experiment
 * `RuSentRel` iter_wrapped_linked_text_opinions now does not provide special checks on entity positions. 
 The latter were moved onto sample level.
+* helper from model removed (`LabeledLinkedTextOpinionCollectionHelper`)
 
 ## v0.20.4-rc
 Updates:

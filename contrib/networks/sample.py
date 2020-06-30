@@ -9,7 +9,7 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.model.sample import InputSampleBase
-from arekit.common.parsed_news.term_position import TermPositionTypes
+from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper

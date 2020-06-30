@@ -5,10 +5,10 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.experiment.labeling import LabeledCollection
-from arekit.common.model.helpers.text_opinions import LabeledLinkedTextOpinionCollectionHelper
 from arekit.common.model.labeling.single import SingleLabelsHelper
-from arekit.common.parsed_news.collection import ParsedNewsCollection
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
+from arekit.common.news.parsed.collection import ParsedNewsCollection
+from arekit.common.text_opinions.text_opinion import TextOpinion
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
@@ -105,15 +105,9 @@ class SingleInstanceModelExperimentInitializer(object):
             lambda data_type: BagsCollectionHelper(bags_collection=self.__bags_collection[data_type],
                                                    name=data_type))
 
-        self.__text_opinion_collection_helpers = self.__create_collection(
-            supported_data_types,
-            lambda data_type: LabeledLinkedTextOpinionCollectionHelper(
-                collection=self.__text_opinion_collections[data_type],
-                labels_helper=self.__labels_helper,
-                text_opinion_helper=self.__text_opinion_helpers[data_type],
-                name=data_type))
+        norm, _ = self.get_statistic(collection=self.__text_opinion_collections[DataType.Train],
+                                     labels_helper=self.__labels_helper)
 
-        norm, _ = self.__text_opinion_collection_helpers[DataType.Train].get_statistic()
         config.set_class_weights(norm)
 
         config.notify_initialization_completed()
@@ -123,6 +117,10 @@ class SingleInstanceModelExperimentInitializer(object):
     @property
     def _LabelsScaler(self):
         return self.__labels_scaler
+
+    @property
+    def TextOpitnionCollections(self):
+        return self.__text_opinion_collections
 
     @property
     def BagsCollections(self):
@@ -137,18 +135,30 @@ class SingleInstanceModelExperimentInitializer(object):
         return self.__labeled_collections
 
     @property
-    def TextOpinionCollectionHelpers(self):
-        return self.__text_opinion_collection_helpers
-
-    @property
     def LabelsHelper(self):
         return self.__labels_helper
+
+    @property
+    def TextOpinionHelpers(self):
+        return self.__text_opinion_helpers
 
     @property
     def _BagCollectionType(self):
         return SingleBagsCollection
 
     # endregion
+
+    @staticmethod
+    def get_statistic(collection, labels_helper):
+        stat = [0] * labels_helper.get_classes_count()
+
+        for text_opinion in collection:
+            assert(isinstance(text_opinion, TextOpinion))
+            stat[labels_helper.label_to_uint(text_opinion.Sentiment)] += 1
+
+        total = sum(stat)
+        norm = [100.0 * value / total if total > 0 else 0 for value in stat]
+        return norm, stat
 
     def _create_empty_sample_func(self, config):
         return None
@@ -199,14 +209,11 @@ class SingleInstanceModelExperimentInitializer(object):
 
         return collection
 
-    # TODO. Simplify (parsed_news already provides filter)
     def __iter_all_terms(self, term_check_func):
         for pnc in self.__pncs.itervalues():
             assert(isinstance(pnc, ParsedNewsCollection))
             for news_ID in pnc.iter_news_ids():
-                for term in pnc.iter_news_terms(news_ID):
-                    if not term_check_func(term):
-                        continue
+                for term in pnc.iter_news_terms(news_ID, term_check=term_check_func):
                     yield term
 
     # endregion

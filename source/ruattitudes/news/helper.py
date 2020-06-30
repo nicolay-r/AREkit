@@ -1,4 +1,4 @@
-from arekit.common.text_object import TextObject
+from arekit.source.ruattitudes.text_object import TextObject
 from arekit.common.text_opinions.base import RefOpinion
 from arekit.common.opinions.base import Opinion
 from arekit.source.ruattitudes.news.base import RuAttitudesNews

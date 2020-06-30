@@ -1,9 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-import logging
-
-import numpy as np
-
 from arekit.contrib.networks.context.architectures.att_ef_bilstm import AttentionEndsAndFramesBiLSTM
 from arekit.contrib.networks.context.architectures.att_ef_cnn import AttentionEndsAndFramesCNN
 from arekit.contrib.networks.context.architectures.att_ef_pcnn import AttentionEndsAndFramesPCNN
@@ -48,68 +42,48 @@ from arekit.contrib.networks.context.configurations.ian_ends import IANEndsBased
 from arekit.contrib.networks.context.configurations.ian_se import IANSynonymEndsBasedConfig
 from arekit.contrib.networks.context.configurations.ian_frames import IANFramesConfig
 from arekit.contrib.networks.context.configurations.rcnn import RCNNConfig
+from arekit.contrib.networks.context.configurations.rnn import RNNConfig
 from arekit.contrib.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
-
 from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.contrib.networks.context.architectures.cnn import VanillaCNN
 from arekit.contrib.networks.context.architectures.rnn import RNN
-from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.networks.context.configurations.rnn import RNNConfig
 
 
-def init_config(config):
-    assert(isinstance(config, DefaultNetworkConfig))
-    config.set_term_embedding(np.zeros((100, 100)))
-    config.set_class_weights([1] * config.ClassesCount)
-    config.notify_initialization_completed()
+def get_supported():
 
-
-def contexts_supported():
-    return [(SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
-
-            (AttentionEndsAndFramesBiLSTMConfig(), AttentionEndsAndFramesBiLSTM()),
-            (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
-
-            (AttentionSynonymEndsBiLSTMConfig(), AttentionSynonymEndsBiLSTM()),
+    return [# Self-attention
+            (SelfAttentionBiLSTMConfig(), SelfAttentionBiLSTM()),
             (AttentionSelfPZhouBiLSTMConfig(), AttentionSelfPZhouBiLSTM()),
             (AttentionSelfZYangBiLSTMConfig(), AttentionSelfZYangBiLSTM()),
 
+            # CNN based
             (CNNConfig(), VanillaCNN()),
             (CNNConfig(), PiecewiseCNN()),
+
+            # RNN-based
             (RNNConfig(), RNN()),
             (BiLSTMConfig(), BiLSTM()),
 
+            # RCNN-based models (Recurrent-CNN)
             (RCNNConfig(), RCNN()),
             (AttentionSelfPZhouRCNNConfig(), AttentionSelfPZhouRCNN()),
             (AttentionSelfZYangRCNNConfig(), AttentionSelfZYangRCNN()),
 
+            # IAN (Interactive attention networks)
             (IANFramesConfig(), IANFrames()),
             (IANEndsAndFramesConfig(), IANEndsAndFrames()),
             (IANEndsBasedConfig(), IANEndsBased()),
             (IANSynonymEndsBasedConfig(), IANSynonymEndsBased()),
 
+            # MLP-Attention-based
+            (AttentionEndsAndFramesBiLSTMConfig(), AttentionEndsAndFramesBiLSTM()),
+            (AttentionFramesBiLSTMConfig(), AttentionFramesBiLSTM()),
+            (AttentionSynonymEndsBiLSTMConfig(), AttentionSynonymEndsBiLSTM()),
             (AttentionEndsAndFramesPCNNConfig(), AttentionEndsAndFramesPCNN()),
             [AttentionEndsAndFramesCNNConfig(), AttentionEndsAndFramesCNN()],
             (AttentionEndsCNNConfig(), AttentionEndsCNN()),
             (AttentionEndsPCNNConfig(), AttentionEndsPCNN()),
             (AttentionSynonymEndsPCNNConfig(), AttentionSynonymEndsPCNN()),
             (AttentionSynonymEndsCNNConfig(), AttentionSynonymEndsCNN()),
-
             (AttentionFramesCNNConfig(), AttentionFramesCNN()),
             (AttentionFramesPCNNConfig(), AttentionFramesPCNN())]
-
-
-if __name__ == "__main__":
-
-    logger = logging.getLogger(__name__)
-    logging.basicConfig(level=logging.INFO)
-
-    for config, network in contexts_supported():
-        assert(isinstance(config, DefaultNetworkConfig))
-        config.modify_classes_count(3)
-
-        logger.info("Compile: {}".format(type(network)))
-        logger.info("Clases count: {}".format(config.ClassesCount))
-
-        init_config(config)
-        network.compile(config, reset_graph=True)

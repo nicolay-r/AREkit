@@ -11,8 +11,8 @@ from arekit.bert.providers.text.single import SingleTextProvider
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.common.parsed_news.base import ParsedNews
-from arekit.common.parsed_news.term_position import TermPositionTypes
+from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.formats.base import BaseExperiment
 
