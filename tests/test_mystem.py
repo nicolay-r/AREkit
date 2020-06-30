@@ -3,7 +3,7 @@ import sys
 import unittest
 from pymystem3 import Mystem
 
-sys.path.append('../')
+sys.path.append('../../')
 
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 

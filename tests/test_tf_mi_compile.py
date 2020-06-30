@@ -3,7 +3,7 @@ import logging
 import sys
 import unittest
 
-sys.path.append('../')
+sys.path.append('../../')
 
 
 from arekit.tests.tf_networks.supported import get_supported

@@ -5,7 +5,7 @@ import unittest
 import tensorflow as tf
 import logging
 
-sys.path.append('../')
+sys.path.append('../../')
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.scales.three import ThreeLabelScaler

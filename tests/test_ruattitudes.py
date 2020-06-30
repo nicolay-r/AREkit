@@ -3,7 +3,7 @@ import logging
 import sys
 import unittest
 
-sys.path.append('../')
+sys.path.append('../../')
 
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.collection import RuAttitudesCollection

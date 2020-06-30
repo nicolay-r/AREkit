@@ -4,7 +4,7 @@ import logging
 import sys
 import unittest
 
-sys.path.append('../')
+sys.path.append('../../')
 
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig

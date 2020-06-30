@@ -3,7 +3,7 @@ import sys
 import unittest
 
 
-sys.path.append('../')
+sys.path.append('../../')
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import PositiveLabel
