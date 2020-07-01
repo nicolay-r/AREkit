@@ -78,11 +78,11 @@ class StringTextTermsMapper(TextTermsMapper):
                                                       entity_type=EntityType.Other)
 
     def map_word(self, w_ind, word):
-        return word
+        return word.strip()
 
     def map_text_frame_variant(self, fv_ind, text_frame_variant):
         assert(isinstance(text_frame_variant, TextFrameVariant))
-        return text_frame_variant.Variant.get_value()
+        return text_frame_variant.Variant.get_value().strip()
 
     def map_token(self, t_ind, token):
         assert(isinstance(token, Token))
