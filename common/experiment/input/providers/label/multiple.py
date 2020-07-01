@@ -1,11 +1,11 @@
-from arekit.common.experiment.input.providers.label.base import BertLabelProvider
+from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.labels.base import Label
 
 
-class BertMultipleLabelProvider(BertLabelProvider):
+class MultipleLabelProvider(LabelProvider):
 
     def __init__(self, label_scaler):
-        super(BertMultipleLabelProvider, self).__init__(label_scaler=label_scaler)
+        super(MultipleLabelProvider, self).__init__(label_scaler=label_scaler)
 
     def calculate_output_label(self, expected_label, etalon_label):
         assert(isinstance(expected_label, Label))

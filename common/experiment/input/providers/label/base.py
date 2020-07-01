@@ -1,7 +1,7 @@
 from arekit.common.experiment.scales.base import BaseLabelScaler
 
 
-class BertLabelProvider(object):
+class LabelProvider(object):
 
     def __init__(self, label_scaler):
         assert(isinstance(label_scaler, BaseLabelScaler))

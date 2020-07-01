@@ -3,11 +3,11 @@ from collections import OrderedDict
 import pandas as pd
 
 from arekit.common.experiment.input.formatters.base import BaseBertRowsFormatter
-from arekit.common.experiment.input.providers.label.base import BertLabelProvider
-from arekit.common.experiment.input.providers.label.binary import BertBinaryLabelProvider
-from arekit.common.experiment.input.providers.label.multiple import BertMultipleLabelProvider
+from arekit.common.experiment.input.providers.label.base import LabelProvider
+from arekit.bert.input.providers.label.binary import BinaryLabelProvider
+from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.common.experiment.input.providers.row_ids.binary import BinaryIDProvider
+from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.providers.text.single import SingleTextProvider
 from arekit.common.experiment.data_type import DataType
@@ -36,7 +36,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
     T_IND = 't_ind'
 
     def __init__(self, data_type, label_provider, text_provider):
-        assert(isinstance(label_provider, BertLabelProvider))
+        assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(text_provider, SingleTextProvider))
 
         self.__label_provider = label_provider
@@ -53,9 +53,9 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
     @staticmethod
     def __create_row_ids_formatter(label_provider):
-        if isinstance(label_provider, BertBinaryLabelProvider):
+        if isinstance(label_provider, BinaryLabelProvider):
             return BinaryIDProvider()
-        if isinstance(label_provider, BertMultipleLabelProvider):
+        if isinstance(label_provider, MultipleLabelProvider):
             return MultipleIDProvider()
 
     def __is_train(self):

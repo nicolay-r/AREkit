@@ -2,7 +2,7 @@
 from arekit.bert.input.providers.text.pair import PairTextProvider
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.input.formatters.sample.base import BaseSampleFormatter
-from arekit.common.experiment.input.providers.label.multiple import BertMultipleLabelProvider
+from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.synonyms import SynonymsCollection
 
@@ -31,4 +31,4 @@ class QaMultipleSampleFormatter(BaseSampleFormatter):
                 synonyms=synonyms,
                 labels_formatter=labels_formatter,
                 entities_formatter=entity_formatter),
-            label_provider=BertMultipleLabelProvider(label_scaler=label_scaler))
+            label_provider=MultipleLabelProvider(label_scaler=label_scaler))

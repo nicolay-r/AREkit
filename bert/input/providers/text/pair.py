@@ -14,18 +14,16 @@ class PairTextProvider(SingleTextProvider):
 
     TEXT_B = u"text_b"
 
-    def __init__(self, text_b_template, labels_formatter, entities_formatter, synonyms):
+    def __init__(self, text_b_template, labels_formatter, text_terms_mapper):
         """
         text_b_template: unicode
             assumes to include {subject}, {object}, and {context} in related template,
             and {label} (optional)
         labels_formatter: StringLabelsFormatter
-        entities_formatter: StringEntitiesFormatter
         """
         assert(isinstance(text_b_template, unicode))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        super(PairTextProvider, self).__init__(entities_formatter=entities_formatter,
-                                               synonyms=synonyms)
+        super(PairTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
         self.__text_b_template = text_b_template
         self.__labels_formatter = labels_formatter
 
@@ -51,8 +49,8 @@ class PairTextProvider(SingleTextProvider):
         inner_context = list(self._mapper.iter_mapped(sentence_terms[s_ind+1:t_ind]))
 
         row[self.TEXT_B] = self.__text_b_template.format(
-            subject=self._entities_formatter.to_string(None, EntityType.Subject),
-            object=self._entities_formatter.to_string(None, EntityType.Object),
+            subject=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Subject),
+            object=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Object),
             context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
             label=self.__labels_formatter.label_to_str(expected_label))
 

@@ -2,7 +2,7 @@
 from arekit.bert.input.providers.text.pair import PairTextProvider
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.input.formatters.sample.base import BaseSampleFormatter
-from arekit.common.experiment.input.providers.label.binary import BertBinaryLabelProvider
+from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.synonyms import SynonymsCollection
 
@@ -31,4 +31,4 @@ class QaBinarySampleFormatter(BaseSampleFormatter):
                 synonyms=synonyms,
                 labels_formatter=labels_formatter,
                 entities_formatter=entity_formatter),
-            label_provider=BertBinaryLabelProvider(label_scaler=label_scaler))
+            label_provider=BinaryLabelProvider(label_scaler=label_scaler))

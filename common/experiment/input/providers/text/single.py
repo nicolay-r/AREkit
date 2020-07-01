@@ -1,8 +1,7 @@
 from collections import OrderedDict
-from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.experiment.input.providers.text.terms_mapper import StringTextTermsMapper
+
+from arekit.common.experiment.input.terms_mapper import StringTextTermsMapper
 from arekit.common.labels.base import Label
-from arekit.common.synonyms import SynonymsCollection
 
 
 class SingleTextProvider(object):
@@ -10,13 +9,9 @@ class SingleTextProvider(object):
     TEXT_A = u'text_a'
     TERMS_SEPARATOR = u" "
 
-    def __init__(self, entities_formatter, synonyms):
-        assert (isinstance(entities_formatter, StringEntitiesFormatter))
-        assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
-        self._entities_formatter = entities_formatter
-        self._synonyms = synonyms
-        self._mapper = StringTextTermsMapper(entities_formatter=entities_formatter,
-                                             synonyms=synonyms)
+    def __init__(self, text_terms_mapper):
+        assert(isinstance(text_terms_mapper, StringTextTermsMapper))
+        self._mapper = text_terms_mapper
 
     def iter_columns(self):
         yield SingleTextProvider.TEXT_A

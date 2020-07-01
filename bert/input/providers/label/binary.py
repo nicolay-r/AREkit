@@ -1,8 +1,8 @@
-from arekit.common.experiment.input.providers.label.base import BertLabelProvider
+from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.labels.base import Label
 
 
-class BertBinaryLabelProvider(BertLabelProvider):
+class BinaryLabelProvider(LabelProvider):
 
     def calculate_output_label(self, expected_label, etalon_label):
         assert(isinstance(expected_label, Label))

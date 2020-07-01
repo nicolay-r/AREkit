@@ -9,15 +9,19 @@ from arekit.processing.text.token import Token
 
 class StringTextTermsMapper(TextTermsMapper):
 
-    def __init__(self, entities_formatter, synonyms):
-        assert(isinstance(entities_formatter, StringEntitiesFormatter))
+    def __init__(self, entity_formatter, synonyms):
+        assert(isinstance(entity_formatter, StringEntitiesFormatter))
         assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
-        self.__entities_formatter = entities_formatter
+        self.__entities_formatter = entity_formatter
         self.__synonyms = synonyms
         self.__s_ind = None
         self.__t_ind = None
         self.__s_group = None
         self.__t_group = None
+
+    @property
+    def StringEntitiesFormatter(self):
+        return self.__entities_formatter
 
     def __syn_group(self, entity):
         assert(isinstance(entity, Entity))
