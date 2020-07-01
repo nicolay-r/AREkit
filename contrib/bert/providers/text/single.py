@@ -57,7 +57,7 @@ class SingleTextProvider(object):
 
             if isinstance(term, unicode):
                 assert(i != s_ind and i != t_ind)
-                yield term
+                yield term.strip()
             elif isinstance(term, Entity):
                 if i == s_ind:
                     yield self._entities_formatter.to_string(term, EntityType.Subject)
@@ -72,7 +72,7 @@ class SingleTextProvider(object):
             elif isinstance(term, Token):
                 yield term.get_original_value()
             elif isinstance(term, TextFrameVariant) and self.__support_frame_variants:
-                yield term.Variant.get_value()
+                yield term.Variant.get_value().strip()
             else:
                 raise Exception("Term type is not supported: {}".format(type(term)))
 
