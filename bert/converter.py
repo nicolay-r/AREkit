@@ -1,10 +1,10 @@
-from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
 from arekit.bert.result.base import BertResults
 from arekit.bert.result.binary import BertBinaryResults
 from arekit.bert.result.multiple import BertMultipleResults
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.input.formatters.opinions.base import BertOpinionsFormatter
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.model.labeling.single import SingleLabelsHelper

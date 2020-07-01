@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from arekit.bert.providers.text.single import SingleTextProvider
+from arekit.common.experiment.input.providers.text.single import SingleTextProvider
 from arekit.common.entities.types import EntityType
 from arekit.common.labels.base import Label
 from arekit.common.labels.str_fmt import StringLabelsFormatter

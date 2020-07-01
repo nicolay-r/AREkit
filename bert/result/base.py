@@ -1,10 +1,10 @@
 import pandas as pd
 
-from arekit.bert.formatters.base import BaseBertRowsFormatter
-from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.bert.providers.row_ids.base import BaseIDProvider
+from arekit.common.experiment.input.formatters.base import BaseBertRowsFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.input.formatters.opinions.base import BertOpinionsFormatter
+from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 

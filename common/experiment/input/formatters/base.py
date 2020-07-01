@@ -7,8 +7,7 @@ import pandas as pd
 import io_utils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.bert.providers.opinions import OpinionProvider
-
+from arekit.common.experiment.input.providers.opinions import OpinionProvider
 
 logger = logging.getLogger(__name__)
 

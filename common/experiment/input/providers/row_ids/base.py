@@ -1,5 +1,5 @@
+from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.bert.providers.opinions import OpinionProvider
 
 
 class BaseIDProvider(object):

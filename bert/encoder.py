@@ -1,6 +1,6 @@
-from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.bert.providers.opinions import OpinionProvider
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.input.formatters.opinions.base import BertOpinionsFormatter
+from arekit.common.experiment.input.providers.opinions import OpinionProvider
 
 
 class BertEncoder(object):

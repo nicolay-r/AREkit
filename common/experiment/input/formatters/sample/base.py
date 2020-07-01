@@ -2,12 +2,14 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from arekit.bert.formatters.base import BaseBertRowsFormatter
-from arekit.bert.providers.label.base import BertLabelProvider
-from arekit.bert.providers.label.multiple import BertMultipleLabelProvider
-from arekit.bert.providers.row_ids.binary import BinaryIDProvider
-from arekit.bert.providers.row_ids.multiple import MultipleIDProvider
-from arekit.bert.providers.text.single import SingleTextProvider
+from arekit.common.experiment.input.formatters.base import BaseBertRowsFormatter
+from arekit.common.experiment.input.providers.label.base import BertLabelProvider
+from arekit.common.experiment.input.providers.label.binary import BertBinaryLabelProvider
+from arekit.common.experiment.input.providers.label.multiple import BertMultipleLabelProvider
+from arekit.common.experiment.input.providers.opinions import OpinionProvider
+from arekit.common.experiment.input.providers.row_ids.binary import BinaryIDProvider
+from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.providers.text.single import SingleTextProvider
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
@@ -15,10 +17,6 @@ from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.formats.base import BaseExperiment
-
-from arekit.bert.providers.label.binary import BertBinaryLabelProvider
-
-from arekit.bert.providers.opinions import OpinionProvider
 
 
 class BaseSampleFormatter(BaseBertRowsFormatter):

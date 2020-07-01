@@ -29,9 +29,7 @@ class OpinionProvider(object):
     def from_experiment(cls, experiment, data_type):
         assert(isinstance(experiment, BaseExperiment))
 
-        pnc = experiment.create_parsed_collection(
-            data_type=data_type,
-            parse_frame_variants=False)
+        pnc = experiment.create_parsed_collection(data_type=data_type)
 
         assert(isinstance(pnc, ParsedNewsCollection))
 

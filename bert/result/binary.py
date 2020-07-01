@@ -1,9 +1,9 @@
 import pandas as pd
 
-from arekit.bert.formatters.opinions.base import BertOpinionsFormatter
-from arekit.bert.providers.row_ids.base import BaseIDProvider
-from arekit.bert.providers.row_ids.binary import BinaryIDProvider
 from arekit.bert.result.base import BertResults
+from arekit.common.experiment.input.formatters.opinions.base import BertOpinionsFormatter
+from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
+from arekit.common.experiment.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.common.experiment.scales.base import BaseLabelScaler
 
 

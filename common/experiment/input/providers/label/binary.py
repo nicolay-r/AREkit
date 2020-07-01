@@ -1,4 +1,4 @@
-from arekit.bert.providers.label.base import BertLabelProvider
+from arekit.common.experiment.input.providers.label.base import BertLabelProvider
 from arekit.common.labels.base import Label
 
 

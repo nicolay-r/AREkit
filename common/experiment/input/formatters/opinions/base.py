@@ -2,10 +2,10 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from arekit.bert.formatters.base import BaseBertRowsFormatter
-from arekit.bert.providers.opinions import OpinionProvider
-from arekit.bert.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.formatters.base import BaseBertRowsFormatter
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.input.providers.opinions import OpinionProvider
+from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 
