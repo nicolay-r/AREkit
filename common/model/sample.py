@@ -10,7 +10,6 @@ class InputSampleBase(object):
     """
 
     def __init__(self, text_opinion_id, values):
-        assert(isinstance(text_opinion_id, int))
         assert(isinstance(values, list))
 
         self.__text_opinion_id = text_opinion_id

@@ -164,7 +164,7 @@ class InputSample(InputSampleBase):
         None parameters considered as optional.
         """
         assert(isinstance(terms, list))
-        assert(isinstance(frame_inds, list))
+        assert(isinstance(frame_inds, list) or frame_inds is None)
         assert(isinstance(words_vocab, dict))
         assert(isinstance(subj_ind, int) and 0 <= subj_ind < len(terms))
         assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
@@ -188,7 +188,7 @@ class InputSample(InputSampleBase):
             filler=cls.POS_PAD_VALUE)
 
         frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=frame_sent_roles,
+            value_vector=[cls.FRAME_SENT_ROLES_PAD_VALUE] * len(terms) if frame_sent_roles is None else [],
             e1_in=subj_ind,
             e2_in=obj_ind,
             expected_size=config.TermsPerContext,
@@ -202,20 +202,20 @@ class InputSample(InputSampleBase):
             filler=cls.TERM_TYPE_PAD_VALUE)
 
         frames_feature = PointersFeature.create_shifted_and_fit(
-            original_value=frame_inds,
+            original_value=[] if frame_inds is None else frame_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=cls.FRAMES_PAD_VALUE,
             expected_size=config.TermsPerContext)
 
         syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
-            original_value=syn_subj_inds,
+            original_value=[subj_ind] if syn_subj_inds is None else syn_subj_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=0)
 
         syn_obj_inds_feature = PointersFeature.create_shifted_and_fit(
-            original_value=syn_obj_inds,
+            original_value=[obj_ind] if syn_obj_inds is None else syn_obj_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=0)
