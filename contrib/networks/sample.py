@@ -145,6 +145,12 @@ class InputSample(InputSampleBase):
                    text_opinion_id=-1)
 
     @classmethod
+    def from_tsv_row(cls):
+        # TODO. Implement
+        pass
+
+    # TODO. To be removed.
+    @classmethod
     def from_text_opinion(cls, text_opinion, frames_collection, synonyms_collection,
                           config,
                           label_scaler,

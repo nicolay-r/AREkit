@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from arekit.common.experiment.input.formatters.base import BaseBertRowsFormatter
+from arekit.common.experiment.input.formatters.base import BaseRowsFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
@@ -19,7 +19,7 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.common.experiment.formats.base import BaseExperiment
 
 
-class BaseSampleFormatter(BaseBertRowsFormatter):
+class BaseSampleFormatter(BaseRowsFormatter):
     """
     Custom Processor with the following fields
 

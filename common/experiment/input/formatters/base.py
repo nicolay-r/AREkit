@@ -12,7 +12,7 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 logger = logging.getLogger(__name__)
 
 
-class BaseBertRowsFormatter(object):
+class BaseRowsFormatter(object):
 
     ROW_ID = 'row_id'
 
@@ -29,7 +29,7 @@ class BaseBertRowsFormatter(object):
 
     def _get_columns_list_with_types(self):
         dtypes_list = []
-        dtypes_list.append((BaseBertRowsFormatter.ROW_ID, 'int32'))
+        dtypes_list.append((BaseRowsFormatter.ROW_ID, 'int32'))
         return dtypes_list
 
     @staticmethod
@@ -91,11 +91,11 @@ class BaseBertRowsFormatter(object):
         assert(isinstance(data_type, DataType))
         assert(isinstance(prefix, unicode))
 
-        filename = BaseBertRowsFormatter.__generate_filename(data_type=data_type,
-                                                             experiment=experiment,
-                                                             prefix=prefix)
+        filename = BaseRowsFormatter.__generate_filename(data_type=data_type,
+                                                         experiment=experiment,
+                                                         prefix=prefix)
 
-        out_dir = BaseBertRowsFormatter.__get_output_dir(experiment=experiment)
+        out_dir = BaseRowsFormatter.__get_output_dir(experiment=experiment)
 
         filepath = path.join(out_dir, filename)
         io_utils.create_dir_if_not_exists(filepath)
@@ -117,3 +117,7 @@ class BaseBertRowsFormatter(object):
     def __get_output_dir(experiment):
         assert(isinstance(experiment, BaseExperiment))
         return experiment.DataIO.get_model_root()
+
+    def __iter__(self):
+        for row in self._df.iterrows():
+            yield row

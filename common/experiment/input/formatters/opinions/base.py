@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from arekit.common.experiment.input.formatters.base import BaseBertRowsFormatter
+from arekit.common.experiment.input.formatters.base import BaseRowsFormatter
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
@@ -10,7 +10,7 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 
 
-class BertOpinionsFormatter(BaseBertRowsFormatter):
+class BertOpinionsFormatter(BaseRowsFormatter):
 
     ID = 'id'
     SOURCE = 'source'

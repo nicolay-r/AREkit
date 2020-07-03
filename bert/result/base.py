@@ -1,6 +1,6 @@
 import pandas as pd
 
-from arekit.common.experiment.input.formatters.base import BaseBertRowsFormatter
+from arekit.common.experiment.input.formatters.base import BaseRowsFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.formatters.opinions.base import BertOpinionsFormatter
@@ -105,9 +105,9 @@ class BertResults(object):
     @staticmethod
     def __get_filepath(data_type, experiment):
         assert(isinstance(experiment, BaseExperiment))
-        return BaseBertRowsFormatter.get_filepath_static(data_type=data_type,
-                                                         experiment=experiment,
-                                                         prefix=u"result")
+        return BaseRowsFormatter.get_filepath_static(data_type=data_type,
+                                                     experiment=experiment,
+                                                     prefix=u"result")
 
     # endregion
 

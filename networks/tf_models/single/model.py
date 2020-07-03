@@ -85,6 +85,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         log.debug_labels_statistic(
             collection=self.get_text_opinions_collection(DataType.Train),
             name=unicode(DataType.Train),
+            # TODO. Labels helper assumes to be removed since all the labels presented in tsv.
             labels_helper=self.get_labels_helper(),
             stat_func=self.__init_helper.get_statistic)
         log.debug_unique_relations_statistic(
@@ -94,6 +95,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         log.debug_labels_statistic(
             collection=self.get_text_opinions_collection(DataType.Test),
             name=unicode(DataType.Test),
+            # TODO. Labels helper assumes to be removed since all the labels presented in tsv.
             labels_helper=self.get_labels_helper(),
             stat_func=self.__init_helper.get_statistic)
         log.debug_unique_relations_statistic(
