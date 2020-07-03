@@ -16,7 +16,7 @@ from arekit.processing.text.tokens import Tokens
 logger = logging.getLogger(__name__)
 
 
-class IndicingTextTermsMapper(TextTermsMapper):
+class IndexingTextTermsMapper(TextTermsMapper):
 
     # region ctor
 
