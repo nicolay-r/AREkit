@@ -74,6 +74,13 @@ class Embedding(object):
 
     # endregion
 
+    # TODO. This should be implemented.
+    # TODO. In order to provide the result word representaiton by a givem original term.
+    # TODO. Assumes to be utilized in samples.
+    def get_entry_by_word(self, word):
+        assert(isinstance(word, unicode))
+        raise NotImplementedError()
+
     def iter_vocabulary(self):
         for word in self.__words:
             yield word, self.__index_by_word[word]

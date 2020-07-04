@@ -16,6 +16,7 @@ from arekit.processing.text.tokens import Tokens
 logger = logging.getLogger(__name__)
 
 
+# TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
 class IndexingTextTermsMapper(TextTermsMapper):
 
     # region ctor

@@ -98,29 +98,35 @@ class SingleInstanceModelExperimentInitializer(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
+        # TODO. Combine mapper for: words, frames, custom_embedding
+
+        # TODO. Word embedding assumes to store only those entries which could be found in samples.
+        # TODO. The benefit from it is a result embedding size.
+        # TODO. As there is no need to keep in memory everything, as it is actually now.
         word_embedding = experiment.DataIO.WordEmbedding
         word_embedding.set_stemmer(experiment.DataIO.Stemmer)
-        config.set_word_embedding(word_embedding)
 
         entity_embeddings = generate_entity_embeddings(
             string_entity_formatter=self.__string_entity_formatter,
             string_emb_entity_formatter=StringWordEmbeddingEntityFormatter(),
             word_embedding=word_embedding)
 
+        token_embedding = create_tokens_embedding(word_embedding.VectorSize)
+
+        # TODO. Use EmbeddingTermsMapper (implement there).
         custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                        entity_embeddings=entity_embeddings,
                                                        string_entity_formatter=self.__string_entity_formatter,
                                                        word_embedding=word_embedding,
                                                        config=config)
 
-        config.set_custom_words_embedding(custom_embedding)
-
-        token_embedding = create_tokens_embedding(word_embedding.VectorSize)
-        config.set_token_embedding(token_embedding)
-
+        # TODO. Use EmbeddingTermsMapper (implement there).
         frame_embedding = init_frames_embedding(iter_all_terms_func=self.__iter_all_terms,
                                                 word_embedding=word_embedding)
 
+        config.set_word_embedding(word_embedding)
+        config.set_custom_words_embedding(custom_embedding)
+        config.set_token_embedding(token_embedding)
         config.set_frames_embedding(frame_embedding)
 
         term_embedding = create_term_embedding_matrix(
@@ -128,6 +134,7 @@ class SingleInstanceModelExperimentInitializer(object):
             custom_embedding=config.CustomWordEmbedding,
             token_embedding=config.TokenEmbedding,
             frame_embedding=config.FrameEmbedding)
+
         config.set_term_embedding(term_embedding)
 
     # region Properties
@@ -231,6 +238,10 @@ class SingleInstanceModelExperimentInitializer(object):
 
         return collection
 
+    # TODO. This should be removed
+    # TODO. This should be removed
+    # TODO. This should be removed
+    # TODO. Assumes to be replaced with iteration through pnc with mappers.
     def __iter_all_terms(self, term_check_func):
         for pnc in self.__pncs.itervalues():
             assert(isinstance(pnc, ParsedNewsCollection))
