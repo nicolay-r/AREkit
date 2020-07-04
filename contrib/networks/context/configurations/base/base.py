@@ -35,10 +35,14 @@ class DefaultNetworkConfig(object):
         epsilon=10e-6,
         rho=0.95)
 
+    # TODO. Remove
     __word_embedding = None
+    # TODO. Remove
     __custom_word_embedding = None   # Includes not found words.
+    # TODO. Remove
     __token_embedding = None
-    __frames_embedding = None
+    # TODO. Remove
+    __entity_embedding = None
 
     __term_embedding_matrix = None   # Includes embeddings of: words, entities, tokens.
     __class_weights = None
@@ -187,25 +191,30 @@ class DefaultNetworkConfig(object):
         assert(self.__term_embedding_matrix is None)
         self.__term_embedding_matrix = embedding_matrix
 
+    # TODO. Remove
     def set_token_embedding(self, token_embedding):
         assert(isinstance(token_embedding, Embedding))
         assert(self.__token_embedding is None)
         self.__token_embedding = token_embedding
+
+    # TODO. Remove
+    def set_entity_embedding(self, entity_embedding):
+        assert(isinstance(entity_embedding, Embedding))
+        assert(self.__token_embedding is None)
+        self.__token_embedding = entity_embedding
 
     def set_class_weights(self, class_weights):
         assert(isinstance(class_weights, list))
         assert(len(class_weights) == self.__classes_count)
         self.__class_weights = class_weights
 
+    # TODO. Remove
+    # TODO. Remove
+    # TODO. Remove
     def set_word_embedding(self, embedding):
         assert(isinstance(embedding, Embedding))
         assert(self.__word_embedding is None)
         self.__word_embedding = embedding
-
-    def set_frames_embedding(self, embedding):
-        assert(isinstance(embedding, Embedding))
-        assert(self.__frames_embedding is None)
-        self.__frames_embedding = embedding
 
     def notify_initialization_completed(self):
         pass
@@ -258,21 +267,31 @@ class DefaultNetworkConfig(object):
     def UseClassWeights(self):
         return self.__use_class_weights
 
+    # TODO. Remove.
     @property
     def WordEmbedding(self):
         return self.__word_embedding
 
+    # TODO. Remove.
+    # TODO. Remove.
+    # TODO. Remove.
     @property
     def CustomWordEmbedding(self):
         return self.__custom_word_embedding
 
+    # TODO. Remove.
+    # TODO. Remove.
+    # TODO. Remove.
     @property
     def TokenEmbedding(self):
         return self.__token_embedding
 
+    # TODO. Remove.
+    # TODO. Remove.
+    # TODO. Remove.
     @property
-    def FrameEmbedding(self):
-        return self.__frames_embedding
+    def EntityEmbedding(self):
+        return self.__entity_embedding
 
     @property
     def UsePOSEmbedding(self):

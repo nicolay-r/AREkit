@@ -1,6 +1,8 @@
 import collections
 import logging
+import numpy as np
 
+from arekit.common.embeddings.base import Embedding
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.opinions import extract_text_opinions
@@ -15,6 +17,8 @@ from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 
 from arekit.networks.embedding.input import create_term_embedding_matrix
+from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
+from arekit.networks.tf_models.single.embedding.custom_mapping import EmbeddedTermMapping
 from arekit.networks.tf_models.single.embedding.entities import generate_entity_embeddings
 from arekit.networks.tf_models.single.embedding.frames import init_frames_embedding
 from arekit.networks.tf_models.single.embedding.tokens import create_tokens_embedding
@@ -95,47 +99,40 @@ class SingleInstanceModelExperimentInitializer(object):
         config.notify_initialization_completed()
 
     def __init_embedding(self, config, experiment):
+        """
+        Iterate through all the terms in order to obtain a result embedding.
+        """
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        # TODO. Combine mapper for: words, frames, custom_embedding
+        predefined_embedding = experiment.DataIO.WordEmbedding
+        predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
 
-        # TODO. Word embedding assumes to store only those entries which could be found in samples.
-        # TODO. The benefit from it is a result embedding size.
-        # TODO. As there is no need to keep in memory everything, as it is actually now.
-        word_embedding = experiment.DataIO.WordEmbedding
-        word_embedding.set_stemmer(experiment.DataIO.Stemmer)
+        # TODO. Embedding might be a part of input (when we perform terms to string transformation).
+        # TODO. So not here, but in a custom mapping.
+        word_embedding = Embedding.from_list_of_word_embedding_pairs(
+            self.__iter_words_embedded_vectors(predefined_embedding=predefined_embedding))
 
         entity_embeddings = generate_entity_embeddings(
             string_entity_formatter=self.__string_entity_formatter,
             string_emb_entity_formatter=StringWordEmbeddingEntityFormatter(),
-            word_embedding=word_embedding)
+            word_embedding=predefined_embedding)
 
-        token_embedding = create_tokens_embedding(word_embedding.VectorSize)
-
-        # TODO. Use EmbeddingTermsMapper (implement there).
-        custom_embedding = init_custom_words_embedding(iter_all_terms_func=self.__iter_all_terms,
-                                                       entity_embeddings=entity_embeddings,
-                                                       string_entity_formatter=self.__string_entity_formatter,
-                                                       word_embedding=word_embedding,
-                                                       config=config)
-
-        # TODO. Use EmbeddingTermsMapper (implement there).
-        frame_embedding = init_frames_embedding(iter_all_terms_func=self.__iter_all_terms,
-                                                word_embedding=word_embedding)
-
-        config.set_word_embedding(word_embedding)
-        config.set_custom_words_embedding(custom_embedding)
-        config.set_token_embedding(token_embedding)
-        config.set_frames_embedding(frame_embedding)
+        token_embedding = create_tokens_embedding(predefined_embedding.VectorSize)
 
         term_embedding = create_term_embedding_matrix(
-            word_embedding=config.WordEmbedding,
-            custom_embedding=config.CustomWordEmbedding,
-            token_embedding=config.TokenEmbedding,
-            frame_embedding=config.FrameEmbedding)
+            word_embedding=word_embedding,
+            entity_embedding=entity_embeddings,
+            token_embedding=token_embedding)
 
         config.set_term_embedding(term_embedding)
+
+        vocab = TermsEmbeddingOffsets.iter_words_vocabulary(
+            words_embedding=word_embedding,
+            entities_embedding=entity_embeddings,
+            tokens_embedding=token_embedding)
+
+        np.savez(u"vocab.txt.gz", list(vocab))
 
     # region Properties
 
@@ -238,15 +235,13 @@ class SingleInstanceModelExperimentInitializer(object):
 
         return collection
 
-    # TODO. This should be removed
-    # TODO. This should be removed
-    # TODO. This should be removed
-    # TODO. Assumes to be replaced with iteration through pnc with mappers.
-    def __iter_all_terms(self, term_check_func):
+    # TODO. Here we should process sentences and also output the updated results.
+    def __iter_words_embedded_vectors(self, predefined_embedding):
+        embedding_mapper = EmbeddedTermMapping(predefined_embedding=predefined_embedding)
         for pnc in self.__pncs.itervalues():
             assert(isinstance(pnc, ParsedNewsCollection))
             for news_ID in pnc.iter_news_ids():
-                for term in pnc.iter_news_terms(news_ID, term_check=term_check_func):
-                    yield term
+                for word, embedding in embedding_mapper.iter_mapped(pnc.iter_news_terms(news_id=news_ID)):
+                    yield word, embedding
 
     # endregion

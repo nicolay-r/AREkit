@@ -27,7 +27,8 @@ class TextTermsMapper(object):
             else:
                 raise Exception("Unsuported type {}".format(term))
 
-            yield m_term
+            if m_term is not None:
+                yield m_term
 
         self._after_mapping()
 

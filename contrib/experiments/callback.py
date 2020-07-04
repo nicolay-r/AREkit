@@ -87,8 +87,6 @@ class ExperimentCallback(Callback):
             return
 
         vocab_path = os.path.join(self.__log_dir, self.VocabularyOutputFilePathInLogDir)
-        # TODO. This should be saved earlier.
-        np.savez(vocab_path, list(self.__model.iter_inner_input_vocabulary()))
 
     def __save_model_hidden_values(self, epoch_index):
 

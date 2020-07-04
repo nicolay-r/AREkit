@@ -307,14 +307,16 @@ class InputSample(InputSampleBase):
                                                             e_value=obj_value,
                                                             synonyms=synonyms_collection)))
 
+        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
+        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
+        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
         term_ind_mapper = IndexingTextTermsMapper(
             syn_subj_indices=set(syn_subj_inds),
             syn_obj_indices=set(syn_obj_inds),
             term_embedding_matrix=config.TermEmbeddingMatrix,
             word_embedding=config.WordEmbedding,
-            custom_word_embedding=config.CustomWordEmbedding,
+            entity_embedding=config.EntityEmbedding,
             token_embedding=config.TokenEmbedding,
-            frames_embedding=config.FrameEmbedding,
             string_entity_formatter=string_entity_formatter)
 
         x_indices = term_ind_mapper.iter_mapped(terms)

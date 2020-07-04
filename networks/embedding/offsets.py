@@ -14,27 +14,23 @@ class TermsEmbeddingOffsets(object):
 
     def __init__(self,
                  words_count,
-                 custom_words_count,
-                 tokens_count,
-                 frames_count):
+                 entities_count,
+                 tokens_count):
         assert(isinstance(words_count, int))
-        assert(isinstance(custom_words_count, int))
+        assert(isinstance(entities_count, int))
         assert(isinstance(tokens_count, int))
-        assert(isinstance(frames_count, int))
         self.__words_count = words_count
-        self.__custom_words_count = custom_words_count
+        self.__entities_count = entities_count
         self.__tokens_count = tokens_count
-        self.__frames_count = frames_count
 
     # region properties
 
     @property
     def TotalCount(self):
         return 1 + \
-               self.__custom_words_count + \
+               self.__entities_count + \
                self.__words_count + \
-               self.__tokens_count + \
-               self.__frames_count
+               self.__tokens_count
 
     # endregion
 
@@ -43,28 +39,23 @@ class TermsEmbeddingOffsets(object):
     def get_word_index(self, index):
         return 1 + index
 
-    def get_custom_word_index(self, index):
+    def get_entity_index(self, index):
         return 1 + self.__words_count + index
 
     def get_token_index(self, index):
-        return 1 + self.__words_count + self.__custom_words_count + index
-
-    def get_frame_index(self, index):
-        return 1 + self.__words_count + self.__custom_words_count + self.__tokens_count + index
+        return 1 + self.__words_count + self.__entities_count + index
 
     # endregion
 
     @staticmethod
-    def iter_words_vocabulary(words_embedding, custom_words_embedding, tokens_embedding, frames_embedding):
+    def iter_words_vocabulary(words_embedding, entities_embedding, tokens_embedding):
         assert(isinstance(words_embedding, Embedding))
-        assert(isinstance(custom_words_embedding, Embedding))
+        assert(isinstance(entities_embedding, Embedding))
         assert(isinstance(tokens_embedding, Embedding))
-        assert(isinstance(frames_embedding, Embedding))
 
         offsets = TermsEmbeddingOffsets(words_count=words_embedding.VocabularySize,
-                                        custom_words_count=custom_words_embedding.VocabularySize,
-                                        tokens_count=tokens_embedding.VocabularySize,
-                                        frames_count=frames_embedding.VocabularySize)
+                                        entities_count=entities_embedding.VocabularySize,
+                                        tokens_count=tokens_embedding.VocabularySize)
 
         all_words = [(0, u'PADDING')]
 
@@ -72,17 +63,13 @@ class TermsEmbeddingOffsets(object):
             assert(isinstance(word, unicode))
             all_words.append((offsets.get_word_index(index), word))
 
-        for custom_word, index in custom_words_embedding.iter_vocabulary():
+        for custom_word, index in entities_embedding.iter_vocabulary():
             assert(isinstance(custom_word, unicode))
-            all_words.append((offsets.get_custom_word_index(index), custom_word))
+            all_words.append((offsets.get_entity_index(index), custom_word))
 
         for token, index in tokens_embedding.iter_vocabulary():
             assert(isinstance(token, unicode))
             all_words.append((offsets.get_token_index(index), token))
-
-        for frame, index in frames_embedding.iter_vocabulary():
-            assert(isinstance(frame, unicode))
-            all_words.append((offsets.get_frame_index(index), frame))
 
         assert(len(all_words) == offsets.TotalCount)
 
@@ -94,8 +81,7 @@ class TermsEmbeddingOffsets(object):
     def log_info(self):
         logger.info("Term embedding matrix details ...")
         logger.info("\t\tWords count: {}".format(self.__words_count))
-        logger.info("\t\tMissed words count: {}".format(self.__custom_words_count))
+        logger.info("\t\tEntities count: {}".format(self.__entities_count))
         logger.info("\t\tTokens count: {}".format(self.__tokens_count))
-        logger.info("\t\tFrames count: {}".format(self.__frames_count))
 
     # endregion

@@ -153,11 +153,13 @@ class TensorflowModel(BaseModel):
         return eval_result, predict_log
 
     def iter_inner_input_vocabulary(self):
+        # TODO. There is no need the related separation onto variety of embeddings.
+        # TODO. since such separation remains unused later, during training process
+        # TODO. and networks compilation stage also especially.
         word_iter = TermsEmbeddingOffsets.iter_words_vocabulary(
             words_embedding=self.Config.WordEmbedding,
-            custom_words_embedding=self.Config.CustomWordEmbedding,
-            tokens_embedding=self.Config.TokenEmbedding,
-            frames_embedding=self.Config.FrameEmbedding)
+            entities_embedding=self.Config.EntityEmbedding,
+            tokens_embedding=self.Config.TokenEmbedding)
 
         for word in word_iter:
             yield word
