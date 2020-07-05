@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from arekit.common.experiment.input.providers.text.single import SingleTextProvider
+from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.entities.types import EntityType
 from arekit.common.labels.base import Label
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
-class PairTextProvider(SingleTextProvider):
+class PairTextProvider(BaseSingleTextProvider):
     """
     Provides additionally text_b parameter
 
@@ -46,12 +46,12 @@ class PairTextProvider(SingleTextProvider):
 
         self._mapper.set_s_ind(s_ind)
         self._mapper.set_t_ind(t_ind)
-        inner_context = list(self._mapper.iter_mapped(sentence_terms[s_ind+1:t_ind]))
+        inner_context = self._compose_text(sentence_terms=sentence_terms[s_ind+1:t_ind])
 
         row[self.TEXT_B] = self.__text_b_template.format(
             subject=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Subject),
             object=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Object),
-            context=self._process_text(self.TERMS_SEPARATOR.join(inner_context)),
+            context=self._process_text(inner_context),
             label=self.__labels_formatter.label_to_str(expected_label))
 
         return row

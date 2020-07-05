@@ -9,7 +9,7 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.common.experiment.input.providers.text.single import SingleTextProvider
+from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.single import SingleLabelsHelper
@@ -24,6 +24,7 @@ from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEnti
 from arekit.networks.input.embedding.matrix import create_term_embedding_matrix
 from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.input.formatters.sample import NetworkSample
+from arekit.networks.input.providers.text.single import SingleTextProvider
 from arekit.networks.input.terms_mapping import EmbeddedTermMapping
 
 from arekit.networks.tf_models.single.helpers.bags import BagsCollectionHelper
@@ -123,6 +124,9 @@ class SingleInstanceModelExperimentInitializer(object):
             experiment.NeutralAnnotator.create_collection(data_type)
 
         term_embedding_pairs = []
+        text_provider = SingleTextProvider(text_terms_mapper=text_terms_mapper,
+                                           write_embedding_pair_func=lambda pair: term_embedding_pairs.append(pair))
+
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment,
                                                                data_type=data_type)
@@ -134,8 +138,7 @@ class SingleInstanceModelExperimentInitializer(object):
             sampler = NetworkSample(
                 data_type=data_type,
                 label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
-                text_provider=SingleTextProvider(text_terms_mapper=text_terms_mapper),
-                write_embedding_pair_func= lambda pair: term_embedding_pairs.append(pair))
+                text_provider=text_provider)
 
             target_filepath = sampler.get_filepath(data_type=data_type,
                                                    experiment=experiment)

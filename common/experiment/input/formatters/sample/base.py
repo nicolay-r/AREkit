@@ -9,7 +9,7 @@ from arekit.common.experiment.input.providers.label.multiple import MultipleLabe
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
-from arekit.common.experiment.input.providers.text.single import SingleTextProvider
+from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
@@ -37,7 +37,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
     def __init__(self, data_type, label_provider, text_provider):
         assert(isinstance(label_provider, LabelProvider))
-        assert(isinstance(text_provider, SingleTextProvider))
+        assert(isinstance(text_provider, BaseSingleTextProvider))
 
         self.__label_provider = label_provider
         self.__text_provider = text_provider
@@ -97,25 +97,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return (s_ind, t_ind)
 
-    def __create_row(self, opinion_provider, linked_wrap, index_in_linked, etalon_label):
-        """
-        Composing row in following format:
-            [id, label, type, text_a]
-
-        returns: OrderedDict
-            row with key values
-        """
-        assert(isinstance(opinion_provider, OpinionProvider))
-        assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
-        assert(isinstance(index_in_linked, int))
-        assert(isinstance(etalon_label, Label))
-
-        text_opinion = linked_wrap[index_in_linked]
-
-        parsed_news, sentence_ind = opinion_provider.get_opinion_location(text_opinion)
-        s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
-
-        row = OrderedDict()
+    def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
+                       parsed_news, sentence_ind, s_ind, t_ind):
 
         row[self.ID] = self.__row_ids_formatter.create_sample_id(
             opinion_provider=opinion_provider,
@@ -140,6 +123,34 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         row[self.S_IND] = s_ind
         row[self.T_IND] = t_ind
+
+    def __create_row(self, opinion_provider, linked_wrap, index_in_linked, etalon_label):
+        """
+        Composing row in following format:
+            [id, label, type, text_a]
+
+        returns: OrderedDict
+            row with key values
+        """
+        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
+        assert(isinstance(index_in_linked, int))
+        assert(isinstance(etalon_label, Label))
+
+        text_opinion = linked_wrap[index_in_linked]
+
+        parsed_news, sentence_ind = opinion_provider.get_opinion_location(text_opinion)
+        s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
+
+        self._fill_row_core(row=OrderedDict(),
+                            parsed_news=parsed_news,
+                            sentence_ind=sentence_ind,
+                            opinion_provider=opinion_provider,
+                            linked_wrap=linked_wrap,
+                            index_in_linked=index_in_linked,
+                            etalon_label=etalon_label,
+                            s_ind=s_ind,
+                            t_ind=t_ind)
 
         return row
 
