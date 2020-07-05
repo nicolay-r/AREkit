@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from arekit.networks.cell_types import CellTypes
+from arekit.contrib.networks.tf_helpers.cell_types import CellTypes
 
 
 def get_cell(hidden_size, cell_type, lstm_initializer=None, dropout_rnn_keep_prob=1.0):
