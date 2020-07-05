@@ -10,7 +10,7 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 
 
-class BertOpinionsFormatter(BaseRowsFormatter):
+class BaseOpinionsFormatter(BaseRowsFormatter):
 
     ID = 'id'
     SOURCE = 'source'
@@ -19,17 +19,17 @@ class BertOpinionsFormatter(BaseRowsFormatter):
     # region methods
 
     def __init__(self, data_type):
-        super(BertOpinionsFormatter, self).__init__(data_type=data_type)
+        super(BaseOpinionsFormatter, self).__init__(data_type=data_type)
 
     @staticmethod
     def formatter_type_log_name():
         return u"opinion"
 
     def _get_columns_list_with_types(self):
-        dtypes_list = super(BertOpinionsFormatter, self)._get_columns_list_with_types()
-        dtypes_list.append((BertOpinionsFormatter.ID, unicode))
-        dtypes_list.append((BertOpinionsFormatter.SOURCE, unicode))
-        dtypes_list.append((BertOpinionsFormatter.TARGET, unicode))
+        dtypes_list = super(BaseOpinionsFormatter, self)._get_columns_list_with_types()
+        dtypes_list.append((BaseOpinionsFormatter.ID, unicode))
+        dtypes_list.append((BaseOpinionsFormatter.SOURCE, unicode))
+        dtypes_list.append((BaseOpinionsFormatter.TARGET, unicode))
         return dtypes_list
 
     @staticmethod
@@ -50,12 +50,12 @@ class BertOpinionsFormatter(BaseRowsFormatter):
             text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Target)
 
-        row[BertOpinionsFormatter.ID] = MultipleIDProvider.create_opinion_id(
+        row[BaseOpinionsFormatter.ID] = MultipleIDProvider.create_opinion_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrapper,
             index_in_linked=0)
-        row[BertOpinionsFormatter.SOURCE] = src_value
-        row[BertOpinionsFormatter.TARGET] = target_value
+        row[BaseOpinionsFormatter.SOURCE] = src_value
+        row[BaseOpinionsFormatter.TARGET] = target_value
 
         return row
 
@@ -67,7 +67,7 @@ class BertOpinionsFormatter(BaseRowsFormatter):
                                                                     supported_labels=None)
 
         for linked_wrapper in linked_iter:
-            yield BertOpinionsFormatter.__create_opinion_row(
+            yield BaseOpinionsFormatter.__create_opinion_row(
                 opinion_provider=opinion_provider,
                 linked_wrapper=linked_wrapper)
 

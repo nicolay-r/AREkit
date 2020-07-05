@@ -3,7 +3,7 @@ import pandas as pd
 from arekit.common.experiment.input.formatters.base import BaseRowsFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.input.formatters.opinions.base import BertOpinionsFormatter
+from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
@@ -47,7 +47,7 @@ class BertResults(object):
 
     def iter_linked_opinions(self, news_id, bert_opinions):
         assert(isinstance(news_id, int))
-        assert(isinstance(bert_opinions, BertOpinionsFormatter))
+        assert(isinstance(bert_opinions, BaseOpinionsFormatter))
 
         for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
@@ -88,7 +88,7 @@ class BertResults(object):
 
     def _compose_opinion_by_opinion_id(self, sample_id, bert_opinions, calc_label_func):
         assert(isinstance(sample_id, unicode))
-        assert(isinstance(bert_opinions, BertOpinionsFormatter))
+        assert(isinstance(bert_opinions, BaseOpinionsFormatter))
         assert(callable(calc_label_func))
 
         opinion_id = self.__ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)

@@ -14,7 +14,7 @@ from arekit.common.model.evaluator import CustomOpinionBasedModelEvaluator
 
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
+from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.networks.tf_models.predict_log import NetworkInputDependentVariables

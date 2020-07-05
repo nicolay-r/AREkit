@@ -4,7 +4,7 @@ from arekit.bert.result.multiple import BertMultipleResults
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.formatters.opinions.base import BertOpinionsFormatter
+from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.model.labeling.single import SingleLabelsHelper
@@ -49,7 +49,7 @@ def iter_eval_collections(formatter_type,
 
     assert(isinstance(bert_results, BertResults))
 
-    bert_test_opinions = BertOpinionsFormatter(data_type=data_type)
+    bert_test_opinions = BaseOpinionsFormatter(data_type=data_type)
     bert_test_opinions.from_tsv(experiment=experiment)
 
     assert(len(bert_results) == len(bert_test_samples))

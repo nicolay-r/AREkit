@@ -3,7 +3,7 @@ import numpy as np
 
 from arekit.common.embeddings.base import Embedding
 from arekit.common.embeddings.tokens import TokenEmbedding
-from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
+from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.debug import DebugKeys
 
 

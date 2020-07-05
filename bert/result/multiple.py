@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from arekit.bert.result.base import BertResults
-from arekit.common.experiment.input.formatters.opinions.base import BertOpinionsFormatter
+from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.scales.base import BaseLabelScaler
 
@@ -29,7 +29,7 @@ class BertMultipleResults(BertResults):
 
     def _iter_by_opinions(self, linked_df, bert_opinions):
         assert(isinstance(linked_df, pd.DataFrame))
-        assert(isinstance(bert_opinions, BertOpinionsFormatter))
+        assert(isinstance(bert_opinions, BaseOpinionsFormatter))
 
         for index, series in linked_df.iterrows():
             yield self._compose_opinion_by_opinion_id(

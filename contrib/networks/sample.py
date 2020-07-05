@@ -21,9 +21,6 @@ from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
 from arekit.networks.mappers.terms import IndexingTextTermsMapper
-from arekit.processing.lemmatization.base import Stemmer
-from arekit.processing.text.parsed import ParsedText
-from arekit.processing.text.parser import TextParser
 
 
 class InputSample(InputSampleBase):

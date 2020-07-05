@@ -9,7 +9,7 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.networks.debug import DebugKeys
-from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
+from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.processing.text.token import Token
 from arekit.processing.text.tokens import Tokens
 
