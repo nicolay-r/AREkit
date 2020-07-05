@@ -107,8 +107,9 @@ class SingleInstanceModelExperimentInitializer(object):
         cls.__to_tsv(experiment=experiment)
 
     @staticmethod
-    def __to_tsv(experiment):
+    def __to_tsv(experiment, config):
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(config, DefaultNetworkConfig))
 
         predefined_embedding = experiment.DataIO.WordEmbedding
         predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
@@ -121,6 +122,7 @@ class SingleInstanceModelExperimentInitializer(object):
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             experiment.NeutralAnnotator.create_collection(data_type)
 
+        term_embedding_pairs = []
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment,
                                                                data_type=data_type)
@@ -132,7 +134,8 @@ class SingleInstanceModelExperimentInitializer(object):
             sampler = NetworkSample(
                 data_type=data_type,
                 label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
-                text_provider=SingleTextProvider(text_terms_mapper=text_terms_mapper))
+                text_provider=SingleTextProvider(text_terms_mapper=text_terms_mapper),
+                write_embedding_pair_func= lambda pair: term_embedding_pairs.append(pair))
 
             target_filepath = sampler.get_filepath(data_type=data_type,
                                                    experiment=experiment)
@@ -141,11 +144,14 @@ class SingleInstanceModelExperimentInitializer(object):
                 continue
 
             sampler.format(opinion_provider=opinion_provider)
+
+            # TODO. Redefine filepath or use a different way of how this should be saved.
             sampler.to_tsv_by_experiment(experiment=experiment)
 
-        # TODO. Init embedding here from text_terms_mapper.
-        # TODO. Init embedding here from text_terms_mapper.
-        # TODO. Init embedding here from text_terms_mapper.
+        term_embedding = Embedding.from_list_of_word_embedding_pairs(
+            word_embedding_pairs=term_embedding_pairs)
+        embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
+        config.set_term_embedding(embedding_matrix)
 
     def __init_embedding(self, config, experiment):
         """
@@ -157,30 +163,16 @@ class SingleInstanceModelExperimentInitializer(object):
         predefined_embedding = experiment.DataIO.WordEmbedding
         predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
 
-        # TODO. Embedding might be a part of input (when we perform terms to string transformation).
+        # TODO. Embedding might be a part of input
+        # TODO. (when we perform terms to string transformation).
         # TODO. So not here, but in a custom mapping.
         word_embedding = Embedding.from_list_of_word_embedding_pairs(
             self.__iter_words_embedded_vectors(predefined_embedding=predefined_embedding))
 
-        # TODO. This should be removed.
-        # TODO. Move the latter in terms_mapper.
-        entity_embeddings = None
-
-        # TODO. This should be removed.
-        # TODO. Move the latter in terms_mapper.
-        token_embedding = None
-
-        term_embedding = create_term_embedding_matrix(
-            word_embedding=word_embedding,
-            entity_embedding=entity_embeddings,
-            token_embedding=token_embedding)
-
+        term_embedding = create_term_embedding_matrix(term_embedding=word_embedding)
         config.set_term_embedding(term_embedding)
 
-        vocab = TermsEmbeddingOffsets.iter_words_vocabulary(
-            words_embedding=word_embedding,
-            entities_embedding=entity_embeddings,
-            tokens_embedding=token_embedding)
+        vocab = TermsEmbeddingOffsets.iter_words_vocabulary(words_embedding=word_embedding)
 
         np.savez(u"vocab.txt.gz", list(vocab))
 

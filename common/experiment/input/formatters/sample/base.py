@@ -208,6 +208,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
 
+        # TODO. This should be in different function.
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
