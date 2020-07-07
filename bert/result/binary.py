@@ -1,30 +1,30 @@
 import pandas as pd
 
-from arekit.bert.result.base import BertResults
+from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.common.experiment.scales.base import BaseLabelScaler
 
 
-class BertBinaryResults(BertResults):
+class BertBinaryOutput(BaseOutput):
 
     YES = u'yes'
     NO = u'no'
 
     def __init__(self, labels_scaler):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertBinaryResults, self).__init__(ids_formatter=BinaryIDProvider())
+        super(BertBinaryOutput, self).__init__(ids_formatter=BinaryIDProvider())
         self.__labels_scaler = labels_scaler
 
     @property
     def _IdsFormatter(self):
-        formatter = super(BertBinaryResults, self)._IdsFormatter
+        formatter = super(BertBinaryOutput, self)._IdsFormatter
         assert(isinstance(formatter, BinaryIDProvider))
         return formatter
 
     def _get_column_header(self):
-        return [BertBinaryResults.NO, BertBinaryResults.YES]
+        return [BertBinaryOutput.NO, BertBinaryOutput.YES]
 
     # region private methods
 
@@ -33,7 +33,7 @@ class BertBinaryResults(BertResults):
         Calculate label by relying on a 'YES' column probability values
         paper: https://www.aclweb.org/anthology/N19-1035.pdf
         """
-        ind_max = df[BertBinaryResults.YES].idxmax()
+        ind_max = df[BertBinaryOutput.YES].idxmax()
         sample_id = df.loc[ind_max][self.ID]
         uint_label = self._IdsFormatter.parse_label_in_sample_id(sample_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)

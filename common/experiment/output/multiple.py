@@ -1,17 +1,17 @@
 import numpy as np
 import pandas as pd
 
-from arekit.bert.result.base import BertResults
+from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.scales.base import BaseLabelScaler
 
 
-class BertMultipleResults(BertResults):
+class MulticlassOutput(BaseOutput):
 
     def __init__(self, labels_scaler):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertMultipleResults, self).__init__(ids_formatter=MultipleIDProvider())
+        super(MulticlassOutput, self).__init__(ids_formatter=MultipleIDProvider())
         self.__labels_scaler = labels_scaler
 
     # region protected methods

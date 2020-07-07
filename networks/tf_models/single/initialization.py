@@ -1,15 +1,8 @@
 import collections
 import logging
-import os
-import numpy as np
 
-from arekit.common.embeddings.base import Embedding
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
-from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.single import SingleLabelsHelper
@@ -19,14 +12,9 @@ from arekit.common.text_opinions.text_opinion import TextOpinion
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
-from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 
-from arekit.networks.input.embedding.matrix import create_term_embedding_matrix
-from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
-from arekit.networks.input.formatters.sample import NetworkSample
-from arekit.networks.input.providers.text.single import SingleTextProvider
+from arekit.networks.input.encoder import NetworkInputEncoder
 from arekit.networks.input.terms_mapping import EmbeddedTermMapping
-
 from arekit.networks.tf_models.single.helpers.bags import BagsCollectionHelper
 from arekit.networks.training.bags.collection.single import SingleBagsCollection
 
@@ -75,9 +63,6 @@ class SingleInstanceModelExperimentInitializer(object):
             # TODO. Labeled collection will be simplified
             lambda data_type: LabeledCollection(collection=self.__text_opinion_collections[data_type]))
 
-        self.__init_embedding(config=config,
-                              experiment=experiment)
-
         self.__frames_collection = experiment.DataIO.FramesCollection
 
         # TODO. We assume here to iterate over tsv records.
@@ -104,80 +89,8 @@ class SingleInstanceModelExperimentInitializer(object):
     def init_from_experiment(cls, config, experiment):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
-
-        cls.__to_tsv(experiment=experiment)
-
-    @staticmethod
-    def __to_tsv(experiment, config):
-        assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(config, DefaultNetworkConfig))
-
-        predefined_embedding = experiment.DataIO.WordEmbedding
-        predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
-
-        text_terms_mapper = EmbeddedTermMapping(
-            predefined_embedding=predefined_embedding,
-            string_entities_formatter=experiment.DataIO.StringEntityFormatter,
-            string_emb_entity_formatter=StringWordEmbeddingEntityFormatter())
-
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            experiment.NeutralAnnotator.create_collection(data_type)
-
-        term_embedding_pairs = []
-        text_provider = SingleTextProvider(text_terms_mapper=text_terms_mapper,
-                                           write_embedding_pair_func=lambda pair: term_embedding_pairs.append(pair))
-
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            opinion_provider = OpinionProvider.from_experiment(experiment=experiment,
-                                                               data_type=data_type)
-
-            opinion_formatter = BaseOpinionsFormatter(data_type=data_type)
-            opinion_formatter.format(opinion_provider=opinion_provider)
-            opinion_formatter.to_tsv_by_experiment(experiment=experiment)
-
-            sampler = NetworkSample(
-                data_type=data_type,
-                label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
-                text_provider=text_provider)
-
-            target_filepath = sampler.get_filepath(data_type=data_type,
-                                                   experiment=experiment)
-
-            if os.path.exists(target_filepath):
-                continue
-
-            sampler.format(opinion_provider=opinion_provider)
-
-            # TODO. Redefine filepath or use a different way of how this should be saved.
-            sampler.to_tsv_by_experiment(experiment=experiment)
-
-        term_embedding = Embedding.from_list_of_word_embedding_pairs(
-            word_embedding_pairs=term_embedding_pairs)
-        embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
-        config.set_term_embedding(embedding_matrix)
-
-    def __init_embedding(self, config, experiment):
-        """
-        Iterate through all the terms in order to obtain a result embedding.
-        """
-        assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(config, DefaultNetworkConfig))
-
-        predefined_embedding = experiment.DataIO.WordEmbedding
-        predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
-
-        # TODO. Embedding might be a part of input
-        # TODO. (when we perform terms to string transformation).
-        # TODO. So not here, but in a custom mapping.
-        word_embedding = Embedding.from_list_of_word_embedding_pairs(
-            self.__iter_words_embedded_vectors(predefined_embedding=predefined_embedding))
-
-        term_embedding = create_term_embedding_matrix(term_embedding=word_embedding)
-        config.set_term_embedding(term_embedding)
-
-        vocab = TermsEmbeddingOffsets.iter_words_vocabulary(words_embedding=word_embedding)
-
-        np.savez(u"vocab.txt.gz", list(vocab))
+        NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(config=config,
+                                                                 experiment=experiment)
 
     # region Properties
 

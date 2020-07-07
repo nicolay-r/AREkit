@@ -3,7 +3,7 @@ from arekit.common.experiment.input.formatters.opinions.base import BaseOpinions
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 
 
-class BertEncoder(object):
+class BaseInputEncoder(object):
 
     @staticmethod
     def to_tsv(experiment, create_formatter_func):

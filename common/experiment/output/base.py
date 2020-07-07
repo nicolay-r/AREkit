@@ -9,7 +9,7 @@ from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 
 
-class BertResults(object):
+class BaseOutput(object):
 
     ID = 'id'
 

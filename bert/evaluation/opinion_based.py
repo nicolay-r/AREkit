@@ -2,6 +2,7 @@ from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
 
 
+# TODO. Move to experiment/evaluation/opinion_based.py
 class BERTModelEvaluator(OpinionBasedModelEvaluator):
 
     def __init__(self, evaluator, opin_ops):
