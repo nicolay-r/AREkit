@@ -142,7 +142,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
         parsed_news, sentence_ind = opinion_provider.get_opinion_location(text_opinion)
         s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
 
-        self._fill_row_core(row=OrderedDict(),
+        row = OrderedDict()
+
+        self._fill_row_core(row=row,
                             parsed_news=parsed_news,
                             sentence_ind=sentence_ind,
                             opinion_provider=opinion_provider,
@@ -151,7 +153,6 @@ class BaseSampleFormatter(BaseRowsFormatter):
                             etalon_label=etalon_label,
                             s_ind=s_ind,
                             t_ind=t_ind)
-
         return row
 
     def __provide_rows(self, opinion_provider, linked_wrap, index_in_linked):
