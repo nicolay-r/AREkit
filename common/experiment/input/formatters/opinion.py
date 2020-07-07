@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from arekit.common.experiment.input.formatters.base import BaseRowsFormatter
+from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider

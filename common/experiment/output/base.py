@@ -1,9 +1,9 @@
 import pandas as pd
 
-from arekit.common.experiment.input.formatters.base import BaseRowsFormatter
+from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
+from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion

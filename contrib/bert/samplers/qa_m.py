@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.bert.input.providers.text.pair import PairTextProvider
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.experiment.input.formatters.sample.base import BaseSampleFormatter
+from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.synonyms import SynonymsCollection

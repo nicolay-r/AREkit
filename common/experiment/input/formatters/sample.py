@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import pandas as pd
 
-from arekit.common.experiment.input.formatters.base import BaseRowsFormatter
+from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider

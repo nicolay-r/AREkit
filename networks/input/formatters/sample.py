@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.formatters.sample.base import BaseSampleFormatter
+from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 
 
 class NetworkSampleFormatter(BaseSampleFormatter):

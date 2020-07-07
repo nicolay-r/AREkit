@@ -1,5 +1,5 @@
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.input.formatters.opinions.base import BaseOpinionsFormatter
+from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 
 
