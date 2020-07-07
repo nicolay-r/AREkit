@@ -38,9 +38,9 @@ class BertBinaryOutput(BaseOutput):
         uint_label = self._IdsFormatter.parse_label_in_sample_id(sample_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)
 
-    def _iter_by_opinions(self, linked_df, bert_opinions):
+    def _iter_by_opinions(self, linked_df, opinions_formatter):
         assert(isinstance(linked_df, pd.DataFrame))
-        assert(isinstance(bert_opinions, BaseOpinionsFormatter))
+        assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
 
         for opinion_ind in self.__iter_linked_opinion_indices(linked_df=linked_df):
             ind_pattern = self._IdsFormatter.create_pattern(id_value=opinion_ind,
@@ -49,7 +49,7 @@ class BertBinaryOutput(BaseOutput):
 
             yield self._compose_opinion_by_opinion_id(
                 sample_id=opinion_df[self.ID].iloc[0],
-                bert_opinions=bert_opinions,
+                opinions_formatter=opinions_formatter,
                 calc_label_func=lambda: self.__calculate_label(df=opinion_df))
 
     def __iter_linked_opinion_indices(self, linked_df):

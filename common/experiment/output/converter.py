@@ -48,7 +48,7 @@ class OutputToOpinionCollectionsConverter(object):
             assert(isinstance(collection, OpinionCollection))
 
             linked_iter = output.iter_linked_opinions(news_id=news_id,
-                                                      bert_opinions=bert_test_opinions)
+                                                      opinions_formatter=bert_test_opinions)
 
             collection = compose_opinion_collection(
                 create_collection_func=experiment.OpinionOperations.create_opinion_collection,

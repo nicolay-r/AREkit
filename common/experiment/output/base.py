@@ -45,15 +45,15 @@ class BaseOutput(object):
         for news_id in set(all_news):
             yield news_id
 
-    def iter_linked_opinions(self, news_id, bert_opinions):
+    def iter_linked_opinions(self, news_id, opinions_formatter):
         assert(isinstance(news_id, int))
-        assert(isinstance(bert_opinions, BaseOpinionsFormatter))
+        assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
 
         for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
 
             opinions_iter = self._iter_by_opinions(linked_df=linked_df,
-                                                   bert_opinions=bert_opinions)
+                                                   opinions_formatter=opinions_formatter)
 
             yield LinkedOpinionWrapper(linked_data=opinions_iter)
 
@@ -64,12 +64,7 @@ class BaseOutput(object):
     def _get_column_header(self):
         raise NotImplementedError()
 
-    def _iter_by_opinions(self, linked_df, bert_opinions):
-        """
-        lined_df: DataFrame
-            describes a linked opinions in dataframe (related rows)
-        bert_opinions: BertOpinions
-        """
+    def _iter_by_opinions(self, linked_df, opinions_formatter):
         raise NotImplementedError()
 
     def __iter_linked_opinions_df(self, news_id):
@@ -86,13 +81,13 @@ class BaseOutput(object):
             linked_opins_df = n_df[n_df[self.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
-    def _compose_opinion_by_opinion_id(self, sample_id, bert_opinions, calc_label_func):
+    def _compose_opinion_by_opinion_id(self, sample_id, opinions_formatter, calc_label_func):
         assert(isinstance(sample_id, unicode))
-        assert(isinstance(bert_opinions, BaseOpinionsFormatter))
+        assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
         assert(callable(calc_label_func))
 
         opinion_id = self.__ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)
-        _, source, target = bert_opinions.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
+        _, source, target = opinions_formatter.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
 
         return Opinion(source_value=source,
                        target_value=target,

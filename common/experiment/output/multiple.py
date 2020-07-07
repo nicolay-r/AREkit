@@ -27,14 +27,14 @@ class MulticlassOutput(BaseOutput):
         labels_prob = [row[label] for label in self._get_column_header()]
         return self.__labels_scaler.uint_to_label(value=np.argmax(labels_prob))
 
-    def _iter_by_opinions(self, linked_df, bert_opinions):
+    def _iter_by_opinions(self, linked_df, opinions_formatter):
         assert(isinstance(linked_df, pd.DataFrame))
-        assert(isinstance(bert_opinions, BaseOpinionsFormatter))
+        assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
 
         for index, series in linked_df.iterrows():
             yield self._compose_opinion_by_opinion_id(
                 sample_id=series[self.ID],
-                bert_opinions=bert_opinions,
+                opinions_formatter=opinions_formatter,
                 calc_label_func=lambda: self.__calculate_label(series))
 
     # endregion
