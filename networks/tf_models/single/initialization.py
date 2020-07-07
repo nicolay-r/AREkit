@@ -166,6 +166,7 @@ class SingleInstanceModelExperimentInitializer(object):
     # region private methods
 
     # TODO. We assume here to iterate over tsv records.
+    # TODO. Remove text_opinion
     def __create_input_sample(self, text_opinion, data_type, config):
         """
         Creates an input for Neural Network model
@@ -174,7 +175,7 @@ class SingleInstanceModelExperimentInitializer(object):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(self.__text_opinion_helpers[data_type].check_ends_has_same_sentence_index(text_opinion))
 
-        # TODO. We assume here to iterate over tsv records.
+        # TODO. Use from tsv_row.
         return InputSample.from_text_opinion(
             text_opinion=text_opinion,
             config=config,

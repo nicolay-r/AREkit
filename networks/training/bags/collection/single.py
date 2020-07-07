@@ -3,6 +3,7 @@ import numpy as np
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.networks.sample import InputSample
+from arekit.networks.input.formatters.sample import NetworkSampleFormatter
 from arekit.networks.training.bags.bag import Bag
 from arekit.networks.training.bags.collection.base import BagsCollection
 
@@ -12,10 +13,38 @@ class SingleBagsCollection(BagsCollection):
     # region classmethods
 
     @classmethod
+    def from_formatted_samples(cls,
+                               formatted_samples,
+                               bag_size,
+                               create_sample_func,
+                               create_empty_sample_func,
+                               text_opinion_helper,
+                               shuffle):
+        assert(isinstance(formatted_samples, NetworkSampleFormatter))
+
+        bags = []
+
+        for linked_samples in formatted_samples.iter_rows_linked_by_text_opinions():
+            # TODO: compose linked_wrap from linked_samples.
+            linked_wrap = None
+            cls.__fill_bags_list_with_linked_text_opinions(
+                bags=bags,
+                linked_wrap=linked_wrap,
+                bag_size=bag_size,
+                create_sample_func=create_sample_func)
+
+        if shuffle:
+            np.random.shuffle(bags)
+
+        return cls(bags)
+
+    # TODO. To be removed
+    # TODO. To be removed
+    # TODO. To be removed
+    @classmethod
     def from_linked_text_opinions(
             cls,
             text_opinion_collection,
-            data_type,
             bag_size,
             create_sample_func,
             create_empty_sample_func,
@@ -29,23 +58,11 @@ class SingleBagsCollection(BagsCollection):
         bags = []
 
         for linked_wrap in text_opinion_collection.iter_wrapped_linked_text_opinions():
-            bags.append(Bag(linked_wrap.First.Sentiment))
-            for opinion in linked_wrap:
-                assert(isinstance(opinion, TextOpinion))
-
-                if len(bags[-1]) == bag_size:
-                    bags.append(Bag(opinion.Sentiment))
-
-                s = create_sample_func(opinion)
-                assert(isinstance(s, InputSample))
-
-                bags[-1].add_sample(s)
-
-            if len(bags[-1]) == 0:
-                bags = bags[:-1]
-                continue
-
-            cls.__complete_last_bag(bags, bag_size)
+            cls.__fill_bags_list_with_linked_text_opinions(
+                bags=bags,
+                linked_wrap=linked_wrap,
+                bag_size=bag_size,
+                create_sample_func=create_sample_func)
 
         if shuffle:
             np.random.shuffle(bags)
@@ -55,6 +72,32 @@ class SingleBagsCollection(BagsCollection):
     # endregion
 
     # region private methods
+
+    @staticmethod
+    def __fill_bags_list_with_linked_text_opinions(bags,
+                                                   linked_wrap,
+                                                   bag_size,
+                                                   create_sample_func):
+        assert(isinstance(bags, list))
+        assert(callable(create_sample_func))
+
+        bags.append(Bag(linked_wrap.First.Sentiment))
+        for text_opinion in linked_wrap:
+            assert(isinstance(text_opinion, TextOpinion))
+
+            if len(bags[-1]) == bag_size:
+                bags.append(Bag(text_opinion.Sentiment))
+
+            s = create_sample_func(text_opinion)
+            assert(isinstance(s, InputSample))
+
+            bags[-1].add_sample(s)
+
+        if len(bags[-1]) == 0:
+            del bags[-1]
+            return
+
+        SingleBagsCollection.__complete_last_bag(bags=bags, bag_size=bag_size)
 
     @staticmethod
     def __complete_last_bag(bags, bag_size):

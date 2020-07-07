@@ -242,10 +242,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
     def extract_ids(self):
         return self._df[self.ID].astype(unicode).tolist()
 
-    @staticmethod
-    def extract_row_id(opinion_row):
-        assert(isinstance(opinion_row, list))
-        return unicode(opinion_row[0])
+    # TODO. Implement.
+    def iter_rows_linked_by_text_opinions(self):
+        raise NotImplementedError()
 
     def __len__(self):
         return len(self._df.index)

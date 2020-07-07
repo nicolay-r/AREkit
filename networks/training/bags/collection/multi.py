@@ -1,6 +1,5 @@
 import numpy as np
 
-from arekit.common.experiment.data_type import DataType
 from arekit.common.linked.base import is_context_continued
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
@@ -18,17 +17,32 @@ class MultiInstanceBagsCollection(BagsCollection):
     """
 
     @classmethod
+    def from_formatted_samples(cls,
+                               samples,
+                               bag_size,
+                               create_sample_func,
+                               create_empty_sample_func,
+                               text_opinion_helper,
+                               shuffle):
+        # TODO. Implement.
+        pass
+
+    # TODO. To be removed
+    # TODO. To be removed
+    # TODO. To be removed
+    # TODO. Make the same format as in 'single.py', related refactoring.
+    # TODO. 1) Separate body in private function.
+    # TODO. 2) Provide linked data.
+    @classmethod
     def from_linked_text_opinions(
             cls,
             text_opinion_collection,
-            data_type,
             max_bag_size,
             create_sample_func,
             create_empty_sample_func,
             text_opinion_helper,
             shuffle):
         assert(isinstance(text_opinion_collection, LinkedTextOpinionCollection))
-        assert(isinstance(data_type, DataType))
         assert(isinstance(max_bag_size, int) and max_bag_size > 0)
         assert(callable(create_sample_func))
         assert(callable(create_empty_sample_func))
@@ -49,6 +63,8 @@ class MultiInstanceBagsCollection(BagsCollection):
         bags = []
 
         for linked_wrap in text_opinion_collection.iter_wrapped_linked_text_opinions():
+
+            # TODO. Move body to other func.
 
             bags.append(Bag(label=linked_wrap.First.Sentiment))
 
@@ -72,6 +88,7 @@ class MultiInstanceBagsCollection(BagsCollection):
                 assert(isinstance(s, InputSampleBase))
                 last_bag().add_sample(s)
 
+            # TODO. Utilize del instead.
             if is_empty_last_bag():
                 bags = bags[:-1]
                 continue

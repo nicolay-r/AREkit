@@ -14,7 +14,6 @@ from arekit.common.model.evaluator import CustomOpinionBasedModelEvaluator
 
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.networks.tf_models.predict_log import NetworkInputDependentVariables
@@ -51,6 +50,7 @@ class TensorflowModel(BaseModel):
         self.__callback = callback
         self.__label_scaler = label_scaler
         self.__current_epoch_index = 0
+
         # TODO. This is too complex for model. Model assumes to provide probabilities towards input samples.
         # TODO. I.e. assumes to return BaseOutput instance.
         self.__evaluator = CustomOpinionBasedModelEvaluator(evaluator=evaluator, model=self)
