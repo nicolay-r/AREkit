@@ -256,6 +256,8 @@ class InputSample(InputSampleBase):
                    text_opinion_id=text_opinion_id)
 
     # TODO. To be removed.
+    # TODO. To be removed.
+    # TODO. To be removed.
     @classmethod
     def from_text_opinion(cls, text_opinion, frames_collection, synonyms_collection,
                           config,
@@ -311,9 +313,9 @@ class InputSample(InputSampleBase):
             syn_subj_indices=set(syn_subj_inds),
             syn_obj_indices=set(syn_obj_inds),
             term_embedding_matrix=config.TermEmbeddingMatrix,
-            word_embedding=config.WordEmbedding,
-            entity_embedding=config.EntityEmbedding,
-            token_embedding=config.TokenEmbedding,
+            word_embedding=None,
+            entity_embedding=None,
+            token_embedding=None,
             string_entity_formatter=string_entity_formatter)
 
         x_indices = term_ind_mapper.iter_mapped(terms)
