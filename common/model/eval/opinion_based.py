@@ -4,6 +4,8 @@ from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.model.eval.base import BaseModelEvaluator
 
 
+# TODO. Too complex for model, because now the latter words with input samples only.
+# TODO. There is no need to provide here information about opinions.
 class OpinionBasedModelEvaluator(BaseModelEvaluator):
 
     def __init__(self, evaluator):

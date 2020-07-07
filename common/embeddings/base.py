@@ -42,6 +42,27 @@ class Embedding(object):
                    words=[w2v_model.wv.index2word[index] for index in range(words_count)])
 
     @classmethod
+    def from_list_of_word_embedding_pairs(cls, word_embedding_pairs):
+        assert(isinstance(word_embedding_pairs, collections.Iterable))
+
+        matrix = []
+        words = []
+        used = set()
+        for word, vector in word_embedding_pairs:
+
+            if word in used:
+                continue
+
+            used.add(word)
+
+            matrix.append(vector)
+            words.append(word)
+
+        return cls(matrix=np.array(matrix),
+                   words=words)
+
+
+    @classmethod
     def from_list_with_embedding_func(cls, words_iter, embedding_func):
         assert(isinstance(words_iter, collections.Iterable))
         assert(callable(embedding_func))

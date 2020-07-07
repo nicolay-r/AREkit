@@ -14,7 +14,6 @@ from arekit.common.model.evaluator import CustomOpinionBasedModelEvaluator
 
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.networks.tf_models.predict_log import NetworkInputDependentVariables
@@ -51,6 +50,9 @@ class TensorflowModel(BaseModel):
         self.__callback = callback
         self.__label_scaler = label_scaler
         self.__current_epoch_index = 0
+
+        # TODO. This is too complex for model. Model assumes to provide probabilities towards input samples.
+        # TODO. I.e. assumes to return BaseOutput instance.
         self.__evaluator = CustomOpinionBasedModelEvaluator(evaluator=evaluator, model=self)
 
     # region Properties
@@ -129,6 +131,8 @@ class TensorflowModel(BaseModel):
         assert(isinstance(labeled_collection, LabeledCollection))
         assert(labeled_collection.check_all_text_opinions_has_labels())
 
+    # TODO. This function should return BaseOutput.
+    # TODO. Results should be calculated in Experiment (on Experiment level).
     def predict_core(self, data_type, labeling_callback):
         assert(isinstance(data_type, DataType))
         assert(callable(labeling_callback))
@@ -143,6 +147,9 @@ class TensorflowModel(BaseModel):
         predict_log = labeling_callback()
         self.after_labeling_func_application(labeled_collection)
 
+        # TODO. This is too complex for model. Model assumes ...
+        # TODO. ... to provide probabilities towards input samples.
+        # TODO. I.e. assumes to return BaseOutput instance.
         eval_result = self.__evaluator.evaluate(
             data_type=data_type,
             doc_ids=labeled_collection.get_unique_news_ids(),
@@ -151,16 +158,6 @@ class TensorflowModel(BaseModel):
         labeled_collection.reset_labels()
 
         return eval_result, predict_log
-
-    def iter_inner_input_vocabulary(self):
-        word_iter = TermsEmbeddingOffsets.iter_words_vocabulary(
-            words_embedding=self.Config.WordEmbedding,
-            custom_words_embedding=self.Config.CustomWordEmbedding,
-            tokens_embedding=self.Config.TokenEmbedding,
-            frames_embedding=self.Config.FrameEmbedding)
-
-        for word in word_iter:
-            yield word
 
     # endregion
 
@@ -192,6 +189,7 @@ class TensorflowModel(BaseModel):
         if self.Callback is not None:
             self.Callback.on_fit_finished()
 
+    # TODO. This function should return BaseOutput.
     def predict(self, dest_data_type=DataType.Test, doc_ids_set=None):
         """
         dest_data_type: unicode
@@ -202,6 +200,7 @@ class TensorflowModel(BaseModel):
         """
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
+        # TODO. This function should return BaseOutput.
         eval_result, predict_log = self.predict_core(
             data_type=dest_data_type,
             labeling_callback=lambda: self.__text_opinions_labeling(data_type=dest_data_type,
@@ -222,8 +221,9 @@ class TensorflowModel(BaseModel):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
         self.set_optimiser_value(optimiser)
 
+    # TODO. Remove this
     def get_evaluator(self):
-        self.__evaluator
+        return self.__evaluator
 
     def get_gpu_memory_fraction(self):
         raise NotImplementedError()
@@ -231,6 +231,7 @@ class TensorflowModel(BaseModel):
     def create_batch_by_bags_group(self, bags_group):
         raise NotImplementedError()
 
+    # TODO. Samples labeling
     def get_labeling_collection(self, data_type):
         raise NotImplementedError()
 
@@ -298,6 +299,8 @@ class TensorflowModel(BaseModel):
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess
 
+    # TODO. This function should compose BaseOutput,
+    # TODO. With label probabilities for each input sample.
     def __text_opinions_labeling(self, data_type, doc_ids_set):
         """
         Provides algorithm of opinions labeling according to model results.

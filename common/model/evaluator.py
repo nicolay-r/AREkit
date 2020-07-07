@@ -4,6 +4,7 @@ from arekit.common.linked.text_opinions.collection import LinkedTextOpinionColle
 from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
 
 
+# TODO. Use bert-like evaluator.
 class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
     def __init__(self, evaluator, model):
@@ -14,7 +15,8 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
         doc_ids_set = set(self.__model.IO.iter_doc_ids_to_compare(doc_ids))
 
-        collections_iter = self.iter_converted_to_opinion_collections(
+        collections_iter = self.__iter_converted_to_opinion_collections(
+            # TODO. This should be based on tsv.
             collection=self.__model.get_text_opinions_collection(data_type),
             create_collection_func=lambda: self.__model.IO.create_opinion_collection(),
             labels_helper=self.__model.LabelsHelper,
@@ -42,12 +44,18 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
         print "Collections saved: {}".format(len(used_doc_ids))
         print "News list: [{lst}]".format(lst=", ".join([str(i) for i in used_doc_ids]))
 
+    def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
+        return self.__model.IO.iter_opinion_collections_to_compare(
+            data_type=data_type,
+            doc_ids=doc_ids,
+            epoch_index=epoch_index)
+
     @staticmethod
-    def iter_converted_to_opinion_collections(collection,
-                                              create_collection_func,
-                                              text_opinion_helper,
-                                              labels_helper,
-                                              label_calc_mode):
+    def __iter_converted_to_opinion_collections(collection,
+                                                create_collection_func,
+                                                text_opinion_helper,
+                                                labels_helper,
+                                                label_calc_mode):
         assert(isinstance(collection, LinkedTextOpinionCollection))
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
         assert(callable(create_collection_func))
@@ -63,9 +71,3 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
                 label_calc_mode=label_calc_mode)
 
             yield collection, news_id
-
-    def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
-        return self.__model.IO.iter_opinion_collections_to_compare(
-            data_type=data_type,
-            doc_ids=doc_ids,
-            epoch_index=epoch_index)

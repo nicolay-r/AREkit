@@ -20,7 +20,7 @@ from arekit.contrib.networks.features.frames import FrameFeatures
 from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
-from arekit.networks.mappers.terms import IndicingTextTermsMapper
+from arekit.networks.mappers.terms import IndexingTextTermsMapper
 
 
 class InputSample(InputSampleBase):
@@ -145,6 +145,120 @@ class InputSample(InputSampleBase):
                    text_opinion_id=-1)
 
     @classmethod
+    def from_tsv_row(cls,
+                     text_opinion_id,       # row_id
+                     terms,                 # list of terms, that might be found in words_vocab
+                     subj_ind,
+                     obj_ind,
+                     words_vocab,           # for indexing input (all the vocabulary, obtained from offsets.py)
+                     config,                # for terms_per_context, frames_per_context.
+                     frame_inds=None,
+                     frame_sent_roles=None,
+                     syn_subj_inds=None,
+                     syn_obj_inds=None):
+        """
+        Here we first need to perform indexing of terms. Therefore, mark entities, frame_variants among them.
+        None parameters considered as optional.
+        """
+        assert(isinstance(terms, list))
+        assert(isinstance(frame_inds, list) or frame_inds is None)
+        assert(isinstance(words_vocab, dict))
+        assert(isinstance(subj_ind, int) and 0 <= subj_ind < len(terms))
+        assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
+        assert(subj_ind != obj_ind)
+
+        # TODO. This should be a simple mapping by embedding_matrix
+        x_indices = [words_vocab[term] for term in terms]
+
+        x_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=x_indices,
+            e1_in=subj_ind,
+            e2_in=obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.X_PAD_VALUE)
+
+        pos_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=arekit.networks.mappers.pos.iter_pos_indices_for_terms(terms=terms, pos_tagger=config.PosTagger),
+            e1_in=subj_ind,
+            e2_in=obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.POS_PAD_VALUE)
+
+        frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=[cls.FRAME_SENT_ROLES_PAD_VALUE] * len(terms) if frame_sent_roles is None else [],
+            e1_in=subj_ind,
+            e2_in=obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
+
+        term_type_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=InputSample.__create_term_types(terms),
+            e1_in=subj_ind,
+            e2_in=obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.TERM_TYPE_PAD_VALUE)
+
+        frames_feature = PointersFeature.create_shifted_and_fit(
+            original_value=[] if frame_inds is None else frame_inds,
+            start_offset=x_feature.StartIndex,
+            end_offset=x_feature.EndIndex,
+            filler=cls.FRAMES_PAD_VALUE,
+            expected_size=config.TermsPerContext)
+
+        syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
+            original_value=[subj_ind] if syn_subj_inds is None else syn_subj_inds,
+            start_offset=x_feature.StartIndex,
+            end_offset=x_feature.EndIndex,
+            filler=0)
+
+        syn_obj_inds_feature = PointersFeature.create_shifted_and_fit(
+            original_value=[obj_ind] if syn_obj_inds is None else syn_obj_inds,
+            start_offset=x_feature.StartIndex,
+            end_offset=x_feature.EndIndex,
+            filler=0)
+
+        subj_ind = subj_ind - x_feature.StartIndex
+        obj_ind = obj_ind - x_feature.StartIndex
+
+        dist_from_subj = DistanceFeatures.distance_feature(position=subj_ind, size=config.TermsPerContext)
+
+        dist_from_obj = DistanceFeatures.distance_feature(position=obj_ind, size=config.TermsPerContext)
+
+        dist_nearest_subj = DistanceFeatures.distance_abs_nearest_feature(
+            positions=syn_subj_inds_feature.ValueVector,
+            size=config.TermsPerContext)
+
+        dist_nearest_obj = DistanceFeatures.distance_abs_nearest_feature(
+            positions=syn_obj_inds_feature.ValueVector,
+            size=config.TermsPerContext)
+
+        pad_right_or_crop_inplace(lst=syn_subj_inds_feature.ValueVector,
+                                  pad_size=config.SynonymsPerContext,
+                                  filler=cls.SYNONYMS_PAD_VALUE)
+
+        pad_right_or_crop_inplace(lst=syn_obj_inds_feature.ValueVector,
+                                  pad_size=config.SynonymsPerContext,
+                                  filler=cls.SYNONYMS_PAD_VALUE)
+
+        return cls(X=np.array(x_feature.ValueVector),
+                   subj_ind=subj_ind,
+                   obj_ind=obj_ind,
+                   syn_subj_inds=np.array(syn_subj_inds_feature.ValueVector),
+                   syn_obj_inds=np.array(syn_obj_inds_feature.ValueVector),
+                   dist_from_subj=dist_from_subj,
+                   dist_from_obj=dist_from_obj,
+                   dist_nearest_subj=dist_nearest_subj,
+                   dist_nearest_obj=dist_nearest_obj,
+                   pos_indices=np.array(pos_feature.ValueVector),
+                   term_type=np.array(term_type_feature.ValueVector),
+                   frame_indices=np.array(frames_feature.ValueVector),
+                   frame_sent_roles=np.array(frame_sent_roles_feature.ValueVector),
+                   text_opinion_id=text_opinion_id)
+
+    # TODO. To be removed.
+    # TODO. To be removed.
+    # TODO. To be removed.
+    @classmethod
     def from_text_opinion(cls, text_opinion, frames_collection, synonyms_collection,
                           config,
                           label_scaler,
@@ -192,14 +306,16 @@ class InputSample(InputSampleBase):
                                                             e_value=obj_value,
                                                             synonyms=synonyms_collection)))
 
-        term_ind_mapper = IndicingTextTermsMapper(
+        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
+        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
+        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
+        term_ind_mapper = IndexingTextTermsMapper(
             syn_subj_indices=set(syn_subj_inds),
             syn_obj_indices=set(syn_obj_inds),
             term_embedding_matrix=config.TermEmbeddingMatrix,
-            word_embedding=config.WordEmbedding,
-            custom_word_embedding=config.CustomWordEmbedding,
-            token_embedding=config.TokenEmbedding,
-            frames_embedding=config.FrameEmbedding,
+            word_embedding=None,
+            entity_embedding=None,
+            token_embedding=None,
             string_entity_formatter=string_entity_formatter)
 
         x_indices = term_ind_mapper.iter_mapped(terms)

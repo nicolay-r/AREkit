@@ -23,5 +23,6 @@ class BaseModel(object):
     def run_training(self, epochs_count, load_model=False):
         raise NotImplementedError()
 
+    # TODO. This should return BaseOutput
     def predict(self, dest_data_type=DataType.Test, doc_ids_set=None):
         raise NotImplementedError()

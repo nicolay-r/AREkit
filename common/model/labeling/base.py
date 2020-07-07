@@ -11,7 +11,7 @@ class LabelsHelper(object):
         return self._label_scaler.uint_to_label(value=value)
 
     def label_to_uint(self, label):
-        return self._label_scaler.label_to_uint(value=label)
+        return self._label_scaler.label_to_uint(label=label)
 
     def get_classes_count(self):
         return len(self._label_scaler.ordered_suppoted_labels())

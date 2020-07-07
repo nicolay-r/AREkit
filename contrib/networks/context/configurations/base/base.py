@@ -35,11 +35,6 @@ class DefaultNetworkConfig(object):
         epsilon=10e-6,
         rho=0.95)
 
-    __word_embedding = None
-    __custom_word_embedding = None   # Includes not found words.
-    __token_embedding = None
-    __frames_embedding = None
-
     __term_embedding_matrix = None   # Includes embeddings of: words, entities, tokens.
     __class_weights = None
     __use_pos_emb = True
@@ -178,34 +173,14 @@ class DefaultNetworkConfig(object):
         assert(isinstance(value, int))
         self.__bag_size = value
 
-    def set_custom_words_embedding(self, embedding):
-        assert(isinstance(embedding, Embedding))
-        assert(self.__custom_word_embedding is None)
-        self.__custom_word_embedding = embedding
-
     def set_term_embedding(self, embedding_matrix):
         assert(self.__term_embedding_matrix is None)
         self.__term_embedding_matrix = embedding_matrix
-
-    def set_token_embedding(self, token_embedding):
-        assert(isinstance(token_embedding, Embedding))
-        assert(self.__token_embedding is None)
-        self.__token_embedding = token_embedding
 
     def set_class_weights(self, class_weights):
         assert(isinstance(class_weights, list))
         assert(len(class_weights) == self.__classes_count)
         self.__class_weights = class_weights
-
-    def set_word_embedding(self, embedding):
-        assert(isinstance(embedding, Embedding))
-        assert(self.__word_embedding is None)
-        self.__word_embedding = embedding
-
-    def set_frames_embedding(self, embedding):
-        assert(isinstance(embedding, Embedding))
-        assert(self.__frames_embedding is None)
-        self.__frames_embedding = embedding
 
     def notify_initialization_completed(self):
         pass
@@ -257,22 +232,6 @@ class DefaultNetworkConfig(object):
     @property
     def UseClassWeights(self):
         return self.__use_class_weights
-
-    @property
-    def WordEmbedding(self):
-        return self.__word_embedding
-
-    @property
-    def CustomWordEmbedding(self):
-        return self.__custom_word_embedding
-
-    @property
-    def TokenEmbedding(self):
-        return self.__token_embedding
-
-    @property
-    def FrameEmbedding(self):
-        return self.__frames_embedding
 
     @property
     def UsePOSEmbedding(self):
