@@ -2,11 +2,10 @@ from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
 
 
-# TODO. Move to experiment/evaluation/opinion_based.py
-class BERTModelEvaluator(OpinionBasedModelEvaluator):
+class OpinionBasedExperimentEvaluator(OpinionBasedModelEvaluator):
 
     def __init__(self, evaluator, opin_ops):
-        super(BERTModelEvaluator, self).__init__(evaluator=evaluator)
+        super(OpinionBasedExperimentEvaluator, self).__init__(evaluator=evaluator)
         assert(isinstance(opin_ops, OpinionOperations))
         self.__opin_ops = opin_ops
 

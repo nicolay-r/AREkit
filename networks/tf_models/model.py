@@ -143,6 +143,8 @@ class TensorflowModel(BaseModel):
         predict_log = labeling_callback()
         self.after_labeling_func_application(labeled_collection)
 
+        # TODO. Already have an evaluation in experiment.
+        # TODO. Decide what we should do with it.
         eval_result = self.__evaluator.evaluate(
             data_type=data_type,
             doc_ids=labeled_collection.get_unique_news_ids(),
@@ -151,18 +153,6 @@ class TensorflowModel(BaseModel):
         labeled_collection.reset_labels()
 
         return eval_result, predict_log
-
-    def iter_inner_input_vocabulary(self):
-        # TODO. There is no need the related separation onto variety of embeddings.
-        # TODO. since such separation remains unused later, during training process
-        # TODO. and networks compilation stage also especially.
-        word_iter = TermsEmbeddingOffsets.iter_words_vocabulary(
-            words_embedding=self.Config.WordEmbedding,
-            entities_embedding=self.Config.EntityEmbedding,
-            tokens_embedding=self.Config.TokenEmbedding)
-
-        for word in word_iter:
-            yield word
 
     # endregion
 
