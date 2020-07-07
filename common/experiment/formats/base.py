@@ -82,6 +82,8 @@ class BaseExperiment(object):
         data_type: DataType
             used as data source (for document ids)
         epoch_index: int or None
+
+        NOTE: assumes that results already written and converted in doc-level opinions.
         """
         assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int) or epoch_index is None)

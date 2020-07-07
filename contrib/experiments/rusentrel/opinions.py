@@ -45,6 +45,9 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
                                                           synonyms=self._data_io.SynonymsCollection)
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
+        """
+        Note: Assumes that all the results already converted into document-level opinions.
+        """
         assert(isinstance(data_type, DataType))
         assert(isinstance(doc_ids, collections.Iterable))
         assert(isinstance(epoch_index, int))

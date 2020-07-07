@@ -49,6 +49,7 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def get_bags_collection(self, data_type):
         return self.__init_helper.BagsCollections[data_type]
 
+    # TODO. Samples labeling collection
     def get_labeling_collection(self, data_type):
         return self.__init_helper.LabeledCollection[data_type]
 

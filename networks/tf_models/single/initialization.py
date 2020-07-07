@@ -58,6 +58,7 @@ class SingleInstanceModelExperimentInitializer(object):
                                                     iter_doc_ids=self.__pncs[data_type].iter_news_ids(),
                                                     text_opinion_helper=self.__text_opinion_helpers[data_type]))
 
+        # TODO: Samples labeling collection
         self.__labeled_collections = self.__create_collection(
             supported_data_types,
             # TODO. Labeled collection will be simplified
@@ -112,6 +113,7 @@ class SingleInstanceModelExperimentInitializer(object):
 
     @property
     def LabeledCollection(self):
+        # TODO. Samples labeling collection
         return self.__labeled_collections
 
     # TODO. Remove
