@@ -9,6 +9,7 @@ from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.tf_models.model import TensorflowModel
 
 
+# TODO. Utilize experiment here.
 class ExperimentCallback(Callback):
 
     VocabularyOutputFilePathInLogDir = u'vocab.txt'
@@ -61,8 +62,6 @@ class ExperimentCallback(Callback):
             return
 
         self.__save_model_hidden_values(epoch_index)
-        # TODO. Save earlier, before model actually start.
-        self.__save_model_vocabulary()
 
     # endregion
 
@@ -79,14 +78,6 @@ class ExperimentCallback(Callback):
     # endregion
 
     # region private methods
-
-    def __save_model_vocabulary(self):
-        assert(isinstance(self.__model, TensorflowModel))
-
-        if not self.__key_save_hidden_parameters:
-            return
-
-        vocab_path = os.path.join(self.__log_dir, self.VocabularyOutputFilePathInLogDir)
 
     def __save_model_hidden_values(self, epoch_index):
 
