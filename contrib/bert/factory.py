@@ -8,6 +8,7 @@ from arekit.contrib.bert.samplers.nli_m import NliMultipleSampleFormatter
 from arekit.contrib.bert.samplers.qa_b import QaBinarySampleFormatter
 from arekit.contrib.bert.samplers.qa_m import QaMultipleSampleFormatter
 from arekit.contrib.bert.supported import BertSampleFormatter
+from arekit.contrib.bert.terms.mapper import BertStringTextTermsMapper
 
 
 def create_bert_sample_formatter(data_type, formatter_type, label_scaler,
@@ -23,36 +24,33 @@ def create_bert_sample_formatter(data_type, formatter_type, label_scaler,
 
     l_formatter = RussianThreeScaleRussianLabelsFormatter()
     e_formatter = RussianEntitiesFormatter() if entity_formatter is None else entity_formatter
+    text_terms_mapper = BertStringTextTermsMapper(entity_formatter=e_formatter,
+                                                  synonyms=synonyms)
 
     if formatter_type == BertSampleFormatter.CLASSIF_M:
         return create_simple_sample_formatter(data_type=data_type,
                                               label_scaler=label_scaler,
-                                              entity_formatter=e_formatter,
-                                              synonyms=synonyms)
+                                              text_terms_mapper=text_terms_mapper)
     if formatter_type == BertSampleFormatter.NLI_M:
         return NliMultipleSampleFormatter(data_type=data_type,
                                           label_scaler=label_scaler,
-                                          synonyms=synonyms,
                                           labels_formatter=l_formatter,
-                                          entity_formatter=e_formatter)
+                                          text_terms_mapper=text_terms_mapper)
     if formatter_type == BertSampleFormatter.QA_M:
         return QaMultipleSampleFormatter(data_type=data_type,
                                          label_scaler=label_scaler,
-                                         synonyms=synonyms,
                                          labels_formatter=l_formatter,
-                                         entity_formatter=e_formatter)
+                                         text_terms_mapper=text_terms_mapper)
     if formatter_type == BertSampleFormatter.NLI_B:
         return NliBinarySampleFormatter(data_type=data_type,
                                         label_scaler=label_scaler,
-                                        synonyms=synonyms,
                                         labels_formatter=l_formatter,
-                                        entity_formatter=e_formatter)
+                                        text_terms_mapper=text_terms_mapper)
     if formatter_type == BertSampleFormatter.QA_B:
         return QaBinarySampleFormatter(data_type=data_type,
                                        label_scaler=label_scaler,
-                                       synonyms=synonyms,
                                        labels_formatter=l_formatter,
-                                       entity_formatter=e_formatter)
+                                       text_terms_mapper=text_terms_mapper)
 
     return None
 
