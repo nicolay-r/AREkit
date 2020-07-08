@@ -267,9 +267,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         for row_index in xrange(len(df)):
             keep_row_index = row_index if row_index < origin_size else random.randint(0, origin_size - 1)
             for column, value in enumerate(df_label.iloc[keep_row_index]):
-                self._set_value(row_ind=row_index,
-                                column=column,
-                                value=value)
+                self._set_value(df=df, row_ind=row_index, column=column, value=value)
 
         return df
 

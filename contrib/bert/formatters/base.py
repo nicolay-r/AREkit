@@ -44,8 +44,9 @@ class BaseBertRowsFormatter(object):
 
     # region private methods
 
-    def _set_value(self, row_ind, column, value):
-        self._df.at[row_ind, column] = value
+    @staticmethod
+    def _set_value(df, row_ind, column, value):
+        df.at[row_ind, column] = value
 
     def __fill_with_blank_rows(self, rows_count):
         assert(isinstance(rows_count, int))
@@ -68,9 +69,7 @@ class BaseBertRowsFormatter(object):
         self.__fill_with_blank_rows(rows_count)
         for row_index, row in enumerate(self._iter_by_rows(opinion_provider)):
             for column, value in row.iteritems():
-                self._set_value(row_ind=row_index,
-                                column=column,
-                                value=value)
+                self._set_value(df=self._df, row_ind=row_index, column=column, value=value)
 
             current_work = row_index + 1
             total_work = rows_count
