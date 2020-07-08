@@ -19,7 +19,7 @@ class BaseBertRowsFormatter(object):
     def __init__(self, data_type):
         assert(isinstance(data_type, unicode))
         self._data_type = data_type
-        self._df = self.__create_empty_df()
+        self._df = self._create_empty_df()
 
     @staticmethod
     def formatter_type_log_name():
@@ -36,7 +36,7 @@ class BaseBertRowsFormatter(object):
     def _iter_by_rows(opinion_provider):
         raise NotImplementedError()
 
-    def __create_empty_df(self):
+    def _create_empty_df(self):
         data = np.empty(0, dtype=np.dtype(self._get_columns_list_with_types()))
         return pd.DataFrame(data)
 
@@ -44,13 +44,18 @@ class BaseBertRowsFormatter(object):
 
     # region private methods
 
-    def __set_value(self, row_ind, column, value):
+    def _set_value(self, row_ind, column, value):
         self._df.at[row_ind, column] = value
 
     def __fill_with_blank_rows(self, rows_count):
         assert(isinstance(rows_count, int))
-        self._df[self.ROW_ID] = range(rows_count)
-        self._df.set_index(self.ROW_ID, inplace=True)
+        self._fast_init_df(df=self._df,
+                           rows_count=rows_count)
+
+    @staticmethod
+    def _fast_init_df(df, rows_count):
+        df[BaseBertRowsFormatter.ROW_ID] = range(rows_count)
+        df.set_index(BaseBertRowsFormatter.ROW_ID, inplace=True)
 
     # endregion
 
@@ -63,9 +68,9 @@ class BaseBertRowsFormatter(object):
         self.__fill_with_blank_rows(rows_count)
         for row_index, row in enumerate(self._iter_by_rows(opinion_provider)):
             for column, value in row.iteritems():
-                self.__set_value(row_ind=row_index,
-                                 column=column,
-                                 value=value)
+                self._set_value(row_ind=row_index,
+                                column=column,
+                                value=value)
 
             current_work = row_index + 1
             total_work = rows_count

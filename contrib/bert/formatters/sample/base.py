@@ -252,33 +252,33 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
         return max(sizes)
 
-    def __extract_balanced_class(self, largest_class_size, label, seed=1):
+    def __compose_balanced_df(self, largest_class_size, label, seed=1):
         """
         Composes a DataFrame which has the same amount of examples as one with 'other_label'
         """
         assert (isinstance(label, Label))
 
-        df_label = self.__get_class(label=label)
+        df = self._create_empty_df()
+        self._fast_init_df(df=df, rows_count=largest_class_size)
 
         random.seed(seed)
-        rows = []
-        need_to_append = largest_class_size - len(df_label)
+        df_label = self.__get_class(label=label)
+        origin_size = len(df_label)
+        for row_index in xrange(len(df)):
+            keep_row_index = row_index if row_index < origin_size else random.randint(0, origin_size - 1)
+            for column, value in enumerate(df_label.iloc[keep_row_index]):
+                self._set_value(row_ind=row_index,
+                                column=column,
+                                value=value)
 
-        while len(rows) < need_to_append:
-            i = random.randint(0, len(df_label) - 1)
-            rows.append(df_label.iloc[i])
-
-        for row in rows:
-            df_label = df_label.append(row)
-
-        return df_label
+        return df
 
     def __balance(self):
         """
         Balancing related dataframe by amount of examples per class
         """
         largest_class_size = self.__get_largest_class_size()
-        balanced = [self.__extract_balanced_class(label=label, largest_class_size=largest_class_size)
+        balanced = [self.__compose_balanced_df(label=label, largest_class_size=largest_class_size)
                     for label in self.__label_provider.SupportedLabels]
         self._df = pd.concat(balanced)
 
