@@ -1,6 +1,7 @@
-from collections import OrderedDict
-
+import random
+import numpy as np
 import pandas as pd
+from collections import OrderedDict
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import Label
@@ -199,11 +200,14 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
     # endregion
 
-    def to_tsv_by_experiment(self, experiment):
+    def to_tsv_by_experiment(self, experiment, balance_rows_by_labels=True):
         assert(isinstance(experiment, BaseExperiment))
 
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
+
+        if balance_rows_by_labels and self.__is_train():
+            self.__balance()
 
         self._df.to_csv(filepath,
                         sep='\t',
@@ -233,3 +237,49 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
     def __len__(self):
         return len(self._df.index)
+
+    # private rows balancing functions
+
+    def __get_class(self, label):
+        assert (isinstance(label, Label))
+        return self._df[self._df[self.LABEL] == self.__label_provider.calculate_output_label(
+            expected_label=label,
+            etalon_label=label)]
+
+    def __get_largest_class_size(self):
+        sizes = [len(self.__get_class(label))
+                 for label in self.__label_provider.SupportedLabels]
+
+        return max(sizes)
+
+    def __extract_balanced_class(self, largest_class_size, label, seed=1):
+        """
+        Composes a DataFrame which has the same amount of examples as one with 'other_label'
+        """
+        assert (isinstance(label, Label))
+
+        df_label = self.__get_class(label=label)
+
+        random.seed(seed)
+        rows = []
+        need_to_append = largest_class_size - len(df_label)
+
+        while len(rows) < need_to_append:
+            i = random.randint(0, len(df_label) - 1)
+            rows.append(df_label.iloc[i])
+
+        for row in rows:
+            df_label = df_label.append(row)
+
+        return df_label
+
+    def __balance(self):
+        """
+        Balancing related dataframe by amount of examples per class
+        """
+        largest_class_size = self.__get_largest_class_size()
+        balanced = [self.__extract_balanced_class(label=label, largest_class_size=largest_class_size)
+                    for label in self.__label_provider.SupportedLabels]
+        self._df = pd.concat(balanced)
+
+    # endregion
