@@ -80,14 +80,6 @@ class SingleInstanceModelExperimentInitializer(object):
                 data_type=data_type,
                 config=config))
 
-        # TODO. This should be removed.
-        # TODO. This should be removed.
-        # TODO. This should be removed.
-        self.__bags_collection_helpers = self.__create_collection(
-            supported_data_types,
-            lambda data_type: BagsCollectionHelper(bags_collection=self.__bags_collection[data_type],
-                                                   name=data_type))
-
         norm, _ = self.get_statistic(collection=self.__text_opinion_collections[DataType.Train],
                                      labels_helper=self.__labels_helper)
 
@@ -118,13 +110,6 @@ class SingleInstanceModelExperimentInitializer(object):
     @property
     def BagsCollections(self):
         return self.__bags_collection
-
-    # TODO. This should be removed.
-    # TODO. This should be removed.
-    # TODO. This should be removed.
-    @property
-    def BagsCollectionHelpers(self):
-        return self.__bags_collection_helpers
 
     @property
     def LabeledCollection(self):

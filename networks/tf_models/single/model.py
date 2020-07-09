@@ -82,12 +82,6 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def get_text_opinions_collection(self, data_type):
         return self.__init_helper.TextOpitnionCollections[data_type]
 
-    # TODO. This should be removed (as it utilized only in logging).
-    # TODO. This should be removed (as it utilized only in logging).
-    # TODO. This should be removed (as it utilized only in logging).
-    def get_bags_collection_helper(self, data_type):
-        return self.__init_helper.BagsCollectionHelpers[data_type]
-
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
         log.write_log(data_io=self.__experiment.DataIO, log_names=keys, log_values=values)
@@ -111,15 +105,5 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         log.debug_unique_relations_statistic(
             name=unicode(DataType.Test),
             collection=self.get_text_opinions_collection(DataType.Test))
-
-        # TODO. This should be removed.
-        # TODO. This should be removed.
-        # TODO. This should be removed.
-        self.get_bags_collection_helper(DataType.Train).print_log_statistics()
-
-        # TODO. This should be removed.
-        # TODO. This should be removed.
-        # TODO. This should be removed.
-        self.get_bags_collection_helper(DataType.Test).print_log_statistics()
 
     # endregion
