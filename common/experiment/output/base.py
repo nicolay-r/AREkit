@@ -45,6 +45,7 @@ class BaseOutput(object):
         for news_id in set(all_news):
             yield news_id
 
+    # TODO. Replace with opinion reader.
     def iter_linked_opinions(self, news_id, opinions_formatter):
         assert(isinstance(news_id, int))
         assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
@@ -52,6 +53,7 @@ class BaseOutput(object):
         for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
 
+            # TODO. Replace with opinion reader.
             opinions_iter = self._iter_by_opinions(linked_df=linked_df,
                                                    opinions_formatter=opinions_formatter)
 
@@ -64,6 +66,7 @@ class BaseOutput(object):
     def _get_column_header(self):
         raise NotImplementedError()
 
+    # TODO. Replace with opinion reader.
     def _iter_by_opinions(self, linked_df, opinions_formatter):
         raise NotImplementedError()
 
@@ -81,8 +84,10 @@ class BaseOutput(object):
             linked_opins_df = n_df[n_df[self.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
+    # TODO. Might be replaced with opinion reader.
     def _compose_opinion_by_opinion_id(self, sample_id, opinions_formatter, calc_label_func):
         assert(isinstance(sample_id, unicode))
+        # TODO. Might be replaced with opinion reader.
         assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
         assert(callable(calc_label_func))
 

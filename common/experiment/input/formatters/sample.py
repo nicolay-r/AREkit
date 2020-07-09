@@ -41,7 +41,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         self.__label_provider = label_provider
         self.__text_provider = text_provider
-        self.__row_ids_formatter = self.__create_row_ids_formatter(label_provider)
+        self.__row_ids_provider = self.__create_row_ids_provider(label_provider)
 
         super(BaseSampleFormatter, self).__init__(data_type=data_type)
 
@@ -52,7 +52,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
     # region Private methods
 
     @staticmethod
-    def __create_row_ids_formatter(label_provider):
+    def __create_row_ids_provider(label_provider):
         if isinstance(label_provider, BinaryLabelProvider):
             return BinaryIDProvider()
         if isinstance(label_provider, MultipleLabelProvider):
@@ -100,7 +100,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
     def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
 
-        row[self.ID] = self.__row_ids_formatter.create_sample_id(
+        row[self.ID] = self.__row_ids_provider.create_sample_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrap,
             index_in_linked=index_in_linked,
@@ -162,7 +162,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
         origin = linked_wrap.First
-        if isinstance(self.__row_ids_formatter, BinaryIDProvider):
+        if isinstance(self.__row_ids_provider, BinaryIDProvider):
             """
             Enumerate all opinions as if it would be with the different label types.
             """
@@ -172,7 +172,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
                                         index_in_linked=index_in_linked,
                                         etalon_label=origin.Sentiment)
 
-        if isinstance(self.__row_ids_formatter, MultipleIDProvider):
+        if isinstance(self.__row_ids_provider, MultipleIDProvider):
             yield self.__create_row(opinion_provider=opinion_provider,
                                     linked_wrap=linked_wrap,
                                     index_in_linked=index_in_linked,
@@ -230,7 +230,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
                         compression='gzip',
                         header=not self.__is_train())
 
-    def from_tsv(self, experiment):
+    # TODO. Reading
+    def init_from_tsv(self, experiment):
 
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
@@ -239,9 +240,11 @@ class BaseSampleFormatter(BaseRowsFormatter):
                                compression='gzip',
                                sep='\t')
 
+    # TODO. Reading
     def extract_ids(self):
         return self._df[self.ID].astype(unicode).tolist()
 
+    # TODO. Reading
     def iter_rows_linked_by_text_opinions(self):
         """
         TODO. This might be improved, i.e. generalized.
@@ -254,8 +257,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
         current_opinion_id = undefined
 
         for row_index, sample_id in enumerate(self._df[self.ID]):
-            news_id = self.__row_ids_formatter.parse_news_in_sample_id(sample_id)
-            opinion_id = self.__row_ids_formatter.parse_opinion_in_sample_id(sample_id)
+            news_id = self.__row_ids_provider.parse_news_in_sample_id(sample_id)
+            opinion_id = self.__row_ids_provider.parse_opinion_in_sample_id(sample_id)
 
             if current_news_id != undefined and current_opinion_id != undefined:
                 if news_id != current_news_id or opinion_id != current_opinion_id:

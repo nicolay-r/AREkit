@@ -58,13 +58,15 @@ class NetworkInputEncoder(object):
         vocab = TermsEmbeddingOffsets.iter_words_vocabulary(words_embedding=term_embedding)
         np.savez(NetworkInputEncoder.VOCABULARY_FILENAME, list(vocab))
 
+    # TODO. Remove this, as this is not related to input.
+    # TODO. Utilize reader common/experiment/input/readers/sample.
     @staticmethod
     def load_sample_formatter(data_type, experiment):
         # TODO. Provide simple text_provider as a placeholder.
         formatter = NetworkInputEncoder.__create_sample_formatter(data_type=data_type,
                                                                   experiment=experiment,
                                                                   text_provider=None)
-        formatter.from_tsv(experiment=experiment)
+        formatter.init_from_tsv(experiment=experiment)
 
         return formatter
 

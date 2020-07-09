@@ -73,6 +73,7 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
     # endregion
 
+    # TODO. Reader.
     def provide_opinion_info_by_opinion_id(self, opinion_id):
         assert(isinstance(opinion_id, unicode))
 
@@ -99,7 +100,8 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
                         compression='gzip',
                         header=False)
 
-    def from_tsv(self, experiment):
+    # TODO. Reader.
+    def init_from_tsv(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
 
         filepath = self.get_filepath(data_type=self._data_type,
@@ -110,7 +112,4 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
                                header=None,
                                compression='gzip',
                                names=[self.ID, self.SOURCE, self.TARGET])
-
-    def get_ids(self):
-        return self._df.iloc[0].tolist()
 

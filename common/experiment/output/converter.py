@@ -13,10 +13,13 @@ from arekit.common.opinions.collection import OpinionCollection
 class OutputToOpinionCollectionsConverter(object):
 
     @staticmethod
-    def iter_opinion_collections(samples_formatter_func,
-                                 experiment,
-                                 label_calculation_mode,
-                                 output):
+    def iter_opinion_collections(
+            # TODO. BaseInputReader (sample)
+            # TODO. BaseInputReader (opinion)
+            samples_formatter_func,
+            experiment,
+            label_calculation_mode,
+            output):
         """
         Args:
             samples_formatter_func: func(data_type) -> FormatterType
@@ -28,15 +31,18 @@ class OutputToOpinionCollectionsConverter(object):
 
         data_type = DataType.Test
 
+        # TODO. Replace with reader.
         bert_test_samples = samples_formatter_func(data_type)
-        bert_test_samples.from_tsv(experiment=experiment)
+        bert_test_samples.init_from_tsv(experiment=experiment)
 
         output.from_tsv(data_type=data_type,
                         experiment=experiment,
+                        # TODO. extract_ids in reader.
                         ids_values=bert_test_samples.extract_ids())
 
+        # TODO. Replace with reader.
         bert_test_opinions = BaseOpinionsFormatter(data_type=data_type)
-        bert_test_opinions.from_tsv(experiment=experiment)
+        bert_test_opinions.init_from_tsv(experiment=experiment)
 
         assert(len(output) == len(bert_test_samples))
 
@@ -48,6 +54,7 @@ class OutputToOpinionCollectionsConverter(object):
             assert(isinstance(collection, OpinionCollection))
 
             linked_iter = output.iter_linked_opinions(news_id=news_id,
+                                                      # TODO. Replace with reader.
                                                       opinions_formatter=bert_test_opinions)
 
             collection = compose_opinion_collection(

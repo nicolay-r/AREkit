@@ -34,6 +34,7 @@ class SingleInstanceModelExperimentInitializer(object):
         self.__bags_collection = self.__create_collection(
             supported_data_types,
             lambda data_type: self.create_bags_collection(
+                # TODO. Redactor this by using reader (see in load_sample_formatter comments)
                 formatted_samples=NetworkInputEncoder.load_sample_formatter(experiment=experiment,
                                                                             data_type=data_type),
                 config=config))
