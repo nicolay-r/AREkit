@@ -5,6 +5,9 @@ from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
 
 
 # TODO. Use bert-like evaluator.
+# TODO. This should be removed (model does not have evaluation now, only prediction).
+# TODO. This should be removed (model does not have evaluation now, only prediction).
+# TODO. This should be removed (model does not have evaluation now, only prediction).
 class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
     def __init__(self, evaluator, model):

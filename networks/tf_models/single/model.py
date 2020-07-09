@@ -70,12 +70,21 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     # region private methods
 
+    # TODO. This should be removed.
+    # TODO. This should be removed.
+    # TODO. This should be removed.
     def get_text_opinion_helper(self, data_type):
         return self.__init_helper.TextOpinionHelpers[data_type]
 
+    # TODO. This should be removed (because we already have encoded samples).
+    # TODO. This should be removed (because we already have encoded samples).
+    # TODO. This should be removed (because we already have encoded samples).
     def get_text_opinions_collection(self, data_type):
         return self.__init_helper.TextOpitnionCollections[data_type]
 
+    # TODO. This should be removed (as it utilized only in logging).
+    # TODO. This should be removed (as it utilized only in logging).
+    # TODO. This should be removed (as it utilized only in logging).
     def get_bags_collection_helper(self, data_type):
         return self.__init_helper.BagsCollectionHelpers[data_type]
 
@@ -103,7 +112,14 @@ class SingleInstanceTensorflowModel(TensorflowModel):
             name=unicode(DataType.Test),
             collection=self.get_text_opinions_collection(DataType.Test))
 
+        # TODO. This should be removed.
+        # TODO. This should be removed.
+        # TODO. This should be removed.
         self.get_bags_collection_helper(DataType.Train).print_log_statistics()
+
+        # TODO. This should be removed.
+        # TODO. This should be removed.
+        # TODO. This should be removed.
         self.get_bags_collection_helper(DataType.Test).print_log_statistics()
 
     # endregion

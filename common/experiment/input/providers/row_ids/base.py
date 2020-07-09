@@ -66,8 +66,13 @@ class BaseIDProvider(object):
         return BaseIDProvider._parse(opinion_id, BaseIDProvider.OPINION)
 
     @staticmethod
-    def parse_news_in_sample_id(opinion_id):
-        assert(isinstance(opinion_id, unicode))
-        return BaseIDProvider._parse(opinion_id, BaseIDProvider.NEWS)
+    def parse_opinion_in_sample_id(sample_id):
+        assert(isinstance(sample_id, unicode))
+        return BaseIDProvider._parse(sample_id, BaseIDProvider.OPINION)
+
+    @staticmethod
+    def parse_news_in_sample_id(sample_id):
+        assert(isinstance(sample_id, unicode))
+        return BaseIDProvider._parse(sample_id, BaseIDProvider.NEWS)
 
     # endregion

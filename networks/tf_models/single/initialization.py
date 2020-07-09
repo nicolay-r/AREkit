@@ -14,6 +14,7 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.sample import InputSample
 
 from arekit.networks.input.encoder import NetworkInputEncoder
+from arekit.networks.input.rows_parser import ParsedSampleRow
 from arekit.networks.input.terms_mapping import EmbeddedTermMapping
 from arekit.networks.tf_models.single.helpers.bags import BagsCollectionHelper
 from arekit.networks.training.bags.collection.single import SingleBagsCollection
@@ -43,12 +44,15 @@ class SingleInstanceModelExperimentInitializer(object):
 
         # TODO. This should not be used since we already have a connections.
         # TODO. This should be removed.
+        # TODO. This should be removed.
         self.__text_opinion_helpers = self.__create_collection(
             data_types=supported_data_types,
             collection_by_dtype_func=lambda data_type: TextOpinionHelper(parsed_news_collection=self.__pncs[data_type]))
 
         # TODO. This should not be used since we already have a connections.
-        # TODO. This should be removed.
+        # TODO. This should be removed (because we already have encoded samples).
+        # TODO. This should be removed (because we already have encoded samples).
+        # TODO. This should be removed (because we already have encoded samples).
         self.__text_opinion_collections = self.__create_collection(
             supported_data_types,
             # TODO. This should not be used since we already have a tsv with extracted text opinions.
@@ -58,7 +62,9 @@ class SingleInstanceModelExperimentInitializer(object):
                                                     iter_doc_ids=self.__pncs[data_type].iter_news_ids(),
                                                     text_opinion_helper=self.__text_opinion_helpers[data_type]))
 
-        # TODO: Samples labeling collection
+        # TODO: Samples labeling collection (update)
+        # TODO: Samples labeling collection (update)
+        # TODO: Samples labeling collection (update)
         self.__labeled_collections = self.__create_collection(
             supported_data_types,
             # TODO. Labeled collection will be simplified
@@ -74,6 +80,9 @@ class SingleInstanceModelExperimentInitializer(object):
                 data_type=data_type,
                 config=config))
 
+        # TODO. This should be removed.
+        # TODO. This should be removed.
+        # TODO. This should be removed.
         self.__bags_collection_helpers = self.__create_collection(
             supported_data_types,
             lambda data_type: BagsCollectionHelper(bags_collection=self.__bags_collection[data_type],
@@ -99,6 +108,9 @@ class SingleInstanceModelExperimentInitializer(object):
     def _LabelsScaler(self):
         return self.__labels_scaler
 
+    # TODO. This should be removed (because we already have encoded samples).
+    # TODO. This should be removed (because we already have encoded samples).
+    # TODO. This should be removed (because we already have encoded samples).
     @property
     def TextOpitnionCollections(self):
         return self.__text_opinion_collections
@@ -107,6 +119,9 @@ class SingleInstanceModelExperimentInitializer(object):
     def BagsCollections(self):
         return self.__bags_collection
 
+    # TODO. This should be removed.
+    # TODO. This should be removed.
+    # TODO. This should be removed.
     @property
     def BagsCollectionHelpers(self):
         return self.__bags_collection_helpers
@@ -121,6 +136,9 @@ class SingleInstanceModelExperimentInitializer(object):
     def LabelsHelper(self):
         return self.__labels_helper
 
+    # TODO. This should be removed.
+    # TODO. This should be removed.
+    # TODO. This should be removed.
     @property
     def TextOpinionHelpers(self):
         return self.__text_opinion_helpers
@@ -149,41 +167,32 @@ class SingleInstanceModelExperimentInitializer(object):
     def create_bags_collection(self, data_type, config):
         assert(isinstance(config, DefaultNetworkConfig))
 
-        collection = self._BagCollectionType.from_linked_text_opinions(
+        collection = self._BagCollectionType.from_formatted_samples(
             self.__text_opinion_collections[data_type],
-            data_type=data_type,
             bag_size=config.BagSize,
             shuffle=True,
             create_empty_sample_func=self._create_empty_sample_func,
-            text_opinion_helper=self.__text_opinion_helpers[data_type],
-            # TODO. We assume here to iterate over tsv records.
-            create_sample_func=lambda text_opinion: self.__create_input_sample(text_opinion=text_opinion,
-                                                                               config=config,
-                                                                               data_type=data_type))
+            create_sample_func=lambda row: self.__create_input_sample(row=row, config=config))
 
         return collection
 
     # region private methods
 
-    # TODO. We assume here to iterate over tsv records.
-    # TODO. Remove text_opinion
-    def __create_input_sample(self, text_opinion, data_type, config):
+    def __create_input_sample(self, row, config):
         """
         Creates an input for Neural Network model
         """
-        assert(isinstance(data_type, DataType))
+        assert(isinstance(row, ParsedSampleRow))
         assert(isinstance(config, DefaultNetworkConfig))
-        assert(self.__text_opinion_helpers[data_type].check_ends_has_same_sentence_index(text_opinion))
 
-        # TODO. Use from tsv_row.
-        return InputSample.from_text_opinion(
-            text_opinion=text_opinion,
-            config=config,
-            frames_collection=self.__frames_collection,
-            synonyms_collection=self.__synonyms,
-            label_scaler=self.__labels_scaler,
-            text_opinion_helper=self.__text_opinion_helpers[data_type],
-            string_entity_formatter=self.__string_entity_formatter)
+        # TODO. Provide extra parameters.
+        return InputSample.from_tsv_row(
+            row_id=row.RowID,
+            terms=row.Terms,
+            subj_ind=row.SubjectIndex,
+            obj_ind=row.ObjectIndex,
+            words_vocab=None,
+            config=config)
 
     @staticmethod
     def __create_collection(data_types, collection_by_dtype_func):

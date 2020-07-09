@@ -2,12 +2,12 @@ from collections import OrderedDict
 
 import pandas as pd
 
+from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
+from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
-from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.data_type import DataType
@@ -242,9 +242,28 @@ class BaseSampleFormatter(BaseRowsFormatter):
     def extract_ids(self):
         return self._df[self.ID].astype(unicode).tolist()
 
-    # TODO. Implement.
     def iter_rows_linked_by_text_opinions(self):
-        raise NotImplementedError()
+        """
+        TODO. This might be improved, i.e. generalized.
+        """
+        undefined = -1
+
+        linked = []
+
+        current_news_id = undefined
+        current_opinion_id = undefined
+
+        for row_index, sample_id in enumerate(self._df[self.ID]):
+            news_id = self.__row_ids_formatter.parse_news_in_sample_id(sample_id)
+            opinion_id = self.__row_ids_formatter.parse_opinion_in_sample_id(sample_id)
+
+            if current_news_id != undefined and current_opinion_id != undefined:
+                if news_id != current_news_id or opinion_id != current_opinion_id:
+                    yield linked
+                    linked = []
+                    continue
+
+            linked.append(self._df.iloc[row_index])
 
     def __len__(self):
         return len(self._df.index)

@@ -8,6 +8,9 @@ from arekit.common.utils import create_dir_if_not_exists
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
+# TODO. Provide synonyms in ctor.
+# TODO. Provide synonyms in ctor.
+# TODO. Provide synonyms in ctor.
 class RuSentRelOpinionCollectionFormatter(OpinionCollectionFormatter):
 
     @staticmethod

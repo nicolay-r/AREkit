@@ -59,6 +59,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
                 filepath=self.create_result_opinion_collection_filepath(data_type=data_type,
                                                                         doc_id=doc_id,
                                                                         epoch_index=epoch_index),
+                # TODO. Depends on synonyms (pass in ctor).
                 synonyms=self._data_io.SynonymsCollection,
                 labels_formatter=self.__result_labels_fmt))
 
@@ -76,6 +77,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             return None
 
         return self._data_io.OpinionFormatter.load_from_file(filepath=filepath,
+                                                             # TODO. Depends on Synonyms (pass in ctor).
                                                              synonyms=self._data_io.SynonymsCollection,
                                                              labels_formatter=self.__neutral_labels_fmt)
 

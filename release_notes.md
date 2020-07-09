@@ -1,5 +1,9 @@
 ## v0.20.5-rc
 
+Changes:
+* Multi-Instance networks: now we consider that the next appered context always continues the prior. 
+(check out multi-instance bags creation for details)
+
 Collection of parsed news become dispatched from text opinions collection.
 * **News parsing now is assumed to be performed using `TextParser.parse(news, options)` call. Related refactoring.**
     * Stemmer application from `RuAttitiudes` parser has been removed.

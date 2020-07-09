@@ -301,6 +301,7 @@ class TensorflowModel(BaseModel):
 
     # TODO. This function should compose BaseOutput,
     # TODO. With label probabilities for each input sample.
+    # TODO. Use row_id instead of text_opinion_id for reference.
     def __text_opinions_labeling(self, data_type, doc_ids_set):
         """
         Provides algorithm of opinions labeling according to model results.

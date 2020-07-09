@@ -51,7 +51,7 @@ class TestSamplesIteration(unittest.TestCase):
             print u"subj_ind: {}".format(subj_ind)
             print u"obj_ind: {}".format(obj_ind)
 
-            s = InputSample.from_tsv_row(text_opinion_id=_id,
+            s = InputSample.from_tsv_row(row_id=_id,
                                          terms=terms.split(u' '),
                                          subj_ind=int(subj_ind),
                                          obj_ind=int(obj_ind),

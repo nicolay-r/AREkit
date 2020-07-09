@@ -4,6 +4,7 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.synonyms import SynonymsCollection
 
 
+# TODO. Move to collection/base.
 class OpinionCollection(object):
     """
     Document-level Collection of sentiment opinions between entities

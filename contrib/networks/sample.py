@@ -146,12 +146,12 @@ class InputSample(InputSampleBase):
 
     @classmethod
     def from_tsv_row(cls,
-                     text_opinion_id,       # row_id
-                     terms,                 # list of terms, that might be found in words_vocab
+                     row_id,       # row_id
+                     terms,        # list of terms, that might be found in words_vocab
                      subj_ind,
                      obj_ind,
-                     words_vocab,           # for indexing input (all the vocabulary, obtained from offsets.py)
-                     config,                # for terms_per_context, frames_per_context.
+                     words_vocab,  # for indexing input (all the vocabulary, obtained from offsets.py)
+                     config,       # for terms_per_context, frames_per_context.
                      frame_inds=None,
                      frame_sent_roles=None,
                      syn_subj_inds=None,
@@ -253,7 +253,7 @@ class InputSample(InputSampleBase):
                    term_type=np.array(term_type_feature.ValueVector),
                    frame_indices=np.array(frames_feature.ValueVector),
                    frame_sent_roles=np.array(frame_sent_roles_feature.ValueVector),
-                   text_opinion_id=text_opinion_id)
+                   text_opinion_id=row_id)
 
     # TODO. To be removed.
     # TODO. To be removed.

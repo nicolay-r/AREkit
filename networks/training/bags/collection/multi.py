@@ -1,102 +1,74 @@
-import numpy as np
-
-from arekit.common.linked.base import is_context_continued
-from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.model.sample import InputSampleBase
-from arekit.common.text_opinions.text_opinion import TextOpinion
-
+from arekit.networks.input.rows_parser import ParsedSampleRow
 from arekit.networks.training.bags.bag import Bag
 from arekit.networks.training.bags.collection.base import BagsCollection
 
 
 class MultiInstanceBagsCollection(BagsCollection):
-    """
-    Has a different algo of bags completion.
-    May contain a various amount of instances (samples) within a bag.
-    """
+
+    # region private methods
+
+    @staticmethod
+    def __last_bag(bags):
+        return bags[-1]
+
+    @staticmethod
+    def __complete_last_bag(bags, max_bag_size, create_empty_sample_func):
+        bag = MultiInstanceBagsCollection.__last_bag(bags)
+        while len(bag) < max_bag_size:
+            bag.add_sample(create_empty_sample_func())
+
+    @staticmethod
+    def __is_empty_last_bag(bags):
+        return len(MultiInstanceBagsCollection.__last_bag(bags)) == 0
+
+    # endregion
 
     @classmethod
-    def from_formatted_samples(cls,
-                               samples,
-                               bag_size,
-                               create_sample_func,
-                               create_empty_sample_func,
-                               text_opinion_helper,
-                               shuffle):
-        # TODO. Implement.
-        pass
+    def _fill_bags_list_with_linked_text_opinions(cls, bags,
+                                                  parsed_rows,
+                                                  bag_size,
+                                                  create_sample_func,
+                                                  create_empty_sample_func):
 
-    # TODO. To be removed
-    # TODO. To be removed
-    # TODO. To be removed
-    # TODO. Make the same format as in 'single.py', related refactoring.
-    # TODO. 1) Separate body in private function.
-    # TODO. 2) Provide linked data.
-    @classmethod
-    def from_linked_text_opinions(
-            cls,
-            text_opinion_collection,
-            max_bag_size,
-            create_sample_func,
-            create_empty_sample_func,
-            text_opinion_helper,
-            shuffle):
-        assert(isinstance(text_opinion_collection, LinkedTextOpinionCollection))
-        assert(isinstance(max_bag_size, int) and max_bag_size > 0)
+        assert(isinstance(parsed_rows, list))
+        assert(isinstance(bags, list))
         assert(callable(create_sample_func))
-        assert(callable(create_empty_sample_func))
-        assert(isinstance(text_opinion_helper, TextOpinionHelper))
-        assert(isinstance(shuffle, bool))
 
-        def last_bag():
-            return bags[-1]
+        bags.append(Bag(parsed_rows[0].Sentiment))
 
-        def complete_last_bag():
-            bag = last_bag()
-            while len(bag) < max_bag_size:
-                bag.add_sample(create_empty_sample_func())
+        for o_ind, parsed_row in enumerate(parsed_rows):
+            assert(isinstance(parsed_row, ParsedSampleRow))
 
-        def is_empty_last_bag():
-            return len(last_bag()) == 0
+            if len(MultiInstanceBagsCollection.__last_bag(bags)) == bag_size:
+                bags.append(Bag(label=parsed_row.Sentiment))
 
-        bags = []
+            s = create_sample_func(parsed_row)
 
-        for linked_wrap in text_opinion_collection.iter_wrapped_linked_text_opinions():
+            # NOTE: Now we consider that the next appered context always continues the prior.
+            prior_opinion = None
 
-            # TODO. Move body to other func.
+            if prior_opinion is not None and not MultiInstanceBagsCollection.__is_empty_last_bag(bags):
 
-            bags.append(Bag(label=linked_wrap.First.Sentiment))
+                # NOTE: Now we consider that the next appered context always continues the prior.
+                is_continued = True
 
-            for o_ind, opinion in enumerate(linked_wrap):
-                assert(isinstance(opinion, TextOpinion))
+                if not is_continued:
+                    MultiInstanceBagsCollection.__complete_last_bag(
+                        bags=bags,
+                        max_bag_size=bag_size,
+                        create_empty_sample_func=create_empty_sample_func)
 
-                if len(last_bag()) == max_bag_size:
-                    bags.append(Bag(label=opinion.Sentiment))
+                    bags.append(Bag(label=parsed_row.Sentiment))
 
-                s = create_sample_func(opinion)
+            assert(isinstance(s, InputSampleBase))
+            MultiInstanceBagsCollection.__last_bag(bags).add_sample(s)
 
-                prior_opinion = linked_wrap.get_prior_opinion_by_index(index=o_ind)
-                if prior_opinion is not None and not is_empty_last_bag():
-                    is_continued = is_context_continued(text_opinion_helper=text_opinion_helper,
-                                                        cur_opinion=opinion,
-                                                        prev_opinion=prior_opinion)
-                    if not is_continued:
-                        complete_last_bag()
-                        bags.append(Bag(label=opinion.Sentiment))
+        if MultiInstanceBagsCollection.__is_empty_last_bag(bags):
+            del bags[-1]
+            return
 
-                assert(isinstance(s, InputSampleBase))
-                last_bag().add_sample(s)
-
-            # TODO. Utilize del instead.
-            if is_empty_last_bag():
-                bags = bags[:-1]
-                continue
-
-            complete_last_bag()
-
-        if shuffle:
-            np.random.shuffle(bags)
-
-        return cls(bags)
-
+        MultiInstanceBagsCollection.__complete_last_bag(
+            bags=bags,
+            max_bag_size=bag_size,
+            create_empty_sample_func=create_empty_sample_func)
