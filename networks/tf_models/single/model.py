@@ -70,12 +70,6 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     # region private methods
 
-    # TODO. This should be removed.
-    # TODO. This should be removed.
-    # TODO. This should be removed.
-    def get_text_opinion_helper(self, data_type):
-        return self.__init_helper.TextOpinionHelpers[data_type]
-
     # TODO. This should be removed (because we already have encoded samples).
     # TODO. This should be removed (because we already have encoded samples).
     # TODO. This should be removed (because we already have encoded samples).

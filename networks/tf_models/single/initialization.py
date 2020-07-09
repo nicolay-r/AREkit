@@ -43,13 +43,6 @@ class SingleInstanceModelExperimentInitializer(object):
         self.__labels_helper = SingleLabelsHelper(label_scaler=self.__labels_scaler)
 
         # TODO. This should not be used since we already have a connections.
-        # TODO. This should be removed.
-        # TODO. This should be removed.
-        self.__text_opinion_helpers = self.__create_collection(
-            data_types=supported_data_types,
-            collection_by_dtype_func=lambda data_type: TextOpinionHelper(parsed_news_collection=self.__pncs[data_type]))
-
-        # TODO. This should not be used since we already have a connections.
         # TODO. This should be removed (because we already have encoded samples).
         # TODO. This should be removed (because we already have encoded samples).
         # TODO. This should be removed (because we already have encoded samples).
@@ -60,7 +53,7 @@ class SingleInstanceModelExperimentInitializer(object):
                                                     data_type=data_type,
                                                     terms_per_context=config.TermsPerContext,
                                                     iter_doc_ids=self.__pncs[data_type].iter_news_ids(),
-                                                    text_opinion_helper=self.__text_opinion_helpers[data_type]))
+                                                    text_opinion_helper=None))
 
         # TODO: Samples labeling collection (update)
         # TODO: Samples labeling collection (update)
@@ -120,13 +113,6 @@ class SingleInstanceModelExperimentInitializer(object):
     @property
     def LabelsHelper(self):
         return self.__labels_helper
-
-    # TODO. This should be removed.
-    # TODO. This should be removed.
-    # TODO. This should be removed.
-    @property
-    def TextOpinionHelpers(self):
-        return self.__text_opinion_helpers
 
     @property
     def _BagCollectionType(self):

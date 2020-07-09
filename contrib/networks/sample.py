@@ -9,14 +9,10 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.model.sample import InputSampleBase
-from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.synonyms import SynonymsCollection
-from arekit.common.dataset.text_opinions.enums import EntityEndType
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.features.dist import DistanceFeatures
-from arekit.contrib.networks.features.frames import FrameFeatures
 from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
@@ -262,53 +258,59 @@ class InputSample(InputSampleBase):
     def from_text_opinion(cls, text_opinion, frames_collection, synonyms_collection,
                           config,
                           label_scaler,
-                          string_entity_formatter,
-                          text_opinion_helper):
+                          string_entity_formatter):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(frames_collection, FramesCollection))
         assert(isinstance(synonyms_collection, SynonymsCollection))
         assert(isinstance(label_scaler, BaseLabelScaler))
-        assert(isinstance(text_opinion_helper, TextOpinionHelper))
         assert(isinstance(string_entity_formatter, StringEntitiesFormatter))
 
-        terms = list(text_opinion_helper.iter_terms_in_related_sentence(
-            text_opinion=text_opinion,
-            return_ind_in_sent=False))
+        # terms = list(text_opinion_helper.iter_terms_in_related_sentence(
+        #     text_opinion=text_opinion,
+        #     return_ind_in_sent=False))
 
-        subj_ind = text_opinion_helper.extract_entity_position(
-            text_opinion=text_opinion,
-            end_type=EntityEndType.Source,
-            position_type=TermPositionTypes.IndexInSentence)
+        # subj_ind = text_opinion_helper.extract_entity_position(
+        #     text_opinion=text_opinion,
+        #     end_type=EntityEndType.Source,
+        #     position_type=TermPositionTypes.IndexInSentence)
 
-        obj_ind = text_opinion_helper.extract_entity_position(
-            text_opinion=text_opinion,
-            end_type=EntityEndType.Target,
-            position_type=TermPositionTypes.IndexInSentence)
+        # obj_ind = text_opinion_helper.extract_entity_position(
+        #     text_opinion=text_opinion,
+        #     end_type=EntityEndType.Target,
+        #     position_type=TermPositionTypes.IndexInSentence)
 
-        subj_value = text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
-                                                              end_type=EntityEndType.Source)
+        # subj_value = text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
+        #                                                       end_type=EntityEndType.Source)
 
-        obj_value = text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
-                                                             end_type=EntityEndType.Target)
+        # obj_value = text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
+        #                                                      end_type=EntityEndType.Target)
 
-        syn_subj_inds = list(text_opinion_helper.iter_terms_in_related_sentence(
-            text_opinion=text_opinion,
-            return_ind_in_sent=False,
-            term_check=lambda term: cls.__is_synonym_entity(term=term,
-                                                            e_value=subj_value,
-                                                            synonyms=synonyms_collection)))
+        # syn_subj_inds = list(text_opinion_helper.iter_terms_in_related_sentence(
+        #     text_opinion=text_opinion,
+        #     return_ind_in_sent=False,
+        #     term_check=lambda term: cls.__is_synonym_entity(term=term,
+        #                                                     e_value=subj_value,
+        #                                                     synonyms=synonyms_collection)))
 
-        syn_obj_inds = list(text_opinion_helper.iter_terms_in_related_sentence(
-            text_opinion=text_opinion,
-            return_ind_in_sent=False,
-            term_check=lambda term: cls.__is_synonym_entity(term=term,
-                                                            e_value=obj_value,
-                                                            synonyms=synonyms_collection)))
+        # syn_obj_inds = list(text_opinion_helper.iter_terms_in_related_sentence(
+        #     text_opinion=text_opinion,
+        #     return_ind_in_sent=False,
+        #     term_check=lambda term: cls.__is_synonym_entity(term=term,
+        #                                                     e_value=obj_value,
+        #                                                     synonyms=synonyms_collection)))
 
         # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
         # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
         # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
+
+        syn_subj_inds = None
+        syn_obj_inds = None
+        terms = None
+        frame_features = None
+        obj_ind = None
+        subj_ind = None
+
         term_ind_mapper = IndexingTextTermsMapper(
             syn_subj_indices=set(syn_subj_inds),
             syn_obj_indices=set(syn_obj_inds),
@@ -322,7 +324,7 @@ class InputSample(InputSampleBase):
 
         x_indices = list(x_indices)
 
-        frame_features = FrameFeatures(text_opinion_helper)
+        # frame_features = FrameFeatures(text_opinion_helper)
 
         frame_sent_roles = frame_features.compose_frame_roles(
             text_opinion=text_opinion,

@@ -1,4 +1,3 @@
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment.opinions import compose_opinion_collection
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
@@ -23,7 +22,6 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
             collection=self.__model.get_text_opinions_collection(data_type),
             create_collection_func=lambda: self.__model.IO.create_opinion_collection(),
             labels_helper=self.__model.LabelsHelper,
-            text_opinion_helper=self.__model.get_text_opinion_helper(data_type),
             label_calc_mode=self.__model.Config.TextOpinionLabelCalculationMode)
 
         used_doc_ids = []
@@ -56,11 +54,9 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
     @staticmethod
     def __iter_converted_to_opinion_collections(collection,
                                                 create_collection_func,
-                                                text_opinion_helper,
                                                 labels_helper,
                                                 label_calc_mode):
         assert(isinstance(collection, LinkedTextOpinionCollection))
-        assert(isinstance(text_opinion_helper, TextOpinionHelper))
         assert(callable(create_collection_func))
         assert(isinstance(label_calc_mode, unicode))
 
@@ -70,7 +66,7 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
                 create_collection_func=create_collection_func,
                 linked_data_iter=collection.iter_wrapped_linked_text_opinions(news_id=news_id),
                 labels_helper=labels_helper,
-                to_opinion_func=text_opinion_helper.to_opinion,
+                to_opinion_func=None,
                 label_calc_mode=label_calc_mode)
 
             yield collection, news_id
