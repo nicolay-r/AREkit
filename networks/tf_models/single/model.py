@@ -55,9 +55,6 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def get_gpu_memory_fraction(self):
         return self.__config.GPUMemoryFraction
 
-    def get_labels_helper(self):
-        return self.__init_helper.LabelsHelper
-
     def create_batch_by_bags_group(self, bags_group):
         return MiniBatch(bags_group)
 
