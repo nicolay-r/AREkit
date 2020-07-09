@@ -1,5 +1,4 @@
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.data_type import DataType
 
 from arekit.networks.tf_models.single import log
 from arekit.networks.callback import Callback
@@ -70,34 +69,28 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
     # region private methods
 
-    # TODO. This should be removed (because we already have encoded samples).
-    # TODO. This should be removed (because we already have encoded samples).
-    # TODO. This should be removed (because we already have encoded samples).
-    def get_text_opinions_collection(self, data_type):
-        return self.__init_helper.TextOpitnionCollections[data_type]
-
     def __print_statistic(self):
         keys, values = self.Config.get_parameters()
         log.write_log(data_io=self.__experiment.DataIO, log_names=keys, log_values=values)
 
-        log.debug_labels_statistic(
-            collection=self.get_text_opinions_collection(DataType.Train),
-            name=unicode(DataType.Train),
-            # TODO. Labels helper assumes to be removed since all the labels presented in tsv.
-            labels_helper=self.get_labels_helper(),
-            stat_func=self.__init_helper.get_statistic)
-        log.debug_unique_relations_statistic(
-            name=unicode(DataType.Train),
-            collection=self.get_text_opinions_collection(DataType.Train))
+        # log.debug_labels_statistic(
+        #     collection=self.get_text_opinions_collection(DataType.Train),
+        #     name=unicode(DataType.Train),
+        #     # TODO. Labels helper assumes to be removed since all the labels presented in tsv.
+        #     labels_helper=self.get_labels_helper(),
+        #     stat_func=self.__init_helper.get_statistic)
+        # log.debug_unique_relations_statistic(
+        #     name=unicode(DataType.Train),
+        #     collection=self.get_text_opinions_collection(DataType.Train))
 
-        log.debug_labels_statistic(
-            collection=self.get_text_opinions_collection(DataType.Test),
-            name=unicode(DataType.Test),
-            # TODO. Labels helper assumes to be removed since all the labels presented in tsv.
-            labels_helper=self.get_labels_helper(),
-            stat_func=self.__init_helper.get_statistic)
-        log.debug_unique_relations_statistic(
-            name=unicode(DataType.Test),
-            collection=self.get_text_opinions_collection(DataType.Test))
+        # log.debug_labels_statistic(
+        #     collection=self.get_text_opinions_collection(DataType.Test),
+        #     name=unicode(DataType.Test),
+        #     # TODO. Labels helper assumes to be removed since all the labels presented in tsv.
+        #     labels_helper=self.get_labels_helper(),
+        #     stat_func=self.__init_helper.get_statistic)
+        # log.debug_unique_relations_statistic(
+        #     name=unicode(DataType.Test),
+        #     collection=self.get_text_opinions_collection(DataType.Test))
 
     # endregion

@@ -19,7 +19,7 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
         collections_iter = self.__iter_converted_to_opinion_collections(
             # TODO. This should be based on tsv.
-            collection=self.__model.get_text_opinions_collection(data_type),
+            collection=None,   # self.__model.get_text_opinions_collection(data_type),
             create_collection_func=lambda: self.__model.IO.create_opinion_collection(),
             labels_helper=self.__model.LabelsHelper,
             label_calc_mode=self.__model.Config.TextOpinionLabelCalculationMode)
