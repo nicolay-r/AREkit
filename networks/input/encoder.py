@@ -43,9 +43,9 @@ class NetworkInputEncoder(object):
         BaseInputEncoder.to_tsv(
             experiment=experiment,
             create_formatter_func=lambda data_type:
-                NetworkSampleFormatter(data_type=data_type,
-                                       label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
-                                       text_provider=text_provider))
+                NetworkInputEncoder.__create_sample_formatter(data_type=data_type,
+                                                              experiment=experiment,
+                                                              text_provider=text_provider))
 
         # Save embedding information additionally.
         term_embedding = Embedding.from_list_of_word_embedding_pairs(
@@ -57,3 +57,21 @@ class NetworkInputEncoder(object):
 
         vocab = TermsEmbeddingOffsets.iter_words_vocabulary(words_embedding=term_embedding)
         np.savez(NetworkInputEncoder.VOCABULARY_FILENAME, list(vocab))
+
+    @staticmethod
+    def load_sample_formatter(data_type, experiment):
+        # TODO. Provide simple text_provider as a placeholder.
+        formatter = NetworkInputEncoder.__create_sample_formatter(data_type=data_type,
+                                                                  experiment=experiment,
+                                                                  text_provider=None)
+        formatter.from_tsv(experiment=experiment)
+
+        return formatter
+
+    @staticmethod
+    def __create_sample_formatter(data_type, experiment, text_provider):
+        return NetworkSampleFormatter(
+            data_type=data_type,
+            label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
+            text_provider=text_provider)
+

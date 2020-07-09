@@ -31,12 +31,11 @@ class SingleInstanceModelExperimentInitializer(object):
             # TODO. Labeled collection will be simplified
             lambda data_type: LabeledCollection(collection=None))
 
-        # TODO. We assume here to iterate over tsv records.
         self.__bags_collection = self.__create_collection(
             supported_data_types,
-            # TODO. We assume here to iterate over tsv records.
             lambda data_type: self.create_bags_collection(
-                formatted_samples=None,
+                formatted_samples=NetworkInputEncoder.load_sample_formatter(experiment=experiment,
+                                                                            data_type=data_type),
                 config=config))
 
         labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
@@ -46,13 +45,6 @@ class SingleInstanceModelExperimentInitializer(object):
         config.set_class_weights(norm)
 
         config.notify_initialization_completed()
-
-    @classmethod
-    def init_from_experiment(cls, config, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(config, DefaultNetworkConfig))
-        NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(config=config,
-                                                                 experiment=experiment)
 
     # region Properties
 
