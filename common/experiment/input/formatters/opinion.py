@@ -1,7 +1,5 @@
 from collections import OrderedDict
 
-import pandas as pd
-
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
@@ -73,19 +71,6 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
     # endregion
 
-    # TODO. Reader.
-    def provide_opinion_info_by_opinion_id(self, opinion_id):
-        assert(isinstance(opinion_id, unicode))
-
-        opinion_row = self._df[self._df[self.ID] == opinion_id]
-        df_row = opinion_row.iloc[0].tolist()
-
-        news_id = df_row[0]
-        source = df_row[1].decode('utf-8')
-        target = df_row[2].decode('utf-8')
-
-        return news_id, source, target
-
     def to_tsv_by_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
 
@@ -99,17 +84,4 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
                         index=False,
                         compression='gzip',
                         header=False)
-
-    # TODO. Reader.
-    def init_from_tsv(self, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-
-        filepath = self.get_filepath(data_type=self._data_type,
-                                     experiment=experiment)
-
-        self._df = pd.read_csv(filepath,
-                               sep='\t',
-                               header=None,
-                               compression='gzip',
-                               names=[self.ID, self.SOURCE, self.TARGET])
 

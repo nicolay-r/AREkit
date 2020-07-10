@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
@@ -27,16 +28,14 @@ class MulticlassOutput(BaseOutput):
         labels_prob = [row[label] for label in self._get_column_header()]
         return self.__labels_scaler.uint_to_label(value=np.argmax(labels_prob))
 
-    # TODO. Replace with opinions reader.
-    def _iter_by_opinions(self, linked_df, opinions_formatter):
+    def _iter_by_opinions(self, linked_df, opinions_reader):
         assert(isinstance(linked_df, pd.DataFrame))
-        assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
+        assert(isinstance(opinions_reader, InputOpinionReader))
 
         for index, series in linked_df.iterrows():
             yield self._compose_opinion_by_opinion_id(
                 sample_id=series[self.ID],
-                # TODO. Replace with opinions reader.
-                opinions_formatter=opinions_formatter,
+                opinions_reader=opinions_reader,
                 calc_label_func=lambda: self.__calculate_label(series))
 
     # endregion

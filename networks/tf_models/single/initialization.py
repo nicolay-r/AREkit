@@ -11,6 +11,7 @@ from arekit.contrib.networks.sample import InputSample
 
 from arekit.networks.input.encoder import NetworkInputEncoder
 from arekit.networks.input.formatters.sample import NetworkSampleFormatter
+from arekit.networks.input.readers.samples import NetworkInputSampleReader
 from arekit.networks.input.rows_parser import ParsedSampleRow
 from arekit.networks.training.bags.collection.single import SingleBagsCollection
 
@@ -35,8 +36,7 @@ class SingleInstanceModelExperimentInitializer(object):
             supported_data_types,
             lambda data_type: self.create_bags_collection(
                 # TODO. Redactor this by using reader (see in load_sample_formatter comments)
-                formatted_samples=NetworkInputEncoder.load_sample_formatter(experiment=experiment,
-                                                                            data_type=data_type),
+                formatted_samples=NetworkInputSampleReader.from_tsv(filepath=filepath),
                 config=config))
 
         labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
@@ -85,7 +85,7 @@ class SingleInstanceModelExperimentInitializer(object):
         assert(isinstance(config, DefaultNetworkConfig))
 
         collection = self._BagCollectionType.from_formatted_samples(
-            formatted_samples=formatted_samples,
+            samples_reader=formatted_samples,
             bag_size=config.BagSize,
             shuffle=True,
             create_empty_sample_func=self._create_empty_sample_func,

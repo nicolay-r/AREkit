@@ -1,7 +1,7 @@
+from arekit.common.experiment.input.readers.opinion import InputOpinionReader
+from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.opinions import compose_opinion_collection
 
 from arekit.common.model.labeling.single import SingleLabelsHelper
@@ -14,37 +14,23 @@ class OutputToOpinionCollectionsConverter(object):
 
     @staticmethod
     def iter_opinion_collections(
-            # TODO. BaseInputReader (sample)
-            # TODO. BaseInputReader (opinion)
-            samples_formatter_func,
+            opinions_reader,
+            samples_reader,
+            data_type,
             experiment,
             label_calculation_mode,
             output):
-        """
-        Args:
-            samples_formatter_func: func(data_type) -> FormatterType
-        """
-        assert(callable(samples_formatter_func))
+        assert(isinstance(opinions_reader, InputOpinionReader))
+        assert(isinstance(samples_reader, InputSampleReader))
         assert(isinstance(label_calculation_mode, unicode))
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(output, BaseOutput))
 
-        data_type = DataType.Test
-
-        # TODO. Replace with reader.
-        bert_test_samples = samples_formatter_func(data_type)
-        bert_test_samples.init_from_tsv(experiment=experiment)
-
         output.from_tsv(data_type=data_type,
                         experiment=experiment,
-                        # TODO. extract_ids in reader.
-                        ids_values=bert_test_samples.extract_ids())
+                        ids_values=samples_reader.extract_ids())
 
-        # TODO. Replace with reader.
-        bert_test_opinions = BaseOpinionsFormatter(data_type=data_type)
-        bert_test_opinions.init_from_tsv(experiment=experiment)
-
-        assert(len(output) == len(bert_test_samples))
+        assert(len(output) == samples_reader.rows_count())
 
         labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
 
@@ -54,8 +40,7 @@ class OutputToOpinionCollectionsConverter(object):
             assert(isinstance(collection, OpinionCollection))
 
             linked_iter = output.iter_linked_opinions(news_id=news_id,
-                                                      # TODO. Replace with reader.
-                                                      opinions_formatter=bert_test_opinions)
+                                                      opinions_reader=opinions_reader)
 
             collection = compose_opinion_collection(
                 create_collection_func=experiment.OpinionOperations.create_opinion_collection,

@@ -3,8 +3,8 @@ import pandas as pd
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
+from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 
@@ -45,17 +45,15 @@ class BaseOutput(object):
         for news_id in set(all_news):
             yield news_id
 
-    # TODO. Replace with opinion reader.
-    def iter_linked_opinions(self, news_id, opinions_formatter):
+    def iter_linked_opinions(self, news_id, opinions_reader):
         assert(isinstance(news_id, int))
-        assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
+        assert(isinstance(opinions_reader, InputOpinionReader))
 
         for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
 
-            # TODO. Replace with opinion reader.
             opinions_iter = self._iter_by_opinions(linked_df=linked_df,
-                                                   opinions_formatter=opinions_formatter)
+                                                   opinions_reader=opinions_reader)
 
             yield LinkedOpinionWrapper(linked_data=opinions_iter)
 
@@ -66,8 +64,7 @@ class BaseOutput(object):
     def _get_column_header(self):
         raise NotImplementedError()
 
-    # TODO. Replace with opinion reader.
-    def _iter_by_opinions(self, linked_df, opinions_formatter):
+    def _iter_by_opinions(self, linked_df, opinions_reader):
         raise NotImplementedError()
 
     def __iter_linked_opinions_df(self, news_id):
@@ -84,15 +81,13 @@ class BaseOutput(object):
             linked_opins_df = n_df[n_df[self.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
-    # TODO. Might be replaced with opinion reader.
-    def _compose_opinion_by_opinion_id(self, sample_id, opinions_formatter, calc_label_func):
+    def _compose_opinion_by_opinion_id(self, sample_id, opinions_reader, calc_label_func):
         assert(isinstance(sample_id, unicode))
-        # TODO. Might be replaced with opinion reader.
-        assert(isinstance(opinions_formatter, BaseOpinionsFormatter))
+        assert(isinstance(opinions_reader, InputOpinionReader))
         assert(callable(calc_label_func))
 
         opinion_id = self.__ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)
-        _, source, target = opinions_formatter.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
+        _, source, target = opinions_reader.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
 
         return Opinion(source_value=source,
                        target_value=target,

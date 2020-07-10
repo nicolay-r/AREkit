@@ -1,22 +1,19 @@
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.input.readers.opinion import InputOpinionReader
+from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.output.converter import OutputToOpinionCollectionsConverter
 
 
 def eval_output(
-        # TODO. BaseInputReader (sample)
-        # TODO. BaseInputReader (opinion)
-        samples_formatter_func,
+        opinions_reader,
+        samples_reader,
         data_type,
         experiment,
         label_calculation_mode,
         output_instance):
-    """
-    Args:
-        samples_formatter_func: func(data_type) -> FormatterType
-    """
-    # TODO. Remove (as we utilize only reader instead).
-    assert(callable(samples_formatter_func))
+    assert(isinstance(opinions_reader, InputOpinionReader))
+    assert(isinstance(samples_reader, InputSampleReader))
     assert(isinstance(experiment, BaseExperiment))
     assert(isinstance(label_calculation_mode, unicode))
     assert(isinstance(output_instance, BaseOutput))
@@ -24,9 +21,9 @@ def eval_output(
     experiment.OpinionOperations.create_opinion_collection()
 
     opinion_collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
-        # TODO. BaseInputReader (sample)
-        # TODO. BaseInputReader (opinion)
-        samples_formatter_func=samples_formatter_func,
+        opinions_reader=opinions_reader,
+        samples_reader=samples_reader,
+        data_type=data_type,
         experiment=experiment,
         label_calculation_mode=label_calculation_mode,
         output=output_instance)

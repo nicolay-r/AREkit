@@ -1,5 +1,6 @@
 import numpy as np
 
+from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.networks.input.formatters.sample import NetworkSampleFormatter
 from arekit.networks.input.rows_parser import ParsedSampleRow
 
@@ -17,12 +18,12 @@ class BagsCollection(object):
 
     @classmethod
     def from_formatted_samples(cls,
-                               formatted_samples,
+                               samples_reader,
                                bag_size,
                                create_sample_func,
                                create_empty_sample_func,
                                shuffle):
-        assert(isinstance(formatted_samples, NetworkSampleFormatter))
+        assert(isinstance(samples_reader, InputSampleReader))
         assert(isinstance(bag_size, int) and bag_size > 0)
         assert(callable(create_sample_func))
         assert(callable(create_empty_sample_func))
@@ -30,7 +31,7 @@ class BagsCollection(object):
 
         bags = []
 
-        for linked_rows in formatted_samples.iter_rows_linked_by_text_opinions():
+        for linked_rows in samples_reader.iter_rows_linked_by_text_opinions():
             cls._fill_bags_list_with_linked_text_opinions(
                 bags=bags,
                 parsed_rows=[ParsedSampleRow.parse(row) for row in linked_rows],
