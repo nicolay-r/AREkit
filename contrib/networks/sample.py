@@ -62,7 +62,7 @@ class InputSample(InputSampleBase):
                  term_type,
                  frame_indices,
                  frame_sent_roles,
-                 text_opinion_id):
+                 input_sample_id):
         assert(isinstance(X, np.ndarray))
         assert(isinstance(subj_ind, int))
         assert(isinstance(obj_ind, int))
@@ -91,7 +91,7 @@ class InputSample(InputSampleBase):
                   (InputSample.I_FRAME_SENT_ROLES, frame_sent_roles),
                   (InputSample.I_TERM_TYPE, term_type)]
 
-        super(InputSample, self).__init__(text_opinion_id=text_opinion_id,
+        super(InputSample, self).__init__(input_sample_id=input_sample_id,
                                           values=values)
 
     # region class methods

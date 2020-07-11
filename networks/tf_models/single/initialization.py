@@ -1,15 +1,15 @@
 import collections
 import logging
 
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.labeling import LabeledCollection
+from arekit.common.labels.base import Label
 from arekit.common.model.labeling.single import SingleLabelsHelper
-from arekit.common.text_opinions.text_opinion import TextOpinion
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 
-from arekit.networks.input.encoder import NetworkInputEncoder
 from arekit.networks.input.formatters.sample import NetworkSampleFormatter
 from arekit.networks.input.readers.samples import NetworkInputSampleReader
 from arekit.networks.input.rows_parser import ParsedSampleRow
@@ -24,28 +24,45 @@ class SingleInstanceModelExperimentInitializer(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        supported_data_types = list(experiment.DocumentOperations.iter_suppoted_data_types())
+        self.__labeled_collections = {}
+        self.__bags_collection = {}
 
-        # TODO: Samples labeling collection (update)
-        self.__labeled_collections = self.__create_collection(
-            supported_data_types,
-            # TODO. Labeled collection will be simplified
-            lambda data_type: LabeledCollection(collection=None))
+        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
+            self.__init_for_data_type(experiment=experiment,
+                                      config=config,
+                                      data_type=data_type)
 
-        self.__bags_collection = self.__create_collection(
-            supported_data_types,
-            lambda data_type: self.create_bags_collection(
-                # TODO. Redactor this by using reader (see in load_sample_formatter comments)
-                formatted_samples=NetworkInputSampleReader.from_tsv(filepath=filepath),
-                config=config))
+        config.notify_initialization_completed()
+
+    def __init_for_data_type(self, experiment, config, data_type):
+        assert(isinstance(data_type, DataType))
+
+        samples_reader = NetworkInputSampleReader.from_tsv(filepath=None,
+                                                           row_ids_provider=None)
+
+        # TODO. Incomplete.
+        # TODO: Create this (as iteration over samples with the related labels).
+        # TODO. Labels especially in case of Train data type.
+        # TODO. Utilize rows_parser.py (in networks/input) in order to perform the latter.
+        labeled_sample_row_ids = list()
+
+        self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
+
+        self.__bags_collection[data_type] = self._BagCollectionType.from_formatted_samples(
+            samples_reader=samples_reader,
+            bag_size=config.BagSize,
+            shuffle=True,
+            create_empty_sample_func=self._create_empty_sample_func,
+            create_sample_func=lambda row: self.__create_input_sample(row=row, config=config))
+
+        if data_type != DataType.Train:
+            return
 
         labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
-        norm, _ = self.get_statistic(text_opinion_collection=None,
+        norm, _ = self.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
                                      labels_helper=labels_helper)
 
         config.set_class_weights(norm)
-
-        config.notify_initialization_completed()
 
     # region Properties
 
@@ -64,14 +81,15 @@ class SingleInstanceModelExperimentInitializer(object):
 
     # endregion
 
-    # TODO. Refactoring (text_opinion_collectin should be replace with row_ids
     @staticmethod
-    def get_statistic(text_opinion_collection, labels_helper):
+    def get_statistic(labeled_sample_row_ids, labels_helper):
+        assert(isinstance(labeled_sample_row_ids, collections.Iterable))
+
         stat = [0] * labels_helper.get_classes_count()
 
-        for text_opinion in text_opinion_collection:
-            assert(isinstance(text_opinion, TextOpinion))
-            stat[labels_helper.label_to_uint(text_opinion.Sentiment)] += 1
+        for _, label in labeled_sample_row_ids:
+            assert(isinstance(label, Label))
+            stat[labels_helper.label_to_uint(label)] += 1
 
         total = sum(stat)
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
@@ -80,12 +98,12 @@ class SingleInstanceModelExperimentInitializer(object):
     def _create_empty_sample_func(self, config):
         return None
 
-    def create_bags_collection(self, formatted_samples, config):
-        assert(isinstance(formatted_samples, NetworkSampleFormatter))
+    def __create_bags_collection(self, samples_reader, config):
+        assert(isinstance(samples_reader, NetworkSampleFormatter))
         assert(isinstance(config, DefaultNetworkConfig))
 
         collection = self._BagCollectionType.from_formatted_samples(
-            samples_reader=formatted_samples,
+            samples_reader=samples_reader,
             bag_size=config.BagSize,
             shuffle=True,
             create_empty_sample_func=self._create_empty_sample_func,

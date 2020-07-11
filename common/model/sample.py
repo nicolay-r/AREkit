@@ -9,17 +9,18 @@ class InputSampleBase(object):
     Description of a single sample (context) of a model
     """
 
-    def __init__(self, text_opinion_id, values):
+    def __init__(self, input_sample_id, values):
+        assert(isinstance(input_sample_id, unicode))
         assert(isinstance(values, list))
 
-        self.__text_opinion_id = text_opinion_id
+        self.__input_sample_id = input_sample_id
         self.__values = OrderedDict(values)
 
     # region properties
 
     @property
-    def TextOpinionID(self):
-        return self.__text_opinion_id
+    def ID(self):
+        return self.__input_sample_id
 
     # endregion
 

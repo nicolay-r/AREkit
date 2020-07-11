@@ -124,12 +124,12 @@ class TensorflowModel(BaseModel):
     @staticmethod
     def before_labeling_func_application(labeled_collection):
         assert(isinstance(labeled_collection, LabeledCollection))
-        assert(labeled_collection.check_all_text_opinions_without_labels())
+        assert(labeled_collection.check_all_samples_without_labels())
 
     @staticmethod
     def after_labeling_func_application(labeled_collection):
         assert(isinstance(labeled_collection, LabeledCollection))
-        assert(labeled_collection.check_all_text_opinions_has_labels())
+        assert(labeled_collection.check_all_samples_has_labels())
 
     # TODO. This function should return BaseOutput.
     # TODO. Results should be calculated in Experiment (on Experiment level).
@@ -152,7 +152,7 @@ class TensorflowModel(BaseModel):
         # TODO. I.e. assumes to return BaseOutput instance.
         eval_result = self.__evaluator.evaluate(
             data_type=data_type,
-            doc_ids=labeled_collection.get_unique_news_ids(),
+            doc_ids=None,
             epoch_index=self.__current_epoch_index)
 
         labeled_collection.reset_labels()
@@ -322,7 +322,9 @@ class TensorflowModel(BaseModel):
         text_opinion_ids_set = None
         if doc_ids_set is not None:
             __text_opinion_ids = [text_opinion.TextOpinionID for text_opinion in
-                                  doc_ids_set.intersection(labeled_collection.iter_text_opinions())]
+                                  # TODO. Remove doc_ids_set.
+                                  # TODO. As now we do not have a set as an another argument for intersection.
+                                  doc_ids_set.intersection(None)]
             text_opinion_ids_set = set(__text_opinion_ids)
 
         bags_group_it = self.get_bags_collection(data_type).iter_by_groups(
@@ -341,7 +343,7 @@ class TensorflowModel(BaseModel):
             if len(idh_names) > 0 and len(idh_values) > 0:
                 predict_log.add_input_dependent_values(names_list=idh_names,
                                                        tensor_values_list=idh_values,
-                                                       text_opinion_ids=[sample.TextOpinionID for sample in
+                                                       text_opinion_ids=[sample.ID for sample in
                                                                          minibatch.iter_by_samples()],
                                                        bags_per_minibatch=self.Config.BagsPerMinibatch,
                                                        bag_size=self.Config.BagSize)
@@ -352,9 +354,9 @@ class TensorflowModel(BaseModel):
                 label = self.__label_scaler.uint_to_label(value=int(uint_labels[bag_index]))
 
                 for sample in bag:
-                    if sample.TextOpinionID < 0:
+                    if sample.ID < 0:
                         continue
-                    labeled_collection.apply_label(label, sample.TextOpinionID)
+                    labeled_collection.apply_label(label, sample.ID)
 
         return predict_log
 

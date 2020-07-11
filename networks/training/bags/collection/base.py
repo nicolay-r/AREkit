@@ -1,7 +1,6 @@
 import numpy as np
 
 from arekit.common.experiment.input.readers.sample import InputSampleReader
-from arekit.networks.input.formatters.sample import NetworkSampleFormatter
 from arekit.networks.input.rows_parser import ParsedSampleRow
 
 
@@ -58,7 +57,7 @@ class BagsCollection(object):
 
         for bag in bags_list:
             for sample in bag:
-                if sample.TextOpinionID in text_opinion_ids_set:
+                if sample.ID in text_opinion_ids_set:
                     return True
 
         return False
