@@ -51,10 +51,6 @@ class TensorflowModel(BaseModel):
         self.__label_scaler = label_scaler
         self.__current_epoch_index = 0
 
-        # TODO. This is too complex for model. Model assumes to provide probabilities towards input samples.
-        # TODO. I.e. assumes to return BaseOutput instance.
-        self.__evaluator = CustomOpinionBasedModelEvaluator(evaluator=evaluator, model=self)
-
     # region Properties
 
     @property
@@ -137,27 +133,18 @@ class TensorflowModel(BaseModel):
         assert(isinstance(data_type, DataType))
         assert(callable(labeling_callback))
 
-        labeled_collection = self.get_labeling_collection(data_type)
+        labeled_collection = self.get_samples_labeling_collection(data_type)
         assert(isinstance(labeled_collection, LabeledCollection))
 
         labeled_collection.reset_labels()
 
-        # Predict.
         self.before_labeling_func_application(labeled_collection)
         predict_log = labeling_callback()
         self.after_labeling_func_application(labeled_collection)
 
-        # TODO. This is too complex for model. Model assumes ...
-        # TODO. ... to provide probabilities towards input samples.
-        # TODO. I.e. assumes to return BaseOutput instance.
-        eval_result = self.__evaluator.evaluate(
-            data_type=data_type,
-            doc_ids=None,
-            epoch_index=self.__current_epoch_index)
-
         labeled_collection.reset_labels()
 
-        return eval_result, predict_log
+        return predict_log
 
     # endregion
 
@@ -190,22 +177,16 @@ class TensorflowModel(BaseModel):
             self.Callback.on_fit_finished()
 
     # TODO. This function should return BaseOutput.
-    def predict(self, dest_data_type=DataType.Test, doc_ids_set=None):
+    def predict(self, dest_data_type=DataType.Test):
         """
         dest_data_type: unicode
             DataType.Train or DataTypes.Test
-        doc_ids_set: set or None
-            set of documents says which documents and related text opinions should be used in predict process.
-            None -- ignore the related parameter, i.e. utilize all the documents in `predict` procedure.
         """
-        assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
-
         # TODO. This function should return BaseOutput.
-        eval_result, predict_log = self.predict_core(
+        predict_log = self.predict_core(
             data_type=dest_data_type,
-            labeling_callback=lambda: self.__text_opinions_labeling(data_type=dest_data_type,
-                                                                    doc_ids_set=doc_ids_set))
-        return eval_result, predict_log
+            labeling_callback=lambda: self.__text_opinions_labeling(data_type=dest_data_type))
+        return predict_log
 
     def get_hidden_parameters(self):
         names = []
@@ -221,18 +202,13 @@ class TensorflowModel(BaseModel):
         optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
         self.set_optimiser_value(optimiser)
 
-    # TODO. Remove this
-    def get_evaluator(self):
-        return self.__evaluator
-
     def get_gpu_memory_fraction(self):
         raise NotImplementedError()
 
     def create_batch_by_bags_group(self, bags_group):
         raise NotImplementedError()
 
-    # TODO. Samples labeling
-    def get_labeling_collection(self, data_type):
+    def get_samples_labeling_collection(self, data_type):
         raise NotImplementedError()
 
     def get_bags_collection(self, data_type):
@@ -302,14 +278,13 @@ class TensorflowModel(BaseModel):
     # TODO. This function should compose BaseOutput,
     # TODO. With label probabilities for each input sample.
     # TODO. Use row_id instead of text_opinion_id for reference.
-    def __text_opinions_labeling(self, data_type, doc_ids_set):
+    def __text_opinions_labeling(self, data_type):
         """
         Provides algorithm of opinions labeling according to model results.
         """
         assert(isinstance(data_type, DataType))
-        assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
-        labeled_collection = self.get_labeling_collection(data_type)
+        labeled_collection = self.get_samples_labeling_collection(data_type)
         assert(isinstance(labeled_collection, LabeledCollection))
 
         predict_log = NetworkInputDependentVariables()
@@ -319,17 +294,9 @@ class TensorflowModel(BaseModel):
             idh_names.append(name)
             idh_tensors.append(tensor)
 
-        text_opinion_ids_set = None
-        if doc_ids_set is not None:
-            __text_opinion_ids = [text_opinion.TextOpinionID for text_opinion in
-                                  # TODO. Remove doc_ids_set.
-                                  # TODO. As now we do not have a set as an another argument for intersection.
-                                  doc_ids_set.intersection(None)]
-            text_opinion_ids_set = set(__text_opinion_ids)
-
         bags_group_it = self.get_bags_collection(data_type).iter_by_groups(
             bags_per_group=self.Config.BagsPerMinibatch,
-            text_opinion_ids_set=text_opinion_ids_set)
+            text_opinion_ids_set=None)
 
         for bags_group in bags_group_it:
 

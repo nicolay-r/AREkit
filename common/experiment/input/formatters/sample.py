@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.bert.input.providers.label.binary import BinaryLabelProvider
+from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
@@ -28,8 +29,6 @@ class BaseSampleFormatter(BaseRowsFormatter):
     """
     Fields
     """
-    ID = 'id'
-    LABEL = 'label'
     S_IND = 's_ind'
     T_IND = 't_ind'
 
@@ -66,11 +65,11 @@ class BaseSampleFormatter(BaseRowsFormatter):
         """
         dtypes_list = super(BaseSampleFormatter, self)._get_columns_list_with_types()
 
-        dtypes_list.append((self.ID, unicode))
+        dtypes_list.append((const.ID, unicode))
 
         # insert labels
         if self.__is_train():
-            dtypes_list.append((self.LABEL, 'int32'))
+            dtypes_list.append((const.LABEL, 'int32'))
 
         # insert text columns
         for col_name in self.__text_provider.iter_columns():
@@ -98,7 +97,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
     def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
 
-        row[self.ID] = self.__row_ids_provider.create_sample_id(
+        row[const.ID] = self.__row_ids_provider.create_sample_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrap,
             index_in_linked=index_in_linked,
@@ -107,7 +106,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         expected_label = linked_wrap.get_linked_label()
 
         if self.__is_train():
-            row[self.LABEL] = self.__label_provider.calculate_output_label(
+            row[const.LABEL] = self.__label_provider.calculate_output_label(
                 expected_label=expected_label,
                 etalon_label=etalon_label)
 

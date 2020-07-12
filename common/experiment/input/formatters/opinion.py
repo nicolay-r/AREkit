@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
@@ -9,10 +10,6 @@ from arekit.common.dataset.text_opinions.enums import EntityEndType
 
 
 class BaseOpinionsFormatter(BaseRowsFormatter):
-
-    ID = 'id'
-    SOURCE = 'source'
-    TARGET = 'target'
 
     # region methods
 
@@ -25,9 +22,9 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
     def _get_columns_list_with_types(self):
         dtypes_list = super(BaseOpinionsFormatter, self)._get_columns_list_with_types()
-        dtypes_list.append((BaseOpinionsFormatter.ID, unicode))
-        dtypes_list.append((BaseOpinionsFormatter.SOURCE, unicode))
-        dtypes_list.append((BaseOpinionsFormatter.TARGET, unicode))
+        dtypes_list.append((const.ID, unicode))
+        dtypes_list.append((const.SOURCE, unicode))
+        dtypes_list.append((const.TARGET, unicode))
         return dtypes_list
 
     @staticmethod
@@ -48,12 +45,12 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
             text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Target)
 
-        row[BaseOpinionsFormatter.ID] = MultipleIDProvider.create_opinion_id(
+        row[const.ID] = MultipleIDProvider.create_opinion_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrapper,
             index_in_linked=0)
-        row[BaseOpinionsFormatter.SOURCE] = src_value
-        row[BaseOpinionsFormatter.TARGET] = target_value
+        row[const.SOURCE] = src_value
+        row[const.TARGET] = target_value
 
         return row
 

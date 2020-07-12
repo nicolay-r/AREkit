@@ -1,13 +1,11 @@
 import pandas as pd
 
-from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
+from arekit.common.experiment import const
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.input.readers.base import BaseInputReader
 
 
 class InputSampleReader(BaseInputReader):
-
-    ID = BaseSampleFormatter.ID
 
     def __init__(self, df, row_ids_provider):
         assert(isinstance(row_ids_provider, BaseIDProvider))
@@ -23,7 +21,7 @@ class InputSampleReader(BaseInputReader):
         return cls(df=df, row_ids_provider=row_ids_provider)
 
     def extract_ids(self):
-        return self._df[self.ID].astype(unicode).tolist()
+        return self._df[const.ID].astype(unicode).tolist()
 
     def iter_rows_linked_by_text_opinions(self):
         """
@@ -36,7 +34,7 @@ class InputSampleReader(BaseInputReader):
         current_news_id = undefined
         current_opinion_id = undefined
 
-        for row_index, sample_id in enumerate(self._df[self.ID]):
+        for row_index, sample_id in enumerate(self._df[const.ID]):
             news_id = self.__row_ids_provider.parse_news_in_sample_id(sample_id)
             opinion_id = self.__row_ids_provider.parse_opinion_in_sample_id(sample_id)
 
