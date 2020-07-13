@@ -23,5 +23,5 @@ class BaseModel(object):
     def run_training(self, epochs_count, load_model=False):
         raise NotImplementedError()
 
-    def predict(self, dest_data_type=DataType.Test):
+    def predict(self, data_type=DataType.Test):
         raise NotImplementedError()

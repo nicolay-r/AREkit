@@ -10,12 +10,13 @@ from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
-from arekit.common.model.evaluator import CustomOpinionBasedModelEvaluator
 
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
+from arekit.networks.output.encoder import NetworkOutputEncoder
+from arekit.networks.tf_models.labeling import BaseSamplesLabeling
 from arekit.networks.tf_models.predict_log import NetworkInputDependentVariables
 from arekit.networks.training.batch.batch import MiniBatch
 
@@ -117,35 +118,6 @@ class TensorflowModel(BaseModel):
         self.fit(epochs_count=epochs_count)
         self.dispose_session()
 
-    @staticmethod
-    def before_labeling_func_application(labeled_collection):
-        assert(isinstance(labeled_collection, LabeledCollection))
-        assert(labeled_collection.check_all_samples_without_labels())
-
-    @staticmethod
-    def after_labeling_func_application(labeled_collection):
-        assert(isinstance(labeled_collection, LabeledCollection))
-        assert(labeled_collection.check_all_samples_has_labels())
-
-    # TODO. This function should return BaseOutput.
-    # TODO. Results should be calculated in Experiment (on Experiment level).
-    def predict_core(self, data_type, labeling_callback):
-        assert(isinstance(data_type, DataType))
-        assert(callable(labeling_callback))
-
-        labeled_collection = self.get_samples_labeling_collection(data_type)
-        assert(isinstance(labeled_collection, LabeledCollection))
-
-        labeled_collection.reset_labels()
-
-        self.before_labeling_func_application(labeled_collection)
-        predict_log = labeling_callback()
-        self.after_labeling_func_application(labeled_collection)
-
-        labeled_collection.reset_labels()
-
-        return predict_log
-
     # endregion
 
     # region Abstract
@@ -176,17 +148,20 @@ class TensorflowModel(BaseModel):
         if self.Callback is not None:
             self.Callback.on_fit_finished()
 
-    # TODO. This function should return BaseOutput.
-    def predict(self, dest_data_type=DataType.Test):
+    def predict(self, data_type=DataType.Test):
         """
         dest_data_type: unicode
             DataType.Train or DataTypes.Test
         """
-        # TODO. This function should return BaseOutput.
-        predict_log = self.predict_core(
-            data_type=dest_data_type,
-            labeling_callback=lambda: self.__text_opinions_labeling(data_type=dest_data_type))
-        return predict_log
+        labeling_collection = self.get_samples_labeling_collection(data_type=data_type)
+
+        labeling = BaseSamplesLabeling(data_type=data_type,
+                                       samples_labeling_collection=labeling_collection)
+
+        predict_log = labeling.predict(labeling_callback=lambda: self.__samples_labeling(data_type=data_type))
+        output = NetworkOutputEncoder(sample_ids_with_labels_iter=labeling_collection.iter_labeled_sample_row_ids())
+
+        return predict_log, output
 
     def get_hidden_parameters(self):
         names = []
@@ -275,17 +250,14 @@ class TensorflowModel(BaseModel):
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess
 
-    # TODO. This function should compose BaseOutput,
-    # TODO. With label probabilities for each input sample.
-    # TODO. Use row_id instead of text_opinion_id for reference.
-    def __text_opinions_labeling(self, data_type):
+    def __samples_labeling(self, data_type):
         """
         Provides algorithm of opinions labeling according to model results.
         """
         assert(isinstance(data_type, DataType))
 
-        labeled_collection = self.get_samples_labeling_collection(data_type)
-        assert(isinstance(labeled_collection, LabeledCollection))
+        labeled_samples = self.get_samples_labeling_collection(data_type)
+        assert(isinstance(labeled_samples, LabeledCollection))
 
         predict_log = NetworkInputDependentVariables()
         idh_names = []
@@ -323,7 +295,7 @@ class TensorflowModel(BaseModel):
                 for sample in bag:
                     if sample.ID < 0:
                         continue
-                    labeled_collection.apply_label(label, sample.ID)
+                    labeled_samples.apply_label(label, sample.ID)
 
         return predict_log
 
