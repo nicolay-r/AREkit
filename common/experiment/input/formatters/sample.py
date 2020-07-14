@@ -212,7 +212,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
     # endregion
 
-    def __create_empty_df(self, size):
+    def _create_blank_df(self, size):
         df = self._create_empty_df()
         self._fast_init_df(df=df, rows_count=size)
         return df
@@ -229,9 +229,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
                                      experiment=experiment)
 
         if balance and self.__is_train():
-            SampleRowBalancerHelper.balanse_oversampling(
+            SampleRowBalancerHelper.balance_oversampling(
                 df=self._df,
-                create_blank_df=lambda size: self.__create_empty_df(size),
+                create_blank_df=lambda size: self._create_blank_df(size),
                 label_provider=self.__label_provider)
 
         self._df.to_csv(filepath,
