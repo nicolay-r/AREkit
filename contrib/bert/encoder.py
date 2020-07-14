@@ -4,7 +4,7 @@ from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.bert.formatters.str_entity_simple_fmt import RussianEntitiesSimpleFormatter
+from arekit.contrib.bert.formatters.str_entity_simple_fmt import EntitiesSimpleFormatter
 from arekit.contrib.bert.providers.label.multiple import BertMultipleLabelProvider
 from arekit.contrib.bert.providers.opinions import OpinionProvider
 
@@ -27,7 +27,7 @@ class BertEncoder(object):
         for data_type in DataType.iter_supported():
             experiment.NeutralAnnotator.create_collection(data_type)
 
-        entities_formatter = RussianEntitiesSimpleFormatter()
+        entities_formatter = EntitiesSimpleFormatter()
 
         for data_type in DataType.iter_supported():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)

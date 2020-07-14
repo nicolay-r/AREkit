@@ -2,7 +2,7 @@ from arekit.common.entities.entity_mask import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 
 
-class RussianEntitiesSimpleFormatter(StringEntitiesFormatter):
+class EntitiesSimpleFormatter(StringEntitiesFormatter):
 
     def to_string(self, original_value, entity_type):
         assert(isinstance(entity_type, EntityType))
