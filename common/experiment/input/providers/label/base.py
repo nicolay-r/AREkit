@@ -16,7 +16,7 @@ class LabelProvider(object):
         return self.__label_scaler.ordered_suppoted_labels()
 
     @property
-    def OutputLabels(self):
+    def OutputLabelsUint(self):
         raise NotImplementedError()
 
     def calculate_output_label(self, expected_label, etalon_label):
