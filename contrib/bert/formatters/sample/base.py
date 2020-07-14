@@ -1,5 +1,5 @@
+import logging
 import random
-import numpy as np
 import pandas as pd
 from collections import OrderedDict
 
@@ -19,6 +19,9 @@ from arekit.contrib.bert.providers.text.single import SingleTextProvider
 
 from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
 from arekit.contrib.bert.providers.opinions import OpinionProvider
+
+
+logger = logging.getLogger(__name__)
 
 
 class BaseSampleFormatter(BaseBertRowsFormatter):
@@ -207,7 +210,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
                                      experiment=experiment)
 
         if balance_rows_by_labels and self.__is_train():
-            self.__balance()
+            self._balance()
 
         self._df.to_csv(filepath,
                         sep='\t',
@@ -252,7 +255,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
         return max(sizes)
 
-    def __compose_balanced_df(self, largest_class_size, label, seed=1):
+    def _compose_balanced_df(self, largest_class_size, label, seed=1):
         """
         Composes a DataFrame which has the same amount of examples as one with 'other_label'
         """
@@ -264,19 +267,24 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         random.seed(seed)
         df_label = self.__get_class(label=label)
         origin_size = len(df_label)
-        for row_index in xrange(len(df)):
-            keep_row_index = row_index if row_index < origin_size else random.randint(0, origin_size - 1)
-            for column, value in enumerate(df_label.iloc[keep_row_index]):
-                self._set_value(df=df, row_ind=row_index, column=column, value=value)
+
+        if origin_size > 0:
+            for row_index in xrange(len(df)):
+                keep_row_index = row_index if row_index < origin_size else random.randint(0, origin_size - 1)
+                row = df_label.iloc[keep_row_index]
+                for column, value in row.iteritems():
+                    self._set_value(df=df, row_ind=row_index, column=column, value=value)
+        else:
+            logger.info("Could not be expanded by label={}, as there are no related examples".format(label.to_class_str()))
 
         return df
 
-    def __balance(self):
+    def _balance(self):
         """
         Balancing related dataframe by amount of examples per class
         """
         largest_class_size = self.__get_largest_class_size()
-        balanced = [self.__compose_balanced_df(label=label, largest_class_size=largest_class_size)
+        balanced = [self._compose_balanced_df(label=label, largest_class_size=largest_class_size)
                     for label in self.__label_provider.SupportedLabels]
         self._df = pd.concat(balanced)
 
