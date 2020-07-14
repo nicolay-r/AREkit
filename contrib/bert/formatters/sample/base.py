@@ -128,7 +128,7 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         expected_label = linked_wrap.get_linked_label()
 
         if self.__is_train():
-            row[self.LABEL] = self.__label_provider.calculate_output_label(
+            row[self.LABEL] = self.__label_provider.calculate_output_label_uint(
                 expected_label=expected_label,
                 etalon_label=etalon_label)
 
@@ -243,15 +243,26 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
     # private rows balancing functions
 
-    def __get_class(self, label):
-        assert (isinstance(label, Label))
-        return self._df[self._df[self.LABEL] == self.__label_provider.calculate_output_label(
-            expected_label=label,
-            etalon_label=label)]
+    @staticmethod
+    def __get_class(df, label_provider, label):
+        assert (isinstance(label, Label) or isinstance(label, int))
 
-    def __get_largest_class_size(self):
-        sizes = [len(self.__get_class(label))
-                 for label in self.__label_provider.SupportedLabels]
+        if isinstance(label, Label):
+            uint_label = label_provider.calculate_output_label_uint(
+                expected_label=label,
+                etalon_label=label)
+        else:
+            assert(label >= 0)
+            uint_label = label
+
+        return df[df[BaseSampleFormatter.LABEL] == uint_label]
+
+    @staticmethod
+    def __get_largest_class_size(df, label_provider, labels):
+        assert(isinstance(label_provider, BertLabelProvider))
+
+        sizes = [len(BaseSampleFormatter.__get_class(df=df, label_provider=label_provider, label=label))
+                 for label in labels]
 
         return max(sizes)
 
@@ -259,13 +270,14 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         """
         Composes a DataFrame which has the same amount of examples as one with 'other_label'
         """
-        assert (isinstance(label, Label))
 
         df = self._create_empty_df()
         self._fast_init_df(df=df, rows_count=largest_class_size)
 
         random.seed(seed)
-        df_label = self.__get_class(label=label)
+        df_label = self.__get_class(df=self._df,
+                                    label_provider=self.__label_provider,
+                                    label=label)
         origin_size = len(df_label)
 
         if origin_size > 0:
@@ -283,9 +295,20 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         """
         Balancing related dataframe by amount of examples per class
         """
-        largest_class_size = self.__get_largest_class_size()
+        output_labels = self.__label_provider.OutputLabels
+
+        largest_class_size = self.__get_largest_class_size(
+            df=self._df,
+            label_provider=self.__label_provider,
+            labels=output_labels)
+
         balanced = [self._compose_balanced_df(label=label, largest_class_size=largest_class_size)
-                    for label in self.__label_provider.SupportedLabels]
+                    for label in output_labels]
+
         self._df = pd.concat(balanced)
+
+        self._df.sort_values(by=[self.ID],
+                             inplace=True,
+                             ascending=True)
 
     # endregion
