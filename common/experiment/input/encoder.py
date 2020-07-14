@@ -6,13 +6,14 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 class BaseInputEncoder(object):
 
     @staticmethod
-    def to_tsv(experiment, create_formatter_func):
+    def to_tsv(experiment, create_formatter_func, balance):
         """
         Args:
             create_formatter_func: func(data_type) -> FormatterType
         """
         assert(isinstance(experiment, BaseExperiment))
         assert(callable(create_formatter_func))
+        assert(isinstance(balance, bool))
 
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             experiment.NeutralAnnotator.create_collection(data_type)
@@ -26,5 +27,5 @@ class BaseInputEncoder(object):
 
             sampler = create_formatter_func(data_type=data_type)
             sampler.format(opinion_provider=opinion_provider)
-            sampler.to_tsv_by_experiment(experiment=experiment)
+            sampler.to_tsv_by_experiment(experiment=experiment, balance=balance)
 

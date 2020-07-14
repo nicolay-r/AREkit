@@ -19,7 +19,7 @@ class BaseRowsFormatter(object):
     def __init__(self, data_type):
         assert(isinstance(data_type, DataType))
         self._data_type = data_type
-        self._df = self.__create_empty_df()
+        self._df = self._create_empty_df()
 
     @staticmethod
     def formatter_type_log_name():
@@ -36,7 +36,7 @@ class BaseRowsFormatter(object):
     def _iter_by_rows(opinion_provider):
         raise NotImplementedError()
 
-    def __create_empty_df(self):
+    def _create_empty_df(self):
         data = np.empty(0, dtype=np.dtype(self._get_columns_list_with_types()))
         return pd.DataFrame(data)
 

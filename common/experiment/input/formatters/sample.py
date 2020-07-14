@@ -4,6 +4,7 @@ from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
+from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
@@ -211,13 +212,28 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
     # endregion
 
-    def to_tsv_by_experiment(self, experiment):
+    def __create_empty_df(self, size):
+        df = self._create_empty_df()
+        self._fast_init_df(df=df, rows_count=size)
+        return df
+
+    def _fast_init_df(self, df, rows_count):
+        df[self.ROW_ID] = range(rows_count)
+        df.set_index(self.ROW_ID, inplace=True)
+
+    def to_tsv_by_experiment(self, experiment, balance):
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(balance, bool))
 
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
 
-        # TODO. This should be in different function.
+        if balance and self.__is_train():
+            SampleRowBalancerHelper.balanse_oversampling(
+                df=self._df,
+                create_blank_df=lambda size: self.__create_empty_df(size),
+                label_provider=self.__label_provider)
+
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
