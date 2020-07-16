@@ -48,9 +48,8 @@ class SingleInstanceTensorflowModel(TensorflowModel):
     def get_bags_collection(self, data_type):
         return self.__init_helper.BagsCollections[data_type]
 
-    # TODO. Samples labeling collection
     def get_samples_labeling_collection(self, data_type):
-        return self.__init_helper.LabeledCollection[data_type]
+        return self.__init_helper.SamplesLabelingCollection[data_type]
 
     def get_gpu_memory_fraction(self):
         return self.__config.GPUMemoryFraction

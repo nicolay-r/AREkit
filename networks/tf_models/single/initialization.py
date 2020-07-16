@@ -40,11 +40,8 @@ class SingleInstanceModelExperimentInitializer(object):
         samples_reader = NetworkInputSampleReader.from_tsv(filepath=None,
                                                            row_ids_provider=None)
 
-        # TODO. Incomplete.
-        # TODO: Create this (as iteration over samples with the related labels).
-        # TODO. Labels especially in case of Train data type.
-        # TODO. Utilize rows_parser.py (in networks/input) in order to perform the latter.
-        labeled_sample_row_ids = list()
+        labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(
+            label_scaler=experiment.DataIO.LabelsScaler))
 
         self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
 
@@ -70,9 +67,8 @@ class SingleInstanceModelExperimentInitializer(object):
     def BagsCollections(self):
         return self.__bags_collection
 
-    # TODO. Samples labeling collection
     @property
-    def LabeledCollection(self):
+    def SamplesLabelingCollection(self):
         return self.__labeled_collections
 
     @property
