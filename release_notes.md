@@ -24,6 +24,7 @@ Minor changes (light refactoring):
 * `RuSentRel` iter_wrapped_linked_text_opinions now does not provide special checks on entity positions. 
 The latter were moved onto sample level.
 * helper from model removed (`LabeledLinkedTextOpinionCollectionHelper`)
+* `Service` folder removed as the latter assumes to be apart of this repository.
 
 ## v0.20.4-rc
 Updates:

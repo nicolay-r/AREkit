@@ -28,8 +28,6 @@ on document level.
 * [Bert](bert) directory -- Tsv encoders for the related task which is assumes to be applied for experiments with 
 BERT language model. 
 
-* **Services** directory -- application in News Processing [N/A, TODO]
-
 Structurally, the fundamental task representation could be departed into following domains:
 
 1. **Named Entity Recognition** -- to extract mentioned named entities;
