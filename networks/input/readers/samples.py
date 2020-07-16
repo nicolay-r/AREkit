@@ -12,10 +12,10 @@ class NetworkInputSampleReader(InputSampleReader):
 
         for row_index, sample_id in enumerate(self._df[const.ID]):
 
-            uint_label = int(self._df.[const.LABEL][row_index]) if has_label else None
+            uint_label = int(self._df[const.LABEL][row_index]) if has_label else None
 
             if has_label:
                 yield sample_id, label_scaler.uint_to_label(uint_label)
-            else
+            else:
                 yield sample_id
 
