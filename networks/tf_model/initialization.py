@@ -10,17 +10,16 @@ from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 
-from arekit.networks.input.formatters.sample import NetworkSampleFormatter
 from arekit.networks.input.readers.samples import NetworkInputSampleReader
 from arekit.networks.input.rows_parser import ParsedSampleRow
-from arekit.networks.training.bags.collection.single import SingleBagsCollection
+from arekit.networks.training.bags.collection.base import BagsCollection
 
 logger = logging.getLogger(__name__)
 
 
-class SingleInstanceModelExperimentInitializer(object):
+class ModelExperimentInitializer(object):
 
-    def __init__(self, experiment, config):
+    def __init__(self, experiment, config, bags_collection_type):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
@@ -30,12 +29,14 @@ class SingleInstanceModelExperimentInitializer(object):
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             self.__init_for_data_type(experiment=experiment,
                                       config=config,
-                                      data_type=data_type)
+                                      data_type=data_type,
+                                      bags_collection_type=bags_collection_type)
 
         config.notify_initialization_completed()
 
-    def __init_for_data_type(self, experiment, config, data_type):
+    def __init_for_data_type(self, experiment, config, data_type, bags_collection_type):
         assert(isinstance(data_type, DataType))
+        assert(issubclass(bags_collection_type, BagsCollection))
 
         samples_reader = NetworkInputSampleReader.from_tsv(filepath=None,
                                                            row_ids_provider=None)
@@ -45,11 +46,11 @@ class SingleInstanceModelExperimentInitializer(object):
 
         self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
 
-        self.__bags_collection[data_type] = self._BagCollectionType.from_formatted_samples(
+        self.__bags_collection[data_type] = bags_collection_type.from_formatted_samples(
             samples_reader=samples_reader,
             bag_size=config.BagSize,
             shuffle=True,
-            create_empty_sample_func=self._create_empty_sample_func,
+            create_empty_sample_func=lambda config: InputSample.create_empty(config),
             create_sample_func=lambda row: self.__create_input_sample(row=row, config=config))
 
         if data_type != DataType.Train:
@@ -71,10 +72,6 @@ class SingleInstanceModelExperimentInitializer(object):
     def SamplesLabelingCollection(self):
         return self.__labeled_collections
 
-    @property
-    def _BagCollectionType(self):
-        return SingleBagsCollection
-
     # endregion
 
     @staticmethod
@@ -90,22 +87,6 @@ class SingleInstanceModelExperimentInitializer(object):
         total = sum(stat)
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
         return norm, stat
-
-    def _create_empty_sample_func(self, config):
-        return None
-
-    def __create_bags_collection(self, samples_reader, config):
-        assert(isinstance(samples_reader, NetworkSampleFormatter))
-        assert(isinstance(config, DefaultNetworkConfig))
-
-        collection = self._BagCollectionType.from_formatted_samples(
-            samples_reader=samples_reader,
-            bag_size=config.BagSize,
-            shuffle=True,
-            create_empty_sample_func=self._create_empty_sample_func,
-            create_sample_func=lambda row: self.__create_input_sample(row=row, config=config))
-
-        return collection
 
     # region private methods
 

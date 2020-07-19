@@ -14,7 +14,7 @@ from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 
 from arekit.networks.training.bags.bag import Bag
-from arekit.networks.training.batch.multi.batch import MultiInstanceBatch
+from arekit.networks.training.batch.multi import MultiInstanceBatch
 
 from arekit.tests.test_tf_ctx_feed import TestContextNetworkFeeding
 from arekit.tests.tf_networks.supported import get_supported

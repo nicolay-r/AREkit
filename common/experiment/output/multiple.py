@@ -3,7 +3,6 @@ import pandas as pd
 
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.output.base import BaseOutput
-from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.scales.base import BaseLabelScaler
 

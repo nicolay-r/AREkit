@@ -8,10 +8,8 @@ from arekit.common.utils import create_dir_if_not_exists
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.output.encoder import NetworkOutputEncoder
-from arekit.networks.tf_models.model import TensorflowModel
-
-# TODO. Utilize experiment here.
-from arekit.networks.tf_models.predict_log import NetworkInputDependentVariables
+from arekit.networks.tf_model.model_super import TensorflowModel
+from arekit.networks.tf_model.predict_log import NetworkInputDependentVariables
 
 
 class NeuralNetworkCallback(Callback):

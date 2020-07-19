@@ -14,6 +14,7 @@ Collection of parsed news become dispatched from text opinions collection.
 * Fixed: `RuSentRelTextOpinion` depends on `TextOpinion` (not straightly from `OpinionRef`).
 * Refactoring: Entity masks now were moved into `contrib` for networks: `StringWordEmbeddingEntityFormatter`, 
 `StringSimpleMaskedEntityFormatter`.
+* `Single`/`Multi` models now are not exist, as the latter prefixes affects only onto batch types selection. Refactoring.
 
 Minor changes (light refactoring):
 

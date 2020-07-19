@@ -8,6 +8,7 @@ from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperime
 from arekit.networks.callback import Callback
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.networks.training.bags.collection.base import BagsCollection
 
 
 class ExperimentEngine(object):
@@ -16,6 +17,7 @@ class ExperimentEngine(object):
     def __run_cv_index(full_model_name,
                        data_io,
                        experiment,
+                       bags_collection_type,
                        create_config_func,
                        create_model_func,
                        create_network_func,
@@ -29,6 +31,7 @@ class ExperimentEngine(object):
         """
         assert(isinstance(callback, Callback))
         assert(isinstance(experiment, CVBasedExperiment))
+        assert(issubclass(bags_collection_type, BagsCollection))
         assert(callable(create_config_func))
         assert(callable(create_network_func))
         assert(callable(create_model_func))
@@ -64,6 +67,7 @@ class ExperimentEngine(object):
         model = create_model_func(experiment=experiment,
                                   network=network,
                                   config=config,
+                                  bags_collection_type=bags_collection_type,
                                   callback=callback)
 
         ###########
@@ -88,12 +92,14 @@ class ExperimentEngine(object):
                     create_network,
                     create_model,
                     create_experiment,
+                    bags_collection_type,
                     data_io,
                     cv_count=1,
                     common_callback_modification_func=None,
                     custom_config_modification_func=None,
                     common_config_modification_func=None):
         """
+        :param bags_collection_type: BagsCollection
         :param data_io:
         :param full_model_name: unicode
             model name
@@ -109,6 +115,7 @@ class ExperimentEngine(object):
         :param custom_config_modification_func:
             for model
         """
+        assert(issubclass(bags_collection_type, BagsCollection))
         assert(callable(create_experiment))
         assert(isinstance(full_model_name, unicode))
         assert(isinstance(data_io, DataIO))
@@ -156,6 +163,7 @@ class ExperimentEngine(object):
                 create_config_func=create_config,
                 create_model_func=create_model,
                 create_network_func=create_network,
+                bags_collection_type=bags_collection_type,
                 common_callback_modification_func=common_callback_modification_func,
                 custom_config_modification_func=custom_config_modification_func,
                 common_config_modification_func=common_config_modification_func)

@@ -1,28 +1,33 @@
 from arekit.common.experiment.formats.base import BaseExperiment
 
-from arekit.networks.tf_models.single import log
 from arekit.networks.callback import Callback
-from arekit.networks.tf_models.single.initialization import SingleInstanceModelExperimentInitializer
-from arekit.networks.tf_models.model import TensorflowModel
 from arekit.networks.nn import NeuralNetwork
-from arekit.networks.training.batch.batch import MiniBatch
+from arekit.networks.tf_model import log
+from arekit.networks.tf_model.initialization import ModelExperimentInitializer
+from arekit.networks.tf_model.base import BaseTensorflowModel
+from arekit.networks.training.bags.collection.base import BagsCollection
+from arekit.networks.training.bags.collection.multi import MultiInstanceBagsCollection
+from arekit.networks.training.bags.collection.single import SingleBagsCollection
+from arekit.networks.training.batch.base import MiniBatch
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.networks.training.batch.multi import MultiInstanceBatch
 
 
-class SingleInstanceTensorflowModel(TensorflowModel):
+class TensorflowModel(BaseTensorflowModel):
     """
     This model assumes to perform a classification of a single sentence (instance, or context)
     with an attitude mentioned in it.
     """
 
-    def __init__(self, experiment, network, config, callback):
+    def __init__(self, experiment, network, bags_collection_type, config, callback):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(callback, Callback) or callback is None)
+        assert(issubclass(bags_collection_type, BagsCollection))
 
-        super(SingleInstanceTensorflowModel, self).__init__(
+        super(TensorflowModel, self).__init__(
             nn_io=experiment.DataIO.ModelIO,
             network=network,
             label_scaler=experiment.DataIO.LabelsScaler,
@@ -31,7 +36,10 @@ class SingleInstanceTensorflowModel(TensorflowModel):
 
         self.__config = config
         self.__experiment = experiment
-        self.__init_helper = self.create_model_init_helper()
+        self.__bags_collection_type = bags_collection_type
+        self.__init_helper = ModelExperimentInitializer(experiment=self.__experiment,
+                                                        config=self.Config,
+                                                        bags_collection_type=bags_collection_type)
 
         self.__print_statistic()
 
@@ -55,11 +63,10 @@ class SingleInstanceTensorflowModel(TensorflowModel):
         return self.__config.GPUMemoryFraction
 
     def create_batch_by_bags_group(self, bags_group):
-        return MiniBatch(bags_group)
-
-    def create_model_init_helper(self):
-        return SingleInstanceModelExperimentInitializer(experiment=self.__experiment,
-                                                        config=self.Config)
+        if issubclass(self.__bags_collection_type, SingleBagsCollection):
+            return MiniBatch(bags_group)
+        if issubclass(self.__bags_collection_type, MultiInstanceBagsCollection):
+            return MultiInstanceBatch(bags_group)
 
     # endregion
 

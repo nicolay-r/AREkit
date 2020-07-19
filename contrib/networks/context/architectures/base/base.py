@@ -4,7 +4,7 @@ from arekit.contrib.networks.tf_helpers.initialization import init_weighted_cost
 from arekit.contrib.networks.sample import InputSample
 from arekit.common.experiment.data_type import DataType
 from arekit.networks.nn import NeuralNetwork
-from arekit.networks.training.batch.batch import MiniBatch
+from arekit.networks.training.batch.base import MiniBatch
 
 
 class SingleInstanceNeuralNetwork(NeuralNetwork):

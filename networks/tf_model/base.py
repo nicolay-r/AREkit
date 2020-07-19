@@ -16,14 +16,14 @@ from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.networks.output.encoder import NetworkOutputEncoder
-from arekit.networks.tf_models.labeling import BaseSamplesLabeling
-from arekit.networks.tf_models.predict_log import NetworkInputDependentVariables
-from arekit.networks.training.batch.batch import MiniBatch
+from arekit.networks.tf_model.labeling import BaseSamplesLabeling
+from arekit.networks.tf_model.predict_log import NetworkInputDependentVariables
+from arekit.networks.training.batch.base import MiniBatch
 
 logger = logging.getLogger(__name__)
 
 
-class TensorflowModel(BaseModel):
+class BaseTensorflowModel(BaseModel):
     """
     Base model class, which provides api for
         - tensorflow model compilation
@@ -42,7 +42,7 @@ class TensorflowModel(BaseModel):
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(evaluator, BaseEvaluator) or evaluator is None)
         assert(isinstance(callback, Callback) or callback is None)
-        super(TensorflowModel, self).__init__(io=nn_io)
+        super(BaseTensorflowModel, self).__init__(io=nn_io)
 
         self.__sess = None
         self.__saver = None
@@ -159,7 +159,8 @@ class TensorflowModel(BaseModel):
                                        samples_labeling_collection=labeling_collection)
 
         predict_log = labeling.predict(labeling_callback=lambda: self.__samples_labeling(data_type=data_type))
-        output = NetworkOutputEncoder(sample_ids_with_labels_iter=labeling_collection.iter_labeled_sample_row_ids())
+        output = NetworkOutputEncoder(sample_ids_with_labels_iter=labeling_collection.iter_labeled_sample_row_ids(),
+                                      labels_scaler=self.__label_scaler)
 
         return predict_log, output
 
@@ -230,7 +231,7 @@ class TensorflowModel(BaseModel):
             fit_total_acc += result[2]
             groups_count += 1
 
-        if TensorflowModel.SaveTensorflowModelStateOnFit:
+        if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
             self.save_model(save_path=self.IO.ModelSavePathPrefix)
 
         return fit_total_cost / groups_count, fit_total_acc / groups_count

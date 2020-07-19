@@ -13,7 +13,7 @@ from arekit.common.experiment.data_type import DataType
 
 from arekit.networks.training.bags.bag import Bag
 from arekit.networks.nn import NeuralNetwork
-from arekit.networks.training.batch.batch import MiniBatch
+from arekit.networks.training.batch.base import MiniBatch
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
