@@ -10,15 +10,21 @@ from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
+from arekit.networks.data_handling.data import HandledData
+from arekit.networks.feeding.bags.collection.base import BagsCollection
+from arekit.networks.feeding.bags.collection.multi import MultiInstanceBagsCollection
+from arekit.networks.feeding.bags.collection.single import SingleBagsCollection
+from arekit.networks.feeding.batch.multi import MultiInstanceMiniBatch
 from arekit.networks.nn_io import NeuralNetworkModelIO
 from arekit.networks.nn import NeuralNetwork
 from arekit.networks.output.encoder import NetworkOutputEncoder
-from arekit.networks.tf_model.labeling import BaseSamplesLabeling
-from arekit.networks.tf_model.predict_log import NetworkInputDependentVariables
-from arekit.networks.training.batch.base import MiniBatch
+from arekit.networks.data_handling.labeling import BaseSamplesLabeling
+from arekit.networks.data_handling.predict_log import NetworkInputDependentVariables
+from arekit.networks.feeding.batch.base import MiniBatch
 
 logger = logging.getLogger(__name__)
 
@@ -28,55 +34,48 @@ class BaseTensorflowModel(BaseModel):
     Base model class, which provides api for
         - tensorflow model compilation
         - fitting
-        - training
-        - load/save states during fitting/training
+        - feeding
+        - load/save states during fitting/feeding
         and more.
     """
 
     SaveTensorflowModelStateOnFit = False
     FeedDictShow = False
 
-    def __init__(self, nn_io, network, label_scaler, evaluator, callback=None):
+    def __init__(self, nn_io, network, label_scaler, handled_data, evaluator, bags_collection_type,
+                 config, callback=None):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(label_scaler, BaseLabelScaler))
+        assert(isinstance(handled_data, HandledData))
         assert(isinstance(evaluator, BaseEvaluator) or evaluator is None)
+        assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(callback, Callback) or callback is None)
+        assert(isinstance(config, DefaultNetworkConfig))
+
         super(BaseTensorflowModel, self).__init__(io=nn_io)
 
         self.__sess = None
         self.__saver = None
         self.__optimiser = None
+        self.__init_helper = handled_data
         self.__network = network
         self.__callback = callback
         self.__label_scaler = label_scaler
         self.__current_epoch_index = 0
 
+        self.__config = config
+        self.__bags_collection_type = bags_collection_type
+
     # region Properties
 
     @property
-    def CurrentEpochIndex(self):
-        return self.__current_epoch_index
-
-    @property
     def Config(self):
-        raise NotImplementedError()
-
-    @property
-    def Session(self):
-        return self.__sess
+        return self.__config
 
     @property
     def Callback(self):
         return self.__callback
-
-    @property
-    def Network(self):
-        return self.__network
-
-    @property
-    def Optimiser(self):
-        return self.__optimiser
 
     # endregion
 
@@ -97,7 +96,7 @@ class BaseTensorflowModel(BaseModel):
                           save_path=save_path,
                           write_meta_graph=False)
 
-    def dispose_session(self):
+    def __dispose_session(self):
         """
         Tensorflow session dispose method
         """
@@ -116,7 +115,7 @@ class BaseTensorflowModel(BaseModel):
             self.load_model(saved_model_path)
 
         self.fit(epochs_count=epochs_count)
-        self.dispose_session()
+        self.__dispose_session()
 
     # endregion
 
@@ -124,7 +123,7 @@ class BaseTensorflowModel(BaseModel):
 
     def fit(self, epochs_count):
         assert(isinstance(epochs_count, int))
-        assert(self.Session is not None)
+        assert(self.__sess is not None)
 
         operation_cancel = OperationCancellation()
         minibatches = list(self.get_bags_collection(DataType.Train).iter_by_groups(self.Config.BagsPerMinibatch))
@@ -167,31 +166,35 @@ class BaseTensorflowModel(BaseModel):
     def get_hidden_parameters(self):
         names = []
         tensors = []
-        for name, tensor in self.Network.iter_hidden_parameters():
+        for name, tensor in self.__network.iter_hidden_parameters():
             names.append(name)
             tensors.append(tensor)
 
-        result_list = self.Session.run(tensors)
+        result_list = self.__sess.run(tensors)
         return names, result_list
 
     def set_optimiser(self):
-        optimiser = self.Config.Optimiser.minimize(self.Network.Cost)
+        optimiser = self.Config.Optimiser.minimize(self.__network.Cost)
         self.set_optimiser_value(optimiser)
 
-    def get_gpu_memory_fraction(self):
-        raise NotImplementedError()
-
-    def create_batch_by_bags_group(self, bags_group):
-        raise NotImplementedError()
+    def get_bags_collection(self, data_type):
+        return self.__init_helper.BagsCollections[data_type]
 
     def get_samples_labeling_collection(self, data_type):
-        raise NotImplementedError()
+        return self.__init_helper.SamplesLabelingCollection[data_type]
 
-    def get_bags_collection(self, data_type):
-        raise NotImplementedError()
+    def get_gpu_memory_fraction(self):
+        return self.__config.GPUMemoryFraction
+
+    # TODO. Simplify.
+    def create_batch_by_bags_group(self, bags_group):
+        if issubclass(self.__bags_collection_type, SingleBagsCollection):
+            return MiniBatch(bags_group)
+        if issubclass(self.__bags_collection_type, MultiInstanceBagsCollection):
+            return MultiInstanceMiniBatch(bags_group)
+
 
     def create_feed_dict(self, minibatch, data_type):
-        assert(isinstance(self.Network, NeuralNetwork))
         assert(isinstance(minibatch, MiniBatch))
         assert(isinstance(data_type, DataType))
 
@@ -199,7 +202,7 @@ class BaseTensorflowModel(BaseModel):
         if self.FeedDictShow:
             MiniBatch.debug_output(network_input)
 
-        return self.Network.create_feed_dict(network_input, data_type)
+        return self.__network.create_feed_dict(network_input, data_type)
 
     # endregion
 
@@ -219,12 +222,12 @@ class BaseTensorflowModel(BaseModel):
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch, data_type=DataType.Train)
 
-            hidden_list = list(self.Network.iter_hidden_parameters())
-            fetches_default = [self.Optimiser, self.Network.Cost, self.Network.Accuracy]
+            hidden_list = list(self.__network.iter_hidden_parameters())
+            fetches_default = [self.Optimiser, self.__network.Cost, self.__network.Accuracy]
             fetches_hidden = [tensor for _, tensor in hidden_list]
 
-            result = self.Session.run(fetches_default + fetches_hidden,
-                                      feed_dict=feed_dict)
+            result = self.__sess.run(fetches_default + fetches_hidden,
+                                     feed_dict=feed_dict)
             cost = result[1]
 
             fit_total_cost += np.mean(cost)
@@ -246,7 +249,7 @@ class BaseTensorflowModel(BaseModel):
         """
         init_op = tf.global_variables_initializer()
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=self.get_gpu_memory_fraction())
-        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        sess = tf.__sess(config=tf.ConfigProto(gpu_options=gpu_options))
         sess.run(init_op)
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess
@@ -263,7 +266,7 @@ class BaseTensorflowModel(BaseModel):
         predict_log = NetworkInputDependentVariables()
         idh_names = []
         idh_tensors = []
-        for name, tensor in self.Network.iter_input_dependent_hidden_parameters():
+        for name, tensor in self.__network.iter_input_dependent_hidden_parameters():
             idh_names.append(name)
             idh_tensors.append(tensor)
 
@@ -276,7 +279,7 @@ class BaseTensorflowModel(BaseModel):
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch, data_type=data_type)
 
-            result = self.Session.run([self.Network.Labels] + idh_tensors, feed_dict=feed_dict)
+            result = self.__sess.run([self.__network.Labels] + idh_tensors, feed_dict=feed_dict)
             uint_labels = result[0]
             idh_values = result[1:]
 

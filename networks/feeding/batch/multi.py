@@ -3,14 +3,14 @@ from collections import OrderedDict
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.networks.debug import DebugKeys
 from arekit.common.model.sample import InputSampleBase
-from arekit.networks.training.bags.bag import Bag
-from arekit.networks.training.batch.base import MiniBatch
+from arekit.networks.feeding.bags.bag import Bag
+from arekit.networks.feeding.batch.base import MiniBatch
 
 
-class MultiInstanceBatch(MiniBatch):
+class MultiInstanceMiniBatch(MiniBatch):
 
     def __init__(self, bags, batch_id=None):
-        super(MultiInstanceBatch, self).__init__(bags, batch_id)
+        super(MultiInstanceMiniBatch, self).__init__(bags, batch_id)
 
     def to_network_input(self, label_scaler):
         assert(isinstance(label_scaler, BaseLabelScaler))

@@ -1,7 +1,7 @@
 from arekit.contrib.networks.sample import InputSample
 from arekit.networks.input.rows_parser import ParsedSampleRow
-from arekit.networks.training.bags.bag import Bag
-from arekit.networks.training.bags.collection.base import BagsCollection
+from arekit.networks.feeding.bags.bag import Bag
+from arekit.networks.feeding.bags.collection.base import BagsCollection
 
 
 class SingleBagsCollection(BagsCollection):

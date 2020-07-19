@@ -5,7 +5,7 @@ from arekit.contrib.networks.context.architectures.base.base import SingleInstan
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.tf_helpers.initialization import init_accuracy, init_weighted_cost
-from arekit.networks.training.batch.multi import MultiInstanceBatch
+from arekit.networks.feeding.batch.multi import MultiInstanceMiniBatch
 from arekit.networks.nn import NeuralNetwork
 
 
@@ -339,7 +339,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
                 raise Exception('parameter "{}" was not found in __input. Check the presence of related parameter in "mi" initialization.'.format(param))
             feed_dict[self.__input[param]] = input[param]
 
-        feed_dict[self.__y] = input[MultiInstanceBatch.I_LABELS]
+        feed_dict[self.__y] = input[MultiInstanceMiniBatch.I_LABELS]
         feed_dict[self.__dropout_keep_prob] = self.__cfg.DropoutKeepProb \
             if data_type == DataType.Train else 1.0
         feed_dict[self.__dropout_emb_keep_prob] = self.__cfg.EmbeddingDropoutKeepProb \

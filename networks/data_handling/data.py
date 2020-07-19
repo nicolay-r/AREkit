@@ -12,25 +12,31 @@ from arekit.contrib.networks.sample import InputSample
 
 from arekit.networks.input.readers.samples import NetworkInputSampleReader
 from arekit.networks.input.rows_parser import ParsedSampleRow
-from arekit.networks.training.bags.collection.base import BagsCollection
+from arekit.networks.feeding.bags.collection.base import BagsCollection
 
 logger = logging.getLogger(__name__)
 
 
-class ModelExperimentInitializer(object):
+class HandledData(object):
 
-    def __init__(self, experiment, config, bags_collection_type):
+    def __init__(self, labeled_collections, bags_collection):
+        assert(isinstance(labeled_collections, dict))
+        assert(isinstance(bags_collection, dict))
+        self.__labeled_collections = labeled_collections
+        self.__bags_collection = bags_collection
+
+    @classmethod
+    def initialize_from_experiment(cls, experiment, config, bags_collection_type):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        self.__labeled_collections = {}
-        self.__bags_collection = {}
+        instance = cls(labeled_collections={}, bags_collection={})
 
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            self.__init_for_data_type(experiment=experiment,
-                                      config=config,
-                                      data_type=data_type,
-                                      bags_collection_type=bags_collection_type)
+            instance.__init_for_data_type(experiment=experiment,
+                                          config=config,
+                                          data_type=data_type,
+                                          bags_collection_type=bags_collection_type)
 
         config.notify_initialization_completed()
 
@@ -56,10 +62,15 @@ class ModelExperimentInitializer(object):
         if data_type != DataType.Train:
             return
 
+        # TODO. Setup norm somewhere else!
+        # TODO. Setup norm somewhere else!
+        # TODO. Setup norm somewhere else!
+
         labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
         norm, _ = self.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
                                      labels_helper=labels_helper)
 
+        # TODO. Setup the latter somewhere else !!!
         config.set_class_weights(norm)
 
     # region Properties

@@ -8,7 +8,8 @@ from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperime
 from arekit.networks.callback import Callback
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.networks.training.bags.collection.base import BagsCollection
+from arekit.networks.data_handling.data import HandledData
+from arekit.networks.feeding.bags.collection.base import BagsCollection
 
 
 class ExperimentEngine(object):
@@ -63,10 +64,17 @@ class ExperimentEngine(object):
 
         callback.reset_experiment_dependent_parameters()
 
+        # Perform data handling.
+        handled_data = HandledData.initialize_from_experiment(
+            experiment=experiment,
+            config=config,
+            bags_collection_type=bags_collection_type)
+
         # Initialize model
         model = create_model_func(experiment=experiment,
                                   network=network,
                                   config=config,
+                                  handled_data=handled_data,
                                   bags_collection_type=bags_collection_type,
                                   callback=callback)
 

@@ -13,8 +13,8 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 
-from arekit.networks.training.bags.bag import Bag
-from arekit.networks.training.batch.multi import MultiInstanceBatch
+from arekit.networks.feeding.bags.bag import Bag
+from arekit.networks.feeding.batch.multi import MultiInstanceMiniBatch
 
 from arekit.tests.test_tf_ctx_feed import TestContextNetworkFeeding
 from arekit.tests.tf_networks.supported import get_supported
@@ -35,7 +35,7 @@ class TestMultiInstanceFeed(unittest.TestCase):
                 bag.add_sample(empty_sample)
             bags.append(bag)
 
-        return MultiInstanceBatch(bags=bags, batch_id=None)
+        return MultiInstanceMiniBatch(bags=bags, batch_id=None)
 
     @staticmethod
     def multiinstances_supported(ctx_config, ctx_network):

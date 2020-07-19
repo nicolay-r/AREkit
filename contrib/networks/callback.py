@@ -7,9 +7,9 @@ from arekit.common.evaluation.results.two_class import TwoClassEvalResult
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
+from arekit.networks.model import BaseTensorflowModel
 from arekit.networks.output.encoder import NetworkOutputEncoder
-from arekit.networks.tf_model.model_super import TensorflowModel
-from arekit.networks.tf_model.predict_log import NetworkInputDependentVariables
+from arekit.networks.data_handling.predict_log import NetworkInputDependentVariables
 
 
 class NeuralNetworkCallback(Callback):
@@ -45,7 +45,7 @@ class NeuralNetworkCallback(Callback):
         self.__log_dir = log_dir
 
     def on_initialized(self, model):
-        assert(isinstance(model, TensorflowModel))
+        assert(isinstance(model, BaseTensorflowModel))
         self.__model = model
 
     def on_epoch_finished(self, avg_fit_cost, avg_fit_acc, epoch_index, operation_cancel):
