@@ -10,6 +10,7 @@ from arekit.networks.callback import Callback
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.networks.data_handling.data import HandledData
 from arekit.networks.feeding.bags.collection.base import BagsCollection
+from arekit.networks.model import BaseTensorflowModel
 
 
 class ExperimentEngine(object):
@@ -20,7 +21,6 @@ class ExperimentEngine(object):
                        experiment,
                        bags_collection_type,
                        create_config_func,
-                       create_model_func,
                        create_network_func,
                        callback,
                        cv_index,
@@ -35,7 +35,6 @@ class ExperimentEngine(object):
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(callable(create_config_func))
         assert(callable(create_network_func))
-        assert(callable(create_model_func))
         assert(callable(common_callback_modification_func) or common_callback_modification_func is None)
         assert(callable(common_config_modification_func) or common_config_modification_func is None)
         assert(callable(custom_config_modification_func) or custom_config_modification_func is None)
@@ -71,12 +70,14 @@ class ExperimentEngine(object):
             bags_collection_type=bags_collection_type)
 
         # Initialize model
-        model = create_model_func(experiment=experiment,
-                                  network=network,
-                                  config=config,
-                                  handled_data=handled_data,
-                                  bags_collection_type=bags_collection_type,
-                                  callback=callback)
+        model = BaseTensorflowModel(network=network,
+                                    config=config,
+                                    handled_data=handled_data,
+                                    bags_collection_type=bags_collection_type,
+                                    callback=callback,
+                                    nn_io=experiment.DataIO.ModelIO,
+                                    label_scaler=experiment.DataIO.LabelsScaler,
+                                    evaluator=experiment.DataIO.Evaluator)
 
         ###########
         # Run model
@@ -98,7 +99,6 @@ class ExperimentEngine(object):
     def run_testing(full_model_name,
                     create_config,
                     create_network,
-                    create_model,
                     create_experiment,
                     bags_collection_type,
                     data_io,
@@ -113,7 +113,6 @@ class ExperimentEngine(object):
             model name
         :param create_config: func
         :param create_network:
-        :param create_model:
         :param create_experiment:
         :param cv_count: int, cv_count > 0
             1 -- considered a fixed train/test separation.
@@ -169,7 +168,6 @@ class ExperimentEngine(object):
                 callback=callback,
                 cv_index=cv_index,
                 create_config_func=create_config,
-                create_model_func=create_model,
                 create_network_func=create_network,
                 bags_collection_type=bags_collection_type,
                 common_callback_modification_func=common_callback_modification_func,
