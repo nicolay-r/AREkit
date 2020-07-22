@@ -36,4 +36,4 @@ class ZipArchiveUtils(object):
 
     @staticmethod
     def get_data_root():
-        return path.join(dirname(__file__), u"../data/")
+        return path.join(dirname(__file__), u"data/")

@@ -5,6 +5,7 @@ from os.path import dirname
 import pandas as pd
 
 from arekit.source.lexicons.lexicon import Lexicon
+from arekit.source.zip_utils import ZipArchiveUtils
 
 
 class RuSentiLexLexicon(Lexicon):
@@ -23,12 +24,8 @@ class RuSentiLexLexicon(Lexicon):
         return 'term'
 
     @staticmethod
-    def __get_data_root():
-        return path.join(dirname(__file__), u"../../data/")
-
-    @staticmethod
     def __get_archive_filepath():
-        return path.join(RuSentiLexLexicon.__get_data_root(), u"rusentilex.zip")
+        return path.join(ZipArchiveUtils.get_data_root(), u"rusentilex.zip")
 
     @classmethod
     def from_zip(cls):
