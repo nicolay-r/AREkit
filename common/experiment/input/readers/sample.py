@@ -14,6 +14,8 @@ class InputSampleReader(BaseInputReader):
 
     @classmethod
     def from_tsv(cls, filepath, row_ids_provider):
+        assert(isinstance(filepath, unicode))
+
         df = pd.read_csv(filepath,
                          compression='gzip',
                          sep='\t')

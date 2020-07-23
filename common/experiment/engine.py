@@ -143,15 +143,13 @@ class ExperimentEngine(object):
         logger.info("Full-Model-Name: {}".format(full_model_name))
 
         # TODO. Refactor
+        data_io.CVFoldingAlgorithm.set_cv_count(cv_count)
         data_io.set_model_name(full_model_name)
         data_io.ModelIO.set_model_name(value=full_model_name)
 
         experiment = create_experiment(data_io=data_io,
                                        prepare_model_root=True)
         assert(isinstance(experiment, BaseExperiment))
-
-        # TODO. This should be initialized automatically somewhere else.
-        data_io.CVFoldingAlgorithm.set_cv_count(cv_count)
 
         # Initialize data_io
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():

@@ -33,10 +33,18 @@ class HandledData(object):
         instance = cls(labeled_collections={}, bags_collection={})
 
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            instance.__init_for_data_type(experiment=experiment,
-                                          config=config,
-                                          data_type=data_type,
-                                          bags_collection_type=bags_collection_type)
+            labeled_sample_row_ids = instance.__init_for_data_type(experiment=experiment,
+                                                                   config=config,
+                                                                   data_type=data_type,
+                                                                   bags_collection_type=bags_collection_type)
+
+            if data_type != DataType.Train:
+                continue
+
+            labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
+            norm, _ = instance.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
+                                             labels_helper=labels_helper)
+            config.set_class_weights(norm)
 
         config.notify_initialization_completed()
 
@@ -59,19 +67,7 @@ class HandledData(object):
             create_empty_sample_func=lambda config: InputSample.create_empty(config),
             create_sample_func=lambda row: self.__create_input_sample(row=row, config=config))
 
-        if data_type != DataType.Train:
-            return
-
-        # TODO. Setup norm somewhere else!
-        # TODO. Setup norm somewhere else!
-        # TODO. Setup norm somewhere else!
-
-        labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
-        norm, _ = self.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
-                                     labels_helper=labels_helper)
-
-        # TODO. Setup the latter somewhere else !!!
-        config.set_class_weights(norm)
+        return labeled_sample_row_ids
 
     # region Properties
 
