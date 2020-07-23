@@ -20,4 +20,3 @@ class CVBasedExperiment(BaseExperiment):
             opin_operation=opin_ops,
             doc_operations=doc_ops,
             prepare_model_root=prepare_model_root)
-

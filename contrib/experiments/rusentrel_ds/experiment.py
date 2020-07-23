@@ -47,6 +47,10 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
             doc_ops=doc_ops,
             prepare_model_root=prepare_model_root)
 
+    @property
+    def Name(self):
+        return u"rusentrel-ds"
+
     @staticmethod
     def read_ruattitudes_in_memory(doc_ids_set=None):
         """

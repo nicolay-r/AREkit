@@ -3,6 +3,7 @@ import logging
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.labels.base import Label
 from arekit.common.model.labeling.single import SingleLabelsHelper
@@ -52,8 +53,9 @@ class HandledData(object):
         assert(isinstance(data_type, DataType))
         assert(issubclass(bags_collection_type, BagsCollection))
 
-        samples_reader = NetworkInputSampleReader.from_tsv(filepath=None,
-                                                           row_ids_provider=None)
+        samples_reader = NetworkInputSampleReader.from_tsv(
+            filepath=experiment.get_input_samples_filepath(),
+            row_ids_provider=MultipleIDProvider())
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(
             label_scaler=experiment.DataIO.LabelsScaler))

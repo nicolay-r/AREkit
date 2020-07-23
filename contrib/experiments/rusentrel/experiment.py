@@ -28,6 +28,10 @@ class RuSentRelExperiment(CVBasedExperiment):
             doc_ops=doc_ops,
             prepare_model_root=prepare_model_root)
 
+    @property
+    def Name(self):
+        return u"rusentrel"
+
     @staticmethod
     def get_rusentrel_inds():
         return set(RuSentRelIOUtils.iter_collection_indices())

@@ -7,6 +7,7 @@ class NetworkInputSampleReader(InputSampleReader):
     def iter_labeled_sample_rows(self, label_scaler):
         """
         Iter sample_ids with the related labels (if the latter presented in dataframe)
+        TODO. This might be also improved via rows_parser usage.
         """
         has_label = const.LABEL in self._df.columns
 
@@ -18,4 +19,8 @@ class NetworkInputSampleReader(InputSampleReader):
                 yield sample_id, label_scaler.uint_to_label(uint_label)
             else:
                 yield sample_id
+
+    def iter_parsed_rows(self, label_scaler):
+        # TODO. Iter parsed_rows (Instances from rows_parser.py).
+        pass
 
