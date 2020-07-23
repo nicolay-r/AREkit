@@ -1,7 +1,7 @@
-from arekit.common.experiment.input.terms_mapper import StringTextTermsMapper
+from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 
 
-class BertStringTextTermsMapper(StringTextTermsMapper):
+class BertStringTextTermsMapper(OpinionContainingTextTermsMapper):
 
     def map_text_frame_variant(self, fv_ind, text_frame_variant):
         raise NotImplementedError()

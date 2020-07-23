@@ -72,8 +72,9 @@ class BaseExperiment(object):
     # endregion
 
     def get_input_samples_filepath(self):
-        e_name = self.Name
-        # TODO. Considering CV_index: If cv is not declared => fixed.
+        is_fixed = self.__data_io.CVFoldingAlgorithm.CVCount == 1
+        e_name = u"{name}-{mode}".format(name=self.Name,
+                                         mode=u"fixed" if is_fixed else u"cv")
         return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
                                                         experiments_dir=self.DataIO.get_experiments_dir())
 

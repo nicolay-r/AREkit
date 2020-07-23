@@ -1,14 +1,14 @@
 from arekit.common import utils
-from arekit.common.context.terms_mapper import TextTermsMapper
 from arekit.common.embeddings.base import Embedding
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
+from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.networks.input.embedding.custom import create_term_embedding
 
 
-class EmbeddedTermMapping(TextTermsMapper):
+class EmbeddedTermMapping(OpinionContainingTextTermsMapper):
     """
     For every element returns: (word, embedded vector)
     """
@@ -17,23 +17,23 @@ class EmbeddedTermMapping(TextTermsMapper):
     TOKEN_RANDOM_SEED_OFFSET = 12345
 
     def __init__(self,
+                 synonyms,
                  predefined_embedding,
                  string_entities_formatter,
                  string_emb_entity_formatter):
         """
-
         predefined_embedding:
-        string_entities_formatter:
-            Utilized for result entity representation (variety of masks)
         string_emb_entity_formatter:
             Utilized in order to obtain embedding value from predefined_embeding for enties
         """
         assert(isinstance(predefined_embedding, Embedding))
-        assert(isinstance(string_entities_formatter, StringEntitiesFormatter))
         assert(isinstance(string_emb_entity_formatter, StringEntitiesFormatter))
 
+        super(EmbeddedTermMapping, self).__init__(
+            entity_formatter=string_entities_formatter,
+            synonyms=synonyms)
+
         self.__predefined_embedding = predefined_embedding
-        self.__string_entities_formatter = string_entities_formatter
         self.__string_emb_entity_formatter = string_emb_entity_formatter
 
     def map_word(self, w_ind, word):
@@ -77,15 +77,16 @@ class EmbeddedTermMapping(TextTermsMapper):
         """
         assert(isinstance(entity, Entity))
 
-        # TODO. Provide synonyms
+        # Value extraction
+        str_entity_mask = super(EmbeddedTermMapping, self).map_entity(
+            e_ind=e_ind,
+            entity=entity)
+
+        # TODO. Use synonyms. (Or use this functionality in a base class).
         empty_set = set()
         e_type = self.__get_entity_type(e_ind=e_ind,
                                         subj_ind_set=empty_set,
                                         obj_ind_set=empty_set)
-
-        # Value extraction
-        str_entity_mask = self.__string_entities_formatter.to_string(original_value=entity,
-                                                                     entity_type=e_type)
 
         # Vector extraction
         entity_word = self.__string_emb_entity_formatter.to_string(original_value=None,

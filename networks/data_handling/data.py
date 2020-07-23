@@ -1,5 +1,6 @@
 import collections
 import logging
+import os
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
@@ -10,6 +11,7 @@ from arekit.common.model.labeling.single import SingleLabelsHelper
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
+from arekit.networks.input.encoder import NetworkInputEncoder
 
 from arekit.networks.input.readers.samples import NetworkInputSampleReader
 from arekit.networks.input.rows_parser import ParsedSampleRow
@@ -53,8 +55,18 @@ class HandledData(object):
         assert(isinstance(data_type, DataType))
         assert(issubclass(bags_collection_type, BagsCollection))
 
+        sample_filepath = os.path.join(experiment.get_input_samples_filepath(), u"input.csv.gz")
+
+        files_existed = NetworkInputEncoder.check_files_existance(
+            target_dir=experiment.get_input_samples_filepath(),
+            data_type=data_type)
+
+        if not files_existed:
+            NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(experiment=experiment,
+                                                                     config=config)
+
         samples_reader = NetworkInputSampleReader.from_tsv(
-            filepath=experiment.get_input_samples_filepath(),
+            filepath=sample_filepath,
             row_ids_provider=MultipleIDProvider())
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(

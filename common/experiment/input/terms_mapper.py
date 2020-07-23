@@ -7,7 +7,11 @@ from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.processing.text.token import Token
 
 
-class StringTextTermsMapper(TextTermsMapper):
+class OpinionContainingTextTermsMapper(TextTermsMapper):
+    """
+    Provides an ability to setup s_obj, t_obj
+    The latter might be utilized with synonyms collection
+    """
 
     def __init__(self, entity_formatter, synonyms):
         assert(isinstance(entity_formatter, StringEntitiesFormatter))
@@ -37,10 +41,14 @@ class StringTextTermsMapper(TextTermsMapper):
 
         return self.__synonyms.get_synonym_group_index(entity.Value)
 
+    # TODO. This should be moved from here
+    # TODO. Because this is not a feature of string mapping
     def set_s_ind(self, s_ind):
         assert(isinstance(s_ind, int))
         self.__s_ind = s_ind
 
+    # TODO. This should be moved from here
+    # TODO. Because this is not a feature of string mapping
     def set_t_ind(self, t_ind):
         assert(isinstance(t_ind, int))
         self.__t_ind = t_ind
@@ -57,7 +65,7 @@ class StringTextTermsMapper(TextTermsMapper):
         self.__s_group = self.__syn_group(terms_list[self.__s_ind] if self.__s_ind is not None else None)
         self.__t_group = self.__syn_group(terms_list[self.__t_ind] if self.__t_ind is not None else None)
 
-        for mapped in super(StringTextTermsMapper, self).iter_mapped(terms):
+        for mapped in super(OpinionContainingTextTermsMapper, self).iter_mapped(terms):
             yield mapped
 
     def map_entity(self, e_ind, entity):

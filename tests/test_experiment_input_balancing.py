@@ -5,7 +5,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.experiment.input.terms_mapper import StringTextTermsMapper
+from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.DEBUG)
 stemmer = MystemWrapper()
 label_provider = BinaryLabelProvider(label_scaler=ThreeLabelScaler())
 synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer, is_read_only=True)
-terms_mapper = StringTextTermsMapper(entity_formatter=StringWordEmbeddingEntityFormatter(), synonyms=synonyms)
+terms_mapper = OpinionContainingTextTermsMapper(entity_formatter=StringWordEmbeddingEntityFormatter(), synonyms=synonyms)
 
 formatter = BaseSampleFormatter(
     data_type=DataType.Train,

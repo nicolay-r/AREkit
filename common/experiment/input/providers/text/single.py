@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from arekit.common.experiment.input.terms_mapper import StringTextTermsMapper
+from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.labels.base import Label
 
 
@@ -10,7 +10,7 @@ class BaseSingleTextProvider(object):
     TERMS_SEPARATOR = u" "
 
     def __init__(self, text_terms_mapper):
-        assert(isinstance(text_terms_mapper, StringTextTermsMapper))
+        assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
         self._mapper = text_terms_mapper
 
     def iter_columns(self):

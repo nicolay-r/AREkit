@@ -1,6 +1,7 @@
 import numpy as np
 
 from arekit.common.embeddings.base import Embedding
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
@@ -27,6 +28,7 @@ class NetworkInputEncoder(object):
         predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
 
         text_terms_mapper = EmbeddedTermMapping(
+            synonyms=experiment.DataIO.SynonymsCollection,
             predefined_embedding=predefined_embedding,
             string_entities_formatter=experiment.DataIO.StringEntityFormatter,
             string_emb_entity_formatter=StringWordEmbeddingEntityFormatter())
@@ -58,6 +60,13 @@ class NetworkInputEncoder(object):
 
         vocab = TermsEmbeddingOffsets.iter_words_vocabulary(words_embedding=term_embedding)
         np.savez(NetworkInputEncoder.VOCABULARY_FILENAME, list(vocab))
+
+    @staticmethod
+    def check_files_existance(target_dir, data_type):
+        assert(isinstance(target_dir, unicode))
+        assert(isinstance(data_type, DataType))
+        # TODO. Update
+        return False
 
     @staticmethod
     def __create_sample_formatter(data_type, experiment, text_provider):

@@ -2,7 +2,7 @@
 from arekit.bert.input.providers.text.pair import PairTextProvider
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.bert.input.providers.label.binary import BinaryLabelProvider
-from arekit.common.experiment.input.terms_mapper import StringTextTermsMapper
+from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
@@ -19,7 +19,7 @@ class QaBinarySampleFormatter(BaseSampleFormatter):
 
     def __init__(self, data_type, label_scaler, labels_formatter, text_terms_mapper):
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        assert(isinstance(text_terms_mapper, StringTextTermsMapper))
+        assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
         text_b_template = u'Отношение {subject} к {object} в контексте << {context} >> -- {label} ?'
         super(QaBinarySampleFormatter, self).__init__(
