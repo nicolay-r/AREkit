@@ -31,13 +31,16 @@ class InputSampleBase(object):
         """
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
 
+        is_in_window = False
+        is_same_sentence = False
+
         if text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InTerms) < window_size:
-            return True
+            is_in_window = True
 
         if text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InSentences) == 0:
-            return True
+            is_same_sentence = True
 
-        return False
+        return is_in_window and is_same_sentence
 
     def __iter__(self):
         for key, value in self.__values.iteritems():
