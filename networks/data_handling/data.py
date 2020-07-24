@@ -2,6 +2,8 @@ import collections
 import logging
 import os
 
+import numpy as np
+
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
@@ -36,11 +38,28 @@ class HandledData(object):
 
         instance = cls(labeled_collections={}, bags_collection={})
 
+        source_dir = NetworkInputEncoder.get_samples_dir(experiment)
+
+        # Check files existed.
+        files_existed = True
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            labeled_sample_row_ids = instance.__init_for_data_type(experiment=experiment,
-                                                                   config=config,
-                                                                   data_type=data_type,
-                                                                   bags_collection_type=bags_collection_type)
+            if not NetworkInputEncoder.check_files_existance(target_dir=source_dir,
+                                                             data_type=data_type,
+                                                             experiment=experiment):
+                files_existed = False
+                break
+
+        # Check files existed.
+        term_embedding_pairs = []
+        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
+            labeled_sample_row_ids = instance.__init_for_data_type(
+                experiment=experiment,
+                config=config,
+                data_type=data_type,
+                bags_collection_type=bags_collection_type,
+                term_embedding_pairs=term_embedding_pairs,
+                source_dir=source_dir,
+                files_existed=files_existed)
 
             if data_type != DataType.Train:
                 continue
@@ -50,24 +69,34 @@ class HandledData(object):
                                              labels_helper=labels_helper)
             config.set_class_weights(norm)
 
+        # Optionally writing embeddings in file.
+        if not files_existed:
+            NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
+                target_dir=source_dir,
+                term_embedding_pairs=term_embedding_pairs)
+
+        # Reading embedding.
+        embedding = np.load(NetworkInputEncoder.get_embedding_filepath(source_dir))
+        config.set_term_embedding(embedding)
+
         config.notify_initialization_completed()
 
-    def __init_for_data_type(self, experiment, config, data_type, bags_collection_type):
+    def __init_for_data_type(self, experiment, term_embedding_pairs,
+                             config, data_type, bags_collection_type,
+                             source_dir, files_existed):
         assert(isinstance(data_type, DataType))
+        assert(isinstance(term_embedding_pairs, list))
         assert(issubclass(bags_collection_type, BagsCollection))
-
-        source_dir = NetworkInputEncoder.get_samples_dir()
+        assert(isinstance(files_existed, bool))
 
         sample_filepath = os.path.join(
             source_dir,
             BaseInputEncoder.filename_template(experiment=experiment, data_type=data_type))
 
-        files_existed = NetworkInputEncoder.check_files_existance(target_dir=source_dir,
-                                                                  data_type=data_type)
-
         if not files_existed:
-            NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(experiment=experiment,
-                                                                     config=config)
+            NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
+                experiment=experiment,
+                term_embedding_pairs=term_embedding_pairs)
 
         samples_reader = NetworkInputSampleReader.from_tsv(
             filepath=sample_filepath,

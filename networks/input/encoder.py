@@ -1,4 +1,5 @@
 import logging
+import os
 
 import numpy as np
 from os.path import join
@@ -8,7 +9,6 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
-from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 from arekit.networks.input.embedding.matrix import create_term_embedding_matrix
 from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
@@ -22,13 +22,13 @@ logger = logging.getLogger(__name__)
 
 class NetworkInputEncoder(object):
 
-    TERM_EMBEDDING_FILENAME = 'term_embedding.gz'
-    VOCABULARY_FILENAME = "vocab.txt.gz"
+    TERM_EMBEDDING_FILENAME = u'term_embedding'
+    VOCABULARY_FILENAME = u"vocab.txt"
 
     @staticmethod
-    def to_tsv_with_embedding_and_vocabulary(experiment, config):
+    def to_tsv_with_embedding_and_vocabulary(experiment, term_embedding_pairs):
         assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(config, DefaultNetworkConfig))
+        assert(isinstance(term_embedding_pairs, list))
 
         predefined_embedding = experiment.DataIO.WordEmbedding
         predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
@@ -42,7 +42,6 @@ class NetworkInputEncoder(object):
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             experiment.NeutralAnnotator.create_collection(data_type)
 
-        term_embedding_pairs = []
         text_provider = NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,
             pair_handling_func=lambda pair: term_embedding_pairs.append(pair))
@@ -50,38 +49,64 @@ class NetworkInputEncoder(object):
         target_dir = NetworkInputEncoder.get_samples_dir(experiment)
 
         # Encoding input
-        BaseInputEncoder.to_tsv(
-            balance=False,
-            # TODO. Move this to the method.
-            # TODO. Access this method from data_handler.
-            out_dir=target_dir,
-            experiment=experiment,
-            create_formatter_func=lambda data_type:
-                NetworkInputEncoder.__create_sample_formatter(data_type=data_type,
-                                                              experiment=experiment,
-                                                              text_provider=text_provider))
+        BaseInputEncoder.to_tsv(balance=False,
+                                out_dir=target_dir,
+                                experiment=experiment,
+                                create_formatter_func=lambda data_type:
+                                    NetworkInputEncoder.__create_sample_formatter(data_type=data_type,
+                                                                                  experiment=experiment,
+                                                                                  text_provider=text_provider))
+
+    @staticmethod
+    def compose_and_save_term_embeddings_and_vocabulary(target_dir, term_embedding_pairs):
+        assert(isinstance(target_dir, unicode))
+        assert(isinstance(term_embedding_pairs, list))
 
         # Save embedding information additionally.
         term_embedding = Embedding.from_list_of_word_embedding_pairs(
             word_embedding_pairs=term_embedding_pairs)
 
+        # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
-        config.set_term_embedding(embedding_matrix)
-        embedding_filepath = join(target_dir, NetworkInputEncoder.TERM_EMBEDDING_FILENAME)
+        embedding_filepath = join(target_dir, NetworkInputEncoder.TERM_EMBEDDING_FILENAME + u'.npz')
         logger.info("Saving embedding: {}".format(embedding_filepath))
         np.savez(embedding_filepath, embedding_matrix)
 
+        # Save vocabulary
         vocab = TermsEmbeddingOffsets.iter_words_vocabulary(words_embedding=term_embedding)
-        vocab_filepath = join(target_dir, NetworkInputEncoder.VOCABULARY_FILENAME)
+        vocab_filepath = join(target_dir, NetworkInputEncoder.VOCABULARY_FILENAME + u'.npz')
         logger.info("Saving vocabulary: {}".format(vocab_filepath))
         np.savez(vocab_filepath, list(vocab))
 
     @staticmethod
-    def check_files_existance(target_dir, data_type):
+    def check_files_existance(target_dir, data_type, experiment):
         assert(isinstance(target_dir, unicode))
         assert(isinstance(data_type, DataType))
-        # TODO. Update
-        return False
+        assert(isinstance(experiment, BaseExperiment))
+
+        filepaths = list(BaseInputEncoder.get_filepaths(out_dir=target_dir,
+                                                        data_type=data_type,
+                                                        experiment=experiment))
+
+        filepaths.extend([NetworkInputEncoder.get_vocab_filepath(target_dir),
+                          NetworkInputEncoder.get_embedding_filepath(target_dir)])
+
+        existed = True
+        for filepath in filepaths:
+            existed = os.path.exists(filepath)
+            print "Check existance [{is_existed}]: {fp}".format(is_existed=existed, fp=filepath)
+            if not existed:
+                existed = False
+
+        return existed
+
+    @staticmethod
+    def get_vocab_filepath(target_dir):
+        return join(target_dir, NetworkInputEncoder.VOCABULARY_FILENAME)
+
+    @staticmethod
+    def get_embedding_filepath(target_dir):
+        return join(target_dir, NetworkInputEncoder.TERM_EMBEDDING_FILENAME)
 
     @staticmethod
     def __create_sample_formatter(data_type, experiment, text_provider):

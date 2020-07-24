@@ -147,11 +147,14 @@ class ExperimentEngine(object):
         data_io.set_model_name(full_model_name)
         data_io.ModelIO.set_model_name(value=full_model_name)
 
+        # Creating experiment
+        logger.info("Creating experiment ...")
         experiment = create_experiment(data_io=data_io,
                                        prepare_model_root=True)
         assert(isinstance(experiment, BaseExperiment))
 
         # Initialize data_io
+        logger.info("Initialize data-io ...")
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             experiment.NeutralAnnotator.create_collection(data_type=data_type)
 
@@ -159,6 +162,7 @@ class ExperimentEngine(object):
         callback.PredictVerbosePerFileStatistic = False
 
         for cv_index in range(data_io.CVFoldingAlgorithm.CVCount):
+            logger.info("Running for cv-index={}".format(cv_index))
             ExperimentEngine.__run_cv_index(
                 full_model_name=full_model_name,
                 data_io=data_io,

@@ -1,7 +1,4 @@
-import os
 from collections import OrderedDict
-
-import io_utils
 from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
@@ -69,14 +66,7 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
     # endregion
 
-    def save(self, out_dir, filename_template):
-        assert(isinstance(out_dir, unicode))
-        assert(isinstance(filename_template, unicode))
-
-        filepath = self.get_filepath_static(out_dir=out_dir,
-                                            template=filename_template,
-                                            prefix=self.formatter_type_log_name())
-
+    def save(self, filepath):
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',

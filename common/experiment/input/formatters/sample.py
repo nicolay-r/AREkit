@@ -222,9 +222,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         df[self.ROW_ID] = range(rows_count)
         df.set_index(self.ROW_ID, inplace=True)
 
-    def save(self, out_dir, filename_template, balance):
-        assert(isinstance(out_dir, unicode))
-        assert(isinstance(filename_template, unicode))
+    def save(self, filepath, balance):
         assert(isinstance(balance, bool))
 
         if balance and self.__is_train():
@@ -232,10 +230,6 @@ class BaseSampleFormatter(BaseRowsFormatter):
                 df=self._df,
                 create_blank_df=lambda size: self._create_blank_df(size),
                 label_provider=self.__label_provider)
-
-        filepath = self.get_filepath_static(out_dir=out_dir,
-                                            template=filename_template,
-                                            prefix=self.formatter_type_log_name())
 
         self._df.to_csv(filepath,
                         sep='\t',
