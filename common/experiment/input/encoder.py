@@ -10,7 +10,10 @@ class BaseInputEncoder(object):
     def to_tsv(out_dir, experiment, create_formatter_func, balance):
         """
         Args:
+            out_dir: unicode
+            experiment: BaseExperiment
             create_formatter_func: func(data_type) -> FormatterType
+            balance: bool
         """
         assert(isinstance(out_dir, unicode))
         assert(isinstance(experiment, BaseExperiment))

@@ -64,7 +64,11 @@ class BaseRowsFormatter(object):
         desc = u"{fmt}-{dtype}".format(fmt=self.formatter_type_log_name(),
                                        dtype=self._data_type)
 
-        for row_index, row in enumerate(tqdm(self._iter_by_rows(opinion_provider), desc=desc)):
+        iter = tqdm(iterable=self._iter_by_rows(opinion_provider),
+                    desc=desc,
+                    total=opinion_provider.opinions_count())
+
+        for row_index, row in enumerate(iter):
             for column, value in row.iteritems():
                 self.__set_value(row_ind=row_index,
                                  column=column,

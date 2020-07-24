@@ -73,8 +73,10 @@ class BaseExperiment(object):
 
     def get_input_samples_dir(self):
         is_fixed = self.__data_io.CVFoldingAlgorithm.CVCount == 1
-        e_name = u"{name}-{mode}".format(name=self.Name,
-                                         mode=u"fixed" if is_fixed else u"cv")
+        e_name = u"{name}_{mode}_{scale}l".format(name=self.Name,
+                                                  mode=u"fixed" if is_fixed else u"cv",
+                                                  scale=self.DataIO.LabelsScaler.LabelsCount)
+
         return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
                                                         experiments_dir=self.DataIO.get_experiments_dir())
 

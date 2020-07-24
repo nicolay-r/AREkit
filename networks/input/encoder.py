@@ -1,4 +1,7 @@
+import logging
+
 import numpy as np
+from os.path import join
 
 from arekit.common.embeddings.base import Embedding
 from arekit.common.experiment.data_type import DataType
@@ -12,6 +15,9 @@ from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.input.formatters.sample import NetworkSampleFormatter
 from arekit.networks.input.providers.text.single import NetworkSingleTextProvider
 from arekit.networks.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
+
+
+logger = logging.getLogger(__name__)
 
 
 class NetworkInputEncoder(object):
@@ -41,10 +47,14 @@ class NetworkInputEncoder(object):
             text_terms_mapper=terms_with_embeddings_terms_mapper,
             pair_handling_func=lambda pair: term_embedding_pairs.append(pair))
 
+        target_dir = NetworkInputEncoder.get_samples_dir(experiment)
+
         # Encoding input
         BaseInputEncoder.to_tsv(
             balance=False,
-            out_dir=experiment.get_input_samples_dir(),
+            # TODO. Move this to the method.
+            # TODO. Access this method from data_handler.
+            out_dir=target_dir,
             experiment=experiment,
             create_formatter_func=lambda data_type:
                 NetworkInputEncoder.__create_sample_formatter(data_type=data_type,
@@ -57,10 +67,14 @@ class NetworkInputEncoder(object):
 
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
         config.set_term_embedding(embedding_matrix)
-        np.savez(NetworkInputEncoder.TERM_EMBEDDING_FILENAME, embedding_matrix)
+        embedding_filepath = join(target_dir, NetworkInputEncoder.TERM_EMBEDDING_FILENAME)
+        logger.info("Saving embedding: {}".format(embedding_filepath))
+        np.savez(embedding_filepath, embedding_matrix)
 
         vocab = TermsEmbeddingOffsets.iter_words_vocabulary(words_embedding=term_embedding)
-        np.savez(NetworkInputEncoder.VOCABULARY_FILENAME, list(vocab))
+        vocab_filepath = join(target_dir, NetworkInputEncoder.VOCABULARY_FILENAME)
+        logger.info("Saving vocabulary: {}".format(vocab_filepath))
+        np.savez(vocab_filepath, list(vocab))
 
     @staticmethod
     def check_files_existance(target_dir, data_type):
@@ -75,4 +89,8 @@ class NetworkInputEncoder(object):
             data_type=data_type,
             label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
             text_provider=text_provider)
+
+    @staticmethod
+    def get_samples_dir(experiment):
+        return experiment.get_input_samples_dir()
 

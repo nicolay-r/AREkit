@@ -4,6 +4,7 @@ import os
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.labels.base import Label
@@ -55,13 +56,14 @@ class HandledData(object):
         assert(isinstance(data_type, DataType))
         assert(issubclass(bags_collection_type, BagsCollection))
 
-        samples_dir = experiment.get_input_samples_dir()
-        #  TODO. Update filename.
-        sample_filepath = os.path.join(samples_dir, u"input.csv.gz")
+        source_dir = NetworkInputEncoder.get_samples_dir()
 
-        files_existed = NetworkInputEncoder.check_files_existance(
-            target_dir=samples_dir,
-            data_type=data_type)
+        sample_filepath = os.path.join(
+            source_dir,
+            BaseInputEncoder.filename_template(experiment=experiment, data_type=data_type))
+
+        files_existed = NetworkInputEncoder.check_files_existance(target_dir=source_dir,
+                                                                  data_type=data_type)
 
         if not files_existed:
             NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(experiment=experiment,
