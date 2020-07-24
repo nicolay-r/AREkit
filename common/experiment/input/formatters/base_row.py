@@ -1,4 +1,5 @@
 import logging
+from tqdm import tqdm
 from os import path
 
 import numpy as np
@@ -58,26 +59,16 @@ class BaseRowsFormatter(object):
 
         rows_count = sum(1 for _ in self._iter_by_rows(opinion_provider))
 
-        p_prev = 0
         self.__fill_with_blank_rows(rows_count)
-        for row_index, row in enumerate(self._iter_by_rows(opinion_provider)):
+
+        desc = u"{fmt}-{dtype}".format(fmt=self.formatter_type_log_name(),
+                                       dtype=self._data_type)
+
+        for row_index, row in enumerate(tqdm(self._iter_by_rows(opinion_provider), desc=desc)):
             for column, value in row.iteritems():
                 self.__set_value(row_ind=row_index,
                                  column=column,
                                  value=value)
-
-            current_work = row_index + 1
-            total_work = rows_count
-            percent = round(100 * float(current_work) / total_work, 2)
-
-            if percent - p_prev > 5 or (current_work == total_work):
-                logging.info("{f_type} ('{d_type}') added: {c}/{t} ({p}%)".format(
-                    f_type=self.formatter_type_log_name(),
-                    d_type=self._data_type,
-                    c=current_work,
-                    t=total_work,
-                    p=percent))
-                p_prev = percent
 
     @staticmethod
     def get_filepath_static(out_dir, template, prefix):
