@@ -41,13 +41,13 @@ class BaseInputEncoder(object):
             # Samples
             sampler = create_formatter_func(data_type)
             sampler.format(opinion_provider)
-            sampler.save(samples_filepath=sample_filepath,
+            sampler.save(filepath=sample_filepath,
                          balance=balance)
 
     @staticmethod
     def get_filepaths(out_dir, experiment, data_type):
-        template = BaseInputEncoder.filename_template(data_type=data_type,
-                                                      experiment=experiment)
+        template = BaseInputEncoder.__filename_template(data_type=data_type,
+                                                        experiment=experiment)
 
         opinions_filepath = BaseRowsFormatter.get_filepath_static(
             out_dir=out_dir,
@@ -62,7 +62,7 @@ class BaseInputEncoder(object):
         return opinions_filepath, samples_filepath
 
     @staticmethod
-    def filename_template(data_type, experiment):
+    def __filename_template(data_type, experiment):
         assert(isinstance(data_type, DataType))
         return u"{data_type}-{cv_index}".format(
             data_type=data_type.name.lower(),

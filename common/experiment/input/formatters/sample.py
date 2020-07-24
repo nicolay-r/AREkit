@@ -223,6 +223,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         df.set_index(self.ROW_ID, inplace=True)
 
     def save(self, filepath, balance):
+        assert(isinstance(filepath, unicode))
         assert(isinstance(balance, bool))
 
         if balance and self.__is_train():

@@ -49,6 +49,9 @@ class HandledData(object):
                 files_existed = False
                 break
 
+        if not files_existed:
+            logger.info("Starting data serialization process to: {}".format(source_dir))
+
         # Check files existed.
         term_embedding_pairs = []
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
@@ -89,9 +92,9 @@ class HandledData(object):
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(files_existed, bool))
 
-        sample_filepath = os.path.join(
-            source_dir,
-            BaseInputEncoder.filename_template(experiment=experiment, data_type=data_type))
+        _, sample_filepath = BaseInputEncoder.get_filepaths(data_type=data_type,
+                                                            out_dir=source_dir,
+                                                            experiment=experiment)
 
         if not files_existed:
             NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
