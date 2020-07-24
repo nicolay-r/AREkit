@@ -6,7 +6,6 @@ import pandas as pd
 
 import io_utils
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 
 logger = logging.getLogger(__name__)
@@ -80,43 +79,19 @@ class BaseRowsFormatter(object):
                     p=percent))
                 p_prev = percent
 
-    def get_filepath(self, data_type, experiment):
-        return self.get_filepath_static(data_type=data_type,
-                                        experiment=experiment,
-                                        prefix=self.formatter_type_log_name())
-
     @staticmethod
-    def get_filepath_static(data_type, experiment, prefix):
-        assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(data_type, DataType))
+    def get_filepath_static(out_dir, template, prefix):
+        assert(isinstance(template, unicode))
         assert(isinstance(prefix, unicode))
 
-        filename = BaseRowsFormatter.__generate_filename(data_type=data_type,
-                                                         experiment=experiment,
-                                                         prefix=prefix)
-
-        out_dir = BaseRowsFormatter.__get_output_dir(experiment=experiment)
-
-        filepath = path.join(out_dir, filename)
+        filepath = path.join(out_dir, BaseRowsFormatter.__generate_filename(template=template, prefix=prefix))
         io_utils.create_dir_if_not_exists(filepath)
 
         return filepath
 
     @staticmethod
-    def __generate_filename(data_type, experiment, prefix):
-        assert(isinstance(data_type, DataType))
-        assert(isinstance(prefix, unicode))
-        assert(isinstance(experiment, BaseExperiment))
-
-        return u"{prefix}-{data_type}-{cv_index}.tsv.gz".format(
-            prefix=prefix,
-            data_type=data_type,
-            cv_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex)
-
-    @staticmethod
-    def __get_output_dir(experiment):
-        assert(isinstance(experiment, BaseExperiment))
-        return experiment.DataIO.get_model_root()
+    def __generate_filename(template, prefix):
+        return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
 
     def __iter__(self):
         for row in self._df.iterrows():

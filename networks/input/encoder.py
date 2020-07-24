@@ -44,6 +44,7 @@ class NetworkInputEncoder(object):
         # Encoding input
         BaseInputEncoder.to_tsv(
             balance=False,
+            out_dir=experiment.get_input_samples_dir(),
             experiment=experiment,
             create_formatter_func=lambda data_type:
                 NetworkInputEncoder.__create_sample_formatter(data_type=data_type,

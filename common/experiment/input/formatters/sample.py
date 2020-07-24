@@ -1,5 +1,7 @@
+import os
 from collections import OrderedDict
 
+import io_utils
 from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment import const
@@ -16,7 +18,6 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.experiment.formats.base import BaseExperiment
 
 
 class BaseSampleFormatter(BaseRowsFormatter):
@@ -221,18 +222,20 @@ class BaseSampleFormatter(BaseRowsFormatter):
         df[self.ROW_ID] = range(rows_count)
         df.set_index(self.ROW_ID, inplace=True)
 
-    def to_tsv_by_experiment(self, experiment, balance):
-        assert(isinstance(experiment, BaseExperiment))
+    def save(self, out_dir, filename_template, balance):
+        assert(isinstance(out_dir, unicode))
+        assert(isinstance(filename_template, unicode))
         assert(isinstance(balance, bool))
-
-        filepath = self.get_filepath(data_type=self._data_type,
-                                     experiment=experiment)
 
         if balance and self.__is_train():
             SampleRowBalancerHelper.balance_oversampling(
                 df=self._df,
                 create_blank_df=lambda size: self._create_blank_df(size),
                 label_provider=self.__label_provider)
+
+        filepath = self.get_filepath_static(out_dir=out_dir,
+                                            template=filename_template,
+                                            prefix=self.formatter_type_log_name())
 
         self._df.to_csv(filepath,
                         sep='\t',

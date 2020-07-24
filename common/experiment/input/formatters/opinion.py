@@ -1,8 +1,9 @@
+import os
 from collections import OrderedDict
 
+import io_utils
 from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
-from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
@@ -68,11 +69,13 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
     # endregion
 
-    def to_tsv_by_experiment(self, experiment):
-        assert(isinstance(experiment, BaseExperiment))
+    def save(self, out_dir, filename_template):
+        assert(isinstance(out_dir, unicode))
+        assert(isinstance(filename_template, unicode))
 
-        filepath = self.get_filepath(data_type=self._data_type,
-                                     experiment=experiment)
+        filepath = self.get_filepath_static(out_dir=out_dir,
+                                            template=filename_template,
+                                            prefix=self.formatter_type_log_name())
 
         self._df.to_csv(filepath,
                         sep='\t',

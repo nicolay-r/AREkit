@@ -71,7 +71,7 @@ class BaseExperiment(object):
 
     # endregion
 
-    def get_input_samples_filepath(self):
+    def get_input_samples_dir(self):
         is_fixed = self.__data_io.CVFoldingAlgorithm.CVCount == 1
         e_name = u"{name}-{mode}".format(name=self.Name,
                                          mode=u"fixed" if is_fixed else u"cv")

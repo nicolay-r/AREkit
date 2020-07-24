@@ -55,10 +55,12 @@ class HandledData(object):
         assert(isinstance(data_type, DataType))
         assert(issubclass(bags_collection_type, BagsCollection))
 
-        sample_filepath = os.path.join(experiment.get_input_samples_filepath(), u"input.csv.gz")
+        samples_dir = experiment.get_input_samples_dir()
+        #  TODO. Update filename.
+        sample_filepath = os.path.join(samples_dir, u"input.csv.gz")
 
         files_existed = NetworkInputEncoder.check_files_existance(
-            target_dir=experiment.get_input_samples_filepath(),
+            target_dir=samples_dir,
             data_type=data_type)
 
         if not files_existed:

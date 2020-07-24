@@ -24,12 +24,15 @@ class BaseOutput(object):
 
     # region public methods
 
-    def from_tsv(self, data_type, experiment, ids_values):
+    def from_tsv(self, source_dir, filename_template, data_type, experiment, ids_values):
+        assert(isinstance(source_dir, unicode))
+        assert(isinstance(filename_template, unicode))
         assert(isinstance(data_type, DataType))
         assert(isinstance(experiment, BaseExperiment))
 
-        filepath = self.__get_filepath(data_type=data_type,
-                                       experiment=experiment)
+        filepath = BaseRowsFormatter.get_filepath_static(out_dir=source_dir,
+                                                         template=filename_template,
+                                                         prefix=u"result")
 
         self.__df = pd.read_csv(filepath,
                                 sep='\t',
@@ -92,17 +95,6 @@ class BaseOutput(object):
         return Opinion(source_value=source,
                        target_value=target,
                        sentiment=calc_label_func())
-
-    # endregion
-
-    # region private methods
-
-    @staticmethod
-    def __get_filepath(data_type, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-        return BaseRowsFormatter.get_filepath_static(data_type=data_type,
-                                                     experiment=experiment,
-                                                     prefix=u"result")
 
     # endregion
 

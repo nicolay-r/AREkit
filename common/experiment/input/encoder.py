@@ -1,3 +1,4 @@
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
@@ -6,11 +7,12 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 class BaseInputEncoder(object):
 
     @staticmethod
-    def to_tsv(experiment, create_formatter_func, balance):
+    def to_tsv(out_dir, experiment, create_formatter_func, balance):
         """
         Args:
             create_formatter_func: func(data_type) -> FormatterType
         """
+        assert(isinstance(out_dir, unicode))
         assert(isinstance(experiment, BaseExperiment))
         assert(callable(create_formatter_func))
         assert(isinstance(balance, bool))
@@ -21,11 +23,24 @@ class BaseInputEncoder(object):
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)
 
+            template = BaseInputEncoder.filename_template(data_type=data_type,
+                                                          experiment=experiment)
+
             opnion_formatter = BaseOpinionsFormatter(data_type=data_type)
             opnion_formatter.format(opinion_provider=opinion_provider)
-            opnion_formatter.to_tsv_by_experiment(experiment=experiment)
+            opnion_formatter.save(out_dir=out_dir,
+                                  filename_template=template)
 
             sampler = create_formatter_func(data_type=data_type)
             sampler.format(opinion_provider=opinion_provider)
-            sampler.to_tsv_by_experiment(experiment=experiment, balance=balance)
+            sampler.save(out_dir=out_dir,
+                         filename_template=template,
+                         balance=balance)
+
+    @staticmethod
+    def filename_template(data_type, experiment):
+        assert(isinstance(data_type, DataType))
+        return u"{data_type}-{cv_index}".format(
+            data_type=data_type.name.lower(),
+            cv_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex)
 
