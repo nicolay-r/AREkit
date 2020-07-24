@@ -41,14 +41,10 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
 
         return self.__synonyms.get_synonym_group_index(entity.Value)
 
-    # TODO. This should be moved from here
-    # TODO. Because this is not a feature of string mapping
     def set_s_ind(self, s_ind):
         assert(isinstance(s_ind, int))
         self.__s_ind = s_ind
 
-    # TODO. This should be moved from here
-    # TODO. Because this is not a feature of string mapping
     def set_t_ind(self, t_ind):
         assert(isinstance(t_ind, int))
         self.__t_ind = t_ind
@@ -70,20 +66,20 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
 
     def map_entity(self, e_ind, entity):
         if e_ind == self.__s_ind:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.Subject)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.Subject)
         elif e_ind == self.__t_ind:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.Object)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.Object)
         elif self.__syn_group(entity) == self.__s_group:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.SynonymSubject)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.SynonymSubject)
         elif self.__syn_group(entity) == self.__t_group:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.SynonymObject)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.SynonymObject)
         else:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.Other)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.Other)
 
     def map_word(self, w_ind, word):
         return word.strip()

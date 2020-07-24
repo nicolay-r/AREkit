@@ -1,15 +1,18 @@
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
-from arekit.networks.input.terms_mapping import EmbeddedTermMapping
+from arekit.networks.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 
 
-class SingleTextProvider(BaseSingleTextProvider):
+class NetworkSingleTextProvider(BaseSingleTextProvider):
+    """
+    Performs iteration process over (string, embedding) term pairs.
+    """
 
-    def __init__(self, text_terms_mapper, write_embedding_pair_func):
-        assert(isinstance(text_terms_mapper, EmbeddedTermMapping))
-        assert(callable(write_embedding_pair_func))
-        super(SingleTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
+    def __init__(self, text_terms_mapper, pair_handling_func):
+        assert(isinstance(text_terms_mapper, StringWithEmbeddingNetworkTermMapping))
+        assert(callable(pair_handling_func))
+        super(NetworkSingleTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
 
-        self.__write_embedding_pair_func = write_embedding_pair_func
+        self.__write_embedding_pair_func = pair_handling_func
 
     def _compose_text(self, sentence_terms):
         terms = []

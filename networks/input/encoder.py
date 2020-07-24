@@ -10,8 +10,8 @@ from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEnti
 from arekit.networks.input.embedding.matrix import create_term_embedding_matrix
 from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.networks.input.formatters.sample import NetworkSampleFormatter
-from arekit.networks.input.providers.text.single import SingleTextProvider
-from arekit.networks.input.terms_mapping import EmbeddedTermMapping
+from arekit.networks.input.providers.text.single import NetworkSingleTextProvider
+from arekit.networks.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 
 
 class NetworkInputEncoder(object):
@@ -27,7 +27,7 @@ class NetworkInputEncoder(object):
         predefined_embedding = experiment.DataIO.WordEmbedding
         predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
 
-        text_terms_mapper = EmbeddedTermMapping(
+        terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
             synonyms=experiment.DataIO.SynonymsCollection,
             predefined_embedding=predefined_embedding,
             string_entities_formatter=experiment.DataIO.StringEntityFormatter,
@@ -37,9 +37,9 @@ class NetworkInputEncoder(object):
             experiment.NeutralAnnotator.create_collection(data_type)
 
         term_embedding_pairs = []
-        text_provider = SingleTextProvider(
-            text_terms_mapper=text_terms_mapper,
-            write_embedding_pair_func=lambda pair: term_embedding_pairs.append(pair))
+        text_provider = NetworkSingleTextProvider(
+            text_terms_mapper=terms_with_embeddings_terms_mapper,
+            pair_handling_func=lambda pair: term_embedding_pairs.append(pair))
 
         # Encoding input
         BaseInputEncoder.to_tsv(

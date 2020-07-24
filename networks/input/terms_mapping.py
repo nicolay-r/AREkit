@@ -8,7 +8,7 @@ from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.networks.input.embedding.custom import create_term_embedding
 
 
-class EmbeddedTermMapping(OpinionContainingTextTermsMapper):
+class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
     """
     For every element returns: (word, embedded vector)
     """
@@ -29,7 +29,7 @@ class EmbeddedTermMapping(OpinionContainingTextTermsMapper):
         assert(isinstance(predefined_embedding, Embedding))
         assert(isinstance(string_emb_entity_formatter, StringEntitiesFormatter))
 
-        super(EmbeddedTermMapping, self).__init__(
+        super(StringWithEmbeddingNetworkTermMapping, self).__init__(
             entity_formatter=string_entities_formatter,
             synonyms=synonyms)
 
@@ -78,7 +78,7 @@ class EmbeddedTermMapping(OpinionContainingTextTermsMapper):
         assert(isinstance(entity, Entity))
 
         # Value extraction
-        str_entity_mask = super(EmbeddedTermMapping, self).map_entity(
+        str_entity_mask = super(StringWithEmbeddingNetworkTermMapping, self).map_entity(
             e_ind=e_ind,
             entity=entity)
 
