@@ -63,6 +63,8 @@ class HandledData(object):
                                                       bags_collection_type=bags_collection_type,
                                                       config=config)
 
+        return instance
+
     # region writing methods
 
     def __perform_writing(self, source_dir, experiment):
@@ -95,8 +97,8 @@ class HandledData(object):
         Initializing networks configuration.
         """
         # Reading embedding.
-        embedding = np.load(NetworkInputEncoder.get_embedding_filepath(source_dir))
-        config.set_term_embedding(embedding)
+        npz_embedding_data = np.load(NetworkInputEncoder.get_embedding_filepath(source_dir))
+        config.set_term_embedding(npz_embedding_data['arr_0'])
 
         # Reading from serialized information
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
@@ -138,6 +140,7 @@ class HandledData(object):
             samples_reader=samples_reader,
             bag_size=config.BagSize,
             shuffle=True,
+            label_scaler=experiment.DataIO.LabelsScaler,
             create_empty_sample_func=lambda config: InputSample.create_empty(config),
             create_sample_func=lambda row: self.__create_input_sample(row=row, config=config))
 

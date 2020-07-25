@@ -39,6 +39,7 @@ class InputSampleReader(BaseInputReader):
 
         for row_index, sample_id in enumerate(self._df[const.ID]):
             sample_id = unicode(sample_id)
+
             news_id = self.__row_ids_provider.parse_news_in_sample_id(sample_id)
             opinion_id = self.__row_ids_provider.parse_opinion_in_sample_id(sample_id)
 
@@ -47,6 +48,11 @@ class InputSampleReader(BaseInputReader):
                     yield linked
                     linked = []
                     continue
+            else:
+                current_news_id = news_id
+                current_opinion_id = opinion_id
 
             linked.append(self._df.iloc[row_index])
+
+        yield linked
 

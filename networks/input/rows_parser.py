@@ -1,6 +1,7 @@
-# TODO: This should be generated from the samples formatter, neural network samples formatter.
-# TODO: This should be generated from the samples formatter, neural network samples formatter.
-# TODO: This should be generated from the samples formatter, neural network samples formatter.
+import pandas as pd
+
+from arekit.common.experiment import const
+from arekit.common.experiment.scales.base import BaseLabelScaler
 
 
 class ParsedSampleRow(object):
@@ -9,12 +10,21 @@ class ParsedSampleRow(object):
     TODO. Use this class as API
     """
 
-    def __init__(self):
-        self.__sentiment = None
-        self.__row_id = None
-        self.__subj_ind = None
-        self.__obj_ind = None
-        self.__terms = None
+    def __init__(self, row, labels_scaler):
+        assert(isinstance(row, pd.Series))
+        assert(isinstance(labels_scaler, BaseLabelScaler))
+
+        for key, value in row.iteritems():
+            if key == const.LABEL:
+                self.__sentiment = labels_scaler.uint_to_label(value)
+            if key == const.ID:
+                self.__row_id = value
+            if key == const.S_IND:
+                self.__subj_ind = value
+            if key == const.T_IND:
+                self.__obj_ind = value
+            if key == "text_a":
+                self.__terms = row["text_a"].split(' ')
 
     @property
     def RowID(self):
@@ -37,6 +47,6 @@ class ParsedSampleRow(object):
         return self.__sentiment
 
     @classmethod
-    def parse(cls, row):
-        assert(isinstance(row, list))
-        return cls()
+    def parse(cls, row, labels_scaler):
+        return cls(row=row,
+                   labels_scaler=labels_scaler)

@@ -25,12 +25,6 @@ class BaseSampleFormatter(BaseRowsFormatter):
     [id, text_a] -- for test
     """
 
-    """
-    Fields
-    """
-    S_IND = 's_ind'
-    T_IND = 't_ind'
-
     def __init__(self, data_type, label_provider, text_provider):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(text_provider, BaseSingleTextProvider))
@@ -75,8 +69,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
             dtypes_list.append((col_name, unicode))
 
         # insert indices
-        dtypes_list.append((self.S_IND, 'int32'))
-        dtypes_list.append((self.T_IND, 'int32'))
+        dtypes_list.append((const.S_IND, 'int32'))
+        dtypes_list.append((const.T_IND, 'int32'))
 
         return dtypes_list
 
@@ -117,8 +111,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
                                              t_ind=t_ind,
                                              expected_label=expected_label)
 
-        row[self.S_IND] = s_ind
-        row[self.T_IND] = t_ind
+        row[const.S_IND] = s_ind
+        row[const.T_IND] = t_ind
 
     def __create_row(self, opinion_provider, linked_wrap, index_in_linked, etalon_label):
         """

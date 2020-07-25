@@ -249,7 +249,7 @@ class BaseTensorflowModel(BaseModel):
         """
         init_op = tf.global_variables_initializer()
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=self.get_gpu_memory_fraction())
-        sess = tf.__sess(config=tf.ConfigProto(gpu_options=gpu_options))
+        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
         sess.run(init_op)
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess

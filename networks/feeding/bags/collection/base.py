@@ -1,6 +1,8 @@
 import numpy as np
+from tqdm import tqdm
 
 from arekit.common.experiment.input.readers.sample import InputSampleReader
+from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.networks.input.rows_parser import ParsedSampleRow
 
 
@@ -19,10 +21,12 @@ class BagsCollection(object):
     def from_formatted_samples(cls,
                                samples_reader,
                                bag_size,
+                               label_scaler,
                                create_sample_func,
                                create_empty_sample_func,
                                shuffle):
         assert(isinstance(samples_reader, InputSampleReader))
+        assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(bag_size, int) and bag_size > 0)
         assert(callable(create_sample_func))
         assert(callable(create_empty_sample_func))
@@ -30,10 +34,13 @@ class BagsCollection(object):
 
         bags = []
 
-        for linked_rows in samples_reader.iter_rows_linked_by_text_opinions():
+        linked_rows_iter = tqdm(iterable=samples_reader.iter_rows_linked_by_text_opinions(),
+                                desc="Filling bags collection")
+
+        for linked_rows in linked_rows_iter:
             cls._fill_bags_list_with_linked_text_opinions(
                 bags=bags,
-                parsed_rows=[ParsedSampleRow.parse(row) for row in linked_rows],
+                parsed_rows=[ParsedSampleRow.parse(row=row, labels_scaler=label_scaler) for row in linked_rows],
                 bag_size=bag_size,
                 create_sample_func=create_sample_func,
                 create_empty_sample_func=create_empty_sample_func)
@@ -70,6 +77,7 @@ class BagsCollection(object):
         """
         assert(type(bags_per_group) == int and bags_per_group > 0)
         assert(isinstance(text_opinion_ids_set, set) or text_opinion_ids_set is None)
+        assert(len(self._bags) > 0)
 
         def __check(bags_list):
             return self.__is_bag_contains_text_opinion_from_set(
