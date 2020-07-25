@@ -66,7 +66,7 @@ class BaseRowsFormatter(object):
 
         iter = tqdm(iterable=self._iter_by_rows(opinion_provider),
                     desc=desc,
-                    total=opinion_provider.opinions_count())
+                    total=rows_count)
 
         for row_index, row in enumerate(iter):
             for column, value in row.iteritems():
