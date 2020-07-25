@@ -30,7 +30,10 @@ class BaseInputEncoder(object):
 
         # Perform input serialization process.
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)
+
+            # crate opinion provider
+            opinion_provider = OpinionProvider.from_experiment(experiment=experiment,
+                                                               data_type=data_type)
 
             # filepaths
             opinion_filepath, sample_filepath = BaseInputEncoder.get_filepaths(out_dir=out_dir,

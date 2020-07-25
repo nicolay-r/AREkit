@@ -1,6 +1,8 @@
 ## v0.20.5-rc
 
 Changes:
+* Speed-up and engine optimizations:
+    * Optionally loading neutral annotator.
 * Multi-Instance networks: now we consider that the next appered context always continues the prior. 
 (check out multi-instance bags creation for details)
 
