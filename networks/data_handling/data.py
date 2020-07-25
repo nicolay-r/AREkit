@@ -100,6 +100,10 @@ class HandledData(object):
         npz_embedding_data = np.load(NetworkInputEncoder.get_embedding_filepath(source_dir))
         config.set_term_embedding(npz_embedding_data['arr_0'])
 
+        # Reading vocabulary
+        npz_vocab_data = np.load(NetworkInputEncoder.get_vocab_filepath(source_dir))
+        vocab = dict(npz_vocab_data['arr_0'])
+
         # Reading from serialized information
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
 
@@ -108,6 +112,7 @@ class HandledData(object):
                 source_dir=source_dir,
                 experiment=experiment,
                 bags_collection_type=bags_collection_type,
+                vocab=vocab,
                 config=config)
 
             if data_type != DataType.Train:
@@ -120,7 +125,7 @@ class HandledData(object):
 
         config.notify_initialization_completed()
 
-    def __read_data_type(self, data_type, source_dir, experiment, bags_collection_type, config):
+    def __read_data_type(self, data_type, source_dir, experiment, bags_collection_type, vocab, config):
 
         _, sample_filepath = BaseInputEncoder.get_filepaths(data_type=data_type,
                                                             out_dir=source_dir,
@@ -142,7 +147,9 @@ class HandledData(object):
             shuffle=True,
             label_scaler=experiment.DataIO.LabelsScaler,
             create_empty_sample_func=lambda config: InputSample.create_empty(config),
-            create_sample_func=lambda row: self.__create_input_sample(row=row, config=config))
+            create_sample_func=lambda row: self.__create_input_sample(row=row,
+                                                                      config=config,
+                                                                      vocab=vocab))
 
         return labeled_sample_row_ids
 
@@ -162,20 +169,20 @@ class HandledData(object):
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
         return norm, stat
 
-    def __create_input_sample(self, row, config):
+    def __create_input_sample(self, row, config, vocab):
         """
         Creates an input for Neural Network model
         """
         assert(isinstance(row, ParsedSampleRow))
         assert(isinstance(config, DefaultNetworkConfig))
+        assert(isinstance(vocab, dict))
 
-        # TODO. Provide extra parameters.
         return InputSample.from_tsv_row(
             row_id=row.RowID,
             terms=row.Terms,
             subj_ind=row.SubjectIndex,
             obj_ind=row.ObjectIndex,
-            words_vocab=None,
+            words_vocab=vocab,
             config=config)
 
     @staticmethod
