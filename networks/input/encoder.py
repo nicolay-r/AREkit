@@ -80,7 +80,7 @@ class NetworkInputEncoder(object):
         np.savez(embedding_filepath, embedding_matrix)
 
         # Save vocabulary
-        vocab = TermsEmbeddingOffsets.iter_words_vocabulary(words_embedding=term_embedding)
+        vocab = TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding)
         vocab_filepath = NetworkInputEncoder.get_vocab_filepath(target_dir)
         logger.info("Saving vocabulary: {}".format(vocab_filepath))
         np.savez(vocab_filepath, list(vocab))
