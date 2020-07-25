@@ -5,6 +5,7 @@ from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class BaseNeutralAnnotator(object):
@@ -14,6 +15,8 @@ class BaseNeutralAnnotator(object):
 
     def __init__(self, annot_name):
         assert(isinstance(annot_name, unicode))
+
+        logger.info("Init annotator: [{}]".format(annot_name))
         self.__annot_name = annot_name
         self.__opin_ops = None
         self.__doc_ops = None

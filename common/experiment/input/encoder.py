@@ -9,22 +9,26 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 class BaseInputEncoder(object):
 
     @staticmethod
-    def to_tsv(out_dir, experiment, create_formatter_func, balance):
+    def to_tsv(out_dir, experiment, create_formatter_func, balance, write_header_func):
         """
         Args:
             out_dir: unicode
             experiment: BaseExperiment
             create_formatter_func: func(data_type) -> FormatterType
             balance: bool
+            write_header_func: func(data_type) -> bool
         """
         assert(isinstance(out_dir, unicode))
         assert(isinstance(experiment, BaseExperiment))
         assert(callable(create_formatter_func))
         assert(isinstance(balance, bool))
+        assert(callable(write_header_func))
 
+        # Create annotated collection per each type.
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             experiment.NeutralAnnotator.create_collection(data_type)
 
+        # Perform input serialization process.
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)
 
@@ -42,7 +46,8 @@ class BaseInputEncoder(object):
             sampler = create_formatter_func(data_type)
             sampler.format(opinion_provider)
             sampler.save(filepath=sample_filepath,
-                         balance=balance)
+                         balance=balance,
+                         write_header=write_header_func(data_type))
 
     @staticmethod
     def get_filepaths(out_dir, experiment, data_type):

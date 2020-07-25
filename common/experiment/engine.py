@@ -99,7 +99,7 @@ class ExperimentEngine(object):
     def run_testing(full_model_name,
                     create_config,
                     create_network,
-                    create_experiment,
+                    experiment_type,
                     bags_collection_type,
                     data_io,
                     cv_count=1,
@@ -113,7 +113,7 @@ class ExperimentEngine(object):
             model name
         :param create_config: func
         :param create_network:
-        :param create_experiment:
+        :param experiment_type:
         :param cv_count: int, cv_count > 0
             1 -- considered a fixed train/test separation.
         :param common_callback_modification_func:
@@ -123,7 +123,8 @@ class ExperimentEngine(object):
             for model
         """
         assert(issubclass(bags_collection_type, BagsCollection))
-        assert(callable(create_experiment))
+        assert(callable(experiment_type))
+        assert(issubclass(experiment_type, BaseExperiment))
         assert(isinstance(full_model_name, unicode))
         assert(isinstance(data_io, DataIO))
         assert(isinstance(cv_count, int) and cv_count > 0)
@@ -149,8 +150,8 @@ class ExperimentEngine(object):
 
         # Creating experiment
         logger.info("Creating experiment ...")
-        experiment = create_experiment(data_io=data_io,
-                                       prepare_model_root=True)
+        experiment = experiment_type(data_io=data_io,
+                                     prepare_model_root=True)
         assert(isinstance(experiment, BaseExperiment))
 
         # Initialize data_io

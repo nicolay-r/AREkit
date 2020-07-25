@@ -41,11 +41,16 @@ class BaseExperiment(object):
         # TODO. Move into data_io
         self.__data_io.Callback.set_log_dir(log_dir=path.join(self.DataIO.get_model_root(), u"log/"))
 
+        # Initializing annotator
+        logger.info("Initializing neutral annotator ...")
         self.__neutral_annot.initialize(data_io=data_io,
                                         opin_ops=self.OpinionOperations,
                                         doc_ops=self.DocumentOperations)
 
-        self.__data_io.ModelIO.set_model_root(value=self.DataIO.get_model_root())
+        # Setup model root
+        model_root = self.DataIO.get_model_root()
+        logger.info("Setup model root: {}".format(model_root))
+        self.__data_io.ModelIO.set_model_root(value=model_root)
 
     # region Properties
 

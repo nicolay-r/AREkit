@@ -1,9 +1,13 @@
 import glob
+import logging
 import os
 import shutil
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class DataIO(object):
@@ -80,7 +84,7 @@ class DataIO(object):
     def __rm_dir_contents(dir_path):
         contents = glob.glob(dir_path)
         for f in contents:
-            print "Removing old file/dir: {}".format(f)
+            logger.info("Removing old file/dir: {}".format(f))
             if os.path.isfile(f):
                 os.remove(f)
             else:

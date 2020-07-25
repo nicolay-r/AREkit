@@ -11,6 +11,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
@@ -52,6 +53,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
                                                            opin_ops=opin_ops,
                                                            doc_ops=doc_ops)
 
+        logger.info("Setup default annotation algorithm ...")
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self._DataIO.SynonymsCollection,
             iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=self.iter_doc_ids_to_compare()),

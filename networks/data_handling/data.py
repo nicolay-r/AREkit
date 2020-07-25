@@ -1,6 +1,5 @@
 import collections
 import logging
-import os
 
 import numpy as np
 
@@ -18,9 +17,9 @@ from arekit.networks.input.encoder import NetworkInputEncoder
 
 from arekit.networks.input.readers.samples import NetworkInputSampleReader
 from arekit.networks.input.rows_parser import ParsedSampleRow
-from arekit.networks.feeding.bags.collection.base import BagsCollection
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class HandledData(object):
@@ -31,82 +30,107 @@ class HandledData(object):
         self.__labeled_collections = labeled_collections
         self.__bags_collection = bags_collection
 
+    # region Properties
+
+    @property
+    def BagsCollections(self):
+        return self.__bags_collection
+
+    @property
+    def SamplesLabelingCollection(self):
+        return self.__labeled_collections
+
+    # endregion
+
     @classmethod
     def initialize_from_experiment(cls, experiment, config, bags_collection_type):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
+        # Prepare necessary data.
         instance = cls(labeled_collections={}, bags_collection={})
-
         source_dir = NetworkInputEncoder.get_samples_dir(experiment)
 
-        # Check files existed.
-        files_existed = True
+        # Perform writing
+        if not HandledData.__check_files_existed(experiment=experiment, source_dir=source_dir):
+            logger.info("Starting data serialization process to: {}".format(source_dir))
+            instance.__perform_writing(source_dir=source_dir,
+                                       experiment=experiment)
+
+        # Perform reading
+        instance.__perform_reading_and_initialization(source_dir=source_dir,
+                                                      experiment=experiment,
+                                                      bags_collection_type=bags_collection_type,
+                                                      config=config)
+
+    # region writing methods
+
+    def __perform_writing(self, source_dir, experiment):
+        """
+        Perform experiment input serialization
+        """
+        assert(isinstance(source_dir, unicode))
+        assert(isinstance(experiment, BaseExperiment))
+        term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(experiment)
+        NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
+            target_dir=source_dir,
+            term_embedding_pairs=term_embedding_pairs)
+
+    @staticmethod
+    def __check_files_existed(experiment, source_dir):
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
             if not NetworkInputEncoder.check_files_existance(target_dir=source_dir,
                                                              data_type=data_type,
                                                              experiment=experiment):
-                files_existed = False
-                break
+                return False
+        return True
 
-        if not files_existed:
-            logger.info("Starting data serialization process to: {}".format(source_dir))
+    # endregion
 
-        # Check files existed.
-        term_embedding_pairs = []
+    # region reading methods
+
+    def __perform_reading_and_initialization(self, source_dir, experiment, bags_collection_type, config):
+        """
+        Perform reading information from the serialized experiment inputs.
+        Initializing networks configuration.
+        """
+        # Reading embedding.
+        embedding = np.load(NetworkInputEncoder.get_embedding_filepath(source_dir))
+        config.set_term_embedding(embedding)
+
+        # Reading from serialized information
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            labeled_sample_row_ids = instance.__init_for_data_type(
-                experiment=experiment,
-                config=config,
+
+            labeled_sample_row_ids = self.__read_data_type(
                 data_type=data_type,
-                bags_collection_type=bags_collection_type,
-                term_embedding_pairs=term_embedding_pairs,
                 source_dir=source_dir,
-                files_existed=files_existed)
+                experiment=experiment,
+                bags_collection_type=bags_collection_type,
+                config=config)
 
             if data_type != DataType.Train:
                 continue
 
             labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
-            norm, _ = instance.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
-                                             labels_helper=labels_helper)
+            norm, _ = self.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
+                                         labels_helper=labels_helper)
             config.set_class_weights(norm)
-
-        # Optionally writing embeddings in file.
-        if not files_existed:
-            NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
-                target_dir=source_dir,
-                term_embedding_pairs=term_embedding_pairs)
-
-        # Reading embedding.
-        embedding = np.load(NetworkInputEncoder.get_embedding_filepath(source_dir))
-        config.set_term_embedding(embedding)
 
         config.notify_initialization_completed()
 
-    def __init_for_data_type(self, experiment, term_embedding_pairs,
-                             config, data_type, bags_collection_type,
-                             source_dir, files_existed):
-        assert(isinstance(data_type, DataType))
-        assert(isinstance(term_embedding_pairs, list))
-        assert(issubclass(bags_collection_type, BagsCollection))
-        assert(isinstance(files_existed, bool))
+    def __read_data_type(self, data_type, source_dir, experiment, bags_collection_type, config):
 
         _, sample_filepath = BaseInputEncoder.get_filepaths(data_type=data_type,
                                                             out_dir=source_dir,
                                                             experiment=experiment)
-
-        if not files_existed:
-            NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
-                experiment=experiment,
-                term_embedding_pairs=term_embedding_pairs)
 
         samples_reader = NetworkInputSampleReader.from_tsv(
             filepath=sample_filepath,
             row_ids_provider=MultipleIDProvider())
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(
-            label_scaler=experiment.DataIO.LabelsScaler))
+            label_scaler=experiment.DataIO.LabelsScaler,
+            default_label=None))
 
         self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
 
@@ -118,16 +142,6 @@ class HandledData(object):
             create_sample_func=lambda row: self.__create_input_sample(row=row, config=config))
 
         return labeled_sample_row_ids
-
-    # region Properties
-
-    @property
-    def BagsCollections(self):
-        return self.__bags_collection
-
-    @property
-    def SamplesLabelingCollection(self):
-        return self.__labeled_collections
 
     # endregion
 
@@ -144,8 +158,6 @@ class HandledData(object):
         total = sum(stat)
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
         return norm, stat
-
-    # region private methods
 
     def __create_input_sample(self, row, config):
         """
@@ -173,5 +185,3 @@ class HandledData(object):
             collection[data_type] = collection_by_dtype_func(data_type)
 
         return collection
-
-    # endregion

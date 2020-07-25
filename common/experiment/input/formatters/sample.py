@@ -1,7 +1,4 @@
-import os
 from collections import OrderedDict
-
-import io_utils
 from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment import const
@@ -222,7 +219,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         df[self.ROW_ID] = range(rows_count)
         df.set_index(self.ROW_ID, inplace=True)
 
-    def save(self, filepath, balance):
+    def save(self, filepath, balance, write_header):
         assert(isinstance(filepath, unicode))
         assert(isinstance(balance, bool))
 
@@ -239,7 +236,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
                         index=False,
                         float_format="%.0f",
                         compression='gzip',
-                        header=not self.__is_train())
+                        header=write_header)
 
     def __len__(self):
         return len(self._df.index)

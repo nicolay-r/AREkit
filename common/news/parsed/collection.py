@@ -2,6 +2,8 @@
 import collections
 import logging
 
+from tqdm import tqdm
+
 from arekit.common.news.parsed.base import ParsedNews
 
 
@@ -20,7 +22,7 @@ class ParsedNewsCollection(object):
         assert(isinstance(parsed_news_it, collections.Iterable))
 
         d = {}
-        for parsed_news in parsed_news_it:
+        for parsed_news in tqdm(parsed_news_it, desc="Filling parsed news"):
             assert(isinstance(parsed_news, ParsedNews))
             if parsed_news in d:
                 logging.info("Warning: Skipping document with id={}".format(parsed_news.RelatedNewsID))

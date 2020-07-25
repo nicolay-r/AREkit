@@ -38,6 +38,7 @@ class InputSampleReader(BaseInputReader):
         current_opinion_id = undefined
 
         for row_index, sample_id in enumerate(self._df[const.ID]):
+            sample_id = unicode(sample_id)
             news_id = self.__row_ids_provider.parse_news_in_sample_id(sample_id)
             opinion_id = self.__row_ids_provider.parse_opinion_in_sample_id(sample_id)
 
