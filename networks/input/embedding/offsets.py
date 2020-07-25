@@ -33,6 +33,11 @@ class TermsEmbeddingOffsets(object):
 
     @staticmethod
     def extract_vocab(words_embedding):
+        """
+        returns:
+            enumeration of pairs (word, key)
+        """
+
         assert(isinstance(words_embedding, Embedding))
 
         offsets = TermsEmbeddingOffsets(words_count=words_embedding.VocabularySize)
@@ -46,7 +51,7 @@ class TermsEmbeddingOffsets(object):
         assert(len(all_words) == offsets.TotalCount)
 
         for key, word in sorted(all_words, key=lambda item: item[0]):
-            yield key, word
+            yield word, key
 
     # region debug methods
 

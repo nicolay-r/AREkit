@@ -9,7 +9,7 @@ class Bag:
     """
 
     def __init__(self, label):
-        assert(isinstance(label, Label))
+        assert(isinstance(label, Label) or label is None)
         self.__samples = []
         self.__label = label
 

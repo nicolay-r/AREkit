@@ -16,6 +16,7 @@ class SingleBagsCollection(BagsCollection):
     def _fill_bags_list_with_linked_text_opinions(cls, bags, parsed_rows, bag_size, create_sample_func,
                                                   create_empty_sample_func):
         assert(isinstance(parsed_rows, list))
+        assert(len(parsed_rows) > 0)
         assert(isinstance(bags, list))
         assert(callable(create_sample_func))
 

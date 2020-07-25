@@ -142,6 +142,7 @@ class HandledData(object):
         self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
 
         self.__bags_collection[data_type] = bags_collection_type.from_formatted_samples(
+            desc="Filling bags collection [{}]".format(data_type),
             samples_reader=samples_reader,
             bag_size=config.BagSize,
             shuffle=True,
@@ -178,7 +179,7 @@ class HandledData(object):
         assert(isinstance(vocab, dict))
 
         return InputSample.from_tsv_row(
-            row_id=row.RowID,
+            input_sample_id=row.SampleID,
             terms=row.Terms,
             subj_ind=row.SubjectIndex,
             obj_ind=row.ObjectIndex,

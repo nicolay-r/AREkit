@@ -47,12 +47,12 @@ class InputSampleReader(BaseInputReader):
                 if news_id != current_news_id or opinion_id != current_opinion_id:
                     yield linked
                     linked = []
-                    continue
             else:
                 current_news_id = news_id
                 current_opinion_id = opinion_id
 
             linked.append(self._df.iloc[row_index])
 
-        yield linked
+        if len(linked) > 0:
+            yield linked
 

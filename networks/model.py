@@ -223,7 +223,7 @@ class BaseTensorflowModel(BaseModel):
             feed_dict = self.create_feed_dict(minibatch, data_type=DataType.Train)
 
             hidden_list = list(self.__network.iter_hidden_parameters())
-            fetches_default = [self.Optimiser, self.__network.Cost, self.__network.Accuracy]
+            fetches_default = [self.__optimiser, self.__network.Cost, self.__network.Accuracy]
             fetches_hidden = [tensor for _, tensor in hidden_list]
 
             result = self.__sess.run(fetches_default + fetches_hidden,

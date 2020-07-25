@@ -16,8 +16,7 @@ from arekit.networks.model import BaseTensorflowModel
 class ExperimentEngine(object):
 
     @staticmethod
-    def __run_cv_index(full_model_name,
-                       data_io,
+    def __run_cv_index(data_io,
                        experiment,
                        bags_collection_type,
                        create_config_func,
@@ -79,15 +78,8 @@ class ExperimentEngine(object):
                                     label_scaler=experiment.DataIO.LabelsScaler,
                                     evaluator=experiment.DataIO.Evaluator)
 
-        ###########
         # Run model
-        ###########
-        print u"Running model '{model}' at cv_index {index}".format(
-            model=full_model_name,
-            index=data_io.CVFoldingAlgorithm.IterationIndex)
-
-        model.run_training(load_model=False,
-                           epochs_count=callback.Epochs)
+        model.run_training(load_model=False, epochs_count=callback.Epochs)
 
         del config
         del network
@@ -165,7 +157,6 @@ class ExperimentEngine(object):
         for cv_index in range(data_io.CVFoldingAlgorithm.CVCount):
             logger.info("Running for cv-index={}".format(cv_index))
             ExperimentEngine.__run_cv_index(
-                full_model_name=full_model_name,
                 data_io=data_io,
                 experiment=experiment,
                 callback=callback,

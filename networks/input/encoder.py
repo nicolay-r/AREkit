@@ -98,14 +98,14 @@ class NetworkInputEncoder(object):
         filepaths.extend([NetworkInputEncoder.get_vocab_filepath(target_dir),
                           NetworkInputEncoder.get_embedding_filepath(target_dir)])
 
-        existed = True
+        result = True
         for filepath in filepaths:
             existed = os.path.exists(filepath)
             logger.info("Check existance [{is_existed}]: {fp}".format(is_existed=existed, fp=filepath))
             if not existed:
-                existed = False
+                result = False
 
-        return existed
+        return result
 
     @staticmethod
     def get_vocab_filepath(target_dir):

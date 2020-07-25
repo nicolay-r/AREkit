@@ -14,20 +14,26 @@ class ParsedSampleRow(object):
         assert(isinstance(row, pd.Series))
         assert(isinstance(labels_scaler, BaseLabelScaler))
 
+        self.__sentiment = None
+
         for key, value in row.iteritems():
             if key == const.LABEL:
                 self.__sentiment = labels_scaler.uint_to_label(value)
             if key == const.ID:
-                self.__row_id = value
+                self.__row_id = self.__to_unicode_term(value)
             if key == const.S_IND:
                 self.__subj_ind = value
             if key == const.T_IND:
                 self.__obj_ind = value
             if key == "text_a":
-                self.__terms = row["text_a"].split(' ')
+                self.__terms = [self.__to_unicode_term(term) for term in row["text_a"].split(' ')]
+
+    @staticmethod
+    def __to_unicode_term(term):
+        return term if isinstance(term, unicode) else term.decode('utf-8')
 
     @property
-    def RowID(self):
+    def SampleID(self):
         return self.__row_id
     
     @property
