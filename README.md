@@ -25,7 +25,7 @@ stemmer;
 intended for the automatic sentiment relation extraction (RE)
 on document level.
 
-* [Bert](bert) directory -- Tsv encoders for the related task which is assumes to be applied for experiments with 
+* [Bert](contrib/bert/core) directory -- Tsv encoders for the related task which is assumes to be applied for experiments with 
 BERT language model. 
 
 Structurally, the fundamental task representation could be departed into following domains:

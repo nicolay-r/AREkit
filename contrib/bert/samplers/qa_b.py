@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from arekit.bert.input.providers.text.pair import PairTextProvider
+from arekit.contrib.bert.core.input.providers.text.pair import PairTextProvider
+from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
-from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 

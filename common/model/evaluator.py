@@ -3,7 +3,7 @@ from arekit.common.linked.text_opinions.collection import LinkedTextOpinionColle
 from arekit.common.model.eval.opinion_based import OpinionBasedModelEvaluator
 
 
-# TODO. Use bert-like evaluator.
+# TODO. Use core-like evaluator.
 # TODO. This should be removed (model does not have evaluation now, only prediction).
 # TODO. This should be removed (model does not have evaluation now, only prediction).
 # TODO. This should be removed (model does not have evaluation now, only prediction).

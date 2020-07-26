@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from arekit.bert.input.providers.text.pair import PairTextProvider
+from arekit.contrib.bert.core.input.providers.text.pair import PairTextProvider
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper

@@ -1,6 +1,6 @@
 import logging
 
-from arekit.bert.input.providers.label.binary import BinaryLabelProvider
+from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
