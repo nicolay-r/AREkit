@@ -59,8 +59,8 @@ class ExperimentEngine(object):
         # Setup callback
         if common_callback_modification_func is not None:
             common_callback_modification_func(callback)
-
         callback.reset_experiment_dependent_parameters()
+        callback.set_cv_index(cv_index)
 
         # Perform data handling.
         handled_data = HandledData.initialize_from_experiment(

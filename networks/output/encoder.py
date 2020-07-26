@@ -27,10 +27,11 @@ class NetworkOutputEncoder(object):
             for sample_id, label in sample_id_with_labels_iter:
                 assert(isinstance(label, Label))
 
-                labels = [0] * labels_scaler.classes_count()
-                labels[labels_scaler.label_to_uint(label)] = 1
+                labels = [u'0'] * labels_scaler.classes_count()
+                labels[labels_scaler.label_to_uint(label)] = u'1'
 
-                f.write(u'{s_id}{sep}{labels}\n'.format(s_id=sample_id,
-                                                        sep=col_separator,
-                                                        labels=col_separator.join(labels)))
+                f.write(u'{s_id}{sep}{labels}\n'.format(
+                    s_id=sample_id,
+                    sep=col_separator,
+                    labels=col_separator.join(labels)))
 

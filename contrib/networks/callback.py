@@ -29,8 +29,10 @@ class NeuralNetworkCallback(Callback):
 
         self.__model = None
         self.__log_dir = None
+        self.__model_dir = None
 
         self._test_on_epochs = None
+        self.__cv_index = None
 
         self.reset_experiment_dependent_parameters()
 
@@ -49,6 +51,14 @@ class NeuralNetworkCallback(Callback):
     def set_log_dir(self, log_dir):
         assert(isinstance(log_dir, unicode))
         self.__log_dir = log_dir
+
+    def set_model_dir(self, model_dir):
+        assert(isinstance(model_dir, unicode))
+        self.__model_dir = model_dir
+
+    def set_cv_index(self, cv_index):
+        assert (isinstance(cv_index, int))
+        self.__cv_index = cv_index
 
     def on_initialized(self, model):
         assert(isinstance(model, BaseTensorflowModel))
@@ -154,7 +164,16 @@ class NeuralNetworkCallback(Callback):
         assert(isinstance(idhp, NetworkInputDependentVariables))
         assert(isinstance(output, NetworkOutputEncoder))
 
-        output.to_tsv(filepath=None)
+        # Crate filepath
+        template = u"./{cv_index}/{d_type}-{e_ind}.tsv.gz".format(
+            cv_index=self.__cv_index,
+            d_type=data_type,
+            e_ind=epoch_index)
+        filepath = os.path.join(self.__model_dir, template)
+        create_dir_if_not_exists(filepath)
+
+        # Save output
+        output.to_tsv(filepath=filepath)
 
         # TODO. Convert results to opinions.
         # TODO. Convert results to opinions.

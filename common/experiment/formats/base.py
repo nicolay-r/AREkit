@@ -38,8 +38,8 @@ class BaseExperiment(object):
         self.__neutral_annot = self.__init_annotator()
 
         # Setup DataIO
-        # TODO. Move into data_io
-        self.__data_io.Callback.set_log_dir(log_dir=path.join(self.DataIO.get_model_root(), u"log/"))
+        self.__data_io.Callback.set_model_dir(self.DataIO.get_model_root())
+        self.__data_io.Callback.set_log_dir(path.join(self.DataIO.get_model_root(), u"log/"))
 
         # Initializing annotator
         logger.info("Initializing neutral annotator ...")

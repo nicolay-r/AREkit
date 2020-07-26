@@ -43,7 +43,8 @@ class BaseTensorflowModel(BaseModel):
     SaveTensorflowModelStateOnFit = False
     FeedDictShow = False
 
-    def __init__(self, nn_io, network, label_scaler, handled_data, evaluator, bags_collection_type,
+    def __init__(self, nn_io, network, label_scaler,
+                 handled_data, evaluator, bags_collection_type,
                  config, callback=None):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
