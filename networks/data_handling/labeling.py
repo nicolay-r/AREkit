@@ -21,6 +21,4 @@ class BaseSamplesLabeling(object):
         self.before_labeling()
         callback_output = labeling_callback()
 
-        self.__labeling_collection.reset_labels()
-
         return callback_output

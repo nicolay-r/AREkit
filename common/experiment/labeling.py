@@ -21,19 +21,17 @@ class LabeledCollection:
         self._labels_defined = {}
 
     def apply_label(self, label, sample_row_id):
+        """
+        Optionally applies the label.
+        Applies label if the latter has not been provided before for sample_row_id
+        """
         assert(isinstance(sample_row_id, unicode))
-
-        if sample_row_id in self._labels_defined:
-            print "Existed: {}".format(sample_row_id)
-        else:
-            print "OK: {}".format(sample_row_id)
-
-        assert(sample_row_id not in self._labels_defined)
-        self._labels_defined[sample_row_id] = label
+        if sample_row_id not in self._labels_defined:
+            self._labels_defined[sample_row_id] = label
 
     def reset_labels(self):
         self._labels_defined.clear()
 
     def iter_labeled_sample_row_ids(self):
-        for sample_id, _ in self.__original_labels:
+        for sample_id, _ in self.__original_labels.iteritems():
             yield sample_id, self._labels_defined[sample_id]
