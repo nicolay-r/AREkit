@@ -27,11 +27,12 @@ class NetworkInputEncoder(object):
     VOCABULARY_FILENAME = u"vocab.txt"
 
     @staticmethod
-    def to_tsv_with_embedding_and_vocabulary(experiment):
+    def to_tsv_with_embedding_and_vocabulary(experiment, terms_per_context):
         """
         Performs encodding for all the data_types supported by experiment.
         """
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(terms_per_context, int))
 
         predefined_embedding = experiment.DataIO.WordEmbedding
         predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
@@ -56,6 +57,7 @@ class NetworkInputEncoder(object):
         BaseInputEncoder.to_tsv(balance=False,
                                 out_dir=target_dir,
                                 experiment=experiment,
+                                terms_per_context=terms_per_context,
                                 create_formatter_func=lambda data_type:
                                     NetworkInputEncoder.__create_sample_formatter(data_type=data_type,
                                                                                   experiment=experiment,

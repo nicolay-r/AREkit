@@ -55,7 +55,8 @@ class HandledData(object):
         if not HandledData.__check_files_existed(experiment=experiment, source_dir=source_dir):
             logger.info("Starting data serialization process to: {}".format(source_dir))
             instance.__perform_writing(source_dir=source_dir,
-                                       experiment=experiment)
+                                       experiment=experiment,
+                                       terms_per_context=config.TermsPerContext)
 
         # Perform reading
         instance.__perform_reading_and_initialization(source_dir=source_dir,
@@ -67,13 +68,17 @@ class HandledData(object):
 
     # region writing methods
 
-    def __perform_writing(self, source_dir, experiment):
+    def __perform_writing(self, source_dir, experiment, terms_per_context):
         """
         Perform experiment input serialization
         """
         assert(isinstance(source_dir, unicode))
         assert(isinstance(experiment, BaseExperiment))
-        term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(experiment)
+        assert(isinstance(terms_per_context, int))
+
+        term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
+            experiment=experiment,
+            terms_per_context=terms_per_context)
         NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
             target_dir=source_dir,
             term_embedding_pairs=term_embedding_pairs)

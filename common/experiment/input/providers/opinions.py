@@ -26,8 +26,9 @@ class OpinionProvider(object):
         self.__text_opinion_helper = TextOpinionHelper(parsed_news_collection)
 
     @classmethod
-    def from_experiment(cls, experiment, data_type):
+    def from_experiment(cls, experiment, data_type, terms_per_context):
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(terms_per_context, int))
 
         pnc = experiment.create_parsed_collection(data_type=data_type)
 
@@ -36,7 +37,7 @@ class OpinionProvider(object):
         text_opinions = extract_text_opinions(
             experiment=experiment,
             data_type=data_type,
-            terms_per_context=50,
+            terms_per_context=terms_per_context,
             iter_doc_ids=pnc.iter_news_ids(),
             text_opinion_helper=TextOpinionHelper(pnc))
 
