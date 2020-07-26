@@ -76,14 +76,18 @@ class NetworkInputEncoder(object):
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
         embedding_filepath = NetworkInputEncoder.get_embedding_filepath(target_dir)
-        logger.info("Saving embedding: {}".format(embedding_filepath))
+        logger.info("Saving embedding [size=[{voc_size}x{vec_size}]: {filepath}".format(
+            voc_size=embedding_matrix.VocabularySize,
+            vec_size=embedding_matrix.VectorSize,
+            filepath=embedding_filepath))
         np.savez(embedding_filepath, embedding_matrix)
 
         # Save vocabulary
-        vocab = TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding)
+        vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
         vocab_filepath = NetworkInputEncoder.get_vocab_filepath(target_dir)
-        logger.info("Saving vocabulary: {}".format(vocab_filepath))
-        np.savez(vocab_filepath, list(vocab))
+        logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
+                                                                         filepath=vocab_filepath))
+        np.savez(vocab_filepath, vocab)
 
     @staticmethod
     def check_files_existance(target_dir, data_type, experiment):

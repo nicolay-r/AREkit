@@ -1,15 +1,20 @@
 import datetime
+import logging
 
 import numpy as np
 import os
 
 from arekit.common.evaluation.results.two_class import TwoClassEvalResult
+from arekit.common.experiment.data_type import DataType
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.networks.callback import Callback
 from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.model import BaseTensorflowModel
 from arekit.networks.output.encoder import NetworkOutputEncoder
 from arekit.networks.data_handling.predict_log import NetworkInputDependentVariables
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class NeuralNetworkCallback(Callback):
@@ -23,8 +28,9 @@ class NeuralNetworkCallback(Callback):
     def __init__(self):
 
         self.__model = None
-        self.__test_on_epochs = None
         self.__log_dir = None
+
+        self._test_on_epochs = None
 
         self.reset_experiment_dependent_parameters()
 
@@ -36,7 +42,7 @@ class NeuralNetworkCallback(Callback):
 
     @property
     def Epochs(self):
-        return max(self.__test_on_epochs)
+        return max(self._test_on_epochs)
 
     # region event handlers
 
@@ -54,13 +60,13 @@ class NeuralNetworkCallback(Callback):
         assert(isinstance(operation_cancel, OperationCancellation))
 
         if self.FitEpochCompleted:
-            print "{}: Epoch: {}: avg_fit_cost: {:.3f}, avg_fit_acc: {:.3f}".format(
+            logger.info("{}: Epoch: {}: avg_fit_cost: {:.3f}, avg_fit_acc: {:.3f}".format(
                 str(datetime.datetime.now()),
                 epoch_index,
                 avg_fit_cost,
-                avg_fit_acc)
+                avg_fit_acc))
 
-        if (epoch_index not in self.__test_on_epochs) and (not operation_cancel.IsCancelled):
+        if (epoch_index not in self._test_on_epochs) and (not operation_cancel.IsCancelled):
             return
 
         self.__save_model_hidden_values(epoch_index)
@@ -75,7 +81,7 @@ class NeuralNetworkCallback(Callback):
 
     def set_test_on_epochs(self, value):
         assert(isinstance(value, list))
-        self.__test_on_epochs = value
+        self._test_on_epochs = value
 
     # endregion
 
@@ -140,7 +146,7 @@ class NeuralNetworkCallback(Callback):
     # region evaluation
 
     def _evaluate_model(self, data_type, epoch_index):
-        assert(isinstance(data_type, unicode))
+        assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int))
 
         idhp, output = self.__model.predict(data_type=data_type)

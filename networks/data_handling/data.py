@@ -99,10 +99,12 @@ class HandledData(object):
         # Reading embedding.
         npz_embedding_data = np.load(NetworkInputEncoder.get_embedding_filepath(source_dir))
         config.set_term_embedding(npz_embedding_data['arr_0'])
+        logger.info("Embedding readed [size={}]".format(config.TermEmbeddingMatrix.shape))
 
         # Reading vocabulary
         npz_vocab_data = np.load(NetworkInputEncoder.get_vocab_filepath(source_dir))
         vocab = dict(npz_vocab_data['arr_0'])
+        logger.info("Vocabulary readed [size={}]".format(len(vocab)))
 
         # Reading from serialized information
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():

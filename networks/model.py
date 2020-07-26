@@ -4,6 +4,7 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow.python.training.saver import Saver
+from tqdm import tqdm
 
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.experiment.scales.base import BaseLabelScaler
@@ -217,8 +218,12 @@ class BaseTensorflowModel(BaseModel):
 
         np.random.shuffle(minibatches)
 
-        for bags_group in minibatches:
+        iter_minibatches = tqdm(minibatches,
+                                unit='mbs',
+                                desc="Training e={}".format(self.__current_epoch_index),
+                                ncols=80)
 
+        for bags_group in iter_minibatches:
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch, data_type=DataType.Train)
 

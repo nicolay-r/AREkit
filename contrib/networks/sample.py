@@ -116,7 +116,7 @@ class InputSample(InputSampleBase):
                    dist_nearest_obj=blank_terms,
                    frame_sent_roles=blank_terms,
                    frame_indices=blank_frames,
-                   text_opinion_id=-1)
+                   input_sample_id=-1)
 
     @classmethod
     def _generate_test(cls, config):
@@ -138,7 +138,7 @@ class InputSample(InputSampleBase):
                    dist_nearest_obj=blank_terms,
                    frame_sent_roles=blank_terms,
                    frame_indices=blank_frames,
-                   text_opinion_id=-1)
+                   input_sample_id=-1)
 
     @classmethod
     def from_tsv_row(cls,
@@ -197,7 +197,7 @@ class InputSample(InputSampleBase):
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=cls.FRAMES_PAD_VALUE,
-            expected_size=config.TermsPerContext)
+            expected_size=config.FramesPerContext)
 
         syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
             original_value=[subj_ind] if syn_subj_inds is None else syn_subj_inds,
@@ -248,173 +248,6 @@ class InputSample(InputSampleBase):
                    frame_indices=np.array(frames_feature.ValueVector),
                    frame_sent_roles=np.array(frame_sent_roles_feature.ValueVector),
                    input_sample_id=input_sample_id)
-
-    # TODO. To be removed.
-    # TODO. To be removed.
-    # TODO. To be removed.
-    @classmethod
-    def from_text_opinion(cls, text_opinion, frames_collection, synonyms_collection,
-                          config,
-                          label_scaler,
-                          string_entity_formatter):
-        assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(config, DefaultNetworkConfig))
-        assert(isinstance(frames_collection, FramesCollection))
-        assert(isinstance(synonyms_collection, SynonymsCollection))
-        assert(isinstance(label_scaler, BaseLabelScaler))
-        assert(isinstance(string_entity_formatter, StringEntitiesFormatter))
-
-        # terms = list(text_opinion_helper.iter_terms_in_related_sentence(
-        #     text_opinion=text_opinion,
-        #     return_ind_in_sent=False))
-
-        # subj_ind = text_opinion_helper.extract_entity_position(
-        #     text_opinion=text_opinion,
-        #     end_type=EntityEndType.Source,
-        #     position_type=TermPositionTypes.IndexInSentence)
-
-        # obj_ind = text_opinion_helper.extract_entity_position(
-        #     text_opinion=text_opinion,
-        #     end_type=EntityEndType.Target,
-        #     position_type=TermPositionTypes.IndexInSentence)
-
-        # subj_value = text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
-        #                                                       end_type=EntityEndType.Source)
-
-        # obj_value = text_opinion_helper.extract_entity_value(text_opinion=text_opinion,
-        #                                                      end_type=EntityEndType.Target)
-
-        # syn_subj_inds = list(text_opinion_helper.iter_terms_in_related_sentence(
-        #     text_opinion=text_opinion,
-        #     return_ind_in_sent=False,
-        #     term_check=lambda term: cls.__is_synonym_entity(term=term,
-        #                                                     e_value=subj_value,
-        #                                                     synonyms=synonyms_collection)))
-
-        # syn_obj_inds = list(text_opinion_helper.iter_terms_in_related_sentence(
-        #     text_opinion=text_opinion,
-        #     return_ind_in_sent=False,
-        #     term_check=lambda term: cls.__is_synonym_entity(term=term,
-        #                                                     e_value=obj_value,
-        #                                                     synonyms=synonyms_collection)))
-
-        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
-        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
-        # TODO. This will be removed as in Samples we deal with words and a whole vocabulary.
-
-        syn_subj_inds = None
-        syn_obj_inds = None
-        terms = None
-        frame_features = None
-        obj_ind = None
-        subj_ind = None
-
-        term_ind_mapper = IndexingTextTermsMapper(
-            syn_subj_indices=set(syn_subj_inds),
-            syn_obj_indices=set(syn_obj_inds),
-            term_embedding_matrix=config.TermEmbeddingMatrix,
-            word_embedding=None,
-            entity_embedding=None,
-            token_embedding=None,
-            string_entity_formatter=string_entity_formatter)
-
-        x_indices = term_ind_mapper.iter_mapped(terms)
-
-        x_indices = list(x_indices)
-
-        # frame_features = FrameFeatures(text_opinion_helper)
-
-        frame_sent_roles = frame_features.compose_frame_roles(
-            text_opinion=text_opinion,
-            size=len(x_indices),
-            frames_collection=frames_collection,
-            filler=cls.FRAME_SENT_ROLES_PAD_VALUE,
-            label_scaler=label_scaler)
-
-        x_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=x_indices,
-            e1_in=subj_ind,
-            e2_in=obj_ind,
-            expected_size=config.TermsPerContext,
-            filler=cls.X_PAD_VALUE)
-
-        pos_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=arekit.networks.mappers.pos.iter_pos_indices_for_terms(terms=terms, pos_tagger=config.PosTagger),
-            e1_in=subj_ind,
-            e2_in=obj_ind,
-            expected_size=config.TermsPerContext,
-            filler=cls.POS_PAD_VALUE)
-
-        frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=frame_sent_roles,
-            e1_in=subj_ind,
-            e2_in=obj_ind,
-            expected_size=config.TermsPerContext,
-            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
-
-        term_type_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=InputSample.__create_term_types(terms),
-            e1_in=subj_ind,
-            e2_in=obj_ind,
-            expected_size=config.TermsPerContext,
-            filler=cls.TERM_TYPE_PAD_VALUE)
-
-        frames_feature = PointersFeature.create_shifted_and_fit(
-            original_value=frame_features.compose_frames(text_opinion),
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
-            filler=cls.FRAMES_PAD_VALUE,
-            expected_size=config.FramesPerContext)
-
-        syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
-            original_value=syn_subj_inds,
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
-            filler=0)
-
-        syn_obj_inds_feature = PointersFeature.create_shifted_and_fit(
-            original_value=syn_obj_inds,
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
-            filler=0)
-
-        subj_ind = subj_ind - x_feature.StartIndex
-        obj_ind = obj_ind - x_feature.StartIndex
-
-        dist_from_subj = DistanceFeatures.distance_feature(position=subj_ind, size=config.TermsPerContext)
-
-        dist_from_obj = DistanceFeatures.distance_feature(position=obj_ind, size=config.TermsPerContext)
-
-        dist_nearest_subj = DistanceFeatures.distance_abs_nearest_feature(
-            positions=syn_subj_inds_feature.ValueVector,
-            size=config.TermsPerContext)
-
-        dist_nearest_obj = DistanceFeatures.distance_abs_nearest_feature(
-            positions=syn_obj_inds_feature.ValueVector,
-            size=config.TermsPerContext)
-
-        pad_right_or_crop_inplace(lst=syn_subj_inds_feature.ValueVector,
-                                  pad_size=config.SynonymsPerContext,
-                                  filler=cls.SYNONYMS_PAD_VALUE)
-
-        pad_right_or_crop_inplace(lst=syn_obj_inds_feature.ValueVector,
-                                  pad_size=config.SynonymsPerContext,
-                                  filler=cls.SYNONYMS_PAD_VALUE)
-
-        return cls(X=np.array(x_feature.ValueVector),
-                   subj_ind=subj_ind,
-                   obj_ind=obj_ind,
-                   syn_subj_inds=np.array(syn_subj_inds_feature.ValueVector),
-                   syn_obj_inds=np.array(syn_obj_inds_feature.ValueVector),
-                   dist_from_subj=dist_from_subj,
-                   dist_from_obj=dist_from_obj,
-                   dist_nearest_subj=dist_nearest_subj,
-                   dist_nearest_obj=dist_nearest_obj,
-                   pos_indices=np.array(pos_feature.ValueVector),
-                   term_type=np.array(term_type_feature.ValueVector),
-                   frame_indices=np.array(frames_feature.ValueVector),
-                   frame_sent_roles=np.array(frame_sent_roles_feature.ValueVector),
-                   text_opinion_id=text_opinion.TextOpinionID)
 
     # endregion
 

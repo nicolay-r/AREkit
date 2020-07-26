@@ -17,7 +17,9 @@ class PartOfSpeechTypesService(object):
         u"PR": PartOfSpeechType.PR,
         u"A": PartOfSpeechType.ADJ,
         u"SPRO": PartOfSpeechType.SPRO,
-        u"V": PartOfSpeechType.VERB}
+        u"V": PartOfSpeechType.VERB,
+        u"UNKN": PartOfSpeechType.Unknown,
+        u"EMPTY": PartOfSpeechType.Empty}
 
     @staticmethod
     def iter_mystem_tags():

@@ -125,9 +125,6 @@ class POSMystemWrapper(RussianPOSTagger):
         assert(isinstance(pos, PartOfSpeechType))
         return int(pos)
 
-    def get_pos_as_unknown(self):
-        return PartOfSpeechType.Unknown
-
     def is_adjective(self, pos_type):
         assert(isinstance(pos_type, PartOfSpeechType))
         return pos_type.upper() == PartOfSpeechType.ADJ
