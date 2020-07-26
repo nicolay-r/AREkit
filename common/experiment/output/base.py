@@ -1,7 +1,6 @@
 import pandas as pd
 
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
-from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
@@ -24,10 +23,9 @@ class BaseOutput(object):
 
     # region public methods
 
-    def from_tsv(self, source_dir, filename_template, data_type, experiment, ids_values):
+    def from_tsv(self, source_dir, filename_template, experiment, ids_values):
         assert(isinstance(source_dir, unicode))
         assert(isinstance(filename_template, unicode))
-        assert(isinstance(data_type, DataType))
         assert(isinstance(experiment, BaseExperiment))
 
         filepath = BaseRowsFormatter.get_filepath_static(out_dir=source_dir,

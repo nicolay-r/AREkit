@@ -31,6 +31,7 @@ class OutputToOpinionCollectionsConverter(object):
 
         output.from_tsv(source_dir=source_dir,
                         filename_template=filename_template,
+                        experiment=experiment,
                         ids_values=samples_reader.extract_ids())
 
         assert(len(output) == samples_reader.rows_count())
