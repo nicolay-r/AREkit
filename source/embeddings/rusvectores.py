@@ -8,6 +8,8 @@ logger.setLevel(logging.INFO)
 
 class RusvectoresEmbedding(Embedding):
 
+    __lemmatize_by_default = True
+
     def __init__(self, matrix, words):
         super(RusvectoresEmbedding, self).__init__(matrix=matrix,
                                                    words=words)
@@ -21,25 +23,38 @@ class RusvectoresEmbedding(Embedding):
 
     def try_find_index_by_word(self, word):
         assert(isinstance(word, unicode))
-        return self.__try_find_index(term=word,
-                                     lemmatize=True)
+        _, index =self.__try_find_word_index_pair_lemmatized(
+            term=word,
+            lemmatize=self.__lemmatize_by_default)
+        return index
 
     def try_find_index_by_plain_word(self, word):
         assert(isinstance(word, unicode))
-        return self.__try_find_index(term=word,
-                                     lemmatize=False)
+        _, index = self.__try_find_word_index_pair_lemmatized(
+            term=word,
+            lemmatize=False)
+        return index
+
+    def try_get_related_word(self, word):
+        assert(isinstance(word, unicode))
+        word, _ = self.__try_find_word_index_pair_lemmatized(
+            term=word,
+            lemmatize=self.__lemmatize_by_default)
+        return word
 
     # region private methods
 
-    def __try_find_index(self, term, lemmatize=True):
+    def __try_find_word_index_pair_lemmatized(self, term, lemmatize):
         assert(isinstance(term, unicode))
         assert(isinstance(lemmatize, bool))
 
         if lemmatize:
             term = self.__stemmer.lemmatize_to_str(term)
 
-        return self.__index_without_pos[term] \
+        index = self.__index_without_pos[term] \
             if term in self.__index_without_pos else None
+
+        return term, index
 
     def __create_terms_without_pos(self):
         d = {}
@@ -58,11 +73,12 @@ class RusvectoresEmbedding(Embedding):
 
     def __contains__(self, term):
         assert(isinstance(term, unicode))
-        return self.__try_find_index(term) is not None
+        _, index = self.__try_find_word_index_pair_lemmatized(term, self.__lemmatize_by_default)
+        return index is not None
 
     def __getitem__(self, term):
         assert(isinstance(term, unicode))
-        index = self.__try_find_index(term)
-        return self.get_vector_by_index(index)
+        _, index = self.__try_find_word_index_pair_lemmatized(term, self.__lemmatize_by_default)
+        return self._matrix[index]
 
     # endregion

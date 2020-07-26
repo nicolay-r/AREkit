@@ -76,9 +76,8 @@ class NetworkInputEncoder(object):
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
         embedding_filepath = NetworkInputEncoder.get_embedding_filepath(target_dir)
-        logger.info("Saving embedding [size=[{voc_size}x{vec_size}]: {filepath}".format(
-            voc_size=embedding_matrix.VocabularySize,
-            vec_size=embedding_matrix.VectorSize,
+        logger.info("Saving embedding [size={shape}: {filepath}".format(
+            shape=embedding_matrix.shape,
             filepath=embedding_filepath))
         np.savez(embedding_filepath, embedding_matrix)
 

@@ -11,7 +11,7 @@ class Embedding(object):
     def __init__(self, matrix, words):
         assert(isinstance(matrix, np.ndarray) and len(matrix.shape) == 2)
         assert(isinstance(words, list) and len(words) == matrix.shape[0])
-        self.__matrix = matrix
+        self._matrix = matrix
         self.__words = words
         self.__index_by_word = self.__create_index(words)
 
@@ -21,11 +21,11 @@ class Embedding(object):
 
     @property
     def VectorSize(self):
-        return self.__matrix.shape[1]
+        return self._matrix.shape[1]
 
     @property
     def VocabularySize(self):
-        return self.__matrix.shape[0]
+        return self._matrix.shape[0]
 
     # endregion
 
@@ -61,7 +61,6 @@ class Embedding(object):
         return cls(matrix=np.array(matrix),
                    words=words)
 
-
     @classmethod
     def from_list_with_embedding_func(cls, words_iter, embedding_func):
         assert(isinstance(words_iter, collections.Iterable))
@@ -93,6 +92,20 @@ class Embedding(object):
             index[word] = i
         return index
 
+    def __try_find_word_index_pair(self, word):
+        """
+        Assumes to pefrom term transformation (optional)
+        in order to find a term in an inner vocabulary
+
+        returns: pair
+            (processed_term, index)
+        """
+        assert(isinstance(word, unicode))
+
+        has_index = self.__index_by_word[word] if word in self.__index_by_word else None
+        word = word if has_index else None
+        return word, has_index
+
     # endregion
 
     def iter_vocabulary(self):
@@ -101,7 +114,7 @@ class Embedding(object):
 
     def get_vector_by_index(self, index):
         assert(isinstance(index, int))
-        return self.__matrix[index]
+        return self._matrix[index]
 
     def get_word_by_index(self, index):
         assert(isinstance(index, int))
@@ -109,21 +122,28 @@ class Embedding(object):
 
     def try_find_index_by_word(self, word):
         assert(isinstance(word, unicode))
-        return self.__index_by_word[word]
+        _, index = self.__try_find_word_index_pair(word)
+        return index
 
     def try_find_index_by_plain_word(self, word):
         assert(isinstance(word, unicode))
-        return self.__index_by_word[word]
+        _, index = self.__try_find_word_index_pair(word)
+        return index
+
+    def try_get_related_word(self, word):
+        word, _ = self.__try_find_word_index_pair(word)
+        return word
 
     # region overriden methods
 
     def __contains__(self, word):
         assert(isinstance(word, unicode))
-        return word in self.__index_by_word
+        _, index = self.__try_find_word_index_pair(word)
+        return index is not None
 
     def __getitem__(self, word):
         assert(isinstance(word, unicode))
-        index = self.__index_by_word[word]
-        return self.__matrix[index]
+        _, index = self.__try_find_word_index_pair(word)
+        return self._matrix[index]
 
     # endregion

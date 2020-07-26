@@ -10,13 +10,21 @@ logger = logging.getLogger(__name__)
 def create_term_embedding(term,
                           embedding,
                           max_part_size=3,
-                          word_separator=u' '):
+                          word_separator=u' ',
+                          do_lowercase=True):
     """
     Embedding algorithm based on parts (trigrams originally)
     """
     assert(isinstance(term, unicode))
     assert(isinstance(embedding, Embedding))
 
+    if term in embedding:
+        return embedding.try_get_related_word(term), embedding[term]
+
+    if do_lowercase:
+        term = term.lower()
+
+    # Calculating vector from term parts
     count = 0
     vector = np.zeros(embedding.VectorSize)
     for word in term.split(word_separator):
@@ -26,7 +34,7 @@ def create_term_embedding(term,
         count += c
         vector = vector + v
 
-    return vector / count if count > 0 else vector
+    return term, vector / count if count > 0 else vector
 
 
 def __create_embedding_for_word(word, max_part_size, embedding):

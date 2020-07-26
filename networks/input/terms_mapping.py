@@ -20,8 +20,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
                  synonyms,
                  predefined_embedding,
                  string_entities_formatter,
-                 string_emb_entity_formatter,
-                 do_lowercasing=True):
+                 string_emb_entity_formatter):
         """
         predefined_embedding:
         string_emb_entity_formatter:
@@ -29,7 +28,6 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
         """
         assert(isinstance(predefined_embedding, Embedding))
         assert(isinstance(string_emb_entity_formatter, StringEntitiesFormatter))
-        assert(isinstance(do_lowercasing, bool))
 
         super(StringWithEmbeddingNetworkTermMapping, self).__init__(
             entity_formatter=string_entities_formatter,
@@ -37,31 +35,20 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         self.__predefined_embedding = predefined_embedding
         self.__string_emb_entity_formatter = string_emb_entity_formatter
-        self.__do_lowercasing = do_lowercasing
 
     def map_word(self, w_ind, word):
-
-        if self.__do_lowercasing:
-            word = word.lower()
-
-        if word in self.__predefined_embedding:
-            vector = self.__predefined_embedding[word]
-        else:
-            vector = create_term_embedding(term=word,
-                                           embedding=self.__predefined_embedding,
-                                           max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE)
-
-        return word, vector
+        value, vector = create_term_embedding(term=word,
+                                              embedding=self.__predefined_embedding,
+                                              max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE)
+        return value, vector
 
     def map_text_frame_variant(self, fv_ind, text_frame_variant):
         assert(isinstance(text_frame_variant, TextFrameVariant))
+        value, embedding = create_term_embedding(term=text_frame_variant.Variant.get_value(),
+                                                 embedding=self.__predefined_embedding,
+                                                 max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE)
 
-        variant_value = text_frame_variant.Variant.get_value()
-        embedding = create_term_embedding(term=variant_value,
-                                          embedding=self.__predefined_embedding,
-                                          max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE)
-
-        return variant_value, embedding
+        return value, embedding
 
     def map_token(self, t_ind, token):
         """

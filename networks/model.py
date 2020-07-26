@@ -279,7 +279,11 @@ class BaseTensorflowModel(BaseModel):
             bags_per_group=self.Config.BagsPerMinibatch,
             text_opinion_ids_set=None)
 
-        for bags_group in bags_group_it:
+        bags_group_itt = tqdm(iterable=bags_group_it,
+                              desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index,
+                                                                        dtype=data_type))
+
+        for bags_group in bags_group_itt:
 
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch, data_type=data_type)

@@ -22,6 +22,12 @@ class LabeledCollection:
 
     def apply_label(self, label, sample_row_id):
         assert(isinstance(sample_row_id, unicode))
+
+        if sample_row_id in self._labels_defined:
+            print "Existed: {}".format(sample_row_id)
+        else:
+            print "OK: {}".format(sample_row_id)
+
         assert(sample_row_id not in self._labels_defined)
         self._labels_defined[sample_row_id] = label
 
