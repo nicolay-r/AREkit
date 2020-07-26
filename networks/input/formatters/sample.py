@@ -8,11 +8,12 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
     Frames = "frames"
 
-    def __init__(self, data_type, label_provider, text_provider):
+    def __init__(self, data_type, label_provider, text_provider, balance):
 
         super(NetworkSampleFormatter, self).__init__(data_type=data_type,
                                                      label_provider=label_provider,
-                                                     text_provider=text_provider)
+                                                     text_provider=text_provider,
+                                                     balance=balance)
 
     def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):

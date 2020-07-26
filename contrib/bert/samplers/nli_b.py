@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from arekit.common.experiment.data_type import DataType
 from arekit.contrib.bert.core.input.providers.text.pair import PairTextProvider
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
@@ -28,4 +29,5 @@ class NliBinarySampleFormatter(BaseSampleFormatter):
                 text_b_template=text_b_template,
                 labels_formatter=labels_formatter,
                 text_terms_mapper=text_terms_mapper),
-            label_provider=BinaryLabelProvider(label_scaler=label_scaler))
+            label_provider=BinaryLabelProvider(label_scaler=label_scaler),
+            balance=data_type == DataType.Train)

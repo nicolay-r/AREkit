@@ -25,13 +25,15 @@ class BaseSampleFormatter(BaseRowsFormatter):
     [id, text_a] -- for test
     """
 
-    def __init__(self, data_type, label_provider, text_provider):
+    def __init__(self, data_type, label_provider, text_provider, balance):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(text_provider, BaseSingleTextProvider))
+        assert(isinstance(balance, bool))
 
         self.__label_provider = label_provider
         self.__text_provider = text_provider
         self.__row_ids_provider = self.__create_row_ids_provider(label_provider)
+        self.__balance = balance
 
         super(BaseSampleFormatter, self).__init__(data_type=data_type)
 
@@ -187,7 +189,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         assert(isinstance(opinion_provider, OpinionProvider))
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(
-            balance=self.__is_train(),
+            balance=self.__balance,
             supported_labels=self.__label_provider.SupportedLabels)
 
         for linked_wrap in linked_iter:
@@ -213,11 +215,10 @@ class BaseSampleFormatter(BaseRowsFormatter):
         df[self.ROW_ID] = range(rows_count)
         df.set_index(self.ROW_ID, inplace=True)
 
-    def save(self, filepath, balance, write_header):
+    def save(self, filepath, write_header):
         assert(isinstance(filepath, unicode))
-        assert(isinstance(balance, bool))
 
-        if balance and self.__is_train():
+        if self.__balance:
             SampleRowBalancerHelper.balance_oversampling(
                 df=self._df,
                 create_blank_df=lambda size: self._create_blank_df(size),

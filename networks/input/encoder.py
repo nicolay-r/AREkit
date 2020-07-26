@@ -54,8 +54,7 @@ class NetworkInputEncoder(object):
         target_dir = NetworkInputEncoder.get_samples_dir(experiment)
 
         # Encoding input
-        BaseInputEncoder.to_tsv(balance=False,
-                                out_dir=target_dir,
+        BaseInputEncoder.to_tsv(out_dir=target_dir,
                                 experiment=experiment,
                                 terms_per_context=terms_per_context,
                                 create_formatter_func=lambda data_type:
@@ -125,7 +124,8 @@ class NetworkInputEncoder(object):
         return NetworkSampleFormatter(
             data_type=data_type,
             label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
-            text_provider=text_provider)
+            text_provider=text_provider,
+            balance=False)
 
     @staticmethod
     def get_samples_dir(experiment):
