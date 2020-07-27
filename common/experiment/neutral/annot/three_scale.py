@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 import logging
 
+from tqdm import tqdm
+
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
@@ -74,10 +76,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     def create_collection(self, data_type):
         assert(isinstance(data_type, DataType))
 
-        filtered_iter = self.filter_non_created_doc_ids(data_type=data_type,
-                                                        all_doc_ids=self.iter_doc_ids_to_compare())
-
-        for doc_id, filepath in filtered_iter:
+        for doc_id, filepath in self._iter_docs(data_type):
             logger.debug("Create Neutral File (MODE {}): '{}'".format(data_type, filepath))
             collection = self.__create_opinions_for_extraction(doc_id=doc_id,
                                                                data_type=data_type)

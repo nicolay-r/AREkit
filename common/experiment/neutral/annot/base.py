@@ -1,4 +1,7 @@
 import logging
+
+from tqdm import tqdm
+
 import utils
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.formats.documents import DocumentOperations
@@ -80,5 +83,13 @@ class BaseNeutralAnnotator(object):
 
     def create_collection(self, data_type):
         raise NotImplementedError()
+
+    def _iter_docs(self, data_type):
+        doc_ids = list(self.iter_doc_ids_to_compare())
+        return tqdm(iterable=self.filter_non_created_doc_ids(data_type=data_type,
+                                                             all_doc_ids=doc_ids),
+                    desc="Writing neutral-examples [{}]".format(data_type),
+                    ncols=80,
+                    total=doc_ids)
 
 

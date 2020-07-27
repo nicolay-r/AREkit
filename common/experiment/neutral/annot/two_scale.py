@@ -1,5 +1,7 @@
 import logging
 
+from tqdm import tqdm
+
 import arekit.common.experiment.neutral.annot.utils
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 
@@ -54,11 +56,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
         if data_type == DataType.Train:
             return
 
-        filtered_iter = self.filter_non_created_doc_ids(
-            all_doc_ids=self.iter_doc_ids_to_compare(),
-            data_type=data_type)
-
-        for doc_id, filepath in filtered_iter:
+        for doc_id, filepath in self._iter_docs(data_type):
 
             arekit.common.experiment.neutral.annot.utils.notify_newfile_creation(filepath=filepath,
                                                                                  data_type=data_type,
