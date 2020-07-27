@@ -2,6 +2,7 @@ import pandas as pd
 
 from arekit.common.experiment import const
 from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.base import Label
 
 
 class ParsedSampleRow(object):
@@ -10,11 +11,12 @@ class ParsedSampleRow(object):
     TODO. Use this class as API
     """
 
-    def __init__(self, row, labels_scaler):
+    def __init__(self, row, labels_scaler, default_sentiment):
         assert(isinstance(row, pd.Series))
         assert(isinstance(labels_scaler, BaseLabelScaler))
+        assert(isinstance(default_sentiment, Label) or default_sentiment is None)
 
-        self.__sentiment = None
+        self.__sentiment = default_sentiment
 
         for key, value in row.iteritems():
             if key == const.LABEL:
@@ -49,6 +51,7 @@ class ParsedSampleRow(object):
         return self.__sentiment
 
     @classmethod
-    def parse(cls, row, labels_scaler):
+    def parse(cls, row, labels_scaler, default_sentiment):
         return cls(row=row,
-                   labels_scaler=labels_scaler)
+                   labels_scaler=labels_scaler,
+                   default_sentiment=default_sentiment)
