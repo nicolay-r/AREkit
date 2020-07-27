@@ -19,7 +19,8 @@ class InputSampleReader(BaseInputReader):
 
         df = pd.read_csv(filepath,
                          compression='gzip',
-                         sep='\t')
+                         sep='\t',
+                         encoding='utf-8')
 
         return cls(df=df, row_ids_provider=row_ids_provider)
 
