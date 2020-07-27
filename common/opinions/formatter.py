@@ -1,6 +1,6 @@
 
-# TODO. Move to collection/formatter.
-class OpinionCollectionFormatter(object):
+# TODO. Multiple, Collection's'
+class OpinionCollectionsFormatter(object):
     """
     TODO:
         - Remove limitation: saving assumes a certain file per collection. Archieves are not supported.
@@ -16,4 +16,12 @@ class OpinionCollectionFormatter(object):
     def save_to_file(collection, filepath, labels_formatter):
         raise NotImplementedError()
 
-
+    @staticmethod
+    def save_to_archive(collections_iter, synonyms, labels_formatter):
+        """
+        collections_iter: iterator of pairs
+            enumeration of pairs (news_id, collection)
+        synonyms: SynonymsCollection
+        labels_formatter: LabelsFormatter
+        """
+        raise NotImplementedError()

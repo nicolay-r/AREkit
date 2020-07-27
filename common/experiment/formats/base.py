@@ -93,6 +93,11 @@ class BaseExperiment(object):
 
         return ParsedNewsCollection(parsed_news_it)
 
+    # TODO. Maybe make a part of callback?
+    # TODO. Not every experiment should be evaluated.
+    # TODO. But callback assumes to perform evaluation of experiment.
+    # TODO. Specific type of experiment.
+    # TODO. Also because we decide the collection path in callback.
     def evaluate(self, data_type, epoch_index):
         """
         Perform experiment evaluation (related model) of a certain

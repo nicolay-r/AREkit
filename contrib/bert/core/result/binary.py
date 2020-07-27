@@ -3,8 +3,8 @@ import pandas as pd
 from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
-from arekit.contrib.bert.core.input.providers import BinaryIDProvider
 from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider
 
 
 class BertBinaryOutput(BaseOutput):

@@ -22,7 +22,7 @@ class BaseOutput(object):
 
     # region public methods
 
-    def from_tsv(self, source_dir, filename_template, ids_values):
+    def init_from_tsv(self, source_dir, filename_template, ids_values):
         assert(isinstance(source_dir, unicode))
         assert(isinstance(filename_template, unicode))
 

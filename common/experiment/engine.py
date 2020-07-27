@@ -5,9 +5,9 @@ import logging
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
-from arekit.networks.callback import Callback
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.networks.callback.base import Callback
 from arekit.networks.data_handling.data import HandledData
 from arekit.networks.feeding.bags.collection.base import BagsCollection
 from arekit.networks.model import BaseTensorflowModel
@@ -61,6 +61,7 @@ class ExperimentEngine(object):
             common_callback_modification_func(callback)
         callback.reset_experiment_dependent_parameters()
         callback.set_cv_index(cv_index)
+        callback.set_experiment(experiment)
 
         # Perform data handling.
         handled_data = HandledData.initialize_from_experiment(

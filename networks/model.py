@@ -13,7 +13,7 @@ from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
-from arekit.networks.callback import Callback
+from arekit.networks.callback.base import Callback
 from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.data_handling.data import HandledData
 from arekit.networks.feeding.bags.collection.base import BagsCollection

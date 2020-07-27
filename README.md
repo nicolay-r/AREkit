@@ -63,7 +63,7 @@ This toolset includes the following instruments and domain-related datasets:
 * **Network** [[base-class]](networks/nn.py);
     * Model [[base-class]](networks/model.py);
     * IO [[base-class]](networks/nn_io.py);
-    * Callback [[base-class]](networks/callback.py);
+    * Callback [[base-class]](networks/callback/base.py);
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
     * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
     * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);

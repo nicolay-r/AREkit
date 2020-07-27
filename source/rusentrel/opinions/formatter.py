@@ -1,8 +1,10 @@
+import collections
+import gzip
 import io
 
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.opinions.formatter import OpinionCollectionFormatter
+from arekit.common.opinions.formatter import OpinionCollectionsFormatter
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.common.labels.str_fmt import StringLabelsFormatter
@@ -11,7 +13,7 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 # TODO. Provide synonyms in ctor.
 # TODO. Provide synonyms in ctor.
 # TODO. Provide synonyms in ctor.
-class RuSentRelOpinionCollectionFormatter(OpinionCollectionFormatter):
+class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
 
     @staticmethod
     def load_from_file(filepath, synonyms, labels_formatter):

@@ -90,6 +90,6 @@ class BaseNeutralAnnotator(object):
                                                              all_doc_ids=doc_ids),
                     desc="Writing neutral-examples [{}]".format(data_type),
                     ncols=80,
-                    total=doc_ids)
+                    total=len(doc_ids))
 
 

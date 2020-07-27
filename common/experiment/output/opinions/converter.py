@@ -26,9 +26,9 @@ class OutputToOpinionCollectionsConverter(object):
         assert(isinstance(label_calculation_mode, unicode))
         assert(isinstance(output, BaseOutput))
 
-        output.from_tsv(source_dir=source_dir,
-                        filename_template=filename_template,
-                        ids_values=samples_reader.extract_ids())
+        output.init_from_tsv(source_dir=source_dir,
+                             filename_template=filename_template,
+                             ids_values=samples_reader.extract_ids())
 
         assert(len(output) == samples_reader.rows_count())
 

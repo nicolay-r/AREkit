@@ -19,5 +19,8 @@ class Callback(object):
     def set_cv_index(self, cv_index):
         raise NotImplementedError()
 
+    def set_experiment(self, experiment):
+        raise NotImplementedError()
+
     def reset_experiment_dependent_parameters(self):
         raise NotImplementedError()

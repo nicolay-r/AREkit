@@ -6,8 +6,10 @@ import os
 
 from arekit.common.evaluation.results.two_class import TwoClassEvalResult
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.networks.callback import Callback
+from arekit.networks.callback.base import Callback
+from arekit.networks.callback.model_eval import perform_evaluation
 from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.model import BaseTensorflowModel
 from arekit.networks.output.encoder import NetworkOutputEncoder
@@ -30,6 +32,7 @@ class NeuralNetworkCallback(Callback):
         self.__model = None
         self.__log_dir = None
         self.__model_dir = None
+        self.__experiment = None
 
         self._test_on_epochs = None
         self.__cv_index = None
@@ -55,6 +58,10 @@ class NeuralNetworkCallback(Callback):
     def set_model_dir(self, model_dir):
         assert(isinstance(model_dir, unicode))
         self.__model_dir = model_dir
+
+    def set_experiment(self, experiment):
+        assert(isinstance(experiment, BaseExperiment))
+        self.__experiment = experiment
 
     def set_cv_index(self, cv_index):
         assert (isinstance(cv_index, int))
@@ -165,21 +172,23 @@ class NeuralNetworkCallback(Callback):
         assert(isinstance(output, NetworkOutputEncoder))
 
         # Crate filepath
-        template = u"./{cv_index}/{d_type}-{e_ind}.tsv.gz".format(
-            cv_index=self.__cv_index,
-            d_type=data_type,
-            e_ind=epoch_index)
-        filepath = os.path.join(self.__model_dir, template)
+        template = u"{d_type}-{e_ind}".format(d_type=data_type, e_ind=epoch_index)
+        source_dir = os.path.join(self.__model_dir, u"./{cv_index}/")
+        filename = u"result-{template}.tsv.gz".format(cv_index=self.__cv_index, template=template)
+        filepath = os.path.join(source_dir, filename)
         create_dir_if_not_exists(filepath)
 
         # Save output
         output.to_tsv(filepath=filepath)
 
-        # TODO. Convert results to opinions.
-        # TODO. Convert results to opinions.
-        # TODO. Convert results to opinions.
+        # Convert output to result.
 
-        result = None
+        result = perform_evaluation(tsv_results_filepath=filepath,
+                                    template=template,
+                                    source_dir=source_dir,
+                                    data_type=data_type,
+                                    experiment=self.__experiment,
+                                    epoch_index=epoch_index)
 
         if self.PredictVerbosePerFileStatistic:
             self._print_verbose_eval_results(result, data_type)

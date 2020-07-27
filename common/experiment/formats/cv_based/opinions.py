@@ -35,6 +35,9 @@ class CVBasedOpinionOperations(OpinionOperations):
 
     # endregion
 
+    # TODO. Remove
+    # TODO. Remove
+    # TODO. Remove
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         assert(isinstance(epoch_index, int))
 
