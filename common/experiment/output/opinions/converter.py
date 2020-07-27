@@ -22,15 +22,18 @@ class OutputToOpinionCollectionsConverter(object):
         assert(isinstance(source_dir, unicode))
         assert(isinstance(filename_template, unicode))
         assert(isinstance(opinions_reader, InputOpinionReader))
-        assert(isinstance(samples_reader, InputSampleReader))
+        assert(isinstance(samples_reader, InputSampleReader) or samples_reader is None)
         assert(isinstance(label_calculation_mode, unicode))
         assert(isinstance(output, BaseOutput))
 
         output.init_from_tsv(source_dir=source_dir,
                              filename_template=filename_template,
-                             ids_values=samples_reader.extract_ids())
+                             read_header=samples_reader is None)
 
-        assert(len(output) == samples_reader.rows_count())
+        if samples_reader is not None:
+            ids_values = samples_reader.extract_ids()
+            output.insert_ids_values(ids_values)
+            assert(len(output) == samples_reader.rows_count())
 
         labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
 

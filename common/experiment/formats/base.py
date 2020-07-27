@@ -38,7 +38,6 @@ class BaseExperiment(object):
         self.__neutral_annot = self.__init_annotator()
 
         # Setup DataIO
-        self.__data_io.Callback.set_model_dir(self.DataIO.get_model_root())
         self.__data_io.Callback.set_log_dir(path.join(self.DataIO.get_model_root(), u"log/"))
 
         # Initializing annotator
@@ -122,7 +121,9 @@ class BaseExperiment(object):
                                     epoch_index=self.EPOCH_INDEX_PLACEHOLER)
 
         assert(isinstance(result, BaseEvalResult))
-        return result.calculate()
+
+        result.calculate()
+        return result
 
     # region private methods
 

@@ -22,9 +22,10 @@ class BaseOutput(object):
 
     # region public methods
 
-    def init_from_tsv(self, source_dir, filename_template, ids_values):
+    def init_from_tsv(self, source_dir, filename_template, read_header):
         assert(isinstance(source_dir, unicode))
         assert(isinstance(filename_template, unicode))
+        assert(isinstance(read_header, bool))
 
         filepath = BaseRowsFormatter.get_filepath_static(out_dir=source_dir,
                                                          template=filename_template,
@@ -33,14 +34,18 @@ class BaseOutput(object):
         self.__df = pd.read_csv(filepath,
                                 sep='\t',
                                 index_col=False,
-                                header=None)
-        self.__df.columns = self._get_column_header()
+                                header='infer' if read_header else None,
+                                encoding='utf-8')
+
+    def insert_ids_values(self, ids_values):
         self.__df.insert(0, self.ID, ids_values)
+        self.__df.columns = [self.ID] + [''] * (self.__df.shape[1] - 1)
         self.__df.set_index(self.ID)
 
     def iter_news_ids(self):
         sample_row_ids = self.__df[self.ID].tolist()
-        all_news = [self.__ids_formatter.parse_news_in_sample_id(sample_id) for sample_id in sample_row_ids]
+        all_news = [self.__ids_formatter.parse_news_in_sample_id(sample_id)
+                    for sample_id in sample_row_ids]
         for news_id in set(all_news):
             yield news_id
 

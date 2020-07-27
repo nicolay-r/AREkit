@@ -195,7 +195,6 @@ class BaseTensorflowModel(BaseModel):
         if issubclass(self.__bags_collection_type, MultiInstanceBagsCollection):
             return MultiInstanceMiniBatch(bags_group)
 
-
     def create_feed_dict(self, minibatch, data_type):
         assert(isinstance(minibatch, MiniBatch))
         assert(isinstance(data_type, DataType))

@@ -14,6 +14,7 @@ from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.model import BaseTensorflowModel
 from arekit.networks.output.encoder import NetworkOutputEncoder
 from arekit.networks.data_handling.predict_log import NetworkInputDependentVariables
+from arekit.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -31,7 +32,6 @@ class NeuralNetworkCallback(Callback):
 
         self.__model = None
         self.__log_dir = None
-        self.__model_dir = None
         self.__experiment = None
 
         self._test_on_epochs = None
@@ -54,10 +54,6 @@ class NeuralNetworkCallback(Callback):
     def set_log_dir(self, log_dir):
         assert(isinstance(log_dir, unicode))
         self.__log_dir = log_dir
-
-    def set_model_dir(self, model_dir):
-        assert(isinstance(model_dir, unicode))
-        self.__model_dir = model_dir
 
     def set_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
@@ -173,7 +169,7 @@ class NeuralNetworkCallback(Callback):
 
         # Crate filepath
         template = u"{d_type}-{e_ind}".format(d_type=data_type, e_ind=epoch_index)
-        source_dir = os.path.join(self.__model_dir, u"./{cv_index}/")
+        source_dir = os.path.join(self.__experiment.DataIO.get_model_root(), u"./{cv_index}/")
         filename = u"result-{template}.tsv.gz".format(cv_index=self.__cv_index, template=template)
         filepath = os.path.join(source_dir, filename)
         create_dir_if_not_exists(filepath)
@@ -182,13 +178,13 @@ class NeuralNetworkCallback(Callback):
         output.to_tsv(filepath=filepath)
 
         # Convert output to result.
-
         result = perform_evaluation(tsv_results_filepath=filepath,
                                     template=template,
                                     source_dir=source_dir,
                                     data_type=data_type,
                                     experiment=self.__experiment,
-                                    epoch_index=epoch_index)
+                                    epoch_index=epoch_index,
+                                    labels_formatter=RuSentRelLabelsFormatter())
 
         if self.PredictVerbosePerFileStatistic:
             self._print_verbose_eval_results(result, data_type)
@@ -208,16 +204,16 @@ class NeuralNetworkCallback(Callback):
     @staticmethod
     def _print_verbose_eval_results(eval_result, data_type):
         assert(isinstance(eval_result, TwoClassEvalResult))
-        print "Verbose statistic for {}:".format(data_type)
+        logger.info("Verbose statistic for {}:".format(data_type))
         for doc_id, result in eval_result.iter_document_results():
-            print doc_id, result
+            logger.info(doc_id, result)
 
     @staticmethod
     def _print_overall_results(eval_result, data_type):
         assert(isinstance(eval_result, TwoClassEvalResult))
-        print "Overall statistic for '{}' type:".format(data_type)
+        logger.info("Overall statistic for '{}' type:".format(data_type))
         params = ["{}: {}".format(metric_name, round(value, 2))
                   for metric_name, value in eval_result.iter_results()]
-        print "; ".join(params)
+        logger.info("; ".join(params))
 
     # endregion
