@@ -86,10 +86,13 @@ class BaseNeutralAnnotator(object):
 
     def _iter_docs(self, data_type):
         doc_ids = list(self.iter_doc_ids_to_compare())
-        return tqdm(iterable=self.filter_non_created_doc_ids(data_type=data_type,
-                                                             all_doc_ids=doc_ids),
-                    desc="Writing neutral-examples [{}]".format(data_type),
-                    ncols=80,
-                    total=len(doc_ids))
+
+        it = tqdm(iterable=self.filter_non_created_doc_ids(data_type=data_type, all_doc_ids=doc_ids),
+                  desc="Writing neutral-examples [{}]".format(data_type),
+                  ncols=80,
+                  total=len(doc_ids))
+
+        for doc_id, filepath in it:
+            yield doc_id, filepath
 
 
