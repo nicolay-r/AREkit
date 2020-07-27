@@ -1,7 +1,6 @@
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.output.base import BaseOutput
-from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.opinions import compose_opinion_collection
 
 from arekit.common.model.labeling.single import SingleLabelsHelper
@@ -13,25 +12,22 @@ from arekit.common.opinions.collection import OpinionCollection
 class OutputToOpinionCollectionsConverter(object):
 
     @staticmethod
-    def iter_opinion_collections(
-            source_dir,
-            filename_template,
-            opinions_reader,
-            samples_reader,
-            experiment,
-            label_calculation_mode,
-            output):
+    def iter_opinion_collections(source_dir,
+                                 filename_template,
+                                 opinions_reader,
+                                 samples_reader,
+                                 experiment,
+                                 label_calculation_mode,
+                                 output):
         assert(isinstance(source_dir, unicode))
         assert(isinstance(filename_template, unicode))
         assert(isinstance(opinions_reader, InputOpinionReader))
         assert(isinstance(samples_reader, InputSampleReader))
         assert(isinstance(label_calculation_mode, unicode))
-        assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(output, BaseOutput))
 
         output.from_tsv(source_dir=source_dir,
                         filename_template=filename_template,
-                        experiment=experiment,
                         ids_values=samples_reader.extract_ids())
 
         assert(len(output) == samples_reader.rows_count())
