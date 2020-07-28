@@ -3,6 +3,12 @@ import logging
 import sys
 import unittest
 
+from arekit.common.entities.base import Entity
+from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.text.parser import TextParser
+from arekit.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
+from arekit.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
+
 sys.path.append('../../')
 
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
@@ -22,10 +28,31 @@ class TestRuAttiudes(unittest.TestCase):
             assert(news.ID not in ids)
             ids.add(news.ID)
 
-    def test_reading(self):
+    def test_parsing(self):
+        # Initializing stemmer
+        stemmer = MystemWrapper()
+
+        options = RuAttitudesParseOptions(stemmer=stemmer,
+                                          frame_variants_collection=None)
+
         # iterating through collection
         for news in RuAttitudesCollection.iter_news():
+
+            # parse news
+            parsed_news = TextParser.parse_news(news=news, parse_options=options)
+            terms = parsed_news.iter_sentence_terms(sentence_index=0,
+                                                    return_id=False)
+
+            str_terms = ['E' if isinstance(t, Entity) else t for t in terms]
+            logger.info(" ".join(str_terms))
+
+    def test_reading(self):
+
+        # iterating through collection
+        for news in RuAttitudesCollection.iter_news():
+            assert(isinstance(news, RuAttitudesNews))
             logger.debug(u"News: {}".format(news.ID))
+
             for sentence in news.iter_sentences(return_text=False):
                 assert(isinstance(sentence, RuAttitudesSentence))
                 # text
@@ -42,6 +69,8 @@ class TestRuAttiudes(unittest.TestCase):
                         src_type=src.Type,
                         target_type=target.Type).encode('utf-8')
                     logger.debug(s)
+
+            break
 
 
 if __name__ == '__main__':

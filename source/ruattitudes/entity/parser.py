@@ -37,8 +37,7 @@ class RuAttitudesTextEntitiesParser(BaseEntitiesParser):
 
         subs_iter = RuAttitudesTextEntitiesParser.__iter_subs(sentence=sentence,
                                                               s_to_doc_id=s_to_doc_id)
-
-        return BaseEntitiesParser.iter_text_with_substitutions(text=sentence.Text,
+        return BaseEntitiesParser.iter_text_with_substitutions(text=sentence.Text.split(' '),
                                                                iter_subs=subs_iter)
 
     @staticmethod

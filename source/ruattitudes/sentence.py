@@ -6,7 +6,6 @@ class RuAttitudesSentence(BaseNewsSentence):
 
     def __init__(self, is_title, text, ref_opinions, objects_list, sentence_index):
         assert(isinstance(is_title, bool))
-        assert(isinstance(text, unicode))
         assert(isinstance(ref_opinions, list))
         assert(isinstance(objects_list, list))
         assert(isinstance(sentence_index, int))
@@ -72,8 +71,5 @@ class RuAttitudesSentence(BaseNewsSentence):
     def iter_ref_opinions(self):
         for opinion in self.__ref_opinions:
             yield opinion
-
-    def __len__(self):
-        return len(self.Text)
 
     # endregion
