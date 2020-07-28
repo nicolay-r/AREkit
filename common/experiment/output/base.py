@@ -27,6 +27,9 @@ class BaseOutput(object):
         assert(isinstance(filename_template, unicode))
         assert(isinstance(read_header, bool))
 
+        # TODO: REMOVE
+        # TODO: REMOVE
+        # TODO: REMOVE
         filepath = BaseRowsFormatter.get_filepath_static(out_dir=source_dir,
                                                          template=filename_template,
                                                          prefix=u"result")

@@ -75,6 +75,9 @@ class BaseRowsFormatter(object):
                                  column=column,
                                  value=value)
 
+    # TODO: REMOVE
+    # TODO: REMOVE
+    # TODO: REMOVE
     @staticmethod
     def get_filepath_static(out_dir, template, prefix):
         assert(isinstance(template, unicode))
@@ -85,6 +88,9 @@ class BaseRowsFormatter(object):
 
         return filepath
 
+    # TODO: REMOVE
+    # TODO: REMOVE
+    # TODO: REMOVE
     @staticmethod
     def __generate_filename(template, prefix):
         return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)

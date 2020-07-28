@@ -26,6 +26,9 @@ class OutputToOpinionCollectionsConverter(object):
         assert(isinstance(label_calculation_mode, unicode))
         assert(isinstance(output, BaseOutput))
 
+        # TODO: REMOVE
+        # TODO: REMOVE
+        # TODO: REMOVE
         output.init_from_tsv(source_dir=source_dir,
                              filename_template=filename_template,
                              read_header=samples_reader is None)

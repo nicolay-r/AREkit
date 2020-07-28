@@ -28,6 +28,9 @@ def perform_evaluation(tsv_results_filepath, source_dir, template,
                                                         data_type=data_type)
 
     # Extract iterator.
+    # TODO: Refactor
+    # TODO: Refactor
+    # TODO: Refactor
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
         source_dir=source_dir,
         filename_template=template,
