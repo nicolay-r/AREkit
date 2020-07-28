@@ -85,14 +85,14 @@ class BaseNeutralAnnotator(object):
         raise NotImplementedError()
 
     def _iter_docs(self, data_type):
-        doc_ids = list(self.iter_doc_ids_to_compare())
+        pairs = list(self.filter_non_created_doc_ids(data_type=data_type,
+                                                     all_doc_ids=self.iter_doc_ids_to_compare()))
 
-        it = tqdm(iterable=self.filter_non_created_doc_ids(data_type=data_type, all_doc_ids=doc_ids),
-                  desc="Writing neutral-examples [{}]".format(data_type),
-                  ncols=80,
-                  total=len(doc_ids))
+        if len(pairs) == 0:
+            return pairs
 
-        for doc_id, filepath in it:
-            yield doc_id, filepath
+        return tqdm(iterable=pairs,
+                    desc="Writing neutral-examples [{}]".format(data_type),
+                    ncols=80)
 
 
