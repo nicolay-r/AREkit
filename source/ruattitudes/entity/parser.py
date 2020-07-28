@@ -38,11 +38,8 @@ class RuAttitudesTextEntitiesParser(BaseEntitiesParser):
         subs_iter = RuAttitudesTextEntitiesParser.__iter_subs(sentence=sentence,
                                                               s_to_doc_id=s_to_doc_id)
 
-        terms_with_entities_iter = BaseEntitiesParser.iter_text_with_substitutions(
-            text=list(sentence.Text.iter_raw_terms()),
-            iter_subs=subs_iter)
-
-        return sentence.Text.copy_modified(terms=list(terms_with_entities_iter))
+        return BaseEntitiesParser.iter_text_with_substitutions(text=sentence.Text,
+                                                               iter_subs=subs_iter)
 
     @staticmethod
     def __iter_subs(sentence, s_to_doc_id):
