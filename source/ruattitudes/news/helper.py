@@ -40,7 +40,7 @@ class RuAttitudesNewsHelper(object):
         opinion = None
         related_sentences = []
 
-        for sentence in news.iter_sentences():
+        for sentence in news.iter_sentences(return_text=False):
 
             ref_opinion = sentence.find_ref_opinion_by_key(ref_opinion_tag)
             if ref_opinion is None:
@@ -80,7 +80,7 @@ class RuAttitudesNewsHelper(object):
     def __build_opinion_dict(news):
         opin_dict = {}
 
-        for s_ind, sentence in enumerate(news.iter_sentences()):
+        for s_ind, sentence in enumerate(news.iter_sentences(return_text=False)):
             assert(isinstance(sentence, RuAttitudesSentence))
             for ref_opinion in sentence.iter_ref_opinions():
                 assert(isinstance(ref_opinion, RefOpinion))

@@ -57,11 +57,6 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
             return
 
         for doc_id, filepath in self._iter_docs(data_type):
-
-            arekit.common.experiment.neutral.annot.utils.notify_newfile_creation(filepath=filepath,
-                                                                                 data_type=data_type,
-                                                                                 logger=logger)
-
             self._DataIO.OpinionFormatter.save_to_file(
                 collection=self.__create_opinions_for_classification(doc_id),
                 filepath=filepath,
