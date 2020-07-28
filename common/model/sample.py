@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from arekit.common.dataset.text_opinions.enums import DistanceType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
+from arekit.common.text_opinions.text_opinion import TextOpinion
 
 
 class InputSampleBase(object):
@@ -29,10 +30,15 @@ class InputSampleBase(object):
         """
         Main text_opinion filtering rules
         """
+        assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
 
+        is_not_same_ends = False
         is_in_window = False
         is_same_sentence = False
+
+        if text_opinion.SourceId != text_opinion.TargetId:
+            is_not_same_ends = True
 
         if text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InTerms) < window_size:
             is_in_window = True
@@ -40,7 +46,7 @@ class InputSampleBase(object):
         if text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InSentences) == 0:
             is_same_sentence = True
 
-        return is_in_window and is_same_sentence
+        return is_not_same_ends and is_in_window and is_same_sentence
 
     def __iter__(self):
         for key, value in self.__values.iteritems():

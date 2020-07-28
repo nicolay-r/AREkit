@@ -25,7 +25,6 @@ class BagsCollection(object):
                                create_sample_func,
                                create_empty_sample_func,
                                shuffle,
-                               default_sentiment,
                                desc=None):
         assert(isinstance(samples_reader, InputSampleReader))
         assert(isinstance(label_scaler, BaseLabelScaler))
@@ -44,9 +43,7 @@ class BagsCollection(object):
 
             cls._fill_bags_list_with_linked_text_opinions(
                 bags=bags,
-                parsed_rows=[ParsedSampleRow.parse(row=row,
-                                                   labels_scaler=label_scaler,
-                                                   default_sentiment=default_sentiment)
+                parsed_rows=[ParsedSampleRow.parse(row=row, labels_scaler=label_scaler)
                              for row in linked_rows],
                 bag_size=bag_size,
                 create_sample_func=create_sample_func,

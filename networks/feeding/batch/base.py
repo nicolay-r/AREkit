@@ -32,8 +32,9 @@ class MiniBatch(object):
 
     # region public methods
 
-    def to_network_input(self, label_scaler):
+    def to_network_input(self, label_scaler, provide_labels):
         assert(isinstance(label_scaler, BaseLabelScaler))
+        assert(isinstance(provide_labels, bool))
 
         result = OrderedDict()
 
@@ -49,7 +50,8 @@ class MiniBatch(object):
         for bag in self.iter_by_bags():
             if self.I_LABELS not in result:
                 result[self.I_LABELS] = []
-            result[self.I_LABELS].append(label_scaler.label_to_uint(label=bag.BagLabel))
+            uint_label = label_scaler.label_to_uint(label=bag.BagLabel) if provide_labels else 0
+            result[self.I_LABELS].append(uint_label)
 
         if DebugKeys.MiniBatchShow:
             MiniBatch.debug_output(result)

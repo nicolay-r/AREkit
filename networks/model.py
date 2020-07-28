@@ -199,7 +199,8 @@ class BaseTensorflowModel(BaseModel):
         assert(isinstance(minibatch, MiniBatch))
         assert(isinstance(data_type, DataType))
 
-        network_input = minibatch.to_network_input(label_scaler=self.__label_scaler)
+        network_input = minibatch.to_network_input(label_scaler=self.__label_scaler,
+                                                   provide_labels=data_type != DataType.Test)
         if self.FeedDictShow:
             MiniBatch.debug_output(network_input)
 

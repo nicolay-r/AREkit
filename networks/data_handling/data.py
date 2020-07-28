@@ -7,7 +7,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.labeling import LabeledCollection
-from arekit.common.labels.base import Label, NeutralLabel
+from arekit.common.labels.base import Label
 from arekit.common.model.labeling.single import SingleLabelsHelper
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -23,8 +23,6 @@ logging.basicConfig(level=logging.INFO)
 
 
 class HandledData(object):
-
-    __default_label = NeutralLabel()
 
     def __init__(self, labeled_collections, bags_collection):
         assert(isinstance(labeled_collections, dict))
@@ -135,8 +133,7 @@ class HandledData(object):
             row_ids_provider=MultipleIDProvider())
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(
-            label_scaler=experiment.DataIO.LabelsScaler,
-            default_label=self.__default_label))
+            label_scaler=experiment.DataIO.LabelsScaler))
 
         self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
 
@@ -147,7 +144,6 @@ class HandledData(object):
             shuffle=True,
             label_scaler=experiment.DataIO.LabelsScaler,
             create_empty_sample_func=lambda cfg: InputSample.create_empty(cfg),
-            default_sentiment=self.__default_label,
             create_sample_func=lambda row: self.__create_input_sample(row=row, config=config, vocab=vocab))
 
         return labeled_sample_row_ids
