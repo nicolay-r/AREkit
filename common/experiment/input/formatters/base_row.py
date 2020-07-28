@@ -75,26 +75,6 @@ class BaseRowsFormatter(object):
                                  column=column,
                                  value=value)
 
-    # TODO: REMOVE
-    # TODO: REMOVE
-    # TODO: REMOVE
-    @staticmethod
-    def get_filepath_static(out_dir, template, prefix):
-        assert(isinstance(template, unicode))
-        assert(isinstance(prefix, unicode))
-
-        filepath = path.join(out_dir, BaseRowsFormatter.__generate_filename(template=template, prefix=prefix))
-        io_utils.create_dir_if_not_exists(filepath)
-
-        return filepath
-
-    # TODO: REMOVE
-    # TODO: REMOVE
-    # TODO: REMOVE
-    @staticmethod
-    def __generate_filename(template, prefix):
-        return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
-
     def __iter__(self):
         for row in self._df.iterrows():
             yield row

@@ -12,25 +12,19 @@ from arekit.common.opinions.collection import OpinionCollection
 class OutputToOpinionCollectionsConverter(object):
 
     @staticmethod
-    def iter_opinion_collections(source_dir,
-                                 filename_template,
+    def iter_opinion_collections(output_filepath,
                                  opinions_reader,
                                  samples_reader,
                                  experiment,
                                  label_calculation_mode,
                                  output):
-        assert(isinstance(source_dir, unicode))
-        assert(isinstance(filename_template, unicode))
+        assert(isinstance(output_filepath, unicode))
         assert(isinstance(opinions_reader, InputOpinionReader))
         assert(isinstance(samples_reader, InputSampleReader) or samples_reader is None)
         assert(isinstance(label_calculation_mode, unicode))
         assert(isinstance(output, BaseOutput))
 
-        # TODO: REMOVE
-        # TODO: REMOVE
-        # TODO: REMOVE
-        output.init_from_tsv(source_dir=source_dir,
-                             filename_template=filename_template,
+        output.init_from_tsv(filepath=output_filepath,
                              read_header=samples_reader is None)
 
         if samples_reader is not None:

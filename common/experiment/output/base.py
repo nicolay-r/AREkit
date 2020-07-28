@@ -1,6 +1,5 @@
 import pandas as pd
 
-from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
@@ -22,18 +21,9 @@ class BaseOutput(object):
 
     # region public methods
 
-    def init_from_tsv(self, source_dir, filename_template, read_header):
-        assert(isinstance(source_dir, unicode))
-        assert(isinstance(filename_template, unicode))
+    def init_from_tsv(self, filepath, read_header):
+        assert(isinstance(filepath, unicode))
         assert(isinstance(read_header, bool))
-
-        # TODO: REMOVE
-        # TODO: REMOVE
-        # TODO: REMOVE
-        filepath = BaseRowsFormatter.get_filepath_static(out_dir=source_dir,
-                                                         template=filename_template,
-                                                         prefix=u"result")
-
         self.__df = pd.read_csv(filepath,
                                 sep='\t',
                                 index_col=False,

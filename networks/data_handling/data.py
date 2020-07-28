@@ -5,7 +5,6 @@ import numpy as np
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.labels.base import Label, NeutralLabel

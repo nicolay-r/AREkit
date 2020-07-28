@@ -11,6 +11,7 @@ from arekit.common.utils import create_dir_if_not_exists
 from arekit.networks.callback.base import Callback
 from arekit.networks.callback.model_eval import perform_evaluation
 from arekit.networks.cancellation import OperationCancellation
+from arekit.networks.io_utils import NetworkIOUtils
 from arekit.networks.model import BaseTensorflowModel
 from arekit.networks.output.encoder import NetworkOutputEncoder
 from arekit.networks.data_handling.predict_log import NetworkInputDependentVariables
@@ -168,20 +169,14 @@ class NeuralNetworkCallback(Callback):
         assert(isinstance(output, NetworkOutputEncoder))
 
         # Crate filepath
-        template = u"{d_type}-{e_ind}".format(d_type=data_type, e_ind=epoch_index)
-        source_dir = os.path.join(self.__experiment.DataIO.get_model_root(), u"./{cv_index}/")
-        filename = u"result-{template}.tsv.gz".format(cv_index=self.__cv_index, template=template)
-        filepath = os.path.join(source_dir, filename)
-        create_dir_if_not_exists(filepath)
+        result_filepath = NetworkIOUtils.get_output_results_filepath(experiment=self.__experiment,
+                                                                     data_type=data_type)
 
         # Save output
-        output.to_tsv(filepath=filepath)
+        output.to_tsv(filepath=result_filepath)
 
         # Convert output to result.
-        result = perform_evaluation(tsv_results_filepath=filepath,
-                                    template=template,
-                                    source_dir=source_dir,
-                                    data_type=data_type,
+        result = perform_evaluation(data_type=data_type,
                                     experiment=self.__experiment,
                                     epoch_index=epoch_index,
                                     labels_formatter=RuSentRelLabelsFormatter())
