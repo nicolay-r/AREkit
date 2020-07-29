@@ -91,6 +91,8 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         return str_entity_mask, vector
 
+    # region private methods
+
     @staticmethod
     def __get_entity_type(e_ind, subj_ind_set, obj_ind_set):
         assert(isinstance(e_ind, int))
@@ -105,3 +107,4 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         return result
 
+    # endregion

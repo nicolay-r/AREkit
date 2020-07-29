@@ -8,39 +8,30 @@ logger.setLevel(logging.INFO)
 
 class RusvectoresEmbedding(Embedding):
 
-    __lemmatize_by_default = True
-
     def __init__(self, matrix, words):
         super(RusvectoresEmbedding, self).__init__(matrix=matrix,
                                                    words=words)
 
         self.__index_without_pos = self.__create_terms_without_pos()
         self.__stemmer = None
+        self.__lemmatize_by_default = True
 
     def set_stemmer(self, stemmer):
         assert(isinstance(stemmer, Stemmer))
         self.__stemmer = stemmer
 
-    def try_find_index_by_word(self, word):
-        assert(isinstance(word, unicode))
-        _, index =self.__try_find_word_index_pair_lemmatized(
-            term=word,
-            lemmatize=self.__lemmatize_by_default)
-        return index
-
     def try_find_index_by_plain_word(self, word):
         assert(isinstance(word, unicode))
-        _, index = self.__try_find_word_index_pair_lemmatized(
-            term=word,
-            lemmatize=False)
+
+        temp = self.__lemmatize_by_default
+        self.__lemmatize_by_default = False
+        index = super(RusvectoresEmbedding, self).try_find_index_by_plain_word(word)
+        self.__lemmatize_by_default = temp
+
         return index
 
-    def try_get_related_word(self, word):
-        assert(isinstance(word, unicode))
-        word, _ = self.__try_find_word_index_pair_lemmatized(
-            term=word,
-            lemmatize=self.__lemmatize_by_default)
-        return word
+    def _handler(self, word):
+        return self.__try_find_word_index_pair_lemmatized(word, self.__lemmatize_by_default)
 
     # region private methods
 
@@ -66,19 +57,5 @@ class RusvectoresEmbedding(Embedding):
             d[word] = index
 
         return d
-
-    # endregion
-
-    # region general methods
-
-    def __contains__(self, term):
-        assert(isinstance(term, unicode))
-        _, index = self.__try_find_word_index_pair_lemmatized(term, self.__lemmatize_by_default)
-        return index is not None
-
-    def __getitem__(self, term):
-        assert(isinstance(term, unicode))
-        _, index = self.__try_find_word_index_pair_lemmatized(term, self.__lemmatize_by_default)
-        return self._matrix[index]
 
     # endregion

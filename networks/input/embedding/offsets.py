@@ -52,11 +52,3 @@ class TermsEmbeddingOffsets(object):
 
         for key, word in sorted(all_words, key=lambda item: item[0]):
             yield word, key
-
-    # region debug methods
-
-    def log_info(self):
-        logger.info("Term embedding matrix details ...")
-        logger.info("\t\tWords count: {}".format(self.__words_count))
-
-    # endregion

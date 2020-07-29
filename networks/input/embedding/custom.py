@@ -34,7 +34,7 @@ def create_term_embedding(term,
         count += c
         vector = vector + v
 
-    return term, vector / count if count > 0 else vector
+    return term.strip(), vector / count if count > 0 else vector
 
 
 def __create_embedding_for_word(word, max_part_size, embedding):

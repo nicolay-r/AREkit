@@ -23,3 +23,7 @@ def create_dir_if_not_exists(filepath):
     dir = os.path.dirname(filepath)
     if not os.path.exists(dir):
         os.makedirs(dir)
+
+
+def filter_whitespaces(terms):
+    return [term.strip() for term in terms if term.strip()]

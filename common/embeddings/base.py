@@ -106,6 +106,14 @@ class Embedding(object):
         word = word if has_index else None
         return word, has_index
 
+    def __hadler_core(self, word):
+        """
+        Core word handler.
+        Assumes to perform word stripping.
+        """
+        stripped_word = word.strip()
+        return self._handler(stripped_word)
+
     # endregion
 
     def iter_vocabulary(self):
@@ -122,28 +130,31 @@ class Embedding(object):
 
     def try_find_index_by_word(self, word):
         assert(isinstance(word, unicode))
-        _, index = self.__try_find_word_index_pair(word)
+        _, index = self.__hadler_core(word)
         return index
 
     def try_find_index_by_plain_word(self, word):
         assert(isinstance(word, unicode))
-        _, index = self.__try_find_word_index_pair(word)
+        _, index = self.__hadler_core(word)
         return index
 
     def try_get_related_word(self, word):
-        word, _ = self.__try_find_word_index_pair(word)
+        word, _ = self.__hadler_core(word)
         return word
+
+    def _handler(self, word):
+        return self.__try_find_word_index_pair(word)
 
     # region overriden methods
 
     def __contains__(self, word):
         assert(isinstance(word, unicode))
-        _, index = self.__try_find_word_index_pair(word)
+        _, index = self.__hadler_core(word)
         return index is not None
 
     def __getitem__(self, word):
         assert(isinstance(word, unicode))
-        _, index = self.__try_find_word_index_pair(word)
+        _, index = self.__hadler_core(word)
         return self._matrix[index]
 
     # endregion

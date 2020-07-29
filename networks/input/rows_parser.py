@@ -2,6 +2,7 @@ import pandas as pd
 
 from arekit.common.experiment import const
 from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.utils import filter_whitespaces
 
 
 class ParsedSampleRow(object):
@@ -26,7 +27,7 @@ class ParsedSampleRow(object):
             if key == const.T_IND:
                 self.__obj_ind = value
             if key == "text_a":
-                self.__terms = [term for term in row["text_a"].split(' ')]
+                self.__terms = filter_whitespaces([term for term in row["text_a"].split(u' ')])
 
     @property
     def SampleID(self):
