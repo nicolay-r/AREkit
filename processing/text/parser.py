@@ -28,13 +28,6 @@ class TextParser:
     def __init__(self):
         pass
 
-    # TODO. Tokens hiding actually discarded
-    @staticmethod
-    def parse(text, keep_tokens=False, stemmer=None):
-        assert(isinstance(text, unicode))
-        terms = TextParser.__parse_core(text, keep_tokens)
-        return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
-
     @staticmethod
     def parse_news(news, parse_options):
         assert(isinstance(news, News))
@@ -46,8 +39,8 @@ class TextParser:
         for sentence in news.iter_sentences(return_text=return_text):
             if parse_options.ParseEntities:
                 text_with_entities = news.EntitiesParser.parse(sentence)
-                parsed_sentence = TextParser.parse_string_list(string_iter=text_with_entities,
-                                                               stemmer=parse_options.Stemmer)
+                parsed_sentence = TextParser.__parse_string_list(string_iter=text_with_entities,
+                                                                 stemmer=parse_options.Stemmer)
             else:
                 parsed_sentence = TextParser.parse(text=sentence,
                                                    stemmer=parse_options.Stemmer)
@@ -73,6 +66,12 @@ class TextParser:
                           parsed_sentences=parsed_sentences)
 
     @staticmethod
+    def parse(text, stemmer=None):
+        assert(isinstance(text, unicode))
+        terms = TextParser.__parse_core(text)
+        return ParsedText(terms, stemmer=stemmer)
+
+    @staticmethod
     def __post_processing(parsed_news, frame_variant_collection):
         """
         Labeling frame variants in doc sentences.
@@ -88,8 +87,10 @@ class TextParser:
                 frame_variants_collection=frame_variant_collection,
                 parsed_text=sentence))
 
+    # region private methods
+
     @staticmethod
-    def parse_string_list(string_iter, keep_tokens=False, stemmer=None):
+    def __parse_string_list(string_iter, stemmer=None):
         assert(isinstance(string_iter, collections.Iterable))
 
         terms = []
@@ -97,28 +98,13 @@ class TextParser:
             if not isinstance(text, unicode):
                 terms.append(text)
                 continue
-            new_terms = TextParser.__parse_core(text, keep_tokens)
+            new_terms = TextParser.__parse_core(text)
             terms.extend(new_terms)
 
-        return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
+        return ParsedText(terms, stemmer=stemmer)
 
     @staticmethod
-    def from_string(str, separator=u' ', stemmer=None):
-
-        def __term_or_token(term):
-            token = TextParser.__try_term_as_token(term)
-            return token if token is not None else term
-
-        assert(isinstance(str, unicode))
-        terms = [word.strip(u' ') for word in str.split(separator)]
-        terms = [__term_or_token(t) for t in terms]
-        # TODO. Tokens hiding actually discarded
-        return ParsedText(terms, hide_tokens=True, stemmer=stemmer)
-
-    # region private methods
-
-    @staticmethod
-    def __parse_core(text, keep_tokens=False):
+    def __parse_core(text, keep_tokens=True):
         """
         Separates sentence into list of parsed_news
 
@@ -177,13 +163,15 @@ class TextParser:
         l = 0
         words_and_tokens = []
         while l < len(term):
-            # token
+
+            # Token.
             token = Tokens.try_create(term[l])
             if token is not None:
                 if token.get_token_value() != Tokens.NEW_LINE:
                     words_and_tokens.append(token)
                 l += 1
-            # number
+
+            # Number.
             elif unicode.isdigit(term[l]):
                 k = l + 1
                 while k < len(term) and unicode.isdigit(term[k]):
@@ -192,7 +180,8 @@ class TextParser:
                 assert(token is not None)
                 words_and_tokens.append(token)
                 l = k
-            # term
+
+            # Term.
             else:
                 k = l + 1
                 while k < len(term):

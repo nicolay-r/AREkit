@@ -21,6 +21,10 @@ def create_term_embedding(term,
     if term in embedding:
         return embedding.try_get_related_word(term), embedding[term]
 
+    # remove empty spaces before and after.
+    term = term.strip()
+
+    # perform lowercasing
     if do_lowercase:
         term = term.lower()
 
@@ -34,7 +38,11 @@ def create_term_embedding(term,
         count += c
         vector = vector + v
 
-    return term.strip(), vector / count if count > 0 else vector
+    # In order to prevent a problem of the further separations during reading process.
+    # it is necessary to replace the separators with the other chars.
+    term = term.replace(word_separator, u'-')
+
+    return term, vector / count if count > 0 else vector
 
 
 def __create_embedding_for_word(word, max_part_size, embedding):
