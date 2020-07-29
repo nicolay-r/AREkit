@@ -14,7 +14,7 @@ from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 
 
 class BaseSampleFormatter(BaseRowsFormatter):

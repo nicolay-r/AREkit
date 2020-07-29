@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.source.ruattitudes.text_object import TextObject
-from arekit.common.text_opinions.base import RefOpinion
+from arekit.source.ruattitudes.ref_opinion import RefOpinion
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
@@ -35,6 +35,7 @@ class RuAttitudesFormatReader(object):
         opinions_list = []
         objects_list = []
         s_index = 0
+        objects_in_prior_sentences_count = 0
         news_index = None
 
         label_scaler = ThreeLabelScaler()
@@ -86,6 +87,7 @@ class RuAttitudesFormatReader(object):
                                                objects_list=objects_list,
                                                sentence_index=s_index)
                 sentences.append(sentence)
+                objects_in_prior_sentences_count += len(objects_list)
                 t_len = RuAttitudesFormatReader.__calculate_terms_in_line(line)
                 assert(text_terms_count == t_len or text_terms_count is None)
                 reset = True
@@ -138,28 +140,32 @@ class RuAttitudesFormatReader(object):
 
         o_from = line.index(u'oi:[')
         o_to = line.index(u']', o_from)
-        source_object_id, target_object_id = line[o_from + 4:o_to].split(u',')
+        source_object_id_in_sentence, target_object_id_in_sentence = line[o_from + 4:o_to].split(u',')
 
-        source_object_id = int(source_object_id)
-        target_object_id = int(target_object_id)
-
-        ref_opinion = RefOpinion(source_id=source_object_id,
-                                 target_id=target_object_id,
-                                 sentiment=label,
-                                 owner=objects_list)
+        source_object_id_in_sentence = int(source_object_id_in_sentence)
+        target_object_id_in_sentence = int(target_object_id_in_sentence)
 
         s_from = line.index(u'si:{')
         s_to = line.index(u'}', s_from)
         opninion_key = line[s_from+4:s_to]
 
-        ref_opinion.set_tag(opninion_key)
+        ref_opinion = RefOpinion(source_id=source_object_id_in_sentence,
+                                 target_id=target_object_id_in_sentence,
+                                 source_value=objects_list[source_object_id_in_sentence].get_value(),
+                                 target_value=objects_list[target_object_id_in_sentence].get_value(),
+                                 sentiment=label,
+                                 tag=opninion_key)
 
         return ref_opinion
 
     @staticmethod
     def __parse_object(line):
         assert(isinstance(line, unicode))
+
         line = line[len(RuAttitudesFormatReader.OBJ_KEY):]
+
+        obj_ind_begin = line.index(u'oi:[', 0)
+        obj_ind_end = line.index(u']', obj_ind_begin + 1)
 
         o_begin = line.index(u"'", 0)
         o_end = line.index(u"'", o_begin + 1)
@@ -167,12 +173,14 @@ class RuAttitudesFormatReader(object):
         b_from = line.index(u'b:(')
         b_to = line.index(u')', b_from)
 
+        id_in_sentence = int(line[obj_ind_begin + 4:obj_ind_end])
         term_index, length = line[b_from+3:b_to].split(u',')
         terms = line[o_begin+1:o_end].split(u',')
 
         obj_type = RuAttitudesFormatReader.__try_get_type(line)
 
-        text_object = TextObject(terms=terms,
+        text_object = TextObject(id_in_sentence=id_in_sentence,
+                                 terms=terms,
                                  obj_type=obj_type,
                                  position=int(term_index))
 

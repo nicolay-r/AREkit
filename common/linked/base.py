@@ -1,7 +1,7 @@
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.news.parsed.term_position import TermPositionTypes
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 
 
 def is_context_continued(text_opinion_helper, cur_opinion, prev_opinion):

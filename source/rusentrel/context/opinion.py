@@ -1,5 +1,5 @@
 from arekit.common.labels.base import Label
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 from arekit.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 
 

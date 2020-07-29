@@ -10,7 +10,7 @@ from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.synonyms import SynonymsCollection
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.features.dist import DistanceFeatures
 from arekit.contrib.networks.features.inds import IndicesFeature

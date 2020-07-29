@@ -1,7 +1,5 @@
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.base import News
-from arekit.common.text_opinions.base import RefOpinion
-from arekit.common.text_opinions.text_opinion import TextOpinion
 from arekit.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
@@ -11,10 +9,9 @@ class RuAttitudesNews(News):
     def __init__(self, sentences, news_index):
         assert(len(sentences) > 0)
 
-        super(RuAttitudesNews, self).__init__(
-            news_id=news_index,
-            sentences=sentences,
-            entities_parser=RuAttitudesTextEntitiesParser(iter_sentences=sentences))
+        super(RuAttitudesNews, self).__init__(news_id=news_index,
+                                              sentences=sentences,
+                                              entities_parser=RuAttitudesTextEntitiesParser())
 
         self.__set_owners()
         self.__objects_before_sentence = self.__cache_objects_declared_before()
@@ -74,31 +71,12 @@ class RuAttitudesNews(News):
             assert(isinstance(sentence, RuAttitudesSentence))
 
             ref_opinion = sentence.find_ref_opinion_by_key(key=opinion.Tag)
-
             if ref_opinion is None:
                 continue
 
-            yield self.__ref_opinion_to_text_opinion(
-                news_index=sentence.Owner.ID,
-                ref_opinion=ref_opinion,
-                sent_to_doc_id_func=sentence.get_doc_level_text_object_id)
-
-    @staticmethod
-    def __ref_opinion_to_text_opinion(news_index,
-                                      ref_opinion,
-                                      sent_to_doc_id_func):
-        assert(isinstance(news_index, int))
-        assert(isinstance(ref_opinion, RefOpinion))
-        assert(callable(sent_to_doc_id_func))
-
-        cloned_ref_opinion = RefOpinion(
-            source_id=sent_to_doc_id_func(ref_opinion.SourceId),
-            target_id=sent_to_doc_id_func(ref_opinion.TargetId),
-            sentiment=ref_opinion.Sentiment)
-
-        return TextOpinion.create_from_ref_opinion(
-            news_id=news_index,
-            text_opinion_id=None,
-            ref_opinion=cloned_ref_opinion)
+            yield ref_opinion.to_text_opinion(
+                news_id=sentence.Owner.ID,
+                end_to_doc_id_func=lambda sent_level_id: sentence.get_doc_level_text_object_id(sent_level_id),
+                text_opinion_id=None)
 
     # endregion

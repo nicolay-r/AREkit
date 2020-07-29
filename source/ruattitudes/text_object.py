@@ -1,4 +1,5 @@
 from arekit.common.bound import Bound
+from arekit.common.entities.base import Entity
 
 
 class TextObject(object):
@@ -7,14 +8,26 @@ class TextObject(object):
     The latter is used to emphasize the entity type.
     """
 
-    def __init__(self, terms, obj_type, position):
+    def __init__(self, id_in_sentence, terms, obj_type, position):
+        assert(isinstance(id_in_sentence, int))
         assert(isinstance(terms, list))
         assert(isinstance(position, int))
         assert(isinstance(obj_type, unicode) or obj_type is None)
         self.__terms = terms
         self.__position = position
         self.__type = obj_type
+        self.__id_in_sentence = id_in_sentence
         self.__tag = None
+
+    def to_entity(self, to_doc_id_func):
+        assert(callable(to_doc_id_func))
+
+        _value = self.get_value()
+        value = _value if len(_value) > 0 else u'[empty]'
+
+        return Entity(value=value,
+                      e_type=self.Type,
+                      id_in_doc=to_doc_id_func(self.IdInSentence))
 
     # region properties
 
@@ -29,6 +42,10 @@ class TextObject(object):
     @property
     def Type(self):
         return self.__type
+
+    @property
+    def IdInSentence(self):
+        return self.__id_in_sentence
 
     # endregion
 
