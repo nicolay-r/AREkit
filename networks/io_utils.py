@@ -41,7 +41,7 @@ class NetworkIOUtils(object):
     @staticmethod
     def get_output_results_filepath(experiment, data_type):
         template = NetworkIOUtils.__filename_template(data_type=data_type, experiment=experiment)
-        return NetworkIOUtils.__get_filepath(out_dir=NetworkIOUtils.get_target_dir(experiment),
+        return NetworkIOUtils.__get_filepath(out_dir=experiment.DataIO.get_model_root(),
                                              template=template,
                                              prefix=u"result")
 
