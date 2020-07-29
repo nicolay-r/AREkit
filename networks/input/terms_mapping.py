@@ -39,6 +39,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
     def map_word(self, w_ind, word):
         value, vector = create_term_embedding(term=word,
                                               embedding=self.__predefined_embedding,
+                                              check=True,
                                               max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE)
         return value, vector
 
@@ -46,6 +47,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
         assert(isinstance(text_frame_variant, TextFrameVariant))
         value, embedding = create_term_embedding(term=text_frame_variant.Variant.get_value(),
                                                  embedding=self.__predefined_embedding,
+                                                 check=False,
                                                  max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE)
 
         return value, embedding

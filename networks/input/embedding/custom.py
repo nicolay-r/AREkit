@@ -1,17 +1,11 @@
 import logging
-
 import numpy as np
-
 from arekit.common.embeddings.base import Embedding
 
 logger = logging.getLogger(__name__)
 
 
-def create_term_embedding(term,
-                          embedding,
-                          max_part_size=3,
-                          word_separator=u' ',
-                          do_lowercase=True):
+def create_term_embedding(term, embedding, check, word_separator=u' '):
     """
     Embedding algorithm based on parts (trigrams originally)
     """
@@ -19,10 +13,27 @@ def create_term_embedding(term,
     assert(isinstance(embedding, Embedding))
 
     if term in embedding:
-        return embedding.try_get_related_word(term), embedding[term]
+        word, embedding = __get_from_embedding(term=term, embedding=embedding, check=check)
+    else:
+        word, embedding = __compose_from_parts(term=term,
+                                               embedding=embedding,
+                                               check=check,
+                                               word_separator=word_separator)
 
+    # In order to prevent a problem of the further separations during reading process.
+    # it is necessary to replace the separators with the other chars.
+    word = word.replace(word_separator, u'-')
+
+    return word, embedding
+
+
+def __compose_from_parts(term, embedding, check, word_separator, max_part_size=3, do_lowercase=True):
     # remove empty spaces before and after.
     term = term.strip()
+
+    if check:
+        if u' ' in term:
+            print u"FAILED: [{}]".format(term)
 
     # perform lowercasing
     if do_lowercase:
@@ -38,12 +49,12 @@ def create_term_embedding(term,
         count += c
         vector = vector + v
 
-    # In order to prevent a problem of the further separations during reading process.
-    # it is necessary to replace the separators with the other chars.
-    term = term.replace(word_separator, u'-')
-
     return term, vector / count if count > 0 else vector
 
+def __get_from_embedding(term, embedding, check):
+    if u' ' in term:
+        print u"EXISTED IN EMBEDDING: [{}]".format(term)
+    return embedding.try_get_related_word(term), embedding[term]
 
 def __create_embedding_for_word(word, max_part_size, embedding):
     assert(isinstance(word, unicode))
