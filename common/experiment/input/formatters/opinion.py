@@ -1,3 +1,4 @@
+import logging
 from collections import OrderedDict
 from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
@@ -5,6 +6,9 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.dataset.text_opinions.enums import EntityEndType
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class BaseOpinionsFormatter(BaseRowsFormatter):
@@ -67,6 +71,7 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
     # endregion
 
     def save(self, filepath):
+        logger.info(u"Saving... : {}".format(filepath))
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
@@ -74,4 +79,5 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
                         index=False,
                         compression='gzip',
                         header=False)
+        logger.info(u"Saving Complete!")
 

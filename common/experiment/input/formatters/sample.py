@@ -1,3 +1,4 @@
+import logging
 from collections import OrderedDict
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider
@@ -15,6 +16,9 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class BaseSampleFormatter(BaseRowsFormatter):
@@ -219,11 +223,14 @@ class BaseSampleFormatter(BaseRowsFormatter):
         assert(isinstance(filepath, unicode))
 
         if self.__balance:
+            logger.info(u"Start balancing...")
             SampleRowBalancerHelper.balance_oversampling(
                 df=self._df,
                 create_blank_df=lambda size: self._create_blank_df(size),
                 label_provider=self.__label_provider)
+            logger.info(u"Balancing completed!")
 
+        logger.info(u"Saving... : {}".format(filepath))
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
@@ -232,6 +239,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
                         float_format="%.0f",
                         compression='gzip',
                         header=write_header)
+        logger.info(u"Saving completed!")
 
     def __len__(self):
         return len(self._df.index)
