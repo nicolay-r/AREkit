@@ -1,11 +1,9 @@
 import logging
 from tqdm import tqdm
-from os import path
 
 import numpy as np
 import pandas as pd
 
-import io_utils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 

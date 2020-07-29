@@ -1,6 +1,6 @@
 from arekit.common.news.entities_parser import BaseEntitiesParser
+from arekit.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.source.ruattitudes.text_object import TextObject
-from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class RuAttitudesTextEntitiesParser(BaseEntitiesParser):

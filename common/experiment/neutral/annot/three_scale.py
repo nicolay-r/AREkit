@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 import logging
 
-from tqdm import tqdm
-
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations

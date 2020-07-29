@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from arekit.common.experiment.scales.three import ThreeLabelScaler
+from arekit.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.source.ruattitudes.text_object import TextObject
-from arekit.source.ruattitudes.ref_opinion import RefOpinion
+from arekit.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class RuAttitudesFormatReader(object):
@@ -51,10 +51,10 @@ class RuAttitudesFormatReader(object):
                 objects_list.append(object)
 
             if RuAttitudesFormatReader.OPINION_KEY in line:
-                opinion = RuAttitudesFormatReader.__parse_opinion(line=line,
-                                                                  objects_list=objects_list,
-                                                                  label_scaler=label_scaler)
-                opinions_list.append(opinion)
+                sentence_opin = RuAttitudesFormatReader.__parse_sentence_opin(line=line,
+                                                                              objects_list=objects_list,
+                                                                              label_scaler=label_scaler)
+                opinions_list.append(sentence_opin)
 
             if RuAttitudesFormatReader.FRAMEVAR_TITLE in line:
                 # TODO. This information is ommited now.
@@ -72,7 +72,7 @@ class RuAttitudesFormatReader(object):
             if RuAttitudesFormatReader.TITLE_KEY in line:
                 title = RuAttitudesSentence(is_title=True,
                                             text=RuAttitudesFormatReader.__parse_sentence(line, True),
-                                            ref_opinions=opinions_list,
+                                            sentence_opins=opinions_list,
                                             objects_list=objects_list,
                                             sentence_index=-1)
                 sentences.append(title)
@@ -83,7 +83,7 @@ class RuAttitudesFormatReader(object):
             if RuAttitudesFormatReader.STEXT_KEY in line and line.index(RuAttitudesFormatReader.STEXT_KEY) == 0:
                 sentence = RuAttitudesSentence(is_title=False,
                                                text=RuAttitudesFormatReader.__parse_sentence(line, False),
-                                               ref_opinions=opinions_list,
+                                               sentence_opins=opinions_list,
                                                objects_list=objects_list,
                                                sentence_index=s_index)
                 sentences.append(sentence)
@@ -128,7 +128,7 @@ class RuAttitudesFormatReader(object):
         return text.strip()
 
     @staticmethod
-    def __parse_opinion(line, objects_list, label_scaler):
+    def __parse_sentence_opin(line, objects_list, label_scaler):
         assert(isinstance(objects_list, list))
         assert(isinstance(label_scaler, ThreeLabelScaler))
 
@@ -149,14 +149,14 @@ class RuAttitudesFormatReader(object):
         s_to = line.index(u'}', s_from)
         opninion_key = line[s_from+4:s_to]
 
-        ref_opinion = RefOpinion(source_id=source_object_id_in_sentence,
-                                 target_id=target_object_id_in_sentence,
-                                 source_value=objects_list[source_object_id_in_sentence].get_value(),
-                                 target_value=objects_list[target_object_id_in_sentence].get_value(),
-                                 sentiment=label,
-                                 tag=opninion_key)
+        sentence_opin = SentenceOpinion(source_id=source_object_id_in_sentence,
+                                        target_id=target_object_id_in_sentence,
+                                        source_value=objects_list[source_object_id_in_sentence].get_value(),
+                                        target_value=objects_list[target_object_id_in_sentence].get_value(),
+                                        sentiment=label,
+                                        tag=opninion_key)
 
-        return ref_opinion
+        return sentence_opin
 
     @staticmethod
     def __parse_object(line):

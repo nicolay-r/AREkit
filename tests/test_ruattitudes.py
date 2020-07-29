@@ -3,17 +3,16 @@ import logging
 import sys
 import unittest
 
-from arekit.common.entities.base import Entity
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
-from arekit.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
-from arekit.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
 
 sys.path.append('../../')
 
+from arekit.common.entities.base import Entity
+from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.text.parser import TextParser
+from arekit.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.source.ruattitudes.collection import RuAttitudesCollection
-from arekit.source.ruattitudes.sentence import RuAttitudesSentence
+from arekit.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -60,12 +59,12 @@ class TestRuAttiudes(unittest.TestCase):
                 # objects
                 logger.debug(u",".join([object.get_value() for object in sentence.iter_objects()]))
                 # attitudes
-                for ref_opinion in sentence.iter_ref_opinions():
-                    src, target = sentence.get_objects(ref_opinion)
+                for sentence_opin in sentence.iter_sentence_opins():
+                    src, target = sentence.get_objects(sentence_opin)
                     s = u"{src}->{target} ({label}) (t:[{src_type},{target_type}])".format(
                         src=src.get_value(),
                         target=target.get_value(),
-                        label=str(ref_opinion.Sentiment.to_class_str()),
+                        label=str(sentence_opin.Sentiment.to_class_str()),
                         src_type=src.Type,
                         target_type=target.Type).encode('utf-8')
                     logger.debug(s)

@@ -3,7 +3,7 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.base import TextOpinion
 
 
-class RefOpinion(object):
+class SentenceOpinion(object):
     """
     Provides an opinion within a sentence.
     Specific for RuAttitudes collection, as the latter provides connections within a sentence.

@@ -1,6 +1,6 @@
-from arekit.source.ruattitudes.ref_opinion import RefOpinion
+from arekit.source.ruattitudes.sentence.base import RuAttitudesSentence
+from arekit.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.source.ruattitudes.sentence import RuAttitudesSentence
 
 
 class RuAttitudesNewsHelper(object):
@@ -18,11 +18,11 @@ class RuAttitudesNewsHelper(object):
         doc_opinions = RuAttitudesNewsHelper.build_opinion_dict(news=news)
         assert(isinstance(doc_opinions, dict))
 
-        for ref_opinion_tag, value in doc_opinions.iteritems():
+        for sentence_opin_tag, value in doc_opinions.iteritems():
 
             opinion, related_sentences = RuAttitudesNewsHelper.__extract_opinion_with_related_sentences(
                 news=news,
-                ref_opinion_tag=ref_opinion_tag)
+                sentence_opin_tag=sentence_opin_tag)
 
             if opinion is None:
                 continue
@@ -34,25 +34,25 @@ class RuAttitudesNewsHelper(object):
     # region private methods
 
     @staticmethod
-    def __extract_opinion_with_related_sentences(news, ref_opinion_tag):
+    def __extract_opinion_with_related_sentences(news, sentence_opin_tag):
         opinion = None
         related_sentences = []
 
         for sentence in news.iter_sentences(return_text=False):
             assert(isinstance(sentence, RuAttitudesSentence))
 
-            ref_opinion = sentence.find_ref_opinion_by_key(ref_opinion_tag)
-            if ref_opinion is None:
+            sentence_opin = sentence.find_sentence_opin_by_key(sentence_opin_tag)
+            if sentence_opin is None:
                 continue
 
-            assert(isinstance(ref_opinion, RefOpinion))
+            assert(isinstance(sentence_opin, SentenceOpinion))
 
             related_sentences.append(sentence)
 
             if opinion is not None:
                 continue
 
-            opinion = ref_opinion.to_opinion()
+            opinion = sentence_opin.to_opinion()
 
         return opinion, related_sentences
 
@@ -62,9 +62,9 @@ class RuAttitudesNewsHelper(object):
 
         for s_ind, sentence in enumerate(news.iter_sentences(return_text=False)):
             assert(isinstance(sentence, RuAttitudesSentence))
-            for ref_opinion in sentence.iter_ref_opinions():
-                assert(isinstance(ref_opinion, RefOpinion))
-                key = ref_opinion.Tag
+            for sentence_opin in sentence.iter_sentence_opins():
+                assert(isinstance(sentence_opin, SentenceOpinion))
+                key = sentence_opin.Tag
                 if key not in opin_dict:
                     opin_dict[key] = []
                 opin_dict[key].append(s_ind)

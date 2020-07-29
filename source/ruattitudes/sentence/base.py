@@ -1,19 +1,19 @@
 from arekit.common.news.sentence import BaseNewsSentence
-from arekit.source.ruattitudes.ref_opinion import RefOpinion
+from arekit.source.ruattitudes.sentence.opinion import SentenceOpinion
 
 
 class RuAttitudesSentence(BaseNewsSentence):
 
-    def __init__(self, is_title, text, ref_opinions, objects_list, sentence_index):
+    def __init__(self, is_title, text, sentence_opins, objects_list, sentence_index):
         assert(isinstance(is_title, bool))
-        assert(isinstance(ref_opinions, list))
+        assert(isinstance(sentence_opins, list))
         assert(isinstance(objects_list, list))
         assert(isinstance(sentence_index, int))
 
         super(RuAttitudesSentence, self).__init__(text=text)
 
         self.__is_title = is_title
-        self.__ref_opinions = ref_opinions
+        self.__sentence_opins = sentence_opins
         self.__objects = objects_list
         self.__sentence_index = sentence_index
         self.__owner = None
@@ -48,10 +48,10 @@ class RuAttitudesSentence(BaseNewsSentence):
             raise Exception("Owner is already declared")
         self.__owner = owner
 
-    def get_objects(self, ref_opinion):
-        assert(isinstance(ref_opinion, RefOpinion))
-        source_obj = self.__objects[ref_opinion.SourceID]
-        target_obj = self.__objects[ref_opinion.TargetID]
+    def get_objects(self, sentence_opin):
+        assert(isinstance(sentence_opin, SentenceOpinion))
+        source_obj = self.__objects[sentence_opin.SourceID]
+        target_obj = self.__objects[sentence_opin.TargetID]
         return source_obj, target_obj
 
     def get_doc_level_text_object_id(self, text_object_ind):
@@ -61,17 +61,17 @@ class RuAttitudesSentence(BaseNewsSentence):
         for object in self.__objects:
             yield object
 
-    def find_ref_opinion_by_key(self, key):
+    def find_sentence_opin_by_key(self, key):
         assert(key is not None)
 
-        for opinion in self.__ref_opinions:
+        for opinion in self.__sentence_opins:
             if opinion.Tag == key:
                 return opinion
 
         return None
 
-    def iter_ref_opinions(self):
-        for opinion in self.__ref_opinions:
+    def iter_sentence_opins(self):
+        for opinion in self.__sentence_opins:
             yield opinion
 
     # endregion

@@ -1,10 +1,6 @@
 import logging
 
-from tqdm import tqdm
-
-import arekit.common.experiment.neutral.annot.utils
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
-
 from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion

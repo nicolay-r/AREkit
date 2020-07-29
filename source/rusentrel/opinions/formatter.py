@@ -1,5 +1,3 @@
-import collections
-import gzip
 import io
 
 from arekit.common.opinions.base import Opinion

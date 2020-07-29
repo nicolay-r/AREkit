@@ -1,6 +1,5 @@
 import zipfile
 from os import path
-from os.path import dirname
 
 import pandas as pd
 
