@@ -41,9 +41,6 @@ class OpinionOperations(object):
     def create_opinion_collection(self, opinions=None):
         raise NotImplementedError()
 
-    # TODO. Remove
-    # TODO. Remove
-    # TODO. Remove
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 
