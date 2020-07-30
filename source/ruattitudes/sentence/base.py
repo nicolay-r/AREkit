@@ -1,4 +1,5 @@
 from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.utils import split_by_whitespaces
 from arekit.source.ruattitudes.sentence.opinion import SentenceOpinion
 
 
@@ -41,7 +42,7 @@ class RuAttitudesSentence(BaseNewsSentence):
     # region public methods
 
     def get_text_as_list(self):
-        return self.Text.split(' ')
+        return split_by_whitespaces(self.Text)
 
     def set_owner(self, owner):
         if self.__owner is not None:

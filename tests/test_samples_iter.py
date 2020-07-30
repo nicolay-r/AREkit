@@ -6,6 +6,7 @@ import unittest
 
 sys.path.append('../../')
 
+from arekit.common.utils import split_by_whitespaces
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 
@@ -41,18 +42,18 @@ class TestSamplesIteration(unittest.TestCase):
 
         samples = []
         for line in self.iter_tsv_gzip(input_file=samples_filepath):
-            _id, label, terms, subj_ind, obj_ind = line
+            _id, label, text, subj_ind, obj_ind = line
 
-            terms = terms.decode('utf-8')
+            text = text.decode('utf-8')
 
             print u"id: {}".format(_id)
             print u"label: {}".format(label)
-            print u"terms: {}".format(terms)
+            print u"terms: {}".format(text)
             print u"subj_ind: {}".format(subj_ind)
             print u"obj_ind: {}".format(obj_ind)
 
             s = InputSample.from_tsv_row(input_sample_id=_id,
-                                         terms=terms.split(u' '),
+                                         terms=split_by_whitespaces(text),
                                          subj_ind=int(subj_ind),
                                          obj_ind=int(obj_ind),
                                          words_vocab=words_vocab,

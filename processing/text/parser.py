@@ -7,6 +7,7 @@ from arekit.common.frame_variants.parse import FrameVariantsParser
 from arekit.common.news.base import News
 from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.utils import split_by_whitespaces
 from arekit.processing.text.news_stat import debug_statistics, debug_show_terms
 from arekit.processing.text.parsed import ParsedText
 from arekit.processing.text.tokens import Tokens
@@ -116,8 +117,8 @@ class TextParser:
         assert(isinstance(text, unicode))
         assert(isinstance(keep_tokens, bool))
 
-        words = [word.strip(u' ') for word in text.split(u' ')]
-        terms = TextParser.__process_words(words, keep_tokens)
+        terms = TextParser.__process_words(words=split_by_whitespaces(text),
+                                           keep_tokens=keep_tokens)
 
         TextParser.__log_debug(terms)
 

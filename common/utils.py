@@ -27,3 +27,12 @@ def create_dir_if_not_exists(filepath):
 
 def filter_whitespaces(terms):
     return [term.strip() for term in terms if term.strip()]
+
+
+def split_by_whitespaces(text):
+    """
+    Assumes to perform a word separation including a variety of space entries.
+    In terms of the latter we consider any whitespace separator.
+    """
+    assert(isinstance(text, unicode))
+    return text.split()

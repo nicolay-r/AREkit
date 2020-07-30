@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from arekit.common.experiment.scales.three import ThreeLabelScaler
+from arekit.common.utils import split_by_whitespaces
 from arekit.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.source.ruattitudes.text_object import TextObject
 from arekit.source.ruattitudes.sentence.opinion import SentenceOpinion
@@ -117,7 +118,7 @@ class RuAttitudesFormatReader(object):
     @staticmethod
     def __calculate_terms_in_line(line):
         assert(isinstance(line, unicode))
-        return len(line.split(u' '))
+        return len(split_by_whitespaces(line))
 
     @staticmethod
     def __parse_sentence(line, is_title):
