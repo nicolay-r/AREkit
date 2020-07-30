@@ -5,6 +5,8 @@ from arekit.source.zip_utils import ZipArchiveUtils
 class RuAttitudesVersions:
     V10 = u"v1_0"
     V11 = u"v1_1"
+    # Expanded with neutral attitudes
+    V11N = u'v1_1-n'
 
 
 class RuAttitudesIOUtils(ZipArchiveUtils):
