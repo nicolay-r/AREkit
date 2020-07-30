@@ -57,16 +57,21 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
         return row
 
     @staticmethod
-    def _iter_by_rows(opinion_provider):
+    def _iter_by_rows(opinion_provider, idle_mode):
         assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(idle_mode, bool))
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(balance=False,
                                                                     supported_labels=None)
 
         for linked_wrapper in linked_iter:
-            yield BaseOpinionsFormatter.__create_opinion_row(
-                opinion_provider=opinion_provider,
-                linked_wrapper=linked_wrapper)
+            if idle_mode:
+                yield None
+            else:
+                yield BaseOpinionsFormatter.__create_opinion_row(
+                    opinion_provider=opinion_provider,
+                    linked_wrapper=linked_wrapper)
+
 
     # endregion
 
@@ -79,5 +84,5 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
                         index=False,
                         compression='gzip',
                         header=False)
-        logger.info(u"Saving Complete!")
+        logger.info(u"Saving completed!")
 

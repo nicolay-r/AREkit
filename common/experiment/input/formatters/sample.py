@@ -120,7 +120,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         row[const.S_IND] = s_ind
         row[const.T_IND] = t_ind
 
-    def __create_row(self, opinion_provider, linked_wrap, index_in_linked, etalon_label):
+    def __create_row(self, opinion_provider, linked_wrap, index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -132,6 +132,10 @@ class BaseSampleFormatter(BaseRowsFormatter):
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
+        assert(isinstance(idle_mode, bool))
+
+        if idle_mode:
+            return None
 
         text_opinion = linked_wrap[index_in_linked]
 
@@ -151,7 +155,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
                             t_ind=t_ind)
         return row
 
-    def __provide_rows(self, opinion_provider, linked_wrap, index_in_linked):
+    def __provide_rows(self, opinion_provider, linked_wrap, index_in_linked, idle_mode):
         """
         Providing Rows depending on row_id_formatter type
         """
@@ -166,13 +170,15 @@ class BaseSampleFormatter(BaseRowsFormatter):
                 yield self.__create_row(opinion_provider=opinion_provider,
                                         linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
                                         index_in_linked=index_in_linked,
-                                        etalon_label=origin.Sentiment)
+                                        etalon_label=origin.Sentiment,
+                                        idle_mode=idle_mode)
 
         if isinstance(self.__row_ids_provider, MultipleIDProvider):
             yield self.__create_row(opinion_provider=opinion_provider,
                                     linked_wrap=linked_wrap,
                                     index_in_linked=index_in_linked,
-                                    etalon_label=origin.Sentiment)
+                                    etalon_label=origin.Sentiment,
+                                    idle_mode=idle_mode)
 
     @staticmethod
     def __copy_modified_linked_wrap(linked_wrap, label):
@@ -186,11 +192,12 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
-    def _iter_by_rows(self, opinion_provider):
+    def _iter_by_rows(self, opinion_provider, idle_mode):
         """
         Iterate by rows that is assumes to be added as samples, using opinion_provider information
         """
         assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(idle_mode, bool))
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(
             balance=self.__balance,
@@ -203,7 +210,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
                 rows_it = self.__provide_rows(
                     opinion_provider=opinion_provider,
                     linked_wrap=linked_wrap,
-                    index_in_linked=i)
+                    index_in_linked=i,
+                    idle_mode=idle_mode)
 
                 for row in rows_it:
                     yield row

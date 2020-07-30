@@ -31,7 +31,7 @@ class BaseRowsFormatter(object):
         return dtypes_list
 
     @staticmethod
-    def _iter_by_rows(opinion_provider):
+    def _iter_by_rows(opinion_provider, idle_mode):
         raise NotImplementedError()
 
     def _create_empty_df(self):
@@ -55,14 +55,18 @@ class BaseRowsFormatter(object):
     def format(self, opinion_provider):
         assert(isinstance(opinion_provider, OpinionProvider))
 
-        rows_count = sum(1 for _ in self._iter_by_rows(opinion_provider))
+        logger.info(u"Calculating rows count ... ")
+        rows_count = sum(1 for _ in self._iter_by_rows(opinion_provider, idle_mode=True))
+        logger.info(u"Completed!")
 
+        logger.info(u"Filling with blank rows: {}".format(rows_count))
         self.__fill_with_blank_rows(rows_count)
+        logger.info(u"Completed!")
 
         desc = u"{fmt}-{dtype}".format(fmt=self.formatter_type_log_name(),
                                        dtype=self._data_type)
 
-        iter = tqdm(iterable=self._iter_by_rows(opinion_provider),
+        iter = tqdm(iterable=self._iter_by_rows(opinion_provider, idle_mode=False),
                     desc=desc,
                     total=rows_count,
                     ncols=80)
