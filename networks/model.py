@@ -1,3 +1,4 @@
+import collections
 import os
 import logging
 import numpy as np
@@ -128,15 +129,23 @@ class BaseTensorflowModel(BaseModel):
         assert(self.__sess is not None)
 
         operation_cancel = OperationCancellation()
-        minibatches = list(self.get_bags_collection(DataType.Train).iter_by_groups(self.Config.BagsPerMinibatch))
-        logger.info("Minibatches passing per epoch count: {}".format(len(minibatches)))
+        bags_collection = self.get_bags_collection(DataType.Train)
+
+        bags_per_group = self.Config.BagsPerMinibatch
+        # However this is not a precise value.
+        minibatches_count = bags_collection.get_groups_count(bags_per_group)
+        logger.info("Minibatches passing per epoch count: ~{} (Might be greater or equal, as the last bag is expanded)".format(minibatches_count))
 
         for epoch_index in xrange(epochs_count):
 
             if operation_cancel.IsCancelled:
                 break
 
-            e_fit_cost, e_fit_acc = self.__fit_epoch(minibatches=minibatches)
+            bags_collection.shuffle()
+
+            e_fit_cost, e_fit_acc = self.__fit_epoch(
+                minibatches_iter=bags_collection.iter_by_groups(bags_per_group=bags_per_group),
+                total=minibatches_count)
 
             if self.Callback is not None:
                 self.Callback.on_epoch_finished(avg_fit_cost=e_fit_cost,
@@ -210,21 +219,20 @@ class BaseTensorflowModel(BaseModel):
 
     # region Private
 
-    def __fit_epoch(self, minibatches):
-        assert(isinstance(minibatches, list))
+    def __fit_epoch(self, minibatches_iter, total):
+        assert(isinstance(minibatches_iter, collections.Iterable))
 
         fit_total_cost = 0
         fit_total_acc = 0
         groups_count = 0
 
-        np.random.shuffle(minibatches)
+        it = tqdm(minibatches_iter,
+                  unit='mbs',
+                  desc="Training e={}".format(self.__current_epoch_index),
+                  total=total,
+                  ncols=80)
 
-        iter_minibatches = tqdm(minibatches,
-                                unit='mbs',
-                                desc="Training e={}".format(self.__current_epoch_index),
-                                ncols=80)
-
-        for bags_group in iter_minibatches:
+        for bags_group in it:
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch, data_type=DataType.Train)
 
@@ -287,7 +295,8 @@ class BaseTensorflowModel(BaseModel):
         for bags_group in bags_group_itt:
 
             minibatch = self.create_batch_by_bags_group(bags_group)
-            feed_dict = self.create_feed_dict(minibatch, data_type=data_type)
+            feed_dict = self.create_feed_dict(minibatch=minibatch,
+                                              data_type=data_type)
 
             result = self.__sess.run([self.__network.Labels] + idh_tensors, feed_dict=feed_dict)
             uint_labels = result[0]

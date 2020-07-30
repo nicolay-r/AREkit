@@ -73,6 +73,12 @@ class BagsCollection(object):
 
         return False
 
+    def get_groups_count(self, bags_per_group):
+        return len(self._bags) / bags_per_group
+
+    def shuffle(self):
+        np.random.shuffle(self._bags)
+
     def iter_by_groups(self, bags_per_group, text_opinion_ids_set=None):
         """
         text_opinion_ids_set: set or None
@@ -88,9 +94,8 @@ class BagsCollection(object):
                 bags_list=bags_list,
                 text_opinion_ids_set=text_opinion_ids_set)
 
-        groups_count = len(self._bags) / bags_per_group
         end = 0
-        for index in xrange(groups_count):
+        for index in xrange(self.get_groups_count(bags_per_group)):
 
             begin = index * bags_per_group
             end = begin + bags_per_group
