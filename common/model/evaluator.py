@@ -15,7 +15,7 @@ class CustomOpinionBasedModelEvaluator(OpinionBasedModelEvaluator):
 
     def before_evaluation(self, data_type, doc_ids, epoch_index):
 
-        doc_ids_set = set(self.__model.IO.iter_doc_ids_to_compare(doc_ids))
+        doc_ids_set = set(self.__model.IO.get_doc_ids_set_to_compare(doc_ids))
 
         collections_iter = self.__iter_converted_to_opinion_collections(
             # TODO. This should be based on tsv.

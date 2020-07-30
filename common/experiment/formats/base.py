@@ -117,7 +117,7 @@ class BaseExperiment(object):
         doc_ids = self.DocumentOperations.iter_news_indices(data_type=data_type)
 
         result = evaluator.evaluate(data_type=data_type,
-                                    doc_ids=self.OpinionOperations.iter_doc_ids_to_compare(doc_ids),
+                                    doc_ids=self.OpinionOperations.get_doc_ids_set_to_compare(doc_ids),
                                     epoch_index=self.EPOCH_INDEX_PLACEHOLER)
 
         assert(isinstance(result, BaseEvalResult))

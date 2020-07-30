@@ -29,7 +29,7 @@ class OpinionOperations(object):
     def read_neutral_opinion_collection(self, doc_id, data_type):
         raise NotImplementedError()
 
-    def iter_doc_ids_to_compare(self, doc_ids):
+    def get_doc_ids_set_to_compare(self, doc_ids):
         raise NotImplementedError()
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):

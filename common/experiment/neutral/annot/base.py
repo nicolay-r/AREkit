@@ -68,7 +68,7 @@ class BaseNeutralAnnotator(object):
 
     def iter_doc_ids_to_compare(self):
         doc_ids_iter = self.__iter_all_doc_ids()
-        for doc_id in self._OpinOps.iter_doc_ids_to_compare(doc_ids_iter):
+        for doc_id in self._OpinOps.get_doc_ids_set_to_compare(doc_ids_iter):
             yield doc_id
 
     def initialize(self, data_io, opin_ops, doc_ops):
