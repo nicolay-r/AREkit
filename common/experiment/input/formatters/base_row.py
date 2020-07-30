@@ -1,3 +1,4 @@
+import gc
 import logging
 from tqdm import tqdm
 
@@ -80,3 +81,7 @@ class BaseRowsFormatter(object):
     def __iter__(self):
         for row in self._df.iterrows():
             yield row
+
+    def dispose_dataframe(self):
+        del self._df
+        gc.collect()

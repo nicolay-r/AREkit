@@ -42,6 +42,7 @@ class BaseInputEncoder(object):
             opnion_formatter = BaseOpinionsFormatter(data_type)
             opnion_formatter.format(opinion_provider)
             opnion_formatter.save(opinion_filepath)
+            opnion_formatter.dispose_dataframe()
 
             # Samples
             sample_filepath = get_sample_filepath(data_type, experiment)
@@ -49,4 +50,4 @@ class BaseInputEncoder(object):
             sample_formatter.format(opinion_provider)
             sample_formatter.save(filepath=sample_filepath,
                                   write_header=write_header_func(data_type))
-
+            sample_formatter.dispose_dataframe()
