@@ -285,12 +285,13 @@ class BaseTensorflowModel(BaseModel):
             idh_tensors.append(tensor)
 
         bags_collection = self.get_bags_collection(data_type)
-        bags_group_it = bags_collection.iter_by_groups(bags_per_group=self.Config.BagsPerMinibatch,
+        bags_per_group = self.Config.BagsPerMinibatch
+        bags_group_it = bags_collection.iter_by_groups(bags_per_group=bags_per_group,
                                                        text_opinion_ids_set=None)
 
         it = tqdm(iterable=bags_group_it,
                   desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index, dtype=data_type),
-                  total=bags_collection.get_groups_count(),
+                  total=bags_collection.get_groups_count(bags_per_group),
                   ncols=80)
 
         for bags_group in it:
