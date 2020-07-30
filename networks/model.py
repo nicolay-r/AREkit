@@ -284,15 +284,16 @@ class BaseTensorflowModel(BaseModel):
             idh_names.append(name)
             idh_tensors.append(tensor)
 
-        bags_group_it = self.get_bags_collection(data_type).iter_by_groups(
-            bags_per_group=self.Config.BagsPerMinibatch,
-            text_opinion_ids_set=None)
+        bags_collection = self.get_bags_collection(data_type)
+        bags_group_it = bags_collection.iter_by_groups(bags_per_group=self.Config.BagsPerMinibatch,
+                                                       text_opinion_ids_set=None)
 
-        bags_group_itt = tqdm(iterable=bags_group_it,
-                              desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index,
-                                                                        dtype=data_type))
+        it = tqdm(iterable=bags_group_it,
+                  desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index, dtype=data_type),
+                  total=bags_collection.get_groups_count(),
+                  ncols=80)
 
-        for bags_group in bags_group_itt:
+        for bags_group in it:
 
             minibatch = self.create_batch_by_bags_group(bags_group)
             feed_dict = self.create_feed_dict(minibatch=minibatch,
