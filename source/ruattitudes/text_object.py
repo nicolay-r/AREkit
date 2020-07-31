@@ -8,36 +8,30 @@ class TextObject(object):
     The latter is used to emphasize the entity type.
     """
 
-    def __init__(self, id_in_sentence, terms, obj_type, position):
+    def __init__(self, id_in_sentence, value, obj_type, position, terms_count, syn_group_index):
         assert(isinstance(id_in_sentence, int))
-        assert(isinstance(terms, list))
+        assert(isinstance(value, unicode))
         assert(isinstance(position, int))
+        assert(isinstance(terms_count, int) and terms_count > 0)
         assert(isinstance(obj_type, unicode) or obj_type is None)
-        self.__terms = terms
-        self.__position = position
+        assert(isinstance(syn_group_index, int))
+        self.__value = value
         self.__type = obj_type
         self.__id_in_sentence = id_in_sentence
-        self.__tag = None
+        self.__syn_group_index = syn_group_index
+        self.__bound = Bound(pos=position, length=terms_count)
 
     def to_entity(self, to_doc_id_func):
         assert(callable(to_doc_id_func))
-
-        _value = self.get_value()
-        value = _value if len(_value) > 0 else u'[empty]'
-
-        return Entity(value=value,
+        return Entity(value=self.__value if len(self.__value) > 0 else u'[empty]',
                       e_type=self.Type,
                       id_in_doc=to_doc_id_func(self.IdInSentence))
 
     # region properties
 
     @property
-    def Position(self):
-        return self.__position
-
-    @property
-    def Tag(self):
-        return self.__tag
+    def Value(self):
+        return self.__value
 
     @property
     def Type(self):
@@ -47,22 +41,9 @@ class TextObject(object):
     def IdInSentence(self):
         return self.__id_in_sentence
 
-    # endregion
-
-    # region public methods
-
-    def set_tag(self, value):
-        self.__tag = value
-
-    def get_value(self):
-        return u' '.join(self.__terms)
-
-    def get_bound(self):
-        return Bound(self.__position, len(self.__terms))
-
-    def iter_terms(self):
-        for term in self.__terms:
-            yield term
+    @property
+    def Bound(self):
+        return self.__bound
 
     # endregion
 

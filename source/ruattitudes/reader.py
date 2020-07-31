@@ -152,8 +152,8 @@ class RuAttitudesFormatReader(object):
 
         sentence_opin = SentenceOpinion(source_id=source_object_id_in_sentence,
                                         target_id=target_object_id_in_sentence,
-                                        source_value=objects_list[source_object_id_in_sentence].get_value(),
-                                        target_value=objects_list[target_object_id_in_sentence].get_value(),
+                                        source_value=objects_list[source_object_id_in_sentence].Value,
+                                        target_value=objects_list[target_object_id_in_sentence].Value,
                                         sentiment=label,
                                         tag=opninion_key)
 
@@ -176,20 +176,20 @@ class RuAttitudesFormatReader(object):
 
         id_in_sentence = int(line[obj_ind_begin + 4:obj_ind_end])
         term_index, length = line[b_from+3:b_to].split(u',')
-        terms = line[o_begin+1:o_end].split(u',')
+        value = line[o_begin + 1:o_end]
 
         obj_type = RuAttitudesFormatReader.__try_get_type(line)
-
-        text_object = TextObject(id_in_sentence=id_in_sentence,
-                                 terms=terms,
-                                 obj_type=obj_type,
-                                 position=int(term_index))
 
         sg_from = line.index(u'si:{')
         sg_to = line.index(u'}', sg_from)
         group_index = int(line[sg_from+4:sg_to])
 
-        text_object.set_tag(group_index)
+        text_object = TextObject(id_in_sentence=id_in_sentence,
+                                 value=value,
+                                 obj_type=obj_type,
+                                 position=int(term_index),
+                                 terms_count=int(length),
+                                 syn_group_index=group_index)
 
         return text_object
 

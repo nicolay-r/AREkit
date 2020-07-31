@@ -22,5 +22,5 @@ class RuAttitudesTextEntitiesParser(BaseEntitiesParser):
         for text_object in sentence.iter_objects():
             assert(isinstance(text_object, TextObject))
             e = text_object.to_entity(to_doc_id_func=lambda sent_id: sentence.get_doc_level_text_object_id(sent_id))
-            yield e, text_object.get_bound()
+            yield e, text_object.Bound
 

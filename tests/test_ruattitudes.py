@@ -3,6 +3,7 @@ import logging
 import sys
 import unittest
 
+from arekit.processing.text.token import Token
 
 sys.path.append('../../')
 
@@ -42,8 +43,19 @@ class TestRuAttiudes(unittest.TestCase):
             terms = parsed_news.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 
-            str_terms = ['E' if isinstance(t, Entity) else t for t in terms]
-            logger.info(" ".join(str_terms))
+            str_terms = []
+            for t in terms:
+                if isinstance(t, Entity):
+                    str_terms.append(u"E")
+                elif isinstance(t, Token):
+                    str_terms.append(t.get_token_value())
+                else:
+                    str_terms.append(t)
+
+            for t in str_terms:
+                self.assertIsInstance(t, unicode)
+
+            logger.info(u" ".join(str_terms))
 
     def test_reading(self):
 
