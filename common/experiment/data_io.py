@@ -72,10 +72,6 @@ class DataIO(object):
     def TermsPerContext(self):
         raise NotImplementedError
 
-    @property
-    def KeepTokens(self):
-        return True
-
     # endregion
 
     # region private methods

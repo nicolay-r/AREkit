@@ -93,6 +93,10 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return (s_ind, t_ind)
 
+    @staticmethod
+    def _iter_sentence_terms(parsed_news, sentence_ind):
+        return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
+
     def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
 
@@ -109,13 +113,12 @@ class BaseSampleFormatter(BaseRowsFormatter):
                 expected_label=expected_label,
                 etalon_label=etalon_label)
 
-        terms = list(parsed_news.iter_sentence_terms(sentence_index=sentence_ind,
-                                                     return_id=False))
-        self.__text_provider.add_text_in_row(row=row,
-                                             sentence_terms=terms,
-                                             s_ind=s_ind,
-                                             t_ind=t_ind,
-                                             expected_label=expected_label)
+        self.__text_provider.add_text_in_row(
+            row=row,
+            sentence_terms=list(self._iter_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind)),
+            s_ind=s_ind,
+            t_ind=t_ind,
+            expected_label=expected_label)
 
         row[const.S_IND] = s_ind
         row[const.T_IND] = t_ind

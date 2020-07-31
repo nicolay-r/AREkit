@@ -55,6 +55,5 @@ class RuSentrelDocumentOperations(CVBasedDocumentOperations):
                                            synonyms=self.__data_io.SynonymsCollection)
 
     def create_parse_options(self):
-        return RuSentRelNewsParseOptions(keep_tokens=self.__data_io.KeepTokens,
-                                         stemmer=self.__data_io.Stemmer,
+        return RuSentRelNewsParseOptions(stemmer=self.__data_io.Stemmer,
                                          frame_variants_collection=self.__data_io.FrameVariantCollection)

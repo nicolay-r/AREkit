@@ -1,4 +1,6 @@
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
+from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.text_frame_variant import TextFrameVariant
 
 
 class NetworkSampleFormatter(BaseSampleFormatter):
@@ -17,6 +19,8 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
     def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
+        assert(isinstance(parsed_news, ParsedNews))
+
         super(NetworkSampleFormatter, self)._fill_row_core(
             row=row,
             opinion_provider=opinion_provider,
@@ -28,7 +32,11 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
         # TODO. Fill row with extra parameters: (REFER TO samples.py)
 
-        # TODO. For frames: index of FrameType in parsed news.
+        # Compose frame indices.
+        frame_inds = [unicode(t_ind) for t_ind, term in
+                      enumerate(self._iter_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind))
+                      if isinstance(term, TextFrameVariant)]
+        row[self.Frames] = u",".join(frame_inds)
 
         # TODO. For frame roles: we have frames and hence information to obtain related sentiment.
 
