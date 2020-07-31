@@ -92,11 +92,6 @@ class BaseExperiment(object):
 
         return ParsedNewsCollection(parsed_news_it)
 
-    # TODO. Maybe make a part of callback?
-    # TODO. Not every experiment should be evaluated.
-    # TODO. But callback assumes to perform evaluation of experiment.
-    # TODO. Specific type of experiment.
-    # TODO. Also because we decide the collection path in callback.
     def evaluate(self, data_type, epoch_index):
         """
         Perform experiment evaluation (related model) of a certain
@@ -109,16 +104,16 @@ class BaseExperiment(object):
         NOTE: assumes that results already written and converted in doc-level opinions.
         """
         assert(isinstance(data_type, DataType))
-        assert(isinstance(epoch_index, int) or epoch_index is None)
+        assert(isinstance(epoch_index, int))
 
         # Compose cmp pairs iterator.
         cmp_pairs_iter = self.__opin_operations.iter_opinion_collections_to_compare(
             data_type=data_type,
-            doc_ids=self.DocumentOperations.iter_news_indices(data_type=data_type),
+            doc_ids=self.__doc_operations.iter_news_indices(data_type=data_type),
             epoch_index=epoch_index)
 
         # getting evaluator.
-        evaluator = self.DataIO.Evaluator
+        evaluator = self.__data_io.Evaluator
         assert(isinstance(evaluator, BaseEvaluator))
 
         # evaluate every document.
