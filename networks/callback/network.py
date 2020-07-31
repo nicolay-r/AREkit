@@ -9,7 +9,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.networks.callback.base import Callback
-from arekit.networks.callback.model_eval import perform_evaluation
+from arekit.networks.callback.model_eval import perform_experiment_evaluation
 from arekit.networks.cancellation import OperationCancellation
 from arekit.networks.io_utils import NetworkIOUtils
 from arekit.networks.model import BaseTensorflowModel
@@ -176,15 +176,20 @@ class NeuralNetworkCallback(Callback):
         output.to_tsv(filepath=result_filepath)
 
         # Convert output to result.
-        result = perform_evaluation(data_type=data_type,
-                                    experiment=self.__experiment,
-                                    epoch_index=epoch_index,
-                                    labels_formatter=RuSentRelLabelsFormatter())
+        result = perform_experiment_evaluation(experiment=self.__experiment,
+                                               data_type=data_type,
+                                               epoch_index=epoch_index,
+                                               labels_formatter=RuSentRelLabelsFormatter())
 
         if self.PredictVerbosePerFileStatistic:
-            self._print_verbose_eval_results(result, data_type)
+            self._print_verbose_eval_results(eval_result=result,
+                                             data_type=data_type,
+                                             epoch_index=epoch_index)
 
-        self._print_overall_results(result, data_type)
+        self._print_overall_results(eval_result=result,
+                                    data_type=data_type,
+                                    epoch_index=epoch_index)
+
         self._save_minibatch_all_input_dependent_hidden_values(
             predict_log=idhp,
             data_type=data_type,
@@ -197,16 +202,17 @@ class NeuralNetworkCallback(Callback):
     # region logging
 
     @staticmethod
-    def _print_verbose_eval_results(eval_result, data_type):
+    def _print_verbose_eval_results(eval_result, data_type, epoch_index):
         assert(isinstance(eval_result, TwoClassEvalResult))
-        logger.info("Verbose statistic for {}:".format(data_type))
+        logger.info("Stat for {dtype}, e={epoch}:".format(dtype=data_type, epoch=epoch_index))
         for doc_id, result in eval_result.iter_document_results():
             logger.info(doc_id, result)
 
     @staticmethod
-    def _print_overall_results(eval_result, data_type):
+    def _print_overall_results(eval_result, data_type, epoch_index):
         assert(isinstance(eval_result, TwoClassEvalResult))
-        logger.info("Overall statistic for '{}' type:".format(data_type))
+
+        logger.info("Stat for '{dtype}', e={epoch}".format(dtype=data_type, epoch=epoch_index))
         params = ["{}: {}".format(metric_name, round(value, 2))
                   for metric_name, value in eval_result.iter_results()]
         logger.info("; ".join(params))

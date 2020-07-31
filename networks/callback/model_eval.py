@@ -3,19 +3,19 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.output.multiple import MulticlassOutput
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
-from arekit.common.experiment.output.opinions.writer import save_collections
+from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.networks.io_utils import NetworkIOUtils
 
 
-def perform_evaluation(data_type, experiment, epoch_index, labels_formatter):
+def perform_experiment_evaluation(experiment, data_type, epoch_index, labels_formatter):
     """
     1. Converting results
     2. Perform evaluation.
     """
-    assert(isinstance(data_type, DataType))
     assert(isinstance(experiment, BaseExperiment))
+    assert(isinstance(data_type, DataType))
     assert(isinstance(epoch_index, int))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
@@ -32,10 +32,11 @@ def perform_evaluation(data_type, experiment, epoch_index, labels_formatter):
         output=MulticlassOutput(experiment.DataIO.LabelsScaler))
 
     # Save collection.
-    save_collections(opinion_collection_iter=collections_iter,
-                     experiment=experiment,
-                     data_type=data_type,
-                     labels_formatter=labels_formatter)
+    save_opinion_collections(opinion_collection_iter=collections_iter,
+                             experiment=experiment,
+                             data_type=data_type,
+                             labels_formatter=labels_formatter,
+                             epoch_index=epoch_index)
 
     # Evaluate.
     return experiment.evaluate(data_type=data_type, epoch_index=epoch_index)
