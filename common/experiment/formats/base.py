@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    EPOCH_INDEX_PLACEHOLER = 0
     def __init__(self, data_io, opin_operation, doc_operations, prepare_model_root):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(prepare_model_root, bool))
