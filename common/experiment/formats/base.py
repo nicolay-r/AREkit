@@ -1,10 +1,10 @@
 import logging
 from os import path
 
+from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.evaluation.opinion_based import OpinionBasedExperimentEvaluator
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutralAnnotator
@@ -111,18 +111,23 @@ class BaseExperiment(object):
         assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int) or epoch_index is None)
 
-        evaluator = OpinionBasedExperimentEvaluator(evaluator=self.DataIO.Evaluator,
-                                                    opin_ops=self.OpinionOperations)
+        # Compose cmp pairs iterator.
+        cmp_pairs_iter = self.__opin_operations.iter_opinion_collections_to_compare(
+            data_type=data_type,
+            doc_ids=self.DocumentOperations.iter_news_indices(data_type=data_type),
+            epoch_index=epoch_index)
 
-        doc_ids = self.DocumentOperations.iter_news_indices(data_type=data_type)
+        # getting evaluator.
+        evaluator = self.DataIO.Evaluator
+        assert(isinstance(evaluator, BaseEvaluator))
 
-        result = evaluator.evaluate(data_type=data_type,
-                                    doc_ids=self.OpinionOperations.get_doc_ids_set_to_compare(doc_ids),
-                                    epoch_index=self.EPOCH_INDEX_PLACEHOLER)
-
+        # evaluate every document.
+        result = evaluator.evaluate(cmp_pairs=cmp_pairs_iter)
         assert(isinstance(result, BaseEvalResult))
 
+        # calculate results.
         result.calculate()
+
         return result
 
     # region private methods
