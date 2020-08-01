@@ -3,52 +3,24 @@ from arekit.common.frames.collection import FramesCollection
 from arekit.common.frames.polarity import FramePolarity
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.text_frame_variant import TextFrameVariant
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 
 class FrameFeatures(object):
 
-    def __init__(self, text_opinion_helper):
-        assert(isinstance(text_opinion_helper, TextOpinionHelper))
-        self.__text_opinion_helper = text_opinion_helper
-
-    def __iter_frame_variants(self, text_opinion):
-        it = self.__text_opinion_helper.iter_terms_in_related_sentence(
-            text_opinion=text_opinion,
-            return_ind_in_sent=True,
-            term_check=lambda term: isinstance(term, TextFrameVariant))
-
-        for s_ind, frame_variant in it:
-            yield s_ind, frame_variant
-
-    def compose_frames(self, text_opinion):
-        """
-        NOTE: We utilize in reverse mode to prevent a case of zero-based frame by the beginning.
-        """
-        frames = []
-        indices = list(self.__iter_frame_variants(text_opinion))
-
-        for index, _ in reversed(indices):
-            frames.append(index)
-
-        return frames
-
-    def compose_frame_roles(self, text_opinion, size, frames_collection, filler, label_scaler):
+    @staticmethod
+    def compose_frame_roles(frame_variants, frames_collection, label_scaler):
         assert(isinstance(label_scaler, BaseLabelScaler))
 
-        result = [filler] * size
+        result = []
 
-        for index, variant in self.__iter_frame_variants(text_opinion):
-
-            if index >= len(result):
-                continue
+        for variant in frame_variants:
 
             value = FrameFeatures.__extract_uint_frame_variant_sentiment_role(
                 text_frame_variant=variant,
                 frames_collection=frames_collection,
                 label_scaler=label_scaler)
 
-            result[index] = value
+            result.append(value)
 
         return result
 

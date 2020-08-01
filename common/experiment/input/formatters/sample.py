@@ -34,7 +34,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         assert(isinstance(text_provider, BaseSingleTextProvider))
         assert(isinstance(balance, bool))
 
-        self.__label_provider = label_provider
+        self._label_provider = label_provider
         self.__text_provider = text_provider
         self.__row_ids_provider = self.__create_row_ids_provider(label_provider)
         self.__balance = balance
@@ -104,12 +104,12 @@ class BaseSampleFormatter(BaseRowsFormatter):
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrap,
             index_in_linked=index_in_linked,
-            label_scaler=self.__label_provider.LabelScaler)
+            label_scaler=self._label_provider.LabelScaler)
 
         expected_label = linked_wrap.get_linked_label()
 
         if self.__is_train():
-            row[const.LABEL] = self.__label_provider.calculate_output_label(
+            row[const.LABEL] = self._label_provider.calculate_output_label(
                 expected_label=expected_label,
                 etalon_label=etalon_label)
 
@@ -169,7 +169,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
             """
             Enumerate all opinions as if it would be with the different label types.
             """
-            for label in self.__label_provider.SupportedLabels:
+            for label in self._label_provider.SupportedLabels:
                 yield self.__create_row(opinion_provider=opinion_provider,
                                         linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
                                         index_in_linked=index_in_linked,
@@ -204,7 +204,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(
             balance=self.__balance,
-            supported_labels=self.__label_provider.SupportedLabels)
+            supported_labels=self._label_provider.SupportedLabels)
 
         for linked_wrap in linked_iter:
 
@@ -238,7 +238,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
             SampleRowBalancerHelper.balance_oversampling(
                 df=self._df,
                 create_blank_df=lambda size: self._create_blank_df(size),
-                label_provider=self.__label_provider)
+                label_provider=self._label_provider)
             logger.info(u"Balancing completed!")
 
         logger.info(u"Saving... : {}".format(filepath))
