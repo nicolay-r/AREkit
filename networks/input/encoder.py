@@ -67,6 +67,7 @@ class NetworkInputEncoder(object):
                 data_type=data_type,
                 label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
                 text_provider=text_provider,
+                synonyms_collection=experiment.DataIO.SynonymsCollection,
                 balance=False),
             write_sample_header=True)
 
