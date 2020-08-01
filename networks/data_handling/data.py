@@ -72,9 +72,25 @@ class HandledData(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
 
-        term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
-            experiment=experiment,
-            terms_per_context=terms_per_context)
+        term_embedding_pairs = []
+
+        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
+
+            # Create annotated collection per each type.
+            experiment.NeutralAnnotator.create_collection(data_type)
+
+            # Load parsed news collections in memory.
+            parsed_news_collection = experiment.create_parsed_collection(data_type)
+
+            # Composing input.
+            term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
+                experiment=experiment,
+                data_type=data_type,
+                term_embedding_pairs=term_embedding_pairs,
+                parsed_news_collection=parsed_news_collection,
+                terms_per_context=terms_per_context)
+
+        # Save embedding and related vocabulary.
         NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
             experiment=experiment,
             term_embedding_pairs=term_embedding_pairs)

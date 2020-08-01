@@ -10,8 +10,8 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
     Frames = "frames"
 
+    # TODO. Provide TOH
     def __init__(self, data_type, label_provider, text_provider, balance):
-
         super(NetworkSampleFormatter, self).__init__(data_type=data_type,
                                                      label_provider=label_provider,
                                                      text_provider=text_provider,
@@ -41,8 +41,8 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         # TODO. For frame roles: we have frames and hence information to obtain related sentiment.
 
         # TODO. For synonyms to subj: find all Entities, which similar to Entity(s_subj)
-        # TODO.     Use helper for this for example.
+        # TODO.     Use helper for this example.
 
         # TODO. For synonyms to obj: find all Entities, which similar to Entity(s_obj)
-        # TODO.     Use helper for this for example.
+        # TODO.     Use helper for this example.
 

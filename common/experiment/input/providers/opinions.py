@@ -1,12 +1,11 @@
-from arekit.common.experiment.data_type import DataType
+import collections
+
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
-from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
 
@@ -16,37 +15,28 @@ class OpinionProvider(object):
     TextOpinion iterator + balancing.
     """
 
-    def __init__(self, data_type, text_opinions, parsed_news_collection):
-        assert(isinstance(data_type, DataType))
+    def __init__(self, text_opinions, text_opinion_helper):
         assert(isinstance(text_opinions, LinkedTextOpinionCollection))
-        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
+        assert(isinstance(text_opinion_helper, TextOpinionHelper))
         self.__text_opinions = text_opinions
-        self.__data_type = data_type
-        self.__parsed_news_collection = parsed_news_collection
-        self.__text_opinion_helper = TextOpinionHelper(parsed_news_collection)
+        self.__text_opinion_helper = text_opinion_helper
 
     @classmethod
-    def from_experiment(cls, experiment, data_type, terms_per_context):
+    def from_experiment(cls, experiment, data_type, iter_news_ids, terms_per_context, text_opinion_helper):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
-
-        pnc = experiment.create_parsed_collection(data_type=data_type)
-
-        assert(isinstance(pnc, ParsedNewsCollection))
+        assert(isinstance(iter_news_ids, collections.Iterable))
+        assert(isinstance(text_opinion_helper, TextOpinionHelper))
 
         text_opinions = extract_text_opinions(
             experiment=experiment,
             data_type=data_type,
             terms_per_context=terms_per_context,
-            iter_doc_ids=pnc.iter_news_ids(),
-            text_opinion_helper=TextOpinionHelper(pnc))
+            iter_doc_ids=iter_news_ids,
+            text_opinion_helper=text_opinion_helper)
 
-        return cls(data_type=data_type,
-                   text_opinions=text_opinions,
-                   parsed_news_collection=pnc)
-
-    def opinions_count(self):
-        return len(self.__text_opinions)
+        return cls(text_opinions=text_opinions,
+                   text_opinion_helper=text_opinion_helper)
 
     # region private methods
 
@@ -107,8 +97,7 @@ class OpinionProvider(object):
             position_type=TermPositionTypes.SentenceIndex)
 
         # Extract specific document by text_opinion.NewsID
-        parsed_news = self.__parsed_news_collection.get_by_news_id(text_opinion.NewsID)
-        assert(isinstance(parsed_news, ParsedNews))
+        parsed_news = self.__text_opinion_helper.get_related_news(text_opinion)
 
         return parsed_news, s_ind
 

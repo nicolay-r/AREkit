@@ -2,10 +2,15 @@ import logging
 
 import numpy as np
 
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.embeddings.base import Embedding
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
+from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
+from arekit.common.experiment.input.providers.opinions import OpinionProvider
+from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 from arekit.networks.input.embedding.matrix import create_term_embedding_matrix
 from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
@@ -21,11 +26,15 @@ logging.basicConfig(level=logging.INFO)
 class NetworkInputEncoder(object):
 
     @staticmethod
-    def to_tsv_with_embedding_and_vocabulary(experiment, terms_per_context):
+    def to_tsv_with_embedding_and_vocabulary(experiment, data_type, term_embedding_pairs,
+                                             parsed_news_collection, terms_per_context):
         """
         Performs encodding for all the data_types supported by experiment.
         """
+        assert(isinstance(data_type, DataType))
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(term_embedding_pairs, list))
+        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
         assert(isinstance(terms_per_context, int))
 
         predefined_embedding = experiment.DataIO.WordEmbedding
@@ -37,29 +46,29 @@ class NetworkInputEncoder(object):
             string_entities_formatter=experiment.DataIO.StringEntityFormatter,
             string_emb_entity_formatter=StringWordEmbeddingEntityFormatter())
 
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            experiment.NeutralAnnotator.create_collection(data_type)
-
-        term_embedding_pairs = []
         text_provider = NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,
             pair_handling_func=lambda pair: term_embedding_pairs.append(pair))
 
+        text_opinion_helper = TextOpinionHelper(lambda news_id: parsed_news_collection.get_by_news_id(news_id))
+
         # Encoding input
         BaseInputEncoder.to_tsv(
-            get_sample_filepath=lambda data_type, experiment: NetworkIOUtils.get_input_sample_filepath(
+            sample_filepath=NetworkIOUtils.get_input_sample_filepath(experiment=experiment, data_type=data_type),
+            opinion_filepath=NetworkIOUtils.get_input_opinions_filepath(experiment=experiment, data_type=data_type),
+            opinion_formatter=BaseOpinionsFormatter(data_type),
+            opinion_provider=OpinionProvider.from_experiment(
                 experiment=experiment,
-                data_type=data_type),
-            get_opinion_filepath=lambda data_type, experiment: NetworkIOUtils.get_input_opinions_filepath(
-                experiment=experiment,
-                data_type=data_type),
-            experiment=experiment,
-            terms_per_context=terms_per_context,
-            create_formatter_func=lambda data_type: NetworkInputEncoder.__create_sample_formatter(
                 data_type=data_type,
-                experiment=experiment,
-                text_provider=text_provider),
-            write_header_func=lambda _: True)
+                iter_news_ids=parsed_news_collection.iter_news_ids(),
+                terms_per_context=terms_per_context,
+                text_opinion_helper=text_opinion_helper),
+            sample_formatter=NetworkSampleFormatter(
+                data_type=data_type,
+                label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
+                text_provider=text_provider,
+                balance=False),
+            write_sample_header=True)
 
         return term_embedding_pairs
 
@@ -86,11 +95,3 @@ class NetworkInputEncoder(object):
         logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
                                                                          filepath=vocab_filepath))
         np.savez(vocab_filepath, vocab)
-
-    @staticmethod
-    def __create_sample_formatter(data_type, experiment, text_provider):
-        return NetworkSampleFormatter(
-            data_type=data_type,
-            label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
-            text_provider=text_provider,
-            balance=False)
