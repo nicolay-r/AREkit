@@ -25,11 +25,11 @@ class DocumentCompareTable:
 
     @classmethod
     def load(cls, filepath):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         return cls(cmp_table=pd.DataFrame.from_csv(filepath))
 
     def save(self, filepath):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         self.__cmp_table.to_csv(filepath)
 
     def filter_result_column_by_label(self, label):

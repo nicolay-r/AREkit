@@ -22,7 +22,7 @@ class TextObject(object):
         self.__tag = value
 
     def get_value(self):
-        return u' '.join(self.__terms)
+        return ' '.join(self.__terms)
 
     def get_bound(self):
         return Bound(self.__position, len(self.__terms))

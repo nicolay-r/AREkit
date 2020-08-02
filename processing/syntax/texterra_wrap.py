@@ -16,7 +16,7 @@ class TexterraSyntaxParser(SyntaxParser):
         url = default_url if host is None else host
 
         if debug:
-            print "Connecting to Texterra server: {}".format(url)
+            print("Connecting to Texterra server: {}".format(url))
 
         self.t = texterra.API(host=url)
 
@@ -26,7 +26,7 @@ class TexterraSyntaxParser(SyntaxParser):
         text: unicode
         return: SyntaxAnalysisResult
         """
-        assert(isinstance(text, unicode))
+        assert(isinstance(text, str))
         parsed = self.t.syntax_detection(text)
 
         parents = []

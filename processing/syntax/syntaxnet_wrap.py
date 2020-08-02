@@ -1,8 +1,8 @@
 import socket
 import sys
 from core.runtime.parser import ParsedText
-from syntaxnet.annot import Word
-from syntaxnet.conll import ConllFormatStreamParser
+from .syntaxnet.annot import Word
+from .syntaxnet.conll import ConllFormatStreamParser
 
 
 class SyntaxNetParserWrapper:
@@ -19,11 +19,11 @@ class SyntaxNetParserWrapper:
         assert(isinstance(parsed_sentence, ParsedText))
 
         parsed_sentence.unhide_token_values()
-        text = u" ".join(parsed_sentence.Terms)
+        text = " ".join(parsed_sentence.Terms)
         if debug:
-            print "------------------"
-            print "SyntaxNetText (parsed text): {}".format(text.encode('utf-8'))
-            print "------------------"
+            print("------------------")
+            print("SyntaxNetText (parsed text): {}".format(text.encode('utf-8')))
+            print("------------------")
 
         raw_input_s = self._prepare_raw_input_for_syntaxnet(text, sentences=None)
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -46,15 +46,15 @@ class SyntaxNetParserWrapper:
         (C) IINemo
         Original: https://github.com/IINemo/syntaxnet_wrapper
         """
-        raw_input_s = u''
+        raw_input_s = ''
         if not sentences:
-            raw_input_s = text + u'\n\n'
+            raw_input_s = text + '\n\n'
         else:
             for sent in sentences:
-                line = u' '.join((text[e.begin: e.end] for e in sent))
+                line = ' '.join((text[e.begin: e.end] for e in sent))
                 raw_input_s += line
-                raw_input_s += u'\n'
-            raw_input_s += u'\n'
+                raw_input_s += '\n'
+            raw_input_s += '\n'
 
         return raw_input_s.encode('utf8')
 
@@ -73,12 +73,12 @@ class SyntaxNetParserWrapper:
                 else:
                     break
         except socket.error as err:
-            print >> sys.stderr, 'Err: Socket error: ', err
+            print('Err: Socket error: ', err, file=sys.stderr)
 
         return buf
 
     def _parse_conll_format(self, text, string):
-        sent = ConllFormatStreamParser(string).next()
+        sent = next(ConllFormatStreamParser(string))
         words = list()
         end = 0
         for word in sent:

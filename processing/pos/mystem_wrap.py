@@ -4,23 +4,23 @@ from pymystem3 import Mystem
 
 class POSMystemWrapper(POSTagger):
 
-    PosAdjective = u"A"
-    PosNoun = u"S"
-    PosVerb = u"V"
+    PosAdjective = "A"
+    PosNoun = "S"
+    PosVerb = "V"
 
     pos_names = [PosNoun,
-                 u"ADV",
-                 u"ADVPRO",
-                 u"ANUM",
-                 u"APRO",
-                 u"COM",
-                 u"CONJ",
-                 u"INTJ",
-                 u"NUM",
-                 u"PART",
-                 u"PR",
+                 "ADV",
+                 "ADVPRO",
+                 "ANUM",
+                 "APRO",
+                 "COM",
+                 "CONJ",
+                 "INTJ",
+                 "NUM",
+                 "PART",
+                 "PR",
                  PosAdjective,
-                 u"SPRO",
+                 "SPRO",
                  PosVerb,
                  POSTagger.Unknown,
                  POSTagger.Empty]
@@ -42,12 +42,12 @@ class POSMystemWrapper(POSTagger):
         return pos_list
 
     def get_term_pos(self, term):
-        assert(isinstance(term, unicode))
+        assert(isinstance(term, str))
         analyzed = self.__mystem.analyze(term)
         return self.__get_term_pos(analyzed[0]) if len(analyzed) > 0 else self.Unknown
 
     def pos_to_int(self, pos):
-        assert(isinstance(pos, unicode))
+        assert(isinstance(pos, str))
         pos = pos.upper()
         return self.pos_names.index(pos)
 
@@ -74,14 +74,14 @@ class POSMystemWrapper(POSTagger):
         return pos
 
     def is_adjective(self, pos_type):
-        assert(isinstance(pos_type, unicode))
+        assert(isinstance(pos_type, str))
         return pos_type.lower() == self.PosAdjective
 
     def is_noun(self, pos_type):
-        assert(isinstance(pos_type, unicode))
+        assert(isinstance(pos_type, str))
         return pos_type.lower() == self.PosNoun
 
     def is_verb(self, pos_type):
-        assert(isinstance(pos_type, unicode))
+        assert(isinstance(pos_type, str))
         return pos_type.lower() == self.PosNoun
 

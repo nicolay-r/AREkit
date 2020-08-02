@@ -22,14 +22,14 @@ class TextParser:
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
     @staticmethod
-    def from_string(str, separator=u' ', keep_tokens=True, stemmer=None):
+    def from_string(str, separator=' ', keep_tokens=True, stemmer=None):
 
         def __term_or_token(term):
             token = TextParser.__try_term_as_token(term)
             return token if token is not None else term
 
-        assert(isinstance(str, unicode))
-        terms = [word.strip(u' ') for word in str.split(separator)]
+        assert(isinstance(str, str))
+        terms = [word.strip(' ') for word in str.split(separator)]
         terms = [__term_or_token(t) for t in terms]
         return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
@@ -43,10 +43,10 @@ class TextParser:
         return: list
             list of unicode terms, where each term: word or token
         """
-        assert(isinstance(text, unicode))
+        assert(isinstance(text, str))
         assert(isinstance(keep_tokens, bool))
 
-        words = [word.strip(u' ') for word in text.split(u' ')]
+        words = [word.strip(' ') for word in text.split(' ')]
         terms = TextParser.__process_words(words, keep_tokens)
 
         if debug:
@@ -101,9 +101,9 @@ class TextParser:
                     words_and_tokens.append(token)
                 l += 1
             # number
-            elif unicode.isdigit(term[l]):
+            elif str.isdigit(term[l]):
                 k = l + 1
-                while k < len(term) and unicode.isdigit(term[k]):
+                while k < len(term) and str.isdigit(term[k]):
                     k += 1
                 token = Tokens.try_create_number(term[l:k])
                 assert(token is not None)
@@ -136,11 +136,11 @@ class TextParser:
     def __print(terms):
         for term in terms:
             if isinstance(term, Token):
-                print u'"TOKEN: {}, {}" '.format(
+                print('"TOKEN: {}, {}" '.format(
                     term.get_original_value(),
-                    term.get_token_value()).decode('utf-8')
+                    term.get_token_value()).decode('utf-8'))
             else:
-                print u'"WORD: {}" '.format(term).decode('utf-8')
+                print('"WORD: {}" '.format(term).decode('utf-8'))
 
 # TODO. Move into processing/text directory.
 class ParsedText:
@@ -171,7 +171,7 @@ class ParsedText:
 
     def is_term(self, index):
         assert(isinstance(index, int))
-        return isinstance(self.__terms[index], unicode)
+        return isinstance(self.__terms[index], str)
 
     def iter_lemmas(self):
         for lemma in self.__lemmas:
@@ -183,7 +183,7 @@ class ParsedText:
 
     def iter_raw_words(self):
         for term in self.__terms:
-            if not isinstance(term, unicode):
+            if not isinstance(term, str):
                 continue
             yield term
 
@@ -193,7 +193,7 @@ class ParsedText:
 
     def iter_raw_word_lemmas(self):
         for lemma in self.__lemmas:
-            if not isinstance(lemma, unicode):
+            if not isinstance(lemma, str):
                 continue
             yield lemma
 
@@ -203,7 +203,7 @@ class ParsedText:
         PS: Might be significantly slow, depending on stemmer were used.
         """
         assert(isinstance(stemmer, Stemmer))
-        self.__lemmas = [u"".join(stemmer.lemmatize_to_list(t)) if isinstance(t, unicode) else t
+        self.__lemmas = ["".join(stemmer.lemmatize_to_list(t)) if isinstance(t, str) else t
                          for t in self.__terms]
 
     def get_term(self, i):
@@ -229,7 +229,7 @@ class ParsedText:
 
     def to_string(self):
         terms = [ParsedText.__output_term(term, False) for term in self.__terms]
-        return u' '.join(terms)
+        return ' '.join(terms)
 
     @staticmethod
     def __output_term(term, hide_token_value):

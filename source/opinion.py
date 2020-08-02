@@ -18,7 +18,7 @@ class OpinionCollection:
 
     def __add_synonym(self, value):
         if self.__synonyms.IsReadOnly:
-            raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
+            raise Exception(("Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
         self.__synonyms.add_synonym(value)
 
     def __create_index(self):
@@ -90,16 +90,16 @@ class OpinionCollection:
         with io.open(filepath, 'w') as f:
             for o in sorted_ops:
                 f.write(o.to_unicode())
-                f.write(u'\n')
+                f.write('\n')
 
     @staticmethod
     def __add_opinion(opinion, collection, synonyms, check=True):
         key = opinion.create_synonym_id(synonyms)
 
-        assert(isinstance(key, unicode))
+        assert(isinstance(key, str))
         if check:
             if key in collection:
-                raise Exception(u"'{}->{}' already exists in collection".format(
+                raise Exception("'{}->{}' already exists in collection".format(
                     opinion.value_left, opinion.value_right).encode('utf-8'))
         if key in collection:
             return False
@@ -126,8 +126,8 @@ class Opinion:
     """
 
     def __init__(self, value_left, value_right, sentiment):
-        assert(isinstance(value_left, unicode))
-        assert(isinstance(value_right, unicode))
+        assert(isinstance(value_left, str))
+        assert(isinstance(value_right, str))
         assert(isinstance(sentiment, Label))
         assert(',' not in value_left)
         assert(',' not in value_right)
@@ -145,7 +145,7 @@ class Opinion:
 
     def create_synonym_id(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return u"{}_{}".format(
+        return "{}_{}".format(
             synonyms.get_synonym_group_index(self.value_left),
             synonyms.get_synonym_group_index(self.value_right))
 
@@ -159,7 +159,7 @@ class Opinion:
 
     # TODO. Leave in RuSentRelOpinion (/rusentrel/opinion.py), nested from Opinion.
     def to_unicode(self):
-        return u"{}, {}, {}, current".format(
+        return "{}, {}, {}, current".format(
             self.value_left,
             self.value_right,
             self.sentiment.to_str())

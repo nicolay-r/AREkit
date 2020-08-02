@@ -78,13 +78,13 @@ class EntityCollection:
         return self.entities[index]
 
     def get_entity_by_id(self, ID):
-        assert(isinstance(ID, unicode))
+        assert(isinstance(ID, str))
         value = self.by_id[ID]
         assert(len(value) == 1)
         return value[0]
 
     def try_get_entities(self, value, group_key):
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
         if group_key == self.KeyType.BY_LEMMAS:
             key = self.stemmer.lemmatize_to_str(value)
             return self.__value_or_none(self.by_lemmas, key)
@@ -107,11 +107,11 @@ class Entity:
     """
 
     def __init__(self, ID, str_type, begin, end, value):
-        assert(type(ID) == unicode)
-        assert(type(str_type) == unicode)
+        assert(type(ID) == str)
+        assert(type(str_type) == str)
         assert(type(begin) == int)
         assert(type(end) == int)
-        assert(type(value) == unicode and len(value) > 0)
+        assert(type(value) == str and len(value) > 0)
         self.ID = ID
         self.str_type = str_type
         self.begin = begin

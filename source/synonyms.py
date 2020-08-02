@@ -23,7 +23,7 @@ class SynonymsCollection:
 
     @classmethod
     def from_file(cls, filepath, stemmer, is_read_only=True, debug=False):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         assert(isinstance(stemmer, Stemmer))
         by_index = []
         by_synonym = {}
@@ -62,7 +62,7 @@ class SynonymsCollection:
                     id = SynonymsCollection._create_synonym_id(stemmer, value)
 
                     if id in by_synonym and debug:
-                        print "Collection already has a value '{}'. Skipped".format(value.encode('utf-8'))
+                        print("Collection already has a value '{}'. Skipped".format(value.encode('utf-8')))
                         continue
 
                     synonym_list.append(value)
@@ -72,7 +72,7 @@ class SynonymsCollection:
                 by_index.append(synonym_list)
 
     def add_synonym(self, s):
-        assert(isinstance(s, unicode))
+        assert(isinstance(s, str))
         assert(not self.has_synonym(s))
         assert(not self.__is_read_only)
         id = self._create_synonym_id(self.__stemmer, s)
@@ -80,18 +80,18 @@ class SynonymsCollection:
         self.__by_index.append([s])
 
     def has_synonym(self, s):
-        assert(isinstance(s, unicode))
+        assert(isinstance(s, str))
         id = self._create_synonym_id(self.__stemmer, s)
         return id in self.__by_synonym
 
     def get_synonyms_list(self, s):
-        assert(isinstance(s, unicode))
+        assert(isinstance(s, str))
         id = self._create_synonym_id(self.__stemmer, s)
         index = self.__by_synonym[id]
         return self.__by_index[index]
 
     def get_synonym_group_index(self, s):
-        assert(isinstance(s, unicode))
+        assert(isinstance(s, str))
         return self._get_group_index(s)
 
     def _get_groups_count(self):

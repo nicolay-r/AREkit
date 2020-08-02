@@ -36,11 +36,11 @@ class TokenEmbeddingVectors:
 
     @staticmethod
     def get_token_index(token_value):
-        assert(isinstance(token_value, unicode))
+        assert(isinstance(token_value, str))
         return TokenEmbeddingVectors.token_values.index(token_value)
 
     def __getitem__(self, token_value):
-        assert (isinstance(token_value, unicode))
+        assert (isinstance(token_value, str))
         return self.E[token_value]
 
     def __iter__(self):
@@ -48,5 +48,5 @@ class TokenEmbeddingVectors:
             yield token_value
 
     def __contains__(self, token_value):
-        assert (isinstance(token_value, unicode))
+        assert (isinstance(token_value, str))
         return token_value in self.E

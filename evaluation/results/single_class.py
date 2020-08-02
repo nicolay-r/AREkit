@@ -6,9 +6,9 @@ from core.evaluation.results.utils import calc_f1_single_class
 
 class SingleClassEvalResult(BaseEvalResult):
 
-    C_PREC = u'prec'
-    C_RECALL = u'recall'
-    C_F1 = u'f1'
+    C_PREC = 'prec'
+    C_RECALL = 'recall'
+    C_F1 = 'f1'
 
     def __init__(self):
         super(SingleClassEvalResult, self).__init__()
@@ -36,7 +36,7 @@ class SingleClassEvalResult(BaseEvalResult):
     def calculate(self):
         prec, recall = (0.0, 0.0)
 
-        for info in self.__documents.itervalues():
+        for info in self.__documents.values():
             prec += info[self.C_PREC]
             recall += info[self.C_RECALL]
 

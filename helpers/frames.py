@@ -46,21 +46,21 @@ class FramesHelper:
         """
         def __replace_specific_russian_chars(terms):
             for i, term in enumerate(terms):
-                if not isinstance(term, unicode):
+                if not isinstance(term, str):
                     continue
-                terms[i] = term.replace(u'ё', u'e')
+                terms[i] = term.replace('ё', 'e')
 
         def __check(terms, start_index, last_index):
             for i in range(start_index, last_index + 1):
-                if not isinstance(terms[i], unicode):
+                if not isinstance(terms[i], str):
                     return False
             return True
 
         def __check_inverted_frame_prefix(terms, index):
             if index == 0:
                 return False
-            if isinstance(terms[index - 1], unicode):
-                return terms[index - 1] == u'не'
+            if isinstance(terms[index - 1], str):
+                return terms[index - 1] == 'не'
             return False
 
         assert(isinstance(parsed_text, ParsedText))
@@ -72,7 +72,7 @@ class FramesHelper:
         __replace_specific_russian_chars(lemmas)
         max_variant_len = max([len(variant) for _, variant in self.__frames.iter_variants()])
         while start_ind < len(lemmas):
-            for ctx_size in reversed(range(1, max_variant_len)):
+            for ctx_size in reversed(list(range(1, max_variant_len))):
 
                 last_ind = start_ind + ctx_size - 1
 
@@ -82,7 +82,7 @@ class FramesHelper:
                 if not __check(lemmas, start_ind, last_ind):
                     continue
 
-                ctx_template = u" ".join(lemmas[start_ind:last_ind + 1])
+                ctx_template = " ".join(lemmas[start_ind:last_ind + 1])
 
                 if not self.__frames.has_variant(ctx_template):
                     continue

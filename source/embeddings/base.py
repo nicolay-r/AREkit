@@ -51,21 +51,21 @@ class Embedding(object):
         return self.w2v_model.wv.index2word[index]
 
     def find_index_by_word(self, word, return_unknown=False):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         assert(return_unknown is False)
         return self.w2v_model.wv.index2word.index(word)
 
     def similarity(self, word_1, word_2):
-        assert(isinstance(word_1, unicode))
-        assert(isinstance(word_2, unicode))
+        assert(isinstance(word_1, str))
+        assert(isinstance(word_2, str))
         # TODO: Implement similarity.
         pass
 
     def __contains__(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         return word in self.w2v_model
 
     def __getitem__(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         return self.w2v_model[word]
 

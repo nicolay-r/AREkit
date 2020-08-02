@@ -18,7 +18,7 @@ class Span(object):
         return self.left_overlap(other) or other.left_overlap(self)
 
     def __unicode__(self):
-        return u'{} {}'.format(self.begin, self.end)
+        return '{} {}'.format(self.begin, self.end)
 
     def __str__(self):
         return self.__unicode__().encode('utf-8')
@@ -28,14 +28,14 @@ class Span(object):
 
 
 class Word(Span):
-    def __init__(self, pos_tag=u'', morph=u'', word_form=u'',
-                 parent=-1, link_name=u'', *args, **kwargs):
-        assert(isinstance(pos_tag, unicode))
-        assert(isinstance(morph, unicode))
-        assert(isinstance(word_form, unicode))
-        assert(isinstance(pos_tag, unicode))
+    def __init__(self, pos_tag='', morph='', word_form='',
+                 parent=-1, link_name='', *args, **kwargs):
+        assert(isinstance(pos_tag, str))
+        assert(isinstance(morph, str))
+        assert(isinstance(word_form, str))
+        assert(isinstance(pos_tag, str))
         assert(isinstance(parent, int))
-        assert(isinstance(link_name, unicode))
+        assert(isinstance(link_name, str))
 
         super(Word, self).__init__(*args, **kwargs)
         self.pos_tag = pos_tag
@@ -45,7 +45,7 @@ class Word(Span):
         self.link_name = link_name
 
     def __unicode__(self):
-        return u'{} | word_form: {} pos_tag: {} morph: {} parent {} link_name: {}'.format(
+        return '{} | word_form: {} pos_tag: {} morph: {} parent {} link_name: {}'.format(
             super(Word, self).__unicode__(),
             self.word_form,
             self.pos_tag,

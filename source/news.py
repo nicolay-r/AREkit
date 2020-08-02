@@ -27,7 +27,7 @@ class News:
     def from_file(cls, filepath, entities):
         """ Read news from file
         """
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         assert(isinstance(entities, EntityCollection))
 
         sentences = News.read_sentences(filepath)
@@ -50,7 +50,7 @@ class News:
                 e_ind += 1
                 continue
 
-            if e.value in [u'author', u'unknown']:
+            if e.value in ['author', 'unknown']:
                 e_ind += 1
                 continue
 
@@ -66,13 +66,13 @@ class News:
 
     @staticmethod
     def read_sentences(filepath):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
 
         with io.open(filepath, 'rt', newline='\n', encoding='utf-8') as f:
 
             sentences = []
             line_start = 0
-            unknown_entity = u"Unknown}"
+            unknown_entity = "Unknown}"
 
             for line in f.readlines():
 
@@ -83,7 +83,7 @@ class News:
 
                 line_end = line_start + len(line) - 1
 
-                if line != unicode('\r\n'):
+                if line != str('\r\n'):
                     s = Sentence(text=line,
                                  begin=line_start,
                                  end=line_end)
@@ -108,7 +108,7 @@ class News:
 class Sentence:
 
     def __init__(self, text, begin, end):
-        assert(isinstance(text, unicode) and len(text) > 0)
+        assert(isinstance(text, str) and len(text) > 0)
         assert(isinstance(begin, int))
         assert(isinstance(end, int))
         self.__text = text
@@ -129,7 +129,7 @@ class Sentence:
         return self.__text
 
     def add_local_entity(self, id, begin, end):
-        assert(isinstance(id, unicode))
+        assert(isinstance(id, str))
         assert(isinstance(begin, int))
         assert(isinstance(end, int))
         self.__entity_info.append((id, begin, end))

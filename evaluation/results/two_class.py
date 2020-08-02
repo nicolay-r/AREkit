@@ -7,13 +7,13 @@ from core.evaluation.results.utils import calc_f1_single_class, calc_f1
 
 class TwoClassEvalResult(BaseEvalResult):
 
-    C_POS_PREC = u'pos_prec'
-    C_NEG_PREC = u'neg_prec'
-    C_POS_RECALL = u'pos_recall'
-    C_NEG_RECALL = u'neg_recall'
-    C_F1_POS = u'f1_pos'
-    C_F1_NEG = u'f1_neg'
-    C_F1 = u'f1'
+    C_POS_PREC = 'pos_prec'
+    C_NEG_PREC = 'neg_prec'
+    C_POS_RECALL = 'pos_recall'
+    C_NEG_RECALL = 'neg_recall'
+    C_F1_POS = 'f1_pos'
+    C_F1_NEG = 'f1_neg'
+    C_F1 = 'f1'
 
     def __init__(self):
         super(TwoClassEvalResult, self).__init__()
@@ -54,7 +54,7 @@ class TwoClassEvalResult(BaseEvalResult):
     def calculate(self):
         pos_prec, neg_prec, pos_recall, neg_recall = (0.0, 0.0, 0.0, 0.0)
 
-        for info in self.__documents.itervalues():
+        for info in self.__documents.values():
             pos_prec += info[self.C_POS_PREC]
             neg_prec += info[self.C_NEG_PREC]
             pos_recall += info[self.C_POS_RECALL]
@@ -80,9 +80,9 @@ class TwoClassEvalResult(BaseEvalResult):
         self.__result[self.C_NEG_RECALL] = neg_recall
 
     def iter_document_results(self):
-        for doc_id, info in self.__documents.iteritems():
+        for doc_id, info in self.__documents.items():
             yield doc_id, info
 
     def iter_document_cmp(self):
-        for doc_id, cmp_result in self.__cmp_results.iteritems():
+        for doc_id, cmp_result in self.__cmp_results.items():
             yield doc_id, cmp_result

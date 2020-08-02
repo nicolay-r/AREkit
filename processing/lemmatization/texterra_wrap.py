@@ -15,7 +15,7 @@ class TexterraLemmatizationWrap(Stemmer):
         url = default_url if host is None else host
 
         if debug:
-            print "Connecting to Texterra server: {}".format(url)
+            print("Connecting to Texterra server: {}".format(url))
 
         self.__t = texterra.API(host=url)
 
@@ -34,5 +34,5 @@ class TexterraLemmatizationWrap(Stemmer):
                 i, j, original, lemma = l
                 result_lemma = lemma.strip()
                 lemmas.append(result_lemma if len(result_lemma) > 0 else original)
-                print '"{}"'.format(lemma.encode('utf-8'))
+                print('"{}"'.format(lemma.encode('utf-8')))
         return lemmas

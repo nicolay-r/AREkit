@@ -52,12 +52,12 @@ class DeepNERWrap(NamedEntityRecognition):
 
     @staticmethod
     def __tag_part(tag):
-        assert(isinstance(tag, unicode))
+        assert(isinstance(tag, str))
         return tag if DeepNERWrap.separator not in tag \
             else tag[:tag.index(DeepNERWrap.separator)]
 
     @staticmethod
     def __tag_type(tag):
-        assert(isinstance(tag, unicode))
+        assert(isinstance(tag, str))
         return "" if DeepNERWrap.separator not in tag \
             else tag[tag.index(DeepNERWrap.separator) + 1:]

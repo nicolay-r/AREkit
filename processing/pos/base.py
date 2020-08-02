@@ -1,7 +1,7 @@
 class POSTagger:
 
-    Unknown = u"UNKNOWN"
-    Empty = u"EMPTY"
+    Unknown = "UNKNOWN"
+    Empty = "EMPTY"
 
     def get_term_pos(self, term):
         raise Exception("Not implemented")

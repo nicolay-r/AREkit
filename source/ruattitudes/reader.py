@@ -10,24 +10,24 @@ from core.source.ruattitudes.sentence import ProcessedSentence
 
 class RuAttitudesFormatReader(object):
 
-    NEWS_SEP_KEY = u'--------'
-    FILE_KEY = u"Файл:"
-    OBJ_KEY = u"Oбъект:"
-    TITLE_KEY = u"Заголовок:"
-    SINDEX_KEY = u"Предложение:"
-    OPINION_KEY = u"Отношение:"
-    STEXT_KEY = u"Текст:"
-    TEXT_IND_KEY = u"Номер:"
-    TERMS_IN_TITLE = u"Термов в заголовке:"
-    TERMS_IN_TEXT = u"Термов в тексте:"
-    FRAMEVAR_TITLE = u"Вариант фрейма:"
+    NEWS_SEP_KEY = '--------'
+    FILE_KEY = "Файл:"
+    OBJ_KEY = "Oбъект:"
+    TITLE_KEY = "Заголовок:"
+    SINDEX_KEY = "Предложение:"
+    OPINION_KEY = "Отношение:"
+    STEXT_KEY = "Текст:"
+    TEXT_IND_KEY = "Номер:"
+    TERMS_IN_TITLE = "Термов в заголовке:"
+    TERMS_IN_TEXT = "Термов в тексте:"
+    FRAMEVAR_TITLE = "Вариант фрейма:"
 
     def __iter__(self):
         pass
 
     @staticmethod
     def iter_processed_news(filepath, stemmer=None):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         reset = False
@@ -119,13 +119,13 @@ class RuAttitudesFormatReader(object):
 
         line = line[len(RuAttitudesFormatReader.OPINION_KEY):]
 
-        s_from = line.index(u'b:(')
-        s_to = line.index(u')', s_from)
+        s_from = line.index('b:(')
+        s_to = line.index(')', s_from)
         label = Label.from_int(int(line[s_from+3:s_to]))
 
-        o_from = line.index(u'oi:[')
-        o_to = line.index(u']', o_from)
-        left_object_id, right_object_id = line[o_from+4:o_to].split(u',')
+        o_from = line.index('oi:[')
+        o_to = line.index(']', o_from)
+        left_object_id, right_object_id = line[o_from+4:o_to].split(',')
 
         left_object_id = int(left_object_id)
         right_object_id = int(right_object_id)
@@ -135,8 +135,8 @@ class RuAttitudesFormatReader(object):
                                  sentiment=label,
                                  owner=objects_list)
 
-        s_from = line.index(u'si:{')
-        s_to = line.index(u'}', s_from)
+        s_from = line.index('si:{')
+        s_to = line.index('}', s_from)
         opninion_key = line[s_from+4:s_to]
 
         ref_opinion.set_tag(opninion_key)
@@ -145,22 +145,22 @@ class RuAttitudesFormatReader(object):
 
     @staticmethod
     def __parse_object(line):
-        assert(isinstance(line, unicode))
+        assert(isinstance(line, str))
         line = line[len(RuAttitudesFormatReader.OBJ_KEY):]
 
-        o_begin = line.index(u"'", 0)
-        o_end = line.index(u"'", o_begin + 1)
+        o_begin = line.index("'", 0)
+        o_end = line.index("'", o_begin + 1)
 
-        b_from = line.index(u'b:(')
-        b_to = line.index(u')', b_from)
+        b_from = line.index('b:(')
+        b_to = line.index(')', b_from)
 
-        term_index, length = line[b_from+3:b_to].split(u',')
-        terms = line[o_begin+1:o_end].split(u',')
+        term_index, length = line[b_from+3:b_to].split(',')
+        terms = line[o_begin+1:o_end].split(',')
 
         text_object = TextObject(terms=terms, position=int(term_index))
 
-        sg_from = line.index(u'si:{')
-        sg_to = line.index(u'}', sg_from)
+        sg_from = line.index('si:{')
+        sg_to = line.index('}', sg_from)
         group_index = int(line[sg_from+4:sg_to])
 
         text_object.set_tag(group_index)

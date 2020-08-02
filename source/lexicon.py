@@ -11,12 +11,12 @@ class Lexicon:
         return cls(df)
 
     def get_score(self, lemma):
-        assert(type(lemma) == unicode)
+        assert(type(lemma) == str)
         s = self.lexicon[lemma.encode('utf-8') == self.lexicon['term']]
         return s['tone'].values[0] if len(s) > 0 else 0
 
     def has_term(self, term):
-        assert(type(term) == unicode)
+        assert(type(term) == str)
         s = self.lexicon[term.encode('utf-8') == self.lexicon['term']]
         return len(s) > 0
 
@@ -27,7 +27,7 @@ class RelationLexicon:
         assert(isinstance(dataframe, pd.DataFrame))
         self._check(dataframe)
         self.lexicon = dataframe
-        print self.lexicon.index
+        print(self.lexicon.index)
 
     @classmethod
     def from_csv(cls, filepath, separator=','):
@@ -42,13 +42,13 @@ class RelationLexicon:
 
     @staticmethod
     def _create_key(l, r):
-        assert(type(l) == unicode)
-        assert(type(r) == unicode)
+        assert(type(l) == str)
+        assert(type(r) == str)
         return ('<->'.join([l.encode('utf-8'), r.encode('utf-8')])).decode('utf-8')
 
     def get_score(self, left, right):
-        assert(type(left) == unicode)
-        assert(type(right) == unicode)
+        assert(type(left) == str)
+        assert(type(right) == str)
 
         lr_key = self._create_key(left, right).encode('utf-8')
         rl_key = self._create_key(right, left).encode('utf-8')

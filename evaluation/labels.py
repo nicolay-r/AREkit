@@ -120,7 +120,7 @@ class LabelPair(Label):
         return self.to_uint()
 
     def to_str(self):
-        return u"{}-{}".format(self.__forward.to_str(), self.__backward.to_str())
+        return "{}-{}".format(self.__forward.to_str(), self.__backward.to_str())
 
     @staticmethod
     def from_uint(value):

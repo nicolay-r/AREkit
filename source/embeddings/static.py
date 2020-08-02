@@ -6,7 +6,7 @@ from core.source.embeddings.base import Embedding
 
 class StaticEmbedding(Embedding):
 
-    __unknown_word = u"<UNKNOWN>"
+    __unknown_word = "<UNKNOWN>"
 
     def __init__(self, vector_size):
         assert(isinstance(vector_size, int))
@@ -28,7 +28,7 @@ class StaticEmbedding(Embedding):
         raise Exception("Not available")
 
     def __create_and_add_embedding(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         assert(word not in self.__word_indices)
 
         h = hashlib.md5(word.encode('utf-8'))
@@ -51,13 +51,13 @@ class StaticEmbedding(Embedding):
     def get_word_by_index(self, index):
         assert(isinstance(index, int))
         assert(isinstance(self.__word_indices, dict))
-        for word, i in self.__word_indices.iteritems():
+        for word, i in self.__word_indices.items():
             if i == index:
                 return word
         raise Exception("Word has not been found")
 
     def find_index_by_word(self, word, return_unknown=False):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
 
         if word in self.__word_indices:
             return self.__word_indices[word]
@@ -68,15 +68,15 @@ class StaticEmbedding(Embedding):
         return None
 
     def iter_word_with_index(self):
-        for word, index in self.__word_indices.iteritems():
+        for word, index in self.__word_indices.items():
             yield word, index
 
     def __contains__(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         return word in self.__word_indices
 
     def __getitem__(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         index = self.__word_indices[word]
         return self.__vectors[index]
 

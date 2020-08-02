@@ -23,7 +23,7 @@ class FrameVariantsCollection:
         assert(isinstance(stemmer, Stemmer))
 
         lemma_variants = {}
-        for variant, frame_variant in self.__variants.iteritems():
+        for variant, frame_variant in self.__variants.items():
             key = stemmer.lemmatize_to_str(variant)
             if key in lemma_variants:
                 continue
@@ -47,7 +47,7 @@ class FrameVariantsCollection:
 
     @staticmethod
     def __register_frame(frames_dict, frames_list, id):
-        assert(isinstance(id, unicode))
+        assert(isinstance(id, str))
         if id not in frames_dict:
             frames_dict[id] = len(frames_list)
             frames_list.append(id)
@@ -67,15 +67,15 @@ class FrameVariantsCollection:
         return template in self.__lemma_variants
 
     def iter_variants(self):
-        for template, variant in self.__variants.iteritems():
+        for template, variant in self.__variants.items():
             yield template, variant
 
 
 class FrameVariant:
 
     def __init__(self, text, frame_id):
-        assert(isinstance(text, unicode))
-        assert(isinstance(frame_id, unicode))
+        assert(isinstance(text, str))
+        assert(isinstance(frame_id, str))
         self.__terms = text.lower().split()
         self.__frame_id = frame_id
 
@@ -84,7 +84,7 @@ class FrameVariant:
         return self.__frame_id
 
     def get_value(self):
-        return u" ".join(self.__terms)
+        return " ".join(self.__terms)
 
     def iter_terms(self):
         for term in self.__terms:

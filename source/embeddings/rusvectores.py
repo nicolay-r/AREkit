@@ -9,7 +9,7 @@ class RusvectoresEmbedding(Embedding):
         super(RusvectoresEmbedding, self).__init__(w2v_model, stemmer, pos_tagger)
 
     def __contains__(self, term):
-        assert(isinstance(term, unicode))
+        assert(isinstance(term, str))
 
         item = self.__lemmatize_term_to_rusvectores(term)
         if item is None:
@@ -17,7 +17,7 @@ class RusvectoresEmbedding(Embedding):
         return super(RusvectoresEmbedding, self).__contains__(item)
 
     def __getitem__(self, term):
-        assert(isinstance(term, unicode))
+        assert(isinstance(term, str))
 
         item = self.__lemmatize_term_to_rusvectores(term)
         if item is None:
@@ -25,7 +25,7 @@ class RusvectoresEmbedding(Embedding):
         return super(RusvectoresEmbedding, self).__getitem__(item)
 
     def find_index_by_word(self, word, return_unknown=False):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         assert(return_unknown is False)
 
         item = self.__lemmatize_term_to_rusvectores(word)
@@ -37,7 +37,7 @@ class RusvectoresEmbedding(Embedding):
         """
         Combine lemmatized 'text' with POS tag (part of speech).
         """
-        assert(isinstance(term, unicode))
+        assert(isinstance(term, str))
 
         term = self._stemmer.lemmatize_to_str(term)
         pos = self._pos_tagger.get_term_pos(term)

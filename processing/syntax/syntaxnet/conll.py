@@ -2,7 +2,7 @@
 (C) IINemo
 Original: https://github.com/IINemo/syntaxnet_wrapper
 """
-from StringIO import StringIO
+from io import StringIO
 
 
 class ConllFormatSentenceParser(object):
@@ -14,7 +14,7 @@ class ConllFormatSentenceParser(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if not self.stop_:
             line = self.string_.readline().rstrip('\n')
             if not line:
@@ -34,7 +34,7 @@ class ConllFormatStreamParser(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if not self.stop_:
             sent_parser = ConllFormatSentenceParser(self.string_io_)
             result = list(sent_parser)
