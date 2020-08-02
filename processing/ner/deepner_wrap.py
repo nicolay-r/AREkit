@@ -13,6 +13,14 @@ class DeepNERWrap(NamedEntityRecognition):
     def __init__(self):
         self.url = "http://{}:{}/ner".format(self.host, self.port)
 
+    @property
+    def NeedLemmatization(self):
+        return True
+
+    @property
+    def NeedLowercase(self):
+        return True
+
     def _extract_tags(self, terms):
         """
         terms: list

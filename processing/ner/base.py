@@ -16,6 +16,14 @@ class NamedEntityRecognition:
 
         return merged_terms, types, positions
 
+    @property
+    def NeedLemmatization(self):
+        raise NotImplementedError()
+
+    @property
+    def NeedLowercase(self):
+        raise NotImplementedError()
+
     def _extract_tags(self, terms):
         raise NotImplementedError()
 

@@ -18,7 +18,7 @@ class FramesHelper:
                 del terms[start]
                 end -= 1
 
-        parsed_text = ParsedText(terms=raw_terms, hide_tokens=True, stemmer=stemmer)
+        parsed_text = ParsedText(terms=raw_terms, stemmer=stemmer)
         frame_variants = self.find_frames(parsed_text)
 
         if frame_variants is None:
