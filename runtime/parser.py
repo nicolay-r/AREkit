@@ -137,9 +137,9 @@ class TextParser:
             if isinstance(term, Token):
                 print(('"TOKEN: {}, {}" '.format(
                     term.get_original_value(),
-                    term.get_token_value()).decode('utf-8')))
+                    term.get_token_value())))
             else:
-                print(('"WORD: {}" '.format(term).decode('utf-8')))
+                print(('"WORD: {}" '.format(term)))
 
 # TODO. Move into processing/text directory.
 class ParsedText:
@@ -159,10 +159,6 @@ class ParsedText:
             self.__lemmatize(stemmer)
 
     @property
-    def IsTokenValuesHidden(self):
-        return self.__hide_token_value
-
-    @property
     # TODO: Processing outside. Method also might be renamed as 'iter_*'
     def Terms(self):
         for term in self.__terms:
@@ -180,20 +176,8 @@ class ParsedText:
         for term in self.__terms:
             yield term
 
-    def iter_raw_words(self):
-        for term in self.__terms:
-            if not isinstance(term, str):
-                continue
-            yield term
-
     def iter_raw_lemmas(self):
         for lemma in self.__lemmas:
-            yield lemma
-
-    def iter_raw_word_lemmas(self):
-        for lemma in self.__lemmas:
-            if not isinstance(lemma, str):
-                continue
             yield lemma
 
     def __lemmatize(self, stemmer):
@@ -204,15 +188,6 @@ class ParsedText:
         assert(isinstance(stemmer, Stemmer))
         self.__lemmas = ["".join(stemmer.lemmatize_to_list(t)) if isinstance(t, str) else t
                          for t in self.__terms]
-
-    def get_term(self, i):
-        return self.__output_term(self.__terms[i], self.__hide_token_value)
-
-    def get_lemma(self, i):
-        return self.__output_term(self.__terms[i], self.__hide_token_value)
-
-    def is_token_values_hidden(self):
-        return self.__hide_token_value
 
     def unhide_token_values(self):
         """
