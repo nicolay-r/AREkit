@@ -13,12 +13,12 @@ class Lexicon:
 
     def get_score(self, lemma):
         assert(type(lemma) == str)
-        s = self.lexicon[lemma.encode('utf-8') == self.lexicon['term']]
+        s = self.lexicon[lemma == self.lexicon['term']]
         return s['tone'].values[0] if len(s) > 0 else 0
 
     def has_term(self, term):
         assert(type(term) == str)
-        s = self.lexicon[term.encode('utf-8') == self.lexicon['term']]
+        s = self.lexicon[term == self.lexicon['term']]
         return len(s) > 0
 
 
@@ -45,14 +45,14 @@ class RelationLexicon:
     def _create_key(l, r):
         assert(type(l) == str)
         assert(type(r) == str)
-        return ('<->'.join([l.encode('utf-8'), r.encode('utf-8')])).decode('utf-8')
+        return ('<->'.join([l, r])).decode('utf-8')
 
     def get_score(self, left, right):
         assert(type(left) == str)
         assert(type(right) == str)
 
-        lr_key = self._create_key(left, right).encode('utf-8')
-        rl_key = self._create_key(right, left).encode('utf-8')
+        lr_key = self._create_key(left, right)
+        rl_key = self._create_key(right, left)
 
         lr_score = self.lexicon[lr_key == self.lexicon['relation']]
         rl_score = self.lexicon[rl_key == self.lexicon['relation']]

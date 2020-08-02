@@ -62,11 +62,11 @@ class SynonymsCollection:
                     id = SynonymsCollection._create_synonym_id(stemmer, value)
 
                     if id in by_synonym and debug:
-                        print(("Collection already has a value '{}'. Skipped".format(value.encode('utf-8'))))
+                        print(("Collection already has a value '{}'. Skipped".format(value)))
                         continue
 
                     synonym_list.append(value)
-                    # print 'adding:', id.encode('utf-8'), '->', group_index
+                    # print 'adding:', id, '->', group_index
                     by_synonym[id] = group_index
 
                 by_index.append(synonym_list)

@@ -34,5 +34,5 @@ class TexterraLemmatizationWrap(Stemmer):
                 i, j, original, lemma = l
                 result_lemma = lemma.strip()
                 lemmas.append(result_lemma if len(result_lemma) > 0 else original)
-                print(('"{}"'.format(lemma.encode('utf-8'))))
+                print(('"{}"'.format(lemma)))
         return lemmas

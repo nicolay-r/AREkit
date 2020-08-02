@@ -31,7 +31,7 @@ class StaticEmbedding(Embedding):
         assert(isinstance(word, str))
         assert(word not in self.__word_indices)
 
-        h = hashlib.md5(word.encode('utf-8'))
+        h = hashlib.md5(word)
         seed = int(h.hexdigest(), 16) % 2**32
         vector = get_random_vector(self.__vector_size, int(seed))
         index = len(self.__vectors)

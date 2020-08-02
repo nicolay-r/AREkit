@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from core.source.tokens import Tokens, Token
 from core.processing.lemmatization.base import Stemmer
 

@@ -56,7 +56,7 @@ class News:
 
             raise Exception("e_i:{} e:('{}',{},{}), s_i:{}  s({},{})".format(
                 e_ind,
-                e.value.encode('utf-8'), e.begin, e.end,
+                e.value, e.begin, e.end,
                 s_ind,
                 s.Begin, s.End))
 

@@ -31,8 +31,8 @@ class BaseEvaluator(object):
                 o_test = test_opins.get_synonymous_opinion(o_etalon)
                 comparison = o_test.sentiment == o_etalon.sentiment
 
-            cmp_table.loc[r_ind] = [o_etalon.value_left.encode('utf-8'),
-                                    o_etalon.value_right.encode('utf-8'),
+            cmp_table.loc[r_ind] = [o_etalon.value_left,
+                                    o_etalon.value_right,
                                     o_etalon.sentiment.to_str(),
                                     None if not has_opinion else o_test.sentiment.to_str(),
                                     comparison]
@@ -42,8 +42,8 @@ class BaseEvaluator(object):
             has_opinion = etalon_opins.has_synonymous_opinion(o_test)
             if has_opinion:
                 continue
-            cmp_table.loc[r_ind] = [o_test.value_left.encode('utf-8'),
-                                    o_test.value_right.encode('utf-8'),
+            cmp_table.loc[r_ind] = [o_test.value_left,
+                                    o_test.value_right,
                                     None, o_test.sentiment.to_str(), False]
             r_ind += 1
 

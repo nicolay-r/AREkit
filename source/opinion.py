@@ -18,7 +18,7 @@ class OpinionCollection:
 
     def __add_synonym(self, value):
         if self.__synonyms.IsReadOnly:
-            raise Exception(("Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
+            raise Exception(("Failed to add '{}'. Synonym collection is read only!".format(value)))
         self.__synonyms.add_synonym(value)
 
     def __create_index(self):
@@ -100,7 +100,7 @@ class OpinionCollection:
         if check:
             if key in collection:
                 raise Exception("'{}->{}' already exists in collection".format(
-                    opinion.value_left, opinion.value_right).encode('utf-8'))
+                    opinion.value_left, opinion.value_right))
         if key in collection:
             return False
         collection[key] = opinion
