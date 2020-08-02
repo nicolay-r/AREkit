@@ -54,7 +54,7 @@ class TwoClassEvalResult(BaseEvalResult):
     def calculate(self):
         pos_prec, neg_prec, pos_recall, neg_recall = (0.0, 0.0, 0.0, 0.0)
 
-        for info in self.__documents.values():
+        for info in list(self.__documents.values()):
             pos_prec += info[self.C_POS_PREC]
             neg_prec += info[self.C_NEG_PREC]
             pos_recall += info[self.C_POS_RECALL]
@@ -80,9 +80,9 @@ class TwoClassEvalResult(BaseEvalResult):
         self.__result[self.C_NEG_RECALL] = neg_recall
 
     def iter_document_results(self):
-        for doc_id, info in self.__documents.items():
+        for doc_id, info in list(self.__documents.items()):
             yield doc_id, info
 
     def iter_document_cmp(self):
-        for doc_id, cmp_result in self.__cmp_results.items():
+        for doc_id, cmp_result in list(self.__cmp_results.items()):
             yield doc_id, cmp_result

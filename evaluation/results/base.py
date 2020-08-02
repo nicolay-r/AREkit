@@ -19,9 +19,9 @@ class BaseEvalResult(object):
         self.__documents[doc_id] = cmp_table
 
     def iter_document_cmp_tables(self):
-        for doc_id, cmp_table in self.__documents.items():
+        for doc_id, cmp_table in list(self.__documents.items()):
             yield doc_id, cmp_table
 
     def iter_document_ids(self):
-        for doc_id in self.__documents.keys():
+        for doc_id in list(self.__documents.keys()):
             yield doc_id

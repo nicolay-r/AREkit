@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from core.evaluation.labels import Label
 from core.processing.lemmatization.base import Stemmer
 from core.runtime.object import TextObject
@@ -42,7 +41,7 @@ class RuAttitudesFormatReader(object):
 
         with open(filepath, 'r') as input:
             for line in input.readlines():
-                line = line.decode('utf-8')
+                line = line
 
                 if RuAttitudesFormatReader.FILE_KEY in line:
                     pass

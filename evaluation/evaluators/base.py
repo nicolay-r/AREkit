@@ -63,9 +63,9 @@ class BaseEvaluator(object):
             synonyms=self.__synonyms)
 
         if debug:
-            print("{} <-> {}, {}".format(
+            print(("{} <-> {}, {}".format(
                 files_to_compare.TestFilepath,
                 files_to_compare.EtalonFilepath,
-                files_to_compare.index))
+                files_to_compare.index)))
 
         return test_opins, etalon_opins

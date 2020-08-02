@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class Lexicon:
 
     def __init__(self, dataframe):
@@ -27,7 +28,7 @@ class RelationLexicon:
         assert(isinstance(dataframe, pd.DataFrame))
         self._check(dataframe)
         self.lexicon = dataframe
-        print(self.lexicon.index)
+        print((self.lexicon.index))
 
     @classmethod
     def from_csv(cls, filepath, separator=','):

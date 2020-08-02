@@ -23,7 +23,7 @@ class FrameVariantsCollection:
         assert(isinstance(stemmer, Stemmer))
 
         lemma_variants = {}
-        for variant, frame_variant in self.__variants.items():
+        for variant, frame_variant in list(self.__variants.items()):
             key = stemmer.lemmatize_to_str(variant)
             if key in lemma_variants:
                 continue
@@ -67,7 +67,7 @@ class FrameVariantsCollection:
         return template in self.__lemma_variants
 
     def iter_variants(self):
-        for template, variant in self.__variants.items():
+        for template, variant in list(self.__variants.items()):
             yield template, variant
 
 

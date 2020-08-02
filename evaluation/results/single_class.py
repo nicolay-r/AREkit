@@ -36,7 +36,7 @@ class SingleClassEvalResult(BaseEvalResult):
     def calculate(self):
         prec, recall = (0.0, 0.0)
 
-        for info in self.__documents.values():
+        for info in list(self.__documents.values()):
             prec += info[self.C_PREC]
             recall += info[self.C_RECALL]
 

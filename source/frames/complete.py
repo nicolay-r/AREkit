@@ -23,7 +23,7 @@ class FramesCollection:
     def get_frame_roles(self, frame_id):
         assert(isinstance(frame_id, str))
         return [FrameRole(source=key, description=value)
-                for key, value in self.__data[frame_id]["roles"].items()]
+                for key, value in list(self.__data[frame_id]["roles"].items())]
 
     def get_frame_polarities(self, frame_id):
         assert(isinstance(frame_id, str))
@@ -71,7 +71,7 @@ class FramesCollection:
         pass
 
     def iter_frames_ids(self):
-        for frame_id in self.__data.keys():
+        for frame_id in list(self.__data.keys()):
             yield frame_id
 
     def __check_has_frame_polarity_key(self, frame_id):
@@ -82,7 +82,7 @@ class FramesCollection:
         return FramePolarity(src=args[0], dest=args[1], label=Label.from_str(args[2]), prob=args[3])
 
     def iter_frame_id_and_variants(self):
-        for id, frame in self.__data.items():
+        for id, frame in list(self.__data.items()):
             for variant in frame["variants"]:
                 yield id, variant
 

@@ -51,7 +51,7 @@ class StaticEmbedding(Embedding):
     def get_word_by_index(self, index):
         assert(isinstance(index, int))
         assert(isinstance(self.__word_indices, dict))
-        for word, i in self.__word_indices.items():
+        for word, i in list(self.__word_indices.items()):
             if i == index:
                 return word
         raise Exception("Word has not been found")
@@ -68,7 +68,7 @@ class StaticEmbedding(Embedding):
         return None
 
     def iter_word_with_index(self):
-        for word, index in self.__word_indices.items():
+        for word, index in list(self.__word_indices.items()):
             yield word, index
 
     def __contains__(self, word):

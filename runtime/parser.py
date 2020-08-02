@@ -136,11 +136,11 @@ class TextParser:
     def __print(terms):
         for term in terms:
             if isinstance(term, Token):
-                print('"TOKEN: {}, {}" '.format(
+                print(('"TOKEN: {}, {}" '.format(
                     term.get_original_value(),
-                    term.get_token_value()).decode('utf-8'))
+                    term.get_token_value()).decode('utf-8')))
             else:
-                print('"WORD: {}" '.format(term).decode('utf-8'))
+                print(('"WORD: {}" '.format(term).decode('utf-8')))
 
 # TODO. Move into processing/text directory.
 class ParsedText:

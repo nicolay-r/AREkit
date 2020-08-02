@@ -37,7 +37,7 @@ class NewsProcessingHelper(object):
         doc_opinions = NewsProcessingHelper.build_opinion_dict(processed_news=processed_news)
         assert(isinstance(doc_opinions, dict))
 
-        for ref_opinion_tag, value in doc_opinions.items():
+        for ref_opinion_tag, value in list(doc_opinions.items()):
 
             opinion = None
             related_sentences = []

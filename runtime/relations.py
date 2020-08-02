@@ -24,14 +24,14 @@ class RelationCollection:
 
         if left_entities is None:
             if debug:
-                print("Appropriate entity for '{}'->'...' has not been found".format(
-                    opinion.value_left.encode('utf-8')))
+                print(("Appropriate entity for '{}'->'...' has not been found".format(
+                    opinion.value_left.encode('utf-8'))))
             return cls(relation_list=[])
 
         if right_entities is None:
             if debug:
-                print("Appropriate entity for '...'->'{}' has not been found".format(
-                    opinion.value_right.encode('utf-8')))
+                print(("Appropriate entity for '...'->'{}' has not been found".format(
+                    opinion.value_right.encode('utf-8'))))
             return cls(relation_list=[])
 
         relations = []

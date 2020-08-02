@@ -107,7 +107,7 @@ class Tokens:
         token: char
         """
         assert(isinstance(term, str))
-        for char, token in Tokens.__token_mapping.items():
+        for char, token in list(Tokens.__token_mapping.items()):
             if term == token:
                 yield char
 
