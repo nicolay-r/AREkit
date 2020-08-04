@@ -39,7 +39,8 @@ class RuSentRelExperiment(CVBasedExperiment):
 
     @property
     def Name(self):
-        return  u"rusentrel"
+        version = self.OpinionOperations._rusentrel_version
+        return u"rusentrel-{version}".format(version=version.value)
 
     @staticmethod
     def get_rusentrel_inds():

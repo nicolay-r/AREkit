@@ -34,6 +34,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         self.__eval_on_rusentrel_docs_key = True
         self.__result_labels_fmt = RuSentRelLabelsFormatter()
         self.__neutral_labels_fmt = NeutralLabelsFormatter()
+        self._rusentrel_version = version
 
     def __get_doc_ids_set_to_compare(self, doc_ids):
         assert(isinstance(doc_ids, collections.Iterable))
@@ -51,7 +52,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         assert(isinstance(doc_id, int))
         return RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
                                                           synonyms=self._data_io.SynonymsCollection,
-                                                          version=version)
+                                                          version=self._rusentrel_version)
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
         """

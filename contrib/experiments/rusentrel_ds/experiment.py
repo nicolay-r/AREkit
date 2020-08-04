@@ -27,6 +27,9 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         assert(isinstance(rusentrel_version, RuSentRelVersions))
         assert(isinstance(ra_instance, dict) or ra_instance is None)
 
+        self.__version = version
+        self.__rusentrel_version = rusentrel_version
+
         rusentrel_news_inds = RuSentRelExperiment.get_rusentrel_inds()
 
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
@@ -54,7 +57,9 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
     @property
     def Name(self):
-        return u"rusentrel-ds"
+        return u"rsr-{rsr_version}-ra-{ra_version}".format(
+            rsr_version=self.__rusentrel_version.value,
+            ra_version=self.__version.value)
 
     @staticmethod
     def read_ruattitudes_in_memory(version, doc_ids_set=None):
