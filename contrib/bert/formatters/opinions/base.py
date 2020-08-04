@@ -35,12 +35,16 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
         return dtypes_list
 
     @staticmethod
-    def __create_opinion_row(opinion_provider, linked_wrapper):
+    def __create_opinion_row(opinion_provider, linked_wrapper, idle_mode):
         """
         row format: [id, src, target, label]
         """
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(linked_wrapper, LinkedTextOpinionsWrapper))
+        assert(isinstance(idle_mode, bool))
+
+        if idle_mode:
+            return None
 
         row = OrderedDict()
 
@@ -62,8 +66,9 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
         return row
 
     @staticmethod
-    def _iter_by_rows(opinion_provider):
+    def _iter_by_rows(opinion_provider, idle_mode):
         assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(idle_mode, bool))
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(balance=False,
                                                                     supported_labels=None)
@@ -71,7 +76,8 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
         for linked_wrapper in linked_iter:
             yield BertOpinionsFormatter.__create_opinion_row(
                 opinion_provider=opinion_provider,
-                linked_wrapper=linked_wrapper)
+                linked_wrapper=linked_wrapper,
+                idle_mode=idle_mode)
 
     # endregion
 

@@ -33,7 +33,7 @@ class BaseBertRowsFormatter(object):
         return dtypes_list
 
     @staticmethod
-    def _iter_by_rows(opinion_provider):
+    def _iter_by_rows(opinion_provider, idle_mode):
         raise NotImplementedError()
 
     def _create_empty_df(self):
@@ -63,11 +63,11 @@ class BaseBertRowsFormatter(object):
     def format(self, opinion_provider):
         assert(isinstance(opinion_provider, OpinionProvider))
 
-        rows_count = sum(1 for _ in self._iter_by_rows(opinion_provider))
+        rows_count = sum(1 for _ in self._iter_by_rows(opinion_provider, idle_mode=True))
 
         p_prev = 0
         self.__fill_with_blank_rows(rows_count)
-        for row_index, row in enumerate(self._iter_by_rows(opinion_provider)):
+        for row_index, row in enumerate(self._iter_by_rows(opinion_provider, idle_mode=False)):
             for column, value in row.iteritems():
                 self._set_value(df=self._df, row_ind=row_index, column=column, value=value)
 
