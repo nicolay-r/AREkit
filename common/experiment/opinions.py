@@ -1,5 +1,7 @@
 import collections
 
+from tqdm import tqdm
+
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
@@ -83,7 +85,11 @@ def __create_parsed_collection(doc_operations, data_io, data_type, parse_frame_v
 
     parsed_collection = ParsedNewsCollection()
 
-    for doc_id in doc_operations.iter_news_indices(data_type):
+    it = tqdm(iterable=doc_operations.iter_news_indices(data_type),
+              desc="Created parsed news collection [{}]".format(data_type),
+              ncols=120)
+
+    for doc_id in it:
 
         news = doc_operations.read_news(doc_id=doc_id)
         parsed_news = news.parse(options=doc_operations.create_parse_options())
