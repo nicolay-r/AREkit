@@ -69,7 +69,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         d = {}
 
         it = tqdm(iterable=RuAttitudesCollection.iter_news(stemmer=stemmer, version=version),
-                  desc="Loading RuAttitudes collection in memory",
+                  desc="Loading RuAttitudes collection in memory (version={})".format(version),
                   ncols=120)
 
         for news in it:
