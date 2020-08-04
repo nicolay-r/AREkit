@@ -22,6 +22,7 @@ from arekit.contrib.bert.providers.opinions import OpinionProvider
 
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class BaseSampleFormatter(BaseBertRowsFormatter):
@@ -220,6 +221,8 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
         if balance_rows_by_labels and self.__is_train():
             self._balance()
 
+        logger.info("Saving: {}".format(filepath))
+
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
@@ -233,6 +236,8 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
 
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
+
+        logger.info("Saving: {}".format(filepath))
 
         self._df = pd.read_csv(filepath,
                                compression='gzip',

@@ -1,3 +1,4 @@
+import logging
 from collections import OrderedDict
 
 import pandas as pd
@@ -10,6 +11,10 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
 from arekit.contrib.bert.providers.opinions import OpinionProvider
 from arekit.contrib.bert.providers.row_ids.multiple import MultipleIDProvider
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class BertOpinionsFormatter(BaseBertRowsFormatter):
@@ -99,6 +104,8 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
 
+        logger.info("Saving: {}".format(filepath))
+
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
@@ -112,6 +119,8 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
 
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
+
+        logger.info("Saving: {}".format(filepath))
 
         self._df = pd.read_csv(filepath,
                                sep='\t',
