@@ -85,7 +85,9 @@ def __create_parsed_collection(doc_operations, data_io, data_type, parse_frame_v
 
     parsed_collection = ParsedNewsCollection()
 
-    it = tqdm(iterable=doc_operations.iter_news_indices(data_type),
+    news_inds = list(doc_operations.iter_news_indices(data_type))
+
+    it = tqdm(iterable=news_inds,
               desc="Created parsed news collection [{}]".format(data_type),
               ncols=120)
 
