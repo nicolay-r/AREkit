@@ -1,4 +1,5 @@
 import collections
+import logging
 
 from tqdm import tqdm
 
@@ -23,6 +24,10 @@ from arekit.processing.text.token import Token
 
 NewsTermsShow = False
 NewsTermsStatisticShow = False
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 # region private methods
@@ -112,7 +117,7 @@ def __create_parsed_collection(doc_operations, data_io, data_type, parse_frame_v
         if not parsed_collection.contains_id(doc_id):
             parsed_collection.add(parsed_news)
         else:
-            print "Warning: Skipping document with id={}, news={}".format(news.ID, news)
+            logger.info("Warning: Document with id={}, news={} has been skipped.".format(news.ID, news))
 
     return parsed_collection
 

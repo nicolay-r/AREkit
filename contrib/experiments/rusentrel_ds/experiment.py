@@ -29,6 +29,10 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         rusentrel_news_inds = RuSentRelExperiment.get_rusentrel_inds()
 
+        ru_attitudes = ra_instance
+        if ra_instance is None:
+            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(data_io.Stemmer)
+
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
             data_io=data_io,
             rusentrel_news_inds=rusentrel_news_inds)
@@ -43,10 +47,6 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
             opin_ops=opin_ops,
             doc_ops=doc_ops,
             prepare_model_root=prepare_model_root)
-
-        ru_attitudes = ra_instance
-        if ra_instance is None:
-            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(data_io.Stemmer)
 
         doc_ops.set_ru_attitudes(ru_attitudes)
         opin_ops.set_ru_attitudes(ru_attitudes)
