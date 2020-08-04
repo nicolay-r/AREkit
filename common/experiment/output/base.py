@@ -1,5 +1,6 @@
 import pandas as pd
 
+from arekit.common.experiment import const
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
@@ -7,8 +8,6 @@ from arekit.common.opinions.base import Opinion
 
 
 class BaseOutput(object):
-
-    ID = 'id'
 
     def __init__(self, ids_formatter):
         assert(isinstance(ids_formatter, BaseIDProvider))
@@ -30,17 +29,16 @@ class BaseOutput(object):
                                 header='infer' if read_header else None,
                                 encoding='utf-8')
 
+    def insert_news_ids_values(self, news_ids_values):
+        self.__df.insert(1, const.NEWS_ID, news_ids_values)
+
     def insert_ids_values(self, ids_values):
-        self.__df.insert(0, self.ID, ids_values)
-        self.__df.columns = [self.ID] + [''] * (self.__df.shape[1] - 1)
-        self.__df.set_index(self.ID)
+        self.__df.insert(0, const.ID, ids_values)
+        self.__df.columns = [const.ID] + [''] * (self.__df.shape[1] - 1)
+        self.__df.set_index(const.ID)
 
     def iter_news_ids(self):
-        sample_row_ids = self.__df[self.ID].tolist()
-        all_news = [self.__ids_formatter.parse_news_in_sample_id(sample_id)
-                    for sample_id in sample_row_ids]
-        for news_id in set(all_news):
-            yield news_id
+        return set(self.__df[const.NEWS_ID])
 
     def iter_linked_opinions(self, news_id, opinions_reader):
         assert(isinstance(news_id, int))
@@ -65,17 +63,16 @@ class BaseOutput(object):
         raise NotImplementedError()
 
     def __iter_linked_opinions_df(self, news_id):
-        news_id_pattern = self.__ids_formatter.create_pattern(id_value=news_id,
-                                                              p_type=BaseIDProvider.NEWS)
-        n_df = self.__df[self.__df[self.ID].str.contains(news_id_pattern)]
+        assert(isinstance(news_id, int))
 
+        news_df = self.__df[self.__df[const.NEWS_ID] == news_id]
         opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
-                       for opinion_id in n_df[self.ID]]
+                       for opinion_id in news_df[const.ID]]
 
         for opinion_id in set(opinion_ids):
             opin_id_pattern = self.__ids_formatter.create_pattern(id_value=opinion_id,
                                                                   p_type=BaseIDProvider.OPINION)
-            linked_opins_df = n_df[n_df[self.ID].str.contains(opin_id_pattern)]
+            linked_opins_df = news_df[news_df[const.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
     def _compose_opinion_by_opinion_id(self, sample_id, opinions_reader, calc_label_func):
@@ -84,7 +81,7 @@ class BaseOutput(object):
         assert(callable(calc_label_func))
 
         opinion_id = self.__ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)
-        _, source, target = opinions_reader.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
+        source, target = opinions_reader.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
 
         return Opinion(source_value=source,
                        target_value=target,

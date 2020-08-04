@@ -65,6 +65,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         dtypes_list = super(BaseSampleFormatter, self)._get_columns_list_with_types()
 
         dtypes_list.append((const.ID, unicode))
+        dtypes_list.append((const.NEWS_ID, 'int32'))
 
         # insert labels
         if self.__is_train():
@@ -105,6 +106,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
             linked_opinions=linked_wrap,
             index_in_linked=index_in_linked,
             label_scaler=self._label_provider.LabelScaler)
+
+        row[const.NEWS_ID] = linked_wrap.First.NewsID
 
         expected_label = linked_wrap.get_linked_label()
 

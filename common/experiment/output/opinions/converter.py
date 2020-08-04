@@ -17,20 +17,29 @@ class OutputToOpinionCollectionsConverter(object):
                                  samples_reader,
                                  experiment,
                                  label_calculation_mode,
-                                 output):
+                                 output,
+                                 keep_news_ids_from_samples_reader,
+                                 keep_ids_from_samples_reader):
         assert(isinstance(output_filepath, unicode))
         assert(isinstance(opinions_reader, InputOpinionReader))
-        assert(isinstance(samples_reader, InputSampleReader) or samples_reader is None)
+        assert(isinstance(samples_reader, InputSampleReader))
         assert(isinstance(label_calculation_mode, unicode))
         assert(isinstance(output, BaseOutput))
+        assert(isinstance(keep_news_ids_from_samples_reader, bool))
+        assert(isinstance(keep_ids_from_samples_reader, bool))
 
         output.init_from_tsv(filepath=output_filepath,
-                             read_header=samples_reader is None)
+                             read_header=True)
 
-        if samples_reader is not None:
+        if keep_news_ids_from_samples_reader:
+            news_ids_values = list(samples_reader.iter_news_ids())
+            print news_ids_values
+            output.insert_news_ids_values(news_ids_values)
+
+        if keep_ids_from_samples_reader:
+            assert(len(output) == samples_reader.rows_count())
             ids_values = samples_reader.extract_ids()
             output.insert_ids_values(ids_values)
-            assert(len(output) == samples_reader.rows_count())
 
         labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
 

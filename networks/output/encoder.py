@@ -1,7 +1,7 @@
 import collections
 import gzip
 
-from arekit.common.experiment.output.base import BaseOutput
+from arekit.common.experiment import const
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import Label
 
@@ -27,7 +27,7 @@ class NetworkOutputEncoder(object):
         with gzip.open(filepath, 'wb') as f:
 
             # Writing title.
-            title = [BaseOutput.ID]
+            title = [const.ID]
             title.extend([unicode(labels_scaler.label_to_uint(label))
                           for label in labels_scaler.ordered_suppoted_labels()])
             f.write(u"{}\n".format(col_separator.join(title)))

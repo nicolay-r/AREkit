@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 
+from arekit.common.experiment import const
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
@@ -33,7 +34,7 @@ class MulticlassOutput(BaseOutput):
 
         for index, series in linked_df.iterrows():
             yield self._compose_opinion_by_opinion_id(
-                sample_id=series[self.ID],
+                sample_id=series[const.ID],
                 opinions_reader=opinions_reader,
                 calc_label_func=lambda: self.__calculate_label(series))
 

@@ -13,9 +13,7 @@ class InputOpinionReader(BaseInputReader):
     def from_tsv(cls, filepath):
         df = pd.read_csv(filepath,
                          sep='\t',
-                         header=None,
-                         compression='gzip',
-                         names=[const.ID, const.SOURCE, const.TARGET])
+                         compression='gzip')
 
         return cls(df)
 
@@ -23,12 +21,11 @@ class InputOpinionReader(BaseInputReader):
         assert(isinstance(opinion_id, unicode))
 
         opinion_row = self._df[self._df[const.ID] == opinion_id]
-        df_row = opinion_row.iloc[0].tolist()
+        df_row = opinion_row.iloc[0]
 
-        news_id = df_row[0]
-        source = df_row[1].decode('utf-8')
-        target = df_row[2].decode('utf-8')
+        source = df_row[const.SOURCE].decode('utf-8')
+        target = df_row[const.TARGET].decode('utf-8')
 
-        return news_id, source, target
+        return source, target
 
 

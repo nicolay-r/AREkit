@@ -25,6 +25,7 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
     def _get_columns_list_with_types(self):
         dtypes_list = super(BaseOpinionsFormatter, self)._get_columns_list_with_types()
         dtypes_list.append((const.ID, unicode))
+        dtypes_list.append((const.NEWS_ID, 'int32'))
         dtypes_list.append((const.SOURCE, unicode))
         dtypes_list.append((const.TARGET, unicode))
         return dtypes_list
@@ -51,6 +52,9 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrapper,
             index_in_linked=0)
+
+        row[const.NEWS_ID] = linked_wrapper.First.NewsID
+
         row[const.SOURCE] = src_value
         row[const.TARGET] = target_value
 
@@ -82,7 +86,6 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
                         encoding='utf-8',
                         columns=[c for c in self._df.columns if c != self.ROW_ID],
                         index=False,
-                        compression='gzip',
-                        header=False)
+                        compression='gzip')
         logger.info(u"Saving completed!")
 
