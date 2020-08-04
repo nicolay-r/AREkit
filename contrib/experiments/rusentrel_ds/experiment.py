@@ -20,7 +20,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
     Paper: https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, prepare_model_root, ra_instance=None):
+    def __init__(self, data_io, version, prepare_model_root, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
@@ -31,7 +31,9 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         ru_attitudes = ra_instance
         if ra_instance is None:
-            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(data_io.Stemmer)
+            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(
+                stemmer=data_io.Stemmer,
+                version=version)
 
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
             data_io=data_io,
@@ -52,7 +54,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         opin_ops.set_ru_attitudes(ru_attitudes)
 
     @staticmethod
-    def read_ruattitudes_in_memory(stemmer, doc_ids_set=None):
+    def read_ruattitudes_in_memory(stemmer, version, doc_ids_set=None):
         """
         Performs reading of ruattitude formatted documents and
         selection according to 'doc_ids_set' parameter.
@@ -66,7 +68,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         d = {}
 
-        it = tqdm(iterable=RuAttitudesCollection.iter_news(stemmer=stemmer),
+        it = tqdm(iterable=RuAttitudesCollection.iter_news(stemmer=stemmer, version=version),
                   desc="Loading RuAttitudes collection in memory",
                   ncols=120)
 
