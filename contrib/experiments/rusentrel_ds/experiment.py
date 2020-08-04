@@ -1,5 +1,7 @@
 import logging
 
+from tqdm import tqdm
+
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
 from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
@@ -9,6 +11,7 @@ from arekit.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
@@ -61,11 +64,13 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
-        logger.debug("Loading RuAttitudes collection in memory, please wait ...")
-
         d = {}
 
-        for news in RuAttitudesCollection.iter_news(stemmer=stemmer):
+        it = tqdm(iterable=RuAttitudesCollection.iter_news(stemmer=stemmer),
+                  desc="Loading RuAttitudes collection in memory",
+                  ncols=120)
+
+        for news in it:
             assert(isinstance(news, RuAttitudesNews))
 
             if doc_ids_set is not None and news.ID not in doc_ids_set:
