@@ -1,8 +1,11 @@
 from os import path
+
+from enum import Enum
+
 from arekit.source.zip_utils import ZipArchiveUtils
 
 
-class RuSentiFramesVersions:
+class RuSentiFramesVersions(Enum):
 
     # Papers for description:
     # Distant Supervision for Sentiment Attitude Extraction (RANLP-2019)

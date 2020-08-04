@@ -1,8 +1,11 @@
 from os import path
+
+from enum import Enum
+
 from arekit.source.zip_utils import ZipArchiveUtils
 
 
-class RuSentRelVersions:
+class RuSentRelVersions(Enum):
     V11 = u"v1_1"
 
 
@@ -12,7 +15,7 @@ class RuSentRelIOUtils(ZipArchiveUtils):
 
     @staticmethod
     def get_archive_filepath(version):
-        assert(isinstance(version, unicode))
+        assert(version, unicode)
         return path.join(RuSentRelIOUtils.get_data_root(), u"rusentrel-{}.zip".format(version))
 
     # region internal methods
@@ -55,6 +58,8 @@ class RuSentRelIOUtils(ZipArchiveUtils):
             if i in missed:
                 continue
             yield i
+            # TODO. Temporary.
+            break
 
     @staticmethod
     def iter_train_indices():
@@ -63,6 +68,8 @@ class RuSentRelIOUtils(ZipArchiveUtils):
             if i in missed:
                 continue
             yield i
+            # TODO. Temporary.
+            break
 
     @staticmethod
     def iter_collection_indices():

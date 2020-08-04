@@ -11,6 +11,8 @@ class RuSentRelOpinionCollection:
 
     @staticmethod
     def load_collection(doc_id, synonyms, version=RuSentRelVersions.V11):
+        assert(isinstance(version, RuSentRelVersions))
+
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id),
             process_func=lambda input_file: RuSentRelOpinionCollectionFormatter._load_from_file(

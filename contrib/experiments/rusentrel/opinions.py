@@ -8,14 +8,16 @@ from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOpe
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 
 class RuSentrelOpinionOperations(CVBasedOpinionOperations):
 
-    def __init__(self, data_io, annot_name_func, rusentrel_news_ids):
+    def __init__(self, data_io, version, annot_name_func, rusentrel_news_ids):
         assert(isinstance(data_io, DataIO))
+        assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(rusentrel_news_ids, set))
 
         super(RuSentrelOpinionOperations, self).__init__(
@@ -25,6 +27,9 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             annot_name_func=annot_name_func)
 
         self._data_io = data_io
+        # TODO. In general, we may use this set for a DEV.
+        # TODO. However this is actully a part of train, it allows us
+        # TODO. Not to use logic with set compositions (as in __get_doc_ids_set_to_compare)
         self._rusentrel_news_ids = rusentrel_news_ids
         self.__eval_on_rusentrel_docs_key = True
         self.__result_labels_fmt = RuSentRelLabelsFormatter()
@@ -45,7 +50,8 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
         return RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
-                                                          synonyms=self._data_io.SynonymsCollection)
+                                                          synonyms=self._data_io.SynonymsCollection,
+                                                          version=version)
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
         """

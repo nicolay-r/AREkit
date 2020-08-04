@@ -29,7 +29,9 @@ class RuSentiFramesCollection(FramesCollection):
     # region classmethods
 
     @classmethod
-    def read_collection(cls, version=RuSentiFramesVersions.V10):
+    def read_collection(cls, version):
+        assert(isinstance(version, RuSentiFramesVersions))
+
         return RuSentiFramesIOUtils.read_from_zip(
             inner_path=RuSentiFramesIOUtils.get_collection_filepath(),
             process_func=lambda input_file: cls.__from_json(

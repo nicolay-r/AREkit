@@ -1,8 +1,11 @@
 from os import path
+
+from enum import Enum
+
 from arekit.source.zip_utils import ZipArchiveUtils
 
 
-class RuAttitudesVersions:
+class RuAttitudesVersions(Enum):
     V10 = u"v1_0"
     V11 = u"v1_1"
     # Expanded with neutral attitudes

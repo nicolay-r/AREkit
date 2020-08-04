@@ -2,6 +2,8 @@ import zipfile
 from os import path
 from os.path import dirname
 
+import enum
+
 
 class ZipArchiveUtils(object):
 
@@ -17,9 +19,9 @@ class ZipArchiveUtils(object):
         """
         assert(isinstance(inner_path, unicode))
         assert(callable(process_func))
-        assert(isinstance(version, unicode))
+        assert(isinstance(version, enum.Enum))
 
-        with zipfile.ZipFile(cls.get_archive_filepath(version), "r") as zip_ref:
+        with zipfile.ZipFile(cls.get_archive_filepath(version.value), "r") as zip_ref:
             with zip_ref.open(inner_path, mode='r') as c_file:
                 return process_func(c_file)
 
@@ -27,9 +29,9 @@ class ZipArchiveUtils(object):
     def iter_from_zip(cls, inner_path, process_func, version):
         assert(isinstance(inner_path, unicode))
         assert(callable(process_func))
-        assert(isinstance(version, unicode))
+        assert(isinstance(version, enum.Enum))
 
-        with zipfile.ZipFile(cls.get_archive_filepath(version), "r") as zip_ref:
+        with zipfile.ZipFile(cls.get_archive_filepath(version.value), "r") as zip_ref:
             with zip_ref.open(inner_path, mode='r') as c_file:
                 for result in process_func(c_file):
                     yield result
