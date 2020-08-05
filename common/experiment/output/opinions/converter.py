@@ -33,7 +33,6 @@ class OutputToOpinionCollectionsConverter(object):
 
         if keep_news_ids_from_samples_reader:
             news_ids_values = list(samples_reader.iter_news_ids())
-            print news_ids_values
             output.insert_news_ids_values(news_ids_values)
 
         if keep_ids_from_samples_reader:
