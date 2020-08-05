@@ -39,8 +39,9 @@ class NetworkIOUtils(object):
                                              prefix=BaseSampleFormatter.formatter_type_log_name())
 
     @staticmethod
-    def get_output_results_filepath(experiment, data_type):
-        template = NetworkIOUtils.__filename_template(data_type=data_type, experiment=experiment)
+    def get_output_results_filepath(experiment, data_type, epoch_index):
+        template = NetworkIOUtils.__filename_template(data_type=data_type, experiment=experiment) +\
+                   u'-e{e_index}'.format(e_index=epoch_index)
         return NetworkIOUtils.__get_filepath(out_dir=experiment.DataIO.get_model_root(),
                                              template=template,
                                              prefix=u"result")

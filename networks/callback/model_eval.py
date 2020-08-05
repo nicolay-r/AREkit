@@ -22,8 +22,10 @@ def perform_experiment_evaluation(experiment, data_type, epoch_index, labels_for
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
     samples_filepath = NetworkIOUtils.get_input_sample_filepath(experiment=experiment, data_type=data_type)
-    result_filepath = NetworkIOUtils.get_output_results_filepath(experiment=experiment, data_type=data_type)
     opinions_source = NetworkIOUtils.get_input_opinions_filepath(experiment=experiment, data_type=data_type)
+    result_filepath = NetworkIOUtils.get_output_results_filepath(experiment=experiment,
+                                                                 data_type=data_type,
+                                                                 epoch_index=epoch_index)
 
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
