@@ -81,6 +81,7 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
     def save(self, filepath):
         logger.info(u"Saving... : {}".format(filepath))
+        self._df.sort_values(by=[const.ID], ascending=True)
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
