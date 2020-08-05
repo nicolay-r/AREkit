@@ -4,18 +4,13 @@ from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.features.frames import FrameFeatures
+from arekit.networks.input import const
 
 
 class NetworkSampleFormatter(BaseSampleFormatter):
     """
     Provides additional features, frame-based especially
     """
-
-    Frames = "frames"
-    FrameRoles = "frame_roles_uint"
-    SynonymObject = "syn_objs"
-    SynonymSubject = "syn_subjs"
-    ArgsSep = u','
 
     def __init__(self, data_type, label_provider, text_provider, synonyms_collection, frames_collection, balance):
         assert(isinstance(label_provider, LabelProvider))
@@ -26,6 +21,17 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
         self.__synonyms_collection = synonyms_collection
         self.__frames_collection = frames_collection
+
+    def _get_columns_list_with_types(self):
+        dtypes_list = super(NetworkSampleFormatter, self)._get_columns_list_with_types()
+
+        # insert indices
+        dtypes_list.append((const.FrameVariantIndices, unicode))
+        dtypes_list.append((const.FrameRoles, unicode))
+        dtypes_list.append((const.SynonymObject, unicode))
+        dtypes_list.append((const.SynonymSubject, unicode))
+
+        return dtypes_list
 
     def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
@@ -63,10 +69,10 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         uint_syn_t_inds = self.__iter_indices(terms=terms, filter=lambda t: self.__syn_check(t=t, g=syn_t_group))
 
         # Saving.
-        row[self.Frames] = self.__to_arg(uint_frame_inds)
-        row[self.FrameRoles] = self.__to_arg(uint_frame_roles)
-        row[self.SynonymSubject] = self.__to_arg(uint_syn_s_inds)
-        row[self.SynonymObject] = self.__to_arg(uint_syn_t_inds)
+        row[const.FrameVariantIndices] = self.__to_arg(uint_frame_inds)
+        row[const.FrameRoles] = self.__to_arg(uint_frame_roles)
+        row[const.SynonymSubject] = self.__to_arg(uint_syn_s_inds)
+        row[const.SynonymObject] = self.__to_arg(uint_syn_t_inds)
 
     @staticmethod
     def __iter_indices(terms, filter):
@@ -83,4 +89,4 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         return self.__synonyms_collection.get_synonym_group_index(value)
 
     def __to_arg(self, inds_iter):
-        return self.ArgsSep.join([str(i) for i in inds_iter])
+        return const.ArgsSep.join([str(i) for i in inds_iter])
