@@ -1,8 +1,8 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
-from arekit.source.ruattitudes.news.helper import RuAttitudesNewsHelper
-from arekit.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 
 class RuSentrelWithRuAttitudesOpinionOperations(RuSentrelOpinionOperations):

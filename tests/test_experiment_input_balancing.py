@@ -9,7 +9,7 @@ from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTer
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
+from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
 # Setup logging format

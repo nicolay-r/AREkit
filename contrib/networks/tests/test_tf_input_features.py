@@ -9,20 +9,19 @@ sys.path.append('../../../')
 from arekit.common.entities.base import Entity
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.news.parsed.term_position import TermPositionTypes
-
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
-from arekit.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.source.rusentiframes.io_utils import RuSentiFramesVersions
-from arekit.source.rusentrel.synonyms import RuSentRelSynonymsCollection
-
+from arekit.contrib.networks.tests.text.news import init_rusentrel_doc
+from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.bert.entity.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
-from arekit.tests.text.news import init_rusentrel_doc
 from arekit.tests.text.utils import terms_to_str
+
+from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
+from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions
 
 
 class TestTfInputFeatures(unittest.TestCase):

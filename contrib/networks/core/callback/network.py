@@ -15,7 +15,7 @@ from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputD
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
-from arekit.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
+from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

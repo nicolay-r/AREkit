@@ -9,9 +9,9 @@ from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
-from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
+from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 
 class RuSentrelOpinionOperations(CVBasedOpinionOperations):

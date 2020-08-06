@@ -3,16 +3,15 @@ import itertools
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.cv_based.documents import CVBasedDocumentOperations
-from arekit.source.rusentrel.io_utils import RuSentRelIOUtils
-from arekit.source.rusentrel.news.base import RuSentRelNews
-from arekit.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
+from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 
 
 class RuSentrelDocumentOperations(CVBasedDocumentOperations):
     """
     Limitations: Supported only train/test collections format
     """
-
 
     def __init__(self, data_io):
         assert(isinstance(data_io, DataIO))

@@ -3,7 +3,7 @@ import logging
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
-from arekit.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

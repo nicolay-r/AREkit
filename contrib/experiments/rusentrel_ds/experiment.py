@@ -4,10 +4,10 @@ from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperime
 from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
-from arekit.source.ruattitudes.collection import RuAttitudesCollection
-from arekit.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
+from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
+from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 logger = logging.getLogger(__name__)
 
