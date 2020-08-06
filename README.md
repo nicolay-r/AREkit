@@ -1,6 +1,8 @@
 # AREkit 0.20.5
 
-![](logo.png)
+<p align="center">
+    <img src="logo.png"/>
+</p>
 
 **AREkit** -- is a python toolkit for **sentiment attitude extraction** task.
 
