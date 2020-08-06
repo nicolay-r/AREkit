@@ -21,7 +21,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         assert(isinstance(rusentrel_news_ids, set))
 
         super(RuSentrelOpinionOperations, self).__init__(
-            model_root=data_io.get_model_root(),
+            model_io=data_io.ModelIO,
             experiments_dir=data_io.get_experiments_dir(),
             folding_algo=data_io.CVFoldingAlgorithm,
             annot_name_func=annot_name_func)

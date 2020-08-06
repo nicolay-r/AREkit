@@ -48,11 +48,9 @@ class OpinionOperations(object):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
 
-        output_dir = self.__experiments_dir
-
         root = get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__annot_name_func(),
-            experiments_dir=output_dir)
+            experiments_dir=self.__experiments_dir)
 
         filename = u"art{doc_id}.neut.{d_type}.txt".format(
             doc_id=doc_id,

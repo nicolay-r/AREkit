@@ -30,13 +30,17 @@ class BaseExperiment(object):
 
         self.__data_io = data_io
 
-        if prepare_model_root:
-            self.DataIO.prepare_model_root()
-
         self.__neutral_annot = self.__init_annotator()
 
-        # Setup DataIO
-        self.__data_io.Callback.set_log_dir(path.join(self.DataIO.get_model_root(), u"log/"))
+        # Setup DataIO model root
+        model_root = self.DataIO.get_model_root(experiment_name=self.Name)
+        logger.info("Setup model root: {}".format(model_root))
+        self.__data_io.ModelIO.set_model_root(value=model_root)
+        if prepare_model_root:
+            self.__data_io.prepare_model_root()
+
+        # Setup Log dir.
+        self.__data_io.Callback.set_log_dir(path.join(model_root, u"log/"))
 
         # Initializing annotator
         logger.info("Initializing neutral annotator ...")
@@ -45,9 +49,6 @@ class BaseExperiment(object):
                                         doc_ops=self.DocumentOperations)
 
         # Setup model root
-        model_root = self.DataIO.get_model_root()
-        logger.info("Setup model root: {}".format(model_root))
-        self.__data_io.ModelIO.set_model_root(value=model_root)
 
     # region Properties
 
@@ -72,15 +73,6 @@ class BaseExperiment(object):
         return self.__doc_operations
 
     # endregion
-
-    def get_input_samples_dir(self):
-        is_fixed = self.__data_io.CVFoldingAlgorithm.CVCount == 1
-        e_name = u"{name}_{mode}_{scale}l".format(name=self.Name,
-                                                  mode=u"fixed" if is_fixed else u"cv",
-                                                  scale=self.DataIO.LabelsScaler.LabelsCount)
-
-        return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
-                                                        experiments_dir=self.DataIO.get_experiments_dir())
 
     def create_parsed_collection(self, data_type):
         assert(isinstance(data_type, DataType))

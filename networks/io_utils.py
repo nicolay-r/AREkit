@@ -22,7 +22,7 @@ class NetworkIOUtils(object):
     def get_target_dir(experiment):
         """ Provides a main directory for input
         """
-        return experiment.get_input_samples_dir()
+        return experiment.DataIO.get_input_samples_dir(experiment.Name)
 
     @staticmethod
     def get_input_opinions_filepath(experiment, data_type):
@@ -40,10 +40,14 @@ class NetworkIOUtils(object):
 
     @staticmethod
     def get_output_results_filepath(experiment, data_type, epoch_index):
-        template = NetworkIOUtils.__filename_template(data_type=data_type, experiment=experiment) +\
-                   u'-e{e_index}'.format(e_index=epoch_index)
-        return NetworkIOUtils.__get_filepath(out_dir=experiment.DataIO.get_model_root(),
-                                             template=template,
+        f_name_template = NetworkIOUtils.__filename_template(data_type=data_type,
+                                                             experiment=experiment)
+
+        result_template = u"".join([f_name_template,
+                             u'-e{e_index}'.format(e_index=epoch_index)])
+
+        return NetworkIOUtils.__get_filepath(out_dir=experiment.DataIO.ModelIO.ModelRoot,
+                                             template=result_template,
                                              prefix=u"result")
 
     @staticmethod
