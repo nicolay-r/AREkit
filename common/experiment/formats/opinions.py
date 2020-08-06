@@ -15,17 +15,6 @@ class OpinionOperations(object):
         self.__experiments_dir = experiments_dir
         self.__annot_name_func = annot_name_func
 
-    # region private methods
-
-    @staticmethod
-    def __data_type_to_string(data_type):
-        if data_type == DataType.Train:
-            return u'train'
-        if data_type == DataType.Test:
-            return u'test'
-
-    # endregion
-
     def read_neutral_opinion_collection(self, doc_id, data_type):
         raise NotImplementedError()
 
@@ -52,8 +41,7 @@ class OpinionOperations(object):
             subfolder_name=self.__annot_name_func(),
             experiments_dir=self.__experiments_dir)
 
-        filename = u"art{doc_id}.neut.{d_type}.txt".format(
-            doc_id=doc_id,
-            d_type=self.__data_type_to_string(data_type=data_type))
+        filename = u"art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
+                                                           d_type=data_type.name)
 
         return join(root, filename)
