@@ -3,7 +3,7 @@ import random
 
 import numpy as np
 
-import arekit.networks.mappers.pos
+import arekit.contrib.networks.core.mappers.pos
 from arekit.common.entities.base import Entity
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -111,7 +111,7 @@ class InputSample(InputSampleBase):
                    dist_nearest_obj=blank_terms,
                    frame_sent_roles=blank_terms,
                    frame_indices=blank_frames,
-                   input_sample_id=-1)
+                   input_sample_id=u"1")
 
     @classmethod
     def _generate_test(cls, config):
@@ -133,7 +133,7 @@ class InputSample(InputSampleBase):
                    dist_nearest_obj=blank_terms,
                    frame_sent_roles=blank_terms,
                    frame_indices=blank_frames,
-                   input_sample_id=-1)
+                   input_sample_id=u"1")
 
     @classmethod
     def from_tsv_row(cls,
@@ -167,7 +167,7 @@ class InputSample(InputSampleBase):
             terms_per_context=config.TermsPerContext,
             pad=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
-        pos_vector = arekit.networks.mappers.pos.iter_pos_indices_for_terms(
+        pos_vector = arekit.contrib.networks.core.mappers.pos.iter_pos_indices_for_terms(
             terms=terms,
             pos_tagger=config.PosTagger)
 

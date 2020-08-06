@@ -7,8 +7,8 @@ from arekit.common.experiment.output.opinions.converter import OutputToOpinionCo
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
-from arekit.networks.input.readers.samples import NetworkInputSampleReader
-from arekit.networks.io_utils import NetworkIOUtils
+from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 
 
 def perform_experiment_evaluation(experiment, data_type, epoch_index, labels_formatter):

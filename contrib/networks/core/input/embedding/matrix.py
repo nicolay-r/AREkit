@@ -2,8 +2,7 @@ import logging
 import numpy as np
 
 from arekit.common.embeddings.base import Embedding
-from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
-
+from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
 
 logger = logging.getLogger(__name__)
 

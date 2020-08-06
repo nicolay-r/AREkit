@@ -1,7 +1,7 @@
 from arekit.common.model.sample import InputSampleBase
-from arekit.networks.input.rows_parser import ParsedSampleRow
-from arekit.networks.feeding.bags.bag import Bag
-from arekit.networks.feeding.bags.collection.base import BagsCollection
+from arekit.contrib.networks.core.feeding.bags.bag import Bag
+from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
+from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
 
 class MultiInstanceBagsCollection(BagsCollection):

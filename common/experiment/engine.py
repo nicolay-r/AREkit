@@ -6,10 +6,10 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.networks.callback.base import Callback
-from arekit.networks.data_handling.data import HandledData
-from arekit.networks.feeding.bags.collection.base import BagsCollection
-from arekit.networks.model import BaseTensorflowModel
+from arekit.contrib.networks.core.callback.base import Callback
+from arekit.contrib.networks.core.data_handling.data import HandledData
+from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
+from arekit.contrib.networks.core.model import BaseTensorflowModel
 
 
 class ExperimentEngine(object):

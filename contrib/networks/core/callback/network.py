@@ -8,13 +8,13 @@ from arekit.common.evaluation.results.two_class import TwoClassEvalResult
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.networks.callback.base import Callback
-from arekit.networks.callback.model_eval import perform_experiment_evaluation
-from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.io_utils import NetworkIOUtils
-from arekit.networks.model import BaseTensorflowModel
-from arekit.networks.output.encoder import NetworkOutputEncoder
-from arekit.networks.data_handling.predict_log import NetworkInputDependentVariables
+from arekit.contrib.networks.core.callback.base import Callback
+from arekit.contrib.networks.core.callback.model_eval import perform_experiment_evaluation
+from arekit.contrib.networks.core.cancellation import OperationCancellation
+from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
+from arekit.contrib.networks.core.model import BaseTensorflowModel
+from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
 from arekit.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 
 logger = logging.getLogger(__name__)

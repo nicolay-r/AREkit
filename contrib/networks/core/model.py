@@ -12,21 +12,22 @@ from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
+
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
-from arekit.networks.callback.base import Callback
-from arekit.networks.cancellation import OperationCancellation
-from arekit.networks.data_handling.data import HandledData
-from arekit.networks.feeding.bags.collection.base import BagsCollection
-from arekit.networks.feeding.bags.collection.multi import MultiInstanceBagsCollection
-from arekit.networks.feeding.bags.collection.single import SingleBagsCollection
-from arekit.networks.feeding.batch.multi import MultiInstanceMiniBatch
-from arekit.networks.nn_io import NeuralNetworkModelIO
-from arekit.networks.nn import NeuralNetwork
-from arekit.networks.output.encoder import NetworkOutputEncoder
-from arekit.networks.data_handling.labeling import BaseSamplesLabeling
-from arekit.networks.data_handling.predict_log import NetworkInputDependentVariables
-from arekit.networks.feeding.batch.base import MiniBatch
+from arekit.contrib.networks.core.callback.base import Callback
+from arekit.contrib.networks.core.cancellation import OperationCancellation
+from arekit.contrib.networks.core.data_handling.data import HandledData
+from arekit.contrib.networks.core.data_handling.labeling import BaseSamplesLabeling
+from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
+from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
+from arekit.contrib.networks.core.feeding.bags.collection.multi import MultiInstanceBagsCollection
+from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
+from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
+from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
+from arekit.contrib.networks.core.nn import NeuralNetwork
+from arekit.contrib.networks.core.nn_io import NeuralNetworkModelIO
+from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
 
 logger = logging.getLogger(__name__)
 

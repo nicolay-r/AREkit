@@ -1,5 +1,5 @@
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
-from arekit.networks.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
+from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 
 
 class NetworkSingleTextProvider(BaseSingleTextProvider):

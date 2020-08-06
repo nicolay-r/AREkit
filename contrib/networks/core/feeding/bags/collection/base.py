@@ -3,7 +3,7 @@ from tqdm import tqdm
 
 from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.networks.input.rows_parser import ParsedSampleRow
+from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
 
 class BagsCollection(object):

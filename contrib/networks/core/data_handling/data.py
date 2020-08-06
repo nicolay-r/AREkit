@@ -11,12 +11,12 @@ from arekit.common.labels.base import Label
 from arekit.common.model.labeling.single import SingleLabelsHelper
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
-from arekit.networks.input.encoder import NetworkInputEncoder
+from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
 
-from arekit.networks.input.readers.samples import NetworkInputSampleReader
-from arekit.networks.input.rows_parser import ParsedSampleRow
-from arekit.networks.io_utils import NetworkIOUtils
+from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -110,7 +110,7 @@ class HandledData(object):
     def __perform_reading_and_initialization(self, experiment, bags_collection_type, config):
         """
         Perform reading information from the serialized experiment inputs.
-        Initializing networks configuration.
+        Initializing core configuration.
         """
         # Reading embedding.
         npz_embedding_data = np.load(NetworkIOUtils.get_embedding_filepath(experiment))

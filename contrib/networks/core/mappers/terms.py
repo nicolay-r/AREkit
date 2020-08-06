@@ -7,7 +7,7 @@ from arekit.common.embeddings.tokens import TokenEmbedding
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.text_frame_variant import TextFrameVariant
-from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
+from arekit.contrib.networks.core.input import TermsEmbeddingOffsets
 from arekit.processing.text.token import Token
 
 logger = logging.getLogger(__name__)

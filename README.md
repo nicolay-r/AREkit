@@ -21,7 +21,7 @@ named entity recognition (NER),
 part of speech tagging (POS),
 stemmer;
 
-* [Networks](networks) directory -- Provides both neural network model implementation (in Tensorflow) 
+* [Networks](contrib/networks/core) directory -- Provides both neural network model implementation (in Tensorflow) 
 intended for the automatic sentiment relation extraction (RE)
 on document level.
 
@@ -60,10 +60,10 @@ List of the toolset dependencies is as follows:
 
 This toolset includes the following instruments and domain-related datasets:
 
-* **Network** [[base-class]](networks/nn.py);
-    * Model [[base-class]](networks/model.py);
-    * IO [[base-class]](networks/nn_io.py);
-    * Callback [[base-class]](networks/callback/base.py);
+* **Network** [[base-class]](contrib/networks/core/nn.py);
+    * Model [[base-class]](contrib/networks/core/model.py);
+    * IO [[base-class]](contrib/networks/core/nn_io.py);
+    * Callback [[base-class]](contrib/networks/core/callback/base.py);
 * **Sources** [[README]](source/README.md) -- datasets and embeddings;
     * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
     * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);

@@ -4,7 +4,7 @@ from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.features.frame_roles import FrameRoleFeatures
-from arekit.networks.input import const
+from arekit.contrib.networks.core.input import const
 
 
 class NetworkSampleFormatter(BaseSampleFormatter):

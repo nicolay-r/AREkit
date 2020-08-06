@@ -1,19 +1,19 @@
 import random
 import sys
 import unittest
-
 import tensorflow as tf
 import logging
 
 sys.path.append('../../')
 
+from arekit.contrib.networks.core.feeding.bags.bag import Bag
+
+from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
+from arekit.contrib.networks.core.nn import NeuralNetwork
+
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.data_type import DataType
-
-from arekit.networks.feeding.bags.bag import Bag
-from arekit.networks.nn import NeuralNetwork
-from arekit.networks.feeding.batch.base import MiniBatch
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
@@ -71,7 +71,8 @@ class TestContextNetworkFeeding(unittest.TestCase):
             # Save graph
             writer = tf.summary.FileWriter("output", sess.graph)
             # Init feed dict
-            feed_dict = network.create_feed_dict(input=minibatch.to_network_input(label_scaler=labels_scaler),
+            feed_dict = network.create_feed_dict(input=minibatch.to_network_input(label_scaler=labels_scaler,
+                                                                                  provide_labels=True),
                                                  data_type=DataType.Train)
 
             hidden_list = list(network.iter_hidden_parameters())

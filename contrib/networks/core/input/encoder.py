@@ -12,12 +12,12 @@ from arekit.common.experiment.input.providers.label.multiple import MultipleLabe
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
-from arekit.networks.input.embedding.matrix import create_term_embedding_matrix
-from arekit.networks.input.embedding.offsets import TermsEmbeddingOffsets
-from arekit.networks.input.formatters.sample import NetworkSampleFormatter
-from arekit.networks.input.providers.text.single import NetworkSingleTextProvider
-from arekit.networks.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
-from arekit.networks.io_utils import NetworkIOUtils
+from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
+from arekit.contrib.networks.core.input.formatters.sample import NetworkSampleFormatter
+from arekit.contrib.networks.core.input.providers.text.single import NetworkSingleTextProvider
+from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
+from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

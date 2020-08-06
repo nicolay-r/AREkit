@@ -1,10 +1,10 @@
 from collections import OrderedDict
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.networks.debug import DebugKeys
 from arekit.common.model.sample import InputSampleBase
-from arekit.networks.feeding.bags.bag import Bag
-from arekit.networks.feeding.batch.base import MiniBatch
+from arekit.contrib.networks.core.debug import DebugKeys
+from arekit.contrib.networks.core.feeding.bags.bag import Bag
+from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 
 
 class MultiInstanceMiniBatch(MiniBatch):
@@ -12,8 +12,9 @@ class MultiInstanceMiniBatch(MiniBatch):
     def __init__(self, bags, batch_id=None):
         super(MultiInstanceMiniBatch, self).__init__(bags, batch_id)
 
-    def to_network_input(self, label_scaler):
+    def to_network_input(self, label_scaler, provide_labels):
         assert(isinstance(label_scaler, BaseLabelScaler))
+        assert(isinstance(provide_labels, bool))
 
         result = OrderedDict()
 
@@ -29,7 +30,7 @@ class MultiInstanceMiniBatch(MiniBatch):
         for bag in self.iter_by_bags():
             if self.I_LABELS not in result:
                 result[self.I_LABELS] = []
-            result[self.I_LABELS].append(label_scaler.label_to_uint(label=bag.BagLabel))
+            result[self.I_LABELS].append(label_scaler.label_to_uint(label=bag.BagLabel) if provide_labels else 0)
 
         if DebugKeys.MiniBatchShow:
             MiniBatch.debug_output(result)

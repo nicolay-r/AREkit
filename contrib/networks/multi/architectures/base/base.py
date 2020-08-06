@@ -2,11 +2,11 @@ import tensorflow as tf
 
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.context.architectures.base.base import SingleInstanceNeuralNetwork
+from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
+from arekit.contrib.networks.core.nn import NeuralNetwork
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.tf_helpers.initialization import init_accuracy, init_weighted_cost
-from arekit.networks.feeding.batch.multi import MultiInstanceMiniBatch
-from arekit.networks.nn import NeuralNetwork
 
 
 class BaseMultiInstanceNeuralNetwork(NeuralNetwork):

@@ -2,8 +2,8 @@ import logging
 from collections import OrderedDict
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.networks.debug import DebugKeys
 from arekit.common.model.sample import InputSampleBase
+from arekit.contrib.networks.core.debug import DebugKeys
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
