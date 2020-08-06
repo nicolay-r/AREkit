@@ -1,22 +1,20 @@
 import logging
-import sys
 import unittest
 
-sys.path.append('../../')
-
-from arekit.contrib.networks.core.feeding.bags.bag import Bag
-from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
+sys.path.append('../../../')
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import PositiveLabel
+
+from arekit.contrib.networks.tests.tf_networks.supported import get_supported
+from arekit.contrib.networks.core.feeding.bags.bag import Bag
+from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
 
 from arekit.contrib.networks.multi.configurations.max_pooling import MaxPoolingOverSentencesConfig
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-
-from arekit.tests.test_tf_ctx_feed import TestContextNetworkFeeding
-from arekit.tests.tf_networks.supported import get_supported
+from arekit.contrib.networks.tests.test_tf_ctx_feed import TestContextNetworkFeeding
 
 
 class TestMultiInstanceFeed(unittest.TestCase):

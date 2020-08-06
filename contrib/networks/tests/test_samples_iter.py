@@ -1,10 +1,9 @@
-#!/usr/bin/python
 import csv
 import gzip
 import sys
 import unittest
 
-sys.path.append('../../')
+sys.path.append('../../../')
 
 from arekit.common.utils import split_by_whitespaces
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -39,13 +38,18 @@ class TestSamplesIteration(unittest.TestCase):
 
         words_vocab = self.read_vocab(vocab_filepath)
         config = DefaultNetworkConfig()
+        config.modify_terms_per_context(35)
 
         samples = []
         for line in self.iter_tsv_gzip(input_file=samples_filepath):
             _id, label, text, subj_ind, obj_ind = line
 
+            _id = _id.decode('utf-8')
             text = text.decode('utf-8')
 
+            print u"------------------"
+            print u"INPUT SAMPLE DATA"
+            print u"------------------"
             print u"id: {}".format(_id)
             print u"label: {}".format(label)
             print u"terms: {}".format(text)
@@ -58,6 +62,12 @@ class TestSamplesIteration(unittest.TestCase):
                                          obj_ind=int(obj_ind),
                                          words_vocab=words_vocab,
                                          config=config)
+
+            print u"------------------"
+            print u"NETWORK INPUT DATA"
+            print u"------------------"
+            for key, value in s:
+                print key, value
 
             samples.append(s)
 

@@ -3,14 +3,13 @@ import logging
 import sys
 import unittest
 
-sys.path.append('../../')
+sys.path.append('../../../')
 
-
-from arekit.tests.tf_networks.supported import get_supported
+from arekit.contrib.networks.tests.tf_networks.supported import get_supported
+from arekit.contrib.networks.tests.tf_networks.utils import init_config
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
-from arekit.tests.tf_networks.utils import init_config
 
 
 class TestMultiInstanceCompile(unittest.TestCase):

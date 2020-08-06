@@ -1,15 +1,12 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import logging
 import sys
 import unittest
 
-sys.path.append('../../')
+sys.path.append('../../../')
 
-
+from arekit.contrib.networks.tests.tf_networks.utils import init_config
+from arekit.contrib.networks.tests.tf_networks.supported import get_supported
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.tests.tf_networks.utils import init_config
-from arekit.tests.tf_networks.supported import get_supported
 
 
 class TestContextNetworkCompilation(unittest.TestCase):

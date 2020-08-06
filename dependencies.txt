@@ -1,8 +1,7 @@
-pymystem3
+pymystem3==0.2.0
 pandas==0.20.3
 gensim==0.13.4
 smart_open==1.8.0
 scipy==0.18.1
 texterra==1.0.1
-tensorflow==1.12.0
-tqdm
+tqdm==4.48.0

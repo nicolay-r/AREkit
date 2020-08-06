@@ -4,12 +4,7 @@ import unittest
 import tensorflow as tf
 import logging
 
-sys.path.append('../../')
-
-from arekit.contrib.networks.core.feeding.bags.bag import Bag
-
-from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
-from arekit.contrib.networks.core.nn import NeuralNetwork
+sys.path.append('../../../')
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.scales.three import ThreeLabelScaler
@@ -17,9 +12,11 @@ from arekit.common.experiment.data_type import DataType
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
-
-from arekit.tests.tf_networks.supported import get_supported
-from arekit.tests.tf_networks.utils import init_config
+from arekit.contrib.networks.tests.tf_networks.supported import get_supported
+from arekit.contrib.networks.tests.tf_networks.utils import init_config
+from arekit.contrib.networks.core.feeding.bags.bag import Bag
+from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
+from arekit.contrib.networks.core.nn import NeuralNetwork
 
 
 class TestContextNetworkFeeding(unittest.TestCase):
