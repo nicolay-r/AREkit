@@ -159,7 +159,7 @@ class HandledData(object):
             bag_size=config.BagSize,
             shuffle=True,
             label_scaler=experiment.DataIO.LabelsScaler,
-            create_empty_sample_func=lambda cfg: InputSample.create_empty(cfg),
+            create_empty_sample_func=lambda: InputSample.create_empty(config),
             create_sample_func=lambda row: self.__create_input_sample(row=row, config=config, vocab=vocab))
 
         return labeled_sample_row_ids
