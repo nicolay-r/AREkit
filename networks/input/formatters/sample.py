@@ -3,7 +3,7 @@ from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
-from arekit.contrib.networks.features.frames import FrameFeatures
+from arekit.contrib.networks.features.frame_roles import FrameRoleFeatures
 from arekit.networks.input import const
 
 
@@ -54,9 +54,9 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         uint_frame_inds = list(self.__iter_indices(terms=terms, filter=lambda t: isinstance(t, TextFrameVariant)))
 
         # Compose frame sentiment.
-        uint_frame_roles = FrameFeatures.compose_frame_roles(frame_variants=[terms[fi] for fi in uint_frame_inds],
-                                                             frames_collection=self.__frames_collection,
-                                                             label_scaler=self._label_provider.LabelScaler)
+        uint_frame_roles = FrameRoleFeatures.from_tsv(frame_variants=[terms[fi] for fi in uint_frame_inds],
+                                                      frames_collection=self.__frames_collection,
+                                                      label_scaler=self._label_provider.LabelScaler)
 
         # Synonyms for source.
         assert(isinstance(terms[s_ind], Entity))

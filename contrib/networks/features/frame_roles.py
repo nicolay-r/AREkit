@@ -5,17 +5,17 @@ from arekit.common.labels.base import NeutralLabel
 from arekit.common.text_frame_variant import TextFrameVariant
 
 
-class FrameFeatures(object):
+class FrameRoleFeatures(object):
 
     @staticmethod
-    def compose_frame_roles(frame_variants, frames_collection, label_scaler):
+    def from_tsv(frame_variants, frames_collection, label_scaler):
         assert(isinstance(label_scaler, BaseLabelScaler))
 
         result = []
 
         for variant in frame_variants:
 
-            value = FrameFeatures.__extract_uint_frame_variant_sentiment_role(
+            value = FrameRoleFeatures.__extract_uint_frame_variant_sentiment_role(
                 text_frame_variant=variant,
                 frames_collection=frames_collection,
                 label_scaler=label_scaler)
@@ -23,6 +23,23 @@ class FrameFeatures(object):
             result.append(value)
 
         return result
+
+    @staticmethod
+    def to_input(frame_inds, frame_sent_roles, terms_per_context, pad):
+        assert(isinstance(frame_inds, list) or frame_inds is None)
+        assert(isinstance(frame_sent_roles, list) or frame_sent_roles is None)
+
+        vector = [pad] * terms_per_context
+
+        if frame_sent_roles is None or frame_inds is None:
+            return vector
+
+        assert(len(frame_inds) == len(frame_sent_roles))
+
+        for i, frame_ind in frame_inds:
+            vector[frame_ind] = frame_sent_roles[i]
+
+        return vector
 
     # region private methods
 

@@ -8,6 +8,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.features.dist import DistanceFeatures
+from arekit.contrib.networks.features.frame_roles import FrameRoleFeatures
 from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
@@ -157,7 +158,20 @@ class InputSample(InputSampleBase):
         assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
         assert(subj_ind != obj_ind)
 
+        # Composing vectors
         x_indices = [words_vocab[term] for term in terms]
+
+        frame_sent_roles_vector = FrameRoleFeatures.to_input(
+            frame_inds=frame_inds,
+            frame_sent_roles=frame_sent_roles,
+            terms_per_context=config.TermsPerContext,
+            pad=cls.FRAME_SENT_ROLES_PAD_VALUE)
+
+        pos_vector = arekit.networks.mappers.pos.iter_pos_indices_for_terms(
+            terms=terms,
+            pos_tagger=config.PosTagger)
+
+        # Composing Features
         x_feature = IndicesFeature.from_vector_to_be_fitted(
             value_vector=x_indices,
             e1_in=subj_ind,
@@ -166,14 +180,14 @@ class InputSample(InputSampleBase):
             filler=cls.X_PAD_VALUE)
 
         pos_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=arekit.networks.mappers.pos.iter_pos_indices_for_terms(terms=terms, pos_tagger=config.PosTagger),
+            value_vector=pos_vector,
             e1_in=subj_ind,
             e2_in=obj_ind,
             expected_size=config.TermsPerContext,
             filler=cls.POS_PAD_VALUE)
 
         frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=[cls.FRAME_SENT_ROLES_PAD_VALUE] * len(terms) if frame_sent_roles is None else [],
+            value_vector=frame_sent_roles_vector,
             e1_in=subj_ind,
             e2_in=obj_ind,
             expected_size=config.TermsPerContext,
@@ -209,7 +223,6 @@ class InputSample(InputSampleBase):
         obj_ind = obj_ind - x_feature.StartIndex
 
         dist_from_subj = DistanceFeatures.distance_feature(position=subj_ind, size=config.TermsPerContext)
-
         dist_from_obj = DistanceFeatures.distance_feature(position=obj_ind, size=config.TermsPerContext)
 
         dist_nearest_subj = DistanceFeatures.distance_abs_nearest_feature(
