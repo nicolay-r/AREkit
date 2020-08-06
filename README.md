@@ -48,9 +48,6 @@ List of the toolset dependencies is as follows:
 
 * ![](https://img.shields.io/badge/Pandas-0.20.3-yellowgreen.svg)
 
-* ![](https://img.shields.io/badge/Tensorflow-1.12.0-yellowgreen.svg) 
-(`1.6.0+` since `tf.sort` call utilized)
-
 ### Optional Service Dependencies
 * Named Entity Recognition
     [[flask-python-server]](https://github.com/nicolay-r/ner-flask-wrapper);
@@ -61,21 +58,6 @@ List of the toolset dependencies is as follows:
 ## Manual
 
 This toolset includes the following instruments and domain-related datasets:
-
-* **Network** [[base-class]](contrib/networks/core/nn.py);
-    * Model [[base-class]](contrib/networks/core/model.py);
-    * IO [[base-class]](contrib/networks/core/nn_io.py);
-    * Callback [[base-class]](contrib/networks/core/callback/base.py);
-* **Sources** [[README]](source/README.md) -- datasets and embeddings;
-    * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
-    * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);
-    * RuSentRel [[github-repo]](https://github.com/nicolay-r/RuSentRel);
-    * Embeddings
-        * RusVectores 
-            [[code]](source/embeddings/rusvectores.py) /
-            [[news-w2v-download]](http://rusvectores.org/static/models/rusvectores2/news_mystem_skipgram_1000_20_2015.bin.gz);
-    * Lexicons
-        * RuSentiLex [[lab-site]](https://www.labinform.ru/pub/rusentilex/index.htm);
 
 ## Installation (Python 2.7)
 Using [virtualenv](https://www.pythoncentral.io/how-to-install-virtualenv-python/). 
@@ -89,11 +71,6 @@ Then install dependencies as follows:
 ```
 pip install -r dependencies.txt
 ```
-
-## Might be embedded in framework:
-
-* Semantic Relation Classification via Hierarchical Recurrent Neural Network with Attention
-[[paper]](https://www.aclweb.org/anthology/C16-1119)
 
 ## Research Applications & References
 

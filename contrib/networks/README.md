@@ -1,8 +1,20 @@
-# AREnets-0.20.6
+# AREnets 0.20.6
 
 Implementation of neural-netwoks, based on Tensorflow for sentiment attitude extraction task.
 
+### Dependencies
+
+* arekit
+
+### Core
+
+* **Network** [[base-class]](networks/core/nn.py);
+    * Model [[base-class]](networks/core/model.py);
+    * IO [[base-class]](networks/core/nn_io.py);
+    * Callback [[base-class]](networks/core/callback/base.py);
+
 ### Neural Network Models
+
 
 * **Aspect-based Attentive encoders**:
     - Multilayer Perceptron (MLP)
@@ -55,6 +67,11 @@ Implementation of neural-netwoks, based on Tensorflow for sentiment attitude ext
         [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
     - Single MLP
         [[code]](networks/multi/architectures/base/base_single_mlp.py);
+        
+### What could be also added
+* Semantic Relation Classification via Hierarchical Recurrent Neural Network with Attention
+[[paper]](https://www.aclweb.org/anthology/C16-1119)
+
 
 ## References
 
