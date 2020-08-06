@@ -16,18 +16,11 @@ class BaseNeutralAnnotator(object):
     Performs neutral annotation for different data_type.
     """
 
-    def __init__(self, annot_name):
-        assert(isinstance(annot_name, unicode))
-
-        logger.info("Init annotator: [{}]".format(annot_name))
-        self.__annot_name = annot_name
+    def __init__(self):
+        logger.info("Init annotator: [{}]".format(self.__class__))
         self.__opin_ops = None
         self.__doc_ops = None
         self.__data_io = None
-
-    @property
-    def AnnotatorName(self):
-        return self.__annot_name
 
     @property
     def _OpinOps(self):

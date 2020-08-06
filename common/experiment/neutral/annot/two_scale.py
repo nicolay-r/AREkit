@@ -18,7 +18,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
     """
 
     def __init__(self):
-        super(TwoScaleNeutralAnnotator, self).__init__(annot_name=u"neutral_2_scale")
+        super(TwoScaleNeutralAnnotator, self).__init__()
         self.__labels_fmt = ThreeScaleLabelsFormatter()
 
     # region static methods

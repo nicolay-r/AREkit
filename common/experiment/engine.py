@@ -106,6 +106,12 @@ class ExperimentEngine(object):
         logger.setLevel(logging.INFO)
         logger.addHandler(stream_handler)
 
+        # Initializing annotator
+        logger.info("Initializing neutral annotator ...")
+        experiment.initialize_neutral_annotator()
+
+        # Setup model root
+
         # Initialize data_io
         logger.info("Initialize data-io ...")
         for data_type in experiment.DocumentOperations.iter_suppoted_data_types():

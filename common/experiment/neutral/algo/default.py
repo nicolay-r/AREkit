@@ -37,7 +37,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
 
         self.__pnc = ParsedNewsCollection(parsed_news_it=iter_parsed_news)
-        self.__text_opinion_helper = TextOpinionHelper(parsed_news_collection=self.__pnc)
+        self.__text_opinion_helper = TextOpinionHelper(lambda news_id: self.__pnc.get_by_news_id(news_id))
         self.__dist_in_terms_bound = dist_in_terms_bound
 
     # region private methods

@@ -30,6 +30,10 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         self.__version = version
         self.__rusentrel_version = rusentrel_version
 
+        super(RuSentRelWithRuAttitudesExperiment, self).__init__(
+            data_io=data_io,
+            prepare_model_root=prepare_model_root)
+
         rusentrel_news_inds = RuSentRelExperiment.get_rusentrel_inds()
 
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
@@ -38,7 +42,8 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
             data_io=data_io,
-            annot_name_func=lambda: self.NeutralAnnotator.AnnotatorName,
+            neutral_annot_name=self.get_annot_name(),
+            experiments_name=self.Name,
             rusentrel_news_inds=rusentrel_news_inds,
             rusetrel_version=rusentrel_version)
 
@@ -49,11 +54,8 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         doc_ops.set_ru_attitudes(ru_attitudes)
         opin_ops.set_ru_attitudes(ru_attitudes)
 
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(
-            data_io=data_io,
-            opin_ops=opin_ops,
-            doc_ops=doc_ops,
-            prepare_model_root=prepare_model_root)
+        self._set_opin_operations(opin_ops)
+        self._set_doc_operations(doc_ops)
 
     @property
     def Name(self):

@@ -5,6 +5,7 @@ from arekit.common.experiment.data_io import DataIO
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOperations
+from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.opinions.collection import OpinionCollection
@@ -15,21 +16,22 @@ from arekit.source.rusentrel.opinions.collection import RuSentRelOpinionCollecti
 
 class RuSentrelOpinionOperations(CVBasedOpinionOperations):
 
-    def __init__(self, data_io, version, annot_name_func, rusentrel_news_ids):
+    def __init__(self, data_io, version, experiment_name, neutral_annot_name, rusentrel_news_ids):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(version, RuSentRelVersions))
+        assert(isinstance(neutral_annot_name, unicode))
         assert(isinstance(rusentrel_news_ids, set))
+
+        neutral_root = get_path_of_subfolder_in_experiments_dir(
+            experiments_dir=data_io.get_input_samples_dir(experiment_name),
+            subfolder_name=neutral_annot_name)
 
         super(RuSentrelOpinionOperations, self).__init__(
             model_io=data_io.ModelIO,
-            experiments_dir=data_io.get_experiments_dir(),
             folding_algo=data_io.CVFoldingAlgorithm,
-            annot_name_func=annot_name_func)
+            neutral_root=neutral_root)
 
         self._data_io = data_io
-        # TODO. In general, we may use this set for a DEV.
-        # TODO. However this is actully a part of train, it allows us
-        # TODO. Not to use logic with set compositions (as in __get_doc_ids_set_to_compare)
         self._rusentrel_news_ids = rusentrel_news_ids
         self.__eval_on_rusentrel_docs_key = True
         self.__result_labels_fmt = RuSentRelLabelsFormatter()

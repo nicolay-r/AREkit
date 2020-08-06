@@ -19,17 +19,14 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    def __init__(self, data_io, opin_operation, doc_operations, prepare_model_root):
+    def __init__(self, data_io, prepare_model_root):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(prepare_model_root, bool))
-        assert(isinstance(opin_operation, OpinionOperations))
-        assert(isinstance(doc_operations, DocumentOperations))
 
-        self.__opin_operations = opin_operation
-        self.__doc_operations = doc_operations
-
+        # Setup class fields
         self.__data_io = data_io
-
+        self.__opin_operations = None
+        self.__doc_operations = None
         self.__neutral_annot = self.__init_annotator()
 
         # Setup DataIO model root
@@ -41,14 +38,6 @@ class BaseExperiment(object):
 
         # Setup Log dir.
         self.__data_io.Callback.set_log_dir(path.join(model_root, u"log/"))
-
-        # Initializing annotator
-        logger.info("Initializing neutral annotator ...")
-        self.__neutral_annot.initialize(data_io=data_io,
-                                        opin_ops=self.OpinionOperations,
-                                        doc_ops=self.DocumentOperations)
-
-        # Setup model root
 
     # region Properties
 
@@ -73,6 +62,19 @@ class BaseExperiment(object):
         return self.__doc_operations
 
     # endregion
+
+    def _set_opin_operations(self, value):
+        assert(isinstance(value, OpinionOperations))
+        self.__opin_operations = value
+
+    def _set_doc_operations(self, value):
+        assert(isinstance(value, DocumentOperations))
+        self.__doc_operations = value
+
+    def initialize_neutral_annotator(self):
+        self.__neutral_annot.initialize(data_io=self.__data_io,
+                                        opin_ops=self.__opin_operations,
+                                        doc_ops=self.__doc_operations)
 
     def create_parsed_collection(self, data_type):
         assert(isinstance(data_type, DataType))
@@ -122,5 +124,11 @@ class BaseExperiment(object):
             return TwoScaleNeutralAnnotator()
         if isinstance(self.__data_io.LabelsScaler, ThreeLabelScaler):
             return ThreeScaleNeutralAnnotator()
+
+    def get_annot_name(self):
+        if isinstance(self.__neutral_annot, TwoScaleNeutralAnnotator):
+            return u"neut_2_scale"
+        if isinstance(self.__neutral_annot, ThreeScaleNeutralAnnotator):
+            return u"neut_3_scale"
 
     # endregion

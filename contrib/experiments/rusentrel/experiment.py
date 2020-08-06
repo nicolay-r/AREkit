@@ -21,26 +21,28 @@ class RuSentRelExperiment(CVBasedExperiment):
     def __init__(self, data_io, version, prepare_model_root):
         assert(isinstance(version, RuSentRelVersions))
 
+        self.__version = version
+
+        super(RuSentRelExperiment, self).__init__(data_io=data_io,
+                                                  prepare_model_root=prepare_model_root)
+
         logger.info("Create opinion oprations ... ")
-        opin_ops = RuSentrelOpinionOperations(
-            data_io=data_io,
-            annot_name_func=lambda: self.NeutralAnnotator.AnnotatorName,
-            version=version,
-            rusentrel_news_ids=self.get_rusentrel_inds())
+        opin_ops = RuSentrelOpinionOperations(data_io=data_io,
+                                              experiment_name=self.Name,
+                                              neutral_annot_name=self.get_annot_name(),
+                                              version=version,
+                                              rusentrel_news_ids=self.get_rusentrel_inds())
 
         logger.info("Create document operations ... ")
         doc_ops = RuSentrelDocumentOperations(data_io=data_io)
 
-        super(RuSentRelExperiment, self).__init__(
-            data_io=data_io,
-            opin_ops=opin_ops,
-            doc_ops=doc_ops,
-            prepare_model_root=prepare_model_root)
+        # Setup
+        self._set_opin_operations(opin_ops)
+        self._set_doc_operations(doc_ops)
 
     @property
     def Name(self):
-        version = self.OpinionOperations._rusentrel_version
-        return u"rusentrel-{version}".format(version=version.value)
+        return u"rusentrel-{version}".format(version=self.__version.value)
 
     @staticmethod
     def get_rusentrel_inds():

@@ -7,13 +7,14 @@ from arekit.source.rusentrel.io_utils import RuSentRelVersions
 
 class RuSentrelWithRuAttitudesOpinionOperations(RuSentrelOpinionOperations):
 
-    def __init__(self, data_io, rusetrel_version, annot_name_func, rusentrel_news_inds):
+    def __init__(self, data_io, rusetrel_version, experiments_name, neutral_annot_name, rusentrel_news_inds):
         assert(isinstance(rusentrel_news_inds, set))
         assert(isinstance(rusetrel_version, RuSentRelVersions))
         super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__(
             data_io=data_io,
-            annot_name_func=annot_name_func,
+            neutral_annot_name=neutral_annot_name,
             rusentrel_news_ids=rusentrel_news_inds,
+            experiment_name=experiments_name,
             version=rusetrel_version)
 
         self.__ru_attitudes = None
