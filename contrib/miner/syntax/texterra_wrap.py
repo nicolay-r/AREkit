@@ -1,7 +1,7 @@
 import texterra
 import logging
 from texterra.syntaxtree import SyntaxTree
-from arekit.processing.syntax.base import SyntaxParser, SyntaxAnalysisResult
+from arekit.contrib.miner.syntax import SyntaxParser, SyntaxAnalysisResult
 
 
 logger = logging.getLogger(__name__)

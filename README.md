@@ -53,7 +53,7 @@ List of the toolset dependencies is as follows:
     [[flask-python-server]](https://github.com/nicolay-r/ner-flask-wrapper);
     [[sh-script]](start_deep_ner.sh);
 * SyntaxNet docker container
-    [[sh-script]](start_syntaxnet.sh);
+    [[sh-script]](contrib/miner/start_syntaxnet.sh);
 
 ## Manual
 

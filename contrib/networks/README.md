@@ -4,7 +4,10 @@ Implementation of neural-netwoks, based on Tensorflow for sentiment attitude ext
 
 ### Dependencies
 
-* arekit
+* python == 2.7.5
+* arekit == 0.20.6
+* tensorflow == 1.12.0
+* aresets == 0.20.6 (Only for some tests and application purposes) 
 
 ### Core
 
