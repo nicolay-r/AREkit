@@ -8,27 +8,27 @@ from arekit.common.utils import create_dir_if_not_exists
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
-# TODO. Provide synonyms in ctor.
-# TODO. Provide synonyms in ctor.
-# TODO. Provide synonyms in ctor.
 class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
 
-    @staticmethod
-    def load_from_file(filepath, synonyms, labels_formatter):
+    def __init__(self, synonyms_collection):
+        assert(isinstance(synonyms_collection, SynonymsCollection))
+        self.__synonyms = synonyms_collection
+
+    # region protected public methods
+
+    def load_from_file(self, filepath, labels_formatter):
         """
         Important: For externaly saved collections (using save_to_file method) and related usage
         """
         assert(isinstance(filepath, unicode))
-        assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
 
         with open(filepath, 'r') as input_file:
             return RuSentRelOpinionCollectionFormatter._load_from_file(input_file=input_file,
                                                                        labels_formatter=labels_formatter,
-                                                                       synonyms=synonyms)
+                                                                       synonyms=self.__synonyms)
 
-    @staticmethod
-    def save_to_file(collection, filepath, labels_formatter):
+    def save_to_file(self, collection, filepath, labels_formatter):
         assert(isinstance(collection, OpinionCollection))
         assert(isinstance(filepath, unicode))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
@@ -50,6 +50,13 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
 
                 f.write(o_str)
                 f.write(u'\n')
+
+    def save_to_archive(self, collections_iter, labels_formatter):
+        raise NotImplementedError()
+
+    # endregion
+
+    # region private methods
 
     @staticmethod
     def _load_from_file(input_file, synonyms, labels_formatter):
@@ -87,3 +94,5 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
             opinion.SourceValue,
             opinion.TargetValue,
             labels_formatter.label_to_str(opinion.Sentiment))
+
+    # endregion

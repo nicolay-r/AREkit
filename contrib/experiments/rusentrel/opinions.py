@@ -6,9 +6,8 @@ from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOperations
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
-from arekit.common.labels.base import NeutralLabel
-from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiments.rusentrel.labels_formatter import RuSentRelNeutralLabelsFormatter
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
@@ -35,7 +34,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         self._rusentrel_news_ids = rusentrel_news_ids
         self.__eval_on_rusentrel_docs_key = True
         self.__result_labels_fmt = RuSentRelLabelsFormatter()
-        self.__neutral_labels_fmt = NeutralLabelsFormatter()
+        self.__neutral_labels_fmt = RuSentRelNeutralLabelsFormatter()
         self._rusentrel_version = version
 
     def __get_doc_ids_set_to_compare(self, doc_ids):
@@ -71,8 +70,6 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
                 filepath=self.create_result_opinion_collection_filepath(data_type=data_type,
                                                                         doc_id=doc_id,
                                                                         epoch_index=epoch_index),
-                # TODO. Depends on synonyms (pass in ctor).
-                synonyms=self._data_io.SynonymsCollection,
                 labels_formatter=self.__result_labels_fmt))
 
         for opinions_cmp in opinions_cmp_iter:
@@ -89,18 +86,9 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             return None
 
         return self._data_io.OpinionFormatter.load_from_file(filepath=filepath,
-                                                             # TODO. Depends on Synonyms (pass in ctor).
-                                                             synonyms=self._data_io.SynonymsCollection,
                                                              labels_formatter=self.__neutral_labels_fmt)
 
     def create_opinion_collection(self, opinions=None):
         assert(isinstance(opinions, list) or opinions is None)
         return OpinionCollection(opinions=[] if opinions is None else opinions,
                                  synonyms=self._data_io.SynonymsCollection)
-
-
-class NeutralLabelsFormatter(StringLabelsFormatter):
-
-    def __init__(self):
-        stol = {u'neu': NeutralLabel()}
-        super(NeutralLabelsFormatter, self).__init__(stol=stol)
