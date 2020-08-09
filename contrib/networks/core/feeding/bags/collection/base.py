@@ -1,8 +1,8 @@
 import numpy as np
-from tqdm import tqdm
 
 from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
 
@@ -35,8 +35,9 @@ class BagsCollection(object):
 
         bags = []
 
-        linked_rows_iter = tqdm(iterable=samples_reader.iter_rows_linked_by_text_opinions(),
-                                desc=desc)
+        linked_rows_iter = progress_bar_iter(
+            iterable=samples_reader.iter_rows_linked_by_text_opinions(),
+            desc=desc)
 
         for linked_rows in linked_rows_iter:
             assert(len(linked_rows) > 0)

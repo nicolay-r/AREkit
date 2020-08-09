@@ -1,11 +1,10 @@
 import logging
 
-from tqdm import tqdm
-
 import utils
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -84,8 +83,7 @@ class BaseNeutralAnnotator(object):
         if len(pairs) == 0:
             return pairs
 
-        return tqdm(iterable=pairs,
-                    desc="Writing neutral-examples [{}]".format(data_type),
-                    ncols=80)
+        return progress_bar_iter(iterable=pairs,
+                                 desc="Writing neutral-examples [{}]".format(data_type))
 
 

@@ -1,12 +1,12 @@
 import gc
 import logging
-from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
+from arekit.common.utils import progress_bar_defined
 
 logger = logging.getLogger(__name__)
 
@@ -67,12 +67,11 @@ class BaseRowsFormatter(object):
         desc = u"{fmt}-{dtype}".format(fmt=self.formatter_type_log_name(),
                                        dtype=self._data_type)
 
-        iter = tqdm(iterable=self._iter_by_rows(opinion_provider, idle_mode=False),
-                    desc=desc,
-                    total=rows_count,
-                    ncols=80)
+        it = progress_bar_defined(iterable=self._iter_by_rows(opinion_provider, idle_mode=False),
+                                  desc=desc,
+                                  total=rows_count)
 
-        for row_index, row in enumerate(iter):
+        for row_index, row in enumerate(it):
             for column, value in row.iteritems():
                 self.__set_value(row_ind=row_index,
                                  column=column,

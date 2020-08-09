@@ -5,13 +5,13 @@ import numpy as np
 import tensorflow as tf
 
 from tensorflow.python.training.saver import Saver
-from tqdm import tqdm
 
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
+from arekit.common.utils import progress_bar_defined
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
@@ -227,11 +227,10 @@ class BaseTensorflowModel(BaseModel):
         fit_total_acc = 0
         groups_count = 0
 
-        it = tqdm(minibatches_iter,
-                  unit='mbs',
-                  desc="Training e={}".format(self.__current_epoch_index),
-                  total=total,
-                  ncols=80)
+        it = progress_bar_defined(iterable=minibatches_iter,
+                                  unit='mbs',
+                                  desc="Training e={}".format(self.__current_epoch_index),
+                                  total=total)
 
         for bags_group in it:
             minibatch = self.create_batch_by_bags_group(bags_group)
@@ -290,10 +289,10 @@ class BaseTensorflowModel(BaseModel):
         bags_group_it = bags_collection.iter_by_groups(bags_per_group=bags_per_group,
                                                        text_opinion_ids_set=None)
 
-        it = tqdm(iterable=bags_group_it,
-                  desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index, dtype=data_type),
-                  total=bags_collection.get_groups_count(bags_per_group),
-                  ncols=80)
+        it = progress_bar_defined(
+            iterable=bags_group_it,
+            desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index, dtype=data_type),
+            total=bags_collection.get_groups_count(bags_per_group))
 
         for bags_group in it:
 

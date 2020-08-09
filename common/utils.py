@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from tqdm import tqdm
 
 
 def get_random_uniform_with_fixed_seed(vector_size, seed):
@@ -36,3 +37,19 @@ def split_by_whitespaces(text):
     """
     assert(isinstance(text, unicode))
     return text.split()
+
+
+def progress_bar_defined(iterable, total, desc="", unit="it"):
+    return tqdm(iterable=iterable,
+                total=total,
+                desc=desc,
+                ncols=80,
+                unit=unit,
+                miniters=total / 200)
+
+
+def progress_bar_iter(iterable, desc="", unit='it'):
+    return tqdm(iterable=iterable,
+                desc=desc,
+                ncols=80,
+                unit=unit)
