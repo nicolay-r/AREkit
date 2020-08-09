@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import logging
 import sys
 import unittest
@@ -8,8 +6,9 @@ sys.path.append('../../')
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.frame_variants.base import FrameVariant
+from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
+from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.contrib.source.rusentiframes import RuSentiFramesCollection
 
 
 class TestRuSentiFrames(unittest.TestCase):
@@ -22,11 +21,11 @@ class TestRuSentiFrames(unittest.TestCase):
         logging.basicConfig(level=logging.DEBUG)
 
         stemmer = MystemWrapper()
-        frames = RuSentiFramesCollection.read_collection()
+        frames = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
 
         for frame_id in frames.iter_frames_ids():
             # id
-            logger.info("Frame: {}".format(frame_id))
+            logger.info(u"Frame: {}".format(frame_id))
             # titles
             logger.info(u"Titles: {}".format(u",".join(frames.get_frame_titles(frame_id))).encode('utf-8'))
             # variants
