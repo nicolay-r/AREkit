@@ -1,8 +1,6 @@
 import logging
-
 import texterra
 from arekit.processing.lemmatization.base import Stemmer
-
 
 logger = logging.getLogger(__name__)
 
@@ -13,9 +11,8 @@ class TexterraLemmatizationWrap(Stemmer):
     default_port = "8082"
 
     def __init__(self, host=None, debug=False):
-        default_url = 'http://{}:{}/texterra/'.format(
-            self.default_host,
-            self.default_port)
+        default_url = 'http://{}:{}/texterra/'.format(self.default_host,
+                                                      self.default_port)
 
         url = default_url if host is None else host
 

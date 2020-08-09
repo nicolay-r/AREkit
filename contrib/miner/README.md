@@ -1,7 +1,9 @@
-* Named Entity Recognition (NER) [[API]](../contrib/miner/ner/base.py):
-    - DeepNER [[wrapper]](../contrib/miner/ner/deepner_wrap.py) -- is a wrapper of IPavlov CRF-BiLSTM model
-        [[service]](https://github.com/nicolay-r/ner-flask-wrapper) /
+* Lemmatization
+    - Texterra [[wrapper]](.lemmatization/texterra_wrap.py) -- not supported/utilized in this project;
+* Named Entity Recognition (NER) [[API]](ner/base.py):
+    - DeepNER [[wrapper]](ner/deepner_wrap.py) -- is a wrapper of IPavlov CRF-BiLSTM model
+        [[service]](https://github.com/nicolay-r/ner-bilstm-crf-tensorflow) /
         [[original]](https://github.com/deepmipt/ner);
-* Syntax Parser [[API]](../contrib/miner/syntax/base.py);
-    - SyntaxNet [[wrapper]](../contrib/miner/syntax/syntaxnet_wrap.py);
-    - Texterra [[wrapper]](../contrib/miner/syntax/texterra_wrap.py);
+* Syntax Parser [[API]](syntax/base.py);
+    - SyntaxNet [[wrapper]](syntax/syntaxnet_wrap.py);
+    - Texterra [[wrapper]](syntax/texterra_wrap.py);

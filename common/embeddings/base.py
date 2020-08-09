@@ -1,6 +1,5 @@
 import collections
 import numpy as np
-from gensim.models.word2vec import Word2Vec
 
 
 class Embedding(object):
@@ -30,16 +29,6 @@ class Embedding(object):
     # endregion
 
     # region classmethods
-
-    @classmethod
-    def from_word2vec_format(cls, filepath, binary):
-        assert(isinstance(binary, bool))
-
-        w2v_model = Word2Vec.load_word2vec_format(filepath, binary=binary)
-        words_count = len(w2v_model.wv.vocab)
-
-        return cls(matrix=np.array([vector for vector in w2v_model.syn0]),
-                   words=[w2v_model.wv.index2word[index] for index in range(words_count)])
 
     @classmethod
     def from_list_of_word_embedding_pairs(cls, word_embedding_pairs):
