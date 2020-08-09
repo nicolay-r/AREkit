@@ -48,13 +48,6 @@ List of the toolset dependencies is as follows:
 
 * pandas == 0.20.3
 
-### Optional Service Dependencies
-* Named Entity Recognition
-    [[flask-python-server]](https://github.com/nicolay-r/ner-flask-wrapper);
-    [[sh-script]](start_deep_ner.sh);
-* SyntaxNet docker container
-    [[sh-script]](contrib/miner/start_syntaxnet.sh);
-
 ## Manual
 
 This toolset includes the following instruments and domain-related datasets:
