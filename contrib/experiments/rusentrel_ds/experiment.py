@@ -1,6 +1,7 @@
 import logging
 
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
+from arekit.common.utils import progress_bar_iter
 from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
@@ -76,13 +77,16 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         assert(isinstance(version, RuAttitudesVersions))
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
-        logger.debug("Loading RuAttitudes collection in memory, please wait ...")
-
         id_offset = max(doc_ids_set) + 1 if doc_ids_set is not None else 0
 
         d = {}
-        news_it = RuAttitudesCollection.iter_news(version=version,
-                                                  get_news_index_func=lambda: id_offset + len(d))
+
+        news_it = progress_bar_iter(
+            iterable=RuAttitudesCollection.iter_news(
+                version=version,
+                get_news_index_func=lambda: id_offset + len(d)),
+            desc=u"Loading RuAttitudes collection in memory, please wait ...",
+            unit=u'docs')
 
         for news in news_it:
             assert(isinstance(news, RuAttitudesNews))
