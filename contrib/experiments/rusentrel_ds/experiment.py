@@ -78,9 +78,13 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         logger.debug("Loading RuAttitudes collection in memory, please wait ...")
 
-        d = {}
+        id_offset = max(doc_ids_set) + 1 if doc_ids_set is not None else 0
 
-        for news in RuAttitudesCollection.iter_news(version):
+        d = {}
+        news_it = RuAttitudesCollection.iter_news(version=version,
+                                                  get_news_index_func=lambda: id_offset + len(d))
+
+        for news in news_it:
             assert(isinstance(news, RuAttitudesNews))
 
             if doc_ids_set is not None and news.ID not in doc_ids_set:
