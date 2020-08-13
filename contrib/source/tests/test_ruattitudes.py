@@ -24,7 +24,8 @@ class TestRuAttiudes(unittest.TestCase):
 
     def test_indices(self):
         ids = set()
-        for news in RuAttitudesCollection.iter_news(RuAttitudesVersions.V11):
+        for news in RuAttitudesCollection.iter_news(version=RuAttitudesVersions.V11,
+                                                    get_news_index_func=lambda: len(ids)):
             assert(isinstance(news, RuAttitudesNews))
             assert(news.ID not in ids)
             ids.add(news.ID)
@@ -37,7 +38,12 @@ class TestRuAttiudes(unittest.TestCase):
                                           frame_variants_collection=None)
 
         # iterating through collection
-        for news in RuAttitudesCollection.iter_news(RuAttitudesVersions.V11):
+        news_readed = 0
+
+        news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.V11,
+                                                  get_news_index_func=lambda: news_readed)
+
+        for news in news_it:
 
             # parse news
             parsed_news = TextParser.parse_news(news=news, parse_options=options)
@@ -57,11 +63,15 @@ class TestRuAttiudes(unittest.TestCase):
                 self.assertIsInstance(t, unicode)
 
             logger.info(u" ".join(str_terms))
+            news_readed += 1
 
     def test_reading(self):
 
         # iterating through collection
-        for news in RuAttitudesCollection.iter_news(RuAttitudesVersions.V11):
+        news_readed = 0
+        news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.V11,
+                                                  get_news_index_func=lambda: news_readed)
+        for news in news_it:
             assert(isinstance(news, RuAttitudesNews))
             logger.debug(u"News: {}".format(news.ID))
 
@@ -82,6 +92,7 @@ class TestRuAttiudes(unittest.TestCase):
                         target_type=target.Type).encode('utf-8')
                     logger.debug(s)
 
+            news_readed += 1
             break
 
 

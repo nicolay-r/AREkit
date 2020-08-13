@@ -41,6 +41,7 @@ class RuSentRelNews(News):
     @classmethod
     def read_document(cls, doc_id, synonyms, version=RuSentRelVersions.V11, target_doc_id=None):
         assert(isinstance(synonyms, SynonymsCollection))
+        assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(target_doc_id, int) or target_doc_id is None)
 
         def file_to_doc(input_file):

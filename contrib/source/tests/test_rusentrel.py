@@ -6,16 +6,15 @@ import unittest
 
 sys.path.append('../../')
 
+from arekit.common.bound import Bound
+from arekit.common.opinions.base import Opinion
+
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
-
-from arekit.common.bound import Bound
-from arekit.common.opinions.base import Opinion
-
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
@@ -40,7 +39,8 @@ class TestRuSentRel(unittest.TestCase):
             logger.info(u"NewsID: {}".format(doc_id))
 
             news = RuSentRelNews.read_document(doc_id=doc_id,
-                                               synonyms=synonyms)
+                                               synonyms=synonyms,
+                                               version=RuSentRelVersions.V11)
 
             opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
                                                                   synonyms=synonyms)

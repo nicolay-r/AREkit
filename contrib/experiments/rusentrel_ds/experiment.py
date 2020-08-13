@@ -39,6 +39,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
             data_io=data_io,
+            version=version,
             rusentrel_news_inds=rusentrel_news_inds)
 
         opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
