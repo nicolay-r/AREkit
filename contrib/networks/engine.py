@@ -139,14 +139,17 @@ class ExperimentEngine(object):
     # region public methods
 
     @staticmethod
-    def run_serialization(experiment, create_config, skip_if_folder_exists):
+    def run_serialization(logger, experiment, create_config, skip_if_folder_exists):
         assert(isinstance(experiment, BaseExperiment))
         assert(callable(create_config))
-
-        if os.path.exists(NetworkIOUtils.get_target_dir(experiment)) and skip_if_folder_exists:
+        target_dir = NetworkIOUtils.get_target_dir(experiment)
+        target_file = os.path.join(target_dir, 'lock.txt')
+        if os.path.exists(target_file) and skip_if_folder_exists:
+            logger.info("TARGET DIR EXISTS: {}".format(target_dir))
             return
+        else:
+            open(target_file, 'a').close()
 
-        logger = ExperimentEngine.__setup_logger()
         ExperimentEngine.__sutup_experiment(experiment=experiment,
                                             logger=logger)
 

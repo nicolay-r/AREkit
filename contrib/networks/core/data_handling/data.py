@@ -43,16 +43,15 @@ class HandledData(object):
 
     @staticmethod
     def need_serialize(experiment):
-        return HandledData.__check_files_existed(experiment=experiment)
+        return not HandledData.__check_files_existed(experiment=experiment)
 
     @staticmethod
     def serialize_from_experiment(experiment, config):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        if not HandledData.__check_files_existed(experiment=experiment):
-            HandledData.__perform_writing(experiment=experiment,
-                                          terms_per_context=config.TermsPerContext)
+        HandledData.__perform_writing(experiment=experiment,
+                                      terms_per_context=config.TermsPerContext)
 
     @classmethod
     def create_empty(cls):
