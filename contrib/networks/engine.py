@@ -9,6 +9,7 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.core.callback.base import Callback
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 
 
@@ -88,8 +89,12 @@ class ExperimentEngine(object):
             experiment.NeutralAnnotator.create_collection(data_type=data_type)
 
     @staticmethod
-    def __serialize_experiment_data(logger, experiment, config):
+    def __serialize_experiment_data(logger, experiment, config, cancel_if_dir_exists):
         # Performing data serialization.
+
+        if os.path.exists(NetworkIOUtils.get_target_dir(experiment)) and cancel_if_dir_exists:
+            return
+
         for cv_index in ExperimentEngine.__iter_cv_index(experiment):
             logger.info("Serializing data for cv-index={}".format(cv_index))
 
@@ -137,7 +142,7 @@ class ExperimentEngine(object):
     # region public methods
 
     @staticmethod
-    def run_serialization(experiment, create_config):
+    def run_serialization(experiment, create_config, skip_if_folder_exists):
         assert(isinstance(experiment, BaseExperiment))
         assert(callable(create_config))
 
@@ -153,7 +158,8 @@ class ExperimentEngine(object):
         # Running serialization.
         ExperimentEngine.__serialize_experiment_data(logger=logger,
                                                      experiment=experiment,
-                                                     config=config)
+                                                     config=config,
+                                                     cancel_if_dir_exists=skip_if_folder_exists)
 
     @staticmethod
     def run_testing(create_config,
@@ -183,7 +189,8 @@ class ExperimentEngine(object):
 
         ExperimentEngine.__serialize_experiment_data(logger=logger,
                                                      experiment=experiment,
-                                                     config=config)
+                                                     config=config,
+                                                     cancel_if_dir_exists=False)
 
         # Setup callback
         callback = experiment.DataIO.Callback

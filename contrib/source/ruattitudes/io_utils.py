@@ -10,6 +10,8 @@ class RuAttitudesVersions(Enum):
     V11 = u"v1_1"
     # Expanded with neutral attitudes
     V11N = u'v1_1-n'
+    V20 = u'v2_0'
+    V20N = u'v2_0-n'
 
 
 class RuAttitudesIOUtils(ZipArchiveUtils):
