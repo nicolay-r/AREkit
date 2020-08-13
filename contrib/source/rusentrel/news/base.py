@@ -39,8 +39,15 @@ class RuSentRelNews(News):
     # region class methods
 
     @classmethod
-    def read_document(cls, doc_id, synonyms, version=RuSentRelVersions.V11):
+    def read_document(cls, doc_id, synonyms, version=RuSentRelVersions.V11, target_doc_id=None):
         assert(isinstance(synonyms, SynonymsCollection))
+        assert(isinstance(target_doc_id, int) or target_doc_id is None)
+
+        def file_to_doc(input_file):
+            return cls.__from_file(
+                doc_id=target_doc_id if target_doc_id is not None else doc_id,
+                input_file=input_file,
+                entities=entities)
 
         entities = RuSentRelDocumentEntityCollection.read_collection(
             doc_id=doc_id,
@@ -49,9 +56,7 @@ class RuSentRelNews(News):
 
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_news_innerpath(doc_id),
-            process_func=lambda input_file: cls.__from_file(doc_id=doc_id,
-                                                            input_file=input_file,
-                                                            entities=entities),
+            process_func=file_to_doc,
             version=version)
 
     @classmethod
