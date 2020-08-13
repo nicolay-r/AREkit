@@ -15,7 +15,6 @@ from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampl
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
-
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
 logger = logging.getLogger(__name__)
@@ -42,25 +41,62 @@ class HandledData(object):
 
     # endregion
 
-    @classmethod
-    def initialize_from_experiment(cls, experiment, config, bags_collection_type):
+    @staticmethod
+    def need_serialize(experiment):
+        return HandledData.__check_files_existed(experiment=experiment)
+
+    @staticmethod
+    def serialize_from_experiment(experiment, config):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(config, DefaultNetworkConfig))
 
-        # Prepare necessary data.
-        instance = cls(labeled_collections={}, bags_collection={})
-
-        # Perform writing
         if not HandledData.__check_files_existed(experiment=experiment):
-            instance.__perform_writing(experiment=experiment,
-                                       terms_per_context=config.TermsPerContext)
+            HandledData.__perform_writing(experiment=experiment,
+                                          terms_per_context=config.TermsPerContext)
 
-        # Perform reading
-        instance.__perform_reading_and_initialization(experiment=experiment,
-                                                      bags_collection_type=bags_collection_type,
-                                                      config=config)
+    @classmethod
+    def create_empty(cls):
+        return cls(labeled_collections={},
+                   bags_collection={})
 
-        return instance
+    def perform_reading_and_initialization(self, experiment, bags_collection_type, config):
+        """
+        Perform reading information from the serialized experiment inputs.
+        Initializing core configuration.
+        """
+
+        if not HandledData.__check_files_existed(experiment=experiment):
+            raise Exception("Data has not been initialized/serialized")
+
+        # Reading embedding.
+        npz_embedding_data = np.load(NetworkIOUtils.get_embedding_filepath(experiment))
+        config.set_term_embedding(npz_embedding_data['arr_0'])
+        logger.info("Embedding readed [size={}]".format(config.TermEmbeddingMatrix.shape))
+
+        # Reading vocabulary
+        npz_vocab_data = np.load(NetworkIOUtils.get_vocab_filepath(experiment))
+        vocab = dict(npz_vocab_data['arr_0'])
+        logger.info("Vocabulary readed [size={}]".format(len(vocab)))
+
+        # Reading from serialized information
+        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
+
+            labeled_sample_row_ids = self.__read_data_type(
+                data_type=data_type,
+                experiment=experiment,
+                bags_collection_type=bags_collection_type,
+                vocab=vocab,
+                config=config)
+
+            if data_type != DataType.Train:
+                continue
+
+            labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
+            norm, _ = self.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
+                                         labels_helper=labels_helper)
+            config.set_class_weights(norm)
+
+        config.notify_initialization_completed()
 
     # region writing methods
 
@@ -106,41 +142,6 @@ class HandledData(object):
     # endregion
 
     # region reading methods
-
-    def __perform_reading_and_initialization(self, experiment, bags_collection_type, config):
-        """
-        Perform reading information from the serialized experiment inputs.
-        Initializing core configuration.
-        """
-        # Reading embedding.
-        npz_embedding_data = np.load(NetworkIOUtils.get_embedding_filepath(experiment))
-        config.set_term_embedding(npz_embedding_data['arr_0'])
-        logger.info("Embedding readed [size={}]".format(config.TermEmbeddingMatrix.shape))
-
-        # Reading vocabulary
-        npz_vocab_data = np.load(NetworkIOUtils.get_vocab_filepath(experiment))
-        vocab = dict(npz_vocab_data['arr_0'])
-        logger.info("Vocabulary readed [size={}]".format(len(vocab)))
-
-        # Reading from serialized information
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-
-            labeled_sample_row_ids = self.__read_data_type(
-                data_type=data_type,
-                experiment=experiment,
-                bags_collection_type=bags_collection_type,
-                vocab=vocab,
-                config=config)
-
-            if data_type != DataType.Train:
-                continue
-
-            labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
-            norm, _ = self.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
-                                         labels_helper=labels_helper)
-            config.set_class_weights(norm)
-
-        config.notify_initialization_completed()
 
     def __read_data_type(self, data_type, experiment, bags_collection_type, vocab, config):
 
