@@ -89,11 +89,8 @@ class ExperimentEngine(object):
             experiment.NeutralAnnotator.create_collection(data_type=data_type)
 
     @staticmethod
-    def __serialize_experiment_data(logger, experiment, config, cancel_if_dir_exists):
+    def __serialize_experiment_data(logger, experiment, config):
         # Performing data serialization.
-
-        if os.path.exists(NetworkIOUtils.get_target_dir(experiment)) and cancel_if_dir_exists:
-            return
 
         for cv_index in ExperimentEngine.__iter_cv_index(experiment):
             logger.info("Serializing data for cv-index={}".format(cv_index))
@@ -146,6 +143,9 @@ class ExperimentEngine(object):
         assert(isinstance(experiment, BaseExperiment))
         assert(callable(create_config))
 
+        if os.path.exists(NetworkIOUtils.get_target_dir(experiment)) and skip_if_folder_exists:
+            return
+
         logger = ExperimentEngine.__setup_logger()
         ExperimentEngine.__sutup_experiment(experiment=experiment,
                                             logger=logger)
@@ -158,8 +158,7 @@ class ExperimentEngine(object):
         # Running serialization.
         ExperimentEngine.__serialize_experiment_data(logger=logger,
                                                      experiment=experiment,
-                                                     config=config,
-                                                     cancel_if_dir_exists=skip_if_folder_exists)
+                                                     config=config)
 
     @staticmethod
     def run_testing(create_config,
@@ -189,8 +188,7 @@ class ExperimentEngine(object):
 
         ExperimentEngine.__serialize_experiment_data(logger=logger,
                                                      experiment=experiment,
-                                                     config=config,
-                                                     cancel_if_dir_exists=False)
+                                                     config=config)
 
         # Setup callback
         callback = experiment.DataIO.Callback

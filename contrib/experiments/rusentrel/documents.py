@@ -13,12 +13,12 @@ class RuSentrelDocumentOperations(CVBasedDocumentOperations):
     Limitations: Supported only train/test collections format
     """
 
-    def __init__(self, data_io, version):
+    def __init__(self, data_io, rusentrel_version):
         assert(isinstance(data_io, DataIO))
-        assert(isinstance(version, RuSentRelVersions))
+        assert(isinstance(rusentrel_version, RuSentRelVersions))
         super(RuSentrelDocumentOperations, self).__init__(folding_algo=data_io.CVFoldingAlgorithm)
         self.__data_io = data_io
-        self.__version = version
+        self.__version = rusentrel_version
 
     def __use_fixed_folding(self):
         return self._FoldingAlgo.CVCount == 1

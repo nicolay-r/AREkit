@@ -1,6 +1,6 @@
-from arekit.contrib.source.ruattitudes import RuAttitudesSentence
+from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
-from arekit.contrib.source.ruattitudes import RuAttitudesNews
 
 
 class RuAttitudesNewsHelper(object):

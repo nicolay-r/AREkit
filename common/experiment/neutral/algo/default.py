@@ -80,8 +80,6 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
                 neutral_opinions.add_opinion(opinion)
                 extracted_count += 1
 
-        print "Neutral opinions extracted: {}".format(extracted_count)
-
         return neutral_opinions
 
     def __try_create_pair_key(self, news_id, e1, e2, sentiment_opinions):

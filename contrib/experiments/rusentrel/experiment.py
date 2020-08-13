@@ -35,7 +35,7 @@ class RuSentRelExperiment(CVBasedExperiment):
 
         logger.info("Create document operations ... ")
         doc_ops = RuSentrelDocumentOperations(data_io=data_io,
-                                              version=version)
+                                              rusentrel_version=version)
 
         # Setup
         self._set_opin_operations(opin_ops)
