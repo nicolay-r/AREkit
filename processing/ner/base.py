@@ -17,6 +17,14 @@ class NamedEntityRecognition:
         return merged_terms, types, positions
 
     @property
+    def InputLimitation(self):
+        raise NotImplementedError()
+
+    @property
+    def LocationTypeStr(self):
+        raise NotImplementedError()
+
+    @property
     def NeedLemmatization(self):
         raise NotImplementedError()
 
