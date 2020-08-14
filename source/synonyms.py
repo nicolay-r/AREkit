@@ -101,7 +101,6 @@ class SynonymsCollection:
         id = self._create_synonym_id(self.__stemmer, s)
         return self.__by_synonym[id]
 
-    #TODO: Deprecated. Use iter instead
     def get_group_by_index(self, index):
         assert(isinstance(index, int))
         return self.__by_index[index]
