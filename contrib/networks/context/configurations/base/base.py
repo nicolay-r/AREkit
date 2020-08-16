@@ -10,7 +10,6 @@ class DefaultNetworkConfig(object):
 
     # region private settings
 
-    __gpu_memory_fraction = 0.25
     __use_class_weights = True
 
     __dropout_keep_prob = 0.5
@@ -91,10 +90,6 @@ class DefaultNetworkConfig(object):
         return self.__default_weight_initializer
 
     @property
-    def GPUMemoryFraction(self):
-        return self.__gpu_memory_fraction
-
-    @property
     def LayerRegularizer(self):
         return self.__default_regularizer
 
@@ -163,10 +158,6 @@ class DefaultNetworkConfig(object):
     def modify_bags_per_minibatch(self, value):
         assert(isinstance(value, int))
         self.__bags_per_minibatch = value
-
-    def modify_gpu_memory_fraction(self, value):
-        assert(isinstance(value, float))
-        self.__gpu_memory_fraction = value
 
     def modify_bag_size(self, value):
         assert(isinstance(value, int))
@@ -265,7 +256,6 @@ class DefaultNetworkConfig(object):
     def _internal_get_parameters(self):
         return [
             ("base:current_time", datetime.datetime.now()),
-            ("base:memory_fraction", self.GPUMemoryFraction),
             ("base:use_class_weights", self.UseClassWeights),
             ("base:dropout (keep prob)", self.DropoutKeepProb),
             ("base:classes_count", self.ClassesCount),

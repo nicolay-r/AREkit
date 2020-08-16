@@ -195,9 +195,6 @@ class BaseTensorflowModel(BaseModel):
     def get_samples_labeling_collection(self, data_type):
         return self.__init_helper.SamplesLabelingCollection[data_type]
 
-    def get_gpu_memory_fraction(self):
-        return self.__config.GPUMemoryFraction
-
     # TODO. Simplify.
     def create_batch_by_bags_group(self, bags_group):
         if issubclass(self.__bags_collection_type, SingleBagsCollection):
@@ -262,8 +259,9 @@ class BaseTensorflowModel(BaseModel):
         Tensorflow session initialization
         """
         init_op = tf.global_variables_initializer()
-        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=self.get_gpu_memory_fraction())
-        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True
+        sess = tf.Session(config=tf.ConfigProto(gpu_options=config))
         sess.run(init_op)
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess

@@ -7,6 +7,9 @@ Changes:
 (check out multi-instance bags creation for details)
 * Now shuffling in models performed for bags, not for bag groups.
 
+* Networks: added `allow_growth=True` flag for tensorflow based neural networks.
+Memory fraction parameter has been removed.
+
 Collection of parsed news become dispatched from text opinions collection.
 * **News parsing now is assumed to be performed using `TextParser.parse(news, options)` call. Related refactoring.**
     * Stemmer application from `RuAttitiudes` parser has been removed.
