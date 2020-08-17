@@ -58,8 +58,6 @@ class RuSentRelIOUtils(ZipArchiveUtils):
             if i in missed:
                 continue
             yield i
-            # TODO. Temporary.
-            break
 
     @staticmethod
     def iter_train_indices():
@@ -68,8 +66,6 @@ class RuSentRelIOUtils(ZipArchiveUtils):
             if i in missed:
                 continue
             yield i
-            # TODO. Temporary.
-            break
 
     @staticmethod
     def iter_collection_indices():
