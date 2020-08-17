@@ -1,4 +1,7 @@
 import logging
+import sys
+
+sys.path.append('../')
 
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.data_type import DataType
@@ -24,7 +27,8 @@ terms_mapper = OpinionContainingTextTermsMapper(entity_formatter=StringWordEmbed
 formatter = BaseSampleFormatter(
     data_type=DataType.Train,
     label_provider=label_provider,
-    text_provider=BaseSingleTextProvider(terms_mapper))
+    text_provider=BaseSingleTextProvider(terms_mapper),
+    balance=False)
 
 df = formatter._df
 
