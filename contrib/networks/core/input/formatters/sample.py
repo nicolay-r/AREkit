@@ -59,20 +59,32 @@ class NetworkSampleFormatter(BaseSampleFormatter):
                                                       label_scaler=self._label_provider.LabelScaler)
 
         # Synonyms for source.
-        assert(isinstance(terms[s_ind], Entity))
-        syn_s_group = self.__get_g(terms[s_ind].Value)
-        uint_syn_s_inds = self.__iter_indices(terms=terms, filter=lambda t: self.__syn_check(t=t, g=syn_s_group))
+        uint_syn_s_inds = self.__create_synonyms_set(terms=terms, term_ind=s_ind)
 
         # Synonyms for target.
-        assert(isinstance(terms[t_ind], Entity))
-        syn_t_group = self.__get_g(terms[t_ind].Value)
-        uint_syn_t_inds = self.__iter_indices(terms=terms, filter=lambda t: self.__syn_check(t=t, g=syn_t_group))
+        uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=t_ind)
 
         # Saving.
         row[const.FrameVariantIndices] = self.__to_arg(uint_frame_inds)
         row[const.FrameRoles] = self.__to_arg(uint_frame_roles)
         row[const.SynonymSubject] = self.__to_arg(uint_syn_s_inds)
         row[const.SynonymObject] = self.__to_arg(uint_syn_t_inds)
+
+    # region private methods
+
+    def __create_synonyms_set(self, terms, term_ind):
+        e = terms[term_ind]
+        assert(isinstance(e, Entity))
+
+        # Searching for other synonyms among all the terms.
+        syn_s_group = self.__get_g(e.Value)
+        it = self.__iter_indices(terms=terms, filter=lambda t: self.__syn_check(t=t, g=syn_s_group))
+        inds_set = set(it)
+
+        # Guarantee the presence of the term_ind
+        inds_set.add(term_ind)
+
+        return sorted(list(inds_set))
 
     @staticmethod
     def __iter_indices(terms, filter):
@@ -83,10 +95,14 @@ class NetworkSampleFormatter(BaseSampleFormatter):
     def __syn_check(self, t, g):
         if not isinstance(t, Entity):
             return False
+        if g < 0:
+            return False
         return self.__get_g(t.Value) == g
 
     def __get_g(self, value):
-        return self.__synonyms_collection.get_synonym_group_index(value)
+        return self.__synonyms_collection.try_get_synonym_group_index(value)
 
     def __to_arg(self, inds_iter):
         return const.ArgsSep.join([str(i) for i in inds_iter])
+
+    # endregion

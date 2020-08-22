@@ -38,11 +38,11 @@ class InputSample(InputSampleBase):
 
     # TODO: Should be -1, but now it is not supported
     FRAME_SENT_ROLES_PAD_VALUE = 0
-    SYNONYMS_PAD_VALUE = 0
     FRAMES_PAD_VALUE = 0
     POS_PAD_VALUE = 0
     X_PAD_VALUE = 0
     TERM_TYPE_PAD_VALUE = -1
+    SYNONYMS_PAD_VALUE = 0
 
     def __init__(self, X,
                  subj_ind,
@@ -211,13 +211,13 @@ class InputSample(InputSampleBase):
             original_value=[subj_ind] if syn_subj_inds is None else syn_subj_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
-            filler=0)
+            filler=cls.SYNONYMS_PAD_VALUE)
 
         syn_obj_inds_feature = PointersFeature.create_shifted_and_fit(
             original_value=[obj_ind] if syn_obj_inds is None else syn_obj_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
-            filler=0)
+            filler=cls.SYNONYMS_PAD_VALUE)
 
         subj_ind = subj_ind - x_feature.StartIndex
         obj_ind = obj_ind - x_feature.StartIndex
