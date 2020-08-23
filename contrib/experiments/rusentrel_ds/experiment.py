@@ -20,7 +20,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
     Paper: https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, version, prepare_model_root, ra_instance=None):
+    def __init__(self, data_io, prepare_model_root, version=None, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
