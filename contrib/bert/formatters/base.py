@@ -72,6 +72,7 @@ class BaseBertRowsFormatter(object):
                   total=rows_count,
                   desc="{fmt}-[{dtype}]".format(fmt=self.formatter_type_log_name(),
                                                 dtype=self._data_type),
+                  miniters=rows_count / 200,
                   ncols=120)
 
         for row_index, row in enumerate(it):

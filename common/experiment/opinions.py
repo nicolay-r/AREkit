@@ -94,6 +94,7 @@ def __create_parsed_collection(doc_operations, data_io, data_type, parse_frame_v
 
     it = tqdm(iterable=news_inds,
               desc="Created parsed news collection [{}]".format(data_type),
+              miniters=len(news_inds) / 200,
               ncols=120)
 
     for doc_id in it:
