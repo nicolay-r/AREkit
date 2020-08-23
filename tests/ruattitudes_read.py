@@ -3,6 +3,7 @@ import logging
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.source.ruattitudes.collection import RuAttitudesCollection
+from arekit.source.ruattitudes.io_utils import RuAttitudesVersions
 
 
 stemmer = MystemWrapper()
@@ -10,7 +11,12 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # iterating through collection
-for news in RuAttitudesCollection.iter_news(stemmer):
+news_it = RuAttitudesCollection.iter_news(
+    version=RuAttitudesVersions.V20,
+    stemmer=stemmer,
+    get_news_index_func=lambda: 0)
+
+for news in news_it:
     logger.debug(u"News: {}".format(news.ID))
     for sentence in news.iter_sentences():
         # text

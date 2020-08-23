@@ -66,9 +66,13 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
 
+        id_offset = max(doc_ids_set) + 1 if doc_ids_set is not None else 0
+
         d = {}
 
-        it = tqdm(iterable=RuAttitudesCollection.iter_news(stemmer=stemmer, version=version),
+        it = tqdm(iterable=RuAttitudesCollection.iter_news(stemmer=stemmer,
+                                                           version=version,
+                                                           get_news_index_func=lambda: id_offset + len(d)),
                   desc="Loading RuAttitudes collection in memory (version={})".format(version),
                   ncols=120)
 

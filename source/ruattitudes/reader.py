@@ -28,7 +28,8 @@ class RuAttitudesFormatReader(object):
     # region private methods
 
     @staticmethod
-    def iter_news(input_file, stemmer=None):
+    def iter_news(input_file, get_news_index_func, stemmer=None):
+        assert(callable(get_news_index_func))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
 
         reset = False
@@ -39,7 +40,6 @@ class RuAttitudesFormatReader(object):
         opinions_list = []
         objects_list = []
         s_index = 0
-        news_index = None
 
         label_scaler = ThreeLabelScaler()
 
@@ -70,7 +70,7 @@ class RuAttitudesFormatReader(object):
                 s_index = RuAttitudesFormatReader.__parse_sentence_index(line)
 
             if RuAttitudesFormatReader.TEXT_IND_KEY in line:
-                news_index = RuAttitudesFormatReader.__parse_text_index(line)
+                pass
 
             if RuAttitudesFormatReader.TITLE_KEY in line:
                 title = RuAttitudesSentence(is_title=True,
@@ -98,7 +98,7 @@ class RuAttitudesFormatReader(object):
 
             if RuAttitudesFormatReader.NEWS_SEP_KEY in line and title is not None:
                 yield RuAttitudesNews(sentences=sentences,
-                                      news_index=news_index)
+                                      news_index=get_news_index_func())
                 sentences = []
                 reset = True
 
@@ -113,7 +113,7 @@ class RuAttitudesFormatReader(object):
 
         if len(sentences) > 0:
             yield RuAttitudesNews(sentences=sentences,
-                                  news_index=news_index)
+                                  news_index=get_news_index_func())
             sentences = []
 
         assert(len(sentences) == 0)

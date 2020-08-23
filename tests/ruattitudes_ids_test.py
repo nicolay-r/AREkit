@@ -2,6 +2,7 @@ import logging
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.source.ruattitudes.collection import RuAttitudesCollection
+from arekit.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.source.ruattitudes.news.base import RuAttitudesNews
 
 
@@ -13,7 +14,12 @@ if __name__ == "__main__":
     stemmer = MystemWrapper()
 
     ids = set()
-    for news in RuAttitudesCollection.iter_news(stemmer):
+
+    news_it = RuAttitudesCollection.iter_news(stemmer=stemmer,
+                                              version=RuAttitudesVersions.V20,
+                                              get_news_index_func=lambda: len(ids))
+
+    for news in news_it:
         assert(isinstance(news, RuAttitudesNews))
         if news.ID in ids:
             logging.debug("index already exist: {}".format(news.ID))
