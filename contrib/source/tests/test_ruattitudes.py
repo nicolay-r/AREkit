@@ -3,16 +3,20 @@ import logging
 import sys
 import unittest
 
-sys.path.append('../../')
+sys.path.append('../../../../')
 
+from arekit.common.opinions.base import Opinion
+from arekit.common.entities.base import Entity
+
+from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
+from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
-from arekit.processing.text.token import Token
 
-from arekit.common.entities.base import Entity
+from arekit.processing.text.token import Token
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.parser import TextParser
 
@@ -69,10 +73,11 @@ class TestRuAttiudes(unittest.TestCase):
 
         # iterating through collection
         news_readed = 0
-        news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.V11,
+        news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.V20,
                                                   get_news_index_func=lambda: news_readed)
         for news in news_it:
             assert(isinstance(news, RuAttitudesNews))
+
             logger.debug(u"News: {}".format(news.ID))
 
             for sentence in news.iter_sentences(return_text=False):
@@ -80,20 +85,34 @@ class TestRuAttiudes(unittest.TestCase):
                 # text
                 logger.debug(sentence.Text.encode('utf-8'))
                 # objects
-                logger.debug(u",".join([object.get_value() for object in sentence.iter_objects()]))
+                logger.debug(u",".join([object.Value for object in sentence.iter_objects()]))
                 # attitudes
                 for sentence_opin in sentence.iter_sentence_opins():
-                    src, target = sentence.get_objects(sentence_opin)
-                    s = u"{src}->{target} ({label}) (t:[{src_type},{target_type}])".format(
-                        src=src.get_value(),
-                        target=target.get_value(),
+                    assert(isinstance(sentence_opin, SentenceOpinion))
+
+                    source, target = sentence.get_objects(sentence_opin)
+                    s = u"{src}->{target} ({label}) (t:[{src_type},{target_type}]) tag=[{tag}]".format(
+                        src=source.Value,
+                        target=target.Value,
                         label=str(sentence_opin.Sentiment.to_class_str()),
-                        src_type=src.Type,
+                        tag=sentence_opin.Tag,
+                        src_type=source.Type,
                         target_type=target.Type).encode('utf-8')
+
+                    logger.debug(sentence.SentenceIndex)
                     logger.debug(s)
 
+                # Providing aggregated opinions.
+                logger.info("Providing information for opinions with the related sentences:")
+                for o, sentences in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news):
+                    assert(isinstance(o, Opinion))
+                    assert(isinstance(sentences, list))
+                    logger.debug(u"'{source}'->'{target}' ({s_count})".format(
+                        source=o.SourceValue,
+                        target=o.TargetValue,
+                        s_count=len(sentences)).encode('utf-8'))
+
             news_readed += 1
-            break
 
 
 if __name__ == '__main__':
