@@ -5,7 +5,7 @@ import unittest
 from pymystem3 import Mystem
 
 
-sys.path.append('../../')
+sys.path.append('../../../../')
 
 from arekit.tests.text.utils import terms_to_str
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions

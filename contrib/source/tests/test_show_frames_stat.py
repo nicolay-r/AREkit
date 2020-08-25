@@ -1,3 +1,7 @@
+import sys
+
+sys.path.append('../../../../')
+
 from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions
 from arekit.contrib.source.rusentiframes.stat import about_version
 

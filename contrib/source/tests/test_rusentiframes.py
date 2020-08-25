@@ -2,7 +2,7 @@ import logging
 import sys
 import unittest
 
-sys.path.append('../../')
+sys.path.append('../../../../')
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.frame_variants.base import FrameVariant

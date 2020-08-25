@@ -4,7 +4,7 @@ import sys
 import unittest
 
 
-sys.path.append('../../')
+sys.path.append('../../../../')
 
 from arekit.common.bound import Bound
 from arekit.common.opinions.base import Opinion
