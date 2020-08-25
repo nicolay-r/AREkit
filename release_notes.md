@@ -1,5 +1,8 @@
 ## v0.20.5-rc
 
+Fixed:
+* Using custom check of duplicated opinions during `OpinionCollection` initialization.
+
 Changes:
 * Speed-up and engine optimizations:
     * Optionally loading neutral annotator.

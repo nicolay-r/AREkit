@@ -26,7 +26,8 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
         with open(filepath, 'r') as input_file:
             return RuSentRelOpinionCollectionFormatter._load_from_file(input_file=input_file,
                                                                        labels_formatter=labels_formatter,
-                                                                       synonyms=self.__synonyms)
+                                                                       synonyms=self.__synonyms,
+                                                                       is_native_synonyms_collection=False)
 
     def save_to_file(self, collection, filepath, labels_formatter):
         assert(isinstance(collection, OpinionCollection))
@@ -59,9 +60,10 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
     # region private methods
 
     @staticmethod
-    def _load_from_file(input_file, synonyms, labels_formatter):
+    def _load_from_file(input_file, synonyms, labels_formatter, is_native_synonyms_collection):
         assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(isinstance(is_native_synonyms_collection, bool))
 
         opinions = []
         for i, line in enumerate(input_file.readlines()):
@@ -83,7 +85,13 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
                         sentiment=sentiment)
             opinions.append(o)
 
-        return OpinionCollection(opinions, synonyms)
+        if is_native_synonyms_collection:
+            return OpinionCollection(opinions=opinions,
+                                     synonyms=synonyms,
+                                     raise_exception_on_duplicates=True)
+        else:
+            return OpinionCollection.init_as_custom(opinions=opinions,
+                                                    synonyms=synonyms)
 
     @staticmethod
     def __opinion_to_str(opinion, labels_formatter):

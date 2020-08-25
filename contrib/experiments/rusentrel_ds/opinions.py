@@ -37,8 +37,8 @@ class RuSentrelWithRuAttitudesOpinionOperations(RuSentrelOpinionOperations):
         if doc_id in self._rusentrel_news_ids:
             return super(RuSentrelWithRuAttitudesOpinionOperations, self).read_etalon_opinion_collection(doc_id)
 
-        return OpinionCollection(opinions=self.__get_opinions_in_news(doc_id),
-                                 synonyms=self._data_io.SynonymsCollection)
+        return OpinionCollection.init_as_custom(opinions=self.__get_opinions_in_news(doc_id),
+                                                synonyms=self._data_io.SynonymsCollection)
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(doc_id, int))

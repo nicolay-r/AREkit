@@ -1,6 +1,8 @@
+from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
+from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
 class RuSentRelOpinionCollection:
@@ -8,9 +10,22 @@ class RuSentRelOpinionCollection:
     Collection of sentiment opinions between entities
     """
 
+    # TODO. Provide here an opportunity with synonyms=None
     @staticmethod
-    def load_collection(doc_id, synonyms, version=RuSentRelVersions.V11):
+    def load_collection(doc_id, synonyms=None, version=RuSentRelVersions.V11):
+        """
+        doc_id:
+        synonyms: None or SynonymsCollection
+            None corresponds to the related synonym collection from RuSentRel collection.
+        version:
+        """
+        assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
         assert(isinstance(version, RuSentRelVersions))
+
+        if synonyms is None:
+            # TODO. Now it is not supported, since synonyms collection
+            # TODO. requires to use stemmer in initialization.
+            synonyms = None
 
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id),

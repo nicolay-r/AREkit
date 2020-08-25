@@ -57,8 +57,8 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         assert(self.__synonyms.IsReadOnly is True)
 
         extracted_count = 0
-        neutral_opinions = OpinionCollection(opinions=None,
-                                             synonyms=self.__synonyms)
+        neutral_opinions = OpinionCollection.init_as_custom(opinions=None,
+                                                            synonyms=self.__synonyms)
 
         for e1 in entities_collection:
             assert(isinstance(e1, Entity))

@@ -90,5 +90,5 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
 
     def create_opinion_collection(self, opinions=None):
         assert(isinstance(opinions, list) or opinions is None)
-        return OpinionCollection(opinions=[] if opinions is None else opinions,
-                                 synonyms=self._data_io.SynonymsCollection)
+        return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
+                                                synonyms=self._data_io.SynonymsCollection)
