@@ -19,6 +19,8 @@ class RuAttitudesFormatReader(object):
     TERMS_IN_TEXT = u"TermsInText:"
     FRAMEVAR_TITLE = u"FrameVariant:"
 
+    AUTH_LABEL = u'<AUTH>'
+
     def __iter__(self):
         pass
 
@@ -206,13 +208,20 @@ class RuAttitudesFormatReader(object):
 
     @staticmethod
     def __try_get_type(line):
+
+        # Tag, utilized in RuAttitudes-2.0 format.
+        template = u'type:'
+        if template in line:
+            is_auth = RuAttitudesFormatReader.AUTH_LABEL in line
+            t_from = line.index(template)
+            t_to = line.index(RuAttitudesFormatReader.AUTH_LABEL[0], t_from) if is_auth else len(line)
+            return line[t_from + len(template):t_to].strip()
+
+        # Tag, utilized in RuAttitudes-1.* format.
         template = u't:['
-
-        if template not in line:
-            return None
-
-        t_from = line.index(template)
-        t_to = line.index(u']', t_from)
-        return line[t_from + len(template):t_to]
+        if template in line:
+            t_from = line.index(template)
+            t_to = line.index(u']', t_from)
+            return line[t_from + len(template):t_to].strip()
 
     # endregion
