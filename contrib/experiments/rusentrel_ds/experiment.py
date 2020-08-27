@@ -51,7 +51,9 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         ru_attitudes = ra_instance
         if ra_instance is None:
-            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(version)
+            ru_attitudes = RuSentRelWithRuAttitudesExperiment.read_ruattitudes_in_memory(
+                version=version,
+                used_doc_ids_set=rusentrel_news_inds)
 
         doc_ops.set_ru_attitudes(ru_attitudes)
         opin_ops.set_ru_attitudes(ru_attitudes)
@@ -66,19 +68,19 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
             ra_version=self.__version.value)
 
     @staticmethod
-    def read_ruattitudes_in_memory(version, doc_ids_set=None):
+    def read_ruattitudes_in_memory(version, used_doc_ids_set=None):
         """
         Performs reading of ruattitude formatted documents and
         selection according to 'doc_ids_set' parameter.
 
-        doc_ids_set: set or None
-            ids of documents that should be selected.
-            'None' corresponds to all the available doc_ids.
+        used_doc_ids_set: set or None
+            ids of documents that already used and could not be assigned
+            'None' corresponds to an empty set.
         """
         assert(isinstance(version, RuAttitudesVersions))
-        assert(isinstance(doc_ids_set, set) or doc_ids_set is None)
+        assert(isinstance(used_doc_ids_set, set) or used_doc_ids_set is None)
 
-        id_offset = max(doc_ids_set) + 1 if doc_ids_set is not None else 0
+        id_offset = max(used_doc_ids_set) + 1 if used_doc_ids_set is not None else 0
 
         d = {}
 
@@ -92,8 +94,10 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         for news in news_it:
             assert(isinstance(news, RuAttitudesNews))
 
-            if doc_ids_set is not None and news.ID not in doc_ids_set:
-                continue
+            if used_doc_ids_set is not None:
+                if news.ID in used_doc_ids_set:
+                    logger.info(u"Document with id='{}' already used. Skipping".format(news.ID))
+                    continue
 
             d[news.ID] = news
 
