@@ -3,7 +3,7 @@ from arekit.common.labels.base import Label
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.opinions.base import Opinion
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.dataset.text_opinions.enums import EntityEndType, DistanceType
 
 
@@ -17,11 +17,14 @@ class TextOpinionHelper(object):
         parsed news, positions, text_opinions
     """
 
-    def __init__(self, parsed_news_collection):
-        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
-        self.__parsed_news_collection = parsed_news_collection
+    def __init__(self, parsed_news_by_id_func):
+        assert(callable(parsed_news_by_id_func))
+        self.__parsed_news_by_id_func = parsed_news_by_id_func
 
     # region public 'extract' methods
+
+    def get_related_news(self, text_opinion):
+        return self.__get_related_news_by_text_opinion(text_opinion)
 
     def extract_entity_value(self, text_opinion, end_type):
         return self.__extract_entity_value(text_opinion=text_opinion,
@@ -57,7 +60,7 @@ class TextOpinionHelper(object):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(distance_type, DistanceType))
 
-        parsed_news = self.__parsed_news_collection.get_by_news_id(news_id=text_opinion.NewsID)
+        parsed_news = self.__get_related_news_by_text_opinion(text_opinion)
 
         e1_id = self.__get_end_id(text_opinion=text_opinion,
                                   end_type=EntityEndType.Source)
@@ -76,7 +79,7 @@ class TextOpinionHelper(object):
         assert(isinstance(e2, Entity))
         assert(isinstance(distance_type, DistanceType))
 
-        parsed_news = self.__parsed_news_collection.get_by_news_id(news_id)
+        parsed_news = self.__get_related_news_by_id(news_id)
         return TextOpinionHelper.__calc_distance(
             pos1=parsed_news.get_entity_position(e1.IdInDocument),
             pos2=parsed_news.get_entity_position(e2.IdInDocument),
@@ -107,7 +110,7 @@ class TextOpinionHelper(object):
         assert(isinstance(return_ind_in_sent, bool))
 
         id_in_doc = TextOpinionHelper.__get_end_id(text_opinion, EntityEndType.Target)
-        parsed_news = self.__parsed_news_collection.get_by_news_id(news_id=text_opinion.NewsID)
+        parsed_news = self.__parsed_news_by_id_func(text_opinion.NewsID)
         s_index = parsed_news.get_entity_position(id_in_document=id_in_doc,
                                                   position_type=TermPositionTypes.SentenceIndex)
         it = parsed_news.iter_sentence_terms(sentence_index=s_index,
@@ -132,13 +135,16 @@ class TextOpinionHelper(object):
         return parsed_news.get_entity_position(end_id, position_type)
 
     def __get_related_news_and_end_id(self, text_opinion, end_type):
-        parsed_news = self.__get_related_news(text_opinion)
+        parsed_news = self.__get_related_news_by_text_opinion(text_opinion)
         end_id = TextOpinionHelper.__get_end_id(text_opinion, end_type)
         return parsed_news, end_id
 
-    def __get_related_news(self, text_opinion):
+    def __get_related_news_by_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
-        return self.__parsed_news_collection.get_by_news_id(text_opinion.NewsID)
+        return self.__get_related_news_by_id(text_opinion.NewsID)
+
+    def __get_related_news_by_id(self, news_id):
+        return self.__parsed_news_by_id_func(news_id)
 
     @staticmethod
     def __calc_distance(pos1, pos2, position_type=TermPositionTypes.IndexInDocument):

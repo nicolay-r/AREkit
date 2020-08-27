@@ -1,16 +1,17 @@
 import logging
 from os import path
 
+from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.evaluation.opinion_based import OpinionBasedExperimentEvaluator
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutralAnnotator
 from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnnotator
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.scales.two import TwoLabelScaler
+from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 
 logger = logging.getLogger(__name__)
@@ -18,35 +19,31 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    EPOCH_INDEX_PLACEHOLER = 0
-
-    def __init__(self, data_io, opin_operation, doc_operations, prepare_model_root):
+    def __init__(self, data_io, prepare_model_root):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(prepare_model_root, bool))
-        assert(isinstance(opin_operation, OpinionOperations))
-        assert(isinstance(doc_operations, DocumentOperations))
 
-        self.__opin_operations = opin_operation
-        self.__doc_operations = doc_operations
-
+        # Setup class fields
         self.__data_io = data_io
-
-        if prepare_model_root:
-            self.DataIO.prepare_model_root()
-
+        self.__opin_operations = None
+        self.__doc_operations = None
         self.__neutral_annot = self.__init_annotator()
 
-        # Setup DataIO
-        # TODO. Move into data_io
-        self.__data_io.Callback.set_log_dir(log_dir=path.join(self.DataIO.get_model_root(), u"log/"))
+        # Setup DataIO model root
+        model_root = self.DataIO.get_model_root(experiment_name=self.Name)
+        logger.info("Setup model root: {}".format(model_root))
+        self.__data_io.ModelIO.set_model_root(value=model_root)
+        if prepare_model_root:
+            self.__data_io.prepare_model_root()
 
-        self.__neutral_annot.initialize(data_io=data_io,
-                                        opin_ops=self.OpinionOperations,
-                                        doc_ops=self.DocumentOperations)
-
-        self.__data_io.ModelIO.set_model_root(value=self.DataIO.get_model_root())
+        # Setup Log dir.
+        self.__data_io.Callback.set_log_dir(path.join(model_root, u"log/"))
 
     # region Properties
+
+    @property
+    def Name(self):
+        raise NotImplementedError()
 
     @property
     def DataIO(self):
@@ -65,6 +62,19 @@ class BaseExperiment(object):
         return self.__doc_operations
 
     # endregion
+
+    def _set_opin_operations(self, value):
+        assert(isinstance(value, OpinionOperations))
+        self.__opin_operations = value
+
+    def _set_doc_operations(self, value):
+        assert(isinstance(value, DocumentOperations))
+        self.__doc_operations = value
+
+    def initialize_neutral_annotator(self):
+        self.__neutral_annot.initialize(data_io=self.__data_io,
+                                        opin_ops=self.__opin_operations,
+                                        doc_ops=self.__doc_operations)
 
     def create_parsed_collection(self, data_type):
         assert(isinstance(data_type, DataType))
@@ -86,19 +96,26 @@ class BaseExperiment(object):
         NOTE: assumes that results already written and converted in doc-level opinions.
         """
         assert(isinstance(data_type, DataType))
-        assert(isinstance(epoch_index, int) or epoch_index is None)
+        assert(isinstance(epoch_index, int))
 
-        evaluator = OpinionBasedExperimentEvaluator(evaluator=self.DataIO.Evaluator,
-                                                    opin_ops=self.OpinionOperations)
+        # Compose cmp pairs iterator.
+        cmp_pairs_iter = self.__opin_operations.iter_opinion_collections_to_compare(
+            data_type=data_type,
+            doc_ids=self.__doc_operations.iter_news_indices(data_type=data_type),
+            epoch_index=epoch_index)
 
-        doc_ids = self.DocumentOperations.iter_news_indices(data_type=data_type)
+        # getting evaluator.
+        evaluator = self.__data_io.Evaluator
+        assert(isinstance(evaluator, BaseEvaluator))
 
-        result = evaluator.evaluate(data_type=data_type,
-                                    doc_ids=self.OpinionOperations.iter_doc_ids_to_compare(doc_ids),
-                                    epoch_index=self.EPOCH_INDEX_PLACEHOLER)
-
+        # evaluate every document.
+        result = evaluator.evaluate(cmp_pairs=cmp_pairs_iter)
         assert(isinstance(result, BaseEvalResult))
-        return result.calculate()
+
+        # calculate results.
+        result.calculate()
+
+        return result
 
     # region private methods
 
@@ -107,5 +124,11 @@ class BaseExperiment(object):
             return TwoScaleNeutralAnnotator()
         if isinstance(self.__data_io.LabelsScaler, ThreeLabelScaler):
             return ThreeScaleNeutralAnnotator()
+
+    def get_annot_name(self):
+        if isinstance(self.__neutral_annot, TwoScaleNeutralAnnotator):
+            return u"neut_2_scale"
+        if isinstance(self.__neutral_annot, ThreeScaleNeutralAnnotator):
+            return u"neut_3_scale"
 
     # endregion

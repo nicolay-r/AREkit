@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from arekit.bert.input.providers.text.pair import PairTextProvider
+from arekit.common.experiment.data_type import DataType
+from arekit.contrib.bert.core.input.providers.text.pair import PairTextProvider
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.experiment.input.terms_mapper import StringTextTermsMapper
+from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
@@ -19,7 +20,7 @@ class NliMultipleSampleFormatter(BaseSampleFormatter):
 
     def __init__(self, data_type, label_scaler, labels_formatter, text_terms_mapper):
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        assert(isinstance(text_terms_mapper, StringTextTermsMapper))
+        assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
         text_b_template = u'{subject} к {object} в контексте : << {context} >>'
         super(NliMultipleSampleFormatter, self).__init__(
@@ -28,4 +29,5 @@ class NliMultipleSampleFormatter(BaseSampleFormatter):
                 text_b_template=text_b_template,
                 labels_formatter=labels_formatter,
                 text_terms_mapper=text_terms_mapper),
-            label_provider=MultipleLabelProvider(label_scaler=label_scaler))
+            label_provider=MultipleLabelProvider(label_scaler=label_scaler),
+            balance=data_type == DataType.Train)

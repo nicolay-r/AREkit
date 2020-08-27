@@ -9,3 +9,4 @@ class DataType(Enum):
 
     Train = 1
     Test = 2
+

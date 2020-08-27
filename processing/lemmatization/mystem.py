@@ -1,3 +1,4 @@
+from arekit.common.utils import filter_whitespaces
 from arekit.processing.lemmatization.base import Stemmer
 from pymystem3 import Mystem
 
@@ -41,14 +42,10 @@ class MystemWrapper(Stemmer):
     def __lemmatize_core(self, text):
         assert(isinstance(text, unicode))
         result_list = self.__mystem.lemmatize(self.__process_original_text(text))
-        return self.__filter_whitespaces(result_list)
+        return filter_whitespaces(result_list)
 
     @staticmethod
     def __process_original_text(text):
         return text.lower()
-
-    @staticmethod
-    def __filter_whitespaces(terms):
-        return [term.strip() for term in terms if term.strip()]
 
     # endregion

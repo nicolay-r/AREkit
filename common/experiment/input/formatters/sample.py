@@ -1,13 +1,13 @@
+import logging
 from collections import OrderedDict
-
-import pandas as pd
-
+from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
+from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider
+from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
+from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.providers.label.base import LabelProvider
-from arekit.bert.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.bert.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.data_type import DataType
@@ -15,8 +15,10 @@ from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
-from arekit.common.text_opinions.text_opinion import TextOpinion
-from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.text_opinions.base import TextOpinion
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class BaseSampleFormatter(BaseRowsFormatter):
@@ -27,21 +29,15 @@ class BaseSampleFormatter(BaseRowsFormatter):
     [id, text_a] -- for test
     """
 
-    """
-    Fields
-    """
-    ID = 'id'
-    LABEL = 'label'
-    S_IND = 's_ind'
-    T_IND = 't_ind'
-
-    def __init__(self, data_type, label_provider, text_provider):
+    def __init__(self, data_type, label_provider, text_provider, balance):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(text_provider, BaseSingleTextProvider))
+        assert(isinstance(balance, bool))
 
-        self.__label_provider = label_provider
+        self._label_provider = label_provider
         self.__text_provider = text_provider
-        self.__row_ids_formatter = self.__create_row_ids_formatter(label_provider)
+        self.__row_ids_provider = self.__create_row_ids_provider(label_provider)
+        self.__balance = balance
 
         super(BaseSampleFormatter, self).__init__(data_type=data_type)
 
@@ -52,7 +48,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
     # region Private methods
 
     @staticmethod
-    def __create_row_ids_formatter(label_provider):
+    def __create_row_ids_provider(label_provider):
         if isinstance(label_provider, BinaryLabelProvider):
             return BinaryIDProvider()
         if isinstance(label_provider, MultipleLabelProvider):
@@ -68,19 +64,20 @@ class BaseSampleFormatter(BaseRowsFormatter):
         """
         dtypes_list = super(BaseSampleFormatter, self)._get_columns_list_with_types()
 
-        dtypes_list.append((self.ID, unicode))
+        dtypes_list.append((const.ID, unicode))
+        dtypes_list.append((const.NEWS_ID, 'int32'))
 
         # insert labels
         if self.__is_train():
-            dtypes_list.append((self.LABEL, 'int32'))
+            dtypes_list.append((const.LABEL, 'int32'))
 
         # insert text columns
         for col_name in self.__text_provider.iter_columns():
             dtypes_list.append((col_name, unicode))
 
         # insert indices
-        dtypes_list.append((self.S_IND, 'int32'))
-        dtypes_list.append((self.T_IND, 'int32'))
+        dtypes_list.append((const.S_IND, 'int32'))
+        dtypes_list.append((const.T_IND, 'int32'))
 
         return dtypes_list
 
@@ -97,34 +94,39 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return (s_ind, t_ind)
 
+    @staticmethod
+    def _iter_sentence_terms(parsed_news, sentence_ind):
+        return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
+
     def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
 
-        row[self.ID] = self.__row_ids_formatter.create_sample_id(
+        row[const.ID] = self.__row_ids_provider.create_sample_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrap,
             index_in_linked=index_in_linked,
-            label_scaler=self.__label_provider.LabelScaler)
+            label_scaler=self._label_provider.LabelScaler)
+
+        row[const.NEWS_ID] = linked_wrap.First.NewsID
 
         expected_label = linked_wrap.get_linked_label()
 
         if self.__is_train():
-            row[self.LABEL] = self.__label_provider.calculate_output_label(
+            row[const.LABEL] = self._label_provider.calculate_output_label(
                 expected_label=expected_label,
                 etalon_label=etalon_label)
 
-        terms = list(parsed_news.iter_sentence_terms(sentence_index=sentence_ind,
-                                                     return_id=False))
-        self.__text_provider.add_text_in_row(row=row,
-                                             sentence_terms=terms,
-                                             s_ind=s_ind,
-                                             t_ind=t_ind,
-                                             expected_label=expected_label)
+        self.__text_provider.add_text_in_row(
+            row=row,
+            sentence_terms=list(self._iter_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind)),
+            s_ind=s_ind,
+            t_ind=t_ind,
+            expected_label=expected_label)
 
-        row[self.S_IND] = s_ind
-        row[self.T_IND] = t_ind
+        row[const.S_IND] = s_ind
+        row[const.T_IND] = t_ind
 
-    def __create_row(self, opinion_provider, linked_wrap, index_in_linked, etalon_label):
+    def __create_row(self, opinion_provider, linked_wrap, index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -136,6 +138,10 @@ class BaseSampleFormatter(BaseRowsFormatter):
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
+        assert(isinstance(idle_mode, bool))
+
+        if idle_mode:
+            return None
 
         text_opinion = linked_wrap[index_in_linked]
 
@@ -155,28 +161,30 @@ class BaseSampleFormatter(BaseRowsFormatter):
                             t_ind=t_ind)
         return row
 
-    def __provide_rows(self, opinion_provider, linked_wrap, index_in_linked):
+    def __provide_rows(self, opinion_provider, linked_wrap, index_in_linked, idle_mode):
         """
         Providing Rows depending on row_id_formatter type
         """
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
         origin = linked_wrap.First
-        if isinstance(self.__row_ids_formatter, BinaryIDProvider):
+        if isinstance(self.__row_ids_provider, BinaryIDProvider):
             """
             Enumerate all opinions as if it would be with the different label types.
             """
-            for label in self.__label_provider.SupportedLabels:
+            for label in self._label_provider.SupportedLabels:
                 yield self.__create_row(opinion_provider=opinion_provider,
                                         linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
                                         index_in_linked=index_in_linked,
-                                        etalon_label=origin.Sentiment)
+                                        etalon_label=origin.Sentiment,
+                                        idle_mode=idle_mode)
 
-        if isinstance(self.__row_ids_formatter, MultipleIDProvider):
+        if isinstance(self.__row_ids_provider, MultipleIDProvider):
             yield self.__create_row(opinion_provider=opinion_provider,
                                     linked_wrap=linked_wrap,
                                     index_in_linked=index_in_linked,
-                                    etalon_label=origin.Sentiment)
+                                    etalon_label=origin.Sentiment,
+                                    idle_mode=idle_mode)
 
     @staticmethod
     def __copy_modified_linked_wrap(linked_wrap, label):
@@ -190,15 +198,16 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
-    def _iter_by_rows(self, opinion_provider):
+    def _iter_by_rows(self, opinion_provider, idle_mode):
         """
         Iterate by rows that is assumes to be added as samples, using opinion_provider information
         """
         assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(idle_mode, bool))
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(
-            balance=self.__is_train(),
-            supported_labels=self.__label_provider.SupportedLabels)
+            balance=self.__balance,
+            supported_labels=self._label_provider.SupportedLabels)
 
         for linked_wrap in linked_iter:
 
@@ -207,20 +216,36 @@ class BaseSampleFormatter(BaseRowsFormatter):
                 rows_it = self.__provide_rows(
                     opinion_provider=opinion_provider,
                     linked_wrap=linked_wrap,
-                    index_in_linked=i)
+                    index_in_linked=i,
+                    idle_mode=idle_mode)
 
                 for row in rows_it:
                     yield row
 
     # endregion
 
-    def to_tsv_by_experiment(self, experiment):
-        assert(isinstance(experiment, BaseExperiment))
+    def _create_blank_df(self, size):
+        df = self._create_empty_df()
+        self._fast_init_df(df=df, rows_count=size)
+        return df
 
-        filepath = self.get_filepath(data_type=self._data_type,
-                                     experiment=experiment)
+    def _fast_init_df(self, df, rows_count):
+        df[self.ROW_ID] = range(rows_count)
+        df.set_index(self.ROW_ID, inplace=True)
 
-        # TODO. This should be in different function.
+    def save(self, filepath, write_header):
+        assert(isinstance(filepath, unicode))
+
+        if self.__balance:
+            logger.info(u"Start balancing...")
+            SampleRowBalancerHelper.balance_oversampling(
+                df=self._df,
+                create_blank_df=lambda size: self._create_blank_df(size),
+                label_provider=self._label_provider)
+            logger.info(u"Balancing completed!")
+
+        logger.info(u"Saving... : {}".format(filepath))
+        self._df.sort_values(by=[const.ID], ascending=True)
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
@@ -228,23 +253,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
                         index=False,
                         float_format="%.0f",
                         compression='gzip',
-                        header=not self.__is_train())
-
-    def from_tsv(self, experiment):
-
-        filepath = self.get_filepath(data_type=self._data_type,
-                                     experiment=experiment)
-
-        self._df = pd.read_csv(filepath,
-                               compression='gzip',
-                               sep='\t')
-
-    def extract_ids(self):
-        return self._df[self.ID].astype(unicode).tolist()
-
-    # TODO. Implement.
-    def iter_rows_linked_by_text_opinions(self):
-        raise NotImplementedError()
+                        header=write_header)
+        logger.info(u"Saving completed!")
 
     def __len__(self):
         return len(self._df.index)

@@ -1,9 +1,14 @@
 import glob
+import logging
 import os
 import shutil
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.common.model.model_io import BaseModelIO
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 
 class DataIO(object):
@@ -68,10 +73,6 @@ class DataIO(object):
     def TermsPerContext(self):
         raise NotImplementedError
 
-    @property
-    def KeepTokens(self):
-        return True
-
     # endregion
 
     # region private methods
@@ -80,7 +81,7 @@ class DataIO(object):
     def __rm_dir_contents(dir_path):
         contents = glob.glob(dir_path)
         for f in contents:
-            print "Removing old file/dir: {}".format(f)
+            logger.info("Removing old file/dir: {}".format(f))
             if os.path.isfile(f):
                 os.remove(f)
             else:
@@ -97,14 +98,29 @@ class DataIO(object):
     def set_model_name(self, value):
         self.__model_name = value
 
-    def get_model_root(self):
-        return get_path_of_subfolder_in_experiments_dir(subfolder_name=self.__model_name,
+    def get_input_samples_dir(self, experiment_name):
+        assert(isinstance(experiment_name, unicode))
+
+        is_fixed = self.CVFoldingAlgorithm.CVCount == 1
+        e_name = u"{name}_{mode}_{scale}l".format(name=experiment_name,
+                                                  mode=u"fixed" if is_fixed else u"cv",
+                                                  scale=self.LabelsScaler.LabelsCount)
+
+        return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
                                                         experiments_dir=self.get_experiments_dir())
+
+    def get_model_root(self, experiment_name):
+        assert(isinstance(experiment_name, unicode))
+        return get_path_of_subfolder_in_experiments_dir(
+            subfolder_name=self.__model_name,
+            experiments_dir=self.get_input_samples_dir(experiment_name))
 
     def prepare_model_root(self, rm_contents=True):
 
         if not rm_contents:
             return
 
-        self.__rm_dir_contents(self.get_model_root())
+        model_io = self.ModelIO
+        assert(isinstance(model_io, BaseModelIO))
+        self.__rm_dir_contents(model_io.ModelRoot)
 

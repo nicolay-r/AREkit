@@ -1,36 +1,81 @@
-## Neural Networks
+# AREnets 0.20.6
 
-### Convolutional Neural Networks
+Implementation of neural-netwoks, based on Tensorflow for sentiment attitude extraction task.
 
-#### CNN
+### Dependencies
 
-#### Piecewise CNN
+* python == 2.7.5
+* arekit == 0.20.6
+* tensorflow == 1.12.0
+* aresets == 0.20.6 (Only for some tests and application purposes) 
 
-### Recurrent Neural Networks (Sequence-Based Text Presentation)
+### Core
 
-### Attention Architectures
+* **Network** [[base-class]](networks/core/nn.py);
+    * Model [[base-class]](networks/core/model.py);
+    * IO [[base-class]](networks/core/nn_io.py);
+    * Callback [[base-class]](networks/core/callback/base.py);
 
-#### IAN
+### Neural Network Models
 
-Includes:
-* Frame aspect based implementation [[code]](context/architectures/ian_frames.py);
-* Attitude ends aspect based implementation;
-> NOTE: Experiments with RuSentRel results in an application of base Optimizer instead of 
-`tf.train.AdamOptimizer(learning_rate=learning_rate)` oprimizer. The latter stucks training process.
 
-#### Att-BiLSTM
+* **Aspect-based Attentive encoders**:
+    - Multilayer Perceptron (MLP)
+        [[code]](networks/attention/architectures/mlp.py) /
+        [[github:nicolay-r]](https://github.com/nicolay-r/mlp-attention);
+* **Self-based Attentive encoders**:
+    - P. Zhou et. al.
+        [[code]](networks/attention/architectures/self_p_zhou.py) /
+        [[github:SeoSangwoo]](https://github.com/SeoSangwoo/Attention-Based-BiLSTM-relation-extraction);
+    - Z. Yang et. al.
+        [[code]](networks/attention/architectures/self_z_yang.py) /
+        [[github:ilivans]](https://github.com/ilivans/tf-rnn-attention);
+* **Single Sentence Based Architectures**:
+    - CNN
+        [[code]](networks/context/architectures/cnn.py) /
+        [[github:roomylee]](https://github.com/roomylee/cnn-relation-extraction);
+    - CNN + Aspect-based MLP Attention
+        [[code]](networks/context/architectures/base/att_cnn_base.py);
+    - PCNN
+        [[code]](networks/context/architectures/pcnn.py) /
+        [[github:nicolay-r]](https://github.com/nicolay-r/sentiment-pcnn);
+    - PCNN + Aspect-based MLP Attention
+        [[code]](networks/context/architectures/base/att_pcnn_base.py);
+    - RNN (LSTM/GRU/RNN)
+        [[code]](networks/context/architectures/rnn.py) /
+        [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
+    - IAN (frames based)
+        [[code]](networks/context/architectures/ian_frames.py) /
+        [[github:lpq29743]](https://github.com/lpq29743/IAN);
+    - RCNN (BiLSTM + CNN)
+        [[code]](networks/context/architectures/rcnn.py) /
+        [[github:roomylee]](https://github.com/roomylee/rcnn-text-classification);
+    - RCNN + Self Attention
+        [[code]](networks/context/architectures/rcnn_self.py);
+    - BiLSTM
+        [[code]](networks/context/architectures/bilstm.py) /
+        [[github:roomylee]](https://github.com/roomylee/rnn-text-classification-tf);
+    - Bi-LSTM + Aspect-based MLP Attention 
+        [[code]](networks/context/architectures/base/att_bilstm_base.py)
+    - Bi-LSTM + Self Attention
+        [[code]](networks/context/architectures/self_att_bilstm.py) /
+        [[github:roomylee]](https://github.com/roomylee/self-attentive-emb-tf);
+    - RCNN + Self Attention
+        [[code]](networks/context/architectures/att_self_rcnn.py);
+* **Multi Sentence Based Encoders Architectures**:
+    - Self Attentive 
+        [[code]](networks/multi/architectures/att_self.py);
+    - Max Pooling
+        [[code]](networks/multi/architectures/max_pooling.py) /
+        [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
+    - Single MLP
+        [[code]](networks/multi/architectures/base/base_single_mlp.py);
+        
+### What could be also added
+* Semantic Relation Classification via Hierarchical Recurrent Neural Network with Attention
+[[paper]](https://www.aclweb.org/anthology/C16-1119)
 
-### Training Approaches
-    
-1. Single Sentence Training
 
-2. Multiple Sentence Training
+## References
 
-#### Layers Regularization
-
-We utilize 'L2'-regularization for layers and then combine with the ordinary loss 
-([stack-overflow-post](https://stackoverflow.com/questions/37107223/how-to-add-regularizations-in-tensorflow#37143333)):
-```
-tf.get_variable('a', regularizer=tf.contrib.layers.l2_regularizer(0.001))
-loss = ordinary_loss + tf.losses.get_regularization_loss()
-```
+TODO.

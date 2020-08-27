@@ -1,4 +1,4 @@
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 
 
 class TextOpinionCollection(object):

@@ -1,20 +1,17 @@
+import logging
 from collections import OrderedDict
-
-import pandas as pd
-
+from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
-from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
+
 
 class BaseOpinionsFormatter(BaseRowsFormatter):
-
-    ID = 'id'
-    SOURCE = 'source'
-    TARGET = 'target'
 
     # region methods
 
@@ -27,9 +24,10 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
     def _get_columns_list_with_types(self):
         dtypes_list = super(BaseOpinionsFormatter, self)._get_columns_list_with_types()
-        dtypes_list.append((BaseOpinionsFormatter.ID, unicode))
-        dtypes_list.append((BaseOpinionsFormatter.SOURCE, unicode))
-        dtypes_list.append((BaseOpinionsFormatter.TARGET, unicode))
+        dtypes_list.append((const.ID, unicode))
+        dtypes_list.append((const.NEWS_ID, 'int32'))
+        dtypes_list.append((const.SOURCE, unicode))
+        dtypes_list.append((const.TARGET, unicode))
         return dtypes_list
 
     @staticmethod
@@ -50,67 +48,45 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
             text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Target)
 
-        row[BaseOpinionsFormatter.ID] = MultipleIDProvider.create_opinion_id(
+        row[const.ID] = MultipleIDProvider.create_opinion_id(
             opinion_provider=opinion_provider,
             linked_opinions=linked_wrapper,
             index_in_linked=0)
-        row[BaseOpinionsFormatter.SOURCE] = src_value
-        row[BaseOpinionsFormatter.TARGET] = target_value
+
+        row[const.NEWS_ID] = linked_wrapper.First.NewsID
+
+        row[const.SOURCE] = src_value
+        row[const.TARGET] = target_value
 
         return row
 
     @staticmethod
-    def _iter_by_rows(opinion_provider):
+    def _iter_by_rows(opinion_provider, idle_mode):
         assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(idle_mode, bool))
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(balance=False,
                                                                     supported_labels=None)
 
         for linked_wrapper in linked_iter:
-            yield BaseOpinionsFormatter.__create_opinion_row(
-                opinion_provider=opinion_provider,
-                linked_wrapper=linked_wrapper)
+            if idle_mode:
+                yield None
+            else:
+                yield BaseOpinionsFormatter.__create_opinion_row(
+                    opinion_provider=opinion_provider,
+                    linked_wrapper=linked_wrapper)
+
 
     # endregion
 
-    def provide_opinion_info_by_opinion_id(self, opinion_id):
-        assert(isinstance(opinion_id, unicode))
-
-        opinion_row = self._df[self._df[self.ID] == opinion_id]
-        df_row = opinion_row.iloc[0].tolist()
-
-        news_id = df_row[0]
-        source = df_row[1].decode('utf-8')
-        target = df_row[2].decode('utf-8')
-
-        return news_id, source, target
-
-    def to_tsv_by_experiment(self, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-
-        filepath = self.get_filepath(data_type=self._data_type,
-                                     experiment=experiment)
-
+    def save(self, filepath):
+        logger.info(u"Saving... : {}".format(filepath))
+        self._df.sort_values(by=[const.ID], ascending=True)
         self._df.to_csv(filepath,
                         sep='\t',
                         encoding='utf-8',
                         columns=[c for c in self._df.columns if c != self.ROW_ID],
                         index=False,
-                        compression='gzip',
-                        header=False)
-
-    def from_tsv(self, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-
-        filepath = self.get_filepath(data_type=self._data_type,
-                                     experiment=experiment)
-
-        self._df = pd.read_csv(filepath,
-                               sep='\t',
-                               header=None,
-                               compression='gzip',
-                               names=[self.ID, self.SOURCE, self.TARGET])
-
-    def get_ids(self):
-        return self._df.iloc[0].tolist()
+                        compression='gzip')
+        logger.info(u"Saving completed!")
 

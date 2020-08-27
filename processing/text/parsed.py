@@ -10,21 +10,22 @@ class ParsedText:
 
     # region constructors
 
-    def __init__(self, terms, hide_tokens, stemmer=None):
+    def __init__(self, terms, stemmer=None):
         """
         NOTE: token hiding is actually discarded.
         """
         assert(isinstance(terms, list))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
+
         self.__terms = terms
         self.__lemmas = None
         self.__stemmer = stemmer
+
         if stemmer is not None:
             self.__lemmatize(stemmer)
 
     def copy_modified(self, terms):
         return ParsedText(terms=terms,
-                          hide_tokens=None,
                           stemmer=self.__stemmer)
 
     # endregion

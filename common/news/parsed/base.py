@@ -50,17 +50,15 @@ class ParsedNews(object):
         return isinstance(term, Entity)
 
     def __init_entity_positions(self):
-        self.__entity_positions = self.__calculate_positions(term_check=lambda term: ParsedNews.__is_entity(term))
+        self.__entity_positions = self.__calculate_entity_positions()
 
-    def __calculate_positions(self, term_check):
-        assert(callable(term_check))
-
+    def __calculate_entity_positions(self):
         positions = {}
         t_ind_in_doc = 0
 
         for s_ind, t_ind_in_sent, term in self.__iter_all_raw_terms():
 
-            if term_check(term):
+            if ParsedNews.__is_entity(term):
                 positions[term.IdInDocument] = TermPosition(term_ind_in_doc=t_ind_in_doc,
                                                             term_ind_in_sent=t_ind_in_sent,
                                                             s_ind=s_ind)

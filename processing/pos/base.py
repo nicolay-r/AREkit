@@ -4,9 +4,6 @@ class POSTagger:
     def POSCount(self):
         raise NotImplementedError()
 
-    def get_pos_as_unknown(self):
-        raise NotImplementedError()
-
     def get_term_pos(self, term):
         raise NotImplementedError()
 

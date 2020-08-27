@@ -12,7 +12,6 @@ from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
-from arekit.common.text_opinions.text_opinion import TextOpinion
 
 
 # region private methods
@@ -31,16 +30,6 @@ def __iter_opinion_collections(opin_operations, doc_id, data_type):
 
     if data_type == DataType.Train:
         yield opin_operations.read_etalon_opinion_collection(doc_id=doc_id)
-
-
-def __check_text_opinion(text_opinion, text_opinion_helper, terms_per_context):
-    assert(isinstance(text_opinion, TextOpinion))
-    assert(isinstance(text_opinion_helper, TextOpinionHelper))
-
-    return InputSampleBase.check_ability_to_create_sample(
-        window_size=terms_per_context,
-        text_opinion_helper=text_opinion_helper,
-        text_opinion=text_opinion)
 
 
 def __iter_linked_wraps(experiment, data_type, iter_doc_ids):
@@ -83,13 +72,17 @@ def extract_text_opinions(experiment,
 
     linked_text_opinions = LinkedTextOpinionCollection()
 
-    for linked_wrap in __iter_linked_wraps(experiment, data_type=data_type, iter_doc_ids=iter_doc_ids):
+    wraps_iter = __iter_linked_wraps(experiment=experiment,
+                                     data_type=data_type,
+                                     iter_doc_ids=iter_doc_ids)
+
+    for linked_wrap in wraps_iter:
         linked_text_opinions.try_add_linked_text_opinions(
             linked_text_opinions=linked_wrap,
-            check_opinion_correctness=lambda text_opinion: __check_text_opinion(
+            check_opinion_correctness=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
                 text_opinion=text_opinion,
                 text_opinion_helper=text_opinion_helper,
-                terms_per_context=terms_per_context))
+                window_size=terms_per_context))
 
     return linked_text_opinions
 

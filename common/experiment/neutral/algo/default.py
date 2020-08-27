@@ -37,7 +37,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
 
         self.__pnc = ParsedNewsCollection(parsed_news_it=iter_parsed_news)
-        self.__text_opinion_helper = TextOpinionHelper(parsed_news_collection=self.__pnc)
+        self.__text_opinion_helper = TextOpinionHelper(lambda news_id: self.__pnc.get_by_news_id(news_id))
         self.__dist_in_terms_bound = dist_in_terms_bound
 
     # region private methods
@@ -57,8 +57,8 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         assert(self.__synonyms.IsReadOnly is True)
 
         extracted_count = 0
-        neutral_opinions = OpinionCollection(opinions=None,
-                                             synonyms=self.__synonyms)
+        neutral_opinions = OpinionCollection.init_as_custom(opinions=None,
+                                                            synonyms=self.__synonyms)
 
         for e1 in entities_collection:
             assert(isinstance(e1, Entity))
@@ -79,8 +79,6 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
 
                 neutral_opinions.add_opinion(opinion)
                 extracted_count += 1
-
-        print "Neutral opinions extracted: {}".format(extracted_count)
 
         return neutral_opinions
 

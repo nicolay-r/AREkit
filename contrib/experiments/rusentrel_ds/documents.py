@@ -4,9 +4,10 @@ from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOper
 
 class RuSentrelWithRuAttitudesDocumentOperations(RuSentrelDocumentOperations):
 
-    def __init__(self, data_io, rusentrel_news_inds):
+    def __init__(self, data_io, rusentrel_news_inds, rusentrel_version):
         assert(isinstance(rusentrel_news_inds, set))
-        super(RuSentrelWithRuAttitudesDocumentOperations, self).__init__(data_io=data_io)
+        super(RuSentrelWithRuAttitudesDocumentOperations, self).__init__(data_io=data_io,
+                                                                         rusentrel_version=rusentrel_version)
         self.__rusentrel_news = rusentrel_news_inds
         self.__ru_attitudes = None
 

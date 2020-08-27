@@ -7,7 +7,7 @@ from arekit.common.frame_variants.parse import FrameVariantsParser
 from arekit.common.news.base import News
 from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.news.parsed.base import ParsedNews
-from arekit.processing.text.news_stat import debug_statistics, debug_show_terms
+from arekit.common.utils import split_by_whitespaces
 from arekit.processing.text.parsed import ParsedText
 from arekit.processing.text.tokens import Tokens
 from arekit.processing.text.token import Token
@@ -18,62 +18,51 @@ logger.setLevel(logging.INFO)
 
 
 class TextParser:
-    """
-    Represents a parser of news sentences.
-    As a result we have a list of TERMS, where term could be a
-        1) Word
-        2) Token
-    """
 
     def __init__(self):
         pass
-
-    # TODO. Tokens hiding actually discarded
-    @staticmethod
-    def parse(text, keep_tokens=False, stemmer=None):
-        assert(isinstance(text, unicode))
-        terms = TextParser.__parse_core(text, keep_tokens)
-        return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
 
     @staticmethod
     def parse_news(news, parse_options):
         assert(isinstance(news, News))
         assert(isinstance(parse_options, NewsParseOptions))
 
-        parsed_sentences = []
-
         return_text = True if not parse_options.ParseEntities else False
-        for sentence in news.iter_sentences(return_text=return_text):
-            if parse_options.ParseEntities:
-                text_with_entities = news.EntitiesParser.parse(sentence)
-                parsed_sentence = TextParser.parse_string_list(string_iter=text_with_entities,
-                                                               stemmer=parse_options.Stemmer)
-            else:
-                parsed_sentence = TextParser.parse(text=sentence,
-                                                   stemmer=parse_options.Stemmer)
 
-            parsed_sentences.append(parsed_sentence)
+        parsed_sentences = [TextParser.__parse_sentence(news, sentence, parse_options)
+                            for sentence in news.iter_sentences(return_text=return_text)]
 
         parsed_news = ParsedNews(news_id=news.ID,
                                  parsed_sentences=parsed_sentences)
 
-        NewsTermsShow = False
-        NewsTermsStatisticShow = False
-
-        if NewsTermsStatisticShow:
-            debug_statistics(parsed_news)
-        if NewsTermsShow:
-            debug_show_terms(parsed_news)
-
         if parse_options.ParseFrameVariants:
-            TextParser.__post_processing(parsed_news=parsed_news,
-                                         frame_variant_collection=parse_options.FrameVariantsCollection)
+            TextParser.__parse_frame_variants(parsed_news=parsed_news,
+                                              frame_variant_collection=parse_options.FrameVariantsCollection)
 
-        return ParsedNews(news_id=news.ID,
-                          parsed_sentences=parsed_sentences)
+        return parsed_news
 
     @staticmethod
-    def __post_processing(parsed_news, frame_variant_collection):
+    def parse(text, stemmer=None):
+        assert(isinstance(text, unicode))
+        terms = TextParser.__parse_core(text)
+        return ParsedText(terms, stemmer=stemmer)
+
+    # region private methods
+
+    @staticmethod
+    def __parse_sentence(news, sentence, parse_options):
+        assert(isinstance(news, News))
+        assert(isinstance(parse_options, NewsParseOptions))
+
+        if parse_options.ParseEntities:
+            text_with_entities = news.EntitiesParser.parse(sentence)
+            return TextParser.__parse_string_list(string_iter=text_with_entities,
+                                                  stemmer=parse_options.Stemmer)
+        return TextParser.parse(text=sentence,
+                                stemmer=parse_options.Stemmer)
+
+    @staticmethod
+    def __parse_frame_variants(parsed_news, frame_variant_collection):
         """
         Labeling frame variants in doc sentences.
         """
@@ -89,7 +78,7 @@ class TextParser:
                 parsed_text=sentence))
 
     @staticmethod
-    def parse_string_list(string_iter, keep_tokens=False, stemmer=None):
+    def __parse_string_list(string_iter, stemmer=None):
         assert(isinstance(string_iter, collections.Iterable))
 
         terms = []
@@ -97,30 +86,15 @@ class TextParser:
             if not isinstance(text, unicode):
                 terms.append(text)
                 continue
-            new_terms = TextParser.__parse_core(text, keep_tokens)
+            new_terms = TextParser.__parse_core(text)
             terms.extend(new_terms)
 
-        return ParsedText(terms, hide_tokens=keep_tokens, stemmer=stemmer)
+        return ParsedText(terms, stemmer=stemmer)
 
     @staticmethod
-    def from_string(str, separator=u' ', stemmer=None):
-
-        def __term_or_token(term):
-            token = TextParser.__try_term_as_token(term)
-            return token if token is not None else term
-
-        assert(isinstance(str, unicode))
-        terms = [word.strip(u' ') for word in str.split(separator)]
-        terms = [__term_or_token(t) for t in terms]
-        # TODO. Tokens hiding actually discarded
-        return ParsedText(terms, hide_tokens=True, stemmer=stemmer)
-
-    # region private methods
-
-    @staticmethod
-    def __parse_core(text, keep_tokens=False):
+    def __parse_core(text, keep_tokens=True):
         """
-        Separates sentence into list of parsed_news
+        Separates sentence into list
 
         save_tokens: bool
             keep token information in result list of parsed_news.
@@ -130,10 +104,8 @@ class TextParser:
         assert(isinstance(text, unicode))
         assert(isinstance(keep_tokens, bool))
 
-        words = [word.strip(u' ') for word in text.split(u' ')]
-        terms = TextParser.__process_words(words, keep_tokens)
-
-        TextParser.__log_debug(terms)
+        terms = TextParser.__process_words(words=split_by_whitespaces(text),
+                                           keep_tokens=keep_tokens)
 
         return terms
 
@@ -177,13 +149,15 @@ class TextParser:
         l = 0
         words_and_tokens = []
         while l < len(term):
-            # token
+
+            # Token.
             token = Tokens.try_create(term[l])
             if token is not None:
                 if token.get_token_value() != Tokens.NEW_LINE:
                     words_and_tokens.append(token)
                 l += 1
-            # number
+
+            # Number.
             elif unicode.isdigit(term[l]):
                 k = l + 1
                 while k < len(term) and unicode.isdigit(term[k]):
@@ -192,7 +166,8 @@ class TextParser:
                 assert(token is not None)
                 words_and_tokens.append(token)
                 l = k
-            # term
+
+            # Term.
             else:
                 k = l + 1
                 while k < len(term):
@@ -214,15 +189,5 @@ class TextParser:
         if number is not None:
             return number
         return Tokens.try_create(term)
-
-    @staticmethod
-    def __log_debug(terms):
-        for term in terms:
-            if isinstance(term, Token):
-                logger.debug(u'"TOKEN: {}, {}" '.format(
-                    term.get_meta_value(),
-                    term.get_token_value()))
-            else:
-                logger.debug(u'"WORD: {}" '.format(term))
 
     # endregion

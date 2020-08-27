@@ -1,8 +1,6 @@
 import logging
 
-import arekit.common.experiment.neutral.annot.utils
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
-
 from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion
@@ -20,7 +18,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
     """
 
     def __init__(self):
-        super(TwoScaleNeutralAnnotator, self).__init__(annot_name=u"neutral_2_scale")
+        super(TwoScaleNeutralAnnotator, self).__init__()
         self.__labels_fmt = ThreeScaleLabelsFormatter()
 
     # region static methods
@@ -54,16 +52,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
         if data_type == DataType.Train:
             return
 
-        filtered_iter = self.filter_non_created_doc_ids(
-            all_doc_ids=self.iter_doc_ids_to_compare(),
-            data_type=data_type)
-
-        for doc_id, filepath in filtered_iter:
-
-            arekit.common.experiment.neutral.annot.utils.notify_newfile_creation(filepath=filepath,
-                                                                                 data_type=data_type,
-                                                                                 logger=logger)
-
+        for doc_id, filepath in self._iter_docs(data_type):
             self._DataIO.OpinionFormatter.save_to_file(
                 collection=self.__create_opinions_for_classification(doc_id),
                 filepath=filepath,

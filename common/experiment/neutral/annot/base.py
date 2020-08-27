@@ -1,10 +1,13 @@
 import logging
+
 import utils
 from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class BaseNeutralAnnotator(object):
@@ -12,16 +15,11 @@ class BaseNeutralAnnotator(object):
     Performs neutral annotation for different data_type.
     """
 
-    def __init__(self, annot_name):
-        assert(isinstance(annot_name, unicode))
-        self.__annot_name = annot_name
+    def __init__(self):
+        logger.info("Init annotator: [{}]".format(self.__class__))
         self.__opin_ops = None
         self.__doc_ops = None
         self.__data_io = None
-
-    @property
-    def AnnotatorName(self):
-        return self.__annot_name
 
     @property
     def _OpinOps(self):
@@ -62,7 +60,7 @@ class BaseNeutralAnnotator(object):
 
     def iter_doc_ids_to_compare(self):
         doc_ids_iter = self.__iter_all_doc_ids()
-        for doc_id in self._OpinOps.iter_doc_ids_to_compare(doc_ids_iter):
+        for doc_id in self._OpinOps.get_doc_ids_set_to_compare(doc_ids_iter):
             yield doc_id
 
     def initialize(self, data_io, opin_ops, doc_ops):
@@ -77,5 +75,15 @@ class BaseNeutralAnnotator(object):
 
     def create_collection(self, data_type):
         raise NotImplementedError()
+
+    def _iter_docs(self, data_type):
+        pairs = list(self.filter_non_created_doc_ids(data_type=data_type,
+                                                     all_doc_ids=self.iter_doc_ids_to_compare()))
+
+        if len(pairs) == 0:
+            return pairs
+
+        return progress_bar_iter(iterable=pairs,
+                                 desc="Writing neutral-examples [{}]".format(data_type))
 
 

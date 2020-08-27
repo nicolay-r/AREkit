@@ -11,6 +11,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
@@ -23,9 +24,10 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self):
-        super(ThreeScaleNeutralAnnotator, self).__init__(annot_name=u"neutral_3_scale")
+        super(ThreeScaleNeutralAnnotator, self).__init__()
         self.__algo = None
         self.__labels_fmt = ThreeScaleLabelsFormatter()
+        self.__distance_in_terms_between_bounds = None
 
     # region private methods
 
@@ -34,12 +36,27 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
         news = self._DocOps.read_news(doc_id=doc_id)
         opinions = self._OpinOps.read_etalon_opinion_collection(doc_id=doc_id)
+
+        if self.__algo is None:
+            logger.info("Setup default annotation algorithm ...")
+            self.__init_neutral_annotation_algo()
+
         collection = self.__algo.make_neutrals(
             news_id=doc_id,
             entities_collection=news.DocEntities,
             sentiment_opinions=opinions if data_type == DataType.Train else None)
 
         return collection
+
+    def __init_neutral_annotation_algo(self):
+        """
+        Note: This operation might take a lot of time, as it assumes to perform news parsing.
+        """
+        self.__algo = DefaultNeutralAnnotationAlgorithm(
+            synonyms=self._DataIO.SynonymsCollection,
+            iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=self.iter_doc_ids_to_compare()),
+            dist_in_terms_bound=self.__distance_in_terms_between_bounds,
+            ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
     # endregion
 
@@ -52,21 +69,12 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
                                                            opin_ops=opin_ops,
                                                            doc_ops=doc_ops)
 
-        self.__algo = DefaultNeutralAnnotationAlgorithm(
-            synonyms=self._DataIO.SynonymsCollection,
-            iter_parsed_news=self._DocOps.iter_parsed_news(
-                doc_inds=self.iter_doc_ids_to_compare(),
-                frame_variant_collection=None),
-            dist_in_terms_bound=data_io.DistanceInTermsBetweenOpinionEndsBound,
-            ignored_entity_values=self.IGNORED_ENTITY_VALUES)
+        self.__distance_in_terms_between_bounds = data_io.DistanceInTermsBetweenOpinionEndsBound
 
     def create_collection(self, data_type):
         assert(isinstance(data_type, DataType))
 
-        filtered_iter = self.filter_non_created_doc_ids(data_type=data_type,
-                                                        all_doc_ids=self.iter_doc_ids_to_compare())
-
-        for doc_id, filepath in filtered_iter:
+        for doc_id, filepath in self._iter_docs(data_type):
             logger.debug("Create Neutral File (MODE {}): '{}'".format(data_type, filepath))
             collection = self.__create_opinions_for_extraction(doc_id=doc_id,
                                                                data_type=data_type)

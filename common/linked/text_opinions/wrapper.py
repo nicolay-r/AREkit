@@ -1,5 +1,5 @@
 from arekit.common.linked.data import LinkedDataWrapper
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 
 
 class LinkedTextOpinionsWrapper(LinkedDataWrapper):

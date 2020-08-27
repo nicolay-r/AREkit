@@ -4,7 +4,7 @@ import collections
 import cPickle as pickle
 
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.text_opinions.collection import TextOpinionCollection
 
 

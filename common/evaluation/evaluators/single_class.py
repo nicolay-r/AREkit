@@ -37,8 +37,10 @@ class SingleClassEvaluator(BaseEvaluator):
         assert(isinstance(opinions, OpinionCollection))
         assert(isinstance(label, Label))
 
-        new_collection = OpinionCollection(opinions=[],
-                                           synonyms=self.Synonyms)
+        # TODO. This might be rewritten with the usage of class ctor,
+        # TODO. istead of a manual adding.
+
+        new_collection = OpinionCollection.create_empty(self.Synonyms)
 
         for opinion in opinions:
             assert(isinstance(opinion, Opinion))

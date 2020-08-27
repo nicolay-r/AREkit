@@ -21,4 +21,4 @@ class ThreeLabelScaler(BaseLabelScaler):
 
     def invert_label(self, label):
         int_label = self.label_to_int(label)
-        return self.uint_to_label(-int_label)
+        return self.int_to_label(-int_label)

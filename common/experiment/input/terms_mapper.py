@@ -7,7 +7,11 @@ from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.processing.text.token import Token
 
 
-class StringTextTermsMapper(TextTermsMapper):
+class OpinionContainingTextTermsMapper(TextTermsMapper):
+    """
+    Provides an ability to setup s_obj, t_obj
+    The latter might be utilized with synonyms collection
+    """
 
     def __init__(self, entity_formatter, synonyms):
         assert(isinstance(entity_formatter, StringEntitiesFormatter))
@@ -57,25 +61,25 @@ class StringTextTermsMapper(TextTermsMapper):
         self.__s_group = self.__syn_group(terms_list[self.__s_ind] if self.__s_ind is not None else None)
         self.__t_group = self.__syn_group(terms_list[self.__t_ind] if self.__t_ind is not None else None)
 
-        for mapped in super(StringTextTermsMapper, self).iter_mapped(terms):
+        for mapped in super(OpinionContainingTextTermsMapper, self).iter_mapped(terms):
             yield mapped
 
     def map_entity(self, e_ind, entity):
         if e_ind == self.__s_ind:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.Subject)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.Subject)
         elif e_ind == self.__t_ind:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.Object)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.Object)
         elif self.__syn_group(entity) == self.__s_group:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.SynonymSubject)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.SynonymSubject)
         elif self.__syn_group(entity) == self.__t_group:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.SynonymObject)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.SynonymObject)
         else:
-            yield self.__entities_formatter.to_string(original_value=entity,
-                                                      entity_type=EntityType.Other)
+            return self.__entities_formatter.to_string(original_value=entity,
+                                                       entity_type=EntityType.Other)
 
     def map_word(self, w_ind, word):
         return word.strip()

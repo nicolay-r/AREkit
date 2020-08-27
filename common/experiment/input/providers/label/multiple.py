@@ -11,6 +11,7 @@ class MultipleLabelProvider(LabelProvider):
         assert(isinstance(expected_label, Label))
         return self.LabelScaler.label_to_uint(label=expected_label)
 
-    def OutputLabels(self):
-        return self.SupportedLabels
+    @property
+    def OutputLabelsUint(self):
+        return map(lambda label: self.LabelScaler.label_to_uint(label), self.SupportedLabels)
 

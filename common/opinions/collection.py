@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import collections
+
 from arekit.common.labels.base import Label
 from arekit.common.opinions.base import Opinion
 from arekit.common.synonyms import SynonymsCollection
@@ -9,12 +11,43 @@ class OpinionCollection(object):
     Document-level Collection of sentiment opinions between entities
     """
 
-    def __init__(self, opinions, synonyms):
-        assert(isinstance(opinions, list) or isinstance(opinions, type(None)))
+    def __init__(self, opinions, synonyms, raise_exception_on_duplicates):
+        """
+        opinions:
+        synonyms:
+        raise_exception_on_duplicates: bool
+            denotes whether there is a need to fire exception for duplicates in opinions list.
+        """
+        assert(isinstance(opinions, collections.Iterable) or isinstance(opinions, type(None)))
         assert(isinstance(synonyms, SynonymsCollection))
-        self.__opinions = [] if opinions is None else opinions
+        assert(isinstance(raise_exception_on_duplicates, bool))
+
+        self.__by_synonyms = {}
+        self.__ordered_opinion_keys = []
         self.__synonyms = synonyms
-        self.__by_synonyms = self.__create_index()
+
+        if opinions is None:
+            return
+
+        for opinion in opinions:
+            self.__register_opinion(opinion=opinion,
+                                    raise_exception_on_existence=raise_exception_on_duplicates)
+
+    # region class methods
+
+    @classmethod
+    def init_as_custom(cls, opinions, synonyms):
+        return cls(opinions=opinions,
+                   synonyms=synonyms,
+                   raise_exception_on_duplicates=False)
+
+    @classmethod
+    def create_empty(cls, synonyms):
+        return cls(opinions=[],
+                   synonyms=synonyms,
+                   raise_exception_on_duplicates=True)
+
+    # endregion
 
     # region public methods
 
@@ -48,42 +81,40 @@ class OpinionCollection(object):
         if not opinion.has_synonym_for_target(self.__synonyms):
             self.__add_synonym(opinion.TargetValue)
 
-        self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
-        self.__opinions.append(opinion)
+        self.__register_opinion(opinion=opinion,
+                                raise_exception_on_existence=True)
 
     def iter_sentiment(self, sentiment):
         assert(isinstance(sentiment, Label))
-        for o in self.__opinions:
-            if o.sentiment == sentiment:
-                yield o
+        for key in self.__ordered_opinion_keys:
+            opinion = self.__by_synonyms[key]
+            if opinion.sentiment == sentiment:
+                yield opinion
 
     # endregion
 
     # region private methods
 
     def __add_synonym(self, value):
-        if self.__synonyms.IsReadOnly:
-            raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
         self.__synonyms.add_synonym_value(value)
 
-    def __create_index(self):
-        index = {}
-        for opinion in self.__opinions:
-            OpinionCollection.__add_opinion(opinion, index, self.__synonyms, check=True)
-        return index
-
-    @staticmethod
-    def __add_opinion(opinion, collection, synonyms, check=True):
-        key = opinion.create_synonym_id(synonyms)
+    def __register_opinion(self, opinion, raise_exception_on_existence):
+        key = opinion.create_synonym_id(self.__synonyms)
 
         assert(isinstance(key, unicode))
-        if check:
-            if key in collection:
+        if key in self.__by_synonyms:
+
+            if raise_exception_on_existence:
                 raise Exception(u"'{}->{}' already exists in collection".format(
                     opinion.SourceValue, opinion.TargetValue).encode('utf-8'))
-        if key in collection:
+
+            # Rejecting opinion.
             return False
-        collection[key] = opinion
+
+        # Perform registration.
+        self.__by_synonyms[key] = opinion
+        self.__ordered_opinion_keys.append(key)
+
         return True
 
     # endregion
@@ -91,10 +122,10 @@ class OpinionCollection(object):
     # region base methods
 
     def __len__(self):
-        return len(self.__opinions)
+        return len(self.__by_synonyms)
 
     def __iter__(self):
-        for o in self.__opinions:
-            yield o
+        for key in self.__ordered_opinion_keys:
+            yield self.__by_synonyms[key]
 
     # endregion

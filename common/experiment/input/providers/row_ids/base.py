@@ -12,7 +12,6 @@ class BaseIDProvider(object):
     """
 
     SEPARATOR = u'_'
-    NEWS = u"n{}" + SEPARATOR
     OPINION = u"o{}" + SEPARATOR
     INDEX = u"i{}" + SEPARATOR
 
@@ -24,12 +23,10 @@ class BaseIDProvider(object):
         assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
 
-        template = u''.join([BaseIDProvider.NEWS,
-                             BaseIDProvider.OPINION,
+        template = u''.join([BaseIDProvider.OPINION,
                              BaseIDProvider.INDEX])
 
-        return template.format(linked_opinions.First.NewsID,
-                               linked_opinions.First.TextOpinionID,
+        return template.format(linked_opinions.First.TextOpinionID,
                                index_in_linked)
 
     @staticmethod
@@ -66,8 +63,8 @@ class BaseIDProvider(object):
         return BaseIDProvider._parse(opinion_id, BaseIDProvider.OPINION)
 
     @staticmethod
-    def parse_news_in_sample_id(opinion_id):
-        assert(isinstance(opinion_id, unicode))
-        return BaseIDProvider._parse(opinion_id, BaseIDProvider.NEWS)
+    def parse_opinion_in_sample_id(sample_id):
+        assert(isinstance(sample_id, unicode))
+        return BaseIDProvider._parse(sample_id, BaseIDProvider.OPINION)
 
     # endregion

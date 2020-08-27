@@ -14,6 +14,10 @@ class BaseLabelScaler(object):
 
         self.__ordered_labels = list(uint_dict.iterkeys())
 
+    @property
+    def LabelsCount(self):
+        return len(self.__uint_dict)
+
     def ordered_suppoted_labels(self):
         return self.__ordered_labels
 

@@ -1,30 +1,27 @@
-from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
+from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 
 
 class BaseInputEncoder(object):
 
     @staticmethod
-    def to_tsv(experiment, create_formatter_func):
-        """
-        Args:
-            create_formatter_func: func(data_type) -> FormatterType
-        """
-        assert(isinstance(experiment, BaseExperiment))
-        assert(callable(create_formatter_func))
+    def to_tsv(opinion_filepath, sample_filepath, opinion_provider,
+               opinion_formatter, sample_formatter, write_sample_header):
+        assert(isinstance(opinion_filepath, unicode))
+        assert(isinstance(sample_filepath, unicode))
+        assert(isinstance(opinion_formatter, BaseOpinionsFormatter))
+        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(sample_formatter, BaseSampleFormatter))
+        assert(isinstance(write_sample_header, bool))
 
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            experiment.NeutralAnnotator.create_collection(data_type)
+        # Opinions
+        opinion_formatter.format(opinion_provider)
+        opinion_formatter.save(opinion_filepath)
+        opinion_formatter.dispose_dataframe()
 
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
-            opinion_provider = OpinionProvider.from_experiment(experiment=experiment, data_type=data_type)
-
-            opnion_formatter = BaseOpinionsFormatter(data_type=data_type)
-            opnion_formatter.format(opinion_provider=opinion_provider)
-            opnion_formatter.to_tsv_by_experiment(experiment=experiment)
-
-            sampler = create_formatter_func(data_type=data_type)
-            sampler.format(opinion_provider=opinion_provider)
-            sampler.to_tsv_by_experiment(experiment=experiment)
-
+        # Samples
+        sample_formatter.format(opinion_provider)
+        sample_formatter.save(filepath=sample_filepath,
+                              write_header=write_sample_header)
+        sample_formatter.dispose_dataframe()

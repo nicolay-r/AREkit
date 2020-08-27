@@ -28,8 +28,13 @@ class SynonymsCollection(object):
 
     def add_synonym_value(self, value):
         assert(isinstance(value, unicode))
-        assert(not self.contains_synonym_value(value))
-        assert(not self.__is_read_only)
+
+        if self.contains_synonym_value(value):
+            raise Exception((u"Collection already contains synonyms '{}'".format(value)).encode('utf-8'))
+
+        if self.__is_read_only:
+            raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
+
         id = self.create_synonym_id(self.__stemmer, value)
         self.__by_synonym[id] = self.__get_groups_count()
         self.__by_index.append([value])
@@ -39,9 +44,7 @@ class SynonymsCollection(object):
     # region public 'contains' methods
 
     def contains_synonym_value(self, value):
-        assert(isinstance(value, unicode))
-        id = self.create_synonym_id(self.__stemmer, value)
-        return id in self.__by_synonym
+        return self.__contains_synonym_value(value)
 
     # endregion
 
@@ -50,6 +53,9 @@ class SynonymsCollection(object):
     def get_synonym_group_index(self, value):
         assert(isinstance(value, unicode))
         return self.__get_group_index(value)
+
+    def try_get_synonym_group_index(self, value, default=-1):
+        return self.__get_group_index(value) if self.__contains_synonym_value(value) else default
 
     # endregion
 
@@ -90,6 +96,10 @@ class SynonymsCollection(object):
     def __get_group_index(self, value):
         id = self.create_synonym_id(self.__stemmer, value)
         return self.__by_synonym[id]
+
+    def __contains_synonym_value(self, value):
+        id = self.create_synonym_id(self.__stemmer, value)
+        return id in self.__by_synonym
 
     # endregion
 

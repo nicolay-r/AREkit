@@ -3,7 +3,7 @@ from arekit.common.news.base import News
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.text_opinions.text_opinion import TextOpinion
+from arekit.common.text_opinions.base import TextOpinion
 
 
 def is_same_sentence(text_opinion, parsed_news):
