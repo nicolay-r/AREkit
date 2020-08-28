@@ -46,10 +46,3 @@ class TextObject(object):
         return self.__bound
 
     # endregion
-
-    # region overriden
-
-    def __len__(self):
-        return len(self.__terms)
-
-    # endregion
