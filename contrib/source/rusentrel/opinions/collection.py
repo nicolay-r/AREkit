@@ -22,7 +22,9 @@ class RuSentRelOpinionCollection:
         assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
         assert(isinstance(version, RuSentRelVersions))
 
-        if synonyms is None:
+        use_native_collection = synonyms is None
+
+        if use_native_collection:
             # TODO. Now it is not supported, since synonyms collection
             # TODO. requires to use stemmer in initialization.
             synonyms = None
@@ -32,5 +34,6 @@ class RuSentRelOpinionCollection:
             process_func=lambda input_file: RuSentRelOpinionCollectionFormatter._load_from_file(
                 input_file=input_file,
                 synonyms=synonyms,
-                labels_formatter=RuSentRelLabelsFormatter()),
+                labels_formatter=RuSentRelLabelsFormatter(),
+                is_native_synonyms_collection=use_native_collection),
             version=version)
