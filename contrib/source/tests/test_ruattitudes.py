@@ -2,6 +2,7 @@
 import logging
 import sys
 import unittest
+from tqdm import tqdm
 
 sys.path.append('../../../../')
 
@@ -26,10 +27,12 @@ logging.basicConfig(level=logging.DEBUG)
 
 class TestRuAttiudes(unittest.TestCase):
 
+    ra_version = RuAttitudesVersions.V20
+
     def test_indices(self):
         ids = set()
-        for news in RuAttitudesCollection.iter_news(version=RuAttitudesVersions.V11,
-                                                    get_news_index_func=lambda: len(ids)):
+        for news in tqdm(RuAttitudesCollection.iter_news(version=self.ra_version,
+                                                         get_news_index_func=lambda: len(ids))):
             assert(isinstance(news, RuAttitudesNews))
             assert(news.ID not in ids)
             ids.add(news.ID)
@@ -44,10 +47,10 @@ class TestRuAttiudes(unittest.TestCase):
         # iterating through collection
         news_readed = 0
 
-        news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.V11,
+        news_it = RuAttitudesCollection.iter_news(version=self.ra_version,
                                                   get_news_index_func=lambda: news_readed)
 
-        for news in news_it:
+        for news in tqdm(news_it):
 
             # parse news
             parsed_news = TextParser.parse_news(news=news, parse_options=options)
@@ -66,14 +69,13 @@ class TestRuAttiudes(unittest.TestCase):
             for t in str_terms:
                 self.assertIsInstance(t, unicode)
 
-            logger.info(u" ".join(str_terms))
             news_readed += 1
 
     def test_reading(self):
 
         # iterating through collection
         news_readed = 0
-        news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.V20,
+        news_it = RuAttitudesCollection.iter_news(version=self.ra_version,
                                                   get_news_index_func=lambda: news_readed)
         for news in news_it:
             assert(isinstance(news, RuAttitudesNews))
