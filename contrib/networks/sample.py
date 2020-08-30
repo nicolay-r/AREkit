@@ -158,14 +158,14 @@ class InputSample(InputSampleBase):
         assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
         assert(subj_ind != obj_ind)
 
+        def shift_index(ind):
+            return ind - x_feature.StartIndex
+
+        def shift_indices(inds):
+            return [shift_index(ind) for ind in inds]
+
         # Composing vectors
         x_indices = [words_vocab[term] for term in terms]
-
-        frame_sent_roles_vector = FrameRoleFeatures.to_input(
-            frame_inds=frame_inds,
-            frame_sent_roles=frame_sent_roles,
-            terms_per_context=config.TermsPerContext,
-            pad=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
         pos_vector = arekit.contrib.networks.core.mappers.pos.iter_pos_indices_for_terms(
             terms=terms,
@@ -186,13 +186,6 @@ class InputSample(InputSampleBase):
             expected_size=config.TermsPerContext,
             filler=cls.POS_PAD_VALUE)
 
-        frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=frame_sent_roles_vector,
-            e1_in=subj_ind,
-            e2_in=obj_ind,
-            expected_size=config.TermsPerContext,
-            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
-
         term_type_feature = IndicesFeature.from_vector_to_be_fitted(
             value_vector=InputSample.__create_term_types(terms),
             e1_in=subj_ind,
@@ -200,12 +193,28 @@ class InputSample(InputSampleBase):
             expected_size=config.TermsPerContext,
             filler=cls.TERM_TYPE_PAD_VALUE)
 
+        shifted_subj_ind = shift_index(subj_ind)
+        shifted_obj_ind = shift_index(obj_ind)
+
+        frame_sent_roles_vector = FrameRoleFeatures.to_input(
+            shifted_frame_inds=shift_indices(frame_inds),
+            frame_sent_roles=frame_sent_roles,
+            terms_per_context=config.TermsPerContext,
+            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
+
+        frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
+            value_vector=frame_sent_roles_vector,
+            e1_in=shifted_subj_ind,
+            e2_in=shifted_obj_ind,
+            expected_size=config.TermsPerContext,
+            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
+
         frames_feature = PointersFeature.create_shifted_and_fit(
             original_value=[] if frame_inds is None else frame_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
-            filler=cls.FRAMES_PAD_VALUE,
-            expected_size=config.FramesPerContext)
+            expected_size=config.FramesPerContext,
+            filler=cls.FRAMES_PAD_VALUE)
 
         syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
             original_value=[subj_ind] if syn_subj_inds is None else syn_subj_inds,
@@ -219,11 +228,8 @@ class InputSample(InputSampleBase):
             end_offset=x_feature.EndIndex,
             filler=cls.SYNONYMS_PAD_VALUE)
 
-        subj_ind = subj_ind - x_feature.StartIndex
-        obj_ind = obj_ind - x_feature.StartIndex
-
-        dist_from_subj = DistanceFeatures.distance_feature(position=subj_ind, size=config.TermsPerContext)
-        dist_from_obj = DistanceFeatures.distance_feature(position=obj_ind, size=config.TermsPerContext)
+        dist_from_subj = DistanceFeatures.distance_feature(position=shifted_subj_ind, size=config.TermsPerContext)
+        dist_from_obj = DistanceFeatures.distance_feature(position=shifted_obj_ind, size=config.TermsPerContext)
 
         dist_nearest_subj = DistanceFeatures.distance_abs_nearest_feature(
             positions=syn_subj_inds_feature.ValueVector,
@@ -242,8 +248,8 @@ class InputSample(InputSampleBase):
                                   filler=cls.SYNONYMS_PAD_VALUE)
 
         return cls(X=np.array(x_feature.ValueVector),
-                   subj_ind=subj_ind,
-                   obj_ind=obj_ind,
+                   subj_ind=shifted_subj_ind,
+                   obj_ind=shifted_obj_ind,
                    syn_subj_inds=np.array(syn_subj_inds_feature.ValueVector),
                    syn_obj_inds=np.array(syn_obj_inds_feature.ValueVector),
                    dist_from_subj=dist_from_subj,

@@ -25,18 +25,18 @@ class FrameRoleFeatures(object):
         return result
 
     @staticmethod
-    def to_input(frame_inds, frame_sent_roles, terms_per_context, pad):
-        assert(isinstance(frame_inds, list) or frame_inds is None)
+    def to_input(shifted_frame_inds, frame_sent_roles, terms_per_context, filler):
+        assert(isinstance(shifted_frame_inds, list) or shifted_frame_inds is None)
         assert(isinstance(frame_sent_roles, list) or frame_sent_roles is None)
 
-        vector = [pad] * terms_per_context
+        vector = [filler] * terms_per_context
 
-        if frame_sent_roles is None or frame_inds is None:
+        if frame_sent_roles is None or shifted_frame_inds is None:
             return vector
 
-        assert(len(frame_inds) == len(frame_sent_roles))
+        assert(len(shifted_frame_inds) == len(frame_sent_roles))
 
-        for i, frame_ind in frame_inds:
+        for i, frame_ind in shifted_frame_inds:
             vector[frame_ind] = frame_sent_roles[i]
 
         return vector

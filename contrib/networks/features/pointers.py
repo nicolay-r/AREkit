@@ -31,9 +31,9 @@ class PointersFeature(object):
 
     @staticmethod
     def __shift_text_pointers(inds, begin, end, pad_value):
-        return map(lambda frame_index: PointersFeature.__shift_index(w_begin=begin, w_end=end,
-                                                                     frame_index=frame_index,
-                                                                     placeholder=pad_value),
+        return map(lambda index: PointersFeature.__shift_index(w_begin=begin, w_end=end,
+                                                               index=index,
+                                                               default=pad_value),
                    inds)
 
     @staticmethod
@@ -45,13 +45,12 @@ class PointersFeature(object):
         else:
             del value[size:]
 
-
     @staticmethod
-    def __shift_index(w_begin, w_end, frame_index, placeholder):
-        shifted = frame_index - w_begin
+    def __shift_index(w_begin, w_end, index, default):
+        shifted = index - w_begin
         in_window = utils.in_window(window_begin=w_begin,
                                     window_end=w_end,
-                                    ind=frame_index)
-        return placeholder if not in_window else shifted
+                                    ind=index)
+        return default if not in_window else shifted
 
     # endregion
