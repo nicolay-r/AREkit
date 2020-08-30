@@ -196,8 +196,10 @@ class InputSample(InputSampleBase):
         shifted_subj_ind = shift_index(subj_ind)
         shifted_obj_ind = shift_index(obj_ind)
 
+        frame_inds_list = [] if frame_inds is None else frame_inds
+
         frame_sent_roles_vector = FrameRoleFeatures.to_input(
-            shifted_frame_inds=shift_indices(frame_inds),
+            shifted_frame_inds=shift_indices(frame_inds_list),
             frame_sent_roles=frame_sent_roles,
             terms_per_context=config.TermsPerContext,
             filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
@@ -210,7 +212,7 @@ class InputSample(InputSampleBase):
             filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
         frames_feature = PointersFeature.create_shifted_and_fit(
-            original_value=[] if frame_inds is None else frame_inds,
+            original_value=frame_inds_list,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             expected_size=config.FramesPerContext,
