@@ -88,7 +88,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
             iterable=RuAttitudesCollection.iter_news(
                 version=version,
                 get_news_index_func=lambda: id_offset + len(d)),
-            desc=u"Loading RuAttitudes collection in memory, please wait ...",
+            desc=u"Loading RuAttitudes Collection",
             unit=u'docs')
 
         for news in news_it:

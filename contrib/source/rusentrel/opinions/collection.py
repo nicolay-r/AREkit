@@ -2,7 +2,6 @@ from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
 class RuSentRelOpinionCollection:
