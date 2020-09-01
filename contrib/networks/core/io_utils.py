@@ -15,8 +15,8 @@ class NetworkIOUtils(object):
     Provides Input/Output paths generation functions.
     """
 
-    TERM_EMBEDDING_FILENAME = u'term_embedding'
-    VOCABULARY_FILENAME = u"vocab.txt"
+    TERM_EMBEDDING_FILENAME_TEMPLATE = u'term_embedding-{cv_index}'
+    VOCABULARY_FILENAME_TEMPLATE = u"vocab-{cv_index}.txt"
 
     @staticmethod
     def get_target_dir(experiment):
@@ -53,12 +53,12 @@ class NetworkIOUtils(object):
     @staticmethod
     def get_vocab_filepath(experiment):
         return os.path.join(NetworkIOUtils.get_target_dir(experiment),
-                            NetworkIOUtils.VOCABULARY_FILENAME + u'.npz')
+                            NetworkIOUtils.VOCABULARY_FILENAME_TEMPLATE.format(cv_index=NetworkIOUtils.__get_cv_index(experiment)) + u'.npz')
 
     @staticmethod
     def get_embedding_filepath(experiment):
         return os.path.join(NetworkIOUtils.get_target_dir(experiment),
-                            NetworkIOUtils.TERM_EMBEDDING_FILENAME + u'.npz')
+                            NetworkIOUtils.TERM_EMBEDDING_FILENAME_TEMPLATE.format(cv_index=NetworkIOUtils.__get_cv_index(experiment)) + u'.npz')
 
     @staticmethod
     def check_files_existance(data_type, experiment):
@@ -85,9 +85,12 @@ class NetworkIOUtils(object):
     @staticmethod
     def __filename_template(data_type, experiment):
         assert(isinstance(data_type, DataType))
-        return u"{data_type}-{cv_index}".format(
-            data_type=data_type.name.lower(),
-            cv_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex)
+        return u"{data_type}-{cv_index}".format(data_type=data_type.name.lower(),
+                                                cv_index=NetworkIOUtils.__get_cv_index(experiment))
+
+    @staticmethod
+    def __get_cv_index(experiment):
+        return experiment.DataIO.CVFoldingAlgorithm.IterationIndex
 
     @staticmethod
     def __get_filepath(out_dir, template, prefix):
