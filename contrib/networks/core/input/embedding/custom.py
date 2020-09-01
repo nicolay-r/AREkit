@@ -51,10 +51,12 @@ def __compose_from_parts(term, embedding, check, word_separator, max_part_size=3
 
     return term, vector / count if count > 0 else vector
 
+
 def __get_from_embedding(term, embedding, check):
     if u' ' in term:
         print u"EXISTED IN EMBEDDING: [{}]".format(term)
     return embedding.try_get_related_word(term), embedding[term]
+
 
 def __create_embedding_for_word(word, max_part_size, embedding):
     assert(isinstance(word, unicode))
@@ -89,8 +91,10 @@ def __create_embedding_for_word(word, max_part_size, embedding):
         c_i += c_l
         count += 1
 
-    w_debug = u''.join([u'?' if i in missings else ch
-                        for i, ch in enumerate(word)])
-    logger.debug(u'Embedded: {}'.format(w_debug).encode('utf-8'))
+    debug = False
+    if debug:
+        w_debug = u''.join([u'?' if i in missings else ch
+                            for i, ch in enumerate(word)])
+        logger.debug(u'Embedded: {}'.format(w_debug).encode('utf-8'))
 
     return vector, count
