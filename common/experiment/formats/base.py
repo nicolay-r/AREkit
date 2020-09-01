@@ -11,7 +11,6 @@ from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutral
 from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnnotator
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.scales.two import TwoLabelScaler
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 
 logger = logging.getLogger(__name__)

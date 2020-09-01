@@ -75,7 +75,6 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         assert(isinstance(data_type, DataType))
 
         for doc_id, filepath in self._iter_docs(data_type):
-            logger.debug("Create Neutral File (MODE {}): '{}'".format(data_type, filepath))
             collection = self.__create_opinions_for_extraction(doc_id=doc_id,
                                                                data_type=data_type)
 
