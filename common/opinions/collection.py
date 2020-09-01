@@ -1,9 +1,14 @@
-# -*- coding: utf-8 -*-
 import collections
+import logging
 
 from arekit.common.labels.base import Label
 from arekit.common.opinions.base import Opinion
+from arekit.common.opinions.enums import OpinionEndTypes
 from arekit.common.synonyms import SynonymsCollection
+
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
 
 class OpinionCollection(object):
@@ -11,7 +16,9 @@ class OpinionCollection(object):
     Document-level Collection of sentiment opinions between entities
     """
 
-    def __init__(self, opinions, synonyms, raise_exception_on_duplicates):
+    def __init__(self, opinions, synonyms,
+                 error_on_duplicates,
+                 error_on_synonym_end_missed):
         """
         opinions:
         synonyms:
@@ -20,7 +27,8 @@ class OpinionCollection(object):
         """
         assert(isinstance(opinions, collections.Iterable) or isinstance(opinions, type(None)))
         assert(isinstance(synonyms, SynonymsCollection))
-        assert(isinstance(raise_exception_on_duplicates, bool))
+        assert(isinstance(error_on_duplicates, bool))
+        assert(isinstance(error_on_synonym_end_missed, bool))
 
         self.__by_synonyms = {}
         self.__ordered_opinion_keys = []
@@ -30,22 +38,30 @@ class OpinionCollection(object):
             return
 
         for opinion in opinions:
-            self.__register_opinion(opinion=opinion,
-                                    raise_exception_on_existence=raise_exception_on_duplicates)
+            self.__register_opinion(
+                opinion=opinion,
+                error_on_existence=error_on_duplicates,
+                error_on_synonym_end_missed=error_on_synonym_end_missed)
 
     # region class methods
 
     @classmethod
     def init_as_custom(cls, opinions, synonyms):
+        """
+        Perform initialization with a synonyms collection which might be partially incompatible
+        with opinion ends (values).
+        """
         return cls(opinions=opinions,
                    synonyms=synonyms,
-                   raise_exception_on_duplicates=False)
+                   error_on_duplicates=False,
+                   error_on_synonym_end_missed=False)
 
     @classmethod
     def create_empty(cls, synonyms):
         return cls(opinions=[],
                    synonyms=synonyms,
-                   raise_exception_on_duplicates=True)
+                   error_on_duplicates=True,
+                   error_on_synonym_end_missed=True)
 
     # endregion
 
@@ -55,10 +71,9 @@ class OpinionCollection(object):
         assert(isinstance(opinion, Opinion))
         assert(sentiment is None or isinstance(sentiment, Label))
 
-        if not opinion.has_synonym_for_source(self.__synonyms):
-            return False
-        if not opinion.has_synonym_for_target(self.__synonyms):
-            return False
+        for end_type in OpinionEndTypes:
+            if not opinion.has_synonym_for_end(synonyms=self.__synonyms, end_type=end_type):
+                return False
 
         s_id = opinion.create_synonym_id(self.__synonyms)
         if s_id in self.__by_synonyms:
@@ -75,14 +90,9 @@ class OpinionCollection(object):
     def add_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
 
-        if not opinion.has_synonym_for_source(self.__synonyms):
-            self.__add_synonym(opinion.SourceValue)
-
-        if not opinion.has_synonym_for_target(self.__synonyms):
-            self.__add_synonym(opinion.TargetValue)
-
         self.__register_opinion(opinion=opinion,
-                                raise_exception_on_existence=True)
+                                error_on_existence=True,
+                                error_on_synonym_end_missed=True)
 
     def iter_sentiment(self, sentiment):
         assert(isinstance(sentiment, Label))
@@ -98,18 +108,46 @@ class OpinionCollection(object):
     def __add_synonym(self, value):
         self.__synonyms.add_synonym_value(value)
 
-    def __register_opinion(self, opinion, raise_exception_on_existence):
+    def __register_opinion(self, opinion,
+                           error_on_existence,
+                           error_on_synonym_end_missed):
+        assert(isinstance(error_on_existence, bool))
+        assert(isinstance(error_on_synonym_end_missed, bool))
+
+        for end_type in OpinionEndTypes:
+            value = opinion.get_value(end_type)
+            if opinion.has_synonym_for_end(synonyms=self.__synonyms, end_type=end_type):
+                # OK.
+                continue
+            if not self.__synonyms.IsReadOnly:
+                # OK. Registering new synonyms as it is possible.
+                self.__add_synonym(value)
+                continue
+
+            message = u"'{s}' for end {e} does not exist in read-only SynonymsCollection".format(
+                s=value,
+                e=end_type).encode('utf-8')
+            if error_on_synonym_end_missed:
+                raise Exception(message)
+            else:
+                # Rejecting opinion.
+                logger.info(message)
+                return False
+
         key = opinion.create_synonym_id(self.__synonyms)
 
         assert(isinstance(key, unicode))
         if key in self.__by_synonyms:
 
-            if raise_exception_on_existence:
-                raise Exception(u"'{}->{}' already exists in collection".format(
-                    opinion.SourceValue, opinion.TargetValue).encode('utf-8'))
+            message = u"'{s}->{t}' already exists in collection".format(
+                s=opinion.SourceValue,
+                t=opinion.TargetValue).encode('utf-8')
 
-            # Rejecting opinion.
-            return False
+            if error_on_existence:
+                raise Exception(message)
+            else:
+                logger.info(message)
+                return False
 
         # Perform registration.
         self.__by_synonyms[key] = opinion

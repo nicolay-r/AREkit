@@ -88,7 +88,8 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
         if is_native_synonyms_collection:
             return OpinionCollection(opinions=opinions,
                                      synonyms=synonyms,
-                                     raise_exception_on_duplicates=True)
+                                     error_on_duplicates=True,
+                                     error_on_synonym_end_missed=True)
         else:
             return OpinionCollection.init_as_custom(opinions=opinions,
                                                     synonyms=synonyms)

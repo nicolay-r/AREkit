@@ -1,4 +1,5 @@
 from arekit.common.labels.base import Label
+from arekit.common.opinions.enums import OpinionEndTypes
 from arekit.common.synonyms import SynonymsCollection
 
 
@@ -39,6 +40,17 @@ class Opinion(object):
 
     # region public methods
 
+    def get_value(self, end_type):
+        assert(isinstance(end_type, OpinionEndTypes))
+
+        if end_type == OpinionEndTypes.Source:
+            return self.SourceValue
+
+        if end_type == OpinionEndTypes.Target:
+            return self.TargetValue
+
+        raise Exception("Unknown end_type='{e_type}'".format(e_type=end_type))
+
     def set_tag(self, value):
         self.__tag = value
 
@@ -48,12 +60,9 @@ class Opinion(object):
             synonyms.get_synonym_group_index(self.__source_value),
             synonyms.get_synonym_group_index(self.__target_value))
 
-    def has_synonym_for_source(self, synonyms):
+    def has_synonym_for_end(self, synonyms, end_type):
         assert(isinstance(synonyms, SynonymsCollection))
-        return synonyms.contains_synonym_value(self.__source_value)
-
-    def has_synonym_for_target(self, synonyms):
-        assert(isinstance(synonyms, SynonymsCollection))
-        return synonyms.contains_synonym_value(self.__target_value)
+        assert(isinstance(end_type, OpinionEndTypes))
+        return synonyms.contains_synonym_value(self.get_value(end_type))
 
     # endregion
