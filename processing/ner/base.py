@@ -4,17 +4,34 @@ class NamedEntityRecognition:
     begin_tag = 'B'
     inner_tag = 'I'
 
-    def extract(self, terms):
+    def extract(self, sequences, return_single=True):
+        return self.__extract(sequences=sequences,
+                              return_single=return_single)
 
-        tags = self._extract_tags(terms=terms)
+    def __extract(self, sequences, return_single):
+        assert(isinstance(sequences, list))
+        assert(isinstance(return_single, bool))
 
-        assert(len(terms) == len(tags))
+        seqs_tags = self._extract_tags(sequences)
 
-        merged_terms = self.__merge(terms, tags)
-        types = [self.__tag_type(tag) for tag in tags if self.__tag_part(tag) == self.begin_tag]
-        positions = [i for i, tag in enumerate(tags) if self.__tag_part(tag) == self.begin_tag]
+        assert(len(sequences) == len(seqs_tags))
 
-        return merged_terms, types, positions
+        lengths = [None] * len(sequences)
+        positions = [None] * len(sequences)
+        types = [None] * len(sequences)
+
+        for s_ind, seq in enumerate(sequences):
+
+            seq_tags = seqs_tags[s_ind]
+
+            lengths[s_ind] = [len(entry) for entry in self.__merge(seq, seq_tags)]
+            types[s_ind] = [self.__tag_type(tag) for tag in seq_tags if self.__tag_part(tag) == self.begin_tag]
+            positions[s_ind] = [j for j, tag in enumerate(seq_tags) if self.__tag_part(tag) == self.begin_tag]
+
+        if len(positions) == 1 and return_single:
+            return positions[0], lengths[0], types[0]
+        else:
+            return positions, lengths, types
 
     @property
     def InputLimitation(self):
@@ -32,7 +49,7 @@ class NamedEntityRecognition:
     def NeedLowercase(self):
         raise NotImplementedError()
 
-    def _extract_tags(self, terms):
+    def _extract_tags(self, seqences):
         raise NotImplementedError()
 
     # region private methods
