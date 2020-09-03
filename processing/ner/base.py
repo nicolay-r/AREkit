@@ -37,9 +37,24 @@ class NamedEntityRecognition:
     def InputLimitation(self):
         raise NotImplementedError()
 
+    # region tags info
+
     @property
     def LocationTypeStr(self):
         raise NotImplementedError()
+
+    def GeoPoliticalTypeStr(self):
+        raise NotImplementedError()
+
+    @property
+    def PersonTypeStr(self):
+        raise NotImplementedError()
+
+    @property
+    def OrganizationTypeStr(self):
+        raise NotImplementedError
+
+    # endregion
 
     @property
     def NeedLemmatization(self):
