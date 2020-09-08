@@ -108,7 +108,8 @@ class BertResults(object):
                                                          experiment=experiment,
                                                          prefix=u"result",
                                                          is_csv=True,
-                                                         zipped=False)
+                                                         zipped=False,
+                                                         is_results=True)
 
     # endregion
 

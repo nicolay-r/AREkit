@@ -233,7 +233,6 @@ class BaseSampleFormatter(BaseBertRowsFormatter):
                         header=not self.__is_train())
 
     def from_tsv(self, experiment):
-
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
 

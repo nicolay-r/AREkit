@@ -10,10 +10,10 @@ class OpinionOperations(object):
     Provides operations with opinions and related collections
     """
 
-    def __init__(self, experiments_dir, annot_name_func):
-        assert(isinstance(experiments_dir, unicode))
+    def __init__(self, results_dir, annot_name_func):
+        assert(isinstance(results_dir, unicode))
         assert(callable(annot_name_func))
-        self.__experiments_dir = experiments_dir
+        self.__results_dir = results_dir
         self.__annot_name_func = annot_name_func
 
     # region private methods
@@ -49,11 +49,11 @@ class OpinionOperations(object):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, unicode))
 
-        output_dir = self.__experiments_dir
+        results_dir = self.__results_dir
 
         root = get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__annot_name_func(),
-            experiments_dir=output_dir)
+            experiments_dir=results_dir)
 
         create_dir_if_not_exists(root)
 

@@ -7,15 +7,15 @@ from arekit.common.utils import create_dir_if_not_exists
 
 class CVBasedOpinionOperations(OpinionOperations):
 
-    def __init__(self, model_root, experiments_dir, folding_algo, annot_name_func):
-        assert(isinstance(model_root, unicode))
+    def __init__(self, model_results_root, results_dir, folding_algo, annot_name_func):
+        assert(isinstance(model_results_root, unicode))
         assert(isinstance(folding_algo, BaseCVFolding))
 
         super(CVBasedOpinionOperations, self).__init__(
-            experiments_dir=experiments_dir,
+            results_dir=results_dir,
             annot_name_func=annot_name_func)
 
-        self.__model_root = model_root
+        self.__model_results_root = model_results_root
         self.__folding_algo = folding_algo
 
     # region private methods
@@ -24,7 +24,7 @@ class CVBasedOpinionOperations(OpinionOperations):
         assert(isinstance(epoch_index, int))
 
         result_dir = os.path.join(
-            self.__model_root,
+            self.__model_results_root,
             os.path.join(u"eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type,
                 iter_index=self.__folding_algo.IterationIndex,

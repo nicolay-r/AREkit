@@ -79,20 +79,24 @@ class BaseBertRowsFormatter(object):
             for column, value in row.iteritems():
                 self._set_value(df=self._df, row_ind=row_index, column=column, value=value)
 
-    def get_filepath(self, data_type, experiment):
+    def get_filepath(self, data_type, experiment, is_results=False):
+        assert(isinstance(is_results, bool))
+
         return self.get_filepath_static(data_type=data_type,
                                         experiment=experiment,
                                         prefix=self.formatter_type_log_name(),
+                                        is_results=is_results,
                                         is_csv=False,
                                         zipped=True)
 
     @staticmethod
-    def get_filepath_static(data_type, experiment, prefix, is_csv, zipped):
+    def get_filepath_static(data_type, experiment, prefix, is_csv, zipped, is_results):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(data_type, unicode))
         assert(isinstance(prefix, unicode))
         assert(isinstance(is_csv, bool))
         assert(isinstance(zipped, bool))
+        assert(isinstance(is_results, bool))
 
         filename = BaseBertRowsFormatter.__generate_filename(
             data_type=data_type,
@@ -101,7 +105,8 @@ class BaseBertRowsFormatter(object):
             is_csv=is_csv,
             zipped=zipped)
 
-        out_dir = BaseBertRowsFormatter.__get_output_dir(experiment=experiment)
+        out_dir = experiment.DataIO.get_model_results_root() if is_results else \
+            BaseBertRowsFormatter.__get_output_dir(experiment=experiment)
 
         filepath = path.join(out_dir, filename)
         io_utils.create_dir_if_not_exists(filepath)
@@ -124,6 +129,8 @@ class BaseBertRowsFormatter(object):
             zipped_optionally=u'.gz' if zipped else u'')
 
     @staticmethod
+    # TODO. Add results flag
     def __get_output_dir(experiment):
         assert(isinstance(experiment, BaseExperiment))
+        # TODO. Use output_root for reslts
         return experiment.DataIO.get_model_root()

@@ -83,7 +83,10 @@ class DataIO(object):
     def get_data_root(self):
         raise NotImplementedError()
 
-    def get_experiments_dir(self):
+    def get_experiment_sources_dir(self):
+        raise NotImplementedError()
+
+    def get_experiment_results_dir(self):
         raise NotImplementedError()
 
     def set_model_name(self, value):
@@ -91,7 +94,11 @@ class DataIO(object):
 
     def get_model_root(self):
         return get_path_of_subfolder_in_experiments_dir(subfolder_name=self.__model_name,
-                                                        experiments_dir=self.get_experiments_dir())
+                                                        experiments_dir=self.get_experiment_sources_dir())
+
+    def get_model_results_root(self):
+        return get_path_of_subfolder_in_experiments_dir(subfolder_name=self.__model_name,
+                                                        experiments_dir=self.get_experiment_results_dir())
 
     def prepare_model_root(self, rm_contents=True):
 
