@@ -16,22 +16,24 @@ class NamedEntityRecognition:
 
         assert(len(sequences) == len(seqs_tags))
 
-        lengths = [None] * len(sequences)
-        positions = [None] * len(sequences)
-        types = [None] * len(sequences)
+        info = []
 
         for s_ind, seq in enumerate(sequences):
 
             seq_tags = seqs_tags[s_ind]
 
-            lengths[s_ind] = [len(entry) for entry in self.__merge(seq, seq_tags)]
-            types[s_ind] = [self.__tag_type(tag) for tag in seq_tags if self.__tag_part(tag) == self.begin_tag]
-            positions[s_ind] = [j for j, tag in enumerate(seq_tags) if self.__tag_part(tag) == self.begin_tag]
+            obj_len = [len(entry) for entry in self.__merge(seq, seq_tags)]
+            obj_type = [self.__tag_type(tag) for tag in seq_tags if self.__tag_part(tag) == self.begin_tag]
+            obj_pos = [j for j, tag in enumerate(seq_tags) if self.__tag_part(tag) == self.begin_tag]
 
-        if len(positions) == 1 and return_single:
-            return positions[0], lengths[0], types[0]
+            obj_info = (obj_pos, obj_len, obj_type)
+
+            info.append(obj_info)
+
+        if len(info) == 1 and return_single:
+            return info[0]
         else:
-            return positions, lengths, types
+            return info
 
     @property
     def InputLimitation(self):
