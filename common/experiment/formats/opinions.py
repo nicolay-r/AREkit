@@ -2,6 +2,7 @@ from os.path import join
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.common.utils import create_dir_if_not_exists
 
 
 class OpinionOperations(object):
@@ -53,6 +54,8 @@ class OpinionOperations(object):
         root = get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__annot_name_func(),
             experiments_dir=output_dir)
+
+        create_dir_if_not_exists(root)
 
         filename = u"art{doc_id}.neut.{d_type}.txt".format(
             doc_id=doc_id,

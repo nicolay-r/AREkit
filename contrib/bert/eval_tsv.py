@@ -1,6 +1,7 @@
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 from arekit.contrib.bert.converter import iter_eval_collections
 from arekit.contrib.bert.evaluation.opinion_based import BERTModelEvaluator
@@ -9,10 +10,11 @@ from arekit.contrib.bert.evaluation.opinion_based import BERTModelEvaluator
 EPOCH_INDEX_PLACEHOLER = 0
 
 
-def eval_tsv(formatter_type, data_type, experiment, label_calculation_mode):
+def eval_tsv(formatter_type, data_type, experiment, label_calculation_mode, labels_formatter):
     assert(isinstance(formatter_type, unicode))
     assert(isinstance(experiment, BaseExperiment))
     assert(isinstance(label_calculation_mode, unicode))
+    assert(isinstance(labels_formatter, StringLabelsFormatter))
 
     experiment.OpinionOperations.create_opinion_collection()
 
@@ -28,7 +30,8 @@ def eval_tsv(formatter_type, data_type, experiment, label_calculation_mode):
             epoch_index=EPOCH_INDEX_PLACEHOLER)
 
         experiment.DataIO.OpinionFormatter.save_to_file(collection=collection,
-                                                        filepath=filepath)
+                                                        filepath=filepath,
+                                                        labels_formatter=labels_formatter)
 
 
 def evaluate_bert_model(experiment, data_type):

@@ -106,7 +106,9 @@ class BertResults(object):
         assert(isinstance(experiment, BaseExperiment))
         return BaseBertRowsFormatter.get_filepath_static(data_type=data_type,
                                                          experiment=experiment,
-                                                         prefix=u"result")
+                                                         prefix=u"result",
+                                                         is_csv=True,
+                                                         zipped=False)
 
     # endregion
 

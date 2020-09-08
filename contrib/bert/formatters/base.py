@@ -82,17 +82,24 @@ class BaseBertRowsFormatter(object):
     def get_filepath(self, data_type, experiment):
         return self.get_filepath_static(data_type=data_type,
                                         experiment=experiment,
-                                        prefix=self.formatter_type_log_name())
+                                        prefix=self.formatter_type_log_name(),
+                                        is_csv=False,
+                                        zipped=True)
 
     @staticmethod
-    def get_filepath_static(data_type, experiment, prefix):
+    def get_filepath_static(data_type, experiment, prefix, is_csv, zipped):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(data_type, unicode))
         assert(isinstance(prefix, unicode))
+        assert(isinstance(is_csv, bool))
+        assert(isinstance(zipped, bool))
 
-        filename = BaseBertRowsFormatter.__generate_filename(data_type=data_type,
-                                                             experiment=experiment,
-                                                             prefix=prefix)
+        filename = BaseBertRowsFormatter.__generate_filename(
+            data_type=data_type,
+            prefix=prefix,
+            cv_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex,
+            is_csv=is_csv,
+            zipped=zipped)
 
         out_dir = BaseBertRowsFormatter.__get_output_dir(experiment=experiment)
 
@@ -102,17 +109,19 @@ class BaseBertRowsFormatter(object):
         return filepath
 
     @staticmethod
-    def __generate_filename(data_type, experiment, prefix):
+    def __generate_filename(data_type, cv_index, prefix, is_csv, zipped):
         assert(isinstance(data_type, unicode))
+        assert(isinstance(cv_index, int))
         assert(isinstance(prefix, unicode))
-        assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(is_csv, bool))
+        assert(isinstance(zipped, bool))
 
-        return u"{prefix}-{data_type}-{cv_index}.tsv.gz".format(
+        return u"{prefix}-{data_type}-{cv_index}.{is_csv}{zipped_optionally}".format(
             prefix=prefix,
             data_type=data_type,
-            # TODO. experiment should be eleminated!!!!!!
-            # TODO. Use just passed IterationIndex instead!!!!
-            cv_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex)
+            cv_index=cv_index,
+            is_csv=u'csv' if is_csv else u'tsv',
+            zipped_optionally=u'.gz' if zipped else u'')
 
     @staticmethod
     def __get_output_dir(experiment):

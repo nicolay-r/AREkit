@@ -18,3 +18,5 @@ class TwoLabelScaler(BaseLabelScaler):
         uint_label = self.label_to_uint(label)
         return self.uint_to_label(1 - uint_label)
 
+    def __str__(self):
+        return u"2"

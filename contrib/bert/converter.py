@@ -7,6 +7,7 @@ from arekit.common.opinions.collection import OpinionCollection
 
 from arekit.contrib.bert.encoder import BertEncoder
 from arekit.contrib.bert.formatters.opinions.base import BertOpinionsFormatter
+from arekit.contrib.bert.formatters.str_entity_simple_fmt import EntitiesSimpleFormatter
 from arekit.contrib.bert.result.base import BertResults
 from arekit.contrib.bert.result.binary import BertBinaryResults
 from arekit.contrib.bert.result.multiple import BertMultipleResults
@@ -23,9 +24,13 @@ def iter_eval_collections(formatter_type,
 
     data_type = DataType.Test
 
+    entities_formatter = EntitiesSimpleFormatter()
+
     bert_test_samples = BertEncoder.create_formatter(data_type=data_type,
                                                      formatter_type=formatter_type,
-                                                     label_scaler=experiment.DataIO.LabelsScaler)
+                                                     label_scaler=experiment.DataIO.LabelsScaler,
+                                                     entities_formatter=entities_formatter,
+                                                     synonyms=experiment.DataIO.SynonymsCollection)
 
     bert_test_samples.from_tsv(experiment=experiment)
 
