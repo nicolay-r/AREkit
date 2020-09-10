@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-import io_utils
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.bert.providers.opinions import OpinionProvider
 
@@ -109,7 +108,6 @@ class BaseBertRowsFormatter(object):
             BaseBertRowsFormatter.__get_output_dir(experiment=experiment)
 
         filepath = path.join(out_dir, filename)
-        io_utils.create_dir_if_not_exists(filepath)
 
         return filepath
 

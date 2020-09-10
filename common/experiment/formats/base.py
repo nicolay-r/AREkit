@@ -27,15 +27,15 @@ class BaseExperiment(object):
 
         self.__neutral_annot = self.__init_annotator()
 
-        # Setup DataIO
-        # TODO. Move into data_io
-        self.__data_io.Callback.set_log_dir(log_dir=path.join(self.DataIO.get_model_root(), u"log/"))
+        if self.__data_io.Callback is not None:
+            self.__data_io.Callback.set_log_dir(log_dir=path.join(self.DataIO.get_model_root(), u"log/"))
 
         self.__neutral_annot.initialize(data_io=data_io,
                                         opin_ops=self.OpinionOperations,
                                         doc_ops=self.DocumentOperations)
 
-        self.__data_io.ModelIO.set_model_root(value=self.DataIO.get_model_root())
+        if  self.__data_io.ModelIO is not None:
+            self.__data_io.ModelIO.set_model_root(value=self.DataIO.get_model_root())
 
     # region Properties
 

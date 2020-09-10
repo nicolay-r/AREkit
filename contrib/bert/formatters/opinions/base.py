@@ -120,8 +120,6 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
         filepath = self.get_filepath(data_type=self._data_type,
                                      experiment=experiment)
 
-        logger.info("Saving: {}".format(filepath))
-
         self._df = pd.read_csv(filepath,
                                sep='\t',
                                header=None,

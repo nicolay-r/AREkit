@@ -61,7 +61,10 @@ def run_testing(full_model_name,
 
     # TODO. Refactor
     data_io.set_model_name(full_model_name)
-    data_io.ModelIO.set_model_name(value=full_model_name)
+
+    # Init for neural networks
+    if data_io.ModelIO is not None:
+        data_io.ModelIO.set_model_name(value=full_model_name)
 
     experiment = create_experiment(data_io=data_io,
                                    prepare_model_root=True)
