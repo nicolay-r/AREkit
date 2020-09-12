@@ -41,19 +41,20 @@ class NamedEntityRecognition:
 
     # region tags info
 
-    @property
-    def LocationTypeStr(self):
+    @staticmethod
+    def get_location_type_str():
         raise NotImplementedError()
 
-    def GeoPoliticalTypeStr(self):
+    @staticmethod
+    def get_geo_political_type_str():
         raise NotImplementedError()
 
-    @property
-    def PersonTypeStr(self):
+    @staticmethod
+    def get_person_type_str():
         raise NotImplementedError()
 
-    @property
-    def OrganizationTypeStr(self):
+    @staticmethod
+    def get_organization_type_str():
         raise NotImplementedError
 
     # endregion
