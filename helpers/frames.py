@@ -67,7 +67,7 @@ class FramesHelper:
         text_frame_variants = []
         start_ind = 0
         last_ind = 0
-        lemmas = list(parsed_text.iter_raw_lemmas())
+        lemmas = list(parsed_text.iter_lemmas(return_raw=True))
         __replace_specific_russian_chars(lemmas)
         max_variant_len = max([len(variant) for _, variant in self.__frames.iter_variants()])
         while start_ind < len(lemmas):

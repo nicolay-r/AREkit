@@ -164,7 +164,7 @@ class ParsedText:
         assert(isinstance(index, int))
         return isinstance(self.__terms[index], str)
 
-    def iter_lemmas(self, terms_range=None, need_cache=True):
+    def iter_lemmas(self, return_raw=False, terms_range=None, need_cache=True):
         """
         terms_range: None or tuple
             None -- denotes the lack of range, i.e. all terms;
@@ -176,21 +176,20 @@ class ParsedText:
             self.__lemmas = self.__lemmatize()
 
         if self.__lemmas is not None:
+            # Slicing lemmas if needed
+            lemmas = self.__lemmas[terms_range[0]:terms_range[1]] \
+                if terms_range is not None else self.__lemmas
             # Provide cached results.
-            for lemma in self.__lemmas:
-                yield self.__output_term(lemma)
+            for lemma in lemmas:
+                yield lemma if return_raw else self.__output_term(lemma)
         else:
             # Calculating results on a flight
             for lemma in self.__lemmatize(range=terms_range):
-                yield lemma
+                yield lemma if return_raw else self.__output_term(lemma)
 
     def iter_raw_terms(self):
         for term in self.__terms:
             yield term
-
-    def iter_raw_lemmas(self):
-        for lemma in self.__lemmas:
-            yield lemma
 
     def __lemmatize(self, range=None, is_lemma_need_func=lambda _: True):
         """
