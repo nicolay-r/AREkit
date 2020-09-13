@@ -16,9 +16,10 @@ class TextParser:
         pass
 
     @staticmethod
-    def parse(text, stemmer=None, debug=False):
-        terms = TextParser.__parse_core(text, debug=debug)
-        return ParsedText(terms, stemmer=stemmer)
+    def parse(text, stemmer=None, lemmatize_on_init=True, debug=False):
+        return ParsedText(terms=TextParser.__parse_core(text, debug=debug),
+                          lemmatize_on_init=lemmatize_on_init,
+                          stemmer=stemmer)
 
     @staticmethod
     def from_string(str, separator=' ', stemmer=None):
@@ -135,6 +136,7 @@ class TextParser:
             else:
                 print(('"WORD: {}" '.format(term)))
 
+
 # TODO. Move into processing/text directory.
 class ParsedText:
     """
@@ -142,13 +144,17 @@ class ParsedText:
     that were used during parsing.
     """
 
-    def __init__(self, terms, stemmer=None):
+    def __init__(self, terms, stemmer=None, lemmatize_on_init=True):
         assert(isinstance(terms, list))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
+        assert(isinstance(lemmatize_on_init, bool))
+
         self.__terms = terms
         self.__lemmas = None
-        if stemmer is not None:
-            self.__lemmatize(stemmer)
+        self.__stemmer = stemmer
+
+        if stemmer is not None and lemmatize_on_init:
+            self.__lemmas = self.__lemmatize()
 
     def iter_original_terms(self):
         for term in self.__terms:
@@ -158,9 +164,25 @@ class ParsedText:
         assert(isinstance(index, int))
         return isinstance(self.__terms[index], str)
 
-    def iter_lemmas(self):
-        for lemma in self.__lemmas:
-            yield self.__output_term(lemma)
+    def iter_lemmas(self, terms_range=None, need_cache=True):
+        """
+        terms_range: None or tuple
+            None -- denotes the lack of range, i.e. all terms;
+        """
+        assert(isinstance(terms_range, tuple) or terms_range is None)
+
+        if self.__lemmas is None and need_cache and terms_range is None:
+            # Calculating and keeping lemmas in further.
+            self.__lemmas = self.__lemmatize()
+
+        if self.__lemmas is not None:
+            # Provide cached results.
+            for lemma in self.__lemmas:
+                yield self.__output_term(lemma)
+        else:
+            # Calculating results on a flight
+            for lemma in self.__lemmatize(range=terms_range):
+                yield lemma
 
     def iter_raw_terms(self):
         for term in self.__terms:
@@ -170,14 +192,18 @@ class ParsedText:
         for lemma in self.__lemmas:
             yield lemma
 
-    def __lemmatize(self, stemmer):
+    def __lemmatize(self, range=None, is_lemma_need_func=lambda _: True):
         """
         Compose a list of lemmatized versions of terms
         PS: Might be significantly slow, depending on stemmer were used.
         """
-        assert(isinstance(stemmer, Stemmer))
-        self.__lemmas = ["".join(stemmer.lemmatize_to_list(t)) if isinstance(t, str) else t
-                         for t in self.__terms]
+        assert(callable(is_lemma_need_func))
+
+        terms_seq = self.__terms if range is None else self.__terms[range[0]:range[1]]
+
+        return ["".join(self.__stemmer.lemmatize_to_list(t))
+                if isinstance(t, str) and is_lemma_need_func(t) else t
+                for t in terms_seq]
 
     def to_string(self):
         return ' '.join(self.iter_original_terms())
