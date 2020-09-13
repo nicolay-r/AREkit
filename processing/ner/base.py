@@ -1,3 +1,6 @@
+from core.processing.ner.obj_decs import NerObjectDescriptor
+
+
 class NamedEntityRecognition:
 
     separator = '-'
@@ -26,7 +29,7 @@ class NamedEntityRecognition:
             obj_type = [self.__tag_type(tag) for tag in seq_tags if self.__tag_part(tag) == self.begin_tag]
             obj_pos = [j for j, tag in enumerate(seq_tags) if self.__tag_part(tag) == self.begin_tag]
 
-            obj_info = (obj_pos, obj_len, obj_type)
+            obj_info = NerObjectDescriptor(pos=obj_pos, length=obj_len, obj_type=obj_type)
 
             info.append(obj_info)
 
