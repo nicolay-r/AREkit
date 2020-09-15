@@ -72,17 +72,23 @@ class OpinionCollection:
         s_id = opinion.create_synonym_id(self.__synonyms)
         return self.__by_synonyms[s_id]
 
-    def add_opinion(self, opinion):
+    def try_add_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
 
         if not opinion.has_synonym_for_left(self.__synonyms):
+            if self.__synonyms.IsReadOnly:
+                return False
             self.__add_synonym(opinion.value_left)
 
         if not opinion.has_synonym_for_right(self.__synonyms):
+            if self.__synonyms.IsReadOnly:
+                return False
             self.__add_synonym(opinion.value_right)
 
         self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
         self.__opinions.append(opinion)
+
+        return True
 
     # TODO. Stay this in rusentrel/opinions.py
     def save(self, filepath):

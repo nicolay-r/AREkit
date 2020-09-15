@@ -54,7 +54,8 @@ class SingleClassEvaluator(BaseEvaluator):
                          value_right=o.value_right,
                          sentiment=label)
 
-            ro.add_opinion(no)
+            added = ro.try_add_opinion(no)
+            assert(added)
 
         return ro
 
