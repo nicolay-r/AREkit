@@ -7,7 +7,7 @@ class SynonymsCollection:
     def __init__(self, by_index, by_synonym, stemmer, is_read_only):
         assert(isinstance(by_index, list))
         assert(isinstance(by_synonym, dict))
-        assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
         self.__by_index = by_index
         self.__by_synonym = by_synonym
         self.__stemmer = stemmer
@@ -60,9 +60,7 @@ class SynonymsCollection:
 
                 for s in args:
                     value = s.strip()
-                    id = SynonymsCollection._create_synonym_id(stemmer=stemmer,
-                                                               s=value,
-                                                               lemmatize=stemmer is not None)
+                    id = SynonymsCollection._create_synonym_id(stemmer=stemmer, s=value)
 
                     if id in by_synonym and debug:
                         print(("Collection already has a value '{}'. Skipped".format(value)))
@@ -74,17 +72,17 @@ class SynonymsCollection:
 
                 by_index.append(synonym_list)
 
-    def add_synonym(self, s, lemmatize=True):
+    def add_synonym(self, s):
         assert(isinstance(s, str))
         assert(not self.has_synonym(s))
         assert(not self.__is_read_only)
-        id = self._create_synonym_id(self.__stemmer, s, lemmatize=lemmatize)
+        id = self._create_synonym_id(self.__stemmer, s)
         self.__by_synonym[id] = self._get_groups_count()
         self.__by_index.append([s])
 
-    def has_synonym(self, s, lemmatize=True):
+    def has_synonym(self, s):
         assert(isinstance(s, str))
-        id = self._create_synonym_id(self.__stemmer, s, lemmatize=lemmatize)
+        id = self._create_synonym_id(self.__stemmer, s)
         return id in self.__by_synonym
 
     def get_synonyms_list(self, s):
@@ -93,15 +91,15 @@ class SynonymsCollection:
         index = self.__by_synonym[id]
         return self.__by_index[index]
 
-    def get_synonym_group_index(self, s, lemmatize=True):
+    def get_synonym_group_index(self, s):
         assert(isinstance(s, str))
-        return self._get_group_index(s, lemmatize=lemmatize)
+        return self._get_group_index(s)
 
     def _get_groups_count(self):
         return len(self.__by_index)
 
-    def _get_group_index(self, s, lemmatize):
-        id = self._create_synonym_id(self.__stemmer, s, lemmatize=lemmatize)
+    def _get_group_index(self, s):
+        id = self._create_synonym_id(self.__stemmer, s)
         return self.__by_synonym[id]
 
     def get_group_by_index(self, index):
@@ -109,8 +107,8 @@ class SynonymsCollection:
         return self.__by_index[index]
 
     @staticmethod
-    def _create_synonym_id(stemmer, s, lemmatize=True):
-        if lemmatize and stemmer is not None:
+    def _create_synonym_id(stemmer, s):
+        if stemmer is not None:
             return stemmer.lemmatize_to_str(s)
         else:
             return s
