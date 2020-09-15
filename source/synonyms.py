@@ -22,9 +22,9 @@ class SynonymsCollection:
         return self.__stemmer
 
     @classmethod
-    def from_file(cls, filepath, stemmer, is_read_only=True, debug=False):
+    def from_file(cls, filepath, stemmer=None, is_read_only=True, debug=False):
         assert(isinstance(filepath, str))
-        assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
         by_index = []
         by_synonym = {}
         SynonymsCollection._from_file(filepath, by_index, by_synonym, stemmer, debug)
@@ -34,7 +34,7 @@ class SynonymsCollection:
                    is_read_only=is_read_only)
 
     @staticmethod
-    def _from_file(filepath, by_index, by_synonym, stemmer, debug):
+    def _from_file(filepath, by_index, by_synonym, stemmer=None, debug=False):
         """
         reading from 'filepath' and initialize 'by_index' and 'by_synonym'
         structures
@@ -48,7 +48,8 @@ class SynonymsCollection:
         """
         assert(isinstance(by_index, list))
         assert(isinstance(by_synonym, dict))
-        assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
+        assert(isinstance(debug, bool))
 
         with io.open(filepath, 'r', encoding='utf-8') as f:
             lines = f.readlines()
@@ -59,7 +60,9 @@ class SynonymsCollection:
 
                 for s in args:
                     value = s.strip()
-                    id = SynonymsCollection._create_synonym_id(stemmer, value)
+                    id = SynonymsCollection._create_synonym_id(stemmer=stemmer,
+                                                               s=value,
+                                                               lemmatize=stemmer is not None)
 
                     if id in by_synonym and debug:
                         print(("Collection already has a value '{}'. Skipped".format(value)))
@@ -107,7 +110,7 @@ class SynonymsCollection:
 
     @staticmethod
     def _create_synonym_id(stemmer, s, lemmatize=True):
-        if lemmatize:
+        if lemmatize and stemmer is not None:
             return stemmer.lemmatize_to_str(s)
         else:
             return s
