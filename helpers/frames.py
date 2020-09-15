@@ -19,7 +19,7 @@ class FramesHelper:
                 end -= 1
 
         parsed_text = ParsedText(terms=raw_terms, stemmer=stemmer)
-        frame_variants = self.find_frames(parsed_text)
+        frame_variants = self.find_frames(parsed_text.iter_lemmas(return_raw=True))
 
         if frame_variants is None:
             return raw_terms
@@ -34,12 +34,12 @@ class FramesHelper:
 
         return raw_terms
 
-    def find_frames(self, parsed_text):
+    def find_frames(self, lemmas):
         """
         Searching frames that a part of terms
 
-        terms: ParsedText
-            parsed text
+        lemmas: list
+            list of lemmatized terms
         return: list or None
             list of tuples (frame, term_begin_index), or None
         """
@@ -62,12 +62,11 @@ class FramesHelper:
                 return terms[index - 1] == 'не'
             return False
 
-        assert(isinstance(parsed_text, ParsedText))
+        assert(isinstance(lemmas, list))
 
         text_frame_variants = []
         start_ind = 0
         last_ind = 0
-        lemmas = list(parsed_text.iter_lemmas(return_raw=True))
         __replace_specific_russian_chars(lemmas)
         max_variant_len = max([len(variant) for _, variant in self.__frames.iter_variants()])
         while start_ind < len(lemmas):

@@ -113,6 +113,10 @@ class FrameVariantInText:
         return self.__start_index
 
     @property
+    def Lenght(self):
+        return len(self)
+
+    @property
     def IsInverted(self):
         return self.__is_inverted
 
