@@ -25,28 +25,56 @@ class DataIO(object):
         return self.__labels_scale
 
     @property
+    def SynonymsCollection(self):
+        raise NotImplementedError()
+
+    # TODO. It is both utlized on serialization stage (neut formatters), and evaluation.
+    @property
+    def OpinionFormatter(self):
+        raise NotImplementedError()
+
+    # region Serialization stage
+
+    # TODO. Strongly a part of Serialization Stage.
+    @property
     def DistanceInTermsBetweenOpinionEndsBound(self):
         raise NotImplementedError()
 
+    # TODO. This should be a part of Serialization Stage.
     @property
     def Stemmer(self):
         raise NotImplementedError()
 
-    @property
-    def SynonymsCollection(self):
-        raise NotImplementedError()
-
+    # TODO. This should be a part of Serialization Stage.
     @property
     def StringEntityFormatter(self):
         raise NotImplementedError()
 
+    # TODO. This should be a part of Serialization Stage.
     @property
     def FramesCollection(self):
         raise NotImplementedError()
 
+    # TODO. This should be a part of Serialization Stage.
     @property
     def FrameVariantCollection(self):
         raise NotImplementedError()
+
+    # TODO. This should be a part of Serialization Stage.
+    @property
+    def TermsPerContext(self):
+        raise NotImplementedError
+
+    def prepare_model_root(self, rm_contents=True):
+
+        if not rm_contents:
+            return
+
+        model_io = self.ModelIO
+        assert(isinstance(model_io, BaseModelIO))
+        self.__rm_dir_contents(model_io.ModelRoot)
+
+    # endregion
 
     @property
     def ModelIO(self):
@@ -60,18 +88,10 @@ class DataIO(object):
     def CVFoldingAlgorithm(self):
         raise NotImplementedError()
 
-    @property
-    def OpinionFormatter(self):
-        raise NotImplementedError()
-
+    # TODO. Optional and utlized in evaluation process.
     @property
     def Callback(self):
         raise NotImplementedError()
-
-    # TODO. In future Proposal to move from nn configs here.
-    @property
-    def TermsPerContext(self):
-        raise NotImplementedError
 
     # endregion
 
@@ -114,13 +134,3 @@ class DataIO(object):
         return get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__model_name,
             experiments_dir=self.get_input_samples_dir(experiment_name))
-
-    def prepare_model_root(self, rm_contents=True):
-
-        if not rm_contents:
-            return
-
-        model_io = self.ModelIO
-        assert(isinstance(model_io, BaseModelIO))
-        self.__rm_dir_contents(model_io.ModelRoot)
-
