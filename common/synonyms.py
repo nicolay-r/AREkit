@@ -1,6 +1,8 @@
 from arekit.processing.lemmatization.base import Stemmer
 
 
+# TODO. Make stemmer as an optional parameter.
+# TODO. Ommit the lemmatization if the stemmer is None.
 class SynonymsCollection(object):
 
     def __init__(self, by_index, by_synonym, stemmer, is_read_only):
