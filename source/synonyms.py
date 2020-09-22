@@ -1,4 +1,7 @@
 import io
+
+from tqdm import tqdm
+
 from core.processing.lemmatization.base import Stemmer
 
 
@@ -53,7 +56,7 @@ class SynonymsCollection:
 
         with io.open(filepath, 'r', encoding='utf-8') as f:
             lines = f.readlines()
-            for line in lines:
+            for line in tqdm(lines):
                 group_index = len(by_index)
                 synonym_list = []
                 args = line.split(',')
