@@ -85,7 +85,7 @@ class OpinionCollection:
                 return False
             self.__add_synonym(opinion.value_right)
 
-        self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms)
+        self.__add_opinion(opinion, self.__by_synonyms, self.__synonyms, check=False)
         self.__opinions.append(opinion)
 
         return True
