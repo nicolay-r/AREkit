@@ -28,15 +28,19 @@ class BaseExperiment(object):
         self.__doc_operations = None
         self.__neutral_annot = self.__init_annotator()
 
-        # Setup DataIO model root
         model_root = self.DataIO.get_model_root(experiment_name=self.Name)
-        logger.info("Setup model root: {}".format(model_root))
-        self.__data_io.ModelIO.set_model_root(value=model_root)
+
+        if self.__data_io.ModelIO is not None:
+            # Setup DataIO model root
+            logger.info("Setup model root: {}".format(model_root))
+            self.__data_io.ModelIO.set_model_root(value=model_root)
+
         if prepare_model_root:
             self.__data_io.prepare_model_root()
 
         # Setup Log dir.
-        self.__data_io.Callback.set_log_dir(path.join(model_root, u"log/"))
+        if self.__data_io.Callback is not None:
+            self.__data_io.Callback.set_log_dir(path.join(model_root, u"log/"))
 
     # region Properties
 
