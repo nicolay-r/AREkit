@@ -23,7 +23,8 @@ class ExperimentEngine(object):
                        create_network_func,
                        config,
                        callback,
-                       cv_index):
+                       cv_index,
+                       load_model):
         """
         Run single CV-index experiment.
         """
@@ -33,6 +34,7 @@ class ExperimentEngine(object):
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(callable(create_network_func))
         assert(isinstance(cv_index, int))
+        assert(isinstance(load_model, bool))
 
         # Perform data reading.
         handled_data = HandledData.create_empty()
@@ -168,11 +170,13 @@ class ExperimentEngine(object):
                     create_network,
                     experiment,
                     bags_collection_type,
+                    load_model=False,
                     common_callback_modification_func=None,
                     custom_config_modification_func=None,
                     common_config_modification_func=None):
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(load_model, bool))
 
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -209,6 +213,7 @@ class ExperimentEngine(object):
                 cv_index=cv_index,
                 config=config,
                 create_network_func=create_network,
-                bags_collection_type=bags_collection_type)
+                bags_collection_type=bags_collection_type,
+                load_model=load_model)
 
     # endregion
