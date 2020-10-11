@@ -25,11 +25,18 @@ def __iter_opinion_collections(opin_operations, doc_id, data_type):
     neutral = opin_operations.read_neutral_opinion_collection(doc_id=doc_id,
                                                               data_type=data_type)
 
-    if neutral is not None:
+    if data_type == DataType.Train:
+        # Providing neutral and sentiment.
+        if neutral is not None:
+            yield neutral
+        yield opin_operations.read_etalon_opinion_collection(doc_id=doc_id)
+
+    elif data_type == DataType.Test:
+        # Providing neutrally labeled only
         yield neutral
 
-    if data_type == DataType.Train:
-        yield opin_operations.read_etalon_opinion_collection(doc_id=doc_id)
+    else:
+        raise NotImplementedError("data_type '{}' does not supported!".format(data_type))
 
 
 def __iter_linked_wraps(experiment, data_type, iter_doc_ids):

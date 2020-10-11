@@ -12,6 +12,10 @@ class OpinionOperations(object):
         self.__get_neutral_root = neutral_root
 
     def read_neutral_opinion_collection(self, doc_id, data_type):
+        """ data_type denotes a set of neutral opinions, where in case of 'train' these are
+            opinions that were ADDITIONALLY found to sentiment, while for 'train' these are
+            all the opinions that could be found in document.
+        """
         raise NotImplementedError()
 
     def get_doc_ids_set_to_compare(self, doc_ids):

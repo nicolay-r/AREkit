@@ -1,4 +1,5 @@
 from arekit.common.experiment.data_type import DataType
+from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
@@ -25,9 +26,11 @@ class RuSentrelWithRuAttitudesOpinionOperations(RuSentrelOpinionOperations):
 
     # region private methods
 
-    def __get_opinions_in_news(self, doc_id):
+    def __get_opinions_in_news(self, doc_id, opinion_check=lambda _: True):
         news = self.__ru_attitudes[doc_id]
-        return [opinion for opinion, _ in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news)]
+        return [opinion
+                for opinion, _ in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news)
+                if opinion_check(opinion)]
 
     # endregion
 
@@ -44,10 +47,10 @@ class RuSentrelWithRuAttitudesOpinionOperations(RuSentrelOpinionOperations):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
 
-        if doc_id not in self._rusentrel_news_ids:
-            return self.__get_opinions_in_news(doc_id=doc_id)
+        if doc_id not in self._rusentrel_news_ids and data_type == DataType.Train:
+            return self.__get_opinions_in_news(doc_id=doc_id,
+                                               opinion_check=lambda opinion: opinion.Sentiment == NeutralLabel())
 
         return super(RuSentrelWithRuAttitudesOpinionOperations, self).read_neutral_opinion_collection(
             doc_id=doc_id,
             data_type=data_type)
-
