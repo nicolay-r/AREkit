@@ -87,7 +87,7 @@ class ExperimentEngine(object):
 
         # Initialize data_io
         logger.info("Initialize data-io ...")
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
+        for data_type in experiment.DocumentOperations.iter_supported_data_types():
             experiment.NeutralAnnotator.create_collection(data_type=data_type)
 
     @staticmethod

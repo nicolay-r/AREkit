@@ -78,7 +78,7 @@ class HandledData(object):
         logger.info("Vocabulary readed [size={}]".format(len(vocab)))
 
         # Reading from serialized information
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
+        for data_type in experiment.DocumentOperations.iter_supported_data_types():
 
             labeled_sample_row_ids = self.__read_data_type(
                 data_type=data_type,
@@ -109,7 +109,7 @@ class HandledData(object):
 
         term_embedding_pairs = []
 
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
+        for data_type in experiment.DocumentOperations.iter_supported_data_types():
 
             # Create annotated collection per each type.
             experiment.NeutralAnnotator.create_collection(data_type)
@@ -132,7 +132,7 @@ class HandledData(object):
 
     @staticmethod
     def __check_files_existed(experiment):
-        for data_type in experiment.DocumentOperations.iter_suppoted_data_types():
+        for data_type in experiment.DocumentOperations.iter_supported_data_types():
             if not NetworkIOUtils.check_files_existance(data_type=data_type,
                                                         experiment=experiment):
                 return False

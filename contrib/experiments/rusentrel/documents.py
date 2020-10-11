@@ -31,7 +31,7 @@ class RuSentrelDocumentOperations(CVBasedDocumentOperations):
         else:
             raise NotImplementedError("DataType '{}' is not supported".format(data_type))
 
-    def iter_suppoted_data_types(self):
+    def iter_supported_data_types(self):
         yield DataType.Train
         yield DataType.Test
 
