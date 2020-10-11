@@ -1,6 +1,7 @@
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
+from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.features.frame_roles import FrameRoleFeatures
@@ -21,6 +22,7 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
         self.__synonyms_collection = synonyms_collection
         self.__frames_collection = frames_collection
+        self.__frame_role_label_scaler = ThreeLabelScaler()
 
     def _get_columns_list_with_types(self):
         dtypes_list = super(NetworkSampleFormatter, self)._get_columns_list_with_types()
@@ -56,7 +58,7 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         # Compose frame sentiment.
         uint_frame_roles = FrameRoleFeatures.from_tsv(frame_variants=[terms[fi] for fi in uint_frame_inds],
                                                       frames_collection=self.__frames_collection,
-                                                      label_scaler=self._label_provider.LabelScaler)
+                                                      three_label_scaler=self.__frame_role_label_scaler)
 
         # Synonyms for source.
         uint_syn_s_inds = self.__create_synonyms_set(terms=terms, term_ind=s_ind)
