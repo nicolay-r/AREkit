@@ -9,14 +9,21 @@ class OpinionOperations(object):
     Provides operations with opinions and related collections
     """
 
-    def __init__(self, neutral_root):
-        assert(isinstance(neutral_root, unicode))
-        self.__get_neutral_root = neutral_root
-        self.__synonyms = None
+    def __init__(self):
+        self.__neutral_root = None
+        self._synonyms = None
+
+    # region protected methods
 
     def _set_synonyms_collection(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        self.__synonyms = synonyms
+        self._synonyms = synonyms
+
+    def _set_neutral_root(self, neutral_root):
+        assert (isinstance(neutral_root, unicode))
+        self.__neutral_root = neutral_root
+
+    # endregion
 
     # region abstract methods
 
@@ -46,19 +53,22 @@ class OpinionOperations(object):
     def create_opinion_collection(self, opinions=None):
         assert(isinstance(opinions, list) or opinions is None)
 
-        if self.__synonyms is None:
+        if self._synonyms is None:
             raise NotImplementedError("Synonyms collection was not provided!")
 
         return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
-                                                synonyms=self.__synonyms)
+                                                synonyms=self._synonyms)
 
     def create_neutral_opinion_collection_filepath(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
 
+        if self.__neutral_root is None:
+            raise NotImplementedError("Neutral root was not provided!")
+
         filename = u"art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
                                                            d_type=data_type.name)
 
-        return join(self.__get_neutral_root, filename)
+        return join(self.__neutral_root, filename)
 
     # endregion

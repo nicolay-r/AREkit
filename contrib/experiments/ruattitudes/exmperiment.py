@@ -1,4 +1,5 @@
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
+from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
@@ -26,9 +27,12 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         doc_ops = RuAttitudesDocumentOperations(data_io=data_io)
 
-        opin_ops = RuAttitudesOpinionOperations(data_io=data_io,
-                                                neutral_annot_name=self.get_annot_name(),
-                                                experiment_name=self.Name)
+        neutral_root = get_path_of_subfolder_in_experiments_dir(
+            experiments_dir=data_io.get_input_samples_dir(self.Name),
+            subfolder_name=self.get_annot_name())
+
+        opin_ops = RuAttitudesOpinionOperations(synonyms=data_io.SynonymsCollection,
+                                                neutral_root=neutral_root)
 
         ru_attitudes = ra_instance
         if ra_instance is None:

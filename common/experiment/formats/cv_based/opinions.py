@@ -9,11 +9,11 @@ from arekit.common.utils import create_dir_if_not_exists
 
 class CVBasedOpinionOperations(OpinionOperations):
 
-    def __init__(self, model_io, folding_algo, neutral_root):
+    def __init__(self, model_io, folding_algo):
         assert(isinstance(model_io, BaseModelIO))
         assert(isinstance(folding_algo, BaseCVFolding))
 
-        super(CVBasedOpinionOperations, self).__init__(neutral_root=neutral_root)
+        super(CVBasedOpinionOperations, self).__init__()
 
         self.__model_io = model_io
         self.__folding_algo = folding_algo

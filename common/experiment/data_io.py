@@ -28,7 +28,7 @@ class DataIO(object):
     def SynonymsCollection(self):
         raise NotImplementedError()
 
-    # TODO. It is both utlized on serialization stage (neut formatters), and evaluation.
+    # TODO. It is both utilized on serialization stage (neut formatters), and evaluation.
     @property
     def OpinionFormatter(self):
         raise NotImplementedError()

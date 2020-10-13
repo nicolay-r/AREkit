@@ -1,26 +1,21 @@
-from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 
 
 class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
 
-    def __init__(self, data_io,  experiment_name, neutral_annot_name, rusentrel_op, ruattitudes_op):
-        assert(isinstance(data_io, DataIO))
+    def __init__(self, synonyms, neutral_root, rusentrel_op, ruattitudes_op):
+        assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(rusentrel_op, RuSentrelOpinionOperations))
         assert(isinstance(ruattitudes_op, RuAttitudesOpinionOperations))
 
-        # TODO. Duplicated
-        neutral_root = get_path_of_subfolder_in_experiments_dir(
-            experiments_dir=data_io.get_input_samples_dir(experiment_name),
-            subfolder_name=neutral_annot_name)
+        super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__()
 
-        super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__(neutral_root=neutral_root)
-
-        self._set_synonyms_collection(data_io.SynonymsCollection)
+        self._set_synonyms_collection(synonyms)
+        self._set_neutral_root(neutral_root)
 
         self.__rusentrel_op = rusentrel_op
         self.__ruattitudes_op = ruattitudes_op

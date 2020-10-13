@@ -5,8 +5,6 @@ from arekit.common.experiment.data_io import DataIO
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOperations
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
-from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel.labels_formatter import RuSentRelNeutralLabelsFormatter
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
@@ -15,25 +13,18 @@ from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinion
 
 class RuSentrelOpinionOperations(CVBasedOpinionOperations):
 
-    def __init__(self, data_io, version, experiment_name, neutral_annot_name, rusentrel_news_ids):
+    def __init__(self, data_io, version, neutral_root, rusentrel_news_ids):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(version, RuSentRelVersions))
-        assert(isinstance(neutral_annot_name, unicode))
         assert(isinstance(rusentrel_news_ids, set))
 
-        # TODO. DUPLICATED
-        neutral_root = get_path_of_subfolder_in_experiments_dir(
-            experiments_dir=data_io.get_input_samples_dir(experiment_name),
-            subfolder_name=neutral_annot_name)
-
-        super(RuSentrelOpinionOperations, self).__init__(
-            model_io=data_io.ModelIO,
-            folding_algo=data_io.CVFoldingAlgorithm,
-            neutral_root=neutral_root)
+        super(RuSentrelOpinionOperations, self).__init__(model_io=data_io.ModelIO,
+                                                         folding_algo=data_io.CVFoldingAlgorithm)
 
         self._set_synonyms_collection(data_io.SynonymsCollection)
+        self._set_neutral_root(neutral_root)
 
-        self._data_io = data_io
+        self.__opinion_formatter = data_io.OpinionFormatter
         self._rusentrel_news_ids = rusentrel_news_ids
         self.__eval_on_rusentrel_docs_key = True
         self.__result_labels_fmt = RuSentRelLabelsFormatter()
@@ -69,7 +60,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
         return RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
-                                                          synonyms=self._data_io.SynonymsCollection,
+                                                          synonyms=self._synonyms,
                                                           version=self._rusentrel_version)
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
@@ -83,7 +74,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         opinions_cmp_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
             doc_ids=self.__get_doc_ids_set_to_compare(doc_ids),
             read_etalon_collection_func=lambda doc_id: self.read_etalon_opinion_collection(doc_id=doc_id),
-            read_result_collection_func=lambda doc_id: self._data_io.OpinionFormatter.load_from_file(
+            read_result_collection_func=lambda doc_id: self.__opinion_formatter.load_from_file(
                 filepath=self.create_result_opinion_collection_filepath(data_type=data_type,
                                                                         doc_id=doc_id,
                                                                         epoch_index=epoch_index),
@@ -102,7 +93,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         if not os.path.exists(filepath):
             return None
 
-        return self._data_io.OpinionFormatter.load_from_file(filepath=filepath,
-                                                             labels_formatter=self.__neutral_labels_fmt)
+        return self.__opinion_formatter.load_from_file(filepath=filepath,
+                                                       labels_formatter=self.__neutral_labels_fmt)
 
     # endregion
