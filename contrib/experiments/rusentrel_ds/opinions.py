@@ -1,3 +1,4 @@
+from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
@@ -8,6 +9,7 @@ from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperat
 class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
 
     def __init__(self, data_io,  experiment_name, neutral_annot_name, rusentrel_op, ruattitudes_op):
+        assert(isinstance(data_io, DataIO))
         assert(isinstance(rusentrel_op, RuSentrelOpinionOperations))
         assert(isinstance(ruattitudes_op, RuAttitudesOpinionOperations))
 
@@ -17,6 +19,8 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
             subfolder_name=neutral_annot_name)
 
         super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__(neutral_root=neutral_root)
+
+        self._set_synonyms_collection(data_io.SynonymsCollection)
 
         self.__rusentrel_op = rusentrel_op
         self.__ruattitudes_op = ruattitudes_op
@@ -52,9 +56,5 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
         return self.__rusentrel_op.create_result_opinion_collection_filepath(data_type=data_type,
                                                                              doc_id=doc_id,
                                                                              epoch_index=epoch_index)
-
-    # TODO. Weird
-    def create_opinion_collection(self, opinions=None):
-        return self.__rusentrel_op.create_opinion_collection()
 
     # endregion

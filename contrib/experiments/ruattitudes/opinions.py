@@ -1,3 +1,4 @@
+from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
@@ -9,6 +10,7 @@ from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 class RuAttitudesOpinionOperations(OpinionOperations):
 
     def __init__(self, data_io, experiment_name, neutral_annot_name):
+        assert(isinstance(data_io, DataIO))
 
         # TODO: DUPLICATED WITH RuSentRel experiment.
         # TODO. Remove duplication
@@ -17,6 +19,8 @@ class RuAttitudesOpinionOperations(OpinionOperations):
             subfolder_name=neutral_annot_name)
 
         super(RuAttitudesOpinionOperations, self).__init__(neutral_root=neutral_root)
+
+        self._set_synonyms_collection(data_io.SynonymsCollection)
 
         self.__data_io = data_io
         self.__ru_attitudes = None

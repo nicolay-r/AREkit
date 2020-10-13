@@ -31,6 +31,8 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             folding_algo=data_io.CVFoldingAlgorithm,
             neutral_root=neutral_root)
 
+        self._set_synonyms_collection(data_io.SynonymsCollection)
+
         self._data_io = data_io
         self._rusentrel_news_ids = rusentrel_news_ids
         self.__eval_on_rusentrel_docs_key = True
@@ -102,13 +104,5 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
 
         return self._data_io.OpinionFormatter.load_from_file(filepath=filepath,
                                                              labels_formatter=self.__neutral_labels_fmt)
-
-    # TODO. Weird
-    # TODO. Maybe move it into base.
-    # TODO. Then provide synonyms collection to base.
-    def create_opinion_collection(self, opinions=None):
-        assert(isinstance(opinions, list) or opinions is None)
-        return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
-                                                synonyms=self._data_io.SynonymsCollection)
 
     # endregion
