@@ -6,8 +6,9 @@ from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_mem
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 
 
-class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
-    """ Application of distant supervision, especially for pretraining purposes
+class RuAttitudesExperiment(CVBasedExperiment):
+    """ Application of distant supervision, especially for pretraining purposes.
+        Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
     def __init__(self, data_io, prepare_model_root, used_doc_ids_set, version, ra_instance=None):
@@ -21,9 +22,8 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
 
         self.__version = version
 
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(
-            data_io=data_io,
-            prepare_model_root=prepare_model_root)
+        super(RuAttitudesExperiment, self).__init__(data_io=data_io,
+                                                    prepare_model_root=prepare_model_root)
 
         doc_ops = RuAttitudesDocumentOperations(data_io=data_io)
 
