@@ -28,6 +28,8 @@ class OpinionOperations(object):
         raise NotImplementedError()
 
     def create_opinion_collection(self, opinions=None):
+        # TODO. Implement with a create_custom.
+        # TODO. Provide synonyms.
         raise NotImplementedError()
 
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):

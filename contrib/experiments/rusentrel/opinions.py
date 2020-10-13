@@ -21,6 +21,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         assert(isinstance(neutral_annot_name, unicode))
         assert(isinstance(rusentrel_news_ids, set))
 
+        # TODO. DUPLICATED
         neutral_root = get_path_of_subfolder_in_experiments_dir(
             experiments_dir=data_io.get_input_samples_dir(experiment_name),
             subfolder_name=neutral_annot_name)
@@ -37,6 +38,16 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         self.__neutral_labels_fmt = RuSentRelNeutralLabelsFormatter()
         self._rusentrel_version = version
 
+    # region property
+
+    @property
+    def NewsIDs(self):
+        return self._rusentrel_news_ids
+
+    # endregion
+
+    # region private methods
+
     def __get_doc_ids_set_to_compare(self, doc_ids):
         assert(isinstance(doc_ids, collections.Iterable))
 
@@ -45,6 +56,10 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
             result_doc_ids = [doc_id for doc_id in doc_ids if doc_id in self._rusentrel_news_ids]
 
         return set(result_doc_ids)
+
+    # endregion
+
+    # region CVBasedOperations
 
     def get_doc_ids_set_to_compare(self, doc_ids):
         return self.__get_doc_ids_set_to_compare(doc_ids)
@@ -88,7 +103,12 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         return self._data_io.OpinionFormatter.load_from_file(filepath=filepath,
                                                              labels_formatter=self.__neutral_labels_fmt)
 
+    # TODO. Weird
+    # TODO. Maybe move it into base.
+    # TODO. Then provide synonyms collection to base.
     def create_opinion_collection(self, opinions=None):
         assert(isinstance(opinions, list) or opinions is None)
         return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
                                                 synonyms=self._data_io.SynonymsCollection)
+
+    # endregion
