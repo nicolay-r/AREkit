@@ -8,10 +8,8 @@ from arekit.contrib.source.zip_utils import ZipArchiveUtils
 class RuAttitudesVersions(Enum):
     V10 = u"v1_0"
     V11 = u"v1_1"
-    # Expanded with neutral attitudes
-    V11N = u'v1_1-n'
-    V20 = u'v2_0'
-    V20N = u'v2_0-n'
+    V20Base = u'v2_0_base'
+    V20Large = u'v2_0_large'
 
 
 class RuAttitudesIOUtils(ZipArchiveUtils):
