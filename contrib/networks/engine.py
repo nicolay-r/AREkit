@@ -114,6 +114,7 @@ class ExperimentEngine(object):
     @staticmethod
     def __create_config(create_config_func,
                         classes_count,
+                        # TODO. Refactor this (use a single modification func instead.
                         custom_config_modification_func=None,
                         common_config_modification_func=None):
         assert(isinstance(classes_count, int))
@@ -129,6 +130,7 @@ class ExperimentEngine(object):
         # Setup config
         config.modify_classes_count(value=classes_count)
 
+        # TODO. Refactor this (use a single modification func instead.
         if common_config_modification_func is not None:
             common_config_modification_func(config=config)
         if custom_config_modification_func is not None:
@@ -172,6 +174,8 @@ class ExperimentEngine(object):
                     bags_collection_type,
                     load_model=False,
                     common_callback_modification_func=None,
+                    # TODO. Refactor this (use a single modification func instead.
+                    # TODO. Use only config_modif_func.
                     custom_config_modification_func=None,
                     common_config_modification_func=None):
         assert(issubclass(bags_collection_type, BagsCollection))
@@ -190,6 +194,7 @@ class ExperimentEngine(object):
         config = ExperimentEngine.__create_config(
             create_config_func=create_config,
             classes_count=experiment.DataIO.LabelsScaler.classes_count(),
+            # TODO. Refactor this (use a single modification func instead.
             custom_config_modification_func=custom_config_modification_func,
             common_config_modification_func=common_config_modification_func)
 
