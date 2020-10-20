@@ -3,5 +3,6 @@ pandas==0.20.3
 gensim==0.13.4
 scipy==0.18.1
 texterra==1.0.1
-tensorflow==1.12.0
+tensorflow==1.14.0
 tqdm==4.48.0
+smart_open==1.8.4
