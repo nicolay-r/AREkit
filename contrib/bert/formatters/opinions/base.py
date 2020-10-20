@@ -8,6 +8,7 @@ from arekit.common.text_opinions.end_type import EntityEndType
 from arekit.common.text_opinions.helper import TextOpinionHelper
 
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.bert.formatters.base import BaseBertRowsFormatter
 from arekit.contrib.bert.providers.opinions import OpinionProvider
 from arekit.contrib.bert.providers.row_ids.multiple import MultipleIDProvider
@@ -105,6 +106,8 @@ class BertOpinionsFormatter(BaseBertRowsFormatter):
                                      experiment=experiment)
 
         logger.info("Saving: {}".format(filepath))
+
+        create_dir_if_not_exists(filepath)
 
         self._df.to_csv(filepath,
                         sep='\t',
