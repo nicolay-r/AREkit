@@ -1,6 +1,7 @@
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
+from arekit.common.utils import create_dir_if_not_exists
 
 
 class BaseInputEncoder(object):
@@ -14,6 +15,10 @@ class BaseInputEncoder(object):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(sample_formatter, BaseSampleFormatter))
         assert(isinstance(write_sample_header, bool))
+
+        # Create output directories
+        create_dir_if_not_exists(opinion_filepath)
+        create_dir_if_not_exists(sample_filepath)
 
         # Opinions
         opinion_formatter.format(opinion_provider)
