@@ -1,7 +1,9 @@
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 
 
-class BertStringTextTermsMapper(OpinionContainingTextTermsMapper):
-
-    def map_text_frame_variant(self, fv_ind, text_frame_variant):
-        raise NotImplementedError()
+class BertDefaultStringTextTermsMapper(OpinionContainingTextTermsMapper):
+    """ We keep frame variant entities untouched, as specifics of the latter
+        relies on hidden states of language models. By default implemenation of
+        a base class assumes to provide an orginal frame variant value.
+    """
+    pass

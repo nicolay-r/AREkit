@@ -38,15 +38,23 @@ class PairTextProvider(BaseSingleTextProvider):
     def add_text_in_row(self, row, sentence_terms, s_ind, t_ind, expected_label):
         assert(isinstance(expected_label, Label))
 
+        # We consider text_a as a default, i.e. the formatting provided by a base provider.
         super(PairTextProvider, self).add_text_in_row(row=row,
                                                       sentence_terms=sentence_terms,
                                                       s_ind=s_ind,
                                                       t_ind=t_ind,
                                                       expected_label=expected_label)
 
-        self._mapper.set_s_ind(s_ind)
-        self._mapper.set_t_ind(t_ind)
-        inner_context = self._compose_text(sentence_terms=sentence_terms[s_ind+1:t_ind])
+        # As for a source of the text_b, we consider an inner context of the attitude
+        # mentioned in context. So we crop inner part of a context, including subject
+        # and object of the opinion.
+        first = min(s_ind, t_ind)
+        last = max(s_ind, t_ind)
+        inner_terms = sentence_terms[first:last + 1]
+        self._mapper.set_s_ind(0)
+        self._mapper.set_t_ind(len(inner_terms)-1)
+
+        inner_context = self._compose_text(sentence_terms=inner_terms)
 
         row[self.TEXT_B] = self.__text_b_template.format(
             subject=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Subject),
