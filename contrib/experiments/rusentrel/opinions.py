@@ -1,4 +1,5 @@
 import collections
+import logging
 import os
 
 from arekit.common.experiment.data_io import DataIO
@@ -9,6 +10,10 @@ from arekit.contrib.experiments.rusentrel.labels_formatter import RuSentRelNeutr
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
+
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class RuSentrelOpinionOperations(CVBasedOpinionOperations):
@@ -86,12 +91,13 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
     def read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(data_type, DataType))
 
-        filepath = self.create_neutral_opinion_collection_filepath(
-            doc_id=doc_id,
-            data_type=data_type)
+        filepath = self.create_neutral_opinion_collection_filepath(doc_id=doc_id,
+                                                                   data_type=data_type)
 
         if not os.path.exists(filepath):
-            return None
+            logger.info("Neutral collection does not exists: {}".format(filepath))
+            logger.info("Providing empty one instead")
+            return self.create_opinion_collection()
 
         return self.__opinion_formatter.load_from_file(filepath=filepath,
                                                        labels_formatter=self.__neutral_labels_fmt)
