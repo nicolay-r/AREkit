@@ -68,8 +68,9 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
                 version=ruattitudes_version,
                 used_doc_ids_set=rusentrel_news_inds)
 
+        # Providing RuAttitudes instance into doc and opins instances.
         ruattitudes_doc.set_ru_attitudes(ru_attitudes)
-        ruattitudes_doc.set_ru_attitudes(ru_attitudes)
+        ruattitudes_op.set_ru_attitudes(ru_attitudes)
 
         self._set_opin_operations(opin_ops)
         self._set_doc_operations(doc_ops)
