@@ -13,7 +13,7 @@ from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 
 
-class ExperimentEngine(object):
+class NetworksExperimentEngine(object):
 
     # region private methods
 
@@ -94,7 +94,7 @@ class ExperimentEngine(object):
     def __serialize_experiment_data(logger, experiment, config):
         # Performing data serialization.
 
-        for cv_index in ExperimentEngine.__iter_cv_index(experiment):
+        for cv_index in NetworksExperimentEngine.__iter_cv_index(experiment):
             logger.info("Serializing data for cv-index={}".format(cv_index))
 
             if not HandledData.need_serialize(experiment):
@@ -112,25 +112,30 @@ class ExperimentEngine(object):
             yield cv_index
 
     @staticmethod
-    def __create_config(create_config_func,
-                        classes_count,
+    def __create_config(classes_count,
+                        create_config_func,
+                        # TODO. Utilize a single modification function.
                         custom_config_modification_func=None,
                         common_config_modification_func=None):
+        """
+        TODO. Use a single modification function, as it comes from a weird initialization procedure of
+        neural network models.
+        """
         assert(isinstance(classes_count, int))
-        assert(callable(create_config_func))
+        assert(callable(create_config_func) or create_config_func is None)
         assert(callable(common_config_modification_func) or common_config_modification_func is None)
         assert(callable(custom_config_modification_func) or custom_config_modification_func is None)
 
         # Initialize config
         config = create_config_func()
-
         assert(isinstance(config, DefaultNetworkConfig))
-
-        # Setup config
         config.modify_classes_count(value=classes_count)
 
+        # Common modification func.
         if common_config_modification_func is not None:
             common_config_modification_func(config=config)
+
+        # Custom (post-common) modification func.
         if custom_config_modification_func is not None:
             custom_config_modification_func(config)
 
@@ -152,18 +157,18 @@ class ExperimentEngine(object):
         else:
             open(target_file, 'a').close()
 
-        ExperimentEngine.__sutup_experiment(experiment=experiment,
-                                            logger=logger)
+        NetworksExperimentEngine.__sutup_experiment(experiment=experiment,
+                                                    logger=logger)
 
         # Create config.
-        config = ExperimentEngine.__create_config(
+        config = NetworksExperimentEngine.__create_config(
             create_config_func=create_config,
             classes_count=experiment.DataIO.LabelsScaler.classes_count())
 
         # Running serialization.
-        ExperimentEngine.__serialize_experiment_data(logger=logger,
-                                                     experiment=experiment,
-                                                     config=config)
+        NetworksExperimentEngine.__serialize_experiment_data(logger=logger,
+                                                             experiment=experiment,
+                                                             config=config)
 
     @staticmethod
     def run_testing(create_config,
@@ -181,21 +186,21 @@ class ExperimentEngine(object):
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-        logger = ExperimentEngine.__setup_logger()
+        logger = NetworksExperimentEngine.__setup_logger()
 
-        ExperimentEngine.__sutup_experiment(experiment=experiment,
-                                            logger=logger)
+        NetworksExperimentEngine.__sutup_experiment(experiment=experiment,
+                                                    logger=logger)
 
         # Create config
-        config = ExperimentEngine.__create_config(
+        config = NetworksExperimentEngine.__create_config(
             create_config_func=create_config,
             classes_count=experiment.DataIO.LabelsScaler.classes_count(),
             custom_config_modification_func=custom_config_modification_func,
             common_config_modification_func=common_config_modification_func)
 
-        ExperimentEngine.__serialize_experiment_data(logger=logger,
-                                                     experiment=experiment,
-                                                     config=config)
+        NetworksExperimentEngine.__serialize_experiment_data(logger=logger,
+                                                             experiment=experiment,
+                                                             config=config)
 
         # Setup callback
         callback = experiment.DataIO.Callback
@@ -204,10 +209,10 @@ class ExperimentEngine(object):
             common_callback_modification_func(callback)
 
         # Performing data reading and running experiments.
-        for cv_index in ExperimentEngine.__iter_cv_index(experiment):
+        for cv_index in NetworksExperimentEngine.__iter_cv_index(experiment):
             logger.info("Running for cv-index={}".format(cv_index))
 
-            ExperimentEngine.__run_cv_index(
+            NetworksExperimentEngine.__run_cv_index(
                 experiment=experiment,
                 callback=callback,
                 cv_index=cv_index,
