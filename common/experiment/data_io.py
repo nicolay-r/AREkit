@@ -112,11 +112,18 @@ class DataIO(object):
     def get_data_root(self):
         raise NotImplementedError()
 
-    def get_experiments_dir(self):
-        raise NotImplementedError()
-
     def set_model_name(self, value):
         self.__model_name = value
+
+    def get_experiment_sources_dir(self):
+        """ Provides directory for samples.
+        """
+        raise NotImplementedError()
+
+    def get_experiment_results_dir(self):
+        """ Provides directory for model serialized output results.
+        """
+        raise NotImplementedError()
 
     def get_input_samples_dir(self, experiment_name):
         assert(isinstance(experiment_name, unicode))
@@ -127,7 +134,11 @@ class DataIO(object):
                                                   scale=self.LabelsScaler.LabelsCount)
 
         return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
-                                                        experiments_dir=self.get_experiments_dir())
+                                                        experiments_dir=self.get_experiment_sources_dir())
+
+    def get_model_results_root(self):
+        return get_path_of_subfolder_in_experiments_dir(subfolder_name=self.__model_name,
+                                                        experiments_dir=self.get_experiment_results_dir())
 
     def get_model_root(self, experiment_name):
         assert(isinstance(experiment_name, unicode))
