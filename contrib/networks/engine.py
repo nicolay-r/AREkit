@@ -146,10 +146,13 @@ class NetworksExperimentEngine(object):
     # region public methods
 
     @staticmethod
-    def run_serialization(logger, experiment, create_config, skip_if_folder_exists):
+    def run_serialization(logger, experiment, create_config, skip_if_folder_exists, io_utils=NetworkIOUtils):
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(io_utils, NetworkIOUtils))
         assert(callable(create_config))
-        target_dir = NetworkIOUtils.get_target_dir(experiment)
+
+        # Mark the directory as selected for serialization process.
+        target_dir = io_utils.get_target_dir(experiment)
         target_file = os.path.join(target_dir, 'lock.txt')
         if os.path.exists(target_file) and skip_if_folder_exists:
             logger.info("TARGET DIR EXISTS: {}".format(target_dir))
@@ -157,6 +160,7 @@ class NetworksExperimentEngine(object):
         else:
             open(target_file, 'a').close()
 
+        # Prepare necessary extra information for data serialization.
         NetworksExperimentEngine.__sutup_experiment(experiment=experiment,
                                                     logger=logger)
 
@@ -188,6 +192,7 @@ class NetworksExperimentEngine(object):
 
         logger = NetworksExperimentEngine.__setup_logger()
 
+        # Prepare necessary extra information for data serialization.
         NetworksExperimentEngine.__sutup_experiment(experiment=experiment,
                                                     logger=logger)
 

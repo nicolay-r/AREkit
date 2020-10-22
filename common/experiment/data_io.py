@@ -146,6 +146,8 @@ class DataIO(object):
                                                         experiments_dir=self.get_experiment_results_dir())
 
     def get_model_root(self, experiment_name):
+        """ Denotes a folder of a particular model of a certain experiment.
+        """
         assert(isinstance(experiment_name, unicode))
         return get_path_of_subfolder_in_experiments_dir(
             subfolder_name=self.__model_name,
