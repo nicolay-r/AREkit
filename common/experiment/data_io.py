@@ -35,6 +35,11 @@ class DataIO(object):
 
     # region Serialization stage
 
+    # TODO. Strongly a part of Serialization Stage, for neural networks.
+    @property
+    def WordEmbedding(self):
+        raise NotImplementedError()
+
     # TODO. Strongly a part of Serialization Stage.
     @property
     def DistanceInTermsBetweenOpinionEndsBound(self):
