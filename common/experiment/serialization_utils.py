@@ -2,6 +2,7 @@ from os.path import join, exists
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.io_utils import BaseIOUtils
+from arekit.common.utils import create_dir_if_not_exists
 
 
 def mark_dir_for_serialization(io_utils, logger, experiment, skip_if_folder_exists):
@@ -15,4 +16,5 @@ def mark_dir_for_serialization(io_utils, logger, experiment, skip_if_folder_exis
         logger.info("TARGET DIR EXISTS: {}".format(target_dir))
         return
     else:
+        create_dir_if_not_exists(target_dir)
         open(target_file, 'a').close()
