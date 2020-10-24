@@ -1,27 +1,22 @@
 import logging
-from os.path import join, exists
-from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.io_utils import BaseIOUtils
+from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
 
 
-class BaseExperimentEngine(object):
+class CVBasedExperimentEngine(object):
+    """ Represents a CV-Based Experiment engine
+        The core method is `run`, which assumes to perform iteration per every
+        cross-validation iteration in order to run `handle_cv_index` handler.
+    """
 
-    @staticmethod
-    def _mark_dir_for_serialization(io_utils, logger, experiment, skip_if_folder_exists):
-        assert(issubclass(io_utils, BaseIOUtils))
-        assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(skip_if_folder_exists, bool))
+    def __init__(self, experiment):
+        assert(isinstance(experiment, CVBasedExperiment))
+        self._experiment = experiment
+        self._logger = self.__setup_logger()
 
-        target_dir = io_utils.get_target_dir(experiment)
-        target_file = join(target_dir, 'lock.txt')
-        if exists(target_file) and skip_if_folder_exists:
-            logger.info("TARGET DIR EXISTS: {}".format(target_dir))
-            return
-        else:
-            open(target_file, 'a').close()
+    # region private methods
 
     @staticmethod
-    def _setup_logger():
+    def __setup_logger():
         stream_handler = logging.StreamHandler()
         formatter = logging.Formatter('%(asctime)s %(levelname)8s %(name)s | %(message)s')
         stream_handler.setFormatter(formatter)
@@ -30,26 +25,26 @@ class BaseExperimentEngine(object):
         logger.addHandler(stream_handler)
         return logger
 
-    @staticmethod
-    def _perform_neutral_annotation(logger, experiment):
-        assert(isinstance(experiment, BaseExperiment))
+    # endregion
 
-        # Initializing annotator
-        logger.info("Initializing neutral annotator ...")
-        experiment.initialize_neutral_annotator()
+    # region protected methods
 
-        # Perform neutral annotation
-        logger.info("Perform neutral annotation ...")
-        for data_type in experiment.DocumentOperations.iter_supported_data_types():
-            experiment.NeutralAnnotator.create_collection(data_type=data_type)
+    def _handle_cv_index(self, cv_index):
+        raise NotImplementedError()
 
-    # TODO. Use this function with handler parameter.
-    # TODO. Where handler performs actions per every cv iteration.
-    # TODO. (This is called both from experiments and serializers).
-    @staticmethod
-    def _iter_cv_index(experiment):
-        """ Performs an update of cv_folding algorithm state for every cv_iteration.
+    def _before_running(self):
+        """ Optional method that allows to implement actions before engine started.
         """
-        for cv_index in range(experiment.DataIO.CVFoldingAlgorithm.CVCount):
-            experiment.DataIO.CVFoldingAlgorithm.set_iteration_index(cv_index)
-            yield cv_index
+        pass
+
+    # endregion
+
+    def run(self):
+        """ Running cv_index iteration and calling handler during every iteration.
+        """
+
+        self._before_running()
+
+        for cv_index in range(self._experiment.DataIO.CVFoldingAlgorithm.CVCount):
+            self._experiment.DataIO.CVFoldingAlgorithm.set_iteration_index(cv_index)
+            self._handle_cv_index(cv_index)

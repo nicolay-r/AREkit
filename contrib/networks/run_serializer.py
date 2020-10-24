@@ -1,51 +1,50 @@
-from arekit.common.experiment.engine import BaseExperimentEngine
-from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.engine import CVBasedExperimentEngine
+from arekit.common.experiment.neutral.init import perform_neutral_annotation
+from arekit.common.experiment.serialization_utils import mark_dir_for_serialization
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.init_config import initialize_config
 
 
-class NetworksExperimentInputSerializer(BaseExperimentEngine):
+class NetworksExperimentInputSerializer(CVBasedExperimentEngine):
 
-    # region private methods
-
-    @staticmethod
-    def __serialize_experiment_data(logger, experiment, config):
-        # Performing data serialization.
-
-        for cv_index in BaseExperimentEngine._iter_cv_index(experiment):
-            logger.info("Serializing data for cv-index={}".format(cv_index))
-
-            if not HandledData.need_serialize(experiment):
-                continue
-
-            # Perform data serialization.
-            HandledData.serialize_from_experiment(experiment=experiment,
-                                                  config=config)
-
-    # endregion
-
-    @staticmethod
-    def run_serialization(logger, experiment, create_config, skip_if_folder_exists, io_utils=NetworkIOUtils):
-        assert(isinstance(experiment, BaseExperiment))
+    def __init__(self, experiment, create_config, skip_folder_if_exists, io_utils=NetworkIOUtils):
         assert(issubclass(io_utils, NetworkIOUtils))
+        assert(issubclass(skip_folder_if_exists, bool))
         assert(callable(create_config))
 
+        super(NetworksExperimentInputSerializer, self).__init__(experiment)
+
+        self.__config = None
+        self.__io_utils = io_utils
+        self.__skip_folder_if_exists = skip_folder_if_exists
+        self.__create_config = create_config
+
+    # region protected methods
+
+    def _handle_cv_index(self, cv_index):
+
+        # Performing data serialization.
+        if not HandledData.need_serialize(self._experiment):
+            return
+
+        # Perform data serialization.
+        HandledData.serialize_from_experiment(experiment=self._experiment,
+                                              config=self.__config)
+
+    def _before_running(self):
         # Mark the directory as selected for serialization process.
-        BaseExperimentEngine._mark_dir_for_serialization(experiment=experiment,
-                                                         logger=logger,
-                                                         io_utils=io_utils,
-                                                         skip_if_folder_exists=skip_if_folder_exists)
+        mark_dir_for_serialization(experiment=self._experiment,
+                                   logger=self._logger,
+                                   io_utils=self.__io_utils,
+                                   skip_if_folder_exists=self.__skip_folder_if_exists)
 
         # Perform neutral annotation.
-        BaseExperimentEngine._perform_neutral_annotation(experiment=experiment,
-                                                         logger=logger)
+        perform_neutral_annotation(experiment=self._experiment,
+                                   logger=self._logger)
 
         # Create config.
-        config = initialize_config(create_config_func=create_config,
-                                   classes_count=experiment.DataIO.LabelsScaler.classes_count())
+        self.__config = initialize_config(create_config_func=self.__create_config,
+                                          classes_count=self._experiment.DataIO.LabelsScaler.classes_count())
 
-        # Running serialization.
-        NetworksExperimentInputSerializer.__serialize_experiment_data(logger=logger,
-                                                                      experiment=experiment,
-                                                                      config=config)
+    #  endregion
