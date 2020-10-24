@@ -8,7 +8,7 @@ from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.init_config import initialize_config
 
 
-class NetworksExperimentEngine(CVBasedExperimentEngine):
+class NetworksTrainingEngine(CVBasedExperimentEngine):
 
     def __init__(self, create_config, bags_collection_type, experiment, load_model,
                  create_network_func,
@@ -20,7 +20,7 @@ class NetworksExperimentEngine(CVBasedExperimentEngine):
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(load_model, bool))
 
-        super(NetworksExperimentEngine, self).__init__(experiment)
+        super(NetworksTrainingEngine, self).__init__(experiment)
 
         self.__config = None
 
