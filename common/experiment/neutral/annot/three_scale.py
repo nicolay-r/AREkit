@@ -1,12 +1,10 @@
 import logging
 
-from arekit.common.experiment.data.serializing import SerializationData
-from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
+from arekit.common.opinions.formatter import OpinionCollectionsFormatter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -21,11 +19,11 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
-    def __init__(self):
+    def __init__(self, distance_in_terms_between_bounds):
         super(ThreeScaleNeutralAnnotator, self).__init__()
         self.__algo = None
         self.__labels_fmt = ThreeScaleLabelsFormatter()
-        self.__distance_in_terms_between_bounds = None
+        self.__distance_in_terms_between_bounds = distance_in_terms_between_bounds
 
     # region private methods
 
@@ -51,34 +49,24 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         Note: This operation might take a lot of time, as it assumes to perform news parsing.
         """
         self.__algo = DefaultNeutralAnnotationAlgorithm(
-            synonyms=self._DataIO.SynonymsCollection,
+            synonyms=self._SynonymsCollection,
             iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=self.iter_doc_ids_to_compare()),
             dist_in_terms_bound=self.__distance_in_terms_between_bounds,
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
     # endregion
 
-    def initialize(self, data_io, opin_ops, doc_ops):
-        assert(isinstance(data_io, SerializationData))
-        assert(isinstance(opin_ops, OpinionOperations))
-        assert(isinstance(doc_ops, DocumentOperations))
-
-        super(ThreeScaleNeutralAnnotator, self).initialize(data_io=data_io,
-                                                           opin_ops=opin_ops,
-                                                           doc_ops=doc_ops)
-
-        self.__distance_in_terms_between_bounds = data_io.DistanceInTermsBetweenOpinionEndsBound
-
-    def create_collection(self, data_type):
+    def create_collection(self, data_type, opinion_formatter):
         assert(isinstance(data_type, DataType))
+        assert(isinstance(opinion_formatter, OpinionCollectionsFormatter))
 
         for doc_id, filepath in self._iter_docs(data_type):
             collection = self.__create_opinions_for_extraction(doc_id=doc_id,
                                                                data_type=data_type)
 
-            self._DataIO.OpinionFormatter.save_to_file(collection=collection,
-                                                       filepath=filepath,
-                                                       labels_formatter=self.__labels_fmt)
+            opinion_formatter.save_to_file(collection=collection,
+                                           filepath=filepath,
+                                           labels_formatter=self.__labels_fmt)
 
 
 

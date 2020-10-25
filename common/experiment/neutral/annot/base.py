@@ -1,9 +1,9 @@
 import logging
 
 import utils
-from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,7 @@ class BaseNeutralAnnotator(object):
         logger.info("Init annotator: [{}]".format(self.__class__))
         self.__opin_ops = None
         self.__doc_ops = None
-        self.__data_io = None
+        self.__synonyms = None
 
     @property
     def _OpinOps(self):
@@ -32,9 +32,8 @@ class BaseNeutralAnnotator(object):
         return self.__doc_ops
 
     @property
-    def _DataIO(self):
-        assert(isinstance(self.__data_io, DataIO))
-        return self.__data_io
+    def _SynonymsCollection(self):
+        return self.__synonyms
 
     # region private methods
 
@@ -63,17 +62,17 @@ class BaseNeutralAnnotator(object):
         for doc_id in self._OpinOps.get_doc_ids_set_to_compare(doc_ids_iter):
             yield doc_id
 
-    def initialize(self, data_io, opin_ops, doc_ops):
-        assert(isinstance(data_io, DataIO))
+    def initialize(self, opin_ops, doc_ops, synonyms):
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
-        assert(data_io.CVFoldingAlgorithm.CVCount is not None)
+        assert(isinstance(synonyms, SynonymsCollection))
+        # assert(data_io.CVFoldingAlgorithm.CVCount is not None)
 
         self.__doc_ops = doc_ops
         self.__opin_ops = opin_ops
-        self.__data_io = data_io
+        self.__synonyms = synonyms
 
-    def create_collection(self, data_type):
+    def create_collection(self, data_type, opinion_formatter):
         raise NotImplementedError()
 
     def _iter_docs(self, data_type):

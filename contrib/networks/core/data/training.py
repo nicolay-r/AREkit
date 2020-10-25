@@ -5,8 +5,8 @@ class NetworkTrainingData(TrainingData):
     """ Specific for NeuralNetworks training data
     """
     
-    def __init__(self, labels_scale):
-        super(NetworkTrainingData, self).__init__(labels_scale)
+    def __init__(self, labels_scaler):
+        super(NetworkTrainingData, self).__init__(labels_scaler)
 
     @property
     def Callback(self):

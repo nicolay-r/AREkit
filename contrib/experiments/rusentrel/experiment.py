@@ -1,7 +1,7 @@
 import logging
 
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.contrib.experiments.common import get_neutral_annotation_root
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
@@ -26,14 +26,10 @@ class RuSentRelExperiment(CVBasedExperiment):
 
         super(RuSentRelExperiment, self).__init__(data_io=data_io)
 
-        neutral_root = get_path_of_subfolder_in_experiments_dir(
-            experiments_dir=data_io.get_input_samples_dir(self.Name),
-            subfolder_name=self.get_annot_name())
-
         logger.info("Create opinion oprations ... ")
         opin_ops = RuSentrelOpinionOperations(data_io=data_io,
                                               version=version,
-                                              neutral_root=neutral_root,
+                                              neutral_root=get_neutral_annotation_root(self),
                                               rusentrel_news_ids=self.get_rusentrel_inds())
 
         logger.info("Create document operations ... ")

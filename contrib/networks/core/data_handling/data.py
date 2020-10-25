@@ -112,7 +112,9 @@ class HandledData(object):
         for data_type in experiment.DocumentOperations.iter_supported_data_types():
 
             # Create annotated collection per each type.
-            experiment.NeutralAnnotator.create_collection(data_type)
+            experiment.DataIO.NeutralAnnotator.create_collection(
+                data_type=data_type,
+                opinion_formatter=experiment.DataIO.OpinionFormatter)
 
             # Load parsed news collections in memory.
             parsed_news_collection = experiment.create_parsed_collection(data_type)
