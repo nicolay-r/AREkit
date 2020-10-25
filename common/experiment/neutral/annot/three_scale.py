@@ -1,5 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import logging
 
 from arekit.common.experiment.data.serializing import SerializationData
