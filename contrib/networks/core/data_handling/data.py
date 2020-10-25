@@ -46,12 +46,12 @@ class HandledData(object):
         return not HandledData.__check_files_existed(experiment=experiment)
 
     @staticmethod
-    def serialize_from_experiment(experiment, config):
+    def serialize_from_experiment(experiment, terms_per_context):
         assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(config, DefaultNetworkConfig))
+        assert(isinstance(terms_per_context, int))
 
         HandledData.__perform_writing(experiment=experiment,
-                                      terms_per_context=config.TermsPerContext)
+                                      terms_per_context=terms_per_context)
 
     @classmethod
     def create_empty(cls):

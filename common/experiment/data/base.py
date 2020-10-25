@@ -25,6 +25,8 @@ class DataIO(object):
 
     @property
     def OpinionFormatter(self):
+        """ Corresponds to `OpinionCollectionsFormatter` instance
+        """
         raise NotImplementedError()
 
     @property
