@@ -13,11 +13,15 @@ class DataIO(object):
         self.__model_name = None
         self.__labels_scale = labels_scale
 
-    # region Properties
-
     @property
     def LabelsScaler(self):
         return self.__labels_scale
+
+    @property
+    def ModelIO(self):
+        return None
+
+    # region not implemented properties
 
     @property
     def SynonymsCollection(self):
@@ -28,10 +32,6 @@ class DataIO(object):
         """ Corresponds to `OpinionCollectionsFormatter` instance
         """
         raise NotImplementedError()
-
-    @property
-    def ModelIO(self):
-        return None
 
     @property
     def CVFoldingAlgorithm(self):

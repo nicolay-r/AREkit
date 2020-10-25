@@ -3,6 +3,8 @@ import gc
 from os.path import join
 
 from arekit.common.experiment.engine.cv_based import CVBasedExperimentEngine
+from arekit.common.experiment.engine.utils import rm_dir_contents
+from arekit.common.model.model_io import BaseModelIO
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -80,7 +82,9 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
 
         # Clear model root before training optionally
         if self.__clear_model_root_before_experiment:
-            self._experiment.DataIO.prepare_model_root(logger=self._logger)
+            model_io = self._experiment.DataIO.ModelIO
+            assert(isinstance(model_io, BaseModelIO))
+            rm_dir_contents(model_io.ModelRoot, logger=self._logger)
 
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
