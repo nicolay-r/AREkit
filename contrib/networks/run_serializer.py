@@ -19,7 +19,7 @@ class NetworksExperimentInputSerializer(CVBasedExperimentEngine):
     # region protected methods
 
     def _handle_cv_index(self, cv_index):
-        assert(issubclass(self._experiment.DataIO, SerializationData))
+        assert(isinstance(self._experiment.DataIO, SerializationData))
 
         # Performing data serialization.
         if not HandledData.need_serialize(self._experiment):
@@ -39,4 +39,4 @@ class NetworksExperimentInputSerializer(CVBasedExperimentEngine):
         perform_neutral_annotation(experiment=self._experiment,
                                    logger=self._logger)
 
-    #  endregion
+    # endregion
