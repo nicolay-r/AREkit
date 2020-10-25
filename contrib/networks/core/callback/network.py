@@ -169,9 +169,9 @@ class NeuralNetworkCallback(Callback):
         assert(isinstance(output, NetworkOutputEncoder))
 
         # Crate filepath
-        result_filepath = NetworkIOUtils.get_output_results_filepath(experiment=self.__experiment,
-                                                                     data_type=data_type,
-                                                                     epoch_index=epoch_index)
+        result_filepath = NetworkIOUtils.get_output_model_results_filepath(experiment=self.__experiment,
+                                                                           data_type=data_type,
+                                                                           epoch_index=epoch_index)
 
         # Save output
         output.to_tsv(filepath=result_filepath)

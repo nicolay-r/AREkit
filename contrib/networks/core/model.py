@@ -114,7 +114,7 @@ class BaseTensorflowModel(BaseModel):
         self.__initialize_session()
 
         if load_model:
-            saved_model_path = u"{}.state".format(self.IO.ModelSavePathPrefix)
+            saved_model_path = u"{}.state".format(self.IO.get_model_save_path_tf_prefix())
             logger.info("Loading model: {}".format(saved_model_path))
             self.load_model(saved_model_path)
 
@@ -246,7 +246,7 @@ class BaseTensorflowModel(BaseModel):
             groups_count += 1
 
         if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
-            self.save_model(save_path=self.IO.ModelSavePathPrefix)
+            self.save_model(save_path=self.IO.get_model_save_path_tf_prefix())
 
         return fit_total_cost / groups_count, fit_total_acc / groups_count
 

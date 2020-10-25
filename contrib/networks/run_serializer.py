@@ -8,7 +8,7 @@ from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 
 class NetworksExperimentInputSerializer(CVBasedExperimentEngine):
 
-    def __init__(self, experiment, skip_folder_if_exists, io_utils=NetworkIOUtils):
+    def __init__(self, experiment, skip_folder_if_exists, io_utils):
         assert(issubclass(io_utils, NetworkIOUtils))
 
         super(NetworksExperimentInputSerializer, self).__init__(experiment)

@@ -23,7 +23,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(rusentrel_news_ids, set))
 
-        super(RuSentrelOpinionOperations, self).__init__(model_io=data_io.ModelIO,
+        super(RuSentrelOpinionOperations, self).__init__(get_model_io_func=lambda: data_io.ModelIO,
                                                          folding_algo=data_io.CVFoldingAlgorithm)
 
         self._set_synonyms_collection(data_io.SynonymsCollection)

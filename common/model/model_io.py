@@ -4,5 +4,5 @@ class BaseModelIO(object):
     """
 
     @property
-    def ModelRoot(self):
+    def get_model_dir(self):
         raise NotImplementedError()

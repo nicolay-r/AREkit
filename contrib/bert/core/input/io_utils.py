@@ -1,7 +1,7 @@
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
+from arekit.common.experiment.io_utils import BaseIOUtils
 
 
-class BertIOUtils(NetworkIOUtils):
+class BertIOUtils(BaseIOUtils):
 
     @classmethod
     def get_target_dir(cls, experiment):

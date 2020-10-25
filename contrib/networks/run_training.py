@@ -4,9 +4,9 @@ from os.path import join
 
 from arekit.common.experiment.engine.cv_based import CVBasedExperimentEngine
 from arekit.common.experiment.engine.utils import rm_dir_contents
-from arekit.common.model.model_io import BaseModelIO
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.init_config import initialize_config
 
@@ -15,6 +15,7 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
 
     def __init__(self, create_config, bags_collection_type, experiment, load_model,
                  create_network_func,
+                 io_utils,
                  prepare_model_root=True,
                  common_callback_modification_func=None,
                  custom_config_modification_func=None,
@@ -22,6 +23,7 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
         assert(callable(create_network_func))
         assert(callable(create_config))
         assert(issubclass(bags_collection_type, BagsCollection))
+        assert(issubclass(io_utils, NetworkIOUtils))
         assert(isinstance(load_model, bool))
 
         super(NetworksTrainingEngine, self).__init__(experiment)
@@ -38,7 +40,13 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
         self.__custom_config_modification_func = custom_config_modification_func
         self.__common_config_modification_func = common_config_modification_func
 
+        self.__io_utils = io_utils
+
+    def __get_model_dir(self):
+        return self._experiment.DataIO.ModelIO.get_model_dir()
+
     # region protected methods
+
 
     def _handle_cv_index(self, cv_index):
         """ Run single CV-index experiment.
@@ -82,9 +90,8 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
 
         # Clear model root before training optionally
         if self.__clear_model_root_before_experiment:
-            model_io = self._experiment.DataIO.ModelIO
-            assert(isinstance(model_io, BaseModelIO))
-            rm_dir_contents(model_io.ModelRoot, logger=self._logger)
+            rm_dir_contents(dir_path=self.__get_model_dir(),
+                            logger=self._logger)
 
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -100,7 +107,7 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
             return
 
         # Setup logging dir.
-        callback.set_log_dir(join(self._experiment.DataIO.ModelIO.get_model_root(), u"log/"))
+        callback.set_log_dir(join(self.__get_model_dir(), u"log/"))
 
         # Init callback
         callback.PredictVerbosePerFileStatistic = False

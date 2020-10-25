@@ -8,19 +8,13 @@ from arekit.common.model.model_io import BaseModelIO
 
 class CVBasedOpinionOperations(OpinionOperations):
 
-    def __init__(self, model_io, folding_algo):
-        """
-        model_io: BaseModelIO or None
-            utilized in experiments in order to obtain ModelRoot
-        folding_algo: BaseCVFolding
-            cross-validation folding algorithm
-        """
-        assert(isinstance(model_io, BaseModelIO) or model_io is None)
+    def __init__(self, get_model_io_func, folding_algo):
+        assert(callable(get_model_io_func))
         assert(isinstance(folding_algo, BaseCVFolding))
 
         super(CVBasedOpinionOperations, self).__init__()
 
-        self.__model_io = model_io
+        self.__get_model_io_func = get_model_io_func
         self.__folding_algo = folding_algo
 
     # region private methods
@@ -29,8 +23,11 @@ class CVBasedOpinionOperations(OpinionOperations):
         assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int))
 
+        model_io = self.__get_model_io_func()
+        assert(isinstance(model_io, BaseModelIO))
+
         result_dir = os.path.join(
-            self.__model_io.ModelRoot,
+            model_io.get_model_dir(),
             os.path.join(u"eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type.name,
                 iter_index=self.__folding_algo.IterationIndex,

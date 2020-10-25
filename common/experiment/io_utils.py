@@ -32,17 +32,6 @@ class BaseIOUtils(object):
                                   template=template,
                                   prefix=BaseSampleFormatter.formatter_type_log_name())
 
-    @classmethod
-    def get_output_results_filepath(cls, experiment, data_type, epoch_index):
-        f_name_template = cls.__filename_template(data_type=data_type,
-                                                  experiment=experiment)
-
-        result_template = u"".join([f_name_template, u'-e{e_index}'.format(e_index=epoch_index)])
-
-        return cls.__get_filepath(out_dir=experiment.DataIO.ModelIO.ModelRoot,
-                                  template=result_template,
-                                  prefix=u"result")
-
     @staticmethod
     def _get_cv_index(experiment):
         return experiment.DataIO.CVFoldingAlgorithm.IterationIndex

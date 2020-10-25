@@ -4,6 +4,7 @@ from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.scales.two import TwoLabelScaler
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.common.model.model_io import BaseModelIO
 
 
 class DataIO(object):
@@ -14,32 +15,32 @@ class DataIO(object):
 
     def __init__(self, labels_scaler):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        self.__model_name = None
         self.__labels_scale = labels_scaler
         self.__neutral_annot = self.__init_annotator(labels_scaler)
+        self.__model_io = None
 
     @property
     def LabelsScaler(self):
+        """ Declares the amount of labels utilized in experiment. The latter
+            is necessary for conversions from int (uint) to Labels and vice versa.
+        """
         return self.__labels_scale
 
     @property
     def ModelIO(self):
+        """ Provides model paths for the resources utilized during training process.
+            The latter is important in Neural Network training process, when there is
+            a need to obtain model root directory.
+        """
         return None
 
     @property
     def NeutralAnnotator(self):
+        """ Provides an instance of neutral annotator that might be utlized
+            for neutral attitudes labeling for a specific set of documents,
+            declared in a particular experiment (see OpinionOperations).
+        """
         return self.__neutral_annot
-
-    # region private methods
-
-    def __init_annotator(self, label_scaler):
-        if isinstance(label_scaler, TwoLabelScaler):
-            return TwoScaleNeutralAnnotator()
-        elif isinstance(label_scaler, ThreeLabelScaler):
-            return ThreeScaleNeutralAnnotator(self.DistanceInTermsBetweenOpinionEndsBound)
-        raise NotImplementedError(u"Could not create neutral annotator for scaler '{}'".format(label_scaler))
-
-    # endregion
 
     # region not implemented properties
 
@@ -63,8 +64,22 @@ class DataIO(object):
 
     # endregion
 
-    def set_model_name(self, value):
-        self.__model_name = value
+    # region private methods
+
+    def __init_annotator(self, label_scaler):
+        if isinstance(label_scaler, TwoLabelScaler):
+            return TwoScaleNeutralAnnotator()
+        elif isinstance(label_scaler, ThreeLabelScaler):
+            return ThreeScaleNeutralAnnotator(self.DistanceInTermsBetweenOpinionEndsBound)
+        raise NotImplementedError(u"Could not create neutral annotator for scaler '{}'".format(label_scaler))
+
+    # endregion
+
+    def set_model_io(self, model_io):
+        """ Providing model_io in experiment data.
+        """
+        assert(isinstance(model_io, BaseModelIO))
+        self.__model_io = model_io
 
     def get_experiment_sources_dir(self):
         """ Provides directory for samples.
@@ -86,11 +101,3 @@ class DataIO(object):
 
         return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
                                                         experiments_dir=self.get_experiment_sources_dir())
-
-    def get_model_root(self, experiment_name):
-        """ Denotes a folder of a particular model of a certain experiment.
-        """
-        assert(isinstance(experiment_name, unicode))
-        return get_path_of_subfolder_in_experiments_dir(
-            subfolder_name=self.__model_name,
-            experiments_dir=self.get_input_samples_dir(experiment_name))

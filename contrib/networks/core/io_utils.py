@@ -2,6 +2,7 @@ import logging
 import os
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.io_utils import BaseIOUtils
+from arekit.common.model.model_io import BaseModelIO
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -9,6 +10,7 @@ logging.basicConfig(level=logging.INFO)
 
 class NetworkIOUtils(BaseIOUtils):
     """ Provides additional Input/Output paths generation functions for:
+        - model directory;
         - embedding matrix;
         - embedding vocabulary.
     """
@@ -19,12 +21,31 @@ class NetworkIOUtils(BaseIOUtils):
     @classmethod
     def get_vocab_filepath(cls, experiment):
         return os.path.join(cls.get_target_dir(experiment),
-                            cls.VOCABULARY_FILENAME_TEMPLATE.format(cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
+                            cls.VOCABULARY_FILENAME_TEMPLATE.format(
+                                cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
 
     @classmethod
     def get_embedding_filepath(cls, experiment):
         return os.path.join(cls.get_target_dir(experiment),
-                            cls.TERM_EMBEDDING_FILENAME_TEMPLATE.format(cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
+                            cls.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
+                                cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
+
+    @classmethod
+    def get_output_model_results_filepath(cls, experiment, data_type, epoch_index):
+
+        f_name_template = cls.__filename_template(data_type=data_type,
+                                                  experiment=experiment)
+
+        result_template = u"".join([f_name_template, u'-e{e_index}'.format(e_index=epoch_index)])
+
+        # Perform access to the model, since all the IO information
+        # that is related to the model, assumes to be stored in ModelIO.
+        model_io = experiment.DataIO.ModelIO
+        assert(isinstance(model_io, BaseModelIO))
+
+        return cls.__get_filepath(out_dir=model_io.get_model_dir(),
+                                  template=result_template,
+                                  prefix=u"result")
 
     @classmethod
     def check_files_existance(cls, data_type, experiment):
