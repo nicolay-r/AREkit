@@ -17,7 +17,7 @@ class RuAttitudesExperiment(CVBasedExperiment):
             precomputed ru_attitudes (in memory)
         """
         assert(isinstance(version, RuAttitudesVersions))
-        assert(isinstance(used_doc_ids_set, set))
+        assert(isinstance(used_doc_ids_set, set) or used_doc_ids_set is None)
         assert(isinstance(ra_instance, dict) or ra_instance is None)
 
         self.__version = version
