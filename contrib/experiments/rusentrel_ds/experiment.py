@@ -21,7 +21,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, prepare_model_root, ruattitudes_version, rusentrel_version, ra_instance=None):
+    def __init__(self, data_io, ruattitudes_version, rusentrel_version, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
@@ -33,9 +33,7 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         self.__ruattitudes_version = ruattitudes_version
         self.__rusentrel_version = rusentrel_version
 
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(
-            data_io=data_io,
-            prepare_model_root=prepare_model_root)
+        super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io)
 
         rusentrel_news_inds = RuSentRelExperiment.get_rusentrel_inds()
         rusentrel_doc = RuSentrelDocumentOperations(data_io=data_io, rusentrel_version=rusentrel_version)

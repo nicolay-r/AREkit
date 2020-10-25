@@ -1,12 +1,12 @@
 from arekit.common.frame_variants.base import FrameVariant
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label, PositiveLabel, NegativeLabel
+from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
+from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions
+from arekit.contrib.source.rusentiframes.polarity import RuSentiFramesFramePolarity
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
-from arekit.contrib.source.rusentiframes import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.effect import FrameEffect
-from arekit.contrib.source.rusentiframes import RuSentiFramesVersions
-from arekit.contrib.source.rusentiframes import RuSentiFramesFramePolarity
 
 
 def __iter_unique_frame_variants(frames_collection, frame_ids):

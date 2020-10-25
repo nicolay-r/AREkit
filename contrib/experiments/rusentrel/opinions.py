@@ -2,8 +2,8 @@ import collections
 import logging
 import os
 
-from arekit.common.experiment.data_io import DataIO
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
+from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOperations
 from arekit.contrib.experiments.rusentrel.labels_formatter import RuSentRelNeutralLabelsFormatter

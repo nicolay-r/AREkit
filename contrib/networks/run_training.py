@@ -1,7 +1,8 @@
 import os
 import gc
+from os.path import join
 
-from arekit.common.experiment.engine import CVBasedExperimentEngine
+from arekit.common.experiment.engine.cv_based import CVBasedExperimentEngine
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -12,6 +13,7 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
 
     def __init__(self, create_config, bags_collection_type, experiment, load_model,
                  create_network_func,
+                 prepare_model_root=True,
                  common_callback_modification_func=None,
                  custom_config_modification_func=None,
                  common_config_modification_func=None):
@@ -23,6 +25,7 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
         super(NetworksTrainingEngine, self).__init__(experiment)
 
         self.__config = None
+        self.__clear_model_root_before_experiment = prepare_model_root
 
         self.__create_config = create_config
         self.__create_network_func = create_network_func
@@ -75,6 +78,10 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
 
     def _before_running(self):
 
+        # Clear model root before training optionally
+        if self.__clear_model_root_before_experiment:
+            self._experiment.DataIO.prepare_model_root(logger=self._logger)
+
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -84,8 +91,14 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
                                           custom_config_modification_func=self.__custom_config_modification_func,
                                           common_config_modification_func=self.__common_config_modification_func)
 
-        # Init callback
         callback = self._experiment.DataIO.Callback
+        if callback is None:
+            return
+
+        # Setup logging dir.
+        callback.set_log_dir(join(self._experiment.DataIO.ModelIO.get_model_root(), u"log/"))
+
+        # Init callback
         callback.PredictVerbosePerFileStatistic = False
         if self.__common_callback_modification_func is not None:
             self.__common_callback_modification_func(callback)

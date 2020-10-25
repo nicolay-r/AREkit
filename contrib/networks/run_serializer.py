@@ -1,6 +1,6 @@
-from arekit.common.experiment.engine import CVBasedExperimentEngine
-from arekit.common.experiment.neutral.init import perform_neutral_annotation
-from arekit.common.experiment.serialization_utils import mark_dir_for_serialization
+from arekit.common.experiment.engine.cv_based import CVBasedExperimentEngine
+from arekit.common.experiment.engine.utils import mark_dir_for_serialization
+from arekit.common.experiment.neutral.run import perform_neutral_annotation
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.init_config import initialize_config
@@ -34,9 +34,8 @@ class NetworksExperimentInputSerializer(CVBasedExperimentEngine):
 
     def _before_running(self):
         # Mark the directory as selected for serialization process.
-        mark_dir_for_serialization(experiment=self._experiment,
+        mark_dir_for_serialization(target_dir=self.__io_utils.get_target_dir(self._experiment),
                                    logger=self._logger,
-                                   io_utils=self.__io_utils,
                                    skip_if_folder_exists=self.__skip_folder_if_exists)
 
         # Perform neutral annotation.

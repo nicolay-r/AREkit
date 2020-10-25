@@ -1,4 +1,4 @@
-import logging
+from arekit.common.experiment.engine.utils import setup_logger
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
 
 
@@ -11,21 +11,7 @@ class CVBasedExperimentEngine(object):
     def __init__(self, experiment):
         assert(isinstance(experiment, CVBasedExperiment))
         self._experiment = experiment
-        self._logger = self.__setup_logger()
-
-    # region private methods
-
-    @staticmethod
-    def __setup_logger():
-        stream_handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s %(levelname)8s %(name)s | %(message)s')
-        stream_handler.setFormatter(formatter)
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.INFO)
-        logger.addHandler(stream_handler)
-        return logger
-
-    # endregion
+        self._logger = setup_logger()
 
     # region protected methods
 

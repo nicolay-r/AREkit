@@ -1,7 +1,7 @@
 import logging
 
 import utils
-from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.utils import progress_bar_iter

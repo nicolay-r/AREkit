@@ -1,12 +1,12 @@
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.engine import CVBasedExperimentEngine
+from arekit.common.experiment.engine.cv_based import CVBasedExperimentEngine
+from arekit.common.experiment.engine.utils import mark_dir_for_serialization
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
-from arekit.common.experiment.serialization_utils import mark_dir_for_serialization
 from arekit.contrib.bert.core.input.io_utils import BertIOUtils
 from arekit.contrib.bert.factory import create_bert_sample_formatter
 
@@ -80,9 +80,8 @@ class BertExperimentInputSerializer(CVBasedExperimentEngine):
 
     def _before_running(self):
         # Mark the directory as selected for serialization process.
-        mark_dir_for_serialization(experiment=self._experiment,
+        mark_dir_for_serialization(target_dir=self.__io_utils.get_target_dir(self._experiment),
                                    logger=self._logger,
-                                   io_utils=self.__io_utils,
                                    skip_if_folder_exists=self.__skip_if_folder_exists)
 
         # Perform neutral annotation.

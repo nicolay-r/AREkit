@@ -1,6 +1,6 @@
 import itertools
 
-from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.cv_based.documents import CVBasedDocumentOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
