@@ -21,21 +21,19 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, prepare_model_root, version, rusentrel_version, ra_instance=None):
+    def __init__(self, data_io, ruattitudes_version, rusentrel_version, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
         """
-        assert(isinstance(version, RuAttitudesVersions))
+        assert(isinstance(ruattitudes_version, RuAttitudesVersions))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
         assert(isinstance(ra_instance, dict) or ra_instance is None)
 
-        self.__version = version
+        self.__ruattitudes_version = ruattitudes_version
         self.__rusentrel_version = rusentrel_version
 
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(
-            data_io=data_io,
-            prepare_model_root=prepare_model_root)
+        super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io)
 
         rusentrel_news_inds = RuSentRelExperiment.get_rusentrel_inds()
         rusentrel_doc = RuSentrelDocumentOperations(data_io=data_io, rusentrel_version=rusentrel_version)
@@ -65,11 +63,12 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         ru_attitudes = ra_instance
         if ra_instance is None:
             ru_attitudes = read_ruattitudes_in_memory(
-                version=version,
+                version=ruattitudes_version,
                 used_doc_ids_set=rusentrel_news_inds)
 
+        # Providing RuAttitudes instance into doc and opins instances.
         ruattitudes_doc.set_ru_attitudes(ru_attitudes)
-        ruattitudes_doc.set_ru_attitudes(ru_attitudes)
+        ruattitudes_op.set_ru_attitudes(ru_attitudes)
 
         self._set_opin_operations(opin_ops)
         self._set_doc_operations(doc_ops)
@@ -78,4 +77,4 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
     def Name(self):
         return u"rsr-{rsr_version}-ra-{ra_version}".format(
             rsr_version=self.__rusentrel_version.value,
-            ra_version=self.__version.value)
+            ra_version=self.__ruattitudes_version.value)

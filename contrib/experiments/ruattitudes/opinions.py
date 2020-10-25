@@ -1,4 +1,3 @@
-from arekit.common.experiment.data_io import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.labels.base import NeutralLabel

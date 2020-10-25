@@ -1,9 +1,8 @@
 import logging
-from os import path
-
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
-from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.data.base import DataIO
+from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
@@ -18,29 +17,15 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    def __init__(self, data_io, prepare_model_root):
+    def __init__(self, data_io):
         assert(isinstance(data_io, DataIO))
-        assert(isinstance(prepare_model_root, bool))
 
         # Setup class fields
-        self.__data_io = data_io
+        self.__experiment_data = data_io
         self.__opin_operations = None
         self.__doc_operations = None
+        # TODO. Maybe into data???
         self.__neutral_annot = self.__init_annotator()
-
-        model_root = self.DataIO.get_model_root(experiment_name=self.Name)
-
-        if self.__data_io.ModelIO is not None:
-            # Setup DataIO model root
-            logger.info("Setup model root: {}".format(model_root))
-            self.__data_io.ModelIO.set_model_root(value=model_root)
-
-        if prepare_model_root:
-            self.__data_io.prepare_model_root()
-
-        # Setup Log dir.
-        if self.__data_io.Callback is not None:
-            self.__data_io.Callback.set_log_dir(path.join(model_root, u"log/"))
 
     # region Properties
 
@@ -50,11 +35,7 @@ class BaseExperiment(object):
 
     @property
     def DataIO(self):
-        return self.__data_io
-
-    @property
-    def NeutralAnnotator(self):
-        return self.__neutral_annot
+        return self.__experiment_data
 
     @property
     def OpinionOperations(self):
@@ -63,6 +44,11 @@ class BaseExperiment(object):
     @property
     def DocumentOperations(self):
         return self.__doc_operations
+
+    # TODO. Maybe into data???
+    @property
+    def NeutralAnnotator(self):
+        return self.__neutral_annot
 
     # endregion
 
@@ -75,7 +61,7 @@ class BaseExperiment(object):
         self.__doc_operations = value
 
     def initialize_neutral_annotator(self):
-        self.__neutral_annot.initialize(data_io=self.__data_io,
+        self.__neutral_annot.initialize(data_io=self.__experiment_data,
                                         opin_ops=self.__opin_operations,
                                         doc_ops=self.__doc_operations)
 
@@ -100,6 +86,7 @@ class BaseExperiment(object):
         """
         assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int))
+        assert(isinstance(self.__experiment_data, TrainingData))
 
         # Compose cmp pairs iterator.
         cmp_pairs_iter = self.__opin_operations.iter_opinion_collections_to_compare(
@@ -108,7 +95,7 @@ class BaseExperiment(object):
             epoch_index=epoch_index)
 
         # getting evaluator.
-        evaluator = self.__data_io.Evaluator
+        evaluator = self.__experiment_data.Evaluator
         assert(isinstance(evaluator, BaseEvaluator))
 
         # evaluate every document.
@@ -122,12 +109,14 @@ class BaseExperiment(object):
 
     # region private methods
 
+    # TODO. Maybe into data???
     def __init_annotator(self):
-        if isinstance(self.__data_io.LabelsScaler, TwoLabelScaler):
+        if isinstance(self.__experiment_data.LabelsScaler, TwoLabelScaler):
             return TwoScaleNeutralAnnotator()
-        if isinstance(self.__data_io.LabelsScaler, ThreeLabelScaler):
+        if isinstance(self.__experiment_data.LabelsScaler, ThreeLabelScaler):
             return ThreeScaleNeutralAnnotator()
 
+    # TODO. Maybe into data???
     def get_annot_name(self):
         if isinstance(self.__neutral_annot, TwoScaleNeutralAnnotator):
             return u"neut_2_scale"

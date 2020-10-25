@@ -11,7 +11,7 @@ class RuAttitudesExperiment(CVBasedExperiment):
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
-    def __init__(self, data_io, prepare_model_root, version, used_doc_ids_set=None, ra_instance=None):
+    def __init__(self, data_io, version, used_doc_ids_set=None, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
@@ -22,8 +22,7 @@ class RuAttitudesExperiment(CVBasedExperiment):
 
         self.__version = version
 
-        super(RuAttitudesExperiment, self).__init__(data_io=data_io,
-                                                    prepare_model_root=prepare_model_root)
+        super(RuAttitudesExperiment, self).__init__(data_io=data_io)
 
         doc_ops = RuAttitudesDocumentOperations(data_io=data_io)
 

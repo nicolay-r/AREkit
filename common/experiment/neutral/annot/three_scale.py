@@ -1,8 +1,6 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
 import logging
 
-from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.data.serializing import SerializationData
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
@@ -61,7 +59,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     # endregion
 
     def initialize(self, data_io, opin_ops, doc_ops):
-        assert(isinstance(data_io, DataIO))
+        assert(isinstance(data_io, SerializationData))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
 

@@ -19,13 +19,12 @@ class RuSentRelExperiment(CVBasedExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, data_io, version, prepare_model_root):
+    def __init__(self, data_io, version):
         assert(isinstance(version, RuSentRelVersions))
 
         self.__version = version
 
-        super(RuSentRelExperiment, self).__init__(data_io=data_io,
-                                                  prepare_model_root=prepare_model_root)
+        super(RuSentRelExperiment, self).__init__(data_io=data_io)
 
         neutral_root = get_path_of_subfolder_in_experiments_dir(
             experiments_dir=data_io.get_input_samples_dir(self.Name),

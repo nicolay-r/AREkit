@@ -8,7 +8,7 @@ from arekit.contrib.bert.samplers.nli_m import NliMultipleSampleFormatter
 from arekit.contrib.bert.samplers.qa_b import QaBinarySampleFormatter
 from arekit.contrib.bert.samplers.qa_m import QaMultipleSampleFormatter
 from arekit.contrib.bert.supported import BertSampleFormatter
-from arekit.contrib.bert.terms.mapper import BertStringTextTermsMapper
+from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 
 
 def create_bert_sample_formatter(data_type, formatter_type, label_scaler,
@@ -19,13 +19,13 @@ def create_bert_sample_formatter(data_type, formatter_type, label_scaler,
     supported bert_sample_encoders
     """
     assert(isinstance(formatter_type, BertSampleFormatter))
-    assert(isinstance(synonyms, SynonymsCollection))
+    assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
     assert(isinstance(entity_formatter, StringEntitiesFormatter))
 
     l_formatter = RussianThreeScaleRussianLabelsFormatter()
     e_formatter = RussianEntitiesFormatter() if entity_formatter is None else entity_formatter
-    text_terms_mapper = BertStringTextTermsMapper(entity_formatter=e_formatter,
-                                                  synonyms=synonyms)
+    text_terms_mapper = BertDefaultStringTextTermsMapper(entity_formatter=e_formatter,
+                                                         synonyms=synonyms)
 
     if formatter_type == BertSampleFormatter.CLASSIF_M:
         return create_simple_sample_formatter(data_type=data_type,

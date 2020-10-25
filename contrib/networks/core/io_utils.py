@@ -1,74 +1,40 @@
 import logging
 import os
-
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
-from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
-from arekit.common.utils import create_dir_if_not_exists
+from arekit.common.experiment.io_utils import BaseIOUtils
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class NetworkIOUtils(object):
-    """
-    Provides Input/Output paths generation functions.
+class NetworkIOUtils(BaseIOUtils):
+    """ Provides additional Input/Output paths generation functions for:
+        - embedding matrix;
+        - embedding vocabulary.
     """
 
     TERM_EMBEDDING_FILENAME_TEMPLATE = u'term_embedding-{cv_index}'
     VOCABULARY_FILENAME_TEMPLATE = u"vocab-{cv_index}.txt"
 
-    @staticmethod
-    def get_target_dir(experiment):
-        """ Provides a main directory for input
-        """
-        return experiment.DataIO.get_input_samples_dir(experiment.Name)
+    @classmethod
+    def get_vocab_filepath(cls, experiment):
+        return os.path.join(cls.get_target_dir(experiment),
+                            cls.VOCABULARY_FILENAME_TEMPLATE.format(cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
 
-    @staticmethod
-    def get_input_opinions_filepath(experiment, data_type):
-        template = NetworkIOUtils.__filename_template(data_type=data_type, experiment=experiment)
-        return NetworkIOUtils.__get_filepath(out_dir=NetworkIOUtils.get_target_dir(experiment),
-                                             template=template,
-                                             prefix=BaseOpinionsFormatter.formatter_type_log_name())
+    @classmethod
+    def get_embedding_filepath(cls, experiment):
+        return os.path.join(cls.get_target_dir(experiment),
+                            cls.TERM_EMBEDDING_FILENAME_TEMPLATE.format(cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
 
-    @staticmethod
-    def get_input_sample_filepath(experiment, data_type):
-        template = NetworkIOUtils.__filename_template(data_type=data_type, experiment=experiment)
-        return NetworkIOUtils.__get_filepath(out_dir=NetworkIOUtils.get_target_dir(experiment),
-                                             template=template,
-                                             prefix=BaseSampleFormatter.formatter_type_log_name())
-
-    @staticmethod
-    def get_output_results_filepath(experiment, data_type, epoch_index):
-        f_name_template = NetworkIOUtils.__filename_template(data_type=data_type,
-                                                             experiment=experiment)
-
-        result_template = u"".join([f_name_template,
-                             u'-e{e_index}'.format(e_index=epoch_index)])
-
-        return NetworkIOUtils.__get_filepath(out_dir=experiment.DataIO.ModelIO.ModelRoot,
-                                             template=result_template,
-                                             prefix=u"result")
-
-    @staticmethod
-    def get_vocab_filepath(experiment):
-        return os.path.join(NetworkIOUtils.get_target_dir(experiment),
-                            NetworkIOUtils.VOCABULARY_FILENAME_TEMPLATE.format(cv_index=NetworkIOUtils.__get_cv_index(experiment)) + u'.npz')
-
-    @staticmethod
-    def get_embedding_filepath(experiment):
-        return os.path.join(NetworkIOUtils.get_target_dir(experiment),
-                            NetworkIOUtils.TERM_EMBEDDING_FILENAME_TEMPLATE.format(cv_index=NetworkIOUtils.__get_cv_index(experiment)) + u'.npz')
-
-    @staticmethod
-    def check_files_existance(data_type, experiment):
+    @classmethod
+    def check_files_existance(cls, data_type, experiment):
         assert(isinstance(data_type, DataType))
 
         filepaths = [
-            NetworkIOUtils.get_input_sample_filepath(experiment=experiment, data_type=data_type),
-            NetworkIOUtils.get_input_opinions_filepath(experiment=experiment, data_type=data_type),
-            NetworkIOUtils.get_vocab_filepath(experiment),
-            NetworkIOUtils.get_embedding_filepath(experiment)
+            cls.get_input_sample_filepath(experiment=experiment, data_type=data_type),
+            cls.get_input_opinions_filepath(experiment=experiment, data_type=data_type),
+            cls.get_vocab_filepath(experiment),
+            cls.get_embedding_filepath(experiment)
         ]
 
         result = True
@@ -79,31 +45,3 @@ class NetworkIOUtils(object):
                 result = False
 
         return result
-
-    # region private methods
-
-    @staticmethod
-    def __filename_template(data_type, experiment):
-        assert(isinstance(data_type, DataType))
-        return u"{data_type}-{cv_index}".format(data_type=data_type.name.lower(),
-                                                cv_index=NetworkIOUtils.__get_cv_index(experiment))
-
-    @staticmethod
-    def __get_cv_index(experiment):
-        return experiment.DataIO.CVFoldingAlgorithm.IterationIndex
-
-    @staticmethod
-    def __get_filepath(out_dir, template, prefix):
-        assert(isinstance(template, unicode))
-        assert(isinstance(prefix, unicode))
-
-        filepath = os.path.join(out_dir, NetworkIOUtils.__generate_filename(template=template, prefix=prefix))
-        create_dir_if_not_exists(filepath)
-
-        return filepath
-
-    @staticmethod
-    def __generate_filename(template, prefix):
-        return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
-
-    # endregion

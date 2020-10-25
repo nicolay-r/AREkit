@@ -4,13 +4,18 @@ from arekit.common.experiment.cv.base import BaseCVFolding
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.model.model_io import BaseModelIO
-from arekit.common.utils import create_dir_if_not_exists
 
 
 class CVBasedOpinionOperations(OpinionOperations):
 
     def __init__(self, model_io, folding_algo):
-        assert(isinstance(model_io, BaseModelIO))
+        """
+        model_io: BaseModelIO or None
+            utilized in experiments in order to obtain ModelRoot
+        folding_algo: BaseCVFolding
+            cross-validation folding algorithm
+        """
+        assert(isinstance(model_io, BaseModelIO) or model_io is None)
         assert(isinstance(folding_algo, BaseCVFolding))
 
         super(CVBasedOpinionOperations, self).__init__()
@@ -31,7 +36,6 @@ class CVBasedOpinionOperations(OpinionOperations):
                 iter_index=self.__folding_algo.IterationIndex,
                 epoch_index=str(epoch_index))))
 
-        create_dir_if_not_exists(result_dir)
         return result_dir
 
     # endregion
@@ -43,5 +47,5 @@ class CVBasedOpinionOperations(OpinionOperations):
                                                         epoch_index=epoch_index)
 
         filepath = os.path.join(model_eval_root, u"{}.opin.txt".format(doc_id))
-        create_dir_if_not_exists(filepath)
+
         return filepath

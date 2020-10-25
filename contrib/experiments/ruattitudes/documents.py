@@ -1,4 +1,5 @@
-from arekit.common.experiment.data_io import DataIO
+from arekit.common.experiment.data.base import DataIO
+from arekit.common.experiment.data.serializing import SerializationData
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
@@ -27,6 +28,7 @@ class RuAttitudesDocumentOperations(DocumentOperations):
                 yield doc_id
 
     def create_parse_options(self):
+        assert(isinstance(self.__data_io, SerializationData))
         return RuAttitudesParseOptions(stemmer=self.__data_io.Stemmer,
                                        frame_variants_collection=self.__data_io.FrameVariantCollection)
 
