@@ -57,10 +57,9 @@ class BaseNeutralAnnotator(object):
 
     # endregion
 
-    def iter_doc_ids_to_compare(self):
-        doc_ids_iter = self.__iter_all_doc_ids()
-        for doc_id in self._OpinOps.get_doc_ids_set_to_compare(doc_ids_iter):
-            yield doc_id
+    def _iter_doc_its_to_annotate(self):
+        return filter(lambda doc_id: doc_id in self._OpinOps.get_doc_ids_set_to_neutrally_annotate(),
+                      self.__iter_all_doc_ids())
 
     def initialize(self, opin_ops, doc_ops, synonyms):
         assert(isinstance(opin_ops, OpinionOperations))
@@ -77,7 +76,7 @@ class BaseNeutralAnnotator(object):
 
     def _iter_docs(self, data_type):
         pairs = list(self.filter_non_created_doc_ids(data_type=data_type,
-                                                     all_doc_ids=self.iter_doc_ids_to_compare()))
+                                                     all_doc_ids=self._iter_doc_its_to_annotate()))
 
         if len(pairs) == 0:
             return pairs

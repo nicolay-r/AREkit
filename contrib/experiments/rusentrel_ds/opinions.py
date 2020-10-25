@@ -39,8 +39,8 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
             return self.__rusentrel_op.read_neutral_opinion_collection(doc_id=doc_id,
                                                                        data_type=data_type)
 
-    def get_doc_ids_set_to_compare(self, doc_ids):
-        return self.__rusentrel_op.get_doc_ids_set_to_compare(doc_ids)
+    def get_doc_ids_set_to_compare(self):
+        return self.__rusentrel_op.get_doc_ids_set_to_compare()
 
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
         return self.__rusentrel_op.iter_opinion_collections_to_compare(data_type=data_type,
@@ -51,5 +51,8 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
         return self.__rusentrel_op.create_result_opinion_collection_filepath(data_type=data_type,
                                                                              doc_id=doc_id,
                                                                              epoch_index=epoch_index)
+
+    def get_doc_ids_set_to_neutrally_annotate(self):
+        return self.__rusentrel_op.get_doc_ids_set_to_neutrally_annotate()
 
     # endregion

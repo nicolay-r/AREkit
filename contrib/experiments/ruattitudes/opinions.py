@@ -18,6 +18,11 @@ class RuAttitudesOpinionOperations(OpinionOperations):
 
         self.__ru_attitudes = None
 
+        # We consider that the neutral annotation to be performed in advance
+        # in RuAttiudes collection. Version 1.0 does not provide the latter
+        # but it might be provided manually or since version 2.0.
+        self.__neutrally_annot_doc_ids = set()
+
     def set_ru_attitudes(self, ra):
         assert(isinstance(ra, dict))
         self.__ru_attitudes = ra
@@ -31,6 +36,9 @@ class RuAttitudesOpinionOperations(OpinionOperations):
                 if opinion_check(opinion)]
 
     # endregion
+
+    def get_doc_ids_set_to_neutrally_annotate(self):
+        return self.__neutrally_annot_doc_ids
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
