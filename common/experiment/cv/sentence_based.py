@@ -7,7 +7,7 @@ from arekit.common.experiment.cv.base import BaseCVFolding
 from arekit.common.experiment.cv.doc_stat.base import BaseDocumentStatGenerator
 
 
-class SentenceBasedCVFolding(BaseCVFolding):
+class StatBasedCVFolding(BaseCVFolding):
     """ Sentence-based separation.
         Considering a separation in foldings,
         equal each other in terms of sentence count.
@@ -16,7 +16,7 @@ class SentenceBasedCVFolding(BaseCVFolding):
     def __init__(self, docs_stat, docs_stat_filepath):
         assert(isinstance(docs_stat, BaseDocumentStatGenerator))
         assert(isinstance(docs_stat_filepath, unicode))
-        super(SentenceBasedCVFolding, self).__init__()
+        super(StatBasedCVFolding, self).__init__()
 
         self.__docs_stat = docs_stat
         self.__docs_stat_filepath = docs_stat_filepath
@@ -27,7 +27,7 @@ class SentenceBasedCVFolding(BaseCVFolding):
     def __select_group(cv_group_size, item):
         deltas = []
         for i in range(len(cv_group_size)):
-            delta = SentenceBasedCVFolding.__calc_cv_group_delta(
+            delta = StatBasedCVFolding.__calc_cv_group_delta(
                 cv_group_size=cv_group_size,
                 item=item,
                 g_index_to_add=i)
