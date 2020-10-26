@@ -6,7 +6,9 @@ from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOp
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
+from arekit.contrib.experiments.rusentrel.folding_type import FoldingType
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
+from arekit.contrib.experiments.rusentrel.utils import folding_type_to_str
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -21,13 +23,14 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, ruattitudes_version, rusentrel_version, ra_instance=None):
+    def __init__(self, data_io, folding_type, ruattitudes_version, rusentrel_version, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
         """
         assert(isinstance(ruattitudes_version, RuAttitudesVersions))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
+        assert(isinstance(folding_type, FoldingType))
         assert(isinstance(ra_instance, dict) or ra_instance is None)
 
         self.__ruattitudes_version = ruattitudes_version
@@ -36,7 +39,9 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io)
 
         rusentrel_news_inds = RuSentRelExperiment.get_rusentrel_inds()
-        rusentrel_doc = RuSentrelDocumentOperations(data_io=data_io, rusentrel_version=rusentrel_version)
+        rusentrel_doc = RuSentrelDocumentOperations(data_io=data_io,
+                                                    rusentrel_version=rusentrel_version,
+                                                    folding_type=folding_type)
         ruattitudes_doc = RuAttitudesDocumentOperations(data_io=data_io)
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(rusentrel_doc=rusentrel_doc,
                                                              rusentrel_news_ids=rusentrel_news_inds,
@@ -71,8 +76,12 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         self._set_opin_operations(opin_ops)
         self._set_doc_operations(doc_ops)
 
+        # Composing experiment name
+        self.__name = u"rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
+            rsr_version=self.__rusentrel_version.value,
+            ra_version=self.__ruattitudes_version.value,
+            folding_type=folding_type_to_str(folding_type))
+
     @property
     def Name(self):
-        return u"rsr-{rsr_version}-ra-{ra_version}".format(
-            rsr_version=self.__rusentrel_version.value,
-            ra_version=self.__ruattitudes_version.value)
+        return self.__name

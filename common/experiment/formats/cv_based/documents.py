@@ -11,10 +11,6 @@ class CVBasedDocumentOperations(DocumentOperations):
         assert(isinstance(folding_algo, BaseCVFolding))
         self.__folding_algo = folding_algo
 
-    @property
-    def _FoldingAlgo(self):
-        return self.__folding_algo
-
     def get_data_indices_to_fold(self):
         raise NotImplementedError()
 

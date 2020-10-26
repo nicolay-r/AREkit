@@ -1,15 +1,13 @@
+from arekit.common.experiment.cv.splitters.base import CrossValidationSplitter
+
+
 class BaseCVFolding(object):
     """ Default, abstract CV splitter
     """
 
     def __init__(self):
-        """
-        cv_count: int
-            is an amount of folds to be produced by an algorithm
-        cv_index: int
-            is an iteration index of a Cross-Fold validation.
-        """
         self.__cv_count = None
+        self.__splitter = None
         self.__iteration_index = 0
 
     # region Properties
@@ -24,10 +22,9 @@ class BaseCVFolding(object):
 
     # endregion
 
-    def _items_to_cv_pairs(self, doc_ids):
-        """ Provides pairs for every cv-iteration.
-        """
-        raise NotImplementedError()
+    def set_splitter(self, value):
+        assert(isinstance(value, CrossValidationSplitter))
+        self.__splitter = value
 
     def set_cv_count(self, value):
         assert(isinstance(value, int))
@@ -51,7 +48,14 @@ class BaseCVFolding(object):
                 data_types[0]: doc_ids_iter
             }
 
-        it = self._items_to_cv_pairs(set(doc_ids_iter))
+        if self.__splitter is None:
+            raise NotImplementedError(u"Splitter has not been intialized!")
+
+        if self.__cv_count is None:
+            raise NotImplementedError(u"CV-count has not been provided!")
+
+        it = self.__splitter.items_to_cv_pairs(doc_ids=set(doc_ids_iter),
+                                               cv_count=self.__cv_count)
 
         for index, pair in enumerate(it):
             large, small = pair

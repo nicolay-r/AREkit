@@ -1,8 +1,10 @@
 import itertools
 
 from arekit.common.experiment.data.base import DataIO
+from arekit.common.experiment.data.serializing import SerializationData
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.cv_based.documents import CVBasedDocumentOperations
+from arekit.contrib.experiments.rusentrel.folding_type import FoldingType
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
@@ -13,15 +15,14 @@ class RuSentrelDocumentOperations(CVBasedDocumentOperations):
     Limitations: Supported only train/test collections format
     """
 
-    def __init__(self, data_io, rusentrel_version):
+    def __init__(self, data_io, folding_type, rusentrel_version):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
+        assert(isinstance(folding_type, FoldingType))
         super(RuSentrelDocumentOperations, self).__init__(folding_algo=data_io.CVFoldingAlgorithm)
         self.__data_io = data_io
         self.__version = rusentrel_version
-
-    def __use_fixed_folding(self):
-        return self._FoldingAlgo.CVCount == 1
+        self.__folding_type = folding_type
 
     def get_fixed_folding(self, data_type):
         if data_type == DataType.Train:
@@ -40,7 +41,7 @@ class RuSentrelDocumentOperations(CVBasedDocumentOperations):
                                     RuSentRelIOUtils.iter_test_indices()))
 
     def iter_news_indices(self, data_type):
-        if self.__use_fixed_folding():
+        if self.__folding_type == FoldingType.Fixed:
             if data_type not in [DataType.Train, DataType.Test]:
                 raise Exception("Not supported data_type='{data_type}'".format(data_type=data_type))
 
@@ -57,5 +58,6 @@ class RuSentrelDocumentOperations(CVBasedDocumentOperations):
                                            version=self.__version)
 
     def create_parse_options(self):
+        assert(isinstance(self.__data_io, SerializationData))
         return RuSentRelNewsParseOptions(stemmer=self.__data_io.Stemmer,
                                          frame_variants_collection=self.__data_io.FrameVariantCollection)

@@ -1,16 +1,14 @@
 import random
 
-from arekit.common.experiment.cv.base import BaseCVFolding
+from arekit.common.experiment.cv.splitters.base import CrossValidationSplitter
 
 
-class SimpleCVFolding(BaseCVFolding):
-    """ This folding algorithm assumes to performs folding
+class SimpleCrossValidataionSplitter(CrossValidationSplitter):
+    """ This splitter assumes to performs folding
         without extra additional statistics of the related documents.
     """
 
     def __init__(self, shuffle=True, seed=1):
-        super(SimpleCVFolding, self).__init__()
-
         self.__shuffle = shuffle
         self.__seed = seed
 
@@ -28,17 +26,20 @@ class SimpleCVFolding(BaseCVFolding):
 
         return out
 
-    def _items_to_cv_pairs(self, doc_ids):
+    # endregion
+
+    def items_to_cv_pairs(self, doc_ids, cv_count):
         """
         Splits array of indices into list of pairs (train_indices_list,
         test_indices_list)
         """
         assert(isinstance(doc_ids, list))
+        assert(isinstance(cv_count, int))
 
         if self.__shuffle:
             random.Random(self.__seed).shuffle(doc_ids)
 
-        chunks = self.__chunk_it(doc_ids, self.CVCount)
+        chunks = self.__chunk_it(doc_ids, cv_count)
 
         for test_index, chunk in enumerate(chunks):
             train_indices = range(len(chunks))
@@ -48,5 +49,3 @@ class SimpleCVFolding(BaseCVFolding):
             small = chunk
 
             yield large, small
-
-    # endregion
