@@ -4,18 +4,25 @@ class DocStatGeneratorBase(object):
     Abstract, considered a specific implementation for document processing operation.
     """
 
-    def calculate_sentences_count(self, doc_id):
+    # region abstract protected methods
+
+    def _calculate_sentences_count(self, doc_id):
         raise NotImplementedError()
 
-    def iter_doc_ids(self):
+    # TODO. This should be also provided, i.e.
+    # TODO. We perform separation for a particular ...
+    # TODO. ... set of documents.
+    def _iter_doc_ids(self):
         raise NotImplementedError()
+
+    # endregion
 
     # region public methods
 
     def calculate_and_write_doc_stat(self, filepath):
         with open(filepath, 'w') as f:
-            for doc_index in self.iter_doc_ids():
-                s_count = self.calculate_sentences_count(doc_index)
+            for doc_index in self._iter_doc_ids():
+                s_count = self._calculate_sentences_count(doc_index)
                 f.write("{}: {}\n".format(doc_index, s_count))
 
     def read_docs_stat(self, filepath, doc_ids_set):

@@ -10,11 +10,13 @@ class RuSentRelDocStatGenerator(DocStatGeneratorBase):
         self.__synonyms = synonyms
         self.__version = version
 
-    def iter_doc_ids(self):
+    def _iter_doc_ids(self):
         for doc_id in RuSentRelIOUtils.iter_collection_indices():
             yield doc_id
 
-    def calculate_sentences_count(self, doc_id):
+    # TODO. Provide reader here, in order to deal with news
+    # TODO. rather than utilize a specific document reader.
+    def _calculate_sentences_count(self, doc_id):
 
         news = RuSentRelNews.read_document(doc_id=doc_id,
                                            synonyms=self.__synonyms,

@@ -5,6 +5,9 @@ from arekit.common.experiment.cv.base import BaseCVFolding
 
 
 class SimpleCVFolding(BaseCVFolding):
+    """ This folding algorithm assumes to performs folding
+        without extra additional statistics of the related documents.
+    """
 
     def __init__(self):
         super(SimpleCVFolding, self).__init__()

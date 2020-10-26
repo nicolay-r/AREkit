@@ -1,6 +1,5 @@
 class BaseCVFolding(object):
-    """
-    Default CV splitter
+    """ Default, abstract CV splitter
     """
 
     def __init__(self):

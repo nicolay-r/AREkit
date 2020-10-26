@@ -8,9 +8,9 @@ from arekit.common.experiment.cv.doc_stat.base import DocStatGeneratorBase
 
 
 class SentenceBasedCVFolding(BaseCVFolding):
-    """
-    Sentence-based separation.
-    Considering a separation in foldings, equal each other in terms of sentence count.
+    """ Sentence-based separation.
+        Considering a separation in foldings,
+        equal each other in terms of sentence count.
     """
 
     def __init__(self, docs_stat, docs_stat_filepath):

@@ -16,6 +16,8 @@ class DocumentOperations(object):
         raise NotImplementedError()
 
     def iter_news_indices(self, data_type):
+        """ Provides a news indeces, related to a particular `data_type`
+        """
         raise NotImplementedError()
 
     def iter_parsed_news(self, doc_inds):
