@@ -1,3 +1,4 @@
+from arekit.common.experiment.cv.base import BaseCVFolding
 from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutralAnnotator
 from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnnotator
 from arekit.common.experiment.scales.base import BaseLabelScaler
@@ -17,6 +18,7 @@ class DataIO(object):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         self.__labels_scale = labels_scaler
         self.__neutral_annot = self.__init_annotator(labels_scaler)
+        self.__cv_folding_algo = None
         self.__model_io = None
 
     @property
@@ -42,6 +44,15 @@ class DataIO(object):
         """
         return self.__neutral_annot
 
+    @property
+    def CVFoldingAlgorithm(self):
+        """ Algorithm, utilized in order to provide cross-validation split
+            for experiment data-types.
+            By default considered as null, and assumes to be initlialized
+            before using in engine, but after experiments initialization creation stage.
+        """
+        return self.__cv_folding_algo
+
     # region not implemented properties
 
     @property
@@ -56,10 +67,6 @@ class DataIO(object):
     def OpinionFormatter(self):
         """ Corresponds to `OpinionCollectionsFormatter` instance
         """
-        raise NotImplementedError()
-
-    @property
-    def CVFoldingAlgorithm(self):
         raise NotImplementedError()
 
     # endregion
@@ -80,6 +87,12 @@ class DataIO(object):
         """
         assert(isinstance(model_io, BaseModelIO))
         self.__model_io = model_io
+
+    def set_cv_folding_algorithm(self, cv_folding_algo):
+        """ Providing cv_folding algorithm instance.
+        """
+        assert(isinstance(cv_folding_algo, BaseCVFolding))
+        self.__cv_folding_algo = cv_folding_algo
 
     def get_experiment_sources_dir(self):
         """ Provides directory for samples.
