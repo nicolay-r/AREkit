@@ -4,7 +4,7 @@ from os import path
 import numpy as np
 
 from arekit.common.experiment.cv.base import BaseCVFolding
-from arekit.common.experiment.cv.doc_stat.base import DocStatGeneratorBase
+from arekit.common.experiment.cv.doc_stat.base import BaseDocumentStatGenerator
 
 
 class SentenceBasedCVFolding(BaseCVFolding):
@@ -14,7 +14,7 @@ class SentenceBasedCVFolding(BaseCVFolding):
     """
 
     def __init__(self, docs_stat, docs_stat_filepath):
-        assert(isinstance(docs_stat, DocStatGeneratorBase))
+        assert(isinstance(docs_stat, BaseDocumentStatGenerator))
         assert(isinstance(docs_stat_filepath, unicode))
         super(SentenceBasedCVFolding, self).__init__()
 
@@ -51,7 +51,8 @@ class SentenceBasedCVFolding(BaseCVFolding):
         assert(isinstance(doc_ids_set, set))
 
         if not path.exists(self.__docs_stat_filepath):
-            self.__docs_stat.calculate_and_write_doc_stat(self.__docs_stat_filepath)
+            self.__docs_stat.calculate_and_write_doc_stat(filepath=self.__docs_stat_filepath,
+                                                          doc_ids_iter=doc_ids_set)
 
         docs_info = self.__docs_stat.read_docs_stat(
             filepath=self.__docs_stat_filepath,
