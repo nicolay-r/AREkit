@@ -7,6 +7,12 @@ class DocumentOperations(object):
     """
 
     def iter_supported_data_types(self):
+        """ Iterates through data_types, supported in a related experiment
+            Note:
+            In CV-split algorithm, the first part corresponds to a LARGE split,
+            Jand second to small; therefore, the correct sequence is as follows:
+            DataType.Train, DataType.Test.
+        """
         raise NotImplementedError()
 
     def read_news(self, doc_id):
