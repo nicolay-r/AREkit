@@ -14,8 +14,9 @@ class BaseIOUtils(object):
     @classmethod
     def get_target_dir(cls, experiment):
         """ Provides a main directory for input
+            Assumes to be maually implemented for every nested base_io utils.
         """
-        return experiment.DataIO.get_input_samples_dir(experiment.Name)
+        raise NotImplementedError()
 
     @classmethod
     def get_input_opinions_filepath(cls, experiment, data_type):
