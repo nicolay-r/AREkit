@@ -8,7 +8,7 @@ from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_
 def get_neutral_annotation_root(experiment):
     assert(isinstance(experiment, BaseExperiment))
     return get_path_of_subfolder_in_experiments_dir(
-        experiments_dir=experiment.DataIO.get_input_samples_dir(experiment.Name),
+        experiments_dir=experiment.ExperimentIO.get_target_dir(experiment),
         subfolder_name=__get_annot_name(experiment.DataIO.NeutralAnnotator))
 
 

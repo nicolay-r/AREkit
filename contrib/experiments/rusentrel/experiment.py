@@ -21,14 +21,15 @@ class RuSentRelExperiment(CVBasedExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, data_io, version, folding_type):
+    def __init__(self, data_io, experiment_io, version, folding_type):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
 
         self.__version = version
         self.__folding_type = folding_type
 
-        super(RuSentRelExperiment, self).__init__(data_io=data_io)
+        super(RuSentRelExperiment, self).__init__(data_io=data_io,
+                                                  experiment_io=experiment_io)
 
         logger.info("Create opinion oprations ... ")
         opin_ops = RuSentrelOpinionOperations(data_io=data_io,

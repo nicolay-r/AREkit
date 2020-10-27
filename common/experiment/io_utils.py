@@ -14,7 +14,7 @@ class BaseIOUtils(object):
     @classmethod
     def get_target_dir(cls, experiment):
         """ Provides a main directory for input
-            Assumes to be maually implemented for every nested base_io utils.
+            Assumes to be manually implemented for every nested base_io utils.
         """
         raise NotImplementedError()
 

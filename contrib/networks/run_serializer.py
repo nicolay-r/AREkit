@@ -3,17 +3,14 @@ from arekit.common.experiment.engine.cv_based import CVBasedExperimentEngine
 from arekit.common.experiment.engine.utils import mark_dir_for_serialization
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
 from arekit.contrib.networks.core.data_handling.data import HandledData
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 
 
 class NetworksExperimentInputSerializer(CVBasedExperimentEngine):
 
-    def __init__(self, experiment, skip_folder_if_exists, io_utils):
-        assert(issubclass(io_utils, NetworkIOUtils))
+    def __init__(self, experiment, skip_folder_if_exists):
 
         super(NetworksExperimentInputSerializer, self).__init__(experiment)
 
-        self.__io_utils = io_utils
         self.__skip_folder_if_exists = skip_folder_if_exists
 
     # region protected methods
@@ -31,7 +28,7 @@ class NetworksExperimentInputSerializer(CVBasedExperimentEngine):
 
     def _before_running(self):
         # Mark the directory as selected for serialization process.
-        mark_dir_for_serialization(target_dir=self.__io_utils.get_target_dir(self._experiment),
+        mark_dir_for_serialization(target_dir=self._experiment.ExperimentIO.get_target_dir(self._experiment),
                                    logger=self._logger,
                                    skip_if_folder_exists=self.__skip_folder_if_exists)
 

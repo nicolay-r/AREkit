@@ -4,7 +4,6 @@ from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnno
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.scales.two import TwoLabelScaler
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.common.model.model_io import BaseModelIO
 
 
@@ -20,8 +19,6 @@ class DataIO(object):
         self.__neutral_annot = self.__init_annotator(labels_scaler)
         self.__cv_folding_algo = BaseCVFolding()
         self.__model_io = None
-
-    # TODO. Provide ExperimentIO (IOUtils)
 
     @property
     def LabelsScaler(self):
@@ -93,22 +90,3 @@ class DataIO(object):
         """
         assert(isinstance(cv_folding_algo, BaseCVFolding))
         self.__cv_folding_algo = cv_folding_algo
-
-    # TODO. Move in io_utils.
-    def get_experiment_sources_dir(self):
-        """ Provides directory for samples.
-        """
-        raise NotImplementedError()
-
-    # TODO. Remove, access through io_utils.
-    def get_input_samples_dir(self, experiment_name):
-        """ Provides directory with serialized input data (samples).
-            The path may vary and depends on CVFolding format, i.e.
-        """
-        assert(isinstance(experiment_name, unicode))
-
-        e_name = u"{name}_{scale}l".format(name=experiment_name,
-                                           scale=self.LabelsScaler.LabelsCount)
-
-        return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
-                                                        experiments_dir=self.get_experiment_sources_dir())

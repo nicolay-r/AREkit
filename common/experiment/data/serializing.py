@@ -6,7 +6,7 @@ class SerializationData(DataIO):
     """
 
     def __init__(self, labels_scaler):
-        super(SerializationData, self).__init__(labels_scaler)
+        super(SerializationData, self).__init__(labels_scaler=labels_scaler)
 
     @property
     def Stemmer(self):

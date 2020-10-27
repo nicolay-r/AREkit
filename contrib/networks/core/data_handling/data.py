@@ -12,7 +12,6 @@ from arekit.common.model.labeling.single import SingleLabelsHelper
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
@@ -63,17 +62,18 @@ class HandledData(object):
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
         """
+        assert(isinstance(experiment, BaseExperiment))
 
         if not HandledData.__check_files_existed(experiment=experiment):
             raise Exception("Data has not been initialized/serialized")
 
         # Reading embedding.
-        npz_embedding_data = np.load(NetworkIOUtils.get_embedding_filepath(experiment))
+        npz_embedding_data = np.load(experiment.ExperimentIO.get_embedding_filepath(experiment))
         config.set_term_embedding(npz_embedding_data['arr_0'])
         logger.info("Embedding readed [size={}]".format(config.TermEmbeddingMatrix.shape))
 
         # Reading vocabulary
-        npz_vocab_data = np.load(NetworkIOUtils.get_vocab_filepath(experiment))
+        npz_vocab_data = np.load(experiment.ExperimentIO.get_vocab_filepath(experiment))
         vocab = dict(npz_vocab_data['arr_0'])
         logger.info("Vocabulary readed [size={}]".format(len(vocab)))
 
@@ -135,8 +135,8 @@ class HandledData(object):
     @staticmethod
     def __check_files_existed(experiment):
         for data_type in experiment.DocumentOperations.iter_supported_data_types():
-            if not NetworkIOUtils.check_files_existance(data_type=data_type,
-                                                        experiment=experiment):
+            if not experiment.ExperimentIO.check_files_existance(data_type=data_type,
+                                                                 experiment=experiment):
                 return False
         return True
 
@@ -147,7 +147,8 @@ class HandledData(object):
     def __read_data_type(self, data_type, experiment, bags_collection_type, vocab, config):
 
         samples_reader = NetworkInputSampleReader.from_tsv(
-            filepath=NetworkIOUtils.get_input_sample_filepath(data_type=data_type, experiment=experiment),
+            filepath=experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type,
+                                                                       experiment=experiment),
             row_ids_provider=MultipleIDProvider())
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(
