@@ -21,6 +21,8 @@ class DataIO(object):
         self.__cv_folding_algo = BaseCVFolding()
         self.__model_io = None
 
+    # TODO. Provide ExperimentIO (IOUtils)
+
     @property
     def LabelsScaler(self):
         """ Declares the amount of labels utilized in experiment. The latter
@@ -92,16 +94,16 @@ class DataIO(object):
         assert(isinstance(cv_folding_algo, BaseCVFolding))
         self.__cv_folding_algo = cv_folding_algo
 
+    # TODO. Move in io_utils.
     def get_experiment_sources_dir(self):
         """ Provides directory for samples.
         """
         raise NotImplementedError()
 
+    # TODO. Remove, access through io_utils.
     def get_input_samples_dir(self, experiment_name):
         """ Provides directory with serialized input data (samples).
             The path may vary and depends on CVFolding format, i.e.
-                1 -- fixed,
-                >= 1 => cv-based
         """
         assert(isinstance(experiment_name, unicode))
 
