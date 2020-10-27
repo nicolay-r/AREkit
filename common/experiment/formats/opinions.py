@@ -34,6 +34,9 @@ class OpinionOperations(object):
         """
         raise NotImplementedError()
 
+    def read_etalon_opinion_collection(self, doc_id):
+        raise NotImplementedError()
+
     def get_doc_ids_set_to_neutrally_annotate(self):
         """ provides set of documents that utilized by neutral annotator algorithm in order to
             provide the related labeling of neutral attitudes in it.
@@ -50,9 +53,9 @@ class OpinionOperations(object):
     def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
         raise NotImplementedError()
 
-    def read_etalon_opinion_collection(self, doc_id):
-        raise NotImplementedError()
-
+    # TODO. This should be removed.
+    # TODO. This should be removed.
+    # TODO. This should be removed.
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 
@@ -69,6 +72,11 @@ class OpinionOperations(object):
         return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
                                                 synonyms=self._synonyms)
 
+    # TODO. This should be removed.
+    # TODO. This is used in neutral annotation in order to check the presence of
+    # TODO. the related collection. It is bad way to utilize path for comparison
+    # TODO. since in general we might use database to store collection.
+    # TODO. Therefore we may use `check_neutral_collection_existance` method instead
     def create_neutral_opinion_collection_filepath(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))

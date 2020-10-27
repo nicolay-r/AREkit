@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import collections
 import logging
 import os
@@ -72,6 +73,8 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         opinions_cmp_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
             doc_ids=filter(lambda doc_id: doc_id in self.get_doc_ids_set_to_compare(), doc_ids),
             read_etalon_collection_func=lambda doc_id: self.read_etalon_opinion_collection(doc_id=doc_id),
+            # TODO. параметр ниже не позволяет распутать этот метод с точки зрения доп. реализаций здесь.
+            # TODO. чтение коллекции результатов должно быть упрощено.
             read_result_collection_func=lambda doc_id: self.__opinion_formatter.load_from_file(
                 filepath=self.create_result_opinion_collection_filepath(data_type=data_type,
                                                                         doc_id=doc_id,
