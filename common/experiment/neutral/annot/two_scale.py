@@ -51,17 +51,15 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     # region public methods
 
-    def create_collection(self, data_type, opinion_formatter):
+    def create_collection(self, data_type):
         assert(isinstance(data_type, DataType))
-        assert(isinstance(opinion_formatter, OpinionCollectionsFormatter))
 
         if data_type == DataType.Train:
             return
 
         for doc_id, filepath in self._iter_docs(data_type):
-            opinion_formatter.save_to_file(
+            self._OpinOps.save_neutral_opinion_collection(
                 collection=self.__create_opinions_for_classification(doc_id),
-                filepath=filepath,
-                labels_formatter=self.__labels_fmt)
+                labels_fmt=self.__labels_fmt)
 
     # endregion

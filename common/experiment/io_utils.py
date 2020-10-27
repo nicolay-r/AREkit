@@ -3,6 +3,7 @@ from os.path import join
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
+from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
 class BaseIOUtils(object):
@@ -33,6 +34,21 @@ class BaseIOUtils(object):
                                   template=template,
                                   prefix=BaseSampleFormatter.formatter_type_log_name())
 
+    @classmethod
+    def create_neutral_opinion_collection_filepath(cls, experiment, doc_id, data_type):
+        assert(isinstance(doc_id, int))
+        assert(isinstance(data_type, DataType))
+
+        annot_dir = cls.__get_neutral_annotation_dir(experiment)
+
+        if annot_dir is None:
+            raise NotImplementedError("Neutral root was not provided!")
+
+        filename = u"art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
+                                                           d_type=data_type.name)
+
+        return join(annot_dir, filename)
+
     @staticmethod
     def _get_cv_index(experiment):
         return experiment.DataIO.CVFoldingAlgorithm.IterationIndex
@@ -55,5 +71,10 @@ class BaseIOUtils(object):
     @staticmethod
     def __generate_filename(template, prefix):
         return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
+
+    @classmethod
+    def __get_neutral_annotation_dir(cls, experiment):
+        return get_path_of_subfolder_in_experiments_dir(experiments_dir=cls.get_target_dir(experiment),
+                                                        subfolder_name=experiment.DataIO.NeutralAnnotator.Name)
 
     # endregion

@@ -22,8 +22,8 @@ def __iter_opinion_collections(opin_operations, doc_id, data_type):
     assert(isinstance(doc_id, int))
     assert(isinstance(data_type, DataType))
 
-    neutral = opin_operations.read_neutral_opinion_collection(doc_id=doc_id,
-                                                              data_type=data_type)
+    neutral = opin_operations.try_read_neutral_opinion_collection(doc_id=doc_id,
+                                                                  data_type=data_type)
 
     if data_type == DataType.Train:
         # Providing neutral and sentiment.

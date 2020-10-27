@@ -1,5 +1,6 @@
-import os
 import logging
+from os.path import join, exists
+
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
@@ -40,15 +41,15 @@ class NetworkIOUtils(BaseIOUtils):
 
     @classmethod
     def get_vocab_filepath(cls, experiment):
-        return os.path.join(cls.get_target_dir(experiment),
-                            cls.VOCABULARY_FILENAME_TEMPLATE.format(
-                                cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
+        return join(cls.get_target_dir(experiment),
+                    cls.VOCABULARY_FILENAME_TEMPLATE.format(
+                        cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
 
     @classmethod
     def get_embedding_filepath(cls, experiment):
-        return os.path.join(cls.get_target_dir(experiment),
-                            cls.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                                cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
+        return join(cls.get_target_dir(experiment),
+                    cls.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
+                        cv_index=NetworkIOUtils._get_cv_index(experiment)) + u'.npz')
 
     @classmethod
     def get_output_model_results_filepath(cls, experiment, data_type, epoch_index):
@@ -58,14 +59,22 @@ class NetworkIOUtils(BaseIOUtils):
 
         result_template = u"".join([f_name_template, u'-e{e_index}'.format(e_index=epoch_index)])
 
-        # Perform access to the model, since all the IO information
-        # that is related to the model, assumes to be stored in ModelIO.
-        model_io = experiment.DataIO.ModelIO
-        assert(isinstance(model_io, BaseModelIO))
-
-        return cls.__get_filepath(out_dir=model_io.get_model_dir(),
+        return cls.__get_filepath(out_dir=cls.__get_model_dir(experiment),
                                   template=result_template,
                                   prefix=u"result")
+
+    @classmethod
+    def create_result_opinion_collection_filepath(cls, experiment, data_type, doc_id, epoch_index):
+        assert(isinstance(epoch_index, int))
+
+        model_eval_root = cls.__get_eval_root_filepath(
+            experiment=experiment,
+            data_type=data_type,
+            epoch_index=epoch_index)
+
+        filepath = join(model_eval_root, u"{}.opin.txt".format(doc_id))
+
+        return filepath
 
     @classmethod
     def check_files_existance(cls, data_type, experiment):
@@ -80,9 +89,35 @@ class NetworkIOUtils(BaseIOUtils):
 
         result = True
         for filepath in filepaths:
-            existed = os.path.exists(filepath)
+            existed = exists(filepath)
             logger.info("Check existance [{is_existed}]: {fp}".format(is_existed=existed, fp=filepath))
             if not existed:
                 result = False
 
         return result
+
+    # region private methods
+
+    @staticmethod
+    def __get_model_dir(experiment):
+        # Perform access to the model, since all the IO information
+        # that is related to the model, assumes to be stored in ModelIO.
+        model_io = experiment.DataIO.ModelIO
+        assert(isinstance(model_io, BaseModelIO))
+        return model_io.get_model_dir()
+
+    @classmethod
+    def __get_eval_root_filepath(cls, experiment, data_type, epoch_index):
+        assert(isinstance(data_type, DataType))
+        assert(isinstance(epoch_index, int))
+
+        result_dir = join(
+            cls.__get_model_dir(experiment),
+            join(u"eval/{data_type}/{iter_index}/{epoch_index}".format(
+                data_type=data_type.name,
+                iter_index=experiment.DataIO.CVFoldingAlgorithm.IterationIndex,
+                epoch_index=str(epoch_index))))
+
+        return result_dir
+
+    # endregion

@@ -1,6 +1,5 @@
 import logging
 
-import utils
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.synonyms import SynonymsCollection
@@ -47,17 +46,9 @@ class BaseNeutralAnnotator(object):
                 yield doc_id
 
     def filter_non_created_doc_ids(self, all_doc_ids, data_type):
-
         for doc_id in all_doc_ids:
-
-            filepath = self._OpinOps.create_neutral_opinion_collection_filepath(
-                doc_id=doc_id,
-                data_type=data_type)
-
-            if utils.check_file_already_existed(filepath=filepath, logger=logger):
-                continue
-
-            yield doc_id, filepath
+            if self._OpinOps.try_read_neutral_opinion_collection(doc_id=doc_id, data_type=data_type) is None:
+                yield doc_id
 
     # endregion
 
@@ -75,17 +66,20 @@ class BaseNeutralAnnotator(object):
         self.__opin_ops = opin_ops
         self.__synonyms = synonyms
 
-    def create_collection(self, data_type, opinion_formatter):
+    def create_collection(self, data_type):
         raise NotImplementedError()
 
     def _iter_docs(self, data_type):
-        pairs = list(self.filter_non_created_doc_ids(data_type=data_type,
-                                                     all_doc_ids=self._iter_doc_its_to_annotate()))
+        doc_ids_iter = self.filter_non_created_doc_ids(
+            data_type=data_type,
+            all_doc_ids=self._iter_doc_its_to_annotate())
 
-        if len(pairs) == 0:
-            return pairs
+        doc_ids = list(doc_ids_iter)
 
-        return progress_bar_iter(iterable=pairs,
+        if len(doc_ids) == 0:
+            return doc_ids
+
+        return progress_bar_iter(iterable=doc_ids,
                                  desc="Writing neutral-examples [{}]".format(data_type))
 
 

@@ -1,7 +1,6 @@
 import logging
 
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
-from arekit.contrib.experiments.common import get_neutral_annotation_root
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiments.rusentrel.folding_type import FoldingType
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
@@ -34,7 +33,7 @@ class RuSentRelExperiment(CVBasedExperiment):
         logger.info("Create opinion oprations ... ")
         opin_ops = RuSentrelOpinionOperations(data_io=data_io,
                                               version=version,
-                                              neutral_root=get_neutral_annotation_root(self),
+                                              experiment_io=self.ExperimentIO,
                                               rusentrel_news_ids=self.get_rusentrel_inds())
 
         logger.info("Create document operations ... ")

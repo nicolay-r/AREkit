@@ -13,5 +13,4 @@ def perform_neutral_annotation(logger, experiment):
     # Perform neutral annotation
     logger.info("Perform neutral annotation ...")
     for data_type in experiment.DocumentOperations.iter_supported_data_types():
-        experiment.DataIO.NeutralAnnotator.create_collection(data_type=data_type,
-                                                             opinion_formatter=experiment.DataIO.OpinionFormatter)
+        experiment.DataIO.NeutralAnnotator.create_collection(data_type=data_type)

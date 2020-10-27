@@ -1,6 +1,5 @@
 import logging
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
-from arekit.contrib.experiments.common import get_neutral_annotation_root
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
@@ -48,21 +47,16 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
                                                              rusentrel_news_ids=rusentrel_news_inds,
                                                              ruattitudes_doc=ruattitudes_doc)
 
-        neutral_root = get_neutral_annotation_root(self)
-
         rusentrel_op = RuSentrelOpinionOperations(data_io=data_io,
                                                   version=rusentrel_version,
-                                                  neutral_root=neutral_root,
+                                                  experiment_io=self.ExperimentIO,
                                                   rusentrel_news_ids=rusentrel_news_inds)
 
-        ruattitudes_op = RuAttitudesOpinionOperations(synonyms=data_io.SynonymsCollection,
-                                                      neutral_root=neutral_root)
+        ruattitudes_op = RuAttitudesOpinionOperations()
 
-        opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
-            synonyms=data_io.SynonymsCollection,
-            neutral_root=neutral_root,
-            rusentrel_op=rusentrel_op,
-            ruattitudes_op=ruattitudes_op)
+        opin_ops = RuSentrelWithRuAttitudesOpinionOperations(synonyms=data_io.SynonymsCollection,
+                                                             rusentrel_op=rusentrel_op,
+                                                             ruattitudes_op=ruattitudes_op)
 
         ru_attitudes = ra_instance
         if ra_instance is None:

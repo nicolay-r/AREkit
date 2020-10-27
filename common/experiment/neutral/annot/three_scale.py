@@ -60,17 +60,13 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     # endregion
 
-    def create_collection(self, data_type, opinion_formatter):
+    def create_collection(self, data_type):
         assert(isinstance(data_type, DataType))
-        assert(isinstance(opinion_formatter, OpinionCollectionsFormatter))
 
-        for doc_id, filepath in self._iter_docs(data_type):
+        for doc_id in self._iter_docs(data_type):
             collection = self.__create_opinions_for_extraction(doc_id=doc_id,
                                                                data_type=data_type)
 
-            opinion_formatter.save_to_file(collection=collection,
-                                           filepath=filepath,
-                                           labels_formatter=self.__labels_fmt)
-
-
+            self._OpinOps.save_neutral_opinion_collection(collection=collection,
+                                                          labels_fmt=self.__labels_fmt)
 

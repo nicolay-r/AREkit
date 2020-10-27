@@ -1,5 +1,4 @@
 from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
-from arekit.contrib.experiments.common import get_neutral_annotation_root
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
@@ -26,9 +25,7 @@ class RuAttitudesExperiment(CVBasedExperiment):
                                                     experiment_io=experiment_io)
 
         doc_ops = RuAttitudesDocumentOperations(data_io=data_io)
-
-        opin_ops = RuAttitudesOpinionOperations(synonyms=data_io.SynonymsCollection,
-                                                neutral_root=get_neutral_annotation_root(self))
+        opin_ops = RuAttitudesOpinionOperations()
 
         ru_attitudes = ra_instance
         if ra_instance is None:
