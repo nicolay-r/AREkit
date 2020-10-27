@@ -22,6 +22,10 @@ class BaseNeutralAnnotator(object):
         self.__synonyms = None
 
     @property
+    def Name(self):
+        raise NotImplementedError()
+
+    @property
     def _OpinOps(self):
         assert(isinstance(self.__opin_ops, OpinionOperations))
         return self.__opin_ops

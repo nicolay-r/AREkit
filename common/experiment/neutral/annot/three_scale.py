@@ -25,6 +25,10 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         self.__labels_fmt = ThreeScaleLabelsFormatter()
         self.__distance_in_terms_between_bounds = distance_in_terms_between_bounds
 
+    @property
+    def Name(self):
+        return u"annot-3-scale"
+
     # region private methods
 
     def __create_opinions_for_extraction(self, doc_id, data_type):
