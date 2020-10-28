@@ -1,4 +1,5 @@
 from arekit.contrib.experiments.rusentrel.folding_type import FoldingType
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils
 
 
 def folding_type_to_str(folding_type):
@@ -8,3 +9,14 @@ def folding_type_to_str(folding_type):
     if folding_type == FoldingType.CrossValidation:
         return u"cv"
 
+
+def get_rusentrel_inds(rusentrel_version):
+    """ Provides all news_inds utilized in RuSentRel collection
+    """
+
+    # TODO. Provide RuSentRelVersion
+    train_doc_ids = list(RuSentRelIOUtils.iter_train_indices())
+    test_doc_ids = list(RuSentRelIOUtils.iter_test_indices())
+    all_doc_ids = train_doc_ids + test_doc_ids
+
+    return train_doc_ids, test_doc_ids, all_doc_ids

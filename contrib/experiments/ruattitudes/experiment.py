@@ -1,11 +1,11 @@
-from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 
 
-class RuAttitudesExperiment(CVBasedExperiment):
+class RuAttitudesExperiment(BaseExperiment):
     """ Application of distant supervision, especially for pretraining purposes.
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """

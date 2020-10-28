@@ -5,9 +5,10 @@ from os.path import exists
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.cv_based.opinions import CVBasedOpinionOperations
+from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel.labels_formatter import RuSentRelNeutralLabelsFormatter
+from arekit.contrib.experiments.rusentrel.utils import get_rusentrel_inds
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
@@ -18,16 +19,16 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class RuSentrelOpinionOperations(CVBasedOpinionOperations):
+class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, data_io, experiment_io, version, rusentrel_news_ids):
+    def __init__(self, data_io, experiment_io, version):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(version, RuSentRelVersions))
-        assert(isinstance(rusentrel_news_ids, set))
 
         super(RuSentrelOpinionOperations, self).__init__()
 
-        self.__news_ids = rusentrel_news_ids
+        _, _, self.__doc_ids_to_cmp = get_rusentrel_inds(version)
+
         self.__eval_on_rusentrel_docs_key = True
 
         self.__experiment_io = experiment_io
@@ -37,24 +38,10 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         self.__neutral_labels_fmt = RuSentRelNeutralLabelsFormatter()
         self.__version = version
 
-    # region property
-
-    @property
-    def NewsIDs(self):
-        return self.__news_ids
-
-    # endregion
-
     # region CVBasedOperations
 
-    def get_doc_ids_set_to_neutrally_annotate(self):
-        # Note:
-        # We provide neutral annotation for every
-        # document of RuSentRelCollection.
-        return self.__news_ids
-
-    def get_doc_ids_set_to_compare(self):
-        return self.__news_ids
+    def __get_doc_ids_set_to_compare(self):
+        return self.__doc_ids_to_cmp
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
@@ -80,7 +67,7 @@ class RuSentrelOpinionOperations(CVBasedOpinionOperations):
         assert(isinstance(epoch_index, int))
 
         opinions_cmp_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
-            doc_ids=filter(lambda doc_id: doc_id in self.get_doc_ids_set_to_compare(), doc_ids),
+            doc_ids=filter(lambda doc_id: doc_id in self.__get_doc_ids_set_to_compare(), doc_ids),
             read_etalon_collection_func=lambda doc_id: self.read_etalon_opinion_collection(doc_id=doc_id),
             read_result_collection_func=lambda doc_id: self.__load_result(data_type=data_type,
                                                                           doc_id=doc_id,

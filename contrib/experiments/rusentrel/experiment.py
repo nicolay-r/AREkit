@@ -1,17 +1,17 @@
 import logging
 
-from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiments.rusentrel.folding_type import FoldingType
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
-from arekit.contrib.experiments.rusentrel.utils import folding_type_to_str
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
+from arekit.contrib.experiments.rusentrel.utils import folding_type_to_str, get_rusentrel_inds
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class RuSentRelExperiment(CVBasedExperiment):
+class RuSentRelExperiment(BaseExperiment):
     """
     Represents a cv-based experiment over RuSentRel collection,
     which supports train/test separation.
@@ -33,13 +33,12 @@ class RuSentRelExperiment(CVBasedExperiment):
         logger.info("Create opinion oprations ... ")
         opin_ops = RuSentrelOpinionOperations(data_io=data_io,
                                               version=version,
-                                              experiment_io=self.ExperimentIO,
-                                              rusentrel_news_ids=self.get_rusentrel_inds())
+                                              experiment_io=self.ExperimentIO)
 
         logger.info("Create document operations ... ")
         doc_ops = RuSentrelDocumentOperations(data_io=data_io,
                                               folding_type=folding_type,
-                                              rusentrel_version=version)
+                                              version=version)
 
         # Setup
         self._set_opin_operations(opin_ops)
@@ -49,8 +48,4 @@ class RuSentRelExperiment(CVBasedExperiment):
     def Name(self):
         return u"rsr-{version}-{format}".format(version=self.__version.value,
                                                 format=folding_type_to_str(self.__folding_type))
-
-    @staticmethod
-    def get_rusentrel_inds():
-        return set(RuSentRelIOUtils.iter_collection_indices())
 

@@ -27,7 +27,7 @@ class RuAttitudesDocumentOperations(DocumentOperations):
             for doc_id in self.__ru_attitudes.iterkeys():
                 yield doc_id
 
-    def create_parse_options(self):
+    def _create_parse_options(self):
         assert(isinstance(self.__data_io, SerializationData))
         return RuAttitudesParseOptions(stemmer=self.__data_io.Stemmer,
                                        frame_variants_collection=self.__data_io.FrameVariantCollection)

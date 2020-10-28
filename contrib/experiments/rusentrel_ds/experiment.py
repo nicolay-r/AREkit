@@ -1,5 +1,6 @@
 import logging
-from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
+
+from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
@@ -16,7 +17,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 logger = logging.getLogger(__name__)
 
 
-class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
+class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     """
     IO for the experiment with distant supervision for sentiment attitude extraction task.
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
@@ -38,31 +39,29 @@ class RuSentRelWithRuAttitudesExperiment(CVBasedExperiment):
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io,
                                                                  experiment_io=experiment_io)
 
-        rusentrel_news_inds = RuSentRelExperiment.get_rusentrel_inds()
         rusentrel_doc = RuSentrelDocumentOperations(data_io=data_io,
-                                                    rusentrel_version=rusentrel_version,
+                                                    version=rusentrel_version,
                                                     folding_type=folding_type)
         ruattitudes_doc = RuAttitudesDocumentOperations(data_io=data_io)
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(rusentrel_doc=rusentrel_doc,
-                                                             rusentrel_news_ids=rusentrel_news_inds,
                                                              ruattitudes_doc=ruattitudes_doc)
 
         rusentrel_op = RuSentrelOpinionOperations(data_io=data_io,
                                                   version=rusentrel_version,
-                                                  experiment_io=self.ExperimentIO,
-                                                  rusentrel_news_ids=rusentrel_news_inds)
+                                                  experiment_io=self.ExperimentIO)
 
         ruattitudes_op = RuAttitudesOpinionOperations()
 
         opin_ops = RuSentrelWithRuAttitudesOpinionOperations(synonyms=data_io.SynonymsCollection,
                                                              rusentrel_op=rusentrel_op,
-                                                             ruattitudes_op=ruattitudes_op)
+                                                             ruattitudes_op=ruattitudes_op,
+                                                             rusentrel_doc_ids=rusentrel_doc.get_doc_ids())
 
         ru_attitudes = ra_instance
         if ra_instance is None:
             ru_attitudes = read_ruattitudes_in_memory(
                 version=ruattitudes_version,
-                used_doc_ids_set=rusentrel_news_inds)
+                used_doc_ids_set=rusentrel_doc.get_doc_ids())
 
         # Providing RuAttitudes instance into doc and opins instances.
         ruattitudes_doc.set_ru_attitudes(ru_attitudes)
