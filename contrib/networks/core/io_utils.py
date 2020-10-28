@@ -34,7 +34,7 @@ class NetworkIOUtils(BaseIOUtils):
         src_dir = self.get_experiment_sources_dir()
 
         e_name = u"{name}_{scale}l".format(name=self._experiment.Name,
-                                           scale=src_dir)
+                                           scale=str(self._experiment.DataIO.LabelsScaler.LabelsCount))
 
         return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
                                                         experiments_dir=src_dir)
