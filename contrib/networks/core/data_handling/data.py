@@ -68,12 +68,12 @@ class HandledData(object):
             raise Exception("Data has not been initialized/serialized")
 
         # Reading embedding.
-        npz_embedding_data = np.load(experiment.ExperimentIO.get_embedding_filepath(experiment))
+        npz_embedding_data = np.load(experiment.ExperimentIO.get_embedding_filepath())
         config.set_term_embedding(npz_embedding_data['arr_0'])
         logger.info("Embedding readed [size={}]".format(config.TermEmbeddingMatrix.shape))
 
         # Reading vocabulary
-        npz_vocab_data = np.load(experiment.ExperimentIO.get_vocab_filepath(experiment))
+        npz_vocab_data = np.load(experiment.ExperimentIO.get_vocab_filepath())
         vocab = dict(npz_vocab_data['arr_0'])
         logger.info("Vocabulary readed [size={}]".format(len(vocab)))
 
@@ -133,8 +133,7 @@ class HandledData(object):
     @staticmethod
     def __check_files_existed(experiment):
         for data_type in experiment.DocumentOperations.iter_supported_data_types():
-            if not experiment.ExperimentIO.check_files_existance(data_type=data_type,
-                                                                 experiment=experiment):
+            if not experiment.ExperimentIO.check_files_existance(data_type=data_type):
                 return False
         return True
 
@@ -145,8 +144,7 @@ class HandledData(object):
     def __read_data_type(self, data_type, experiment, bags_collection_type, vocab, config):
 
         samples_reader = NetworkInputSampleReader.from_tsv(
-            filepath=experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type,
-                                                                       experiment=experiment),
+            filepath=experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(

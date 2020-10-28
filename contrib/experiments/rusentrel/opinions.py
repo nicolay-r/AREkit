@@ -87,7 +87,6 @@ class RuSentrelOpinionOperations(OpinionOperations):
     def __try_load_neutral(self, doc_id, data_type):
 
         filepath = self.__experiment_io.create_neutral_opinion_collection_filepath(
-            experiment=None,
             doc_id=doc_id,
             data_type=data_type)
 
@@ -105,7 +104,6 @@ class RuSentrelOpinionOperations(OpinionOperations):
         assert(isinstance(self.__experiment_io, NetworkIOUtils))
 
         filepath = self.__experiment_io.create_result_opinion_collection_filepath(
-            experiment=None,
             data_type=data_type,
             doc_id=doc_id,
             epoch_index=epoch_index)

@@ -28,7 +28,7 @@ class NetworksExperimentInputSerializer(CVBasedExperimentEngine):
 
     def _before_running(self):
         # Mark the directory as selected for serialization process.
-        mark_dir_for_serialization(target_dir=self._experiment.ExperimentIO.get_target_dir(self._experiment),
+        mark_dir_for_serialization(target_dir=self._experiment.ExperimentIO.get_target_dir(),
                                    logger=self._logger,
                                    skip_if_folder_exists=self.__skip_folder_if_exists)
 

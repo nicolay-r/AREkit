@@ -18,8 +18,7 @@ class BertExperimentInputSerializer(CVBasedExperimentEngine):
                  sample_formatter_type,
                  entity_formatter,
                  label_scaler,
-                 write_sample_header=True,
-                 io_utils=BertIOUtils):
+                 write_sample_header=True):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(skip_if_folder_exists, bool))
         # TODO. Move to data_io (after data_io refactoring)
@@ -27,8 +26,6 @@ class BertExperimentInputSerializer(CVBasedExperimentEngine):
         super(BertExperimentInputSerializer, self).__init__(experiment)
 
         self.__skip_if_folder_exists = skip_if_folder_exists
-        self.__io_utils = io_utils
-        # TODO. Move to data_io (after data_io refactoring)
         self.__write_sample_header = write_sample_header
         self.__entity_formatter = entity_formatter
         self.__sample_formatter_type = sample_formatter_type
@@ -55,8 +52,8 @@ class BertExperimentInputSerializer(CVBasedExperimentEngine):
 
         # Perform data serialization to *.tsv format.
         BaseInputEncoder.to_tsv(
-            sample_filepath=BertIOUtils.get_input_sample_filepath(experiment=self._experiment, data_type=data_type),
-            opinion_filepath=BertIOUtils.get_input_opinions_filepath(experiment=self._experiment, data_type=data_type),
+            sample_filepath=self._experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),
+            opinion_filepath=self._experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type),
             opinion_formatter=BaseOpinionsFormatter(data_type),
             opinion_provider=OpinionProvider.from_experiment(
                 experiment=self._experiment,
@@ -80,7 +77,7 @@ class BertExperimentInputSerializer(CVBasedExperimentEngine):
 
     def _before_running(self):
         # Mark the directory as selected for serialization process.
-        mark_dir_for_serialization(target_dir=self.__io_utils.get_target_dir(self._experiment),
+        mark_dir_for_serialization(target_dir=self._experiment.ExperimentIO.get_target_dir(self._experiment),
                                    logger=self._logger,
                                    skip_if_folder_exists=self.__skip_if_folder_exists)
 

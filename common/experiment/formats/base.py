@@ -18,7 +18,7 @@ class BaseExperiment(object):
         # The problem is that in data_io, opinions depends on experiment.
         # assert(issubclass(experiment_io, BaseIOUtils))
         self.__experiment_data = data_io
-        self.__experiment_io = experiment_io
+        self.__experiment_io = experiment_io(self)
         self.__opin_operations = None
         self.__doc_operations = None
 

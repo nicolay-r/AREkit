@@ -4,8 +4,7 @@ from arekit.common.model.model_io import BaseModelIO
 
 class BertIOUtils(BaseIOUtils):
 
-    @classmethod
-    def get_target_dir(cls, experiment):
+    def get_target_dir(self):
         """ Provides a main directory for input
 
             NOTE:
@@ -14,7 +13,7 @@ class BertIOUtils(BaseIOUtils):
             as model affects on text_b, entities representation, etc.
         """
 
-        model_io = experiment.DataIO.ModelIO
+        model_io = self._experiment.DataIO.ModelIO
         assert(isinstance(model_io, BaseModelIO))
 
         return model_io.get_model_dir()

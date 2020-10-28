@@ -5,7 +5,6 @@ from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocument
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
-from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
 from arekit.contrib.experiments.rusentrel.folding_type import FoldingType
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiments.rusentrel.utils import folding_type_to_str
