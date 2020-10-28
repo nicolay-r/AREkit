@@ -1,5 +1,5 @@
 from arekit.common.experiment.engine.utils import setup_logger
-from arekit.common.experiment.formats.cv_based.experiment import CVBasedExperiment
+from arekit.common.experiment.formats.base import BaseExperiment
 
 
 class CVBasedExperimentEngine(object):
@@ -9,7 +9,7 @@ class CVBasedExperimentEngine(object):
     """
 
     def __init__(self, experiment):
-        assert(isinstance(experiment, CVBasedExperiment))
+        assert(isinstance(experiment, BaseExperiment))
         self._experiment = experiment
         self._logger = setup_logger()
 

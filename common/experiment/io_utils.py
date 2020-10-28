@@ -6,11 +6,16 @@ from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
+# TODO. Make this non static
 class BaseIOUtils(object):
     """ Represents base experiment utils for input/output for:
         samples -- data that utilized for experiments;
         results -- evaluation of experiments.
     """
+
+    # TODO. Init as follows.
+    def __init__(self, experiment):
+        self.__experiment = experiment
 
     @classmethod
     def get_target_dir(cls, experiment):

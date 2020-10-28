@@ -53,7 +53,7 @@ class BaseNeutralAnnotator(object):
     # endregion
 
     def _iter_doc_its_to_annotate(self):
-        return filter(lambda doc_id: doc_id in self._OpinOps.get_doc_ids_set_to_neutrally_annotate(),
+        return filter(lambda doc_id: doc_id in self._DocOps.get_doc_ids_set_to_neutrally_annotate(),
                       self.__iter_all_doc_ids())
 
     def initialize(self, opin_ops, doc_ops, synonyms):

@@ -11,11 +11,11 @@ class CVBasedDocumentOperations(DocumentOperations):
         assert(isinstance(folding_algo, BaseCVFolding))
         self.__folding_algo = folding_algo
 
-    def get_data_indices_to_fold(self):
+    def get_doc_ids_set_to_fold(self):
         raise NotImplementedError()
 
     def iter_news_indices(self, data_type):
-        data_indices = self.get_data_indices_to_fold()
+        data_indices = self.get_doc_ids_set_to_fold()
 
         data_types_splits = self.__folding_algo.get_cv_split(
             doc_ids_iter=data_indices,
