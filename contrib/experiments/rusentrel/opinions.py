@@ -80,6 +80,15 @@ class RuSentrelOpinionOperations(OpinionOperations):
         return self.__try_load_neutral(doc_id=doc_id,
                                        data_type=data_type)
 
+    def save_neutral_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+        filepath = self.__experiment_io.create_neutral_opinion_collection_filepath(
+            doc_id=doc_id,
+            data_type=data_type)
+
+        self.__opinion_formatter.save_to_file(collection=collection,
+                                              filepath=filepath,
+                                              labels_formatter=labels_fmt)
+
     # endregion
 
     # region private provider methods

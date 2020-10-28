@@ -1,5 +1,4 @@
 from arekit.common.experiment.data.base import DataIO
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
 class TrainingData(DataIO):
@@ -17,7 +16,3 @@ class TrainingData(DataIO):
         """ Provides directory for model serialized output results.
         """
         raise NotImplementedError()
-
-    def get_model_results_root(self):
-        return get_path_of_subfolder_in_experiments_dir(subfolder_name=self.__model_name,
-                                                        experiments_dir=self.get_experiment_results_dir())

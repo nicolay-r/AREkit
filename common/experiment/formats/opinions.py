@@ -12,7 +12,7 @@ class OpinionOperations(object):
         """
         raise NotImplementedError()
 
-    def save_neutral_opinion_collection(self, collection, labels_fmt):
+    def save_neutral_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
         raise NotImplementedError()
 
     def read_etalon_opinion_collection(self, doc_id):

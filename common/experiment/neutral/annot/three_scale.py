@@ -4,7 +4,6 @@ from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotati
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
-from arekit.common.opinions.formatter import OpinionCollectionsFormatter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -68,5 +67,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
                                                                data_type=data_type)
 
             self._OpinOps.save_neutral_opinion_collection(collection=collection,
-                                                          labels_fmt=self.__labels_fmt)
+                                                          labels_fmt=self.__labels_fmt,
+                                                          doc_id=doc_id,
+                                                          data_type=data_type)
 

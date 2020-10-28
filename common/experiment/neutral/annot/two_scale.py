@@ -6,7 +6,6 @@ from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.experiment.data_type import DataType
-from arekit.common.opinions.formatter import OpinionCollectionsFormatter
 
 logger = logging.getLogger(__name__)
 
