@@ -26,19 +26,31 @@ class BaseIOUtils(object):
     def _get_cv_index(self):
         return self._experiment.DataIO.CVFoldingAlgorithm.IterationIndex
 
+    def _filename_template(self, data_type):
+        assert(isinstance(data_type, DataType))
+        return u"{data_type}-{cv_index}".format(data_type=data_type.name.lower(),
+                                                cv_index=self._get_cv_index())
+
+    @staticmethod
+    def _get_filepath(out_dir, template, prefix):
+        assert(isinstance(template, unicode))
+        assert(isinstance(prefix, unicode))
+        filepath = join(out_dir, BaseIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+        return filepath
+
     # endregion
 
     # region public methods
 
     def get_input_opinions_filepath(self, data_type):
-        template = self.__filename_template(data_type=data_type)
-        return self.__get_filepath(out_dir=self.get_target_dir(),
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.get_target_dir(),
                                    template=template,
                                    prefix=BaseOpinionsFormatter.formatter_type_log_name())
 
     def get_input_sample_filepath(self, data_type):
-        template = self.__filename_template(data_type=data_type)
-        return self.__get_filepath(out_dir=self.get_target_dir(),
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.get_target_dir(),
                                    template=template,
                                    prefix=BaseSampleFormatter.formatter_type_log_name())
 
@@ -60,20 +72,8 @@ class BaseIOUtils(object):
 
     # region private methods
 
-    def __filename_template(self, data_type):
-        assert(isinstance(data_type, DataType))
-        return u"{data_type}-{cv_index}".format(data_type=data_type.name.lower(),
-                                                cv_index=self._get_cv_index())
-
     @staticmethod
-    def __get_filepath(out_dir, template, prefix):
-        assert(isinstance(template, unicode))
-        assert(isinstance(prefix, unicode))
-        filepath = join(out_dir, BaseIOUtils.__generate_filename(template=template, prefix=prefix))
-        return filepath
-
-    @staticmethod
-    def __generate_filename(template, prefix):
+    def __generate_tsv_archive_filename(template, prefix):
         return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
 
     def __get_neutral_annotation_dir(self):

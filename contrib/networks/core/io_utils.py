@@ -51,13 +51,13 @@ class NetworkIOUtils(BaseIOUtils):
 
     def get_output_model_results_filepath(self, data_type, epoch_index):
 
-        f_name_template = self.__filename_template(data_type=data_type)
+        f_name_template = self._filename_template(data_type=data_type)
 
         result_template = u"".join([f_name_template, u'-e{e_index}'.format(e_index=epoch_index)])
 
-        return self.__get_filepath(out_dir=self.__get_model_dir(),
-                                   template=result_template,
-                                   prefix=u"result")
+        return self._get_filepath(out_dir=self.__get_model_dir(),
+                                  template=result_template,
+                                  prefix=u"result")
 
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         assert(isinstance(epoch_index, int))
