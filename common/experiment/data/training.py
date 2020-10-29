@@ -11,8 +11,3 @@ class TrainingData(DataIO):
     @property
     def Evaluator(self):
         raise NotImplementedError()
-
-    def get_experiment_results_dir(self):
-        """ Provides directory for model serialized output results.
-        """
-        raise NotImplementedError()
