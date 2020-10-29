@@ -31,6 +31,11 @@ class CVBasedExperimentEngine(object):
 
         self._before_running()
 
-        for cv_index in range(self._experiment.DataIO.CVFoldingAlgorithm.CVCount):
+        cv_count = self._experiment.DataIO.CVFoldingAlgorithm.CVCount
+
+        if cv_count is None:
+            raise Exception(u'cv_count has not been initialized!')
+
+        for cv_index in range(cv_count):
             self._experiment.DataIO.CVFoldingAlgorithm.set_iteration_index(cv_index)
             self._handle_cv_index(cv_index)
