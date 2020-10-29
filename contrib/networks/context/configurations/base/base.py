@@ -164,7 +164,6 @@ class DefaultNetworkConfig(object):
         self.__bag_size = value
 
     def set_term_embedding(self, embedding_matrix):
-        assert(self.__term_embedding_matrix is None)
         self.__term_embedding_matrix = embedding_matrix
 
     def set_class_weights(self, class_weights):
