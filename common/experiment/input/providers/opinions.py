@@ -1,8 +1,8 @@
 import collections
 
+from arekit.common.experiment.extract.opinions import extract_text_opinions
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
 from arekit.common.dataset.text_opinions.enums import EntityEndType

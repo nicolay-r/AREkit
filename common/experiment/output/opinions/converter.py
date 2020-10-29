@@ -1,7 +1,7 @@
+from arekit.common.experiment.extract.opinions import compose_opinion_collection
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.output.base import BaseOutput
-from arekit.common.experiment.opinions import compose_opinion_collection
 
 from arekit.common.model.labeling.single import SingleLabelsHelper
 
