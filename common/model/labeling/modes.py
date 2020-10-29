@@ -5,12 +5,12 @@ class LabelCalculationMode:
 
     @staticmethod
     def supported(value):
-        for s in LabelCalculationMode.iter_supported():
+        for s in LabelCalculationMode.__iter_supported():
             if s == value:
                 return True
         return False
 
     @staticmethod
-    def iter_supported():
+    def __iter_supported():
         for var_name in dir(LabelCalculationMode):
             yield getattr(LabelCalculationMode, var_name)

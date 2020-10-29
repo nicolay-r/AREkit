@@ -8,7 +8,6 @@ from arekit.common.experiment.output.opinions.writer import save_opinion_collect
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 
 
 def perform_experiment_evaluation(experiment, data_type, epoch_index, labels_formatter):
@@ -21,11 +20,10 @@ def perform_experiment_evaluation(experiment, data_type, epoch_index, labels_for
     assert(isinstance(epoch_index, int))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
-    samples_filepath = NetworkIOUtils.get_input_sample_filepath(experiment=experiment, data_type=data_type)
-    opinions_source = NetworkIOUtils.get_input_opinions_filepath(experiment=experiment, data_type=data_type)
-    result_filepath = NetworkIOUtils.get_output_model_results_filepath(experiment=experiment,
-                                                                       data_type=data_type,
-                                                                       epoch_index=epoch_index)
+    samples_filepath = experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type)
+    opinions_source = experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type)
+    result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
+                                                                                epoch_index=epoch_index)
 
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(

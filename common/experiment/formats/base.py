@@ -13,9 +13,12 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    def __init__(self, data_io):
+    def __init__(self, data_io, experiment_io):
         assert(isinstance(data_io, DataIO))
+        # The problem is that in data_io, opinions depends on experiment.
+        # assert(issubclass(experiment_io, BaseIOUtils))
         self.__experiment_data = data_io
+        self.__experiment_io = experiment_io(self)
         self.__opin_operations = None
         self.__doc_operations = None
 
@@ -27,7 +30,16 @@ class BaseExperiment(object):
 
     @property
     def DataIO(self):
+        """ TODO. Should be renamed
+            Related to extra resources, utlized in experiment organization.
+        """
         return self.__experiment_data
+
+    @property
+    def ExperimentIO(self):
+        """ Filepaths, related to experiment
+        """
+        return self.__experiment_io
 
     @property
     def OpinionOperations(self):

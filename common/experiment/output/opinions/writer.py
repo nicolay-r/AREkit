@@ -5,21 +5,15 @@ from arekit.common.utils import create_dir_if_not_exists
 
 
 def save_opinion_collections(opinion_collection_iter, experiment, data_type, labels_formatter, epoch_index):
-    """
-        opinion_collection_iter: iter
-            iter pairs (news_id, collection)
-        experiment: BaseExperiment
-        data_type: DataType
-    """
     assert(isinstance(experiment, BaseExperiment))
     assert(isinstance(data_type, DataType))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
     assert(isinstance(epoch_index, int))
 
-    for news_id, collection in opinion_collection_iter:
-        filepath = experiment.OpinionOperations.create_result_opinion_collection_filepath(
+    for doc_id, collection in opinion_collection_iter:
+        filepath = experiment.ExperimentIO.create_result_opinion_collection_filepath(
             data_type=data_type,
-            doc_id=news_id,
+            doc_id=doc_id,
             epoch_index=epoch_index)
 
         create_dir_if_not_exists(filepath)

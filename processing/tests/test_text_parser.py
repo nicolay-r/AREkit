@@ -40,12 +40,13 @@ class TestTextParser(unittest.TestCase):
         # Reading synonyms collection.
         synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer)
 
-        for doc_id in RuSentRelIOUtils.iter_collection_indices():
+        version = RuSentRelVersions.V11
+        for doc_id in RuSentRelIOUtils.iter_collection_indices(version):
 
             # Parsing
             news = RuSentRelNews.read_document(doc_id=doc_id,
                                                synonyms=synonyms,
-                                               version=RuSentRelVersions.V11)
+                                               version=version)
 
             # Perform text parsing.
             parsed_news = TextParser.parse_news(news, options)

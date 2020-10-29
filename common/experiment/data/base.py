@@ -4,7 +4,6 @@ from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnno
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.scales.two import TwoLabelScaler
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 from arekit.common.model.model_io import BaseModelIO
 
 
@@ -18,7 +17,7 @@ class DataIO(object):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         self.__labels_scale = labels_scaler
         self.__neutral_annot = self.__init_annotator(labels_scaler)
-        self.__cv_folding_algo = None
+        self.__cv_folding_algo = BaseCVFolding()
         self.__model_io = None
 
     @property
@@ -48,8 +47,6 @@ class DataIO(object):
     def CVFoldingAlgorithm(self):
         """ Algorithm, utilized in order to provide cross-validation split
             for experiment data-types.
-            By default considered as null, and assumes to be initlialized
-            before using in engine, but after experiments initialization creation stage.
         """
         return self.__cv_folding_algo
 
@@ -93,24 +90,3 @@ class DataIO(object):
         """
         assert(isinstance(cv_folding_algo, BaseCVFolding))
         self.__cv_folding_algo = cv_folding_algo
-
-    def get_experiment_sources_dir(self):
-        """ Provides directory for samples.
-        """
-        raise NotImplementedError()
-
-    def get_input_samples_dir(self, experiment_name):
-        """ Provides directory with serialized input data (samples).
-            The path may vary and depends on CVFolding format, i.e.
-                1 -- fixed,
-                >= 1 => cv-based
-        """
-        assert(isinstance(experiment_name, unicode))
-
-        is_fixed = self.CVFoldingAlgorithm.CVCount == 1
-        e_name = u"{name}_{mode}_{scale}l".format(name=experiment_name,
-                                                  mode=u"fixed" if is_fixed else u"cv",
-                                                  scale=self.LabelsScaler.LabelsCount)
-
-        return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
-                                                        experiments_dir=self.get_experiment_sources_dir())

@@ -43,7 +43,9 @@ def progress_bar_defined(iterable, total, desc="", unit="it"):
     return tqdm(iterable=iterable,
                 total=total,
                 desc=desc,
-                ncols=80,
+                ncols=120,
+                position=0,
+                leave=True,
                 unit=unit,
                 miniters=total / 200)
 
@@ -51,5 +53,7 @@ def progress_bar_defined(iterable, total, desc="", unit="it"):
 def progress_bar_iter(iterable, desc="", unit='it'):
     return tqdm(iterable=iterable,
                 desc=desc,
-                ncols=80,
+                position=0,
+                leave=True,
+                ncols=120,
                 unit=unit)

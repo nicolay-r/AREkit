@@ -3,6 +3,7 @@ from os.path import join
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
+from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
 
 
 class BaseIOUtils(object):
@@ -11,38 +12,58 @@ class BaseIOUtils(object):
         results -- evaluation of experiments.
     """
 
-    @classmethod
-    def get_target_dir(cls, experiment):
+    def __init__(self, experiment):
+        self._experiment = experiment
+
+    def get_target_dir(self):
         """ Provides a main directory for input
+            Assumes to be manually implemented for every nested base_io utils.
         """
-        return experiment.DataIO.get_input_samples_dir(experiment.Name)
+        raise NotImplementedError()
 
-    @classmethod
-    def get_input_opinions_filepath(cls, experiment, data_type):
-        template = cls.__filename_template(data_type=data_type,
-                                           experiment=experiment)
-        return cls.__get_filepath(out_dir=cls.get_target_dir(experiment),
-                                  template=template,
-                                  prefix=BaseOpinionsFormatter.formatter_type_log_name())
+    # region protected methods
 
-    @classmethod
-    def get_input_sample_filepath(cls, experiment, data_type):
-        template = cls.__filename_template(data_type=data_type, experiment=experiment)
-        return cls.__get_filepath(out_dir=cls.get_target_dir(experiment),
-                                  template=template,
-                                  prefix=BaseSampleFormatter.formatter_type_log_name())
+    def _get_cv_index(self):
+        return self._experiment.DataIO.CVFoldingAlgorithm.IterationIndex
 
-    @staticmethod
-    def _get_cv_index(experiment):
-        return experiment.DataIO.CVFoldingAlgorithm.IterationIndex
+    # endregion
+
+    # region public methods
+
+    def get_input_opinions_filepath(self, data_type):
+        template = self.__filename_template(data_type=data_type)
+        return self.__get_filepath(out_dir=self.get_target_dir(),
+                                   template=template,
+                                   prefix=BaseOpinionsFormatter.formatter_type_log_name())
+
+    def get_input_sample_filepath(self, data_type):
+        template = self.__filename_template(data_type=data_type)
+        return self.__get_filepath(out_dir=self.get_target_dir(),
+                                   template=template,
+                                   prefix=BaseSampleFormatter.formatter_type_log_name())
+
+    def create_neutral_opinion_collection_filepath(self, doc_id, data_type):
+        assert(isinstance(doc_id, int))
+        assert(isinstance(data_type, DataType))
+
+        annot_dir = self.__get_neutral_annotation_dir()
+
+        if annot_dir is None:
+            raise NotImplementedError("Neutral root was not provided!")
+
+        filename = u"art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
+                                                           d_type=data_type.name)
+
+        return join(annot_dir, filename)
+
+    # endregion
 
     # region private methods
 
-    @staticmethod
-    def __filename_template(data_type, experiment):
+    def __filename_template(self, data_type):
         assert(isinstance(data_type, DataType))
         return u"{data_type}-{cv_index}".format(data_type=data_type.name.lower(),
-                                                cv_index=BaseIOUtils._get_cv_index(experiment))
+                                                cv_index=self._get_cv_index())
 
     @staticmethod
     def __get_filepath(out_dir, template, prefix):
@@ -54,5 +75,9 @@ class BaseIOUtils(object):
     @staticmethod
     def __generate_filename(template, prefix):
         return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
+
+    def __get_neutral_annotation_dir(self):
+        return get_path_of_subfolder_in_experiments_dir(experiments_dir=self.get_target_dir(),
+                                                        subfolder_name=self._experiment.DataIO.NeutralAnnotator.Name)
 
     # endregion

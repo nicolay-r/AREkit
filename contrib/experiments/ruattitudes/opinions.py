@@ -1,20 +1,13 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.labels.base import NeutralLabel
-from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
 
 class RuAttitudesOpinionOperations(OpinionOperations):
 
-    def __init__(self, synonyms, neutral_root):
-        assert(isinstance(synonyms, SynonymsCollection))
-
+    def __init__(self):
         super(RuAttitudesOpinionOperations, self).__init__()
-
-        self._set_synonyms_collection(synonyms)
-        self._set_neutral_root(neutral_root)
 
         self.__ru_attitudes = None
 
@@ -41,12 +34,10 @@ class RuAttitudesOpinionOperations(OpinionOperations):
         return self.__neutrally_annot_doc_ids
 
     def read_etalon_opinion_collection(self, doc_id):
-        assert(isinstance(doc_id, int))
+        # This operation is not supported in this experiment.
+        raise NotImplementedError()
 
-        return OpinionCollection.init_as_custom(opinions=self.__get_opinions_in_news(doc_id),
-                                                synonyms=self._synonyms)
-
-    def read_neutral_opinion_collection(self, doc_id, data_type):
+    def try_read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
 

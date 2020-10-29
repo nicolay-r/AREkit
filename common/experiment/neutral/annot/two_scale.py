@@ -6,7 +6,6 @@ from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.experiment.data_type import DataType
-from arekit.common.opinions.formatter import OpinionCollectionsFormatter
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +20,10 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
     def __init__(self):
         super(TwoScaleNeutralAnnotator, self).__init__()
         self.__labels_fmt = ThreeScaleLabelsFormatter()
+
+    @property
+    def Name(self):
+        return u"annot-2-scale"
 
     # region static methods
 
@@ -47,17 +50,15 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     # region public methods
 
-    def create_collection(self, data_type, opinion_formatter):
+    def create_collection(self, data_type):
         assert(isinstance(data_type, DataType))
-        assert(isinstance(opinion_formatter, OpinionCollectionsFormatter))
 
         if data_type == DataType.Train:
             return
 
         for doc_id, filepath in self._iter_docs(data_type):
-            opinion_formatter.save_to_file(
+            self._OpinOps.save_neutral_opinion_collection(
                 collection=self.__create_opinions_for_classification(doc_id),
-                filepath=filepath,
-                labels_formatter=self.__labels_fmt)
+                labels_fmt=self.__labels_fmt)
 
     # endregion

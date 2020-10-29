@@ -12,7 +12,6 @@ from arekit.contrib.networks.core.callback.base import Callback
 from arekit.contrib.networks.core.callback.model_eval import perform_experiment_evaluation
 from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
@@ -169,9 +168,8 @@ class NeuralNetworkCallback(Callback):
         assert(isinstance(output, NetworkOutputEncoder))
 
         # Crate filepath
-        result_filepath = NetworkIOUtils.get_output_model_results_filepath(experiment=self.__experiment,
-                                                                           data_type=data_type,
-                                                                           epoch_index=epoch_index)
+        result_filepath = self.__experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
+                                                                                           epoch_index=epoch_index)
 
         # Save output
         output.to_tsv(filepath=result_filepath)

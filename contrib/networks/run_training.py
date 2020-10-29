@@ -15,7 +15,6 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
 
     def __init__(self, create_config, bags_collection_type, experiment, load_model,
                  create_network_func,
-                 io_utils,
                  prepare_model_root=True,
                  common_callback_modification_func=None,
                  custom_config_modification_func=None,
@@ -23,7 +22,6 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
         assert(callable(create_network_func))
         assert(callable(create_config))
         assert(issubclass(bags_collection_type, BagsCollection))
-        assert(issubclass(io_utils, NetworkIOUtils))
         assert(isinstance(load_model, bool))
 
         super(NetworksTrainingEngine, self).__init__(experiment)
@@ -40,13 +38,10 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
         self.__custom_config_modification_func = custom_config_modification_func
         self.__common_config_modification_func = common_config_modification_func
 
-        self.__io_utils = io_utils
-
     def __get_model_dir(self):
         return self._experiment.DataIO.ModelIO.get_model_dir()
 
     # region protected methods
-
 
     def _handle_cv_index(self, cv_index):
         """ Run single CV-index experiment.

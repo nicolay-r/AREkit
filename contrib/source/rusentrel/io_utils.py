@@ -49,29 +49,43 @@ class RuSentRelIOUtils(ZipArchiveUtils):
         other_dir = u'etalon' if is_opinion else u'test'
         return other_dir if doc_id >= RuSentRelIOUtils.__sep_doc_id else u"train"
 
+    @staticmethod
+    def __is_supported(version):
+        assert(isinstance(version, RuSentRelVersions))
+        if version != RuSentRelVersions.V11:
+            raise NotImplementedError("Collection does not supported")
+        return True
+
     # region public methods
 
     @staticmethod
-    def iter_test_indices():
-        missed = [70]
-        for i in xrange(RuSentRelIOUtils.__sep_doc_id, 76):
-            if i in missed:
-                continue
-            yield i
+    def iter_test_indices(version):
+        assert(RuSentRelIOUtils.__is_supported(version))
+
+        if version == RuSentRelVersions.V11:
+            missed = [70]
+            for i in xrange(RuSentRelIOUtils.__sep_doc_id, 76):
+                if i in missed:
+                    continue
+                yield i
 
     @staticmethod
-    def iter_train_indices():
-        missed = [9, 22, 26]
-        for i in xrange(1, RuSentRelIOUtils.__sep_doc_id):
-            if i in missed:
-                continue
-            yield i
+    def iter_train_indices(version):
+        assert(RuSentRelIOUtils.__is_supported(version))
+
+        if version == RuSentRelVersions.V11:
+            missed = [9, 22, 26]
+            for i in xrange(1, RuSentRelIOUtils.__sep_doc_id):
+                if i in missed:
+                    continue
+                yield i
 
     @staticmethod
-    def iter_collection_indices():
-        for index in RuSentRelIOUtils.iter_train_indices():
+    def iter_collection_indices(version):
+        assert(RuSentRelIOUtils.__is_supported(version))
+        for index in RuSentRelIOUtils.iter_train_indices(version):
             yield index
-        for index in RuSentRelIOUtils.iter_test_indices():
+        for index in RuSentRelIOUtils.iter_test_indices(version):
             yield index
 
     # endregion

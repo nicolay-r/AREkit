@@ -14,7 +14,7 @@ class BaseDocumentStatGenerator(object):
 
     # region abstract protected methods
 
-    def __calc(self, news):
+    def _calc(self, news):
         """ Abstract method that provides quantitative statistic
             for a particular news
         """
@@ -28,7 +28,7 @@ class BaseDocumentStatGenerator(object):
         with open(filepath, 'w') as f:
             for doc_id in doc_ids_iter:
                 news = self.__news_parser_func(doc_id)
-                s_count = self.__calc(news)
+                s_count = self._calc(news)
                 f.write("{}: {}\n".format(doc_id, s_count))
 
     @staticmethod

@@ -16,7 +16,6 @@ from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingO
 from arekit.contrib.networks.core.input.formatters.sample import NetworkSampleFormatter
 from arekit.contrib.networks.core.input.providers.text.single import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
 
 logger = logging.getLogger(__name__)
@@ -54,8 +53,8 @@ class NetworkInputEncoder(object):
 
         # Encoding input
         BaseInputEncoder.to_tsv(
-            sample_filepath=NetworkIOUtils.get_input_sample_filepath(experiment=experiment, data_type=data_type),
-            opinion_filepath=NetworkIOUtils.get_input_opinions_filepath(experiment=experiment, data_type=data_type),
+            sample_filepath=experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),
+            opinion_filepath=experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type),
             opinion_formatter=BaseOpinionsFormatter(data_type),
             opinion_provider=OpinionProvider.from_experiment(
                 experiment=experiment,
@@ -85,7 +84,7 @@ class NetworkInputEncoder(object):
 
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
-        embedding_filepath = NetworkIOUtils.get_embedding_filepath(experiment)
+        embedding_filepath = experiment.ExperimentIO.get_embedding_filepath()
         logger.info("Saving embedding [size={shape}]: {filepath}".format(
             shape=embedding_matrix.shape,
             filepath=embedding_filepath))
@@ -93,7 +92,7 @@ class NetworkInputEncoder(object):
 
         # Save vocabulary
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
-        vocab_filepath = NetworkIOUtils.get_vocab_filepath(experiment)
+        vocab_filepath = experiment.ExperimentIO.get_vocab_filepath()
         logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
                                                                          filepath=vocab_filepath))
         np.savez(vocab_filepath, vocab)
