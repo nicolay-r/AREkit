@@ -33,7 +33,7 @@ class DataIO(object):
             The latter is important in Neural Network training process, when there is
             a need to obtain model root directory.
         """
-        return None
+        return self.__model_io
 
     @property
     def NeutralAnnotator(self):
