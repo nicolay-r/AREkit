@@ -57,7 +57,8 @@ class NetworkInputEncoder(object):
             opinion_filepath=experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type),
             opinion_formatter=BaseOpinionsFormatter(data_type),
             opinion_provider=OpinionProvider.from_experiment(
-                experiment=experiment,
+                doc_ops=experiment.DocumentOperations,
+                opin_ops=experiment.OpinionOperations,
                 data_type=data_type,
                 iter_news_ids=parsed_news_collection.iter_news_ids(),
                 terms_per_context=terms_per_context,
