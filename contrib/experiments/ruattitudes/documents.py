@@ -35,4 +35,8 @@ class RuAttitudesDocumentOperations(DocumentOperations):
     def iter_supported_data_types(self):
         yield DataType.Train
 
+    def get_doc_ids_set_to_neutrally_annotate(self):
+        yield
+        return
+
     # endregion

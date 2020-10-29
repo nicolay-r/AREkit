@@ -34,8 +34,7 @@ class RuAttitudesOpinionOperations(OpinionOperations):
         return self.__neutrally_annot_doc_ids
 
     def read_etalon_opinion_collection(self, doc_id):
-        # This operation is not supported in this experiment.
-        raise NotImplementedError()
+        return self.__get_opinions_in_news(doc_id=doc_id)
 
     def try_read_neutral_opinion_collection(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
