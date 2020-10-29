@@ -4,6 +4,7 @@ import gzip
 from arekit.common.experiment import const
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import Label
+from arekit.common.utils import create_dir_if_not_exists
 
 
 class NetworkOutputEncoder(object):
@@ -23,6 +24,8 @@ class NetworkOutputEncoder(object):
         assert(isinstance(labels_scaler, BaseLabelScaler))
 
         col_separator = u'\t'
+
+        create_dir_if_not_exists(filepath)
 
         with gzip.open(filepath, 'wb') as f:
 
