@@ -6,6 +6,7 @@ from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 
 logger = logging.getLogger(__name__)
@@ -15,8 +16,7 @@ class BaseExperiment(object):
 
     def __init__(self, data_io, experiment_io):
         assert(isinstance(data_io, DataIO))
-        # The problem is that in data_io, opinions depends on experiment.
-        # assert(issubclass(experiment_io, BaseIOUtils))
+        assert(issubclass(experiment_io, BaseIOUtils))
         self.__experiment_data = data_io
         self.__experiment_io = experiment_io(self)
         self.__opin_operations = None

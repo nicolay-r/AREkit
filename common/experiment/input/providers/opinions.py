@@ -1,6 +1,7 @@
 import collections
 
-from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.formats.documents import DocumentOperations
+from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.opinions import extract_text_opinions
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
@@ -22,14 +23,16 @@ class OpinionProvider(object):
         self.__text_opinion_helper = text_opinion_helper
 
     @classmethod
-    def from_experiment(cls, experiment, data_type, iter_news_ids, terms_per_context, text_opinion_helper):
-        assert(isinstance(experiment, BaseExperiment))
+    def from_experiment(cls, doc_ops, opin_ops, data_type, iter_news_ids, terms_per_context, text_opinion_helper):
+        assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(iter_news_ids, collections.Iterable))
         assert(isinstance(text_opinion_helper, TextOpinionHelper))
 
         text_opinions = extract_text_opinions(
-            experiment=experiment,
+            doc_ops=doc_ops,
+            opin_ops=opin_ops,
             data_type=data_type,
             terms_per_context=terms_per_context,
             iter_doc_ids=iter_news_ids,

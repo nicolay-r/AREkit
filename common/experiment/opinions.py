@@ -1,7 +1,7 @@
 import collections
 
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.linked.data import LinkedDataWrapper
@@ -39,14 +39,14 @@ def __iter_opinion_collections(opin_operations, doc_id, data_type):
         raise NotImplementedError("data_type '{}' does not supported!".format(data_type))
 
 
-def __iter_linked_wraps(experiment, data_type, iter_doc_ids):
+def __iter_linked_wraps(doc_ops, opin_ops, data_type, iter_doc_ids):
 
     for doc_id in iter_doc_ids:
 
-        news = experiment.DocumentOperations.read_news(doc_id=doc_id)
+        news = doc_ops.read_news(doc_id=doc_id)
         assert(isinstance(news, News))
 
-        opinions_it = __iter_opinion_collections(opin_operations=experiment.OpinionOperations,
+        opinions_it = __iter_opinion_collections(opin_operations=opin_ops,
                                                  doc_id=doc_id,
                                                  data_type=data_type)
 
@@ -58,7 +58,8 @@ def __iter_linked_wraps(experiment, data_type, iter_doc_ids):
 # endregions
 
 
-def extract_text_opinions(experiment,
+def extract_text_opinions(doc_ops,
+                          opin_ops,
                           data_type,
                           iter_doc_ids,
                           text_opinion_helper,
@@ -70,7 +71,8 @@ def extract_text_opinions(experiment,
     NOTE:
     1. Assumes to provide the same label (doc level opinion) onto related text-level opinions.
     """
-    assert(isinstance(experiment, BaseExperiment))
+    assert(isinstance(doc_ops, DocumentOperations))
+    assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(data_type, DataType))
     assert(isinstance(terms_per_context, int))
     assert(isinstance(iter_doc_ids, collections.Iterable))
@@ -79,7 +81,8 @@ def extract_text_opinions(experiment,
 
     linked_text_opinions = LinkedTextOpinionCollection()
 
-    wraps_iter = __iter_linked_wraps(experiment=experiment,
+    wraps_iter = __iter_linked_wraps(doc_ops=doc_ops,
+                                     opin_ops=opin_ops,
                                      data_type=data_type,
                                      iter_doc_ids=iter_doc_ids)
 

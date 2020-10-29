@@ -7,7 +7,6 @@ from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
-from arekit.contrib.bert.core.input.io_utils import BertIOUtils
 from arekit.contrib.bert.factory import create_bert_sample_formatter
 
 
@@ -56,7 +55,8 @@ class BertExperimentInputSerializer(CVBasedExperimentEngine):
             opinion_filepath=self._experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type),
             opinion_formatter=BaseOpinionsFormatter(data_type),
             opinion_provider=OpinionProvider.from_experiment(
-                experiment=self._experiment,
+                doc_ops=self._experiment.DocumentOperations,
+                opin_ops=self._experiment.OpinionOperations,
                 data_type=data_type,
                 iter_news_ids=parsed_news_collection.iter_news_ids(),
                 terms_per_context=self._experiment.DataIO.TermsPerContext,
