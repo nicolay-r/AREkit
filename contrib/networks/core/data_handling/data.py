@@ -9,6 +9,7 @@ from arekit.common.experiment.input.providers.row_ids.multiple import MultipleID
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.labels.base import Label
 from arekit.common.model.labeling.single import SingleLabelsHelper
+from arekit.common.utils import check_files_existance
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
@@ -133,7 +134,15 @@ class HandledData(object):
     @staticmethod
     def __check_files_existed(experiment):
         for data_type in experiment.DocumentOperations.iter_supported_data_types():
-            if not experiment.ExperimentIO.check_files_existance(data_type=data_type):
+
+            filepaths = [
+                experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),
+                experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type),
+                experiment.ExperimentIO.get_vocab_filepath(),
+                experiment.ExperimentIO.get_embedding_filepath()
+            ]
+
+            if not check_files_existance(filepaths=filepaths, logger=logger):
                 return False
         return True
 

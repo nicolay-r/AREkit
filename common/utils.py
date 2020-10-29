@@ -1,3 +1,4 @@
+import collections
 from os import makedirs
 from os.path import join, dirname, exists
 import numpy as np
@@ -61,11 +62,24 @@ def progress_bar_iter(iterable, desc="", unit='it'):
 
 
 def join_dir_with_subfolder_name(subfolder_name, dir):
-    """
-    Returns subfolder in experiments directory
+    """ Returns subfolder in in directory
     """
     assert(isinstance(subfolder_name, unicode))
     assert(isinstance(dir, unicode))
 
     target_dir = join(dir, u"{}/".format(subfolder_name))
     return target_dir
+
+
+def check_files_existance(filepaths, logger):
+    assert(isinstance(filepaths, collections.Iterable))
+
+    result = True
+    for filepath in filepaths:
+        existed = exists(filepath)
+        logger.info("Check existance [{is_existed}]: {fp}".format(is_existed=existed, fp=filepath))
+        if not existed:
+            result = False
+
+    return result
+

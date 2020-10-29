@@ -1,5 +1,5 @@
 import logging
-from os.path import join, exists
+from os.path import join
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.io_utils import BaseIOUtils
@@ -67,26 +67,6 @@ class NetworkIOUtils(BaseIOUtils):
         filepath = join(model_eval_root, u"{}.opin.txt".format(doc_id))
 
         return filepath
-
-    # TODO. Move this outside.
-    def check_files_existance(self, data_type):
-        assert(isinstance(data_type, DataType))
-
-        filepaths = [
-            self.get_input_sample_filepath(data_type=data_type),
-            self.get_input_opinions_filepath(data_type=data_type),
-            self.get_vocab_filepath(),
-            self.get_embedding_filepath()
-        ]
-
-        result = True
-        for filepath in filepaths:
-            existed = exists(filepath)
-            logger.info("Check existance [{is_existed}]: {fp}".format(is_existed=existed, fp=filepath))
-            if not existed:
-                result = False
-
-        return result
 
     # endregion
 
