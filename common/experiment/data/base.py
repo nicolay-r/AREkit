@@ -1,9 +1,5 @@
 from arekit.common.experiment.cv.base import BaseCVFolding
-from arekit.common.experiment.neutral.annot.three_scale import ThreeScaleNeutralAnnotator
-from arekit.common.experiment.neutral.annot.two_scale import TwoScaleNeutralAnnotator
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.experiment.scales.three import ThreeLabelScaler
-from arekit.common.experiment.scales.two import TwoLabelScaler
 from arekit.common.model.model_io import BaseModelIO
 
 
@@ -16,7 +12,6 @@ class DataIO(object):
     def __init__(self, labels_scaler):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         self.__labels_scale = labels_scaler
-        self.__neutral_annot = self.__init_annotator(labels_scaler)
         self.__cv_folding_algo = BaseCVFolding()
         self.__model_io = None
 
@@ -36,14 +31,6 @@ class DataIO(object):
         return self.__model_io
 
     @property
-    def NeutralAnnotator(self):
-        """ Provides an instance of neutral annotator that might be utlized
-            for neutral attitudes labeling for a specific set of documents,
-            declared in a particular experiment (see OpinionOperations).
-        """
-        return self.__neutral_annot
-
-    @property
     def CVFoldingAlgorithm(self):
         """ Algorithm, utilized in order to provide cross-validation split
             for experiment data-types.
@@ -51,10 +38,6 @@ class DataIO(object):
         return self.__cv_folding_algo
 
     # region not implemented properties
-
-    @property
-    def DistanceInTermsBetweenOpinionEndsBound(self):
-        raise NotImplementedError()
 
     @property
     def SynonymsCollection(self):
@@ -65,17 +48,6 @@ class DataIO(object):
         """ Corresponds to `OpinionCollectionsFormatter` instance
         """
         raise NotImplementedError()
-
-    # endregion
-
-    # region private methods
-
-    def __init_annotator(self, label_scaler):
-        if isinstance(label_scaler, TwoLabelScaler):
-            return TwoScaleNeutralAnnotator()
-        elif isinstance(label_scaler, ThreeLabelScaler):
-            return ThreeScaleNeutralAnnotator(self.DistanceInTermsBetweenOpinionEndsBound)
-        raise NotImplementedError(u"Could not create neutral annotator for scaler '{}'".format(label_scaler))
 
     # endregion
 
