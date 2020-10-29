@@ -1,4 +1,5 @@
-import os
+from os import makedirs
+from os.path import join, dirname, exists
 import numpy as np
 from tqdm import tqdm
 
@@ -21,9 +22,9 @@ def get_random_normal_distribution(vector_size, seed, loc, scale):
 
 
 def create_dir_if_not_exists(filepath):
-    dir = os.path.dirname(filepath)
-    if not os.path.exists(dir):
-        os.makedirs(dir)
+    dir = dirname(filepath)
+    if not exists(dir):
+        makedirs(dir)
 
 
 def filter_whitespaces(terms):
@@ -57,3 +58,14 @@ def progress_bar_iter(iterable, desc="", unit='it'):
                 leave=True,
                 ncols=120,
                 unit=unit)
+
+
+def join_dir_with_subfolder_name(subfolder_name, dir):
+    """
+    Returns subfolder in experiments directory
+    """
+    assert(isinstance(subfolder_name, unicode))
+    assert(isinstance(dir, unicode))
+
+    target_dir = join(dir, u"{}/".format(subfolder_name))
+    return target_dir

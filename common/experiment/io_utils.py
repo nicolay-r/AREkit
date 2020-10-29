@@ -3,7 +3,7 @@ from os.path import join
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.common.utils import join_dir_with_subfolder_name
 
 
 class BaseIOUtils(object):
@@ -77,7 +77,7 @@ class BaseIOUtils(object):
         return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
 
     def __get_neutral_annotation_dir(self):
-        return get_path_of_subfolder_in_experiments_dir(experiments_dir=self.get_target_dir(),
-                                                        subfolder_name=self._experiment.DataIO.NeutralAnnotator.Name)
+        return join_dir_with_subfolder_name(dir=self.get_target_dir(),
+                                            subfolder_name=self._experiment.DataIO.NeutralAnnotator.Name)
 
     # endregion

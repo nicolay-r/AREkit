@@ -3,7 +3,7 @@ from os.path import join, exists
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.common.experiment.utils import get_path_of_subfolder_in_experiments_dir
+from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.common.model.model_io import BaseModelIO
 
 logger = logging.getLogger(__name__)
@@ -36,8 +36,8 @@ class NetworkIOUtils(BaseIOUtils):
         e_name = u"{name}_{scale}l".format(name=self._experiment.Name,
                                            scale=str(self._experiment.DataIO.LabelsScaler.LabelsCount))
 
-        return get_path_of_subfolder_in_experiments_dir(subfolder_name=e_name,
-                                                        experiments_dir=src_dir)
+        return join_dir_with_subfolder_name(subfolder_name=e_name,
+                                            dir=src_dir)
 
     def get_vocab_filepath(self):
         return join(self.get_target_dir(),
