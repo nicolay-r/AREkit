@@ -65,7 +65,7 @@ class HandledData(object):
         assert(isinstance(experiment, BaseExperiment))
 
         if not HandledData.__check_files_existed(experiment=experiment):
-            raise Exception("Data has not been initialized/serialized")
+            raise Exception(u"Data has not been initialized/serialized: `{}`".format(experiment.Name))
 
         # Reading embedding.
         npz_embedding_data = np.load(experiment.ExperimentIO.get_embedding_filepath())
