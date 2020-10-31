@@ -34,10 +34,13 @@ class RuSentRelExperiment(BaseExperiment):
                                               experiment_io=self.ExperimentIO)
 
         logger.info("Create document operations ... ")
-        doc_ops = RuSentrelDocumentOperations(
-            data_io=data_io,
-            folding=create_rusentrel_experiment_data_folding(folding_type=folding_type, version=version),
-            version=version)
+        folding = create_rusentrel_experiment_data_folding(folding_type=folding_type,
+                                                           version=version,
+                                                           docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
+                                                           experiment_io=self.ExperimentIO)
+        doc_ops = RuSentrelDocumentOperations(data_io=data_io,
+                                              folding=folding,
+                                              version=version)
 
         # Setup
         self._set_opin_operations(opin_ops)

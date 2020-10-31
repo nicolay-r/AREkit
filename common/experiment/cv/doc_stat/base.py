@@ -4,13 +4,13 @@ class BaseDocumentStatGenerator(object):
     Abstract, considered a specific implementation for document processing operation.
     """
 
-    def __init__(self, news_parser_func):
+    def __init__(self, doc_reader_func):
         """
         news_parser_func: func -> news
             assumes to provide a news by a certain news_id
         """
-        assert(callable(news_parser_func))
-        self.__news_parser_func = news_parser_func
+        assert(callable(doc_reader_func))
+        self.__doc_reader_func = doc_reader_func
 
     # region abstract protected methods
 
@@ -27,8 +27,8 @@ class BaseDocumentStatGenerator(object):
     def calculate_and_write_doc_stat(self, filepath, doc_ids_iter):
         with open(filepath, 'w') as f:
             for doc_id in doc_ids_iter:
-                news = self.__news_parser_func(doc_id)
-                s_count = self._calc(news)
+                doc = self.__doc_reader_func(doc_id)
+                s_count = self._calc(doc)
                 f.write("{}: {}\n".format(doc_id, s_count))
 
     @staticmethod

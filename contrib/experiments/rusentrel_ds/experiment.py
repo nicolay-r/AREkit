@@ -41,7 +41,10 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         # RuSentRel doc operations init.
         rusentrel_folding = create_rusentrel_experiment_data_folding(
             folding_type=folding_type,
-            version=rusentrel_version)
+            version=rusentrel_version,
+            docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
+            experiment_io=self.ExperimentIO)
+
         rusentrel_doc = RuSentrelDocumentOperations(data_io=data_io,
                                                     version=rusentrel_version,
                                                     folding=rusentrel_folding)
@@ -49,9 +52,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         # Loading ru_attitudes in memory
         ru_attitudes = ra_instance
         if ra_instance is None:
-            ru_attitudes = read_ruattitudes_in_memory(
-                version=ruattitudes_version,
-                used_doc_ids_set=rusentrel_doc.get_doc_ids())
+            ru_attitudes = read_ruattitudes_in_memory(version=ruattitudes_version,
+                                                      used_doc_ids_set=set(rusentrel_doc.DataFolding.iter_doc_ids()))
 
         # RuAttitudes doc operations init.
         ruatttiudes_folding = create_ruattitudes_experiment_data_folding(

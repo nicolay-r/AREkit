@@ -7,7 +7,9 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
         i.e. two-class cv-folding algorithm
     """
 
-    def __init__(self, supported_data_types, doc_ids_to_fold, cv_count):
+    def __init__(self, supported_data_types, doc_ids_to_fold, cv_count, splitter):
+        assert(isinstance(splitter, CrossValidationSplitter))
+
         if len(supported_data_types) > 2:
             raise NotImplementedError(u"Experiments with such amount of data-types are not supported!")
 
@@ -15,7 +17,7 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
                                                 supported_data_types=supported_data_types)
 
         self.__cv_count = cv_count
-        self.__splitter = None
+        self.__splitter = splitter
 
     # region Properties
 
@@ -26,23 +28,6 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
     @property
     def Name(self):
         return u"cv{0}".format(self.__cv_count)
-
-    # endregion
-
-    # region public methods
-
-    def set_splitter(self, value):
-        assert(isinstance(value, CrossValidationSplitter))
-        self.__splitter = value
-
-    def set_cv_count(self, value):
-        assert(isinstance(value, int))
-        self.__cv_count = value
-
-    def set_iteration_index(self, value):
-        assert(isinstance(value, int))
-        assert(value < self.__cv_count)
-        self.__iteration_index = value
 
     # endregion
 
@@ -63,9 +48,6 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
 
         if self.__splitter is None:
             raise NotImplementedError(u"Splitter has not been intialized!")
-
-        if self.__cv_count is None:
-            raise NotImplementedError(u"CV-count has not been provided!")
 
         it = self.__splitter.items_to_cv_pairs(doc_ids=set(doc_ids),
                                                cv_count=self.__cv_count)
