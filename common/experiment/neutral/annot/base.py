@@ -25,6 +25,8 @@ class BaseNeutralAnnotator(object):
         self.__doc_ops = None
         self.__synonyms = None
 
+    # region Properties
+
     @property
     def Name(self):
         raise NotImplementedError()
@@ -43,22 +45,13 @@ class BaseNeutralAnnotator(object):
     def _SynonymsCollection(self):
         return self.__synonyms
 
+    # endregion
+
     # region private methods
 
-    def __iter_docs(self, data_type, filter_func):
-        doc_ids_iter = filter(filter_func,
-                              self._DocOps.iter_doc_ids_to_neutrally_annotate())
-
-        doc_ids = list(doc_ids_iter)
-
-        if len(doc_ids) == 0:
-            return doc_ids
-
-        return progress_bar_iter(iterable=doc_ids,
-                                 desc="Writing neutral-examples [{}]".format(data_type))
-
     def __iter_neutral_collections(self, data_type, filter_func):
-        for doc_id in self.__iter_docs(data_type, filter_func=filter_func):
+        docs_it = filter(filter_func, self._DocOps.iter_doc_ids_to_neutrally_annotate())
+        for doc_id in progress_bar_iter(docs_it, desc="Creating neutral-examples [{}]".format(data_type)):
             yield doc_id, self._create_collection_core(doc_id=doc_id, data_type=data_type)
 
     # endregion

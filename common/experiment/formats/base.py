@@ -75,7 +75,7 @@ class BaseExperiment(object):
         parsed_news_it = self.DocumentOperations.iter_parsed_news(
             doc_inds=self.DocumentOperations.iter_news_indices(data_type))
 
-        return ParsedNewsCollection(parsed_news_it)
+        return ParsedNewsCollection(parsed_news_it, notify=True)
 
     def evaluate(self, data_type, epoch_index):
         """

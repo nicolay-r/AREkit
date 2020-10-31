@@ -11,16 +11,20 @@ class ParsedNewsCollection(object):
     which could be indentified by news_id.
     """
 
-    def __init__(self, parsed_news_it):
+    def __init__(self, parsed_news_it, notify):
         assert(isinstance(parsed_news_it, collections.Iterable))
-        self.__by_id = self.__fill(parsed_news_it)
+        self.__by_id = self.__fill(parsed_news_it, notify)
 
     @staticmethod
-    def __fill(parsed_news_it):
+    def __fill(parsed_news_it, notify):
         assert(isinstance(parsed_news_it, collections.Iterable))
+        assert(isinstance(notify, bool))
 
         d = {}
-        for parsed_news in progress_bar_iter(parsed_news_it, desc="Filling parsed news"):
+
+        it = progress_bar_iter(parsed_news_it, desc="Filling parsed news") if notify else parsed_news_it
+
+        for parsed_news in it:
             assert(isinstance(parsed_news, ParsedNews))
             if parsed_news in d:
                 logging.info("Warning: Skipping document with id={}".format(parsed_news.RelatedNewsID))
