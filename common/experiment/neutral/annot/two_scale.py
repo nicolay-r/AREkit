@@ -18,8 +18,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
     """
 
     def __init__(self):
-        super(TwoScaleNeutralAnnotator, self).__init__()
-        self.__labels_fmt = ThreeScaleLabelsFormatter()
+        super(TwoScaleNeutralAnnotator, self).__init__(labels_fmt=ThreeScaleLabelsFormatter())
 
     @property
     def Name(self):
@@ -36,7 +35,9 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
                           target_value=opinion.TargetValue,
                           sentiment=NeutralLabel())
 
-    def __create_opinions_for_classification(self, doc_id):
+    def _create_collection_core(self, doc_id, data_type):
+        assert(isinstance(doc_id, int))
+        assert(isinstance(data_type, DataType))
 
         # TODO. Extract opinions from news.
         # TODO. exp_io.read_parsed_news.
@@ -50,15 +51,11 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     # region public methods
 
-    def create_collection(self, data_type):
-        assert(isinstance(data_type, DataType))
+    def serialize_missed_collections(self, data_type):
 
         if data_type == DataType.Train:
             return
 
-        for doc_id, filepath in self._iter_docs(data_type):
-            self._OpinOps.save_neutral_opinion_collection(
-                collection=self.__create_opinions_for_classification(doc_id),
-                labels_fmt=self.__labels_fmt)
+        super(TwoScaleNeutralAnnotator, self).serialize_missed_collections(data_type)
 
     # endregion

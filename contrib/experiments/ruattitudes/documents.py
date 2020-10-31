@@ -26,8 +26,7 @@ class RuAttitudesDocumentOperations(DocumentOperations):
         return RuAttitudesParseOptions(stemmer=self.__data_io.Stemmer,
                                        frame_variants_collection=self.__data_io.FrameVariantCollection)
 
-    # TODO. This should be provided in annotator.
-    def get_doc_ids_set_to_neutrally_annotate(self):
+    def iter_doc_ids_to_neutrally_annotate(self):
         return
         yield
 

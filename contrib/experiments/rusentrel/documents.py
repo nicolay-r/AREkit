@@ -16,17 +16,13 @@ class RuSentrelDocumentOperations(DocumentOperations):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(version, RuSentRelVersions))
         super(RuSentrelDocumentOperations, self).__init__(folding=folding)
-        _, _, all = get_rusentrel_inds(version)
-        self.__all_doc_ids = set(all)
         self.__data_io = data_io
         self.__version = version
-        # TODO. To Annot.
-        self.__doc_ids_to_neut_annot = self.__all_doc_ids
 
     # region DocumentOperations
 
-    def get_doc_ids_set_to_neutrally_annotate(self):
-        return self.__doc_ids_to_neut_annot
+    def iter_doc_ids_to_neutrally_annotate(self):
+        return self.DataFolding.iter_doc_ids()
 
     def read_news(self, doc_id):
         assert(isinstance(doc_id, int))

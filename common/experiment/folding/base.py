@@ -24,6 +24,9 @@ class BaseExperimentDataFolding(object):
         assert(isinstance(doc_id, int))
         return doc_id in self._doc_ids_to_fold_set
 
+    def iter_doc_ids(self):
+        return iter(self._doc_ids_to_fold_set)
+
     def iter_states(self):
         """ Performs iteration over states supported by folding algorithm
             Default:

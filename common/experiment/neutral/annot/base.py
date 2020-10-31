@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
 
@@ -14,8 +15,12 @@ class BaseNeutralAnnotator(object):
     Performs neutral annotation for different data_type.
     """
 
-    def __init__(self):
+    def __init__(self, labels_fmt):
+        assert(isinstance(labels_fmt, StringLabelsFormatter))
+
         logger.info("Init annotator: [{}]".format(self.__class__))
+
+        self.__labels_fmt = labels_fmt
         self.__opin_ops = None
         self.__doc_ops = None
         self.__synonyms = None
@@ -40,30 +45,9 @@ class BaseNeutralAnnotator(object):
 
     # region private methods
 
-    def filter_non_created_doc_ids(self, all_doc_ids, data_type):
-        for doc_id in all_doc_ids:
-            if self._OpinOps.try_read_neutral_opinion_collection(doc_id=doc_id, data_type=data_type) is None:
-                yield doc_id
-
-    # endregion
-
-    def initialize(self, opin_ops, doc_ops, synonyms):
-        assert(isinstance(opin_ops, OpinionOperations))
-        assert(isinstance(doc_ops, DocumentOperations))
-        assert(isinstance(synonyms, SynonymsCollection))
-        # assert(data_io.CVFoldingAlgorithm.CVCount is not None)
-
-        self.__doc_ops = doc_ops
-        self.__opin_ops = opin_ops
-        self.__synonyms = synonyms
-
-    def create_collection(self, data_type):
-        raise NotImplementedError()
-
-    def _iter_docs(self, data_type):
-        doc_ids_iter = self.filter_non_created_doc_ids(
-            data_type=data_type,
-            all_doc_ids=self._DocOps.get_doc_ids_set_to_neutrally_annotate())
+    def __iter_docs(self, data_type, filter_func):
+        doc_ids_iter = filter(filter_func,
+                              self._DocOps.iter_doc_ids_to_neutrally_annotate())
 
         doc_ids = list(doc_ids_iter)
 
@@ -73,4 +57,35 @@ class BaseNeutralAnnotator(object):
         return progress_bar_iter(iterable=doc_ids,
                                  desc="Writing neutral-examples [{}]".format(data_type))
 
+    def __iter_neutral_collections(self, data_type, filter_func):
+        for doc_id in self.__iter_docs(data_type, filter_func=filter_func):
+            yield doc_id, self._create_collection_core(doc_id=doc_id, data_type=data_type)
 
+    # endregion
+
+    def _create_collection_core(self, doc_id, data_type):
+        raise NotImplementedError
+
+    # region public methods
+
+    def initialize(self, opin_ops, doc_ops, synonyms):
+        assert(isinstance(opin_ops, OpinionOperations))
+        assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(synonyms, SynonymsCollection))
+
+        self.__doc_ops = doc_ops
+        self.__opin_ops = opin_ops
+        self.__synonyms = synonyms
+
+    def serialize_missed_collections(self, data_type):
+
+        filter_func = lambda doc_id: self._OpinOps.try_read_neutral_opinion_collection(
+            doc_id=doc_id, data_type=data_type) is None
+
+        for doc_id, collection in self.__iter_neutral_collections(data_type, filter_func):
+            self._OpinOps.save_neutral_opinion_collection(collection=collection,
+                                                          labels_fmt=self.__labels_fmt,
+                                                          doc_id=doc_id,
+                                                          data_type=data_type)
+
+    # endregion

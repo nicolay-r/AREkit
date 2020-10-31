@@ -19,9 +19,8 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self, distance_in_terms_between_bounds):
-        super(ThreeScaleNeutralAnnotator, self).__init__()
+        super(ThreeScaleNeutralAnnotator, self).__init__(labels_fmt=ThreeScaleLabelsFormatter())
         self.__algo = None
-        self.__labels_fmt = ThreeScaleLabelsFormatter()
         self.__distance_in_terms_between_bounds = distance_in_terms_between_bounds
 
     @property
@@ -30,7 +29,8 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     # region private methods
 
-    def __create_opinions_for_extraction(self, doc_id, data_type):
+    def _create_collection_core(self, doc_id, data_type):
+        assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
 
         news = self._DocOps.read_news(doc_id=doc_id)
@@ -53,21 +53,9 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         """
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self._SynonymsCollection,
-            iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=self._DocOps.get_doc_ids_set_to_neutrally_annotate()),
+            iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=self._DocOps.iter_doc_ids_to_neutrally_annotate()),
             dist_in_terms_bound=self.__distance_in_terms_between_bounds,
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
     # endregion
-
-    def create_collection(self, data_type):
-        assert(isinstance(data_type, DataType))
-
-        for doc_id in self._iter_docs(data_type):
-            collection = self.__create_opinions_for_extraction(doc_id=doc_id,
-                                                               data_type=data_type)
-
-            self._OpinOps.save_neutral_opinion_collection(collection=collection,
-                                                          labels_fmt=self.__labels_fmt,
-                                                          doc_id=doc_id,
-                                                          data_type=data_type)
 

@@ -21,10 +21,10 @@ class DocumentOperations(object):
     # TODO. Into Neutral annotator!!!
     # TODO. Into Neutral annotator!!!
     # TODO. Into Neutral annotator!!!
-    def get_doc_ids_set_to_neutrally_annotate(self):
+    def iter_doc_ids_to_neutrally_annotate(self):
         """ provides set of documents that utilized by neutral annotator algorithm in order to
             provide the related labeling of neutral attitudes in it.
-            By default we consider an empty set, so there is no need to ulize neutral annotator.
+            By default we consider an empty set, so there is no need to utilize neutral annotator.
         """
         raise NotImplementedError()
 
@@ -32,7 +32,7 @@ class DocumentOperations(object):
         raise NotImplementedError()
 
     def iter_news_indices(self, data_type):
-        """ Provides a news indeces, related to a particular `data_type`
+        """ Provides a news indices, related to a particular `data_type`
         """
         data_types_splits = self.__folding.fold_doc_ids_set()
         for doc_id in data_types_splits[data_type]:

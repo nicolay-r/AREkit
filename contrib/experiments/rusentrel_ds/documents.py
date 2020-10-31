@@ -48,8 +48,7 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
         # Therefore we provide rusentrel_doc by default.
         return self.__rusentrel_doc._create_parse_options()
 
-    # TODO. Remove, provide this into into annot.
-    def get_doc_ids_set_to_neutrally_annotate(self):
-        return self.__rusentrel_doc.get_doc_ids_set_to_neutrally_annotate()
+    def iter_doc_ids_to_neutrally_annotate(self):
+        return self.__rusentrel_doc.iter_doc_ids_to_neutrally_annotate()
 
     # endregion
