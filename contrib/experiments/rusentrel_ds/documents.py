@@ -51,4 +51,7 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
     def iter_doc_ids_to_neutrally_annotate(self):
         return self.__rusentrel_doc.iter_doc_ids_to_neutrally_annotate()
 
+    def iter_doc_ids_to_compare(self):
+        return self.__rusentrel_doc.iter_doc_ids_to_compare()
+
     # endregion

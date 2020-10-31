@@ -18,13 +18,15 @@ class DocumentOperations(object):
         """
         return self.__folding
 
-    # TODO. Into Neutral annotator!!!
-    # TODO. Into Neutral annotator!!!
-    # TODO. Into Neutral annotator!!!
     def iter_doc_ids_to_neutrally_annotate(self):
         """ provides set of documents that utilized by neutral annotator algorithm in order to
             provide the related labeling of neutral attitudes in it.
             By default we consider an empty set, so there is no need to utilize neutral annotator.
+        """
+        raise NotImplementedError()
+
+    def iter_doc_ids_to_compare(self):
+        """ provides set of documents that utilized in model evaluation process
         """
         raise NotImplementedError()
 

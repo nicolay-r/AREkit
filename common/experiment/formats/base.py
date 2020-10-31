@@ -92,10 +92,14 @@ class BaseExperiment(object):
         assert(isinstance(epoch_index, int))
         assert(isinstance(self.__experiment_data, TrainingData))
 
+        # Extracting all docs to cmp and those that is related to data_type.
+        cmp_doc_ids = self.__doc_operations.iter_doc_ids_to_compare()
+        doc_ids = self.__doc_operations.iter_news_indices(data_type=data_type)
+
         # Compose cmp pairs iterator.
         cmp_pairs_iter = self.__opin_operations.iter_opinion_collections_to_compare(
             data_type=data_type,
-            doc_ids=self.__doc_operations.iter_news_indices(data_type=data_type),
+            doc_ids_to_cmp=filter(lambda doc_id: doc_id in cmp_doc_ids, doc_ids),
             epoch_index=epoch_index)
 
         # getting evaluator.

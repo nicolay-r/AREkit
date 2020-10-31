@@ -27,10 +27,6 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
         super(RuSentrelOpinionOperations, self).__init__()
 
-        _, _, self.__doc_ids_to_cmp = get_rusentrel_inds(version)
-
-        self.__eval_on_rusentrel_docs_key = True
-
         self.__experiment_io = experiment_io
         self.__synonyms = data_io.SynonymsCollection
         self.__opinion_formatter = data_io.OpinionFormatter
@@ -39,9 +35,6 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__version = version
 
     # region CVBasedOperations
-
-    def __get_doc_ids_set_to_compare(self):
-        return self.__doc_ids_to_cmp
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
@@ -58,16 +51,16 @@ class RuSentrelOpinionOperations(OpinionOperations):
         return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
                                                 synonyms=self.__synonyms)
 
-    def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
+    def iter_opinion_collections_to_compare(self, data_type, doc_ids_to_cmp, epoch_index):
         """
         Note: Assumes that all the results already converted into document-level opinions.
         """
         assert(isinstance(data_type, DataType))
-        assert(isinstance(doc_ids, collections.Iterable))
+        assert(isinstance(doc_ids_to_cmp, collections.Iterable))
         assert(isinstance(epoch_index, int))
 
         opinions_cmp_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
-            doc_ids=filter(lambda doc_id: doc_id in self.__get_doc_ids_set_to_compare(), doc_ids),
+            doc_ids=doc_ids_to_cmp,
             read_etalon_collection_func=lambda doc_id: self.read_etalon_opinion_collection(doc_id=doc_id),
             read_result_collection_func=lambda doc_id: self.__load_result(data_type=data_type,
                                                                           doc_id=doc_id,
