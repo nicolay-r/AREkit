@@ -50,11 +50,23 @@ class BaseNeutralAnnotator(object):
     # region private methods
 
     def __iter_neutral_collections(self, data_type, filter_func):
-        docs_it = filter(filter_func, self._DocOps.iter_doc_ids_to_neutrally_annotate())
-        for doc_id in progress_bar_iter(docs_it, desc="Creating neutral-examples [{}]".format(data_type)):
+        docs_to_annot = list(filter(filter_func, self._DocOps.iter_doc_ids_to_neutrally_annotate()))
+
+        if len(docs_to_annot) == 0:
+            logger.info("[{}]: OK!".format(data_type))
+            return
+
+        self._before_neutral_collections_iter(docs_to_annot)
+
+        for doc_id in progress_bar_iter(docs_to_annot, desc="Creating neutral-examples [{}]".format(data_type)):
             yield doc_id, self._create_collection_core(doc_id=doc_id, data_type=data_type)
 
     # endregion
+
+    def _before_neutral_collections_iter(self, doc_ids_to_annot):
+        """ Might be and actually for annot algorith initialization process.
+        """
+        pass
 
     def _create_collection_core(self, doc_id, data_type):
         raise NotImplementedError

@@ -29,16 +29,15 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     # region private methods
 
+    def _before_neutral_collections_iter(self, doc_ids_to_annot):
+        self.__init_neutral_annotation_algo(doc_ids_to_annot)
+
     def _create_collection_core(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
 
         news = self._DocOps.read_news(doc_id=doc_id)
         opinions = self._OpinOps.read_etalon_opinion_collection(doc_id=doc_id)
-
-        if self.__algo is None:
-            logger.info("Setup default annotation algorithm ...")
-            self.__init_neutral_annotation_algo()
 
         collection = self.__algo.make_neutrals(
             news_id=doc_id,
@@ -47,13 +46,13 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
         return collection
 
-    def __init_neutral_annotation_algo(self):
+    def __init_neutral_annotation_algo(self, doc_ids_to_annot):
         """
         Note: This operation might take a lot of time, as it assumes to perform news parsing.
         """
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self._SynonymsCollection,
-            iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=self._DocOps.iter_doc_ids_to_neutrally_annotate()),
+            iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=doc_ids_to_annot),
             dist_in_terms_bound=self.__distance_in_terms_between_bounds,
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 
