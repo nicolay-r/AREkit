@@ -36,7 +36,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         self.__synonyms = synonyms
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
 
-        self.__pnc = ParsedNewsCollection(parsed_news_it=iter_parsed_news, notify=False)
+        self.__pnc = ParsedNewsCollection(parsed_news_it=iter_parsed_news, notify=True)
         self.__text_opinion_helper = TextOpinionHelper(lambda news_id: self.__pnc.get_by_news_id(news_id))
         self.__dist_in_terms_bound = dist_in_terms_bound
 
@@ -95,11 +95,6 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         if self.__is_ignored_entity_value(entity_value=e2.Value):
             return
 
-        g1 = self.__synonyms.get_synonym_group_index(e1.Value)
-        g2 = self.__synonyms.get_synonym_group_index(e2.Value)
-        if g1 == g2:
-            return
-
         s_dist = self.__text_opinion_helper.calc_dist_between_entities(
             news_id=news_id, e1=e1, e2=e2, distance_type=DistanceType.InSentences)
 
@@ -110,6 +105,11 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
             news_id=news_id, e1=e1, e2=e2, distance_type=DistanceType.InTerms)
 
         if t_dist > self.__dist_in_terms_bound:
+            return
+
+        g1 = self.__synonyms.get_synonym_group_index(e1.Value)
+        g2 = self.__synonyms.get_synonym_group_index(e2.Value)
+        if g1 == g2:
             return
 
         if sentiment_opinions is not None:
