@@ -110,7 +110,7 @@ class HandledData(object):
 
         term_embedding_pairs = []
 
-        for data_type in experiment.DocumentOperations.iter_supported_data_types():
+        for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
             # Create annotated collection per each type.
             experiment.DataIO.NeutralAnnotator.create_collection(data_type=data_type)
@@ -133,7 +133,7 @@ class HandledData(object):
 
     @staticmethod
     def __check_files_existed(experiment):
-        for data_type in experiment.DocumentOperations.iter_supported_data_types():
+        for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
             filepaths = [
                 experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),

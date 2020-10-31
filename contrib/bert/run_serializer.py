@@ -1,6 +1,6 @@
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.engine.cv_based import CVBasedExperimentEngine
+from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.engine.utils import mark_dir_for_serialization
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
@@ -10,7 +10,7 @@ from arekit.common.experiment.neutral.run import perform_neutral_annotation
 from arekit.contrib.bert.factory import create_bert_sample_formatter
 
 
-class BertExperimentInputSerializer(CVBasedExperimentEngine):
+class BertExperimentInputSerializer(ExperimentEngine):
 
     def __init__(self, experiment,
                  skip_if_folder_exists,
@@ -32,7 +32,7 @@ class BertExperimentInputSerializer(CVBasedExperimentEngine):
 
     # region private methods
 
-    def __handle_cv_index(self, data_type):
+    def __handle_iteration(self, data_type):
         assert(isinstance(data_type, DataType))
 
         # Create samples formatter.
@@ -68,12 +68,11 @@ class BertExperimentInputSerializer(CVBasedExperimentEngine):
 
     # region protected methods
 
-    def _handle_cv_index(self, cv_index):
-        """ Performing data serialization for a particular cv_index
-        cv_index: int
+    def _handle_iteration(self, it_index):
+        """ Performing data serialization for a particular iteration
         """
-        for data_type in self._experiment.DocumentOperations.iter_supported_data_types():
-            self.__handle_cv_index(data_type)
+        for data_type in self._experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+            self.__handle_iteration(data_type)
 
     def _before_running(self):
         # Mark the directory as selected for serialization process.

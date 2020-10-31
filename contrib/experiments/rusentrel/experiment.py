@@ -2,9 +2,8 @@ import logging
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
-from arekit.contrib.experiments.rusentrel.folding_type import FoldingType
+from arekit.contrib.experiments.rusentrel.folding import create_rusentrel_experiment_data_folding, FoldingType
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
-from arekit.contrib.experiments.rusentrel.utils import folding_type_to_str, get_rusentrel_inds
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 logger = logging.getLogger(__name__)
@@ -25,7 +24,6 @@ class RuSentRelExperiment(BaseExperiment):
         assert(isinstance(folding_type, FoldingType))
 
         self.__version = version
-        self.__folding_type = folding_type
 
         super(RuSentRelExperiment, self).__init__(data_io=data_io,
                                                   experiment_io=experiment_io)
@@ -36,9 +34,10 @@ class RuSentRelExperiment(BaseExperiment):
                                               experiment_io=self.ExperimentIO)
 
         logger.info("Create document operations ... ")
-        doc_ops = RuSentrelDocumentOperations(data_io=data_io,
-                                              folding_type=folding_type,
-                                              version=version)
+        doc_ops = RuSentrelDocumentOperations(
+            data_io=data_io,
+            folding=create_rusentrel_experiment_data_folding(folding_type=folding_type, version=version),
+            version=version)
 
         # Setup
         self._set_opin_operations(opin_ops)
@@ -47,5 +46,5 @@ class RuSentRelExperiment(BaseExperiment):
     @property
     def Name(self):
         return u"rsr-{version}-{format}".format(version=self.__version.value,
-                                                format=folding_type_to_str(self.__folding_type))
+                                                format=self.DocumentOperations.DataFolding.Name)
 

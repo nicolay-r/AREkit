@@ -1,4 +1,4 @@
-from arekit.common.experiment.cv.base import BaseCVFolding
+from arekit.common.experiment.cv.base import TwoClassCVFolding
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.model.model_io import BaseModelIO
 
@@ -12,7 +12,6 @@ class DataIO(object):
     def __init__(self, labels_scaler):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         self.__labels_scale = labels_scaler
-        self.__cv_folding_algo = BaseCVFolding()
         self.__model_io = None
 
     @property
@@ -29,13 +28,6 @@ class DataIO(object):
             a need to obtain model root directory.
         """
         return self.__model_io
-
-    @property
-    def CVFoldingAlgorithm(self):
-        """ Algorithm, utilized in order to provide cross-validation split
-            for experiment data-types.
-        """
-        return self.__cv_folding_algo
 
     # region not implemented properties
 
@@ -60,5 +52,5 @@ class DataIO(object):
     def set_cv_folding_algorithm(self, cv_folding_algo):
         """ Providing cv_folding algorithm instance.
         """
-        assert(isinstance(cv_folding_algo, BaseCVFolding))
+        assert(isinstance(cv_folding_algo, TwoClassCVFolding))
         self.__cv_folding_algo = cv_folding_algo

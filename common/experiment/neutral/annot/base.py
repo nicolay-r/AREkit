@@ -40,21 +40,12 @@ class BaseNeutralAnnotator(object):
 
     # region private methods
 
-    def __iter_all_doc_ids(self):
-        for data_type in self._DocOps.iter_supported_data_types():
-            for doc_id in self._DocOps.iter_news_indices(data_type):
-                yield doc_id
-
     def filter_non_created_doc_ids(self, all_doc_ids, data_type):
         for doc_id in all_doc_ids:
             if self._OpinOps.try_read_neutral_opinion_collection(doc_id=doc_id, data_type=data_type) is None:
                 yield doc_id
 
     # endregion
-
-    def _iter_doc_its_to_annotate(self):
-        return filter(lambda doc_id: doc_id in self._DocOps.get_doc_ids_set_to_neutrally_annotate(),
-                      self.__iter_all_doc_ids())
 
     def initialize(self, opin_ops, doc_ops, synonyms):
         assert(isinstance(opin_ops, OpinionOperations))
@@ -72,7 +63,7 @@ class BaseNeutralAnnotator(object):
     def _iter_docs(self, data_type):
         doc_ids_iter = self.filter_non_created_doc_ids(
             data_type=data_type,
-            all_doc_ids=self._iter_doc_its_to_annotate())
+            all_doc_ids=self._DocOps.get_doc_ids_set_to_neutrally_annotate())
 
         doc_ids = list(doc_ids_iter)
 

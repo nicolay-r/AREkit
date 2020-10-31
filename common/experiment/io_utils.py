@@ -23,20 +23,19 @@ class BaseIOUtils(object):
 
     # region protected methods
 
-    def _get_cv_index(self):
-        return self._experiment.DataIO.CVFoldingAlgorithm.IterationIndex
+    def _experiment_iter_index(self):
+        return self._experiment.DocumentOperations.DataFolding.IterationIndex
 
     def _filename_template(self, data_type):
         assert(isinstance(data_type, DataType))
-        return u"{data_type}-{cv_index}".format(data_type=data_type.name.lower(),
-                                                cv_index=self._get_cv_index())
+        return u"{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
+                                                  iter_index=self._experiment_iter_index())
 
     @staticmethod
     def _get_filepath(out_dir, template, prefix):
         assert(isinstance(template, unicode))
         assert(isinstance(prefix, unicode))
-        filepath = join(out_dir, BaseIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
-        return filepath
+        return join(out_dir, BaseIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
 
     # endregion
 
@@ -45,14 +44,14 @@ class BaseIOUtils(object):
     def get_input_opinions_filepath(self, data_type):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self.get_target_dir(),
-                                   template=template,
-                                   prefix=BaseOpinionsFormatter.formatter_type_log_name())
+                                  template=template,
+                                  prefix=BaseOpinionsFormatter.formatter_type_log_name())
 
     def get_input_sample_filepath(self, data_type):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self.get_target_dir(),
-                                   template=template,
-                                   prefix=BaseSampleFormatter.formatter_type_log_name())
+                                  template=template,
+                                  prefix=BaseSampleFormatter.formatter_type_log_name())
 
     def create_neutral_opinion_collection_filepath(self, doc_id, data_type):
         assert(isinstance(doc_id, int))

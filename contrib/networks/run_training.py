@@ -2,7 +2,7 @@ import os
 import gc
 from os.path import join
 
-from arekit.common.experiment.engine.cv_based import CVBasedExperimentEngine
+from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.engine.utils import rm_dir_contents
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
@@ -11,7 +11,7 @@ from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.init_config import initialize_config
 
 
-class NetworksTrainingEngine(CVBasedExperimentEngine):
+class NetworksTrainingEngine(ExperimentEngine):
 
     def __init__(self, create_config, bags_collection_type, experiment, load_model,
                  create_network_func,
@@ -43,10 +43,10 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
 
     # region protected methods
 
-    def _handle_cv_index(self, cv_index):
+    def _handle_iteration(self, it_index):
         """ Run single CV-index experiment.
         """
-        assert(isinstance(cv_index, int))
+        assert(isinstance(it_index, int))
         assert(self.__config is not None)
 
         # Perform data reading.
@@ -58,7 +58,7 @@ class NetworksTrainingEngine(CVBasedExperimentEngine):
         # Setup callback
         callback = self._experiment.DataIO.Callback
         callback.reset_experiment_dependent_parameters()
-        callback.set_cv_index(cv_index)
+        callback.set_cv_index(it_index)
         callback.set_experiment(self._experiment)
 
         # Initialize network and model

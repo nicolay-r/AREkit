@@ -1,5 +1,6 @@
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
+from arekit.contrib.experiments.ruattitudes.folding import create_ruattitudes_experiment_data_folding
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -21,17 +22,21 @@ class RuAttitudesExperiment(BaseExperiment):
 
         self.__version = version
 
-        super(RuAttitudesExperiment, self).__init__(data_io=data_io,
-                                                    experiment_io=experiment_io)
-
-        doc_ops = RuAttitudesDocumentOperations(data_io=data_io)
-        opin_ops = RuAttitudesOpinionOperations()
-
         ru_attitudes = ra_instance
         if ra_instance is None:
             ru_attitudes = read_ruattitudes_in_memory(
                 version=version,
                 used_doc_ids_set=used_doc_ids_set)
+
+        super(RuAttitudesExperiment, self).__init__(data_io=data_io,
+                                                    experiment_io=experiment_io)
+
+        folding = create_ruattitudes_experiment_data_folding(
+            doc_ids_to_fold=list(ru_attitudes.iterkeys()))
+        doc_ops = RuAttitudesDocumentOperations(data_io=data_io,
+                                                folding=folding)
+
+        opin_ops = RuAttitudesOpinionOperations()
 
         doc_ops.set_ru_attitudes(ru_attitudes)
         opin_ops.set_ru_attitudes(ru_attitudes)

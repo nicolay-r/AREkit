@@ -53,7 +53,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         """
         self.__algo = DefaultNeutralAnnotationAlgorithm(
             synonyms=self._SynonymsCollection,
-            iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=self._iter_doc_its_to_annotate()),
+            iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=self._DocOps.get_doc_ids_set_to_neutrally_annotate()),
             dist_in_terms_bound=self.__distance_in_terms_between_bounds,
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
 

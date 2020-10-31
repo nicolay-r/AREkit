@@ -1,3 +1,4 @@
+from arekit.common.experiment.folding.base import BaseExperimentDataFolding
 from arekit.processing.text.parser import TextParser
 
 
@@ -6,15 +7,20 @@ class DocumentOperations(object):
     Provides operations with documents
     """
 
-    def iter_supported_data_types(self):
-        """ Iterates through data_types, supported in a related experiment
-            Note:
-            In CV-split algorithm, the first part corresponds to a LARGE split,
-            Jand second to small; therefore, the correct sequence is as follows:
-            DataType.Train, DataType.Test.
-        """
-        raise NotImplementedError()
+    def __init__(self, folding):
+        assert(isinstance(folding, BaseExperimentDataFolding))
+        self.__folding = folding
 
+    @property
+    def DataFolding(self):
+        """ Algorithm, utilized in order to provide variety of foldings, such as
+                cross-validation, fixed, none, etc.
+        """
+        return self.__folding
+
+    # TODO. Into Neutral annotator!!!
+    # TODO. Into Neutral annotator!!!
+    # TODO. Into Neutral annotator!!!
     def get_doc_ids_set_to_neutrally_annotate(self):
         """ provides set of documents that utilized by neutral annotator algorithm in order to
             provide the related labeling of neutral attitudes in it.
@@ -28,7 +34,9 @@ class DocumentOperations(object):
     def iter_news_indices(self, data_type):
         """ Provides a news indeces, related to a particular `data_type`
         """
-        raise NotImplementedError()
+        data_types_splits = self.__folding.fold_doc_ids_set()
+        for doc_id in data_types_splits[data_type]:
+            yield doc_id
 
     def iter_parsed_news(self, doc_inds):
         for doc_id in doc_inds:

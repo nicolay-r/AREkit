@@ -2,12 +2,12 @@ import logging
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
+from arekit.contrib.experiments.ruattitudes.folding import create_ruattitudes_experiment_data_folding
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
-from arekit.contrib.experiments.rusentrel.folding_type import FoldingType
+from arekit.contrib.experiments.rusentrel.folding import FoldingType, create_rusentrel_experiment_data_folding
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
-from arekit.contrib.experiments.rusentrel.utils import folding_type_to_str
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -38,10 +38,28 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io,
                                                                  experiment_io=experiment_io)
 
+        # RuSentRel doc operations init.
+        rusentrel_folding = create_rusentrel_experiment_data_folding(
+            folding_type=folding_type,
+            version=rusentrel_version)
         rusentrel_doc = RuSentrelDocumentOperations(data_io=data_io,
                                                     version=rusentrel_version,
-                                                    folding_type=folding_type)
-        ruattitudes_doc = RuAttitudesDocumentOperations(data_io=data_io)
+                                                    folding=rusentrel_folding)
+
+        # Loading ru_attitudes in memory
+        ru_attitudes = ra_instance
+        if ra_instance is None:
+            ru_attitudes = read_ruattitudes_in_memory(
+                version=ruattitudes_version,
+                used_doc_ids_set=rusentrel_doc.get_doc_ids())
+
+        # RuAttitudes doc operations init.
+        ruatttiudes_folding = create_ruattitudes_experiment_data_folding(
+            doc_ids_to_fold=list(ru_attitudes.iterkeys()))
+        ruattitudes_doc = RuAttitudesDocumentOperations(data_io=data_io,
+                                                        folding=ruatttiudes_folding)
+
+        # Composing doc_ops.
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(rusentrel_doc=rusentrel_doc,
                                                              ruattitudes_doc=ruattitudes_doc)
 
@@ -51,16 +69,11 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
 
         ruattitudes_op = RuAttitudesOpinionOperations()
 
-        opin_ops = RuSentrelWithRuAttitudesOpinionOperations(synonyms=data_io.SynonymsCollection,
-                                                             rusentrel_op=rusentrel_op,
-                                                             ruattitudes_op=ruattitudes_op,
-                                                             rusentrel_doc_ids=rusentrel_doc.get_doc_ids())
-
-        ru_attitudes = ra_instance
-        if ra_instance is None:
-            ru_attitudes = read_ruattitudes_in_memory(
-                version=ruattitudes_version,
-                used_doc_ids_set=rusentrel_doc.get_doc_ids())
+        opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
+            synonyms=data_io.SynonymsCollection,
+            rusentrel_op=rusentrel_op,
+            ruattitudes_op=ruattitudes_op,
+            is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))
 
         # Providing RuAttitudes instance into doc and opins instances.
         ruattitudes_doc.set_ru_attitudes(ru_attitudes)
@@ -73,7 +86,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__name = u"rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
             rsr_version=self.__rusentrel_version.value,
             ra_version=self.__ruattitudes_version.value,
-            folding_type=folding_type_to_str(folding_type))
+            folding_type=self.DocumentOperations.DataFolding.Name)
 
     @property
     def Name(self):

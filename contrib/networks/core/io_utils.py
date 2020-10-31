@@ -42,12 +42,12 @@ class NetworkIOUtils(BaseIOUtils):
     def get_vocab_filepath(self):
         return join(self.get_target_dir(),
                     self.VOCABULARY_FILENAME_TEMPLATE.format(
-                        cv_index=self._get_cv_index()) + u'.npz')
+                        cv_index=self._experiment_iter_index()) + u'.npz')
 
     def get_embedding_filepath(self):
         return join(self.get_target_dir(),
                     self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                        cv_index=self._get_cv_index()) + u'.npz')
+                        cv_index=self._experiment_iter_index()) + u'.npz')
 
     def get_output_model_results_filepath(self, data_type, epoch_index):
 
