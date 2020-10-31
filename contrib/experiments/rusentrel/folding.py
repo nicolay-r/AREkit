@@ -1,28 +1,15 @@
 from collections import OrderedDict
 from os.path import join
 
-from enum import Enum
-
 from arekit.common.experiment.cv.base import TwoClassCVFolding
 from arekit.common.experiment.cv.doc_stat.sentence import SentenceBasedDocumentStatGenerator
 from arekit.common.experiment.cv.splitters.statistical import StatBasedCrossValidataionSplitter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.folding.fixed import FixedFolding
 from arekit.common.experiment.io_utils import BaseIOUtils
+from arekit.contrib.experiments.folding_type import FoldingType
 from arekit.contrib.experiments.rusentrel.utils import get_rusentrel_inds
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-
-
-class FoldingType(Enum):
-    """
-    Assumes a fixed separation onto train and test collections
-    """
-    Fixed = 1
-
-    """
-    Assumes separation using k-fold cross-validation approach
-    """
-    CrossValidation = 2
 
 
 def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_func, experiment_io):
