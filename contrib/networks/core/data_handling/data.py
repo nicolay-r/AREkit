@@ -79,7 +79,7 @@ class HandledData(object):
         logger.info("Vocabulary readed [size={}]".format(len(vocab)))
 
         # Reading from serialized information
-        for data_type in experiment.DocumentOperations.iter_supported_data_types():
+        for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
             labeled_sample_row_ids = self.__read_data_type(
                 data_type=data_type,

@@ -87,7 +87,7 @@ class NetworkIOUtils(BaseIOUtils):
             self.__get_model_dir(),
             join(u"eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type.name,
-                iter_index=self._experiment.DataIO.CVFoldingAlgorithm.IterationIndex,
+                iter_index=self._experiment_iter_index(),
                 epoch_index=str(epoch_index))))
 
         return result_dir
