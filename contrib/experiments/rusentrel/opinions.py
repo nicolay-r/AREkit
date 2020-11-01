@@ -8,7 +8,6 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel.labels_formatter import RuSentRelNeutralLabelsFormatter
-from arekit.contrib.experiments.rusentrel.utils import get_rusentrel_inds
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter

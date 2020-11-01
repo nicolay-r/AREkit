@@ -8,8 +8,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.folding.fixed import FixedFolding
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.experiments.folding_type import FoldingType
-from arekit.contrib.experiments.rusentrel.utils import get_rusentrel_inds
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
 
 def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_func, experiment_io):
@@ -21,7 +20,7 @@ def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_
     assert(isinstance(experiment_io, BaseIOUtils))
 
     # Providing doc_ids
-    train_doc_ids, test_doc_ids, all_doc_ids = get_rusentrel_inds(version)
+    train_doc_ids, test_doc_ids, all_doc_ids = __get_rusentrel_inds(version)
 
     # We support only TRAIN and TEST subcollections
     data_types = OrderedDict()
@@ -58,3 +57,13 @@ def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_
                                  splitter=splitter)
 
     raise Exception("Folding type `{}` does not supported by RuSentRel experiment".format(folding_type))
+
+
+def __get_rusentrel_inds(version):
+    """ Provides all news_inds utilized in RuSentRel collection
+    """
+    train_doc_ids = list(RuSentRelIOUtils.iter_train_indices(version))
+    test_doc_ids = list(RuSentRelIOUtils.iter_test_indices(version))
+    all_doc_ids = train_doc_ids + test_doc_ids
+
+    return train_doc_ids, test_doc_ids, all_doc_ids

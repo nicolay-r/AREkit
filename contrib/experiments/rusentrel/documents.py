@@ -1,7 +1,6 @@
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data.serializing import SerializationData
 from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.contrib.experiments.rusentrel.utils import get_rusentrel_inds
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
