@@ -17,8 +17,10 @@ class SentimentLabel(Label):
 
 class SingleClassEvaluator(BaseEvaluator):
 
-    def __init__(self, synonyms):
-        super(SingleClassEvaluator, self).__init__(synonyms=synonyms)
+    def __init__(self, create_synonyms_collection_func):
+        assert(callable(create_synonyms_collection_func))
+        super(SingleClassEvaluator, self).__init__()
+        self.__create_synonyms_collection_func = create_synonyms_collection_func
         self.__sentiment_label = SentimentLabel()
 
     def calc_a_file(self, cmp_pair):
@@ -37,10 +39,7 @@ class SingleClassEvaluator(BaseEvaluator):
         assert(isinstance(opinions, OpinionCollection))
         assert(isinstance(label, Label))
 
-        # TODO. This might be rewritten with the usage of class ctor,
-        # TODO. istead of a manual adding.
-
-        new_collection = OpinionCollection.create_empty(self.Synonyms)
+        new_collection = self.__create_synonyms_collection_func()
 
         for opinion in opinions:
             assert(isinstance(opinion, Opinion))

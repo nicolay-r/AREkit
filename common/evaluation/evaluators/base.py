@@ -2,18 +2,9 @@ from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.utils import label_to_str
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.synonyms import SynonymsCollection
 
 
 class BaseEvaluator(object):
-
-    def __init__(self, synonyms):
-        assert(isinstance(synonyms, SynonymsCollection) and synonyms.IsReadOnly)
-        self.__synonyms = synonyms
-
-    @property
-    def Synonyms(self):
-        return self.__synonyms
 
     def evaluate(self, cmp_pairs):
         raise NotImplementedError()

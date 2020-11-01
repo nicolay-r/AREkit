@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import collections
 
 from arekit.common.evaluation.results.two_class import TwoClassEvalResult
@@ -11,8 +10,8 @@ from arekit.common.evaluation.evaluators.base import BaseEvaluator
 
 class TwoClassEvaluator(BaseEvaluator):
 
-    def __init__(self, synonyms):
-        super(TwoClassEvaluator, self).__init__(synonyms=synonyms)
+    def __init__(self):
+        super(TwoClassEvaluator, self).__init__()
         self.__pos_label = PositiveLabel()
         self.__neg_label = NegativeLabel()
 
