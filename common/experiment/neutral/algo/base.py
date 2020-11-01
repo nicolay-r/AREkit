@@ -1,5 +1,5 @@
 
 class BaseNeutralAnnotationAlgorithm(object):
 
-    def make_neutrals(self, news_id, entities_collection, sentiment_opinions=None):
+    def iter_neutral_opinions(self, news_id, entities_collection, sentiment_opinions=None):
         pass

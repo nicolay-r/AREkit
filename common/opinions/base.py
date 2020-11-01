@@ -38,6 +38,11 @@ class Opinion(object):
 
     # endregion
 
+    def __get_end_synonym_inds(self, synonyms):
+        s_ind = synonyms.get_synonym_group_index(self.__source_value)
+        t_ind = synonyms.get_synonym_group_index(self.__target_value)
+        return s_ind, t_ind
+
     # region public methods
 
     def get_value(self, end_type):
@@ -54,11 +59,14 @@ class Opinion(object):
     def set_tag(self, value):
         self.__tag = value
 
+    def is_loop(self, synonyms):
+        s_ind, t_ind = self.__get_end_synonym_inds(synonyms)
+        return s_ind == t_ind
+
     def create_synonym_id(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
-        return u"{}_{}".format(
-            synonyms.get_synonym_group_index(self.__source_value),
-            synonyms.get_synonym_group_index(self.__target_value))
+        s_ind, t_ind = self.__get_end_synonym_inds(synonyms)
+        return u"{}_{}".format(s_ind, t_ind)
 
     def has_synonym_for_end(self, synonyms, end_type):
         assert(isinstance(synonyms, SynonymsCollection))

@@ -3,7 +3,6 @@ import logging
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.labels.str_fmt import StringLabelsFormatter
-from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)
@@ -23,7 +22,6 @@ class BaseNeutralAnnotator(object):
         self.__labels_fmt = labels_fmt
         self.__opin_ops = None
         self.__doc_ops = None
-        self.__synonyms = None
 
     # region Properties
 
@@ -40,10 +38,6 @@ class BaseNeutralAnnotator(object):
     def _DocOps(self):
         assert(isinstance(self.__doc_ops, DocumentOperations))
         return self.__doc_ops
-
-    @property
-    def _SynonymsCollection(self):
-        return self.__synonyms
 
     # endregion
 
@@ -73,14 +67,11 @@ class BaseNeutralAnnotator(object):
 
     # region public methods
 
-    def initialize(self, opin_ops, doc_ops, synonyms):
+    def initialize(self, opin_ops, doc_ops):
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
-        assert(isinstance(synonyms, SynonymsCollection))
-
         self.__doc_ops = doc_ops
         self.__opin_ops = opin_ops
-        self.__synonyms = synonyms
 
     def serialize_missed_collections(self, data_type):
 

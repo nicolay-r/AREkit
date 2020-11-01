@@ -65,10 +65,8 @@ class BaseExperiment(object):
     # endregion
 
     def initialize_neutral_annotator(self):
-        self.__experiment_data.NeutralAnnotator.initialize(
-            synonyms=self.__experiment_data.SynonymsCollection,
-            opin_ops=self.__opin_operations,
-            doc_ops=self.__doc_operations)
+        self.__experiment_data.NeutralAnnotator.initialize(opin_ops=self.__opin_operations,
+                                                           doc_ops=self.__doc_operations)
 
     def create_parsed_collection(self, data_type):
         assert(isinstance(data_type, DataType))

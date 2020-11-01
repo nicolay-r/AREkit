@@ -134,6 +134,10 @@ class OpinionCollection(object):
                 logger.info(message)
                 return False
 
+        if opinion.is_loop(self.__synonyms):
+            # Ignoring loops.
+            return False
+
         key = opinion.create_synonym_id(self.__synonyms)
 
         assert(isinstance(key, unicode))

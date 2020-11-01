@@ -39,19 +39,18 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
         news = self._DocOps.read_news(doc_id=doc_id)
         opinions = self._OpinOps.read_etalon_opinion_collection(doc_id=doc_id)
 
-        collection = self.__algo.make_neutrals(
+        neutral_opins_it = self.__algo.iter_neutral_opinions(
             news_id=doc_id,
             entities_collection=news.DocEntities,
             sentiment_opinions=opinions if data_type == DataType.Train else None)
 
-        return collection
+        return self._OpinOps.create_opinion_collection(neutral_opins_it)
 
     def __init_neutral_annotation_algo(self, doc_ids_to_annot):
         """
         Note: This operation might take a lot of time, as it assumes to perform news parsing.
         """
         self.__algo = DefaultNeutralAnnotationAlgorithm(
-            synonyms=self._SynonymsCollection,
             iter_parsed_news=self._DocOps.iter_parsed_news(doc_inds=doc_ids_to_annot),
             dist_in_terms_bound=self.__distance_in_terms_between_bounds,
             ignored_entity_values=self.IGNORED_ENTITY_VALUES)
