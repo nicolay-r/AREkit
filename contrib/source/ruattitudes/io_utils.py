@@ -26,4 +26,8 @@ class RuAttitudesIOUtils(ZipArchiveUtils):
     def get_collection_filepath():
         return u"collection.txt"
 
+    @classmethod
+    def get_synonyms_innerpath(cls):
+        return u"synonyms.txt"
+
     # endregion
