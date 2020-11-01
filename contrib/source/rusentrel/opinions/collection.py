@@ -22,7 +22,7 @@ class RuSentRelOpinionCollection:
 
         labels_fmt = RuSentRelLabelsFormatter()
 
-        return RuSentRelIOUtils.read_from_zip(
+        return RuSentRelIOUtils.iter_from_zip(
             inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id),
             process_func=lambda input_file: RuSentRelOpinionCollectionFormatter._iter_opinions_from_file(
                 input_file=input_file,
