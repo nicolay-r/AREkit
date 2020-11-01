@@ -12,6 +12,7 @@ from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperat
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
+from arekit.contrib.source.ruattitudes.synonyms import RuAttitudesSynonymsCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
@@ -45,7 +46,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                                          version=rusentrel_version)
 
         logger.info("Read synonyms collection [RuAttitudes]...")
-        ruattitdes_synonyms = None
+        ruattitudes_synonyms = RuAttitudesSynonymsCollection.load_collection(stemmer=data_io.Stemmer,
+                                                                             version=ruattitudes_version)
 
         logger.info("Merging collections [RuSentRel <- RuAttitudes]...")
         joined_synonyms = None
@@ -81,7 +83,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                   experiment_io=self.ExperimentIO,
                                                   synonyms=rusentrel_synonyms)
 
-        ruattitudes_op = RuAttitudesOpinionOperations(ruattitdes_synonyms)
+        ruattitudes_op = RuAttitudesOpinionOperations(ruattitudes_synonyms)
 
         # Init experiment doc_ops and opin_ops
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(rusentrel_doc=rusentrel_doc,
