@@ -1,3 +1,4 @@
+from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
@@ -19,6 +20,9 @@ def init_rusentrel_doc(doc_id, stemmer, synonyms, unique_frame_variants):
 
     parsed_news = TextParser.parse_news(news, options)
 
-    opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
-                                                          synonyms=synonyms)
-    return news, parsed_news, opinions
+    opinions = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id)
+
+    collection = OpinionCollection.init_as_custom(opinions=opinions,
+                                                  synonyms=synonyms)
+
+    return news, parsed_news, collection

@@ -6,8 +6,8 @@ from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
 class RuAttitudesOpinionOperations(OpinionOperations):
 
-    def __init__(self):
-        super(RuAttitudesOpinionOperations, self).__init__()
+    def __init__(self, synonyms):
+        super(RuAttitudesOpinionOperations, self).__init__(synonyms)
 
         self.__ru_attitudes = None
 

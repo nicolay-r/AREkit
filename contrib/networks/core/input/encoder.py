@@ -40,7 +40,7 @@ class NetworkInputEncoder(object):
         predefined_embedding.set_stemmer(experiment.DataIO.Stemmer)
 
         terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
-            synonyms=experiment.DataIO.SynonymsCollection,
+            synonyms=experiment.OpinionOperations.SynonymsCollection,
             predefined_embedding=predefined_embedding,
             string_entities_formatter=experiment.DataIO.StringEntityFormatter,
             string_emb_entity_formatter=StringWordEmbeddingEntityFormatter())
@@ -67,7 +67,7 @@ class NetworkInputEncoder(object):
                 data_type=data_type,
                 label_provider=MultipleLabelProvider(label_scaler=experiment.DataIO.LabelsScaler),
                 text_provider=text_provider,
-                synonyms_collection=experiment.DataIO.SynonymsCollection,
+                synonyms_collection=experiment.OpinionOperations.SynonymsCollection,
                 frames_collection=experiment.DataIO.FramesCollection,
                 balance=False),
             write_sample_header=True)

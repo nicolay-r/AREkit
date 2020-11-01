@@ -1,3 +1,4 @@
+import collections
 import logging
 from os.path import exists
 
@@ -10,42 +11,39 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
-
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
 class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, data_io, experiment_io, version):
-        assert(isinstance(data_io, DataIO))
+    def __init__(self, experiment_data, experiment_io, synonyms, version):
+        assert(isinstance(experiment_data, DataIO))
         assert(isinstance(version, RuSentRelVersions))
 
-        super(RuSentrelOpinionOperations, self).__init__()
+        super(RuSentrelOpinionOperations, self).__init__(synonyms)
 
+        self.__version = version
         self.__experiment_io = experiment_io
-        self.__synonyms = data_io.SynonymsCollection
-        self.__opinion_formatter = data_io.OpinionFormatter
+        self.__opinion_formatter = experiment_data.OpinionFormatter
         self.__result_labels_fmt = RuSentRelLabelsFormatter()
         self.__neutral_labels_fmt = RuSentRelNeutralLabelsFormatter()
-        self.__version = version
 
     # region CVBasedOperations
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
-        return RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
-                                                          synonyms=self.__synonyms,
-                                                          version=self.__version)
+        opins_iter = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id,
+                                                                       version=self.__version)
+
+        return OpinionCollection(opinions=opins_iter,
+                                 synonyms=self.SynonymsCollection,
+                                 error_on_duplicates=True,
+                                 error_on_synonym_end_missed=True)
 
     def create_opinion_collection(self, opinions=None):
-        assert(isinstance(opinions, list) or opinions is None)
-
-        if self.__synonyms is None:
-            raise NotImplementedError("Synonyms collection was not provided!")
-
-        return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
-                                                synonyms=self.__synonyms)
+        assert(isinstance(opinions, collections.Iterable) or opinions is None)
+        return self.__create_custom_collection(opinions)
 
     def try_read_neutral_opinion_collection(self, doc_id, data_type):
         filepath = self.__experiment_io.create_neutral_opinion_collection_filepath(
@@ -87,7 +85,13 @@ class RuSentrelOpinionOperations(OpinionOperations):
     # region private provider methods
 
     def __custom_read(self, filepath, labels_fmt):
-        return self.__opinion_formatter.load_from_file(filepath=filepath,
-                                                       labels_formatter=labels_fmt)
+        opinions = self.__opinion_formatter.iter_opinions_from_file(filepath=filepath,
+                                                                    labels_formatter=labels_fmt)
+
+        return self.__create_custom_collection(opinions)
+
+    def __create_custom_collection(self, opinions):
+        return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
+                                                synonyms=self.SynonymsCollection)
 
     # endregion

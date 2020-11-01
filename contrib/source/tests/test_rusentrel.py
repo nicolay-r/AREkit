@@ -3,6 +3,7 @@ import logging
 import sys
 import unittest
 
+from arekit.common.opinions.collection import OpinionCollection
 
 sys.path.append('../../../../')
 
@@ -43,8 +44,10 @@ class TestRuSentRel(unittest.TestCase):
                                                synonyms=synonyms,
                                                version=version)
 
-            opinions = RuSentRelOpinionCollection.load_collection(doc_id=doc_id,
-                                                                  synonyms=synonyms)
+            opins_it = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id)
+
+            opinions = OpinionCollection.init_as_custom(opinions=opins_it,
+                                                        synonyms=synonyms)
 
             # Example: Access to the read OPINIONS collection.
             for opinion in opinions:

@@ -9,9 +9,10 @@ class DataIO(object):
         (data-serialization, training, etc.).
     """
 
-    def __init__(self, labels_scaler):
+    def __init__(self, labels_scaler, stemmer):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         self.__labels_scale = labels_scaler
+        self.__stemmer = stemmer
         self.__model_io = None
 
     @property
@@ -29,11 +30,11 @@ class DataIO(object):
         """
         return self.__model_io
 
-    # region not implemented properties
-
     @property
-    def SynonymsCollection(self):
-        raise NotImplementedError()
+    def Stemmer(self):
+        return self.__stemmer
+
+    # region not implemented properties
 
     @property
     def OpinionFormatter(self):

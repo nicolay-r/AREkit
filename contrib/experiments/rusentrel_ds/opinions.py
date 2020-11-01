@@ -1,6 +1,5 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 
@@ -8,11 +7,10 @@ from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperat
 class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
 
     def __init__(self, synonyms, rusentrel_op, ruattitudes_op, is_rusentrel_doc):
-        assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(rusentrel_op, RuSentrelOpinionOperations))
         assert(isinstance(ruattitudes_op, RuAttitudesOpinionOperations))
 
-        super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__()
+        super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__(synonyms)
 
         self.__rusentrel_op = rusentrel_op
         self.__ruattitudes_op = ruattitudes_op

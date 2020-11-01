@@ -1,9 +1,20 @@
+from arekit.common.synonyms import SynonymsCollection
 
 
 class OpinionOperations(object):
     """
     Provides operations with opinions and related collections
     """
+
+    def __init__(self, synonyms):
+        assert(isinstance(synonyms, SynonymsCollection))
+        self.__synonyms = synonyms
+
+    @property
+    def SynonymsCollection(self):
+        """ Synonyms collection utlized for named entities matching.
+        """
+        return self.__synonyms
 
     def try_read_neutral_opinion_collection(self, doc_id, data_type):
         """ data_type denotes a set of neutral opinions, where in case of 'train' these are

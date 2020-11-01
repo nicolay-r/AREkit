@@ -13,6 +13,7 @@ from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAtt
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,16 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io,
                                                                  experiment_io=experiment_io)
 
+        logger.info("Read synonyms collection [RuSentRel]...")
+        rusentrel_synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=experiment_io.Stemmer,
+                                                                         version=rusentrel_version)
+
+        logger.info("Read synonyms collection [RuAttitudes]...")
+        ruattitdes_synonyms = None
+
+        logger.info("Merging collections [RuSentRel <- RuAttitudes]...")
+        joined_synonyms = None
+
         # RuSentRel doc operations init.
         rusentrel_folding = create_rusentrel_experiment_data_folding(
             folding_type=folding_type,
@@ -46,9 +57,11 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
             experiment_io=self.ExperimentIO)
 
-        rusentrel_doc = RuSentrelDocumentOperations(data_io=data_io,
+        # init documents.
+        rusentrel_doc = RuSentrelDocumentOperations(experiment_io=data_io,
                                                     version=rusentrel_version,
-                                                    folding=rusentrel_folding)
+                                                    folding=rusentrel_folding,
+                                                    get_synonyms_func=lambda: rusentrel_synonyms)
 
         # Loading ru_attitudes in memory
         ru_attitudes = ra_instance
@@ -62,18 +75,20 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         ruattitudes_doc = RuAttitudesDocumentOperations(data_io=data_io,
                                                         folding=ruatttiudes_folding)
 
-        # Composing doc_ops.
+        # Init opinions
+        rusentrel_op = RuSentrelOpinionOperations(experiment_data=data_io,
+                                                  version=rusentrel_version,
+                                                  experiment_io=self.ExperimentIO,
+                                                  synonyms=rusentrel_synonyms)
+
+        ruattitudes_op = RuAttitudesOpinionOperations(ruattitdes_synonyms)
+
+        # Init experiment doc_ops and opin_ops
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(rusentrel_doc=rusentrel_doc,
                                                              ruattitudes_doc=ruattitudes_doc)
 
-        rusentrel_op = RuSentrelOpinionOperations(data_io=data_io,
-                                                  version=rusentrel_version,
-                                                  experiment_io=self.ExperimentIO)
-
-        ruattitudes_op = RuAttitudesOpinionOperations()
-
         opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
-            synonyms=data_io.SynonymsCollection,
+            synonyms=joined_synonyms,
             rusentrel_op=rusentrel_op,
             ruattitudes_op=ruattitudes_op,
             is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))

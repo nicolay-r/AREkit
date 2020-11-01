@@ -1,7 +1,7 @@
 
 class OpinionCollectionsFormatter(object):
 
-    def load_from_file(self, filepath, labels_formatter):
+    def iter_opinions_from_file(self, filepath, labels_formatter):
         raise NotImplementedError()
 
     def save_to_file(self, collection, filepath, labels_formatter):

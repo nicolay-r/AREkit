@@ -6,8 +6,10 @@ class SerializationData(DataIO):
     """ Data, that is necessary for models training stage.
     """
 
-    def __init__(self, labels_scaler):
-        super(SerializationData, self).__init__(labels_scaler=labels_scaler)
+    def __init__(self, labels_scaler, stemmer):
+        super(SerializationData, self).__init__(labels_scaler=labels_scaler,
+                                                stemmer=stemmer)
+
         self.__neutral_annot = create_annotator(
             labels_count=labels_scaler.LabelsCount,
             dist_in_terms_between_opin_ends=self.DistanceInTermsBetweenOpinionEndsBound)
@@ -22,10 +24,6 @@ class SerializationData(DataIO):
 
     @property
     def DistanceInTermsBetweenOpinionEndsBound(self):
-        raise NotImplementedError()
-
-    @property
-    def Stemmer(self):
         raise NotImplementedError()
 
     @property
