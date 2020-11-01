@@ -18,7 +18,7 @@ class OpinionOperations(object):
     def read_etalon_opinion_collection(self, doc_id):
         raise NotImplementedError()
 
-    def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
+    def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 
     def create_opinion_collection(self, opinions=None):

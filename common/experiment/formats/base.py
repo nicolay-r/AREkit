@@ -1,6 +1,7 @@
 import logging
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
+from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.data_type import DataType
@@ -97,10 +98,14 @@ class BaseExperiment(object):
         doc_ids = self.__doc_operations.iter_news_indices(data_type=data_type)
 
         # Compose cmp pairs iterator.
-        cmp_pairs_iter = self.__opin_operations.iter_opinion_collections_to_compare(
-            data_type=data_type,
-            doc_ids_to_cmp=filter(lambda doc_id: doc_id in cmp_doc_ids, doc_ids),
-            epoch_index=epoch_index)
+        cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
+            doc_ids=filter(lambda doc_id: doc_id in cmp_doc_ids, doc_ids),
+            read_etalon_collection_func=lambda doc_id: self.__opin_operations.read_etalon_opinion_collection(
+                doc_id=doc_id),
+            read_result_collection_func=lambda doc_id: self.__opin_operations.read_result_opinion_collection(
+                data_type=data_type,
+                doc_id=doc_id,
+                epoch_index=epoch_index))
 
         # getting evaluator.
         evaluator = self.__experiment_data.Evaluator

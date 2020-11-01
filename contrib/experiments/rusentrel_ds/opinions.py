@@ -36,19 +36,18 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
         target = self.__target(doc_id)
         return target.try_read_neutral_opinion_collection(doc_id=doc_id, data_type=data_type)
 
-    def iter_opinion_collections_to_compare(self, data_type, doc_ids, epoch_index):
-        """ We provide comparison only for RuSentRel collection documents.
-        """
-        return self.__rusentrel_op.iter_opinion_collections_to_compare(data_type=data_type,
-                                                                       doc_ids_to_cmp=doc_ids,
-                                                                       epoch_index=epoch_index)
-
     def save_neutral_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
         target = self.__target(doc_id)
         return target.save_neutral_opinion_collection(collection=collection,
                                                       labels_fmt=labels_fmt,
                                                       doc_id=doc_id,
                                                       data_type=data_type)
+
+    def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
+        target = self.__target(doc_id)
+        return target.read_result_opinion_collection(data_type=data_type,
+                                                     doc_id=doc_id,
+                                                     epoch_index=epoch_index)
 
     def create_opinion_collection(self, opinions=None):
         return self.__rusentrel_op.create_opinion_collection(opinions)
