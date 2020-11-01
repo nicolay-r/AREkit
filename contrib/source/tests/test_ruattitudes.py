@@ -9,6 +9,7 @@ sys.path.append('../../../../')
 from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
 
+from arekit.contrib.source.ruattitudes.synonyms import RuAttitudesSynonymsCollection
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -27,7 +28,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 class TestRuAttiudes(unittest.TestCase):
 
-    ra_version = RuAttitudesVersions.V20
+    ra_version = RuAttitudesVersions.V20Large
 
     def test_indices(self):
         ids = set()
@@ -36,6 +37,14 @@ class TestRuAttiudes(unittest.TestCase):
             assert(isinstance(news, RuAttitudesNews))
             assert(news.ID not in ids)
             ids.add(news.ID)
+
+    def test_synonyms_collection_reading(self):
+        # Initializing stemmer
+        stemmer = MystemWrapper()
+
+        # Synonyms collection reading test
+        return RuAttitudesSynonymsCollection.load_collection(stemmer=stemmer,
+                                                             version=TestRuAttiudes.ra_version)
 
     def test_parsing(self):
         # Initializing stemmer
