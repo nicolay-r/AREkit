@@ -11,11 +11,18 @@ class NeuralNetworkModelIO(BaseModelIO):
         self.__model_dir = model_dir
         self.__full_model_name = full_model_name
 
-    def get_model_dir(self):
+    # region private methods
+
+    def __get_model_dir(self):
         return join(self.__model_dir, self.__full_model_name)
+
+    # endregion
+
+    def get_model_dir(self):
+        return self.__get_model_dir()
 
     def get_model_save_path_tf_prefix(self):
         """ Provides the template for states keeping
             using tensorflow serializer.
         """
-        return join(self.__model_dir, self.__full_model_name)
+        return join(self.__get_model_dir(), self.__full_model_name)
