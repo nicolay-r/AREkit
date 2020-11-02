@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 
-class TestRuAttiudes(unittest.TestCase):
+class TestRuAttitudes(unittest.TestCase):
 
     ra_version = RuAttitudesVersions.V20Large
 
@@ -44,7 +44,7 @@ class TestRuAttiudes(unittest.TestCase):
 
         # Synonyms collection reading test
         return RuAttitudesSynonymsCollection.load_collection(stemmer=stemmer,
-                                                             version=TestRuAttiudes.ra_version)
+                                                             version=TestRuAttitudes.ra_version)
 
     def test_parsing(self):
         # Initializing stemmer
