@@ -42,7 +42,7 @@ class BaseTensorflowModel(BaseModel):
         and more.
     """
 
-    SaveTensorflowModelStateOnFit = False
+    SaveTensorflowModelStateOnFit = True
     FeedDictShow = False
 
     def __init__(self, nn_io, network, label_scaler,
@@ -114,8 +114,8 @@ class BaseTensorflowModel(BaseModel):
         self.__initialize_session()
 
         if load_model:
-            saved_model_path = u"{}.state".format(self.IO.get_model_save_path_tf_prefix())
-            logger.info("Loading model: {}".format(saved_model_path))
+            saved_model_path = u"{}.state".format(self.IO.get_model_load_path_tf_prefix())
+            logger.info(u"Loading model: {}".format(saved_model_path))
             self.load_model(saved_model_path)
 
         self.fit(epochs_count=epochs_count)
@@ -246,7 +246,9 @@ class BaseTensorflowModel(BaseModel):
             groups_count += 1
 
         if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
-            self.save_model(save_path=self.IO.get_model_save_path_tf_prefix())
+            save_fp = self.IO.get_model_save_path_tf_prefix()
+            logger.info(u"Update TensorFlow model state: {}".format(save_fp))
+            self.save_model(save_path=save_fp)
 
         return fit_total_cost / groups_count, fit_total_acc / groups_count
 
