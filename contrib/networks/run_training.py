@@ -73,8 +73,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                                     evaluator=self._experiment.DataIO.Evaluator)
 
         # Run model
-        model.run_training(load_model=False,
-                           epochs_count=callback.Epochs)
+        model.run_training(epochs_count=callback.Epochs)
 
         del network
         del model

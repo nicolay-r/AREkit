@@ -20,7 +20,7 @@ class BaseModel(object):
         return self.__io
 
     # TODO. Remove epochs count, since it is related to NeuralNetworks only.
-    def run_training(self, epochs_count, load_model=False):
+    def run_training(self, epochs_count):
         raise NotImplementedError()
 
     def predict(self, data_type=DataType.Test):

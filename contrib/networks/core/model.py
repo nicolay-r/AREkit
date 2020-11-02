@@ -106,15 +106,15 @@ class BaseTensorflowModel(BaseModel):
         """
         self.__sess.close()
 
-    def run_training(self, epochs_count, load_model=False):
+    def run_training(self, epochs_count):
         self.__network.compile(self.Config, reset_graph=True)
         self.set_optimiser()
         self.__notify_initialized()
 
         self.__initialize_session()
 
-        if load_model:
-            saved_model_path = u"{}.state".format(self.IO.get_model_load_path_tf_prefix())
+        if self.IO.IsPretrainedStateProvided:
+            saved_model_path = u"{}.state".format(self.IO.get_model_source_path_tf_prefix())
             logger.info(u"Loading model: {}".format(saved_model_path))
             self.load_model(saved_model_path)
 
@@ -246,7 +246,7 @@ class BaseTensorflowModel(BaseModel):
             groups_count += 1
 
         if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
-            save_fp = self.IO.get_model_save_path_tf_prefix()
+            save_fp = self.IO.get_model_target_path_tf_prefix()
             logger.info(u"Update TensorFlow model state: {}".format(save_fp))
             self.save_model(save_path=save_fp)
 
