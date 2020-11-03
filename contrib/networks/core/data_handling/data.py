@@ -43,7 +43,9 @@ class HandledData(object):
 
     @staticmethod
     def need_serialize(experiment):
-        return not HandledData.__check_files_existed(experiment=experiment)
+        return not HandledData.__check_files_existed(
+            data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
+            experiment_io=experiment.ExperimentIO)
 
     @staticmethod
     def serialize_from_experiment(experiment, terms_per_context):
@@ -83,7 +85,8 @@ class HandledData(object):
 
             labeled_sample_row_ids = self.__read_data_type(
                 data_type=data_type,
-                experiment=experiment,
+                experiment_io=experiment.ExperimentIO,
+                labels_scaler=experiment.DataIO.LabelsScaler,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
                 config=config)
@@ -128,18 +131,18 @@ class HandledData(object):
 
         # Save embedding and related vocabulary.
         NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
-            experiment=experiment,
+            experiment_io=experiment.ExperimentIO,
             term_embedding_pairs=term_embedding_pairs)
 
     @staticmethod
-    def __check_files_existed(experiment):
-        for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+    def __check_files_existed(data_types_iter, experiment_io):
+        for data_type in data_types_iter:
 
             filepaths = [
-                experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),
-                experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type),
-                experiment.ExperimentIO.get_vocab_filepath(),
-                experiment.ExperimentIO.get_embedding_filepath()
+                experiment_io.get_input_sample_filepath(data_type=data_type),
+                experiment_io.get_input_opinions_filepath(data_type=data_type),
+                experiment_io.get_vocab_filepath(),
+                experiment_io.get_embedding_filepath()
             ]
 
             if not check_files_existance(filepaths=filepaths, logger=logger):
@@ -150,14 +153,13 @@ class HandledData(object):
 
     # region reading methods
 
-    def __read_data_type(self, data_type, experiment, bags_collection_type, vocab, config):
+    def __read_data_type(self, data_type, experiment_io, labels_scaler, bags_collection_type, vocab, config):
 
         samples_reader = NetworkInputSampleReader.from_tsv(
-            filepath=experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),
+            filepath=experiment_io.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
 
-        labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(
-            label_scaler=experiment.DataIO.LabelsScaler))
+        labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
 
         self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
 
@@ -166,7 +168,7 @@ class HandledData(object):
             samples_reader=samples_reader,
             bag_size=config.BagSize,
             shuffle=True,
-            label_scaler=experiment.DataIO.LabelsScaler,
+            label_scaler=labels_scaler,
             create_empty_sample_func=lambda: InputSample.create_empty(config),
             create_sample_func=lambda row: self.__create_input_sample(row=row, config=config, vocab=vocab))
 

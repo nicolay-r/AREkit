@@ -11,6 +11,7 @@ from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormat
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.news.parsed.collection import ParsedNewsCollection
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.contrib.networks.core.input.formatters.sample import NetworkSampleFormatter
@@ -75,8 +76,8 @@ class NetworkInputEncoder(object):
         return term_embedding_pairs
 
     @staticmethod
-    def compose_and_save_term_embeddings_and_vocabulary(experiment, term_embedding_pairs):
-        assert(isinstance(experiment, BaseExperiment))
+    def compose_and_save_term_embeddings_and_vocabulary(experiment_io, term_embedding_pairs):
+        assert(isinstance(experiment_io, NetworkIOUtils))
         assert(isinstance(term_embedding_pairs, list))
 
         # Save embedding information additionally.
@@ -85,7 +86,7 @@ class NetworkInputEncoder(object):
 
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
-        embedding_filepath = experiment.ExperimentIO.get_embedding_filepath()
+        embedding_filepath = experiment_io.get_embedding_filepath()
         logger.info("Saving embedding [size={shape}]: {filepath}".format(
             shape=embedding_matrix.shape,
             filepath=embedding_filepath))
@@ -93,7 +94,7 @@ class NetworkInputEncoder(object):
 
         # Save vocabulary
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
-        vocab_filepath = experiment.ExperimentIO.get_vocab_filepath()
+        vocab_filepath = experiment_io.get_vocab_filepath()
         logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
                                                                          filepath=vocab_filepath))
         np.savez(vocab_filepath, vocab)
