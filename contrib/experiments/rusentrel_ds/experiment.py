@@ -42,7 +42,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                                  experiment_io=experiment_io)
 
         logger.info("Read synonyms collection [RuSentRel]...")
-        rusentrel_synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=experiment_io.Stemmer,
+        rusentrel_synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=data_io.Stemmer,
                                                                          version=rusentrel_version)
 
         logger.info("Read synonyms collection [RuAttitudes]...")
