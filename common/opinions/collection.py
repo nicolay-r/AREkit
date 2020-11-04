@@ -110,7 +110,8 @@ class OpinionCollection(object):
 
     def __register_opinion(self, opinion,
                            error_on_existence,
-                           error_on_synonym_end_missed):
+                           error_on_synonym_end_missed,
+                           show_duplications=False):
         assert(isinstance(error_on_existence, bool))
         assert(isinstance(error_on_synonym_end_missed, bool))
 
@@ -149,7 +150,7 @@ class OpinionCollection(object):
 
             if error_on_existence:
                 raise Exception(message)
-            else:
+            elif show_duplications:
                 logger.info(message)
                 return False
 
