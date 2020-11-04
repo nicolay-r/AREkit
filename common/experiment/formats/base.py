@@ -53,12 +53,6 @@ class BaseExperiment(object):
 
     # endregion
 
-    # TODO. Move it from here (only serialization stage)
-    # TODO. Reason 2: we will have doc_opins and doc_ops already initializaed in experiment __init__.
-    def initialize_neutral_annotator(self):
-        self.__experiment_data.NeutralAnnotator.initialize(opin_ops=self.__opin_operations,
-                                                           doc_ops=self.__doc_operations)
-
     def evaluate(self, data_type, epoch_index):
         """
         Perform experiment evaluation (related model) of a certain

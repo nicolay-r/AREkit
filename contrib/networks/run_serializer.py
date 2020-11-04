@@ -33,7 +33,9 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
                                    skip_if_folder_exists=self.__skip_folder_if_exists)
 
         # Perform neutral annotation.
-        perform_neutral_annotation(experiment=self._experiment,
+        perform_neutral_annotation(neutral_annotator=self._experiment.DataIO.NeutralAnnotator,
+                                   opin_ops=self._experiment.OpinionOperations,
+                                   doc_ops=self._experiment.DocumentOperations,
                                    logger=self._logger)
 
     # endregion
