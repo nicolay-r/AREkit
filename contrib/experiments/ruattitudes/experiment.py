@@ -17,25 +17,22 @@ class RuAttitudesExperiment(BaseExperiment):
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
-    def __init__(self, data_io, experiment_io_type, version, used_doc_ids_set=None, ra_instance=None):
+    def __init__(self, data_io, experiment_io_type, version, load_ruatittudes):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
         """
         assert(isinstance(version, RuAttitudesVersions))
-        assert(isinstance(used_doc_ids_set, set) or used_doc_ids_set is None)
-        assert(isinstance(ra_instance, dict) or ra_instance is None)
+        assert(isinstance(load_ruatittudes, bool))
 
         self.__version = version
 
         logger.info("Init experiment io ...")
         experiment_io = experiment_io_type(self)
 
-        ru_attitudes = ra_instance
-        if ra_instance is None:
-            ru_attitudes = read_ruattitudes_in_memory(
-                version=version,
-                used_doc_ids_set=used_doc_ids_set)
+        logger.info("Loading RuAttitudes collection optionally ...")
+        ru_attitudes = read_ruattitudes_in_memory(version=version, used_doc_ids_set=None) \
+            if load_ruatittudes else None
 
         logger.info("Read synonyms collection ...")
         synonyms = RuAttitudesSynonymsCollection.load_collection(stemmer=data_io.Stemmer,
