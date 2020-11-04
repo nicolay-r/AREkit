@@ -23,10 +23,14 @@ logging.basicConfig(level=logging.INFO)
 
 class NeuralNetworkCallback(Callback):
 
-    VocabularyOutputFilePathInLogDir = u'vocab.txt'
-    HiddenParamsTemplate = u'hparams_{}_e{}'
-    InputDependentParamsTemplate = u'idparams_{}_e{}'
-    FitEpochCompleted = True
+    __log_saving_info = True
+
+    __log_train_filename = u"cb_train.log"
+    __log_eval_filename = u"cb_eval.log"
+    __log_eval_verbose_filename = u"cb_eval_verbose.log"
+
+    __hiddenParams_template = u'hparams_{}_e{}'
+    __input_dependent_params_template = u'idparams_{}_e{}'
 
     def __init__(self):
 
@@ -45,7 +49,6 @@ class NeuralNetworkCallback(Callback):
 
         self.__key_save_hidden_parameters = True
         self.__key_stop_training_by_cost = False
-        self.__debug_save_info = False
 
         self.__train_doc_ids = None
 
@@ -76,18 +79,17 @@ class NeuralNetworkCallback(Callback):
         assert(isinstance(avg_fit_acc, float))
         assert(isinstance(operation_cancel, OperationCancellation))
 
-        if self.FitEpochCompleted:
-            message = "{}: Epoch: {}: avg_fit_cost: {:.3f}, avg_fit_acc: {:.3f}".format(
-                str(datetime.datetime.now()),
-                epoch_index,
-                avg_fit_cost,
-                avg_fit_acc)
+        message = "{}: Epoch: {}: avg_fit_cost: {:.3f}, avg_fit_acc: {:.3f}".format(
+            str(datetime.datetime.now()),
+            epoch_index,
+            avg_fit_cost,
+            avg_fit_acc)
 
-            # Providing information into main logger.
-            logger.info(message)
+        # Providing information into main logger.
+        logger.info(message)
 
-            # Duplicate the related information in separate log file.
-            self.__train_log_file.write("{}\n".format(message))
+        # Duplicate the related information in separate log file.
+        self.__train_log_file.write("{}\n".format(message))
 
         if (epoch_index not in self._test_on_epochs) and (not operation_cancel.IsCancelled):
             return
@@ -122,9 +124,9 @@ class NeuralNetworkCallback(Callback):
         assert(len(names) == len(values))
 
         for i, name in enumerate(names):
-            variable_path = os.path.join(self.__log_dir, self.HiddenParamsTemplate.format(name, epoch_index))
-            if self.__debug_save_info:
-                print "Save hidden values: {}".format(variable_path)
+            variable_path = os.path.join(self.__log_dir, self.__hiddenParams_template.format(name, epoch_index))
+            if self.__log_saving_info:
+                logger.info(u"Save hidden values: {}".format(variable_path))
             create_dir_if_not_exists(variable_path)
             np.save(variable_path, values[i])
 
@@ -151,14 +153,15 @@ class NeuralNetworkCallback(Callback):
         if not self.__key_save_hidden_parameters:
             return
 
-        vars_path = os.path.join(self.__log_dir,
-                                 self.InputDependentParamsTemplate.format(
-                                     '{}-{}'.format(var_name, data_type),
-                                     epoch_index))
+        vars_path = join(self.__log_dir,
+                         self.__input_dependent_params_template.format(
+                             u'{}-{}'.format(var_name, data_type),
+                             epoch_index))
         create_dir_if_not_exists(vars_path)
 
-        if self.__debug_save_info:
-            print "Save input dependent hidden values in a list using np.savez: {}".format(vars_path)
+        if self.__log_saving_info:
+            msg = u"Save input dependent hidden values in a list using np.savez: {}".format(vars_path)
+            logger.info(msg)
 
         id_and_value_pairs = list(predict_log.iter_by_parameter_values(var_name))
         id_and_value_pairs = sorted(id_and_value_pairs, key=lambda pair: pair[0])
@@ -239,9 +242,9 @@ class NeuralNetworkCallback(Callback):
     def __enter__(self):
         assert(self.__log_dir is not None)
 
-        train_log_filepath = join(self.__log_dir, u"cb_train.log")
-        eval_log_filepath = join(self.__log_dir, u"cb_eval.log")
-        eval_verbose_log_filepath = join(self.__log_dir, u"cb_eval_verbose.log")
+        train_log_filepath = join(self.__log_dir, self.__log_train_filename)
+        eval_log_filepath = join(self.__log_dir, self.__log_eval_filename)
+        eval_verbose_log_filepath = join(self.__log_dir, self.__log_eval_verbose_filename)
 
         self.__train_log_file = open(train_log_filepath, u"w")
         self.__eval_log_file = open(eval_log_filepath, u"w")
