@@ -9,6 +9,7 @@ from arekit.common.experiment.input.providers.row_ids.multiple import MultipleID
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.labels.base import Label
 from arekit.common.model.labeling.single import SingleLabelsHelper
+from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.utils import check_files_existance
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -119,7 +120,9 @@ class HandledData(object):
             experiment.DataIO.NeutralAnnotator.serialize_missed_collections(data_type=data_type)
 
             # Load parsed news collections in memory.
-            parsed_news_collection = experiment.create_parsed_collection(data_type)
+            parsed_news_it = experiment.DocumentOperations.iter_parsed_news(
+                experiment.DocumentOperations.iter_news_indices(data_type))
+            parsed_news_collection = ParsedNewsCollection(parsed_news_it=parsed_news_it, notify=True)
 
             # Composing input.
             term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(

@@ -8,7 +8,6 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.common.news.parsed.collection import ParsedNewsCollection
 
 logger = logging.getLogger(__name__)
 
@@ -54,27 +53,23 @@ class BaseExperiment(object):
 
     # region protected method
 
+    # TODO. Remove
     def _set_opin_operations(self, value):
         assert(isinstance(value, OpinionOperations))
         self.__opin_operations = value
 
+    # TODO. Remove
     def _set_doc_operations(self, value):
         assert(isinstance(value, DocumentOperations))
         self.__doc_operations = value
 
     # endregion
 
+    # TODO. Move it from here (only serialization stage)
+    # TODO. Reason 2: we will have doc_opins and doc_ops already initializaed in experiment __init__.
     def initialize_neutral_annotator(self):
         self.__experiment_data.NeutralAnnotator.initialize(opin_ops=self.__opin_operations,
                                                            doc_ops=self.__doc_operations)
-
-    def create_parsed_collection(self, data_type):
-        assert(isinstance(data_type, DataType))
-
-        parsed_news_it = self.DocumentOperations.iter_parsed_news(
-            doc_inds=self.DocumentOperations.iter_news_indices(data_type))
-
-        return ParsedNewsCollection(parsed_news_it, notify=True)
 
     def evaluate(self, data_type, epoch_index):
         """
