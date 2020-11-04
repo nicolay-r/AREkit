@@ -1,5 +1,6 @@
 import datetime
 import logging
+from os.path import join
 
 import numpy as np
 import os
@@ -25,7 +26,6 @@ class NeuralNetworkCallback(Callback):
     VocabularyOutputFilePathInLogDir = u'vocab.txt'
     HiddenParamsTemplate = u'hparams_{}_e{}'
     InputDependentParamsTemplate = u'idparams_{}_e{}'
-    PredictVerbosePerFileStatistic = True
     FitEpochCompleted = True
 
     def __init__(self):
@@ -36,6 +36,10 @@ class NeuralNetworkCallback(Callback):
 
         self._test_on_epochs = None
         self.__cv_index = None
+
+        self.__train_log_file = None
+        self.__eval_log_file = None
+        self.__eval_verbose_log_file = None
 
         self.reset_experiment_dependent_parameters()
 
@@ -73,11 +77,17 @@ class NeuralNetworkCallback(Callback):
         assert(isinstance(operation_cancel, OperationCancellation))
 
         if self.FitEpochCompleted:
-            logger.info("{}: Epoch: {}: avg_fit_cost: {:.3f}, avg_fit_acc: {:.3f}".format(
+            message = "{}: Epoch: {}: avg_fit_cost: {:.3f}, avg_fit_acc: {:.3f}".format(
                 str(datetime.datetime.now()),
                 epoch_index,
                 avg_fit_cost,
-                avg_fit_acc))
+                avg_fit_acc)
+
+            # Providing information into main logger.
+            logger.info(message)
+
+            # Duplicate the related information in separate log file.
+            self.__train_log_file.write("{}\n".format(message))
 
         if (epoch_index not in self._test_on_epochs) and (not operation_cancel.IsCancelled):
             return
@@ -180,14 +190,21 @@ class NeuralNetworkCallback(Callback):
                                                epoch_index=epoch_index,
                                                labels_formatter=RuSentRelLabelsFormatter())
 
-        if self.PredictVerbosePerFileStatistic:
-            self._print_verbose_eval_results(eval_result=result,
-                                             data_type=data_type,
-                                             epoch_index=epoch_index)
+        eval_verbose_msg = self.__create_verbose_eval_results_msg(eval_result=result,
+                                                                  data_type=data_type,
+                                                                  epoch_index=epoch_index)
 
-        self._print_overall_results(eval_result=result,
-                                    data_type=data_type,
-                                    epoch_index=epoch_index)
+        eval_msg = self.__create_overall_eval_results_msg(eval_result=result,
+                                                          data_type=data_type,
+                                                          epoch_index=epoch_index)
+
+        # Writing evaluation logging results.
+        logger.info(eval_verbose_msg)
+        logger.info(eval_msg)
+
+        # Separate logging information by files.
+        self.__eval_log_file.write(eval_msg)
+        self.__eval_verbose_log_file.write(eval_verbose_msg)
 
         self._save_minibatch_all_input_dependent_hidden_values(
             predict_log=idhp,
@@ -201,19 +218,41 @@ class NeuralNetworkCallback(Callback):
     # region logging
 
     @staticmethod
-    def _print_verbose_eval_results(eval_result, data_type, epoch_index):
+    def __create_verbose_eval_results_msg(eval_result, data_type, epoch_index):
         assert(isinstance(eval_result, TwoClassEvalResult))
-        logger.info("Stat for {dtype}, e={epoch}:".format(dtype=data_type, epoch=epoch_index))
-        for doc_id, result in eval_result.iter_document_results():
-            logger.info(doc_id, result)
+        title = u"Stat for [{dtype}], e={epoch}:".format(dtype=data_type, epoch=epoch_index)
+        contents = [u"{doc_id}: {result}".format(doc_id=doc_id, result=result)
+                    for doc_id, result in eval_result.iter_document_results()]
+        return u'\n'.join([title, contents])
 
     @staticmethod
-    def _print_overall_results(eval_result, data_type, epoch_index):
+    def __create_overall_eval_results_msg(eval_result, data_type, epoch_index):
         assert(isinstance(eval_result, TwoClassEvalResult))
-
-        logger.info("Stat for '{dtype}', e={epoch}".format(dtype=data_type, epoch=epoch_index))
-        params = ["{}: {}".format(metric_name, round(value, 2))
+        title = u"Stat for '[{dtype}]', e={epoch}".format(dtype=data_type, epoch=epoch_index)
+        params = [u"{}: {}".format(metric_name, round(value, 2))
                   for metric_name, value in eval_result.iter_results()]
-        logger.info("; ".join(params))
+        contents = u"; ".join(params)
+        return u'\n'.join([title, contents])
 
     # endregion
+
+    def __enter__(self):
+        assert(self.__log_dir is not None)
+
+        train_log_filepath = join(self.__log_dir, u"cb_train.log")
+        eval_log_filepath = join(self.__log_dir, u"cb_eval.log")
+        eval_verbose_log_filepath = join(self.__log_dir, u"cb_eval_verbose.log")
+
+        self.__train_log_file = open(train_log_filepath, u"w")
+        self.__eval_log_file = open(eval_log_filepath, u"w")
+        self.__eval_verbose_log_file = open(eval_verbose_log_filepath, u"w")
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if self.__train_log_file is not None:
+            self.__train_log_file.close()
+
+        if self.__eval_log_file is not None:
+            self.__eval_log_file.close()
+
+        if self.__eval_verbose_log_file is not None:
+            self.__eval_verbose_log_file.close()
