@@ -14,13 +14,15 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    def __init__(self, data_io, experiment_io):
+    def __init__(self, data_io, experiment_io, opin_ops, doc_ops):
         assert(isinstance(data_io, DataIO))
-        assert(issubclass(experiment_io, BaseIOUtils))
+        assert(isinstance(experiment_io, BaseIOUtils))
+        assert(isinstance(opin_ops, OpinionOperations))
+        assert(isinstance(doc_ops, DocumentOperations))
         self.__experiment_data = data_io
-        self.__experiment_io = experiment_io(self)
-        self.__opin_operations = None
-        self.__doc_operations = None
+        self.__experiment_io = experiment_io
+        self.__opin_operations = opin_ops
+        self.__doc_operations = doc_ops
 
     # region Properties
 
@@ -48,20 +50,6 @@ class BaseExperiment(object):
     @property
     def DocumentOperations(self):
         return self.__doc_operations
-
-    # endregion
-
-    # region protected method
-
-    # TODO. Remove
-    def _set_opin_operations(self, value):
-        assert(isinstance(value, OpinionOperations))
-        self.__opin_operations = value
-
-    # TODO. Remove
-    def _set_doc_operations(self, value):
-        assert(isinstance(value, DocumentOperations))
-        self.__doc_operations = value
 
     # endregion
 

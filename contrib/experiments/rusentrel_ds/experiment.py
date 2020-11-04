@@ -1,6 +1,7 @@
 import logging
 
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiments.ruattitudes.folding import create_ruattitudes_experiment_data_folding
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
@@ -25,7 +26,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, experiment_io, folding_type, ruattitudes_version, rusentrel_version, ra_instance=None):
+    def __init__(self, data_io, experiment_io_type, folding_type, ruattitudes_version, rusentrel_version, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
@@ -34,12 +35,13 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         assert(isinstance(rusentrel_version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
         assert(isinstance(ra_instance, dict) or ra_instance is None)
+        assert(issubclass(experiment_io_type, BaseIOUtils))
+
+        logger.info("Init experiment io ...")
+        experiment_io = experiment_io_type(self)
 
         self.__ruattitudes_version = ruattitudes_version
         self.__rusentrel_version = rusentrel_version
-
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io,
-                                                                 experiment_io=experiment_io)
 
         logger.info("Read synonyms collection [RuSentRel]...")
         rusentrel_synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=data_io.Stemmer,
@@ -57,7 +59,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             folding_type=folding_type,
             version=rusentrel_version,
             docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
-            experiment_io=self.ExperimentIO)
+            experiment_io=experiment_io)
 
         # init documents.
         rusentrel_doc = RuSentrelDocumentOperations(experiment_io=data_io,
@@ -80,7 +82,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         # Init opinions
         rusentrel_op = RuSentrelOpinionOperations(experiment_data=data_io,
                                                   version=rusentrel_version,
-                                                  experiment_io=self.ExperimentIO,
+                                                  experiment_io=experiment_io,
                                                   synonyms=rusentrel_synonyms)
 
         ruattitudes_op = RuAttitudesOpinionOperations(ruattitudes_synonyms)
@@ -99,8 +101,10 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         ruattitudes_doc.set_ru_attitudes(ru_attitudes)
         ruattitudes_op.set_ru_attitudes(ru_attitudes)
 
-        self._set_opin_operations(opin_ops)
-        self._set_doc_operations(doc_ops)
+        super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io,
+                                                                 doc_ops=doc_ops,
+                                                                 opin_ops=opin_ops,
+                                                                 experiment_io=experiment_io)
 
         # Composing experiment name
         self.__name = u"rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(

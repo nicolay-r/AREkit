@@ -17,7 +17,7 @@ class RuAttitudesExperiment(BaseExperiment):
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
-    def __init__(self, data_io, experiment_io, version, used_doc_ids_set=None, ra_instance=None):
+    def __init__(self, data_io, experiment_io_type, version, used_doc_ids_set=None, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)
@@ -28,14 +28,14 @@ class RuAttitudesExperiment(BaseExperiment):
 
         self.__version = version
 
+        logger.info("Init experiment io ...")
+        experiment_io = experiment_io_type(self)
+
         ru_attitudes = ra_instance
         if ra_instance is None:
             ru_attitudes = read_ruattitudes_in_memory(
                 version=version,
                 used_doc_ids_set=used_doc_ids_set)
-
-        super(RuAttitudesExperiment, self).__init__(data_io=data_io,
-                                                    experiment_io=experiment_io)
 
         logger.info("Read synonyms collection ...")
         synonyms = RuAttitudesSynonymsCollection.load_collection(stemmer=data_io.Stemmer,
@@ -54,8 +54,10 @@ class RuAttitudesExperiment(BaseExperiment):
         doc_ops.set_ru_attitudes(ru_attitudes)
         opin_ops.set_ru_attitudes(ru_attitudes)
 
-        self._set_opin_operations(opin_ops)
-        self._set_doc_operations(doc_ops)
+        super(RuAttitudesExperiment, self).__init__(data_io=data_io,
+                                                    experiment_io=experiment_io,
+                                                    opin_ops=opin_ops,
+                                                    doc_ops=doc_ops)
 
     @property
     def Name(self):
