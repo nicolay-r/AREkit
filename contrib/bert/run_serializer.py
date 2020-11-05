@@ -7,6 +7,7 @@ from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
+from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.contrib.bert.samplers.factory import create_bert_sample_formatter
 
 
@@ -39,8 +40,9 @@ class BertExperimentInputSerializer(ExperimentEngine):
                                                         entity_formatter=self.__entity_formatter)
 
         # Load parsed news collections in memory.
-        # Taken from Neural networks formatter.
-        parsed_news_collection = self._experiment.create_parsed_collection(data_type)
+        parsed_news_it = self._experiment.DocumentOperations.iter_parsed_news(
+            self._experiment.DocumentOperations.iter_news_indices(data_type))
+        parsed_news_collection = ParsedNewsCollection(parsed_news_it=parsed_news_it, notify=True)
 
         # Compose text opinion helper.
         # Taken from Neural networks formatter.
