@@ -11,6 +11,8 @@ class RuAttitudesVersions(Enum):
     V12 = u"v1_2"
     V20Base = u'v2_0_base'
     V20Large = u'v2_0_large'
+    V20BaseNeut = u'v2_0_base_neut'
+    V20LargeNeut = u'v2_0_large_neut'
 
 
 class RuAttitudesIOUtils(ZipArchiveUtils):
