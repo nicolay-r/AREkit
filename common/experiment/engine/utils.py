@@ -10,13 +10,13 @@ def mark_dir_for_serialization(target_dir, logger, skip_if_folder_exists):
     assert(isinstance(target_dir, unicode))
     assert(isinstance(skip_if_folder_exists, bool))
 
-    target_file = join(target_dir, 'lock.txt')
-    if exists(target_file) and skip_if_folder_exists:
+    target_filepath = join(target_dir, 'lock.txt')
+    if exists(target_filepath) and skip_if_folder_exists:
         logger.info("TARGET DIR EXISTS: {}".format(target_dir))
         return
     else:
-        create_dir_if_not_exists(target_dir)
-        open(target_file, 'a').close()
+        create_dir_if_not_exists(filepath=target_filepath)
+        open(target_filepath, 'a').close()
 
 
 def setup_logger():
