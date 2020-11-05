@@ -3,9 +3,9 @@ from itertools import chain
 from enum import Enum
 
 
-class BertSampleFormatter(Enum):
+class BertSampleFormatterTypes(Enum):
     """
-    Supported formats
+    Supported format types.
     """
 
     """
@@ -27,25 +27,25 @@ class BertSampleFormatter(Enum):
 class SampleFormattersService(object):
 
     __fmt_names = {
-        BertSampleFormatter.CLASSIF_M: u'c_m',
-        BertSampleFormatter.QA_M: u"qa_m",
-        BertSampleFormatter.NLI_M: u'nli_m',
-        BertSampleFormatter.QA_B: u"qa_b",
-        BertSampleFormatter.NLI_B: u"nli_b"
+        BertSampleFormatterTypes.CLASSIF_M: u'c_m',
+        BertSampleFormatterTypes.QA_M: u"qa_m",
+        BertSampleFormatterTypes.NLI_M: u'nli_m',
+        BertSampleFormatterTypes.QA_B: u"qa_b",
+        BertSampleFormatterTypes.NLI_B: u"nli_b"
     }
 
     # region private methods
 
     @staticmethod
     def __iter_multiple():
-        yield BertSampleFormatter.CLASSIF_M
-        yield BertSampleFormatter.QA_M
-        yield BertSampleFormatter.NLI_M
+        yield BertSampleFormatterTypes.CLASSIF_M
+        yield BertSampleFormatterTypes.QA_M
+        yield BertSampleFormatterTypes.NLI_M
 
     @staticmethod
     def __iter_binary():
-        yield BertSampleFormatter.QA_B
-        yield BertSampleFormatter.NLI_B
+        yield BertSampleFormatterTypes.QA_B
+        yield BertSampleFormatterTypes.NLI_B
 
     @staticmethod
     def __iter_all():
@@ -56,12 +56,12 @@ class SampleFormattersService(object):
 
     @staticmethod
     def is_binary(formatter_type):
-        binary = list(BertSampleFormatter.__iter_binary())
+        binary = list(BertSampleFormatterTypes.__iter_binary())
         return formatter_type in binary
 
     @staticmethod
     def is_multiple(formatter_type):
-        multiple = list(BertSampleFormatter.__iter_multiple())
+        multiple = list(BertSampleFormatterTypes.__iter_multiple())
         return formatter_type in multiple
 
     @staticmethod
