@@ -1,3 +1,5 @@
+from itertools import chain
+
 from enum import Enum
 
 
@@ -24,7 +26,7 @@ class BertSampleFormatter(Enum):
 
 class SampleFormattersService(object):
 
-    __to_str = {
+    __fmt_names = {
         BertSampleFormatter.CLASSIF_M: u'c_m',
         BertSampleFormatter.QA_M: u"qa_m",
         BertSampleFormatter.NLI_M: u'nli_m',
@@ -47,10 +49,8 @@ class SampleFormattersService(object):
 
     @staticmethod
     def __iter_all():
-        for formatter in SampleFormattersService.__iter_binary():
-            yield formatter
-        for formatter in SampleFormattersService.__iter_multiple():
-            yield formatter
+        return chain(SampleFormattersService.__iter_binary(),
+                     SampleFormattersService.__iter_multiple())
 
     # endregion
 
@@ -65,17 +65,17 @@ class SampleFormattersService(object):
         return formatter_type in multiple
 
     @staticmethod
-    def iter_supported(return_values=False):
+    def iter_supported_names(return_values=False):
         for fmt_type in SampleFormattersService.__iter_all():
-            yield SampleFormattersService.__to_str[fmt_type] if return_values else fmt_type
+            yield SampleFormattersService.__fmt_names[fmt_type] if return_values else fmt_type
 
     @staticmethod
-    def type_to_value(fmt_type):
-        return SampleFormattersService.__to_str[fmt_type]
+    def type_to_name(fmt_type):
+        return SampleFormattersService.__fmt_names[fmt_type]
 
     @staticmethod
-    def find_type_by_value(value):
-        for fmt_type, fmt_type_value in SampleFormattersService.__to_str.iteritems():
+    def find_fmt_type_by_name(value):
+        for fmt_type, fmt_type_value in SampleFormattersService.__fmt_names.iteritems():
             if fmt_type_value == value:
                 return fmt_type
         raise NotImplemented(u"Formatting type '{}' does not supported".format(value))

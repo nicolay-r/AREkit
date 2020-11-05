@@ -53,5 +53,3 @@ def create_bert_sample_formatter(data_type, formatter_type, label_scaler,
                                        text_terms_mapper=text_terms_mapper)
 
     return None
-
-
