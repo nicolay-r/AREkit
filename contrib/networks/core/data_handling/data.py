@@ -68,18 +68,22 @@ class HandledData(object):
         """
         assert(isinstance(experiment, BaseExperiment))
 
-        if not HandledData.__check_files_existed(experiment=experiment):
+        files_existed = HandledData.__check_files_existed(
+            data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
+            experiment_io=experiment.ExperimentIO)
+
+        if not files_existed:
             raise Exception(u"Data has not been initialized/serialized: `{}`".format(experiment.Name))
 
         # Reading embedding.
         npz_embedding_data = np.load(experiment.ExperimentIO.get_embedding_filepath())
         config.set_term_embedding(npz_embedding_data['arr_0'])
-        logger.info("Embedding readed [size={}]".format(config.TermEmbeddingMatrix.shape))
+        logger.info("Embedding read [size={}]".format(config.TermEmbeddingMatrix.shape))
 
         # Reading vocabulary
         npz_vocab_data = np.load(experiment.ExperimentIO.get_vocab_filepath())
         vocab = dict(npz_vocab_data['arr_0'])
-        logger.info("Vocabulary readed [size={}]".format(len(vocab)))
+        logger.info("Vocabulary read [size={}]".format(len(vocab)))
 
         # Reading from serialized information
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
