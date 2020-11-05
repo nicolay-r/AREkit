@@ -1,5 +1,6 @@
 import logging
 
+from arekit.common.experiment.folding.types import FoldingType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
@@ -8,7 +9,6 @@ from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOp
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiments.rusentrel.folding import create_rusentrel_experiment_data_folding
-from arekit.contrib.experiments.folding_type import FoldingType
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
@@ -26,7 +26,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, experiment_io_type, folding_type, ruattitudes_version, rusentrel_version, ra_instance=None):
+    def __init__(self, data_io, experiment_io_type, folding_type,
+                 ruattitudes_version, rusentrel_version, ra_instance=None):
         """
         ra_instance: dict
             precomputed ru_attitudes (in memory)

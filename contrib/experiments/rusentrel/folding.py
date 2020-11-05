@@ -6,8 +6,8 @@ from arekit.common.experiment.cv.doc_stat.sentence import SentenceBasedDocumentS
 from arekit.common.experiment.cv.splitters.statistical import StatBasedCrossValidataionSplitter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.folding.fixed import FixedFolding
+from arekit.common.experiment.folding.types import FoldingType
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.contrib.experiments.folding_type import FoldingType
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
 

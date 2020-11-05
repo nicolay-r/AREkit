@@ -1,10 +1,10 @@
 import logging
 
+from arekit.common.experiment.folding.types import FoldingType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiments.rusentrel.folding import create_rusentrel_experiment_data_folding
-from arekit.contrib.experiments.folding_type import FoldingType
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
