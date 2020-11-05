@@ -3,7 +3,6 @@ from os.path import join
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.common.model.model_io import BaseModelIO
 
 logger = logging.getLogger(__name__)
@@ -20,24 +19,7 @@ class NetworkIOUtils(BaseIOUtils):
     TERM_EMBEDDING_FILENAME_TEMPLATE = u'term_embedding-{cv_index}'
     VOCABULARY_FILENAME_TEMPLATE = u"vocab-{cv_index}.txt"
 
-    def get_experiment_sources_dir(self):
-        """ Provides directory for samples.
-        """
-        raise NotImplementedError()
-
     # region public methods
-
-    def get_target_dir(self):
-        """ Represents an experiment dir of specific label scale format,
-            defined by labels scaler.
-        """
-        src_dir = self.get_experiment_sources_dir()
-
-        e_name = u"{name}_{scale}l".format(name=self._experiment.Name,
-                                           scale=str(self._experiment.DataIO.LabelsScaler.LabelsCount))
-
-        return join_dir_with_subfolder_name(subfolder_name=e_name,
-                                            dir=src_dir)
 
     def get_vocab_filepath(self):
         return join(self.get_target_dir(),

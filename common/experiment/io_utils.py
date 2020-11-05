@@ -15,11 +15,22 @@ class BaseIOUtils(object):
     def __init__(self, experiment):
         self._experiment = experiment
 
-    def get_target_dir(self):
-        """ Provides a main directory for input
-            Assumes to be manually implemented for every nested base_io utils.
+    def get_experiment_sources_dir(self):
+        """ Provides directory for samples.
         """
         raise NotImplementedError()
+
+    def get_target_dir(self):
+        """ Represents an experiment dir of specific label scale format,
+            defined by labels scaler.
+        """
+        src_dir = self.get_experiment_sources_dir()
+
+        e_name = u"{name}_{scale}l".format(name=self._experiment.Name,
+                                           scale=str(self._experiment.DataIO.LabelsScaler.LabelsCount))
+
+        return join_dir_with_subfolder_name(subfolder_name=e_name,
+                                            dir=src_dir)
 
     # region protected methods
 

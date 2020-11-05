@@ -33,6 +33,9 @@ class NeuralNetworkModelIO(BaseModelIO):
 
     # endregion
 
+    def get_model_name(self):
+        return self.__full_model_name
+
     def get_model_dir(self):
         return self.__get_target_subdir()
 

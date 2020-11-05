@@ -1,5 +1,5 @@
+from os.path import join
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.common.model.model_io import BaseModelIO
 
 
 class BertIOUtils(BaseIOUtils):
@@ -12,8 +12,6 @@ class BertIOUtils(BaseIOUtils):
             rather than experiment dir in a base implementation,
             as model affects on text_b, entities representation, etc.
         """
+        return join(super(BertIOUtils, self).get_target_dir(),
+                    self._experiment.DataIO.ModelIO.get_model_name())
 
-        model_io = self._experiment.DataIO.ModelIO
-        assert(isinstance(model_io, BaseModelIO))
-
-        return model_io.get_model_dir()
