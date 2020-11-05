@@ -74,8 +74,8 @@ class SampleFormattersService(object):
         return SampleFormattersService.__fmt_names[fmt_type]
 
     @staticmethod
-    def find_fmt_type_by_name(value):
-        for fmt_type, fmt_type_value in SampleFormattersService.__fmt_names.iteritems():
-            if fmt_type_value == value:
+    def find_fmt_type_by_name(name):
+        for fmt_type, fmt_type_name in SampleFormattersService.__fmt_names.iteritems():
+            if fmt_type_name == name:
                 return fmt_type
-        raise NotImplemented(u"Formatting type '{}' does not supported".format(value))
+        raise NotImplemented(u"Formatting type '{}' does not supported".format(name))
