@@ -30,7 +30,7 @@ class RuAttitudesExperiment(BaseExperiment):
         logger.info("Init experiment io ...")
         experiment_io = experiment_io_type(self)
 
-        logger.info("Loading RuAttitudes collection optionally ...")
+        logger.info("Loading RuAttitudes collection optionally [{version}] ...".format(version=version))
         ru_attitudes = read_ruattitudes_in_memory(version=version, used_doc_ids_set=None) \
             if load_ruatittudes else None
 
