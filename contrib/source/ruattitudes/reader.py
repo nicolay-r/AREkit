@@ -182,12 +182,15 @@ class RuAttitudesFormatReader(object):
         sg_to = line.index(u'}', sg_from)
         group_index = int(line[sg_from+4:sg_to])
 
+        is_auth = u'<AUTH>' in line
+
         text_object = TextObject(id_in_sentence=id_in_sentence,
                                  value=value,
                                  obj_type=obj_type,
                                  position=int(term_index),
                                  terms_count=int(length),
-                                 syn_group_index=group_index)
+                                 syn_group_index=group_index,
+                                 is_auth=is_auth)
 
         return text_object
 
