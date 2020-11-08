@@ -177,7 +177,11 @@ class HandledData(object):
             shuffle=True,
             label_scaler=labels_scaler,
             create_empty_sample_func=lambda: InputSample.create_empty(config),
-            create_sample_func=lambda row: self.__create_input_sample(row=row, config=config, vocab=vocab))
+            create_sample_func=lambda row: self.__create_input_sample(
+                row=row,
+                config=config,
+                vocab=vocab,
+                is_external_vocab=experiment_io.has_model_predefined_state()))
 
         return labeled_sample_row_ids
 
@@ -197,7 +201,7 @@ class HandledData(object):
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
         return norm, stat
 
-    def __create_input_sample(self, row, config, vocab):
+    def __create_input_sample(self, row, config, vocab, is_external_vocab):
         """
         Creates an input for Neural Network model
         """
@@ -208,6 +212,7 @@ class HandledData(object):
         return InputSample.from_tsv_row(
             input_sample_id=row.SampleID,
             terms=row.Terms,
+            is_external_vocab=is_external_vocab,
             subj_ind=row.SubjectIndex,
             obj_ind=row.ObjectIndex,
             words_vocab=vocab,
