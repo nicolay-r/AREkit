@@ -226,7 +226,7 @@ class NeuralNetworkCallback(Callback):
         title = u"Stat for [{dtype}], e={epoch}:".format(dtype=data_type, epoch=epoch_index)
         contents = [u"{doc_id}: {result}".format(doc_id=doc_id, result=result)
                     for doc_id, result in eval_result.iter_document_results()]
-        return u'\n'.join([title, contents])
+        return u'\n'.join([title] + contents)
 
     @staticmethod
     def __create_overall_eval_results_msg(eval_result, data_type, epoch_index):
