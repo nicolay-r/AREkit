@@ -64,12 +64,12 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
         """ Performing iteration over possible foldings.
         """
         for i in range(self.__cv_count):
-            self._iter_index = 0
+            self._iteration_index = i
             yield None
 
     def get_current_state(self):
         """ Providing current iteration index.
         """
-        return unicode(self.__iteration_index)
+        return unicode(self._iteration_index)
 
     # endregion
