@@ -5,7 +5,7 @@ sys.path.append('../../../../')
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions
+from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 

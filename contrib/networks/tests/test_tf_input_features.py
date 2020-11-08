@@ -21,7 +21,7 @@ from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opi
 from arekit.tests.text.utils import terms_to_str
 
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions
+from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 
 
 class TestTfInputFeatures(unittest.TestCase):

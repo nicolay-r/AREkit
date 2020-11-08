@@ -6,7 +6,7 @@ from arekit.processing.tests.text.debug_text import debug_show_news_terms
 from arekit.processing.text.parser import TextParser
 
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions
+from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions

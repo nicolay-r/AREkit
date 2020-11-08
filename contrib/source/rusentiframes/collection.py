@@ -3,7 +3,8 @@ import json
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.source.rusentiframes.effect import FrameEffect
-from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions, RuSentiFramesIOUtils
+from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesIOUtils
+from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
     RuSentiFramesEffectLabelsFormatter
 from arekit.contrib.source.rusentiframes.polarity import RuSentiFramesFramePolarity

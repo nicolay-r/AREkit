@@ -11,7 +11,7 @@ from arekit.tests.text.utils import terms_to_str
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesVersions
+from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.tests.text.news import init_rusentrel_doc
 from arekit.contrib.bert.entity.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
