@@ -11,3 +11,7 @@ class TrainingData(DataIO):
     @property
     def Evaluator(self):
         raise NotImplementedError()
+
+    @property
+    def Callback(self):
+        raise NotImplementedError()
