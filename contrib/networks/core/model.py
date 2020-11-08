@@ -25,8 +25,8 @@ from arekit.contrib.networks.core.feeding.bags.collection.multi import MultiInst
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
+from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.nn import NeuralNetwork
-from arekit.contrib.networks.core.nn_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
 
 logger = logging.getLogger(__name__)

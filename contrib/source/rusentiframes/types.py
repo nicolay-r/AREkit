@@ -17,7 +17,7 @@ class RuSentiFramesVersions(Enum):
     V20 = u"v2_0"
 
 
-class RuSentiFramesVersionsService():
+class RuSentiFramesVersionsService:
 
     @staticmethod
     def __iter_supported_types():

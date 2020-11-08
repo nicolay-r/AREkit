@@ -6,7 +6,6 @@ from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.engine.utils import rm_dir_contents
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.init_config import initialize_config
 
