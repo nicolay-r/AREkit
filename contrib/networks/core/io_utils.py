@@ -4,6 +4,7 @@ from os.path import join
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.model.model_io import BaseModelIO
+from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -22,14 +23,26 @@ class NetworkIOUtils(BaseIOUtils):
     # region public methods
 
     def get_vocab_filepath(self):
-        return join(self.get_target_dir(),
-                    self.VOCABULARY_FILENAME_TEMPLATE.format(
-                        cv_index=self._experiment_iter_index()) + u'.npz')
+        default_filepath = join(self.get_target_dir(),
+                                self.VOCABULARY_FILENAME_TEMPLATE.format(
+                                    cv_index=self._experiment_iter_index()) + u'.npz')
+
+        model_io = self._experiment.DataIO.ModelIO
+        assert(isinstance(model_io, NeuralNetworkModelIO))
+
+        return model_io.get_model_vocab_filepath() if model_io.IsPretrainedStateProvided \
+            else default_filepath
 
     def get_embedding_filepath(self):
-        return join(self.get_target_dir(),
-                    self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                        cv_index=self._experiment_iter_index()) + u'.npz')
+        default_filepath = join(self.get_target_dir(),
+                                self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
+                                    cv_index=self._experiment_iter_index()) + u'.npz')
+
+        model_io = self._experiment.DataIO.ModelIO
+        assert(isinstance(model_io, NeuralNetworkModelIO))
+
+        return model_io.get_model_embedding_filepath() if model_io.IsPretrainedStateProvided \
+            else default_filepath
 
     def get_output_model_results_filepath(self, data_type, epoch_index):
 

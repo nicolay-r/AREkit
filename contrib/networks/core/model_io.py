@@ -7,13 +7,23 @@ class NeuralNetworkModelIO(BaseModelIO):
     """ Provides an API for saving model states
     """
 
-    def __init__(self, target_dir, full_model_name, source_dir):
+    def __init__(self, target_dir, full_model_name,
+                 source_dir=None,
+                 embedding_filepath=None,
+                 vocab_filepath=None):
         assert(isinstance(target_dir, unicode))
         assert(isinstance(full_model_name, unicode))
         assert(isinstance(source_dir, unicode) or source_dir is None)
+
         self.__target_dir = target_dir
         self.__full_model_name = full_model_name
+
+        # States related parameters that allows to load an existed
+        # model and provide all the related information for further
+        # fine-tuning operation.
         self.__source_dir = source_dir
+        self.__embedding_filepath = embedding_filepath
+        self.__vocab_filepath = vocab_filepath
 
     @property
     def IsPretrainedStateProvided(self):
@@ -38,6 +48,12 @@ class NeuralNetworkModelIO(BaseModelIO):
 
     def get_model_dir(self):
         return self.__get_target_subdir()
+
+    def get_model_embedding_filepath(self):
+        return self.__embedding_filepath
+
+    def get_model_vocab_filepath(self):
+        return self.__vocab_filepath
 
     def get_model_source_path_tf_prefix(self):
         """ Provides a filepath to the state that should be
