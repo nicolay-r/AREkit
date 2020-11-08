@@ -36,6 +36,8 @@ class InputSample(InputSampleBase):
     I_FRAME_INDS = 'frame_inds'
     I_FRAME_SENT_ROLES = 'frame_roles_inds'
 
+    TERM_VALUE_MISSING = -1
+
     # TODO: Should be -1, but now it is not supported
     FRAME_SENT_ROLES_PAD_VALUE = 0
     FRAMES_PAD_VALUE = 0
@@ -136,9 +138,23 @@ class InputSample(InputSampleBase):
                    input_sample_id=u"1")
 
     @classmethod
+    def __get_index_by_term(cls, term, word_vocab, is_external_vocab):
+
+        if not is_external_vocab:
+            # Since we consider that all the existed words presented in vocabulary
+            # we obtain the related index without any additional checks
+            return word_vocab[term]
+
+        # In case of non-native vocabulary, we consider an additional
+        # placeholed when the related term has not been found in vocabulary.
+        return word_vocab[term] if term in word_vocab else cls.TERM_VALUE_MISSING
+
+
+    @classmethod
     def from_tsv_row(cls,
                      input_sample_id,  # row_id
                      terms,            # list of terms, that might be found in words_vocab
+                     is_external_vocab,
                      subj_ind,
                      obj_ind,
                      words_vocab,      # for indexing input (all the vocabulary, obtained from offsets.py)
@@ -165,7 +181,8 @@ class InputSample(InputSampleBase):
             return [shift_index(ind) for ind in inds]
 
         # Composing vectors
-        x_indices = [words_vocab[term] for term in terms]
+        x_indices = [cls.__get_index_by_term(term, words_vocab, is_external_vocab)
+                     for term in terms]
 
         pos_vector = arekit.contrib.networks.core.mappers.pos.iter_pos_indices_for_terms(
             terms=terms,
