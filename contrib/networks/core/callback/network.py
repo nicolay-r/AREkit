@@ -246,6 +246,10 @@ class NeuralNetworkCallback(Callback):
         eval_log_filepath = join(self.__log_dir, self.__log_eval_filename)
         eval_verbose_log_filepath = join(self.__log_dir, self.__log_eval_verbose_filename)
 
+        create_dir_if_not_exists(train_log_filepath)
+        create_dir_if_not_exists(eval_log_filepath)
+        create_dir_if_not_exists(eval_verbose_log_filepath)
+
         self.__train_log_file = open(train_log_filepath, u"w")
         self.__eval_log_file = open(eval_log_filepath, u"w")
         self.__eval_verbose_log_file = open(eval_verbose_log_filepath, u"w")
