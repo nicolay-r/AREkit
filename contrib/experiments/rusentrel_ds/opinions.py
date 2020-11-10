@@ -23,6 +23,12 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
 
     # region CVBasedOpinionOperations
 
+    def iter_opinions_for_extraction(self, doc_id, data_type):
+        assert(isinstance(doc_id, int))
+        target = self.__target(doc_id)
+        return target.iter_opinions_for_extraction(doc_id=doc_id,
+                                                   data_type=data_type)
+
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
         target = self.__target(doc_id)

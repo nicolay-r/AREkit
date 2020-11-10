@@ -1,6 +1,5 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.labels.base import NeutralLabel
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
 
@@ -27,16 +26,17 @@ class RuAttitudesOpinionOperations(OpinionOperations):
 
     # endregion
 
+    def iter_opinions_for_extraction(self, doc_id, data_type):
+        if data_type == DataType.Train:
+            # We provide only those opinions that
+            # were labeled in RuAttitudes collection
+            yield self.__get_opinions_in_news(doc_id=doc_id)
+
+        # Provide nothing otherwise
+        pass
+
     def get_doc_ids_set_to_neutrally_annotate(self):
         return self.__neutrally_annot_doc_ids
 
     def read_etalon_opinion_collection(self, doc_id):
         return self.__get_opinions_in_news(doc_id=doc_id)
-
-    def try_read_neutral_opinion_collection(self, doc_id, data_type):
-        assert(isinstance(doc_id, int))
-        assert(isinstance(data_type, DataType))
-
-        if data_type == DataType.Train:
-            return self.__get_opinions_in_news(doc_id=doc_id,
-                                               opinion_check=lambda opinion: opinion.Sentiment == NeutralLabel())

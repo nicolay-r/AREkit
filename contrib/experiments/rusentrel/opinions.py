@@ -3,6 +3,7 @@ import logging
 from os.path import exists
 
 from arekit.common.experiment.data.base import DataIO
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel.labels_formatter import RuSentRelNeutralLabelsFormatter
@@ -30,6 +31,26 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__neutral_labels_fmt = RuSentRelNeutralLabelsFormatter()
 
     # region CVBasedOperations
+
+    def iter_opinions_for_extraction(self, doc_id, data_type):
+
+        # Reading automatically annotated collection of neutral opinions.
+        auto_neutral = self.try_read_neutral_opinion_collection(doc_id=doc_id,
+                                                                data_type=data_type)
+        if data_type == DataType.Train:
+            # Providing neutral and sentiment.
+            if auto_neutral is not None:
+                yield iter(auto_neutral)
+
+            # Providing sentiment opinions.
+            yield self.read_etalon_opinion_collection(doc_id=doc_id)
+
+        elif data_type == DataType.Test:
+            # Providing neutrally labeled only
+            yield iter(auto_neutral)
+
+        # Provide nothing otherwise
+        pass
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))

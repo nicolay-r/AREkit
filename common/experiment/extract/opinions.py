@@ -16,41 +16,17 @@ from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 # region private methods
 
-
-def __iter_opinion_collections(opin_operations, doc_id, data_type):
-    assert(isinstance(opin_operations, OpinionOperations))
-    assert(isinstance(doc_id, int))
-    assert(isinstance(data_type, DataType))
-
-    neutral = opin_operations.try_read_neutral_opinion_collection(doc_id=doc_id,
-                                                                  data_type=data_type)
-
-    if data_type == DataType.Train:
-        # Providing neutral and sentiment.
-        if neutral is not None:
-            yield neutral
-        yield opin_operations.read_etalon_opinion_collection(doc_id=doc_id)
-
-    elif data_type == DataType.Test:
-        # Providing neutrally labeled only
-        yield neutral
-
-    else:
-        raise NotImplementedError("data_type '{}' does not supported!".format(data_type))
-
-
 def __iter_linked_wraps(doc_ops, opin_ops, data_type, iter_doc_ids):
+    assert(isinstance(doc_ops, DocumentOperations))
+    assert(isinstance(opin_ops, OpinionOperations))
 
     for doc_id in iter_doc_ids:
 
+        # TODO. Use iter_parsed_news
         news = doc_ops.read_news(doc_id=doc_id)
         assert(isinstance(news, News))
 
-        opinions_it = __iter_opinion_collections(opin_operations=opin_ops,
-                                                 doc_id=doc_id,
-                                                 data_type=data_type)
-
-        for opinions in opinions_it:
+        for opinions in opin_ops.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type):
             for linked_wrap in news.iter_wrapped_linked_text_opinions(opinions=opinions):
                 yield linked_wrap
 

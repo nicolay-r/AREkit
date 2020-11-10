@@ -23,6 +23,13 @@ class OpinionOperations(object):
         """
         raise NotImplementedError()
 
+    def iter_opinions_for_extraction(self, doc_id, data_type):
+        """ providing opinions for further context-level opinion extraction process.
+            in terms of sentiment attitude extraction, this is a general method
+            which provides all the possible opinions within a particular document.
+        """
+        raise NotImplementedError()
+
     def save_neutral_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
         raise NotImplementedError()
 
