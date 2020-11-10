@@ -93,7 +93,7 @@ class NetworkInputEncoder(object):
 
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
-        embedding_filepath = experiment_io.get_embedding_filepath()
+        embedding_filepath = experiment_io.get_saving_embedding_filepath()
         logger.info("Saving embedding [size={shape}]: {filepath}".format(
             shape=embedding_matrix.shape,
             filepath=embedding_filepath))
@@ -101,7 +101,7 @@ class NetworkInputEncoder(object):
 
         # Save vocabulary
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
-        vocab_filepath = experiment_io.get_vocab_filepath()
+        vocab_filepath = experiment_io.get_saving_vocab_filepath()
         logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
                                                                          filepath=vocab_filepath))
         np.savez(vocab_filepath, vocab)

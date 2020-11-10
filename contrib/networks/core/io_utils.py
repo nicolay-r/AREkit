@@ -22,31 +22,34 @@ class NetworkIOUtils(BaseIOUtils):
 
     # region public methods
 
-    def get_vocab_filepath(self):
-        default_filepath = join(self.get_target_dir(),
-                                self.VOCABULARY_FILENAME_TEMPLATE.format(
-                                    cv_index=self._experiment_iter_index()) + u'.npz')
-
+    def get_loading_vocab_filepath(self):
+        """ It is possible to load a predefined embedding from another experiment
+            using the related filepath provided by model_io.
+        """
         model_io = self._experiment.DataIO.ModelIO
         assert(isinstance(model_io, NeuralNetworkModelIO))
 
         return model_io.get_model_vocab_filepath() if not self.__model_is_pretrained_state_provided(model_io) \
-            else default_filepath
+            else self.__get_default_vocab_filepath()
+
+    def get_saving_vocab_filepath(self):
+        return self.__get_default_vocab_filepath()
 
     def has_model_predefined_state(self):
         model_io = self._experiment.DataIO.ModelIO
         return self.__model_is_pretrained_state_provided(model_io)
 
-    def get_embedding_filepath(self):
-        default_filepath = join(self.get_target_dir(),
-                                self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                                    cv_index=self._experiment_iter_index()) + u'.npz')
-
+    def get_loading_embedding_filepath(self):
+        """ It is possible to load a predefined embedding from another experiment
+            using the related filepath provided by model_io.
+        """
         model_io = self._experiment.DataIO.ModelIO
         assert(isinstance(model_io, NeuralNetworkModelIO))
-
         return model_io.get_model_embedding_filepath() if not self.__model_is_pretrained_state_provided(model_io) \
-            else default_filepath
+            else self.__get_default_embedding_filepath()
+
+    def get_saving_embedding_filepath(self):
+        return self.__get_default_embedding_filepath()
 
     def get_output_model_results_filepath(self, data_type, epoch_index):
 
@@ -70,6 +73,16 @@ class NetworkIOUtils(BaseIOUtils):
     # endregion
 
     # region private methods
+
+    def __get_default_vocab_filepath(self):
+        return join(self.get_target_dir(),
+                    self.VOCABULARY_FILENAME_TEMPLATE.format(
+                        cv_index=self._experiment_iter_index()) + u'.npz')
+
+    def __get_default_embedding_filepath(self):
+        return join(self.get_target_dir(),
+                    self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
+                        cv_index=self._experiment_iter_index()) + u'.npz')
 
     def __get_model_dir(self):
         # Perform access to the model, since all the IO information

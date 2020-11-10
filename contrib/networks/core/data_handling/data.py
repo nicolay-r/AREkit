@@ -14,6 +14,7 @@ from arekit.common.utils import check_files_existance
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
@@ -76,12 +77,12 @@ class HandledData(object):
             raise Exception(u"Data has not been initialized/serialized: `{}`".format(experiment.Name))
 
         # Reading embedding.
-        npz_embedding_data = np.load(experiment.ExperimentIO.get_embedding_filepath())
+        npz_embedding_data = np.load(experiment.ExperimentIO.get_loading_embedding_filepath())
         config.set_term_embedding(npz_embedding_data['arr_0'])
         logger.info("Embedding read [size={}]".format(config.TermEmbeddingMatrix.shape))
 
         # Reading vocabulary
-        npz_vocab_data = np.load(experiment.ExperimentIO.get_vocab_filepath())
+        npz_vocab_data = np.load(experiment.ExperimentIO.get_loading_vocab_filepath())
         vocab = dict(npz_vocab_data['arr_0'])
         logger.info("Vocabulary read [size={}]".format(len(vocab)))
 
@@ -146,13 +147,14 @@ class HandledData(object):
 
     @staticmethod
     def __check_files_existed(data_types_iter, experiment_io):
+        assert(isinstance(experiment_io, NetworkIOUtils))
         for data_type in data_types_iter:
 
             filepaths = [
                 experiment_io.get_input_sample_filepath(data_type=data_type),
                 experiment_io.get_input_opinions_filepath(data_type=data_type),
-                experiment_io.get_vocab_filepath(),
-                experiment_io.get_embedding_filepath()
+                experiment_io.get_saving_vocab_filepath(),
+                experiment_io.get_saving_embedding_filepath()
             ]
 
             if not check_files_existance(filepaths=filepaths, logger=logger):
