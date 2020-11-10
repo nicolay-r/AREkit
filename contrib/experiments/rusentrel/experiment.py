@@ -22,7 +22,7 @@ class RuSentRelExperiment(BaseExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, data_io, experiment_io_type, version, folding_type):
+    def __init__(self, exp_data, experiment_io_type, version, folding_type):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
@@ -31,11 +31,11 @@ class RuSentRelExperiment(BaseExperiment):
         experiment_io = experiment_io_type(self)
 
         logger.info("Read synonyms collection ...")
-        synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=data_io.Stemmer,
+        synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
                                                                version=version)
 
         logger.info("Create opinion operations ... ")
-        opin_ops = RuSentrelOpinionOperations(experiment_data=data_io,
+        opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
                                               version=version,
                                               experiment_io=experiment_io,
                                               synonyms=synonyms)
@@ -45,12 +45,12 @@ class RuSentRelExperiment(BaseExperiment):
                                                            version=version,
                                                            docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
                                                            experiment_io=experiment_io)
-        doc_ops = RuSentrelDocumentOperations(experiment_io=data_io,
+        doc_ops = RuSentrelDocumentOperations(exp_data=exp_data,
                                               folding=folding,
                                               version=version,
                                               get_synonyms_func=lambda: synonyms)
 
-        super(RuSentRelExperiment, self).__init__(data_io=data_io,
+        super(RuSentRelExperiment, self).__init__(exp_data=exp_data,
                                                   experiment_io=experiment_io,
                                                   doc_ops=doc_ops,
                                                   opin_ops=opin_ops)

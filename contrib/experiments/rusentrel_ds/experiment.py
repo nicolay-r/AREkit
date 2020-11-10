@@ -26,7 +26,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, data_io, experiment_io_type, folding_type,
+    def __init__(self, exp_data, experiment_io_type, folding_type,
                  ruattitudes_version, rusentrel_version, ra_instance=None):
         """
         ra_instance: dict
@@ -45,11 +45,11 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__rusentrel_version = rusentrel_version
 
         logger.info("Read synonyms collection [RuSentRel]...")
-        rusentrel_synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=data_io.Stemmer,
+        rusentrel_synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
                                                                          version=rusentrel_version)
 
         logger.info("Read synonyms collection [RuAttitudes]...")
-        ruattitudes_synonyms = RuAttitudesSynonymsCollection.load_collection(stemmer=data_io.Stemmer,
+        ruattitudes_synonyms = RuAttitudesSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
                                                                              version=ruattitudes_version)
 
         logger.info("Merging collections [RuSentRel <- RuAttitudes]...")
@@ -63,7 +63,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             experiment_io=experiment_io)
 
         # init documents.
-        rusentrel_doc = RuSentrelDocumentOperations(experiment_io=data_io,
+        rusentrel_doc = RuSentrelDocumentOperations(exp_data=exp_data,
                                                     version=rusentrel_version,
                                                     folding=rusentrel_folding,
                                                     get_synonyms_func=lambda: rusentrel_synonyms)
@@ -77,11 +77,11 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         # RuAttitudes doc operations init.
         ruatttiudes_folding = create_ruattitudes_experiment_data_folding(
             doc_ids_to_fold=list(ru_attitudes.iterkeys()))
-        ruattitudes_doc = RuAttitudesDocumentOperations(data_io=data_io,
+        ruattitudes_doc = RuAttitudesDocumentOperations(exp_data=exp_data,
                                                         folding=ruatttiudes_folding)
 
         # Init opinions
-        rusentrel_op = RuSentrelOpinionOperations(experiment_data=data_io,
+        rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_data,
                                                   version=rusentrel_version,
                                                   experiment_io=experiment_io,
                                                   synonyms=rusentrel_synonyms)
@@ -102,7 +102,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         ruattitudes_doc.set_ru_attitudes(ru_attitudes)
         ruattitudes_op.set_ru_attitudes(ru_attitudes)
 
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(data_io=data_io,
+        super(RuSentRelWithRuAttitudesExperiment, self).__init__(exp_data=exp_data,
                                                                  doc_ops=doc_ops,
                                                                  opin_ops=opin_ops,
                                                                  experiment_io=experiment_io)

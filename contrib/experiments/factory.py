@@ -24,14 +24,14 @@ def create_experiment(exp_type,
 
     if exp_type == ExperimentTypes.RuSentRel:
         # Supervised learning experiment type.
-        return RuSentRelExperiment(data_io=experiment_data,
+        return RuSentRelExperiment(exp_data=experiment_data,
                                    version=rusentrel_version,
                                    folding_type=folding_type,
                                    experiment_io_type=experiment_io_type)
 
     if exp_type == ExperimentTypes.RuAttitudes:
         # Application of the distant supervision only (assumes for pretraining purposes)
-        return RuAttitudesExperiment(data_io=experiment_data,
+        return RuAttitudesExperiment(exp_data=experiment_data,
                                      version=ruattitudes_version,
                                      experiment_io_type=experiment_io_type,
                                      load_ruatittudes=is_training)
@@ -39,7 +39,7 @@ def create_experiment(exp_type,
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
         # Supervised learning with an application of distant supervision in training process.
         return RuSentRelWithRuAttitudesExperiment(ruattitudes_version=ruattitudes_version,
-                                                  data_io=experiment_data,
+                                                  exp_data=experiment_data,
                                                   rusentrel_version=rusentrel_version,
                                                   folding_type=folding_type,
                                                   experiment_io_type=experiment_io_type)

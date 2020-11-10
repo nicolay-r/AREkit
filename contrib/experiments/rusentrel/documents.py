@@ -11,12 +11,12 @@ class RuSentrelDocumentOperations(DocumentOperations):
     Limitations: Supported only train/test collections format
     """
 
-    def __init__(self, experiment_io, folding, version, get_synonyms_func):
-        assert(isinstance(experiment_io, DataIO))
+    def __init__(self, exp_data, folding, version, get_synonyms_func):
+        assert(isinstance(exp_data, DataIO))
         assert(isinstance(version, RuSentRelVersions))
         assert(callable(get_synonyms_func))
         super(RuSentrelDocumentOperations, self).__init__(folding=folding)
-        self.__data_io = experiment_io
+        self.__exp_data = exp_data
         self.__version = version
         self.__get_synonyms_func = get_synonyms_func
 
@@ -36,8 +36,8 @@ class RuSentrelDocumentOperations(DocumentOperations):
                                            version=self.__version)
 
     def _create_parse_options(self):
-        assert(isinstance(self.__data_io, SerializationData))
-        return RuSentRelNewsParseOptions(stemmer=self.__data_io.Stemmer,
-                                         frame_variants_collection=self.__data_io.FrameVariantCollection)
+        assert(isinstance(self.__exp_data, SerializationData))
+        return RuSentRelNewsParseOptions(stemmer=self.__exp_data.Stemmer,
+                                         frame_variants_collection=self.__exp_data.FrameVariantCollection)
 
     # endregion
