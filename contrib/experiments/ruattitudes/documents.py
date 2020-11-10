@@ -6,15 +6,12 @@ from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesPars
 
 class RuAttitudesDocumentOperations(DocumentOperations):
 
-    def __init__(self, data_io, folding):
+    def __init__(self, data_io, folding, ru_attitudes):
         assert(isinstance(data_io, DataIO))
+        assert(isinstance(ru_attitudes, dict) or ru_attitudes is None)
         super(RuAttitudesDocumentOperations, self).__init__(folding)
         self.__data_io = data_io
-        self.__ru_attitudes = None
-
-    def set_ru_attitudes(self, ra):
-        assert(isinstance(ra, dict))
-        self.__ru_attitudes = ra
+        self.__ru_attitudes = ru_attitudes
 
     # region DocumentOperations
 

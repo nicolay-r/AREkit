@@ -6,19 +6,16 @@ from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
 class RuAttitudesOpinionOperations(OpinionOperations):
 
-    def __init__(self, synonyms):
+    def __init__(self, synonyms, ru_attitudes):
+        assert(isinstance(ru_attitudes, dict) or ru_attitudes is None)
         super(RuAttitudesOpinionOperations, self).__init__(synonyms)
 
-        self.__ru_attitudes = None
+        self.__ru_attitudes = ru_attitudes
 
         # We consider that the neutral annotation to be performed in advance
-        # in RuAttiudes collection. Version 1.0 does not provide the latter
+        # in RuAttitudes collection. Version 1.0 does not provide the latter
         # but it might be provided manually or since version 2.0.
         self.__neutrally_annot_doc_ids = set()
-
-    def set_ru_attitudes(self, ra):
-        assert(isinstance(ra, dict))
-        self.__ru_attitudes = ra
 
     # region private methods
 

@@ -43,13 +43,12 @@ class RuAttitudesExperiment(BaseExperiment):
 
         logger.info("Create document operations ... ")
         doc_ops = RuAttitudesDocumentOperations(data_io=data_io,
-                                                folding=folding)
+                                                folding=folding,
+                                                ru_attitudes=ru_attitudes)
 
         logger.info("Create opinion operations ... ")
-        opin_ops = RuAttitudesOpinionOperations(synonyms)
-
-        doc_ops.set_ru_attitudes(ru_attitudes)
-        opin_ops.set_ru_attitudes(ru_attitudes)
+        opin_ops = RuAttitudesOpinionOperations(synonyms=synonyms,
+                                                ru_attitudes=ru_attitudes)
 
         super(RuAttitudesExperiment, self).__init__(data_io=data_io,
                                                     experiment_io=experiment_io,
