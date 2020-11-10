@@ -130,7 +130,10 @@ class HandledData(object):
 
             # Composing input.
             term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
-                experiment=experiment,
+                exp_io=experiment.ExperimentIO,
+                exp_data=experiment.DataIO,
+                opin_ops=experiment.OpinionOperations,
+                doc_ops=experiment.DocumentOperations,
                 data_type=data_type,
                 term_embedding_pairs=term_embedding_pairs,
                 parsed_news_collection=parsed_news_collection,
