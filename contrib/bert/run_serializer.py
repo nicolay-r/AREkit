@@ -36,11 +36,13 @@ class BertExperimentInputSerializer(ExperimentEngine):
         assert(isinstance(data_type, DataType))
 
         # Create samples formatter.
-        sample_formatter = create_bert_sample_formatter(data_type=data_type,
-                                                        formatter_type=self.__sample_formatter_type,
-                                                        label_scaler=self._experiment.DataIO.LabelsScaler,
-                                                        entity_formatter=self.__entity_formatter,
-                                                        balance=self.__balance_train_samples)
+        sample_formatter = create_bert_sample_formatter(
+            data_type=data_type,
+            formatter_type=self.__sample_formatter_type,
+            label_scaler=self._experiment.DataIO.LabelsScaler,
+            entity_formatter=self.__entity_formatter,
+            balance=self.__balance_train_samples,
+            synonyms=self._experiment.OpinionOperations.SynonymsCollection)
 
         # Load parsed news collections in memory.
         parsed_news_it = self._experiment.DocumentOperations.iter_parsed_news(

@@ -12,7 +12,7 @@ from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 
 def create_bert_sample_formatter(data_type, formatter_type, label_scaler, balance,
                                  entity_formatter,
-                                 synonyms=None):
+                                 synonyms):
     """
     This is a factory method, which allows to instantiate any of the
     supported bert_sample_encoders
