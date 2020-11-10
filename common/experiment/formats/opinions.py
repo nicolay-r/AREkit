@@ -16,12 +16,21 @@ class OpinionOperations(object):
         """
         return self.__synonyms
 
-    def try_read_neutral_opinion_collection(self, doc_id, data_type):
+    # region annotation
+
+    def try_read_neutrally_annotated_opinion_collection(self, doc_id, data_type):
         """ data_type denotes a set of neutral opinions, where in case of 'train' these are
             opinions that were ADDITIONALLY found to sentiment, while for 'train' these are
             all the opinions that could be found in document.
         """
         raise NotImplementedError()
+
+    def save_neutrally_annotated_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+        raise NotImplementedError()
+
+    # endregion
+
+    # region extraction
 
     def iter_opinions_for_extraction(self, doc_id, data_type):
         """ providing opinions for further context-level opinion extraction process.
@@ -30,8 +39,9 @@ class OpinionOperations(object):
         """
         raise NotImplementedError()
 
-    def save_neutral_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
-        raise NotImplementedError()
+    # endregion
+
+    # region evaluation
 
     def read_etalon_opinion_collection(self, doc_id):
         raise NotImplementedError()
@@ -39,5 +49,11 @@ class OpinionOperations(object):
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 
+    # endregion
+
+    # region creation
+
     def create_opinion_collection(self, opinions=None):
         raise NotImplementedError()
+
+    # endregion

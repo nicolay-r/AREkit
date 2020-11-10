@@ -75,13 +75,13 @@ class BaseNeutralAnnotator(object):
 
     def serialize_missed_collections(self, data_type):
 
-        filter_func = lambda doc_id: self._OpinOps.try_read_neutral_opinion_collection(
+        filter_func = lambda doc_id: self._OpinOps.try_read_neutrally_annotated_opinion_collection(
             doc_id=doc_id, data_type=data_type) is None
 
         for doc_id, collection in self.__iter_neutral_collections(data_type, filter_func):
-            self._OpinOps.save_neutral_opinion_collection(collection=collection,
-                                                          labels_fmt=self.__labels_fmt,
-                                                          doc_id=doc_id,
-                                                          data_type=data_type)
+            self._OpinOps.save_neutrally_annotated_opinion_collection(collection=collection,
+                                                                      labels_fmt=self.__labels_fmt,
+                                                                      doc_id=doc_id,
+                                                                      data_type=data_type)
 
     # endregion

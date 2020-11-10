@@ -34,18 +34,18 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
         target = self.__target(doc_id)
         return target.read_etalon_opinion_collection(doc_id)
 
-    def try_read_neutral_opinion_collection(self, doc_id, data_type):
+    def try_read_neutrally_annotated_opinion_collection(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
         target = self.__target(doc_id)
-        return target.try_read_neutral_opinion_collection(doc_id=doc_id, data_type=data_type)
+        return target.try_read_neutrally_annotated_opinion_collection(doc_id=doc_id, data_type=data_type)
 
-    def save_neutral_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+    def save_neutrally_annotated_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
         target = self.__target(doc_id)
-        return target.save_neutral_opinion_collection(collection=collection,
-                                                      labels_fmt=labels_fmt,
-                                                      doc_id=doc_id,
-                                                      data_type=data_type)
+        return target.save_neutrally_annotated_opinion_collection(collection=collection,
+                                                                  labels_fmt=labels_fmt,
+                                                                  doc_id=doc_id,
+                                                                  data_type=data_type)
 
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         target = self.__target(doc_id)

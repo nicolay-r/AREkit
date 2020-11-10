@@ -35,8 +35,8 @@ class RuSentrelOpinionOperations(OpinionOperations):
     def iter_opinions_for_extraction(self, doc_id, data_type):
 
         # Reading automatically annotated collection of neutral opinions.
-        auto_neutral = self.try_read_neutral_opinion_collection(doc_id=doc_id,
-                                                                data_type=data_type)
+        auto_neutral = self.try_read_neutrally_annotated_opinion_collection(doc_id=doc_id,
+                                                                            data_type=data_type)
         if data_type == DataType.Train:
             # Providing neutral and sentiment.
             if auto_neutral is not None:
@@ -66,7 +66,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         assert(isinstance(opinions, collections.Iterable) or opinions is None)
         return self.__create_custom_collection(opinions)
 
-    def try_read_neutral_opinion_collection(self, doc_id, data_type):
+    def try_read_neutrally_annotated_opinion_collection(self, doc_id, data_type):
         filepath = self.__experiment_io.create_neutral_opinion_collection_filepath(
             doc_id=doc_id,
             data_type=data_type)
@@ -77,7 +77,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         return self.__custom_read(filepath=filepath,
                                   labels_fmt=self.__neutral_labels_fmt)
 
-    def save_neutral_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+    def save_neutrally_annotated_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
         filepath = self.__experiment_io.create_neutral_opinion_collection_filepath(
             doc_id=doc_id,
             data_type=data_type)
