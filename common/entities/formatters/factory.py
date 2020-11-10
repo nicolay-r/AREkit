@@ -6,7 +6,7 @@ from arekit.common.entities.formatters.str_simple_uppercase_fmt import SimpleUpp
 from arekit.common.entities.formatters.types import EntityFormatterTypes
 
 
-def create_bert_entity_formatter(fmt_type, create_russian_pos_tagger_func=None):
+def create_entity_formatter(fmt_type, create_russian_pos_tagger_func=None):
     """ Factory method for entity formatters, applicable in bert.
     """
     assert(isinstance(fmt_type, EntityFormatterTypes))
