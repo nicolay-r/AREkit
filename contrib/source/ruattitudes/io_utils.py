@@ -6,6 +6,7 @@ from arekit.contrib.source.zip_utils import ZipArchiveUtils
 
 
 class RuAttitudesVersions(Enum):
+    Debug = u"dbg"
     V10 = u"v1_0"
     V11 = u"v1_1"
     V12 = u"v1_2"
@@ -15,7 +16,7 @@ class RuAttitudesVersions(Enum):
     V20LargeNeut = u'v2_0_large_neut'
 
 
-class RuAttitudesVersionsService():
+class RuAttitudesVersionsService:
 
     @staticmethod
     def __iter_type_and_names():
