@@ -71,15 +71,25 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
         elif e_ind == self.__t_ind:
             return self.__entities_formatter.to_string(original_value=entity,
                                                        entity_type=EntityType.Object)
-        elif self.__syn_group(entity) == self.__s_group:
+        elif self.__is_in_same_group(self.__syn_group(entity), self.__s_group):
             return self.__entities_formatter.to_string(original_value=entity,
                                                        entity_type=EntityType.SynonymSubject)
-        elif self.__syn_group(entity) == self.__t_group:
+        elif self.__is_in_same_group(self.__syn_group(entity), self.__t_group):
             return self.__entities_formatter.to_string(original_value=entity,
                                                        entity_type=EntityType.SynonymObject)
         else:
             return self.__entities_formatter.to_string(original_value=entity,
                                                        entity_type=EntityType.Other)
+
+    @staticmethod
+    def __is_in_same_group(g1, g2):
+
+        if g1 is None or g2 is None:
+            # In such scenario we cannot guarantee
+            # that g1 and g2 belong to the same group.
+            return False
+
+        return g1 == g2
 
     def map_word(self, w_ind, word):
         return word.strip()
