@@ -11,7 +11,7 @@ from arekit.contrib.bert.samplers.types import BertSampleFormatterTypes
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 
 
-def create_bert_sample_formatter(data_type, formatter_type, label_scaler,
+def create_bert_sample_formatter(data_type, formatter_type, label_scaler, balance,
                                  entity_formatter=None,
                                  synonyms=None):
     """
@@ -30,26 +30,31 @@ def create_bert_sample_formatter(data_type, formatter_type, label_scaler,
     if formatter_type == BertSampleFormatterTypes.CLASSIF_M:
         return create_simple_sample_formatter(data_type=data_type,
                                               label_scaler=label_scaler,
-                                              text_terms_mapper=text_terms_mapper)
+                                              text_terms_mapper=text_terms_mapper,
+                                              balance=balance)
     if formatter_type == BertSampleFormatterTypes.NLI_M:
         return NliMultipleSampleFormatter(data_type=data_type,
                                           label_scaler=label_scaler,
                                           labels_formatter=l_formatter,
-                                          text_terms_mapper=text_terms_mapper)
+                                          text_terms_mapper=text_terms_mapper,
+                                          balance=balance)
     if formatter_type == BertSampleFormatterTypes.QA_M:
         return QaMultipleSampleFormatter(data_type=data_type,
                                          label_scaler=label_scaler,
                                          labels_formatter=l_formatter,
-                                         text_terms_mapper=text_terms_mapper)
+                                         text_terms_mapper=text_terms_mapper,
+                                         balance=balance)
     if formatter_type == BertSampleFormatterTypes.NLI_B:
         return NliBinarySampleFormatter(data_type=data_type,
                                         label_scaler=label_scaler,
                                         labels_formatter=l_formatter,
-                                        text_terms_mapper=text_terms_mapper)
+                                        text_terms_mapper=text_terms_mapper,
+                                        balance=balance)
     if formatter_type == BertSampleFormatterTypes.QA_B:
         return QaBinarySampleFormatter(data_type=data_type,
                                        label_scaler=label_scaler,
                                        labels_formatter=l_formatter,
-                                       text_terms_mapper=text_terms_mapper)
+                                       text_terms_mapper=text_terms_mapper,
+                                       balance=balance)
 
     return None

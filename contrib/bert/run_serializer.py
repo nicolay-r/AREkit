@@ -17,6 +17,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
                  skip_if_folder_exists,
                  sample_formatter_type,
                  entity_formatter,
+                 balance_train_samples,
                  write_sample_header=True):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(skip_if_folder_exists, bool))
@@ -27,6 +28,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         self.__write_sample_header = write_sample_header
         self.__entity_formatter = entity_formatter
         self.__sample_formatter_type = sample_formatter_type
+        self.__balance_train_samples = balance_train_samples
 
     # region private methods
 
@@ -37,7 +39,8 @@ class BertExperimentInputSerializer(ExperimentEngine):
         sample_formatter = create_bert_sample_formatter(data_type=data_type,
                                                         formatter_type=self.__sample_formatter_type,
                                                         label_scaler=self._experiment.DataIO.LabelsScaler,
-                                                        entity_formatter=self.__entity_formatter)
+                                                        entity_formatter=self.__entity_formatter,
+                                                        balance=self.__balance_train_samples)
 
         # Load parsed news collections in memory.
         parsed_news_it = self._experiment.DocumentOperations.iter_parsed_news(

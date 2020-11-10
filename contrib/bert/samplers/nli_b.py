@@ -18,7 +18,7 @@ class NliBinarySampleFormatter(BaseSampleFormatter):
     https://www.aclweb.org/anthology/N19-1035.pdf
     """
 
-    def __init__(self, data_type, label_scaler, labels_formatter, text_terms_mapper):
+    def __init__(self, data_type, label_scaler, labels_formatter, text_terms_mapper, balance):
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
@@ -30,4 +30,4 @@ class NliBinarySampleFormatter(BaseSampleFormatter):
                 labels_formatter=labels_formatter,
                 text_terms_mapper=text_terms_mapper),
             label_provider=BinaryLabelProvider(label_scaler=label_scaler),
-            balance=data_type == DataType.Train)
+            balance=data_type == DataType.Train and balance)
