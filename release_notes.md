@@ -21,8 +21,6 @@ Collection of parsed news become dispatched from text opinions collection.
 * `ParsedText` class has been refactored, removed unused methods. Keep tokens has been discarded.
 * BERT tsv-format-encoders are now in a Factory (at contrib directory).
 * Fixed: `RuSentRelTextOpinion` depends on `TextOpinion` (not straightly from `OpinionRef`).
-* Refactoring: Entity masks now were moved into `contrib` for networks: `StringWordEmbeddingEntityFormatter`,
-`StringSimpleMaskedEntityFormatter`.
 * `Single`/`Multi` models now are not exist, as the latter prefixes affects only onto batch types selection. Refactoring.
 
 Minor changes (light refactoring):

@@ -2,7 +2,7 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 
 
-class EntitiesSimpleFormatter(StringEntitiesFormatter):
+class SharpPrefixedEntitiesSimpleFormatter(StringEntitiesFormatter):
 
     def to_string(self, original_value, entity_type):
         assert(isinstance(entity_type, EntityType))
