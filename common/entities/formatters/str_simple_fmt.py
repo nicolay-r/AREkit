@@ -2,7 +2,7 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 
 
-class StringSimpleFormatter(StringEntitiesFormatter):
+class StringEntitiesSimpleFormatter(StringEntitiesFormatter):
     """
     Utilized for picking a related word in word embedding.
     """
