@@ -78,7 +78,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         ruatttiudes_folding = create_ruattitudes_experiment_data_folding(
             doc_ids_to_fold=list(ru_attitudes.iterkeys()))
         ruattitudes_doc = RuAttitudesDocumentOperations(exp_data=exp_data,
-                                                        folding=ruatttiudes_folding)
+                                                        folding=ruatttiudes_folding,
+                                                        ru_attitudes=ru_attitudes)
 
         # Init opinions
         rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_data,
@@ -86,7 +87,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                   experiment_io=experiment_io,
                                                   synonyms=rusentrel_synonyms)
 
-        ruattitudes_op = RuAttitudesOpinionOperations(ruattitudes_synonyms)
+        ruattitudes_op = RuAttitudesOpinionOperations(synonyms=ruattitudes_synonyms,
+                                                      ru_attitudes=ru_attitudes)
 
         # Init experiment doc_ops and opin_ops
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(rusentrel_doc=rusentrel_doc,
@@ -97,10 +99,6 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             rusentrel_op=rusentrel_op,
             ruattitudes_op=ruattitudes_op,
             is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))
-
-        # Providing RuAttitudes instance into doc and opins instances.
-        ruattitudes_doc.set_ru_attitudes(ru_attitudes)
-        ruattitudes_op.set_ru_attitudes(ru_attitudes)
 
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(exp_data=exp_data,
                                                                  doc_ops=doc_ops,
