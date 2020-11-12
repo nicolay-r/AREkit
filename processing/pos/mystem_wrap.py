@@ -26,7 +26,8 @@ class POSMystemWrapper(RussianPOSTagger):
 
     # region private methods
 
-    def __extract_from_analysis(self, analysis, func):
+    @staticmethod
+    def __extract_from_analysis(analysis, func):
         """
         part of speech description:
             https://tech.yandex.ru/mystem/doc/grammemes-values-docpage/
@@ -125,14 +126,17 @@ class POSMystemWrapper(RussianPOSTagger):
         assert(isinstance(pos, PartOfSpeechType))
         return int(pos)
 
-    def is_adjective(self, pos_type):
+    @staticmethod
+    def is_adjective(pos_type):
         assert(isinstance(pos_type, PartOfSpeechType))
         return pos_type.upper() == PartOfSpeechType.ADJ
 
-    def is_noun(self, pos_type):
+    @staticmethod
+    def is_noun(pos_type):
         assert(isinstance(pos_type, PartOfSpeechType))
         return pos_type.upper() == PartOfSpeechType.NOUN
 
-    def is_verb(self, pos_type):
+    @staticmethod
+    def is_verb(pos_type):
         assert(isinstance(pos_type, PartOfSpeechType))
         return pos_type.upper() == PartOfSpeechType.VERB

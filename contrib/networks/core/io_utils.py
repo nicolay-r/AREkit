@@ -104,7 +104,8 @@ class NetworkIOUtils(BaseIOUtils):
 
         return result_dir
 
-    def __model_is_pretrained_state_provided(self, model_io):
+    @staticmethod
+    def __model_is_pretrained_state_provided(model_io):
         assert(isinstance(model_io, NeuralNetworkModelIO))
         return not model_io.IsPretrainedStateProvided
 

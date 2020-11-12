@@ -75,7 +75,8 @@ class Embedding(object):
 
     # region private methods
 
-    def __create_index(self, words):
+    @staticmethod
+    def __create_index(words):
         index = {}
         for i, word in enumerate(words):
             index[word] = i

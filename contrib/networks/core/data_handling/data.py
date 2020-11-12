@@ -206,7 +206,8 @@ class HandledData(object):
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
         return norm, stat
 
-    def __create_input_sample(self, row, config, vocab, is_external_vocab):
+    @staticmethod
+    def __create_input_sample(row, config, vocab, is_external_vocab):
         """
         Creates an input for Neural Network model
         """
