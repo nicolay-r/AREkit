@@ -18,7 +18,7 @@ class RuAttitudesOpinionOperations(OpinionOperations):
 
     # region private methods
 
-    def __get_opinions_in_news(self, doc_id, opinion_check=lambda _: True):
+    def __get_opinion_list_in_doc(self, doc_id, opinion_check=lambda _: True):
         news = self.__ru_attitudes[doc_id]
         return [opinion
                 for opinion, _ in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news)
@@ -27,16 +27,20 @@ class RuAttitudesOpinionOperations(OpinionOperations):
     # endregion
 
     def iter_opinions_for_extraction(self, doc_id, data_type):
+
+        collections = []
+
         if data_type == DataType.Train:
             # We provide only those opinions that
             # were labeled in RuAttitudes collection
-            yield self.__get_opinions_in_news(doc_id=doc_id)
+            collections.append(self.__get_opinion_list_in_doc(doc_id=doc_id))
 
-        # Provide nothing otherwise
-        pass
+        for collection in collections:
+            for opinion in collection:
+                yield opinion
 
     def get_doc_ids_set_to_neutrally_annotate(self):
         return self.__neutrally_annot_doc_ids
 
     def read_etalon_opinion_collection(self, doc_id):
-        return self.__get_opinions_in_news(doc_id=doc_id)
+        return self.__get_opinion_list_in_doc(doc_id=doc_id)

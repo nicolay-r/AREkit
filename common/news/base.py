@@ -47,7 +47,7 @@ class News(object):
             else:
                 yield sentence
 
-    def iter_wrapped_linked_text_opinions(self, opinions):
+    def extract_text_opinions(self, opinion):
         """
         opinions: iterable Opinion
             is an iterable opinions that should be used to find a related text_opinion entries.

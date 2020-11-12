@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.base import News
-from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.opinions.base import Opinion
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.source.rusentrel.context.collection import RuSentRelTextOpinionCollection
 
@@ -142,24 +142,16 @@ class RuSentRelNews(News):
 
     # region base News
 
-    def iter_wrapped_linked_text_opinions(self, opinions):
-        assert(isinstance(opinions, OpinionCollection))
-        for text_opinions in self.__iter_rusentrel_text_opinions(opinions=opinions):
-            yield LinkedTextOpinionsWrapper(linked_text_opinions=[text_opinion for text_opinion in text_opinions])
+    def extract_text_opinions(self, opinion):
+        assert(isinstance(opinion, Opinion))
 
-    # region private methods
+        # Performing the following conversion:
+        # Document Level Opinions -> Linked Text Level Opinions
+        text_opinion_collection = RuSentRelTextOpinionCollection.from_opinions(
+            rusentrel_news_id=self.ID,
+            doc_entities=self.DocEntities,
+            opinions=[opinion])
 
-    def __iter_rusentrel_text_opinions(self, opinions):
-        """
-        Document Level Opinions -> Linked Text Level Opinions
-        """
-        assert(isinstance(opinions, OpinionCollection))
-
-        for opinion in opinions:
-            yield RuSentRelTextOpinionCollection.from_opinions(rusentrel_news_id=self.ID,
-                                                               doc_entities=self.DocEntities,
-                                                               opinions=[opinion])
-
-    # endregion
+        return LinkedTextOpinionsWrapper(linked_text_opinions=iter(text_opinion_collection))
 
     # endregion

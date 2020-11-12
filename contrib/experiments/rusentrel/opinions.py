@@ -34,23 +34,28 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def iter_opinions_for_extraction(self, doc_id, data_type):
 
+        collections = []
+
         # Reading automatically annotated collection of neutral opinions.
         auto_neutral = self.try_read_neutrally_annotated_opinion_collection(doc_id=doc_id,
                                                                             data_type=data_type)
+
         if data_type == DataType.Train:
             # Providing neutral and sentiment.
             if auto_neutral is not None:
-                yield iter(auto_neutral)
+                collections.append(auto_neutral)
 
             # Providing sentiment opinions.
-            yield self.read_etalon_opinion_collection(doc_id=doc_id)
+            etalon = self.read_etalon_opinion_collection(doc_id=doc_id)
+            collections.append(etalon)
 
         elif data_type == DataType.Test:
             # Providing neutrally labeled only
-            yield iter(auto_neutral)
+            collections.append(auto_neutral)
 
-        # Provide nothing otherwise
-        pass
+        for collection in collections:
+            for opinion in collection:
+                yield opinion
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
