@@ -3,9 +3,6 @@ from arekit.common.news.entities_parser import BaseEntitiesParser
 
 class News(object):
 
-    NewsTermsShow = False
-    NewsTermsStatisticShow = False
-
     def __init__(self, news_id, sentences, entities_parser):
         assert(isinstance(news_id, int))
         assert(isinstance(sentences, list))
