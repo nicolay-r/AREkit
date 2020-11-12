@@ -41,13 +41,13 @@ class TextParser:
 
         return parsed_news
 
+    # region private methods
+
     @staticmethod
-    def parse(text, stemmer=None):
+    def __parse(text, stemmer=None):
         assert(isinstance(text, unicode))
         terms = TextParser.__parse_core(text)
         return ParsedText(terms, stemmer=stemmer)
-
-    # region private methods
 
     @staticmethod
     def __parse_sentence(news, sentence, parse_options):
@@ -58,8 +58,8 @@ class TextParser:
             text_with_entities = news.EntitiesParser.parse(sentence)
             return TextParser.__parse_string_list(string_iter=text_with_entities,
                                                   stemmer=parse_options.Stemmer)
-        return TextParser.parse(text=sentence,
-                                stemmer=parse_options.Stemmer)
+        return TextParser.__parse(text=sentence,
+                                  stemmer=parse_options.Stemmer)
 
     @staticmethod
     def __parse_frame_variants(parsed_news, frame_variant_collection):
