@@ -1,7 +1,6 @@
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
-from arekit.common.experiment.engine.utils import mark_dir_for_serialization
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter

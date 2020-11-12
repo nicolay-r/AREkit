@@ -1,6 +1,5 @@
 from arekit.common.experiment.data.serializing import SerializationData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
-from arekit.common.experiment.engine.utils import mark_dir_for_serialization
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
 from arekit.contrib.networks.core.data_handling.data import HandledData
 
