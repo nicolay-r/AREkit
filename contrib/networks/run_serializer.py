@@ -27,12 +27,6 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
                                               terms_per_context=self._experiment.DataIO.TermsPerContext)
 
     def _before_running(self):
-        # Mark the directory as selected for serialization process.
-        mark_dir_for_serialization(target_dir=self._experiment.ExperimentIO.get_target_dir(),
-                                   logger=self._logger,
-                                   skip_if_folder_exists=self.__skip_folder_if_exists)
-
-        # Perform neutral annotation.
         perform_neutral_annotation(neutral_annotator=self._experiment.DataIO.NeutralAnnotator,
                                    opin_ops=self._experiment.OpinionOperations,
                                    doc_ops=self._experiment.DocumentOperations,
