@@ -54,6 +54,6 @@ class OpinionOperations(object):
     # region creation
 
     def create_opinion_collection(self, opinions=None):
-        raise NotImplementedError()
+        raise NotImplementedError("Collection creation does not supported by experiment.")
 
     # endregion
