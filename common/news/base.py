@@ -19,17 +19,23 @@ class News(object):
         return self.__news_id
 
     @property
-    def EntitiesParser(self):
-        return self.__entities_parser
-
-    @property
     def SentencesCount(self):
         """ Provides total amount of sentences within a news
-            At present is useful in specific CV-splitters, which may rely on sentences count.
+            At present is useful for:
+            -   CV-splitters, which may rely on sentences count.
+            -   Text parsing.
         """
-        raise NotImplementedError()
+        return len(self._sentences)
 
     # endregion
+
+    def parse_sentence(self, sent_ind):
+        assert(isinstance(sent_ind, int))
+        sentence = self._sentences[sent_ind]
+        return self.__entities_parser.parse(sentence)
+
+    def get_sentence(self, sent_ind):
+        return self._sentences[sent_ind]
 
     def iter_sentences(self, return_text):
         """

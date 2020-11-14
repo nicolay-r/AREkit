@@ -27,10 +27,6 @@ class RuSentRelNews(News):
     # region properties
 
     @property
-    def SentencesCount(self):
-        return len(self._sentences)
-
-    @property
     def DocEntities(self):
         return self.__entities
 

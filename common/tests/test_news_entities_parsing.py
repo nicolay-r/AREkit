@@ -1,13 +1,17 @@
 import unittest
 
 from arekit.common.entities.base import Entity
+from arekit.common.news.parsed.base import ParsedNews
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
+from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.text.parser import TextParser
 
 
 class TestPartOfSpeech(unittest.TestCase):
@@ -17,11 +21,17 @@ class TestPartOfSpeech(unittest.TestCase):
                                                   get_news_index_func=lambda: 0)
 
         for news in news_it:
+
+            # Parse single sentence.
             assert(isinstance(news, RuAttitudesNews))
-            for sentence in news.iter_sentences(return_text=False):
-                parsed_text = news.EntitiesParser.parse(sentence)
-                print type(parsed_text)
-                self.__print_parsed_text(parsed_text)
+            parsed_text = news.parse_sentence(0)
+            self.__print_parsed_text(parsed_text)
+
+            # Parse news via external parser.
+            stemmer = MystemWrapper()
+            options = RuAttitudesParseOptions(stemmer=stemmer, frame_variants_collection=None)
+            parsed_news = TextParser.parse_news(news=news, parse_options=options)
+            assert(isinstance(parsed_news, ParsedNews))
 
     def test_rusentrel_news_text_parsing(self):
         stemmer = MystemWrapper()
@@ -31,9 +41,14 @@ class TestPartOfSpeech(unittest.TestCase):
                                            version=RuSentRelVersions.V11)
 
         assert(isinstance(news, RuSentRelNews))
-        first_sentence = news.get_sentence_by_index(9)
-        parsed_text = news.EntitiesParser.parse(first_sentence)
+        parsed_text = news.parse_sentence(8)
         self.__print_parsed_text(parsed_text)
+
+        # Parse news via external parser.
+        stemmer = MystemWrapper()
+        options = RuSentRelNewsParseOptions(stemmer=stemmer, frame_variants_collection=None)
+        parsed_news = TextParser.parse_news(news=news, parse_options=options)
+        assert (isinstance(parsed_news, ParsedNews))
 
     def __print_parsed_text(self, parsed_text):
         assert(isinstance(parsed_text, list))
