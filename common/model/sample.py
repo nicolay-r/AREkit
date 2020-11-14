@@ -40,13 +40,21 @@ class InputSampleBase(object):
         if text_opinion.SourceId != text_opinion.TargetId:
             is_not_same_ends = True
 
-        if text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InTerms) < window_size:
+        dist_between_entities = text_opinion_helper.calc_dist_between_text_opinion_ends(
+            text_opinion=text_opinion,
+            distance_type=DistanceType.InTerms)
+
+        if InputSampleBase._check_ends_could_be_fitted_in_window(dist_between_entities, window_size):
             is_in_window = True
 
         if text_opinion_helper.calc_dist_between_text_opinion_ends(text_opinion, DistanceType.InSentences) == 0:
             is_same_sentence = True
 
         return is_not_same_ends and is_in_window and is_same_sentence
+
+    @staticmethod
+    def _check_ends_could_be_fitted_in_window(actual_dist, window):
+        return actual_dist < window
 
     def __iter__(self):
         for key, value in self.__values.iteritems():

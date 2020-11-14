@@ -4,6 +4,7 @@ import random
 import numpy as np
 
 import arekit.contrib.networks.core.mappers.pos
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.entities.base import Entity
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -188,26 +189,46 @@ class InputSample(InputSampleBase):
             terms=terms,
             pos_tagger=config.PosTagger)
 
+        # Check an ability to create sample by analyzing required window size.
+        window_size = config.TermsPerContext
+        dist_between_entities = TextOpinionHelper.calc_dist_between_text_opinion_end_indices(
+            pos1_ind=subj_ind,
+            pos2_ind=obj_ind)
+
+        if not cls._check_ends_could_be_fitted_in_window(dist_between_entities, window_size):
+            # In some cases we may encounter with mismatched of tpc (terms per context parameter)
+            # utilized during serialization stage, and the one utilized in training process.
+            # If the windows size is lower in the latter case, we need to notify in order to prevent
+            # from the infinite loop.
+            raise Exception("Bounds for sample_id='{sample_id}' with "
+                            "positions obj={obj_ind}, subj={subj_ind} "
+                            "(diff={dist}) could not be fit in window, "
+                            "size of {window}".format(sample_id=input_sample_id,
+                                                      obj_ind=obj_ind,
+                                                      subj_ind=subj_ind,
+                                                      dist=dist_between_entities,
+                                                      window=window_size))
+
         # Composing Features
         x_feature = IndicesFeature.from_vector_to_be_fitted(
             value_vector=x_indices,
             e1_in=subj_ind,
             e2_in=obj_ind,
-            expected_size=config.TermsPerContext,
+            expected_size=window_size,
             filler=cls.X_PAD_VALUE)
 
         pos_feature = IndicesFeature.from_vector_to_be_fitted(
             value_vector=pos_vector,
             e1_in=subj_ind,
             e2_in=obj_ind,
-            expected_size=config.TermsPerContext,
+            expected_size=window_size,
             filler=cls.POS_PAD_VALUE)
 
         term_type_feature = IndicesFeature.from_vector_to_be_fitted(
             value_vector=InputSample.__create_term_types(terms),
             e1_in=subj_ind,
             e2_in=obj_ind,
-            expected_size=config.TermsPerContext,
+            expected_size=window_size,
             filler=cls.TERM_TYPE_PAD_VALUE)
 
         shifted_subj_ind = shift_index(subj_ind)
@@ -225,7 +246,7 @@ class InputSample(InputSampleBase):
             value_vector=frame_sent_roles_vector,
             e1_in=shifted_subj_ind,
             e2_in=shifted_obj_ind,
-            expected_size=config.TermsPerContext,
+            expected_size=window_size,
             filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
         frames_feature = PointersFeature.create_shifted_and_fit(

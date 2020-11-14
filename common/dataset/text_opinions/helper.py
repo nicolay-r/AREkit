@@ -72,6 +72,10 @@ class TextOpinionHelper(object):
             pos2=parsed_news.get_entity_position(id_in_document=e2_id),
             position_type=DistanceType.to_position_type(distance_type))
 
+    @staticmethod
+    def calc_dist_between_text_opinion_end_indices(pos1_ind, pos2_ind):
+        return TextOpinionHelper.__calc_distance_by_inds(pos1_ind=pos1_ind, pos2_ind=pos2_ind)
+
     def calc_dist_between_entities(self, news_id, e1, e2, distance_type):
         assert(isinstance(news_id, int))
         assert(isinstance(e1, Entity))
@@ -149,9 +153,12 @@ class TextOpinionHelper(object):
     def __calc_distance(pos1, pos2, position_type=TermPositionTypes.IndexInDocument):
         assert(isinstance(pos1, TermPosition))
         assert(isinstance(pos2, TermPosition))
+        return TextOpinionHelper.__calc_distance_by_inds(pos1_ind=pos1.get_index(position_type),
+                                                         pos2_ind=pos2.get_index(position_type))
 
-        return abs(pos1.get_index(position_type) -
-                   pos2.get_index(position_type))
+    @staticmethod
+    def __calc_distance_by_inds(pos1_ind, pos2_ind):
+        return abs(pos1_ind - pos2_ind)
 
     @staticmethod
     def __get_end_id(text_opinion, end_type):
