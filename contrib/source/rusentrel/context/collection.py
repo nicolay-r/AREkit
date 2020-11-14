@@ -79,8 +79,7 @@ class RuSentRelTextOpinionCollection(TextOpinionCollection):
                     rusentrel_news_id=rusentrel_news_id,
                     e_source_doc_level_id=source_entity.IdInDocument,
                     e_target_doc_level_id=target_entity.IdInDocument,
-                    sentiment=opinion.Sentiment,
-                    doc_entities=doc_entities)
+                    sentiment=opinion.Sentiment)
 
                 text_opinions.append(text_opinion)
 
