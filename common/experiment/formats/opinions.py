@@ -25,7 +25,7 @@ class OpinionOperations(object):
         """
         raise NotImplementedError()
 
-    def save_neutrally_annotated_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+    def save_neutrally_annotated_opinion_collection(self, collection, doc_id, data_type):
         raise NotImplementedError()
 
     # endregion

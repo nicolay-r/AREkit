@@ -2,7 +2,6 @@ import logging
 
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)
@@ -14,12 +13,9 @@ class BaseNeutralAnnotator(object):
     Performs neutral annotation for different data_type.
     """
 
-    def __init__(self, labels_fmt):
-        assert(isinstance(labels_fmt, StringLabelsFormatter))
-
+    def __init__(self):
         logger.info("Init annotator: [{}]".format(self.__class__))
 
-        self.__labels_fmt = labels_fmt
         self.__opin_ops = None
         self.__doc_ops = None
 
@@ -80,7 +76,6 @@ class BaseNeutralAnnotator(object):
 
         for doc_id, collection in self.__iter_neutral_collections(data_type, filter_func):
             self._OpinOps.save_neutrally_annotated_opinion_collection(collection=collection,
-                                                                      labels_fmt=self.__labels_fmt,
                                                                       doc_id=doc_id,
                                                                       data_type=data_type)
 

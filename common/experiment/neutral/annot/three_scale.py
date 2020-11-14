@@ -3,23 +3,19 @@ import logging
 from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
 class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
-    """
-    Neutral Annotator for RuSentRel Collection (of each data_type)
-
-    Three scale classification task.
+    """ For three scale classification task.
     """
 
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self, distance_in_terms_between_bounds):
-        super(ThreeScaleNeutralAnnotator, self).__init__(labels_fmt=ThreeScaleLabelsFormatter())
+        super(ThreeScaleNeutralAnnotator, self).__init__()
         self.__algo = None
         self.__distance_in_terms_between_bounds = distance_in_terms_between_bounds
 

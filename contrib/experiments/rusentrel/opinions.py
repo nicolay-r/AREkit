@@ -82,14 +82,14 @@ class RuSentrelOpinionOperations(OpinionOperations):
         return self.__custom_read(filepath=filepath,
                                   labels_fmt=self.__neutral_labels_fmt)
 
-    def save_neutrally_annotated_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+    def save_neutrally_annotated_opinion_collection(self, collection, doc_id, data_type):
         filepath = self.__experiment_io.create_neutral_opinion_collection_filepath(
             doc_id=doc_id,
             data_type=data_type)
 
         self.__opinion_formatter.save_to_file(collection=collection,
                                               filepath=filepath,
-                                              labels_formatter=labels_fmt)
+                                              labels_formatter=self.__neutral_labels_fmt)
 
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         """ Since evaluation supported only for neural networks,

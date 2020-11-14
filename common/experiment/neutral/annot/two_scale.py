@@ -1,7 +1,6 @@
 import logging
 
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
-from arekit.common.experiment.neutral.annot.labels_fmt import ThreeScaleLabelsFormatter
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -11,14 +10,11 @@ logger = logging.getLogger(__name__)
 
 
 class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
-    """
-    Neutral Annotator for RuSentRel Collection (of each data_type)
-
-    For two scale classification task.
+    """ For two scale classification task.
     """
 
     def __init__(self):
-        super(TwoScaleNeutralAnnotator, self).__init__(labels_fmt=ThreeScaleLabelsFormatter())
+        super(TwoScaleNeutralAnnotator, self).__init__()
 
     @property
     def Name(self):

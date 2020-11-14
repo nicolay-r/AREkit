@@ -10,8 +10,8 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
         assert(isinstance(ruattitudes_doc, RuAttitudesDocumentOperations))
 
         # We consider RuSentRel folding algorithm by default.
-        # The latter is utilized in experiment as main, while
-        # RuAttitude data-folding considered as auxilary.
+        # The latter utilized in experiment as `main`, while
+        # RuAttitude data-folding considered as `auxiliary`.
         super(RuSentrelWithRuAttitudesDocumentOperations, self).__init__(folding=rusentrel_doc.DataFolding)
 
         self.__rusentrel_doc = rusentrel_doc
