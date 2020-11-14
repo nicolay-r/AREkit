@@ -25,9 +25,9 @@ class NeuralNetworkCallback(Callback):
 
     __log_saving_info = True
 
-    __log_train_filename = u"cb_train.log"
-    __log_eval_filename = u"cb_eval.log"
-    __log_eval_verbose_filename = u"cb_eval_verbose.log"
+    __log_train_filename_template = u"cb_train_{iter}.log"
+    __log_eval_filename_template = u"cb_eval_{iter}.log"
+    __log_eval_verbose_filename = u"cb_eval_verbose_{iter}.log"
 
     __hiddenParams_template = u'hparams_{}_e{}'
     __input_dependent_params_template = u'idparams_{}_e{}'
@@ -242,9 +242,10 @@ class NeuralNetworkCallback(Callback):
     def __enter__(self):
         assert(self.__log_dir is not None)
 
-        train_log_filepath = join(self.__log_dir, self.__log_train_filename)
-        eval_log_filepath = join(self.__log_dir, self.__log_eval_filename)
-        eval_verbose_log_filepath = join(self.__log_dir, self.__log_eval_verbose_filename)
+        iter_index = str(self.__experiment.DocumentOperations.DataFolding.IterationIndex)
+        train_log_filepath = join(self.__log_dir, self.__log_train_filename_template.format(iter=iter_index))
+        eval_log_filepath = join(self.__log_dir, self.__log_eval_filename_template.format(iter=iter_index))
+        eval_verbose_log_filepath = join(self.__log_dir, self.__log_eval_verbose_filename.format(iter=iter_index))
 
         create_dir_if_not_exists(train_log_filepath)
         create_dir_if_not_exists(eval_log_filepath)
