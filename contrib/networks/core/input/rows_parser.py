@@ -15,8 +15,8 @@ parse_value = {
         value.split(network_input_const.ArgsSep) if isinstance(value, unicode) else empty_list,
     network_input_const.FrameRoles: lambda value:
         value.split(network_input_const.ArgsSep) if isinstance(value, unicode) else empty_list,
-    network_input_const.SynonymObject: lambda value: value.split(network_input_const.ArgsSep),
-    network_input_const.SynonymSubject: lambda value: value.split(network_input_const.ArgsSep),
+    network_input_const.SynonymObject: lambda value: unicode(value).split(network_input_const.ArgsSep),
+    network_input_const.SynonymSubject: lambda value: unicode(value).split(network_input_const.ArgsSep),
     "text_a": lambda value: filter_whitespaces([term for term in split_by_whitespaces(value)])
 }
 
