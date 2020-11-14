@@ -84,18 +84,19 @@ class TextParser:
     @staticmethod
     def __parse_string_list(terms_iter, skip_term, stemmer=None):
         assert(isinstance(terms_iter, collections.Iterable))
+        assert(callable(skip_term))
 
-        terms = []
+        processed_terms = []
         for term in terms_iter:
 
-            if skip_term:
-                terms.append(term)
+            if skip_term(term):
+                processed_terms.append(term)
                 continue
 
             new_terms = TextParser.__parse_core(term)
-            terms.extend(new_terms)
+            processed_terms.extend(new_terms)
 
-        return ParsedText(terms, stemmer=stemmer)
+        return ParsedText(terms=processed_terms, stemmer=stemmer)
 
     @staticmethod
     def __parse_core(text, keep_tokens=True):
@@ -185,15 +186,5 @@ class TextParser:
                 l = k
 
         return words_and_tokens
-
-    @staticmethod
-    def __try_term_as_token(term):
-        url = Tokens.try_create_url(term)
-        if url is not None:
-            return url
-        number = Tokens.try_create_number(term)
-        if number is not None:
-            return number
-        return Tokens.try_create(term)
 
     # endregion
