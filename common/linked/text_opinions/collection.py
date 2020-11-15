@@ -28,6 +28,21 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
         # list describes that has i'th relation continuation in text.
         self.__next_opinion_id = []
 
+    # region private methods
+
+    def __set_none_for_last_text_opinion(self):
+        self.__next_opinion_id[-1] = self.NO_NEXT_OPINION
+
+    # endregion
+
+    # region protected methods
+
+    def _remove_last_registered_text_opinion(self):
+        super(LinkedTextOpinionCollection, self)._remove_last_registered_text_opinion()
+        del self.__next_opinion_id[-1]
+
+    # endregion
+
     def try_add_linked_text_opinions(self,
                                      linked_text_opinions,
                                      check_opinion_correctness):
@@ -55,7 +70,7 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
 
             if not check_opinion_correctness(registered):
                 discarded += 1
-                self.remove_last_registered_text_opinion()
+                self._remove_last_registered_text_opinion()
                 del registered
             else:
                 registered_at_least_one = True
@@ -65,17 +80,10 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
 
         return discarded
 
-    def __set_none_for_last_text_opinion(self):
-        self.__next_opinion_id[-1] = self.NO_NEXT_OPINION
-
     def register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
         super(LinkedTextOpinionCollection, self).register_text_opinion(text_opinion)
         self.__next_opinion_id.append(text_opinion.TextOpinionID + 1)
-
-    def remove_last_registered_text_opinion(self):
-        super(LinkedTextOpinionCollection, self).remove_last_registered_text_opinion()
-        del self.__next_opinion_id[-1]
 
     # region public serialization methods
 
