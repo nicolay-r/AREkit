@@ -22,11 +22,7 @@ class TextOpinionCollection(object):
     def _remove_last_registered_text_opinion(self):
         del self.__text_opinions[-1]
 
-    # endregion
-
-    # region public methods
-
-    def register_text_opinion(self, text_opinion):
+    def _register_text_opinion(self, text_opinion):
         assert(isinstance(text_opinion, TextOpinion))
         self.__text_opinions.append(text_opinion)
 

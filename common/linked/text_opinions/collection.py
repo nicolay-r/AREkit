@@ -41,6 +41,11 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
         super(LinkedTextOpinionCollection, self)._remove_last_registered_text_opinion()
         del self.__next_opinion_id[-1]
 
+    def _register_text_opinion(self, text_opinion):
+        assert(isinstance(text_opinion, TextOpinion))
+        super(LinkedTextOpinionCollection, self)._register_text_opinion(text_opinion)
+        self.__next_opinion_id.append(text_opinion.TextOpinionID + 1)
+
     # endregion
 
     def try_add_linked_text_opinions(self,
@@ -66,7 +71,7 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
             registered.set_owner(self)
             registered.set_text_opinion_id(len(self))
 
-            self.register_text_opinion(registered)
+            self._register_text_opinion(registered)
 
             if not check_opinion_correctness(registered):
                 discarded += 1
@@ -79,11 +84,6 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
             self.__set_none_for_last_text_opinion()
 
         return discarded
-
-    def register_text_opinion(self, text_opinion):
-        assert(isinstance(text_opinion, TextOpinion))
-        super(LinkedTextOpinionCollection, self).register_text_opinion(text_opinion)
-        self.__next_opinion_id.append(text_opinion.TextOpinionID + 1)
 
     # region public serialization methods
 
