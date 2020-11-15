@@ -129,13 +129,6 @@ class RuSentRelNews(News):
 
     # endregion
 
-    # region public methods
-
-    def get_sentence_by_index(self, index):
-        return self._sentences[index]
-
-    # endregion
-
     # region base News
 
     def extract_text_opinions(self, opinion):
@@ -145,9 +138,12 @@ class RuSentRelNews(News):
         # Document Level Opinions -> Linked Text Level Opinions
         text_opinion_collection = RuSentRelTextOpinionCollection.from_opinions(
             rusentrel_news_id=self.ID,
-            doc_entities=self.DocEntities,
+            doc_entities=self.__entities,
             opinions=[opinion])
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=iter(text_opinion_collection))
+
+    def get_entities_collection(self):
+        return self.__entities
 
     # endregion

@@ -37,7 +37,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
         neutral_opins_it = self.__algo.iter_neutral_opinions(
             news_id=doc_id,
-            entities_collection=news.DocEntities,
+            entities_collection=news.get_entities_collection(),
             sentiment_opinions=opinions if data_type == DataType.Train else None)
 
         return self._OpinOps.create_opinion_collection(neutral_opins_it)

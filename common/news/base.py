@@ -37,6 +37,9 @@ class News(object):
     def get_sentence(self, sent_ind):
         return self._sentences[sent_ind]
 
+    def get_entities_collection(self):
+        raise NotImplementedError(u"Document does not support entities collection generation.")
+
     def iter_sentences(self, return_text):
         """
         return: list of string
