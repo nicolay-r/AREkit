@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
 import collections
-import cPickle as pickle
 
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.base import TextOpinion
@@ -53,7 +52,7 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
                                      check_opinion_correctness):
         """
         linked_text_opinions: iterable
-            enumeration of text_opinions which is considered to be related to a certain opinion
+            enumeration of text_opinions which are related to a certain opinion
             (in terms of Obj, Subj).
         check_opinion_correctness: bool
         """
@@ -84,17 +83,6 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
             self.__set_none_for_last_text_opinion()
 
         return discarded
-
-    # region public serialization methods
-
-    def save(self, pickle_filepath):
-        pickle.dump(self, open(pickle_filepath, 'wb'))
-
-    @classmethod
-    def load(cls, pickle_filepath):
-        return pickle.load(open(pickle_filepath, 'rb'))
-
-    # endregion
 
     # region iter methods
 
