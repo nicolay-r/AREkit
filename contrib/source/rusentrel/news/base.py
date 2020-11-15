@@ -131,7 +131,7 @@ class RuSentRelNews(News):
 
     # region base News
 
-    def extract_text_opinions(self, opinion):
+    def extract_linked_text_opinions(self, opinion):
         assert(isinstance(opinion, Opinion))
 
         # Performing the following conversion:

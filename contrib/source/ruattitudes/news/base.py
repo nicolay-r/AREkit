@@ -56,7 +56,7 @@ class RuAttitudesNews(News):
 
     # region base News
 
-    def extract_text_opinions(self, opinion):
+    def extract_linked_text_opinions(self, opinion):
         """
         Note: Complexity is O(N)
         """

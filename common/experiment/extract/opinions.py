@@ -27,7 +27,7 @@ def __iter_linked_wraps(doc_ops, opin_ops, data_type, iter_doc_ids):
         assert(isinstance(news, News))
 
         for opinion in opin_ops.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type):
-            yield news.extract_text_opinions(opinion)
+            yield news.extract_linked_text_opinions(opinion)
 
 
 # endregions

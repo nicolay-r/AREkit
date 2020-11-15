@@ -21,7 +21,7 @@ def iter_same_sentence_linked_text_opinions(news, parsed_news, opinions):
     assert(isinstance(opinions, OpinionCollection))
 
     for opinion in opinions:
-        text_opinion_wrap = news.extract_text_opinions(opinion)
+        text_opinion_wrap = news.extract_linked_text_opinions(opinion)
 
         assert(isinstance(text_opinion_wrap, LinkedTextOpinionsWrapper))
 
