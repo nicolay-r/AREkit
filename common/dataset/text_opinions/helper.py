@@ -90,41 +90,6 @@ class TextOpinionHelper(object):
 
     # endregion
 
-    # region public 'check' methods
-
-    def check_ends_has_same_sentence_index(self, text_opinion):
-        assert(isinstance(text_opinion, TextOpinion))
-
-        pos1 = self.__get_entity_position(text_opinion=text_opinion,
-                                          end_type=EntityEndType.Source,
-                                          position_type=TermPositionTypes.SentenceIndex)
-
-        pos2 = self.__get_entity_position(text_opinion=text_opinion,
-                                          end_type=EntityEndType.Target,
-                                          position_type=TermPositionTypes.SentenceIndex)
-
-        return pos1 == pos2
-
-    # endregion
-
-    # region public 'iter' methods
-
-    def iter_terms_in_related_sentence(self, text_opinion, return_ind_in_sent, term_check=None):
-        assert(isinstance(return_ind_in_sent, bool))
-
-        id_in_doc = TextOpinionHelper.__get_end_id(text_opinion, EntityEndType.Target)
-        parsed_news = self.__parsed_news_by_id_func(text_opinion.NewsID)
-        s_index = parsed_news.get_entity_position(id_in_document=id_in_doc,
-                                                  position_type=TermPositionTypes.SentenceIndex)
-        it = parsed_news.iter_sentence_terms(sentence_index=s_index,
-                                             return_id=return_ind_in_sent,
-                                             term_check=term_check)
-
-        for data in it:
-            yield data
-
-    # endregion
-
     # region private methods
 
     def __extract_entity_value(self, text_opinion, end_type):
