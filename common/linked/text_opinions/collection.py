@@ -4,13 +4,13 @@ import collections
 
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.common.text_opinions.collection import TextOpinionCollection
+from arekit.common.text_opinions.collection import BaseTextOpinionCollection
 
 
 logger = logging.getLogger(__name__)
 
 
-class LinkedTextOpinionCollection(TextOpinionCollection):
+class LinkedTextOpinionCollection(BaseTextOpinionCollection):
     """
     Describes text opinions with a position precision and forward connection
 
@@ -47,21 +47,19 @@ class LinkedTextOpinionCollection(TextOpinionCollection):
 
     # endregion
 
-    def try_add_linked_text_opinions(self,
-                                     linked_text_opinions,
-                                     check_opinion_correctness):
+    def try_add_text_opinions(self, text_opinions_iter, check_opinion_correctness):
         """
         linked_text_opinions: iterable
             enumeration of text_opinions which are related to a certain opinion
             (in terms of Obj, Subj).
         check_opinion_correctness: bool
         """
-        assert(isinstance(linked_text_opinions, collections.Iterable))
+        assert(isinstance(text_opinions_iter, collections.Iterable))
         assert(callable(check_opinion_correctness))
 
         discarded = 0
         registered_at_least_one = False
-        for index, text_opinion in enumerate(linked_text_opinions):
+        for index, text_opinion in enumerate(text_opinions_iter):
             assert(isinstance(text_opinion, TextOpinion))
             assert(text_opinion.TextOpinionID is None)
             assert(text_opinion.Owner is None)

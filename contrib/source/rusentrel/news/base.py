@@ -3,7 +3,6 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.synonyms import SynonymsCollection
-from arekit.common.text_opinions.collection import TextOpinionCollection
 
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.contrib.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
@@ -135,14 +134,11 @@ class RuSentRelNews(News):
     def extract_linked_text_opinions(self, opinion):
         assert(isinstance(opinion, Opinion))
 
-        opinions_it = iter_text_opinions_by_doc_opinion(
-            rusentrel_news_id=self.ID,
-            doc_entities=self.__entities,
-            opinion=opinion)
+        opinions_it = iter_text_opinions_by_doc_opinion(rusentrel_news_id=self.ID,
+                                                        doc_entities=self.__entities,
+                                                        opinion=opinion)
 
-        text_opinion_collection = TextOpinionCollection(list(opinions_it))
-
-        return LinkedTextOpinionsWrapper(linked_text_opinions=iter(text_opinion_collection))
+        return LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
 
     def get_entities_collection(self):
         return self.__entities

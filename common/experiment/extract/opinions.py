@@ -62,8 +62,8 @@ def extract_text_opinions(doc_ops,
                                      iter_doc_ids=iter_doc_ids)
 
     for linked_wrap in wraps_iter:
-        linked_text_opinions.try_add_linked_text_opinions(
-            linked_text_opinions=linked_wrap,
+        linked_text_opinions.try_add_text_opinions(
+            text_opinions_iter=linked_wrap,
             check_opinion_correctness=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
                 text_opinion=text_opinion,
                 text_opinion_helper=text_opinion_helper,

@@ -1,9 +1,8 @@
 from arekit.common.text_opinions.base import TextOpinion
 
 
-class TextOpinionCollection(object):
-    """
-    Collection of text-level opinions across many news/documents
+class BaseTextOpinionCollection(object):
+    """ Collection of text-level opinions across news
     """
 
     def __init__(self, text_opinions):
@@ -27,6 +26,9 @@ class TextOpinionCollection(object):
         self.__text_opinions.append(text_opinion)
 
     # endregion
+
+    def try_add_text_opinions(self, text_opinions_iter, check_opinion_correctness):
+        raise NotImplementedError()
 
     # region base methods
 
