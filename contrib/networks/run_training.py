@@ -1,6 +1,5 @@
 import os
 import gc
-from os.path import join
 
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.engine.utils import rm_dir_contents
@@ -81,17 +80,5 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-        callback = self._experiment.DataIO.Callback
-        if callback is None:
-            return
-
-        # Setup logging dir.
-        callback.set_log_dir(join(self.__get_model_dir(), u"log/"))
-
-        # Init callback
-        callback.PredictVerbosePerFileStatistic = False
-        if self.__common_callback_modification_func is not None:
-            self.__common_callback_modification_func(callback)
 
     # endregion
