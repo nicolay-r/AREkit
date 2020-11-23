@@ -89,7 +89,7 @@ class NeuralNetworkCallback(Callback):
         logger.info(message)
 
         # Duplicate the related information in separate log file.
-        self.__train_log_file.write("{}\n".format(message))
+        self.__train_log_file.write(u"{}\n".format(message))
 
         if (epoch_index not in self._test_on_epochs) and (not operation_cancel.IsCancelled):
             return
@@ -206,8 +206,8 @@ class NeuralNetworkCallback(Callback):
         logger.info(eval_msg)
 
         # Separate logging information by files.
-        self.__eval_log_file.write(eval_msg)
-        self.__eval_verbose_log_file.write(eval_verbose_msg)
+        self.__eval_log_file.write(u"{}\n".format(eval_msg))
+        self.__eval_verbose_log_file.write(u"{}\n".format(eval_verbose_msg))
 
         self._save_minibatch_all_input_dependent_hidden_values(
             predict_log=idhp,
@@ -251,9 +251,9 @@ class NeuralNetworkCallback(Callback):
         create_dir_if_not_exists(eval_log_filepath)
         create_dir_if_not_exists(eval_verbose_log_filepath)
 
-        self.__train_log_file = open(train_log_filepath, u"w")
-        self.__eval_log_file = open(eval_log_filepath, u"w")
-        self.__eval_verbose_log_file = open(eval_verbose_log_filepath, u"w")
+        self.__train_log_file = open(train_log_filepath, u"w", buffering=0)
+        self.__eval_log_file = open(eval_log_filepath, u"w", buffering=0)
+        self.__eval_verbose_log_file = open(eval_verbose_log_filepath, u"w", buffering=0)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.__train_log_file is not None:
