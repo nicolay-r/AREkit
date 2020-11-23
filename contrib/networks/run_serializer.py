@@ -1,6 +1,5 @@
 from arekit.common.experiment.data.serializing import SerializationData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
-from arekit.common.experiment.engine.utils import mark_dir_for_serialization
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
 from arekit.contrib.networks.core.data_handling.data import HandledData
 
@@ -27,12 +26,6 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
                                               terms_per_context=self._experiment.DataIO.TermsPerContext)
 
     def _before_running(self):
-        # Mark the directory as selected for serialization process.
-        mark_dir_for_serialization(target_dir=self._experiment.ExperimentIO.get_target_dir(),
-                                   logger=self._logger,
-                                   skip_if_folder_exists=self.__skip_folder_if_exists)
-
-        # Perform neutral annotation.
         perform_neutral_annotation(neutral_annotator=self._experiment.DataIO.NeutralAnnotator,
                                    opin_ops=self._experiment.OpinionOperations,
                                    doc_ops=self._experiment.DocumentOperations,

@@ -17,7 +17,7 @@ class EntityFormattersService:
         u'rus-simple': EntityFormatterTypes.RussianSimple,
         u'simple-uppercase': EntityFormatterTypes.SimpleUppercase,
         u'simple': EntityFormatterTypes.Simple,
-        u'#simple': EntityFormatterTypes.SimpleSharpPrefixed,
+        u'sharp-simple': EntityFormatterTypes.SimpleSharpPrefixed,
     }
 
     @staticmethod

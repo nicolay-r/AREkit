@@ -11,7 +11,8 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 
 class TestRuSentiFrameVariants(unittest.TestCase):
 
-    def __iter_frame_variants(self):
+    @staticmethod
+    def __iter_frame_variants():
         stemmer = MystemWrapper()
         frames_collection = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
         frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(

@@ -26,7 +26,8 @@ class TermsEmbeddingOffsets(object):
 
     # region 'get' methods
 
-    def get_word_index(self, index):
+    @staticmethod
+    def get_word_index(index):
         return 1 + index
 
     # endregion

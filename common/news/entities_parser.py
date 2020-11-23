@@ -1,15 +1,10 @@
-import collections
-
 from arekit.common.bound import Bound
+from arekit.common.news.sentence import BaseNewsSentence
 
 
 class BaseEntitiesParser(object):
 
     def parse(self, sentence):
-        raise NotImplementedError()
-
-    @staticmethod
-    def iter_text_with_substitutions(text, iter_subs):
         """
         text: list or string
             where we perform substitutions;
@@ -19,33 +14,50 @@ class BaseEntitiesParser(object):
 
         NOTE: substitutions should be ordered!
         """
-        assert(isinstance(text, list) or isinstance(text, unicode))
-        assert(isinstance(iter_subs, collections.Iterable))
+        assert(isinstance(sentence, BaseNewsSentence))
 
         start = 0
+        result = []
 
-        is_list = False
-        if isinstance(text, list):
-            is_list = True
+        self._before_parsing(sentence)
 
-        for value, bound in iter_subs:
+        for value, bound in self._iter_subs_values_with_bounds():
             assert(isinstance(bound, Bound))
             assert(bound.Position >= start)
 
-            for part in BaseEntitiesParser.__iter_text_part(text_part=text[start:bound.Position], is_list=is_list):
-                yield part
+            # Release everything till the current value position.
+            part = self._iter_part(from_index=start, to_index=bound.Position)
+            result.extend(part)
 
-            yield value
+            # Release the entity value.
+            result.extend([value])
 
             start = bound.Position + bound.Length
 
-        for part in BaseEntitiesParser.__iter_text_part(text_part=text[start:len(text)], is_list=is_list):
-            yield part
+        # Release everything after the last entity.
+        last_part = self._iter_part(from_index=start,
+                                    to_index=self._get_sentence_length())
+        result.extend(last_part)
 
-    @staticmethod
-    def __iter_text_part(text_part, is_list):
-        if is_list:
-            for word in text_part:
-                yield word
-        else:
-            yield text_part
+        return result
+
+    # region protected methods
+
+    def _before_parsing(self, sentence):
+        raise NotImplementedError()
+
+    def _get_sentence_length(self):
+        raise NotImplementedError()
+
+    def _iter_subs_values_with_bounds(self):
+        """ Provides pairs (value, bound)
+        """
+        raise NotImplementedError()
+
+    def _iter_part(self, from_index, to_index):
+        """ Iters over parts in the following range:
+            [from_index, to_index)
+        """
+        raise NotImplementedError()
+
+    # endregion

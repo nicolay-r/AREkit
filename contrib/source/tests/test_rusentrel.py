@@ -3,12 +3,14 @@ import logging
 import sys
 import unittest
 
-from arekit.common.opinions.collection import OpinionCollection
-
 sys.path.append('../../../../')
 
+from arekit.common.labels.base import Label
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.bound import Bound
 from arekit.common.opinions.base import Opinion
+from arekit.common.opinions.collection import OpinionCollection
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
@@ -22,6 +24,30 @@ from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 class TestRuSentRel(unittest.TestCase):
 
+    __version = RuSentRelVersions.V11
+
+    def __read_synonyms_collection(self):
+
+        # Initializing stemmer
+        stemmer = MystemWrapper()
+
+        # Reading synonyms collection.
+        return RuSentRelSynonymsCollection.load_collection(stemmer=stemmer,
+                                                           version=self.__version)
+
+    def __iter_by_docs(self, synonyms):
+        for doc_id in RuSentRelIOUtils.iter_collection_indices(self.__version):
+
+            news = RuSentRelNews.read_document(doc_id=doc_id,
+                                               synonyms=synonyms,
+                                               version=self.__version)
+
+            opins_it = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id)
+
+            opinions = OpinionCollection.init_as_custom(opinions=opins_it,
+                                                        synonyms=synonyms)
+            yield news, opinions
+
     def test_reading(self):
 
         # Initializing logger
@@ -29,25 +55,9 @@ class TestRuSentRel(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        # Initializing stemmer
-        stemmer = MystemWrapper()
-
-        # Reading synonyms collection.
-        synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer)
-
-        version = RuSentRelVersions.V11
-        for doc_id in RuSentRelIOUtils.iter_collection_indices(version):
-
-            logger.info(u"NewsID: {}".format(doc_id))
-
-            news = RuSentRelNews.read_document(doc_id=doc_id,
-                                               synonyms=synonyms,
-                                               version=version)
-
-            opins_it = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id)
-
-            opinions = OpinionCollection.init_as_custom(opinions=opins_it,
-                                                        synonyms=synonyms)
+        synonyms = self.__read_synonyms_collection()
+        for news, opinions in self.__iter_by_docs(synonyms):
+            logger.info(u"NewsID: {}".format(news.ID))
 
             # Example: Access to the read OPINIONS collection.
             for opinion in opinions:
@@ -75,6 +85,34 @@ class TestRuSentRel(unittest.TestCase):
                         bound.Position,
                         bound.Position + bound.Length,
                         entity.IdInDocument).encode('utf-8'))
+
+    def test_linked_text_opinion_extraction(self):
+
+        # Initializing logger
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.INFO)
+        logging.basicConfig(level=logging.DEBUG)
+
+        synonyms = self.__read_synonyms_collection()
+        for news, opinions in self.__iter_by_docs(synonyms):
+
+            logger.info(u"NewsID: {}".format(news.ID))
+
+            # Example: Access to news text-level opinions.
+            first_opinion = opinions[0]
+            assert(isinstance(first_opinion, Opinion))
+
+            print u"'{src}'->'{tgt}'".format(src=first_opinion.SourceValue,
+                                             tgt=first_opinion.TargetValue).encode('utf-8')
+
+            linked_text_opinions = news.extract_linked_text_opinions(first_opinion)
+            assert(isinstance(linked_text_opinions, LinkedTextOpinionsWrapper))
+            print "Linked opinions count: {}".format(len(linked_text_opinions))
+            for text_opinion in linked_text_opinions:
+                assert(isinstance(text_opinion, TextOpinion))
+                label = text_opinion.Sentiment
+                assert(isinstance(label, Label))
+                print "<{},{},{}>".format(text_opinion.SourceId, text_opinion.TargetId, str(label))
 
 
 if __name__ == '__main__':

@@ -104,7 +104,8 @@ class NetworkSampleFormatter(BaseSampleFormatter):
     def __get_g(self, value):
         return self.__synonyms_collection.try_get_synonym_group_index(value)
 
-    def __to_arg(self, inds_iter):
+    @staticmethod
+    def __to_arg(inds_iter):
         return const.ArgsSep.join([str(i) for i in inds_iter])
 
     # endregion

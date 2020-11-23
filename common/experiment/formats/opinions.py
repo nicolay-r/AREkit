@@ -25,7 +25,7 @@ class OpinionOperations(object):
         """
         raise NotImplementedError()
 
-    def save_neutrally_annotated_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+    def save_neutrally_annotated_opinion_collection(self, collection, doc_id, data_type):
         raise NotImplementedError()
 
     # endregion
@@ -54,6 +54,6 @@ class OpinionOperations(object):
     # region creation
 
     def create_opinion_collection(self, opinions=None):
-        raise NotImplementedError()
+        raise NotImplementedError("Collection creation does not supported by experiment.")
 
     # endregion

@@ -23,7 +23,3 @@ class LinkedTextOpinionsWrapper(LinkedDataWrapper):
     def _get_data_label(self, item):
         assert(isinstance(item, TextOpinion))
         return item.Sentiment
-
-    def get_prior_opinion_by_index(self, index):
-        assert(isinstance(index, int))
-        return self[index - 1] if index > 0 else None

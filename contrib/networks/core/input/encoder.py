@@ -4,6 +4,7 @@ import numpy as np
 
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.embeddings.base import Embedding
+from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
@@ -15,7 +16,6 @@ from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
-from arekit.contrib.networks.entities.str_emb_fmt import StringWordEmbeddingEntityFormatter
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.contrib.networks.core.input.formatters.sample import NetworkSampleFormatter
 from arekit.contrib.networks.core.input.providers.text.single import NetworkSingleTextProvider
@@ -51,7 +51,7 @@ class NetworkInputEncoder(object):
             synonyms=opin_ops.SynonymsCollection,
             predefined_embedding=predefined_embedding,
             string_entities_formatter=exp_data.StringEntityFormatter,
-            string_emb_entity_formatter=StringWordEmbeddingEntityFormatter())
+            string_emb_entity_formatter=StringEntitiesSimpleFormatter())
 
         text_provider = NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,

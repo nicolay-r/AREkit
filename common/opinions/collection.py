@@ -171,4 +171,9 @@ class OpinionCollection(object):
         for key in self.__ordered_opinion_keys:
             yield self.__by_synonyms[key]
 
+    def __getitem__(self, item):
+        assert(isinstance(item, int))
+        key = self.__ordered_opinion_keys[item]
+        return self.__by_synonyms[key]
+
     # endregion

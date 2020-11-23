@@ -59,12 +59,23 @@ class IndicesFeature:
     @staticmethod
     def __calculate_bounds(window_size, e1, e2):
         assert(isinstance(window_size, int) and window_size > 0)
+
+        end = max(e1, e2)
+
         w_begin = 0
         w_end = window_size
+
         while not (utils.in_window(window_begin=w_begin, window_end=w_end, ind=e1) and
                    utils.in_window(window_begin=w_begin, window_end=w_end, ind=e2)):
+
             w_begin += 1
             w_end += 1
+
+            if w_begin > end:
+                raise Exception("Infinite loop during bounds calculation has been detected: "
+                                "e1={e1}, e2={e2}, window_size={window_size}".format(e1=e1,
+                                                                                     e2=e2,
+                                                                                     window_size=window_size))
 
         return w_begin, w_end
 

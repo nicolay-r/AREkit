@@ -18,10 +18,6 @@ class RuAttitudesExperiment(BaseExperiment):
     """
 
     def __init__(self, exp_data, experiment_io_type, version, load_ruatittudes):
-        """
-        ra_instance: dict
-            precomputed ru_attitudes (in memory)
-        """
         assert(isinstance(version, RuAttitudesVersions))
         assert(isinstance(load_ruatittudes, bool))
 

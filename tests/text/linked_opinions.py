@@ -19,15 +19,19 @@ def iter_same_sentence_linked_text_opinions(news, parsed_news, opinions):
     assert(isinstance(news, News))
     assert(isinstance(parsed_news, ParsedNews))
     assert(isinstance(opinions, OpinionCollection))
-    for wrap in news.iter_wrapped_linked_text_opinions(opinions):
 
-        if len(wrap) == 0:
+    for opinion in opinions:
+        text_opinion_wrap = news.extract_linked_text_opinions(opinion)
+
+        assert(isinstance(text_opinion_wrap, LinkedTextOpinionsWrapper))
+
+        if len(text_opinion_wrap) == 0:
             continue
 
-        text_opinion = wrap.First
+        text_opinion = text_opinion_wrap.First
         assert(isinstance(text_opinion, TextOpinion))
         text_opinion.set_owner(opinions)
-        assert(isinstance(wrap, LinkedTextOpinionsWrapper))
+        assert(isinstance(text_opinion_wrap, LinkedTextOpinionsWrapper))
 
         is_same = is_same_sentence(text_opinion=text_opinion, parsed_news=parsed_news)
 

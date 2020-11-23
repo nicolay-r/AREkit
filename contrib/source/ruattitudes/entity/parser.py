@@ -5,24 +5,24 @@ from arekit.contrib.source.ruattitudes.text_object import TextObject
 
 class RuAttitudesTextEntitiesParser(BaseEntitiesParser):
 
-    def parse(self, sentence):
-        assert(isinstance(sentence, RuAttitudesSentence))
-        return self.__iter_terms_with_entities(sentence=sentence)
+    def __init__(self):
+        super(RuAttitudesTextEntitiesParser, self).__init__()
+        self.__text_list = None
+        self.__sentence = None
 
-    @staticmethod
-    def __iter_terms_with_entities(sentence):
+    def _before_parsing(self, sentence):
         assert(isinstance(sentence, RuAttitudesSentence))
-        subs_iter = RuAttitudesTextEntitiesParser.__iter_subs(sentence=sentence)
-        return BaseEntitiesParser.iter_text_with_substitutions(text=sentence.get_text_as_list(),
-                                                               iter_subs=subs_iter)
+        self.__text_list = sentence.get_text_as_list()
+        self.__sentence = sentence
 
-    @staticmethod
-    def __iter_subs(sentence):
-        assert(isinstance(sentence, RuAttitudesSentence))
-        for text_object in sentence.iter_objects():
+    def _iter_part(self, from_index, to_index):
+        return self.__text_list[from_index:to_index]
+
+    def _get_sentence_length(self):
+        return len(self.__text_list)
+
+    def _iter_subs_values_with_bounds(self):
+        for text_object in self.__sentence.iter_objects():
             assert(isinstance(text_object, TextObject))
-
-            # Optionally, you may utilize filtering rules here.
-
-            e = text_object.to_entity(to_doc_id_func=lambda sent_id: sentence.get_doc_level_text_object_id(sent_id))
-            yield e, text_object.Bound
+            entity = text_object.to_entity(lambda sent_id: self.__sentence.get_doc_level_text_object_id(sent_id))
+            yield entity, text_object.Bound

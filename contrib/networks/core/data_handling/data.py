@@ -77,14 +77,19 @@ class HandledData(object):
             raise Exception(u"Data has not been initialized/serialized: `{}`".format(experiment.Name))
 
         # Reading embedding.
-        npz_embedding_data = np.load(experiment.ExperimentIO.get_loading_embedding_filepath())
+        embedding_filepath = experiment.ExperimentIO.get_loading_embedding_filepath()
+        npz_embedding_data = np.load(embedding_filepath)
         config.set_term_embedding(npz_embedding_data['arr_0'])
-        logger.info("Embedding read [size={}]".format(config.TermEmbeddingMatrix.shape))
+        logger.info("Embedding read [size={size}]: {filepath}".format(
+            size=config.TermEmbeddingMatrix.shape,
+            filepath=embedding_filepath))
 
         # Reading vocabulary
-        npz_vocab_data = np.load(experiment.ExperimentIO.get_loading_vocab_filepath())
+        vocab_filepath = experiment.ExperimentIO.get_loading_vocab_filepath()
+        npz_vocab_data = np.load(vocab_filepath)
         vocab = dict(npz_vocab_data['arr_0'])
-        logger.info("Vocabulary read [size={}]".format(len(vocab)))
+        logger.info("Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
+                                                                       filepath=vocab_filepath))
 
         # Reading from serialized information
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
@@ -206,7 +211,8 @@ class HandledData(object):
         norm = [100.0 * value / total if total > 0 else 0 for value in stat]
         return norm, stat
 
-    def __create_input_sample(self, row, config, vocab, is_external_vocab):
+    @staticmethod
+    def __create_input_sample(row, config, vocab, is_external_vocab):
         """
         Creates an input for Neural Network model
         """

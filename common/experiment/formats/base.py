@@ -69,12 +69,13 @@ class BaseExperiment(object):
         assert(isinstance(self.__experiment_data, TrainingData))
 
         # Extracting all docs to cmp and those that is related to data_type.
-        cmp_doc_ids = self.__doc_operations.iter_doc_ids_to_compare()
-        doc_ids = self.__doc_operations.iter_news_indices(data_type=data_type)
+        cmp_doc_ids_iter = self.__doc_operations.iter_doc_ids_to_compare()
+        doc_ids_iter = self.__doc_operations.iter_news_indices(data_type=data_type)
+        cmp_doc_ids_set = set(cmp_doc_ids_iter)
 
         # Compose cmp pairs iterator.
         cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
-            doc_ids=filter(lambda doc_id: doc_id in cmp_doc_ids, doc_ids),
+            doc_ids=filter(lambda doc_id: doc_id in cmp_doc_ids_set, doc_ids_iter),
             read_etalon_collection_func=lambda doc_id: self.__opin_operations.read_etalon_opinion_collection(
                 doc_id=doc_id),
             read_result_collection_func=lambda doc_id: self.__opin_operations.read_result_opinion_collection(

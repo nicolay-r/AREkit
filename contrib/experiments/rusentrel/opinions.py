@@ -34,23 +34,28 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def iter_opinions_for_extraction(self, doc_id, data_type):
 
+        collections = []
+
         # Reading automatically annotated collection of neutral opinions.
         auto_neutral = self.try_read_neutrally_annotated_opinion_collection(doc_id=doc_id,
                                                                             data_type=data_type)
+
         if data_type == DataType.Train:
             # Providing neutral and sentiment.
             if auto_neutral is not None:
-                yield iter(auto_neutral)
+                collections.append(auto_neutral)
 
             # Providing sentiment opinions.
-            yield self.read_etalon_opinion_collection(doc_id=doc_id)
+            etalon = self.read_etalon_opinion_collection(doc_id=doc_id)
+            collections.append(etalon)
 
         elif data_type == DataType.Test:
             # Providing neutrally labeled only
-            yield iter(auto_neutral)
+            collections.append(auto_neutral)
 
-        # Provide nothing otherwise
-        pass
+        for collection in collections:
+            for opinion in collection:
+                yield opinion
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
@@ -77,14 +82,14 @@ class RuSentrelOpinionOperations(OpinionOperations):
         return self.__custom_read(filepath=filepath,
                                   labels_fmt=self.__neutral_labels_fmt)
 
-    def save_neutrally_annotated_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+    def save_neutrally_annotated_opinion_collection(self, collection, doc_id, data_type):
         filepath = self.__experiment_io.create_neutral_opinion_collection_filepath(
             doc_id=doc_id,
             data_type=data_type)
 
         self.__opinion_formatter.save_to_file(collection=collection,
                                               filepath=filepath,
-                                              labels_formatter=labels_fmt)
+                                              labels_formatter=self.__neutral_labels_fmt)
 
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         """ Since evaluation supported only for neural networks,

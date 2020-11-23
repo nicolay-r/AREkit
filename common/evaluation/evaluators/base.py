@@ -9,7 +9,8 @@ class BaseEvaluator(object):
     def evaluate(self, cmp_pairs):
         raise NotImplementedError()
 
-    def calc_difference(self, etalon_opins, test_opins):
+    @staticmethod
+    def calc_difference(etalon_opins, test_opins):
         assert(isinstance(etalon_opins, OpinionCollection))
         assert(isinstance(test_opins, OpinionCollection))
 

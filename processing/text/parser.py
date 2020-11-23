@@ -2,6 +2,7 @@
 import collections
 import logging
 
+from arekit.common.entities.base import Entity
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.frame_variants.parse import FrameVariantsParser
 from arekit.common.news.base import News
@@ -27,10 +28,8 @@ class TextParser:
         assert(isinstance(news, News))
         assert(isinstance(parse_options, NewsParseOptions))
 
-        return_text = True if not parse_options.ParseEntities else False
-
-        parsed_sentences = [TextParser.__parse_sentence(news, sentence, parse_options)
-                            for sentence in news.iter_sentences(return_text=return_text)]
+        parsed_sentences = [TextParser.__parse_sentence(news, sent_ind, parse_options)
+                            for sent_ind in range(news.SentencesCount)]
 
         parsed_news = ParsedNews(news_id=news.ID,
                                  parsed_sentences=parsed_sentences)
@@ -41,25 +40,30 @@ class TextParser:
 
         return parsed_news
 
+    # region private methods
+
     @staticmethod
-    def parse(text, stemmer=None):
+    def __parse(text, stemmer=None):
         assert(isinstance(text, unicode))
         terms = TextParser.__parse_core(text)
         return ParsedText(terms, stemmer=stemmer)
 
-    # region private methods
-
     @staticmethod
-    def __parse_sentence(news, sentence, parse_options):
+    def __parse_sentence(news, sent_ind, parse_options):
         assert(isinstance(news, News))
         assert(isinstance(parse_options, NewsParseOptions))
 
         if parse_options.ParseEntities:
-            text_with_entities = news.EntitiesParser.parse(sentence)
-            return TextParser.__parse_string_list(string_iter=text_with_entities,
+            # Providing a modified list with parsed unicode terms.
+            terms_list = news.parse_sentence(sent_ind)
+            return TextParser.__parse_string_list(terms_iter=terms_list,
+                                                  skip_term=lambda term: isinstance(term, Entity),
                                                   stemmer=parse_options.Stemmer)
-        return TextParser.parse(text=sentence,
-                                stemmer=parse_options.Stemmer)
+
+        # Processing the ordinary sentence text.
+        sentence = news.iter_sentences(sent_ind)
+        return TextParser.__parse(text=sentence.Text,
+                                  stemmer=parse_options.Stemmer)
 
     @staticmethod
     def __parse_frame_variants(parsed_news, frame_variant_collection):
@@ -78,18 +82,21 @@ class TextParser:
                 parsed_text=sentence))
 
     @staticmethod
-    def __parse_string_list(string_iter, stemmer=None):
-        assert(isinstance(string_iter, collections.Iterable))
+    def __parse_string_list(terms_iter, skip_term, stemmer=None):
+        assert(isinstance(terms_iter, collections.Iterable))
+        assert(callable(skip_term))
 
-        terms = []
-        for text in string_iter:
-            if not isinstance(text, unicode):
-                terms.append(text)
+        processed_terms = []
+        for term in terms_iter:
+
+            if skip_term(term):
+                processed_terms.append(term)
                 continue
-            new_terms = TextParser.__parse_core(text)
-            terms.extend(new_terms)
 
-        return ParsedText(terms, stemmer=stemmer)
+            new_terms = TextParser.__parse_core(term)
+            processed_terms.extend(new_terms)
+
+        return ParsedText(terms=processed_terms, stemmer=stemmer)
 
     @staticmethod
     def __parse_core(text, keep_tokens=True):
@@ -179,15 +186,5 @@ class TextParser:
                 l = k
 
         return words_and_tokens
-
-    @staticmethod
-    def __try_term_as_token(term):
-        url = Tokens.try_create_url(term)
-        if url is not None:
-            return url
-        number = Tokens.try_create_number(term)
-        if number is not None:
-            return number
-        return Tokens.try_create(term)
 
     # endregion

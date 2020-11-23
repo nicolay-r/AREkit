@@ -29,7 +29,7 @@ class NetworkIOUtils(BaseIOUtils):
         model_io = self._experiment.DataIO.ModelIO
         assert(isinstance(model_io, NeuralNetworkModelIO))
 
-        return model_io.get_model_vocab_filepath() if not self.__model_is_pretrained_state_provided(model_io) \
+        return model_io.get_model_vocab_filepath() if self.__model_is_pretrained_state_provided(model_io) \
             else self.__get_default_vocab_filepath()
 
     def get_saving_vocab_filepath(self):
@@ -45,7 +45,7 @@ class NetworkIOUtils(BaseIOUtils):
         """
         model_io = self._experiment.DataIO.ModelIO
         assert(isinstance(model_io, NeuralNetworkModelIO))
-        return model_io.get_model_embedding_filepath() if not self.__model_is_pretrained_state_provided(model_io) \
+        return model_io.get_model_embedding_filepath() if self.__model_is_pretrained_state_provided(model_io) \
             else self.__get_default_embedding_filepath()
 
     def get_saving_embedding_filepath(self):
@@ -104,8 +104,9 @@ class NetworkIOUtils(BaseIOUtils):
 
         return result_dir
 
-    def __model_is_pretrained_state_provided(self, model_io):
+    @staticmethod
+    def __model_is_pretrained_state_provided(model_io):
         assert(isinstance(model_io, NeuralNetworkModelIO))
-        return not model_io.IsPretrainedStateProvided
+        return model_io.IsPretrainedStateProvided
 
     # endregion
