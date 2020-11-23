@@ -25,9 +25,9 @@ class NeuralNetworkCallback(Callback):
 
     __log_saving_info = True
 
-    __log_train_filename_template = u"cb_train_{iter}.log"
-    __log_eval_filename_template = u"cb_eval_{iter}.log"
-    __log_eval_verbose_filename = u"cb_eval_verbose_{iter}.log"
+    __log_train_filename_template = u"cb_train_{iter}_{dtype}.log"
+    __log_eval_filename_template = u"cb_eval_{iter}_{dtype}.log"
+    __log_eval_verbose_filename = u"cb_eval_verbose_{iter}_{dtype}.log"
 
     __hiddenParams_template = u'hparams_{}_e{}'
     __input_dependent_params_template = u'idparams_{}_e{}'
@@ -41,9 +41,9 @@ class NeuralNetworkCallback(Callback):
         self._test_on_epochs = None
         self.__cv_index = None
 
-        self.__train_log_file = None
-        self.__eval_log_file = None
-        self.__eval_verbose_log_file = None
+        self.__train_log_files = {}
+        self.__eval_log_files = {}
+        self.__eval_verbose_log_files = {}
 
         self.reset_experiment_dependent_parameters()
 
@@ -89,7 +89,7 @@ class NeuralNetworkCallback(Callback):
         logger.info(message)
 
         # Duplicate the related information in separate log file.
-        self.__train_log_file.write(u"{}\n".format(message))
+        self.__train_log_files[DataType.Train].write(u"{}\n".format(message))
 
         if (epoch_index not in self._test_on_epochs) and (not operation_cancel.IsCancelled):
             return
@@ -206,8 +206,8 @@ class NeuralNetworkCallback(Callback):
         logger.info(eval_msg)
 
         # Separate logging information by files.
-        self.__eval_log_file.write(u"{}\n".format(eval_msg))
-        self.__eval_verbose_log_file.write(u"{}\n".format(eval_verbose_msg))
+        self.__eval_log_files[data_type].write(u"{}\n".format(eval_msg))
+        self.__eval_verbose_log_files[data_type].write(u"{}\n".format(eval_verbose_msg))
 
         self._save_minibatch_all_input_dependent_hidden_values(
             predict_log=idhp,
@@ -243,24 +243,37 @@ class NeuralNetworkCallback(Callback):
         assert(self.__log_dir is not None)
 
         iter_index = str(self.__experiment.DocumentOperations.DataFolding.IterationIndex)
-        train_log_filepath = join(self.__log_dir, self.__log_train_filename_template.format(iter=iter_index))
-        eval_log_filepath = join(self.__log_dir, self.__log_eval_filename_template.format(iter=iter_index))
-        eval_verbose_log_filepath = join(self.__log_dir, self.__log_eval_verbose_filename.format(iter=iter_index))
 
-        create_dir_if_not_exists(train_log_filepath)
-        create_dir_if_not_exists(eval_log_filepath)
-        create_dir_if_not_exists(eval_verbose_log_filepath)
+        for d_type in self.__experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
-        self.__train_log_file = open(train_log_filepath, u"w", buffering=0)
-        self.__eval_log_file = open(eval_log_filepath, u"w", buffering=0)
-        self.__eval_verbose_log_file = open(eval_verbose_log_filepath, u"w", buffering=0)
+            train_log_filepath = join(self.__log_dir, self.__log_train_filename_template.format(iter=iter_index,
+                                                                                                dtype=d_type))
+            eval_log_filepath = join(self.__log_dir, self.__log_eval_filename_template.format(iter=iter_index,
+                                                                                              dtype=d_type))
+            eval_verbose_log_filepath = join(self.__log_dir, self.__log_eval_verbose_filename.format(iter=iter_index,
+                                                                                                     dtype=d_type))
+
+            create_dir_if_not_exists(train_log_filepath)
+            create_dir_if_not_exists(eval_log_filepath)
+            create_dir_if_not_exists(eval_verbose_log_filepath)
+
+            self.__train_log_files[d_type] = open(train_log_filepath, u"w", buffering=0)
+            self.__eval_log_files[d_type] = open(eval_log_filepath, u"w", buffering=0)
+            self.__eval_verbose_log_files[d_type] = open(eval_verbose_log_filepath, u"w", buffering=0)
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.__train_log_file is not None:
-            self.__train_log_file.close()
 
-        if self.__eval_log_file is not None:
-            self.__eval_log_file.close()
+        for d_type in self.__experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
-        if self.__eval_verbose_log_file is not None:
-            self.__eval_verbose_log_file.close()
+            self.__train_log_file = self.__eval_log_files[d_type]
+            self.__eval_log_file = self.__eval_log_files[d_type]
+            self.__eval_verbose_log_file = self.__eval_verbose_log_files[d_type]
+
+            if self.__train_log_file is not None:
+                self.__train_log_file.close()
+
+            if self.__eval_log_file is not None:
+                self.__eval_log_file.close()
+
+            if self.__eval_verbose_log_file is not None:
+                self.__eval_verbose_log_file.close()
