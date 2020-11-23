@@ -14,7 +14,6 @@ class NetworksTrainingEngine(ExperimentEngine):
     def __init__(self, bags_collection_type, experiment,
                  load_model, config,
                  create_network_func,
-                 common_callback_modification_func=None,
                  prepare_model_root=True):
         assert(callable(create_network_func))
         assert(isinstance(config, DefaultNetworkConfig))
@@ -25,7 +24,6 @@ class NetworksTrainingEngine(ExperimentEngine):
         self.__clear_model_root_before_experiment = prepare_model_root
         self.__config = config
         self.__create_network_func = create_network_func
-        self.__common_callback_modification_func = common_callback_modification_func
         self.__bags_collection_type = bags_collection_type
         self.__load_model = load_model
 
