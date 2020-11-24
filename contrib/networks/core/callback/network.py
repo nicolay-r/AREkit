@@ -21,10 +21,11 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class NeuralNetworkCallback(Callback):
+class NeuralNetworkEvaluationCallback(Callback):
 
     __log_saving_info = True
 
+    # TODO. Move to the nested class.
     __log_train_filename_template = u"cb_train_{iter}_{dtype}.log"
     __log_eval_filename_template = u"cb_eval_{iter}_{dtype}.log"
     __log_eval_verbose_filename = u"cb_eval_verbose_{iter}_{dtype}.log"
@@ -39,13 +40,10 @@ class NeuralNetworkCallback(Callback):
         self.__experiment = None
 
         self._test_on_epochs = None
-        self.__cv_index = None
 
         self.__train_log_files = {}
         self.__eval_log_files = {}
         self.__eval_verbose_log_files = {}
-
-        self.reset_experiment_dependent_parameters()
 
         self.__key_save_hidden_parameters = True
         self.__key_stop_training_by_cost = False
@@ -65,10 +63,6 @@ class NeuralNetworkCallback(Callback):
     def set_experiment(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
         self.__experiment = experiment
-
-    def set_cv_index(self, cv_index):
-        assert (isinstance(cv_index, int))
-        self.__cv_index = cv_index
 
     def on_initialized(self, model):
         assert(isinstance(model, BaseTensorflowModel))
@@ -134,7 +128,7 @@ class NeuralNetworkCallback(Callback):
 
     # region extra functionality
 
-    def _save_minibatch_all_input_dependent_hidden_values(self, data_type, epoch_index, predict_log):
+    def __save_minibatch_all_input_dependent_hidden_values(self, data_type, epoch_index, predict_log):
         assert(isinstance(predict_log, NetworkInputDependentVariables))
 
         if not self.__key_save_hidden_parameters:
@@ -193,6 +187,9 @@ class NeuralNetworkCallback(Callback):
                                                epoch_index=epoch_index,
                                                labels_formatter=RuSentRelLabelsFormatter())
 
+        # TODO. This is a logger information and should be provided in nested class.
+        # TODO. This is a logger information and should be provided in nested class.
+        # TODO. This is a logger information and should be provided in nested class.
         eval_verbose_msg = self.__create_verbose_eval_results_msg(eval_result=result,
                                                                   data_type=data_type,
                                                                   epoch_index=epoch_index)
@@ -208,8 +205,11 @@ class NeuralNetworkCallback(Callback):
         # Separate logging information by files.
         self.__eval_log_files[data_type].write(u"{}\n".format(eval_msg))
         self.__eval_verbose_log_files[data_type].write(u"{}\n".format(eval_verbose_msg))
+        # ----------------------------------------------------------------------------
+        # ----------------------------------------------------------------------------
+        # ----------------------------------------------------------------------------
 
-        self._save_minibatch_all_input_dependent_hidden_values(
+        self.__save_minibatch_all_input_dependent_hidden_values(
             predict_log=idhp,
             data_type=data_type,
             epoch_index=epoch_index)
@@ -220,6 +220,9 @@ class NeuralNetworkCallback(Callback):
 
     # region logging
 
+    # TODO. This is a logger information and should be provided in nested class.
+    # TODO. This is a logger information and should be provided in nested class.
+    # TODO. This is a logger information and should be provided in nested class.
     @staticmethod
     def __create_verbose_eval_results_msg(eval_result, data_type, epoch_index):
         assert(isinstance(eval_result, TwoClassEvalResult))
@@ -228,6 +231,9 @@ class NeuralNetworkCallback(Callback):
                     for doc_id, result in eval_result.iter_document_results()]
         return u'\n'.join([title] + contents)
 
+    # TODO. This is a logger information and should be provided in nested class.
+    # TODO. This is a logger information and should be provided in nested class.
+    # TODO. This is a logger information and should be provided in nested class.
     @staticmethod
     def __create_overall_eval_results_msg(eval_result, data_type, epoch_index):
         assert(isinstance(eval_result, TwoClassEvalResult))
@@ -239,6 +245,9 @@ class NeuralNetworkCallback(Callback):
 
     # endregion
 
+    # TODO. This is a logger information and should be provided in nested class.
+    # TODO. This is a logger information and should be provided in nested class.
+    # TODO. This is a logger information and should be provided in nested class.
     def __enter__(self):
         assert(self.__log_dir is not None)
 
@@ -261,6 +270,9 @@ class NeuralNetworkCallback(Callback):
             self.__eval_log_files[d_type] = open(eval_log_filepath, u"w", buffering=0)
             self.__eval_verbose_log_files[d_type] = open(eval_verbose_log_filepath, u"w", buffering=0)
 
+    # TODO. This is a logger information and should be provided in nested class.
+    # TODO. This is a logger information and should be provided in nested class.
+    # TODO. This is a logger information and should be provided in nested class.
     def __exit__(self, exc_type, exc_val, exc_tb):
 
         for d_type in self.__experiment.DocumentOperations.DataFolding.iter_supported_data_types():

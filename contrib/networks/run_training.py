@@ -45,9 +45,7 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Setup callback
         callback = self._experiment.DataIO.Callback
-        callback.reset_experiment_dependent_parameters()
-        callback.set_cv_index(it_index)
-        callback.set_experiment(self._experiment)
+        callback.on_experiment_iteration_begin()
 
         # Initialize network and model
         network = self.__create_network_func()
@@ -75,6 +73,10 @@ class NetworksTrainingEngine(ExperimentEngine):
         if self.__clear_model_root_before_experiment:
             rm_dir_contents(dir_path=self.__get_model_dir(),
                             logger=self._logger)
+
+        # Setup callback
+        callback = self._experiment.DataIO.Callback
+        callback.set_experiment(self._experiment)
 
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
