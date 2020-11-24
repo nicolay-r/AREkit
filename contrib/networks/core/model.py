@@ -137,6 +137,13 @@ class BaseTensorflowModel(BaseModel):
         minibatches_count = bags_collection.get_groups_count(bags_per_group)
         logger.info("Minibatches passing per epoch count: ~{} (Might be greater or equal, as the last bag is expanded)".format(minibatches_count))
 
+        if self.Callback is not None:
+            # Perform evaluation for original state.
+            self.Callback.on_epoch_finished(avg_fit_cost=float(-1),
+                                            avg_fit_acc=float(-1),
+                                            epoch_index=0,
+                                            operation_cancel=operation_cancel)
+
         for epoch_index in xrange(epochs_count):
 
             if operation_cancel.IsCancelled:
