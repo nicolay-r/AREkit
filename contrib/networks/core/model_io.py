@@ -34,7 +34,7 @@ class NeuralNetworkModelIO(BaseModelIO):
     def __get_target_subdir(self):
         # We separate models that were trained from scratch
         # from those that adopt a pre-trained state;
-        # we provide suffix '-tf' in case of the latter.
+        # we provide a suffix '-ft' in case of the latter.
         suffix = u"-ft" if self.__is_pretrained_state_provided() else ""
         return join(self.__target_dir, self.__full_model_name + suffix)
 
@@ -56,8 +56,7 @@ class NeuralNetworkModelIO(BaseModelIO):
         return self.__vocab_filepath
 
     def get_model_source_path_tf_prefix(self):
-        """ Provides a filepath to the state that should be
-            utilized an an original.
+        """ Provides a filepath to the state that should be utilized as original.
         """
         return join(self.__source_dir, self.__full_model_name)
 
