@@ -6,11 +6,13 @@ from arekit.contrib.networks.core.data_handling.data import HandledData
 
 class NetworksExperimentInputSerializer(ExperimentEngine):
 
-    def __init__(self, experiment, skip_folder_if_exists):
+    def __init__(self, experiment, balance, skip_folder_if_exists):
+        assert(isinstance(balance, bool))
 
         super(NetworksExperimentInputSerializer, self).__init__(experiment)
 
         self.__skip_folder_if_exists = skip_folder_if_exists
+        self.__balance = balance
 
     # region protected methods
 
@@ -23,7 +25,8 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
 
         # Perform data serialization.
         HandledData.serialize_from_experiment(experiment=self._experiment,
-                                              terms_per_context=self._experiment.DataIO.TermsPerContext)
+                                              terms_per_context=self._experiment.DataIO.TermsPerContext,
+                                              balance=self.__balance)
 
     def _before_running(self):
         perform_neutral_annotation(neutral_annotator=self._experiment.DataIO.NeutralAnnotator,

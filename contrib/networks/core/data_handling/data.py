@@ -50,12 +50,14 @@ class HandledData(object):
             experiment_io=experiment.ExperimentIO)
 
     @staticmethod
-    def serialize_from_experiment(experiment, terms_per_context):
+    def serialize_from_experiment(experiment, terms_per_context, balance):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
+        assert(isinstance(balance, bool))
 
         HandledData.__perform_writing(experiment=experiment,
-                                      terms_per_context=terms_per_context)
+                                      terms_per_context=terms_per_context,
+                                      balance=balance)
 
     @classmethod
     def create_empty(cls):
@@ -115,12 +117,13 @@ class HandledData(object):
     # region writing methods
 
     @staticmethod
-    def __perform_writing(experiment, terms_per_context):
+    def __perform_writing(experiment, terms_per_context, balance):
         """
         Perform experiment input serialization
         """
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
+        assert(isinstance(balance, bool))
 
         term_embedding_pairs = []
 
@@ -143,7 +146,8 @@ class HandledData(object):
                 data_type=data_type,
                 term_embedding_pairs=term_embedding_pairs,
                 parsed_news_collection=parsed_news_collection,
-                terms_per_context=terms_per_context)
+                terms_per_context=terms_per_context,
+                balance=balance)
 
         # Save embedding and related vocabulary.
         NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
