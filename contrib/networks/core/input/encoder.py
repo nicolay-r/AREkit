@@ -78,7 +78,7 @@ class NetworkInputEncoder(object):
                 text_provider=text_provider,
                 synonyms_collection=opin_ops.SynonymsCollection,
                 frames_collection=exp_data.FramesCollection,
-                balance=balance),
+                balance=balance and data_type == DataType.Train),
             write_sample_header=True)
 
         return term_embedding_pairs
