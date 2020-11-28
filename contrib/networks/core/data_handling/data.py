@@ -44,7 +44,7 @@ class HandledData(object):
     # endregion
 
     @staticmethod
-    def need_serialize(experiment):
+    def check_files_existed(experiment):
         return not HandledData.__check_files_existed(
             data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             experiment_io=experiment.ExperimentIO)
