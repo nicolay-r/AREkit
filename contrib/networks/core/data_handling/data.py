@@ -1,14 +1,13 @@
 import collections
 import logging
 
-import numpy as np
-
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.labeling import LabeledCollection
-from arekit.common.labels.base import Label
 from arekit.common.model.labeling.single import SingleLabelsHelper
+from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.utils import check_files_existance
 
@@ -45,7 +44,7 @@ class HandledData(object):
 
     @staticmethod
     def check_files_existed(experiment):
-        return not HandledData.__check_files_existed(
+        return HandledData.__check_files_existed(
             data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             experiment_io=experiment.ExperimentIO)
 
@@ -64,55 +63,38 @@ class HandledData(object):
         return cls(labeled_collections={},
                    bags_collection={})
 
-    def perform_reading_and_initialization(self, experiment, bags_collection_type, config):
+    def perform_reading_and_initialization(self, doc_ops, exp_io, vocab,
+                                           labels_scaler, bags_collection_type, config):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
         """
-        assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(doc_ops, DocumentOperations))
 
-        files_existed = HandledData.__check_files_existed(
-            data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
-            experiment_io=experiment.ExperimentIO)
-
-        if not files_existed:
-            raise Exception(u"Data has not been initialized/serialized: `{}`".format(experiment.Name))
-
-        # Reading embedding.
-        embedding_filepath = experiment.ExperimentIO.get_loading_embedding_filepath()
-        npz_embedding_data = np.load(embedding_filepath)
-        config.set_term_embedding(npz_embedding_data['arr_0'])
-        logger.info("Embedding read [size={size}]: {filepath}".format(
-            size=config.TermEmbeddingMatrix.shape,
-            filepath=embedding_filepath))
-
-        # Reading vocabulary
-        vocab_filepath = experiment.ExperimentIO.get_loading_vocab_filepath()
-        npz_vocab_data = np.load(vocab_filepath)
-        vocab = dict(npz_vocab_data['arr_0'])
-        logger.info("Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
-                                                                       filepath=vocab_filepath))
+        stat_labeled_sample_row_ids = None
+        dtypes_set = set(doc_ops.DataFolding.iter_supported_data_types())
 
         # Reading from serialized information
-        for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+        for data_type in dtypes_set:
 
             labeled_sample_row_ids = self.__read_data_type(
                 data_type=data_type,
-                experiment_io=experiment.ExperimentIO,
-                labels_scaler=experiment.DataIO.LabelsScaler,
+                experiment_io=exp_io,
+                labels_scaler=labels_scaler,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
                 config=config)
 
-            if data_type != DataType.Train:
-                continue
+            if data_type == DataType.Train:
+                stat_labeled_sample_row_ids = labeled_sample_row_ids
 
-            labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
-            norm, _ = self.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
-                                         labels_helper=labels_helper)
-            config.set_class_weights(norm)
-
-        config.notify_initialization_completed()
+        # Calculate class weights.
+        if stat_labeled_sample_row_ids is not None:
+            labels_helper = SingleLabelsHelper(label_scaler=labels_scaler)
+            normalized_label_stat, _ = calculate_labels_distribution_stat(
+                labeled_sample_row_ids=stat_labeled_sample_row_ids,
+                labels_helper=labels_helper)
+            config.set_class_weights(normalized_label_stat)
 
     # region writing methods
 
@@ -200,20 +182,6 @@ class HandledData(object):
         return labeled_sample_row_ids
 
     # endregion
-
-    @staticmethod
-    def get_statistic(labeled_sample_row_ids, labels_helper):
-        assert(isinstance(labeled_sample_row_ids, collections.Iterable))
-
-        stat = [0] * labels_helper.get_classes_count()
-
-        for _, label in labeled_sample_row_ids:
-            assert(isinstance(label, Label))
-            stat[labels_helper.label_to_uint(label)] += 1
-
-        total = sum(stat)
-        norm = [100.0 * value / total if total > 0 else 0 for value in stat]
-        return norm, stat
 
     @staticmethod
     def __create_input_sample(row, config, vocab, is_external_vocab):

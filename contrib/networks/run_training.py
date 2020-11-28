@@ -1,5 +1,8 @@
+import logging
 import os
 import gc
+
+import numpy as np
 
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.engine.utils import rm_dir_contents
@@ -7,6 +10,10 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
+
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class NetworksTrainingEngine(ExperimentEngine):
@@ -39,9 +46,35 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Perform data reading.
         handled_data = HandledData.create_empty()
-        handled_data.perform_reading_and_initialization(experiment=self._experiment,
-                                                        bags_collection_type=self.__bags_collection_type,
-                                                        config=self.__config)
+
+        if not HandledData.check_files_existed(self._experiment):
+            raise Exception(u"Data has not been initialized/serialized: `{}`".format(self._experiment.Name))
+
+        # Reading embedding.
+        embedding_filepath = self._experiment.ExperimentIO.get_loading_embedding_filepath()
+        npz_embedding_data = np.load(embedding_filepath)
+        self.__config.set_term_embedding(npz_embedding_data['arr_0'])
+        logger.info(u"Embedding read [size={size}]: {filepath}".format(size=self.__config.TermEmbeddingMatrix.shape,
+                                                                       filepath=embedding_filepath))
+
+        # Reading vocabulary
+        vocab_filepath = self._experiment.ExperimentIO.get_loading_vocab_filepath()
+        npz_vocab_data = np.load(vocab_filepath)
+        vocab = dict(npz_vocab_data['arr_0'])
+        logger.info(u"Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
+                                                                        filepath=vocab_filepath))
+
+        # Performing samples reading process.
+        handled_data.perform_reading_and_initialization(
+            doc_ops=self._experiment.DocumentOperations,
+            exp_io=self._experiment.ExperimentIO,
+            labels_scaler=self._experiment.DataIO.LabelsScaler,
+            vocab=vocab,
+            bags_collection_type=self.__bags_collection_type,
+            config=self.__config)
+
+        # Notify other subscribers that initiliazation process has completed.
+        self.__config.notify_initialization_completed()
 
         # Setup callback
         callback = self._experiment.DataIO.Callback
