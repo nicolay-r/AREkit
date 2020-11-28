@@ -72,21 +72,13 @@ def extract_text_opinions(doc_ops,
     return linked_text_opinions
 
 
-def compose_opinion_collection(create_collection_func,
-                               linked_data_iter,
-                               labels_helper,
-                               to_opinion_func,
-                               label_calc_mode):
+def fill_opinion_collection(collection, linked_data_iter, labels_helper, to_opinion_func, label_calc_mode):
+    """ to_opinion_func: (item, label) -> opinion
     """
-    to_opinion_func: (item, label) -> opinion
-    """
-    assert(callable(create_collection_func))
+    assert(isinstance(collection, OpinionCollection))
     assert(isinstance(linked_data_iter, collections.Iterable))
     assert(isinstance(labels_helper, LabelsHelper))
     assert(callable(to_opinion_func))
-
-    collection = create_collection_func()
-    assert(isinstance(collection, OpinionCollection))
 
     for linked in linked_data_iter:
         assert(isinstance(linked, LinkedDataWrapper))
