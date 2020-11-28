@@ -15,6 +15,10 @@ class Callback(object):
         # Do nothing by default.
         pass
 
+    def on_fit_started(self, operation_cancel):
+        # Do nothing by default.
+        pass
+
     def on_epoch_finished(self, avg_fit_cost, avg_fit_acc, epoch_index, operation_cancel):
         # Do nothing by default.
         pass
