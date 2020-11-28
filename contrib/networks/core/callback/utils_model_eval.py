@@ -47,7 +47,7 @@ def evaluate_model(experiment, data_type, epoch_index, model,
         experiment=experiment,
         data_type=data_type,
         epoch_index=epoch_index,
-        labels_formatter=RuSentRelLabelsFormatter())
+        labels_formatter=labels_formatter)
 
     # optionally save input-dependend hidden parameters.
     if save_hidden_params:
