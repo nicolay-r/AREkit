@@ -51,16 +51,17 @@ class SampleRowBalancerHelper(object):
         assert(isinstance(label_provider, LabelProvider))
         assert(callable(create_blank_df))
 
-        output_labels = label_provider.OutputLabelsUint
+        output_labels_uint = label_provider.OutputLabelsUint
 
-        original_class_sizes = SampleRowBalancerHelper.__get_class_sizes(df=df, uint_labels=output_labels)
+        original_class_sizes = SampleRowBalancerHelper.__get_class_sizes(df=df, uint_labels=output_labels_uint)
 
         larges_class_size = max(original_class_sizes)
 
         balanced = [SampleRowBalancerHelper.__fill_blank(
-                        label_df=SampleRowBalancerHelper.__get_class(df=df, uint_label=label),
+                        label_df=SampleRowBalancerHelper.__get_class(df=df, uint_label=uint_label),
                         blank_df=create_blank_df(larges_class_size))
-                    for label in output_labels]
+                    for label_ind, uint_label in enumerate(output_labels_uint)
+                    if original_class_sizes[label_ind] > 0]
 
         balanced_df = pd.concat(balanced)
 
@@ -69,7 +70,7 @@ class SampleRowBalancerHelper(object):
                                 ascending=True)
 
         balanced_class_sizes = SampleRowBalancerHelper.__get_class_sizes(df=balanced_df,
-                                                                         uint_labels=output_labels)
+                                                                         uint_labels=output_labels_uint)
 
         logger.info(u"Rows count for uint labels [original]: {}".format(
             ["{} ({})".format(str(class_uint), str(count))

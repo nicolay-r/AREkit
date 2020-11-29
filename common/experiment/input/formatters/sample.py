@@ -244,7 +244,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
                 label_provider=self._label_provider)
             logger.info(u"Balancing completed!")
 
-        logger.info(u"Saving... : {}".format(filepath))
+        logger.info(u"Saving... {shape}: {filepath}".format(
+            shape=self._df.shape,  # self._df.shape,
+            filepath=filepath))
         self._df.sort_values(by=[const.ID], ascending=True)
         self._df.to_csv(filepath,
                         sep='\t',
