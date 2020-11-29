@@ -42,7 +42,7 @@ class SampleRowBalancerHelper(object):
     # endregion
 
     @staticmethod
-    def balance_oversampling(df, create_blank_df, label_provider):
+    def calculate_balanced_df(df, create_blank_df, label_provider):
         """
         Balancing related dataframe by amount of examples per class
         create_blank_df: func(size) -> df

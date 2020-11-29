@@ -37,11 +37,15 @@ df = df.append({"row_id": 1, "id": 2, "label": 1, "text_a": "-", "s_ind": 0, "t_
 df = df.append({"row_id": 1, "id": 5, "label": 0, "text_a": "-", "s_ind": 0, "t_ind": 0}, ignore_index=True)
 df = df.append({"row_id": 1, "id": 6, "label": 0, "text_a": "-", "s_ind": 0, "t_ind": 0}, ignore_index=True)
 
-balanced_df = SampleRowBalancerHelper.balance_oversampling(
+balanced_df = SampleRowBalancerHelper.calculate_balanced_df(
     df=df,
     create_blank_df=lambda size: formatter._create_blank_df(size),
     label_provider=label_provider)
 
+print "Original:"
+print df
+
+print "Balanced:"
 print balanced_df
 
 
