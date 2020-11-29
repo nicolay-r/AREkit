@@ -1,3 +1,4 @@
+from arekit.common.experiment import const
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
@@ -35,16 +36,23 @@ def evaluate_model(experiment, data_type, epoch_index, model,
 
     assert (isinstance(idhp, NetworkInputDependentVariables))
 
-    # Create output filepath
+    # Getting access to the original samples with the related reader.
+    # In this scenario, there is a need to obtain news ids for the related sample_id.
+    samples_filepath = experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type)
+    samples_reader = NetworkInputSampleReader.from_tsv(samples_filepath, MultipleIDProvider())
+    news_id_by_sample_id = samples_reader.calculate_news_id_by_sample_id_dict()
+
+    # Create and save output.
     result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(
         data_type=data_type,
         epoch_index=epoch_index)
-
-    # Create and save output.
     labeling_collection = model.get_samples_labeling_collection(data_type=data_type)
     NetworkOutputEncoder.to_tsv(
         filepath=result_filepath,
         sample_id_with_labels_iter=labeling_collection.iter_non_duplicated_labeled_sample_row_ids(),
+        column_extra_funcs=[
+            (const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])
+        ],
         labels_scaler=experiment.DataIO.LabelsScaler)
 
     # Convert output to result.
@@ -84,14 +92,12 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, labels_scaler, opi
     assert(isinstance(epoch_index, int))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
-    samples_filepath = exp_io.get_input_sample_filepath(data_type=data_type)
     opinions_source = exp_io.get_input_opinions_filepath(data_type=data_type)
 
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
         output_filepath=result_filepath,
         opinions_reader=InputOpinionReader.from_tsv(opinions_source),
-        samples_reader=NetworkInputSampleReader.from_tsv(samples_filepath, MultipleIDProvider()),
         labels_scaler=labels_scaler,
         opinion_operations=opin_ops,
         label_calculation_mode=LabelCalculationMode.AVERAGE,
