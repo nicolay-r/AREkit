@@ -1,7 +1,6 @@
 from arekit.common.experiment.extract.opinions import fill_opinion_collection
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
-from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.model.labeling.single import SingleLabelsHelper
@@ -13,7 +12,6 @@ class OutputToOpinionCollectionsConverter(object):
     @staticmethod
     def iter_opinion_collections(output_filepath,
                                  opinions_reader,
-                                 samples_reader,
                                  labels_scaler,
                                  opinion_operations,
                                  label_calculation_mode,
@@ -23,7 +21,6 @@ class OutputToOpinionCollectionsConverter(object):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         assert(isinstance(output_filepath, unicode))
         assert(isinstance(opinions_reader, InputOpinionReader))
-        assert(isinstance(samples_reader, InputSampleReader))
         assert(isinstance(opinion_operations, OpinionOperations))
         assert(isinstance(label_calculation_mode, unicode))
         assert(isinstance(output, BaseOutput))
@@ -32,15 +29,6 @@ class OutputToOpinionCollectionsConverter(object):
 
         output.init_from_tsv(filepath=output_filepath,
                              read_header=True)
-
-        if keep_news_ids_from_samples_reader:
-            news_ids_values = list(samples_reader.iter_news_ids())
-            output.insert_news_ids_values(news_ids_values)
-
-        if keep_ids_from_samples_reader:
-            assert(len(output) == samples_reader.rows_count())
-            ids_values = samples_reader.extract_ids()
-            output.insert_ids_values(ids_values)
 
         labels_helper = SingleLabelsHelper(labels_scaler)
 

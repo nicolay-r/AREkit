@@ -1,3 +1,5 @@
+import logging
+
 from arekit.common.experiment import const
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
@@ -10,6 +12,7 @@ from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.formatter import OpinionCollectionsFormatter
+from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
 from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
@@ -17,6 +20,8 @@ from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
+
+logger = logging.getLogger(__name__)
 
 
 def evaluate_model(experiment, data_type, epoch_index, model,
@@ -43,13 +48,14 @@ def evaluate_model(experiment, data_type, epoch_index, model,
     news_id_by_sample_id = samples_reader.calculate_news_id_by_sample_id_dict()
 
     # Create and save output.
-    result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(
-        data_type=data_type,
-        epoch_index=epoch_index)
+    result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
+                                                                                epoch_index=epoch_index)
+    logger.info(u"Target output filepath: {}".format(result_filepath))
     labeling_collection = model.get_samples_labeling_collection(data_type=data_type)
+    sample_id_with_labels_iter = labeling_collection.iter_non_duplicated_labeled_sample_row_ids()
     NetworkOutputEncoder.to_tsv(
         filepath=result_filepath,
-        sample_id_with_labels_iter=labeling_collection.iter_non_duplicated_labeled_sample_row_ids(),
+        sample_id_with_labels_iter=__log_wrap_samples_iter(sample_id_with_labels_iter),
         column_extra_funcs=[
             (const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])
         ],
@@ -107,10 +113,22 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, labels_scaler, opi
 
     # Save collection.
     save_opinion_collections(
-        opinion_collection_iter=collections_iter,
+        opinion_collection_iter=__log_wrap_collections_conversion_iter(collections_iter),
         create_file_func=lambda doc_id: exp_io.create_result_opinion_collection_filepath(data_type=data_type,
                                                                                          doc_id=doc_id,
                                                                                          epoch_index=epoch_index),
         save_to_file_func=lambda filepath, collection: opin_fmt.save_to_file(collection=collection,
                                                                              filepath=filepath,
                                                                              labels_formatter=labels_formatter))
+
+
+def __log_wrap_samples_iter(it):
+    return progress_bar_iter(iterable=it,
+                             desc=u'Writing output',
+                             unit=u'rows')
+
+
+def __log_wrap_collections_conversion_iter(it):
+    return progress_bar_iter(iterable=it,
+                             desc=u"Converting: Output Rows -> Opinion Collections",
+                             unit=u"colls")
