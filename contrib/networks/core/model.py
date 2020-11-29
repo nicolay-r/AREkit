@@ -176,8 +176,9 @@ class BaseTensorflowModel(BaseModel):
                                        samples_labeling_collection=labeling_collection)
 
         predict_log = labeling.predict(labeling_callback=lambda: self.__samples_labeling(data_type=data_type))
-        output = NetworkOutputEncoder(sample_ids_with_labels_iter=labeling_collection.iter_labeled_sample_row_ids(),
-                                      labels_scaler=self.__label_scaler)
+
+        output = NetworkOutputEncoder.init_with_exporting_args(
+            sample_ids_with_labels_iter=labeling_collection.iter_labeled_sample_row_ids())
 
         return predict_log, output
 

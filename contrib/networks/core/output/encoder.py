@@ -9,14 +9,19 @@ from arekit.common.utils import create_dir_if_not_exists
 
 class NetworkOutputEncoder(object):
 
-    def __init__(self, sample_ids_with_labels_iter, labels_scaler):
-        self.__sample_ids_with_labels = list(sample_ids_with_labels_iter)
-        self.__labels_scaler = labels_scaler
+    def __init__(self, sample_ids_with_labels_iter=None):
+        self.__sample_ids_with_labels = sample_ids_with_labels_iter
 
-    def to_tsv(self, filepath):
+    @classmethod
+    def init_with_exporting_args(cls, sample_ids_with_labels_iter):
+        return cls(sample_ids_with_labels_iter=list(sample_ids_with_labels_iter))
+
+    def to_tsv(self, filepath, labels_scaler):
         self.__to_tsv(filepath=filepath,
-                      labels_scaler=self.__labels_scaler,
+                      labels_scaler=labels_scaler,
                       sample_id_with_labels_iter=self.__sample_ids_with_labels)
+
+    # region private methods
 
     @staticmethod
     def __to_tsv(filepath, sample_id_with_labels_iter, labels_scaler):
@@ -47,3 +52,4 @@ class NetworkOutputEncoder(object):
                     sep=col_separator,
                     labels=col_separator.join(labels)))
 
+    # endregion

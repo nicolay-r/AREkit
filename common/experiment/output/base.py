@@ -62,6 +62,22 @@ class BaseOutput(object):
     def _iter_by_opinions(self, linked_df, opinions_reader):
         raise NotImplementedError()
 
+    def _compose_opinion_by_opinion_id(self, sample_id, opinions_reader, calc_label_func):
+        assert(isinstance(sample_id, unicode))
+        assert(isinstance(opinions_reader, InputOpinionReader))
+        assert(callable(calc_label_func))
+
+        opinion_id = self.__ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)
+        source, target = opinions_reader.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
+
+        return Opinion(source_value=source,
+                       target_value=target,
+                       sentiment=calc_label_func())
+
+    # endregion
+
+    # region private methods
+
     def __iter_linked_opinions_df(self, news_id):
         assert(isinstance(news_id, int))
 
@@ -74,18 +90,6 @@ class BaseOutput(object):
                                                                   p_type=BaseIDProvider.OPINION)
             linked_opins_df = news_df[news_df[const.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
-
-    def _compose_opinion_by_opinion_id(self, sample_id, opinions_reader, calc_label_func):
-        assert(isinstance(sample_id, unicode))
-        assert(isinstance(opinions_reader, InputOpinionReader))
-        assert(callable(calc_label_func))
-
-        opinion_id = self.__ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)
-        source, target = opinions_reader.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
-
-        return Opinion(source_value=source,
-                       target_value=target,
-                       sentiment=calc_label_func())
 
     # endregion
 

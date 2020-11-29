@@ -77,13 +77,18 @@ class HandledData(object):
         # Reading from serialized information
         for data_type in dtypes_set:
 
-            labeled_sample_row_ids = self.__read_data_type(
+            # Extracting such information from serialized files.
+            bags_collection, labeled_sample_row_ids = self.__read_for_data_type(
                 data_type=data_type,
                 experiment_io=exp_io,
                 labels_scaler=labels_scaler,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
                 config=config)
+
+            # Saving into dictionaries.
+            self.__bags_collection[data_type] = bags_collection
+            self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
 
             if data_type == DataType.Train:
                 stat_labeled_sample_row_ids = labeled_sample_row_ids
@@ -156,19 +161,16 @@ class HandledData(object):
 
     # region reading methods
 
-    def __read_data_type(self, data_type, experiment_io, labels_scaler, bags_collection_type, vocab, config):
+    def __read_for_data_type(self, data_type, experiment_io, labels_scaler,
+                             bags_collection_type, vocab, config):
 
         samples_reader = NetworkInputSampleReader.from_tsv(
             filepath=experiment_io.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
 
-        labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
-
-        self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
-
-        self.__bags_collection[data_type] = bags_collection_type.from_formatted_samples(
+        bags_collection = bags_collection_type.from_formatted_samples(
+            formatted_samples_iter=samples_reader.iter_rows_linked_by_text_opinions(),
             desc="Filling bags collection [{}]".format(data_type),
-            samples_reader=samples_reader,
             bag_size=config.BagSize,
             shuffle=True,
             label_scaler=labels_scaler,
@@ -179,7 +181,9 @@ class HandledData(object):
                 vocab=vocab,
                 is_external_vocab=experiment_io.has_model_predefined_state()))
 
-        return labeled_sample_row_ids
+        labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
+
+        return bags_collection, labeled_sample_row_ids
 
     # endregion
 
