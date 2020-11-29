@@ -31,20 +31,21 @@ def evaluate_model(experiment, data_type, epoch_index, model,
 
     # Prediction result is a pair of the following parameters:
     # idhp -- input dependent variables that might be saved for additional research.
-    # output -- output encoder of the network.
-    idhp, output = model.predict(data_type=data_type)
+    idhp = model.predict(data_type=data_type)
 
     assert (isinstance(idhp, NetworkInputDependentVariables))
-    assert (isinstance(output, NetworkOutputEncoder))
 
     # Create output filepath
     result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(
         data_type=data_type,
         epoch_index=epoch_index)
 
-    # Save output
-    output.to_tsv(filepath=result_filepath,
-                  labels_scaler=experiment.DataIO.LabelsScaler)
+    # Create and save output.
+    labeling_collection = model.get_samples_labeling_collection(data_type=data_type)
+    NetworkOutputEncoder.to_tsv(
+        filepath=result_filepath,
+        sample_id_with_labels_iter=labeling_collection.iter_non_duplicated_labeled_sample_row_ids(),
+        labels_scaler=experiment.DataIO.LabelsScaler)
 
     # Convert output to result.
     __convert_output_to_opinion_collections(

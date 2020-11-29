@@ -27,7 +27,6 @@ from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.nn import NeuralNetwork
-from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -166,9 +165,7 @@ class BaseTensorflowModel(BaseModel):
             self.__callback.on_fit_finished()
 
     def predict(self, data_type=DataType.Test):
-        """
-        dest_data_type: unicode
-            DataType.Train or DataTypes.Test
+        """ Fills the related labeling collection.
         """
         labeling_collection = self.get_samples_labeling_collection(data_type=data_type)
 
@@ -177,10 +174,7 @@ class BaseTensorflowModel(BaseModel):
 
         predict_log = labeling.predict(labeling_callback=lambda: self.__samples_labeling(data_type=data_type))
 
-        output = NetworkOutputEncoder.init_with_exporting_args(
-            sample_ids_with_labels_iter=labeling_collection.iter_labeled_sample_row_ids())
-
-        return predict_log, output
+        return predict_log
 
     def get_hidden_parameters(self):
         names = []

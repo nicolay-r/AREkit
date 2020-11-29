@@ -17,7 +17,7 @@ class LabeledCollection:
         """
         assert(isinstance(labeled_sample_row_ids, collections.Iterable))
 
-        self.__original_labels = collections.OrderedDict(labeled_sample_row_ids)
+        self.__original_labels_by_row_id_dict = collections.OrderedDict(labeled_sample_row_ids)
         self._labels_defined = {}
 
     def apply_label(self, label, sample_row_id):
@@ -32,6 +32,6 @@ class LabeledCollection:
     def reset_labels(self):
         self._labels_defined.clear()
 
-    def iter_labeled_sample_row_ids(self):
-        for sample_id, _ in self.__original_labels.iteritems():
+    def iter_non_duplicated_labeled_sample_row_ids(self):
+        for sample_id, _ in self.__original_labels_by_row_id_dict.iteritems():
             yield sample_id, self._labels_defined[sample_id]
