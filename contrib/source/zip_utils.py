@@ -36,6 +36,12 @@ class ZipArchiveUtils(object):
                 for result in process_func(c_file):
                     yield result
 
+    @classmethod
+    def iter_filenames_from_zip(cls, version):
+        assert(isinstance(version, enum.Enum))
+        with zipfile.ZipFile(cls.get_archive_filepath(version.value), "r") as zip_ref:
+            return iter(zip_ref.namelist())
+
     @staticmethod
     def get_data_root():
         return path.join(dirname(__file__), u"data/")
