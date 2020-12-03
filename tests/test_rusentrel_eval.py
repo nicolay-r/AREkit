@@ -31,6 +31,10 @@ class ResultVersions(Enum):
     AttPCNNCV3e40i1 = u"cv3_att-pcnn_e40_i1.zip"
     AttPCNNCV3e40i2 = u"cv3_att-pcnn_e40_i2.zip"
 
+    # Distant Supervision + Supervised Learning.
+    # results check.
+    DSAttCNNFixedE40 = u"ds_att-cnn-fixed_e40.zip"
+
 
 class ZippedResultsIOUtils(ZipArchiveUtils):
 
@@ -56,6 +60,7 @@ class ZippedResultsIOUtils(ZipArchiveUtils):
 
 class TestRuSentRelEvaluation(unittest.TestCase):
 
+    __display_cmp_table = False
     __rusentrel_version = RuSentRelVersions.V11
 
     def __test_core(self, res_version):
@@ -94,11 +99,12 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         print result.get_result_as_str()
         print "------------------------"
 
-        # Display cmp tables.
-        # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-        #     for doc_id, df_cmp_table in result.iter_dataframe_cmp_tables():
-        #         print u"{}:\t{}\n".format(doc_id, df_cmp_table)
-        # print "------------------------"
+        # Display cmp tables (optionally).
+        if self.__display_cmp_table:
+            with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+                for doc_id, df_cmp_table in result.iter_dataframe_cmp_tables():
+                    print u"{}:\t{}\n".format(doc_id, df_cmp_table)
+            print "------------------------"
 
     def test_ann_cnn(self):
         self.__test_core(ResultVersions.AttCNNFixed)
@@ -106,10 +112,13 @@ class TestRuSentRelEvaluation(unittest.TestCase):
     def test_ann_pcnn(self):
         self.__test_core(ResultVersions.AttPCNNFixed)
 
+    def test_ann_cnn_ds(self):
+        self.__test_core(ResultVersions.DSAttCNNFixedE40)
+
     def test_ann_pcnn_cv(self):
         self.__test_core(ResultVersions.AttPCNNCV3e40i0)
-        # self.__test_core(ResultVersions.AttPCNNCV3e40i1)
-        # self.__test_core(ResultVersions.AttPCNNCV3e40i2)
+        self.__test_core(ResultVersions.AttPCNNCV3e40i1)
+        self.__test_core(ResultVersions.AttPCNNCV3e40i2)
 
 
 if __name__ == '__main__':
