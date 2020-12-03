@@ -6,11 +6,11 @@ from os.path import dirname
 from enum import Enum
 
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
-from arekit.common.evaluation.results.base import BaseEvalResult
+from arekit.common.evaluation.results.two_class import TwoClassEvalResult
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.utils import progress_bar_iter
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
@@ -20,8 +20,15 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
 class ResultVersions(Enum):
+
+    # Results with a fixed document separation.
     AttCNNFixed = u"att-cnn-fixed-20e-f1-41.zip"
     AttPCNNFixed = u"att-pcnn-fixed-26e-f1-41.zip"
+
+    # Results with cv split.
+    AttPCNNCV3e40i0 = u"cv3_att-pcnn_e40_i0.zip"
+    AttPCNNCV3e40i1 = u"cv3_att-pcnn_e40_i1.zip"
+    AttPCNNCV3e40i2 = u"cv3_att-pcnn_e40_i2.zip"
 
 
 class ZippedResultsIOUtils(ZipArchiveUtils):
@@ -74,11 +81,15 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         # evaluate every document.
         logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc=u"Evaluate", unit=u'pairs')
         result = evaluator.evaluate(cmp_pairs=logged_cmp_pairs_it)
-        assert(isinstance(result, BaseEvalResult))
+        assert(isinstance(result, TwoClassEvalResult))
 
         # calculate results.
         result.calculate()
 
+        # logging all the result information.
+        for doc_id, doc_info in result.iter_document_results():
+            print u"{}:\t{}".format(doc_id, doc_info)
+        print "------------------------"
         print result.get_result_as_str()
 
     def test_ann_cnn(self):
@@ -86,6 +97,11 @@ class TestRuSentRelEvaluation(unittest.TestCase):
 
     def test_ann_pcnn(self):
         self.__test_core(ResultVersions.AttPCNNFixed)
+
+    def test_ann_pcnn_cv(self):
+        self.__test_core(ResultVersions.AttPCNNCV3e40i0)
+        self.__test_core(ResultVersions.AttPCNNCV3e40i1)
+        self.__test_core(ResultVersions.AttPCNNCV3e40i2)
 
 
 if __name__ == '__main__':
