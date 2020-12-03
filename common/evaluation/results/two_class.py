@@ -40,7 +40,7 @@ class TwoClassEvalResult(BaseEvalResult):
         assert(doc_id not in self.__documents)
         assert(isinstance(cmp_table, DocumentCompareTable))
 
-        self.add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
+        self._add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
 
         f1 = calc_f1(pos_prec=pos_prec,
                      neg_prec=neg_prec,
