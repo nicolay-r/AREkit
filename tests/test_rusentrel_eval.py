@@ -1,4 +1,5 @@
 import unittest
+import pandas as pd
 
 from os import path
 from os.path import dirname
@@ -91,6 +92,13 @@ class TestRuSentRelEvaluation(unittest.TestCase):
             print u"{}:\t{}".format(doc_id, doc_info)
         print "------------------------"
         print result.get_result_as_str()
+        print "------------------------"
+
+        # Display cmp tables.
+        # with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+        #     for doc_id, df_cmp_table in result.iter_dataframe_cmp_tables():
+        #         print u"{}:\t{}\n".format(doc_id, df_cmp_table)
+        # print "------------------------"
 
     def test_ann_cnn(self):
         self.__test_core(ResultVersions.AttCNNFixed)
@@ -100,8 +108,8 @@ class TestRuSentRelEvaluation(unittest.TestCase):
 
     def test_ann_pcnn_cv(self):
         self.__test_core(ResultVersions.AttPCNNCV3e40i0)
-        self.__test_core(ResultVersions.AttPCNNCV3e40i1)
-        self.__test_core(ResultVersions.AttPCNNCV3e40i2)
+        # self.__test_core(ResultVersions.AttPCNNCV3e40i1)
+        # self.__test_core(ResultVersions.AttPCNNCV3e40i2)
 
 
 if __name__ == '__main__':

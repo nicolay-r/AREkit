@@ -86,3 +86,9 @@ class TwoClassEvalResult(BaseEvalResult):
     def iter_document_results(self):
         for doc_id, info in self.__documents.iteritems():
             yield doc_id, info
+
+    def iter_dataframe_cmp_tables(self):
+        for doc_id in self.__documents.keys():
+            cmp_table = self._cmp_tables[doc_id]
+            assert(isinstance(cmp_table, DocumentCompareTable))
+            yield doc_id, cmp_table.DataframeTable
