@@ -29,7 +29,7 @@ class RuSentRelThreeScaleNeutralAnnotator(RuSentRelTwoScaleNeutralAnnotator):
         assert(isinstance(data_io, DataIO))
         assert(isinstance(stemmer, Stemmer))
 
-        super(RuSentRelThreeScaleNeutralAnnotator).__init__(data_io=data_io)
+        super(RuSentRelThreeScaleNeutralAnnotator, self).__init__(data_io=data_io)
 
         self.__synonyms = data_io.SynonymsCollection
 
