@@ -164,6 +164,10 @@ class HandledData(object):
     def __read_for_data_type(self, data_type, experiment_io, labels_scaler,
                              bags_collection_type, vocab, config):
 
+        terms_per_context = config.TermsPerContext
+        frames_per_context = config.FramesPerContext
+        synonyms_per_context = config.SynonymsPerContext
+
         samples_reader = NetworkInputSampleReader.from_tsv(
             filepath=experiment_io.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
@@ -174,36 +178,27 @@ class HandledData(object):
             bag_size=config.BagSize,
             shuffle=True,
             label_scaler=labels_scaler,
-            create_empty_sample_func=lambda: InputSample.create_empty(config),
-            create_sample_func=lambda row: self.__create_input_sample(
-                row=row,
-                config=config,
-                vocab=vocab,
-                is_external_vocab=experiment_io.has_model_predefined_state()))
+            create_empty_sample_func=lambda: InputSample.create_empty(
+                terms_per_context=terms_per_context,
+                frames_per_context=frames_per_context,
+                synonyms_per_context=synonyms_per_context),
+            create_sample_func=lambda row: InputSample.create_from_parameters(
+                input_sample_id=row.SampleID,
+                terms=row.Terms,
+                is_external_vocab=experiment_io.has_model_predefined_state(),
+                subj_ind=row.SubjectIndex,
+                obj_ind=row.ObjectIndex,
+                words_vocab=vocab,
+                terms_per_context=terms_per_context,
+                frames_per_context=frames_per_context,
+                synonyms_per_context=synonyms_per_context,
+                pos_tagger=config.PosTagger))
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
 
         return bags_collection, labeled_sample_row_ids
 
     # endregion
-
-    @staticmethod
-    def __create_input_sample(row, config, vocab, is_external_vocab):
-        """
-        Creates an input for Neural Network model
-        """
-        assert(isinstance(row, ParsedSampleRow))
-        assert(isinstance(config, DefaultNetworkConfig))
-        assert(isinstance(vocab, dict))
-
-        return InputSample.from_tsv_row(
-            input_sample_id=row.SampleID,
-            terms=row.Terms,
-            is_external_vocab=is_external_vocab,
-            subj_ind=row.SubjectIndex,
-            obj_ind=row.ObjectIndex,
-            words_vocab=vocab,
-            config=config)
 
     @staticmethod
     def __create_collection(data_types, collection_by_dtype_func):

@@ -31,14 +31,22 @@ class TestSamplesIteration(unittest.TestCase):
                 words[w] = w_ind
         return words
 
-    def test(self):
-
+    def test_simple(self):
         vocab_filepath = u"test_data/vocab.txt.gz"
         samples_filepath = u"test_data/sample_train.tsv.gz"
-
         words_vocab = self.read_vocab(vocab_filepath)
         config = DefaultNetworkConfig()
         config.modify_terms_per_context(35)
+
+        self.__test_core(words_vocab=words_vocab,
+                         config=config,
+                         samples_filepath=samples_filepath)
+
+    # region private methods
+
+    def __test_core(self, words_vocab, config, samples_filepath):
+        assert(isinstance(config, DefaultNetworkConfig))
+        assert(isinstance(samples_filepath, unicode))
 
         samples = []
         for line in self.iter_tsv_gzip(input_file=samples_filepath):
@@ -56,21 +64,27 @@ class TestSamplesIteration(unittest.TestCase):
             print u"subj_ind: {}".format(subj_ind)
             print u"obj_ind: {}".format(obj_ind)
 
-            s = InputSample.from_tsv_row(input_sample_id=_id,
-                                         terms=split_by_whitespaces(text),
-                                         subj_ind=int(subj_ind),
-                                         obj_ind=int(obj_ind),
-                                         words_vocab=words_vocab,
-                                         config=config)
+            sample = InputSample.create_from_parameters(
+                input_sample_id=_id,
+                terms=split_by_whitespaces(text),
+                subj_ind=int(subj_ind),
+                obj_ind=int(obj_ind),
+                words_vocab=words_vocab,
+                is_external_vocab=False,
+                pos_tagger=config.PosTagger,
+                terms_per_context=config.TermsPerContext,
+                frames_per_context=config.FramesPerContext,
+                synonyms_per_context=config.SynonymsPerContext)
 
             print u"------------------"
             print u"NETWORK INPUT DATA"
             print u"------------------"
-            for key, value in s:
-                print key, value
+            for key, value in sample:
+                print u"{key}\n{value}".format(key=key, value=value)
 
-            samples.append(s)
+            samples.append(sample)
 
+    # endregion
 
 if __name__ == '__main__':
     unittest.main()
