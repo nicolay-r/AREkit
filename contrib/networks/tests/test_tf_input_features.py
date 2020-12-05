@@ -4,7 +4,6 @@ import sys
 import unittest
 from pymystem3 import Mystem
 
-
 sys.path.append('../../../')
 
 from arekit.common.entities.base import Entity
@@ -17,7 +16,7 @@ from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 from arekit.contrib.networks.tests.text.news import init_rusentrel_doc
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
-from arekit.contrib.networks.features.inds import IndicesFeature
+from arekit.contrib.networks.features.term_indices import IndicesFeature
 
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from arekit.tests.text.utils import terms_to_str
