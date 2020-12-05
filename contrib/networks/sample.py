@@ -162,6 +162,7 @@ class InputSample(InputSampleBase):
     def create_from_parameters(cls,
                                input_sample_id,  # row_id
                                terms,  # list of terms, that might be found in words_vocab
+                               entity_inds,
                                is_external_vocab,
                                subj_ind,
                                obj_ind,
@@ -179,6 +180,7 @@ class InputSample(InputSampleBase):
         None parameters considered as optional.
         """
         assert(isinstance(terms, list))
+        assert(isinstance(entity_inds, list))
         assert(isinstance(frame_inds, list))
         assert(isinstance(frame_sent_roles, list))
         assert(isinstance(words_vocab, dict))
@@ -201,7 +203,7 @@ class InputSample(InputSampleBase):
         def get_end_offset():
             return x_feature.EndIndex
 
-        entities_set = set(chain(syn_obj_inds, syn_subj_inds))
+        entities_set = set(entity_inds)
 
         # Composing vectors
         x_indices = np.array([cls.__get_index_by_term(term, words_vocab, is_external_vocab) for term in terms])

@@ -80,6 +80,10 @@ class ParsedSampleRow(object):
         return self.__params[network_input_const.FrameRoles]
 
     @property
+    def EntityInds(self):
+        return self.__params[network_input_const.Entities]
+
+    @property
     def SynonymObjectInds(self):
         return self.__params[network_input_const.SynonymObject]
 

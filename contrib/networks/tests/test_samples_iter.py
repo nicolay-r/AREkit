@@ -19,7 +19,7 @@ class TestSamplesIteration(unittest.TestCase):
 
     def test_check_all_samples(self):
         vocab_filepath = u"test_data/vocab.txt.gz"
-        samples_filepath = u"test_data/sample_train.tsv.gz"
+        samples_filepath = u"test_data/sample-train.tsv.gz"
         words_vocab = self.__read_vocab(vocab_filepath)
         config = DefaultNetworkConfig()
         config.modify_terms_per_context(50)
@@ -88,6 +88,7 @@ class TestSamplesIteration(unittest.TestCase):
             sample = InputSample.create_from_parameters(
                 input_sample_id=row.SampleID,
                 terms=row.Terms,
+                entity_inds=row.EntityInds,
                 subj_ind=int(row.SubjectIndex),
                 obj_ind=int(row.ObjectIndex),
                 words_vocab=words_vocab,
@@ -111,6 +112,7 @@ class TestSamplesIteration(unittest.TestCase):
                 print u"offset index (debug): {}".format(sample._shift_index_dbg)
                 print u"id: {}".format(row.SampleID)
                 print u"label: {}".format(row.Sentiment)
+                print u"entity_inds: {}".format(row.EntityInds)
                 print u"subj_ind: {}".format(subj_ind)
                 print u"obj_ind: {}".format(obj_ind)
                 print u"frame_inds: {}".format(row.TextFrameVariantIndices)

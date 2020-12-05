@@ -183,6 +183,7 @@ class HandledData(object):
             create_sample_func=lambda row: InputSample.create_from_parameters(
                 input_sample_id=row.SampleID,
                 terms=row.Terms,
+                entity_inds=row.EntityInds,
                 is_external_vocab=experiment_io.has_model_predefined_state(),
                 subj_ind=row.SubjectIndex,
                 obj_ind=row.ObjectIndex,
