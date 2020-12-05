@@ -1,3 +1,5 @@
+import numpy as np
+
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.frames.polarity import FramePolarity
@@ -25,19 +27,17 @@ class FrameRoleFeatures(object):
         return result
 
     @staticmethod
-    def to_input(shifted_frame_inds, frame_sent_roles, terms_per_context, filler):
-        assert(isinstance(shifted_frame_inds, list) or shifted_frame_inds is None)
-        assert(isinstance(frame_sent_roles, list) or frame_sent_roles is None)
-
-        vector = [filler] * terms_per_context
-
-        if frame_sent_roles is None or shifted_frame_inds is None:
-            return vector
-
+    def to_input(shifted_frame_inds, frame_sent_roles, size, filler):
+        assert(isinstance(shifted_frame_inds, list))
+        assert(isinstance(frame_sent_roles, list))
         assert(len(shifted_frame_inds) == len(frame_sent_roles))
 
-        for i, frame_ind in shifted_frame_inds:
-            vector[frame_ind] = frame_sent_roles[i]
+        vector = FrameRoleFeatures.create_filled_array(size=size, value=filler)
+
+        for frame_ind, frame_ind_in_sample in enumerate(shifted_frame_inds):
+            if frame_ind_in_sample >= len(vector):
+                continue
+            vector[frame_ind_in_sample] = frame_sent_roles[frame_ind]
 
         return vector
 

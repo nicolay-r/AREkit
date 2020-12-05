@@ -166,16 +166,17 @@ class InputSample(InputSampleBase):
                                terms_per_context,  # for terms_per_context, frames_per_context.
                                frames_per_context,
                                synonyms_per_context,
-                               frame_inds=None,
-                               frame_sent_roles=None,
-                               syn_subj_inds=None,
-                               syn_obj_inds=None):
+                               syn_subj_inds,
+                               syn_obj_inds,
+                               frame_inds,
+                               frame_sent_roles):
         """
         Here we first need to perform indexing of terms. Therefore, mark entities, frame_variants among them.
         None parameters considered as optional.
         """
         assert(isinstance(terms, list))
-        assert(isinstance(frame_inds, list) or frame_inds is None)
+        assert(isinstance(frame_inds, list))
+        assert(isinstance(frame_sent_roles, list))
         assert(isinstance(words_vocab, dict))
         assert(isinstance(subj_ind, int) and 0 <= subj_ind < len(terms))
         assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
@@ -183,6 +184,8 @@ class InputSample(InputSampleBase):
         assert(isinstance(terms_per_context, int))
         assert(isinstance(frames_per_context, int))
         assert(isinstance(synonyms_per_context, int))
+        assert(isinstance(syn_subj_inds, list))
+        assert(isinstance(syn_obj_inds, list))
         assert(subj_ind != obj_ind)
 
         def shift_index(ind):
@@ -244,12 +247,10 @@ class InputSample(InputSampleBase):
         shifted_subj_ind = shift_index(subj_ind)
         shifted_obj_ind = shift_index(obj_ind)
 
-        frame_inds_list = [] if frame_inds is None else frame_inds
-
         frame_sent_roles_vector = FrameRoleFeatures.to_input(
-            shifted_frame_inds=shift_indices(frame_inds_list),
+            shifted_frame_inds=shift_indices(inds=frame_inds),
             frame_sent_roles=frame_sent_roles,
-            terms_per_context=terms_per_context,
+            size=terms_per_context,
             filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
         frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
@@ -260,20 +261,20 @@ class InputSample(InputSampleBase):
             filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
         frames_feature = PointersFeature.create_shifted_and_fit(
-            original_value=frame_inds_list,
+            original_value=frame_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             expected_size=frames_per_context,
             filler=cls.FRAMES_PAD_VALUE)
 
         syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
-            original_value=[subj_ind] if syn_subj_inds is None else syn_subj_inds,
+            original_value=syn_subj_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=cls.SYNONYMS_PAD_VALUE)
 
         syn_obj_inds_feature = PointersFeature.create_shifted_and_fit(
-            original_value=[obj_ind] if syn_obj_inds is None else syn_obj_inds,
+            original_value=syn_obj_inds,
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=cls.SYNONYMS_PAD_VALUE)
