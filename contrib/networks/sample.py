@@ -1,9 +1,8 @@
-import collections
 import random
+from itertools import chain
 
 import numpy as np
 
-import arekit.contrib.networks.core.mappers.pos
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -11,7 +10,8 @@ from arekit.contrib.networks.features.dist import DistanceFeatures
 from arekit.contrib.networks.features.frame_roles import FrameRoleFeatures
 from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
-from arekit.contrib.networks.features.term_types import create_term_types
+from arekit.contrib.networks.features.term_part_of_speech import calculate_term_pos
+from arekit.contrib.networks.features.term_types import calculate_term_types
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
 from arekit.processing.pos.base import POSTagger
 
@@ -191,16 +191,10 @@ class InputSample(InputSampleBase):
         def shift_index(ind):
             return ind - x_feature.StartIndex
 
-        def shift_indices(inds):
-            return [shift_index(ind) for ind in inds]
+        entities_set = set(chain(syn_obj_inds, syn_subj_inds))
 
         # Composing vectors
-        x_indices = [cls.__get_index_by_term(term, words_vocab, is_external_vocab)
-                     for term in terms]
-
-        pos_vector = arekit.contrib.networks.core.mappers.pos.iter_pos_indices_for_terms(
-            terms=terms,
-            pos_tagger=pos_tagger)
+        x_indices = np.array([cls.__get_index_by_term(term, words_vocab, is_external_vocab) for term in terms])
 
         # Check an ability to create sample by analyzing required window size.
         window_size = terms_per_context
@@ -222,41 +216,37 @@ class InputSample(InputSampleBase):
                                                       dist=dist_between_entities,
                                                       window=window_size))
 
-        # Composing Features
         x_feature = IndicesFeature.from_vector_to_be_fitted(
             value_vector=x_indices,
-            e1_in=subj_ind,
-            e2_in=obj_ind,
+            e1_ind=subj_ind,
+            e2_ind=obj_ind,
             expected_size=window_size,
             filler=cls.X_PAD_VALUE)
 
         pos_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=pos_vector,
-            e1_in=subj_ind,
-            e2_in=obj_ind,
+            value_vector=calculate_term_pos(terms=terms,
+                                            entity_inds_set=entities_set,
+                                            pos_tagger=pos_tagger),
+            e1_ind=subj_ind,
+            e2_ind=obj_ind,
             expected_size=window_size,
             filler=cls.POS_PAD_VALUE)
 
         term_type_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=create_term_types(terms),
-            e1_in=subj_ind,
-            e2_in=obj_ind,
+            value_vector=calculate_term_types(terms=terms,
+                                              entity_inds_set=entities_set),
+            e1_ind=subj_ind,
+            e2_ind=obj_ind,
             expected_size=window_size,
             filler=cls.TERM_TYPE_PAD_VALUE)
 
-        shifted_subj_ind = shift_index(subj_ind)
-        shifted_obj_ind = shift_index(obj_ind)
-
-        frame_sent_roles_vector = FrameRoleFeatures.to_input(
-            shifted_frame_inds=shift_indices(inds=frame_inds),
-            frame_sent_roles=frame_sent_roles,
-            size=terms_per_context,
-            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
-
         frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=frame_sent_roles_vector,
-            e1_in=shifted_subj_ind,
-            e2_in=shifted_obj_ind,
+            value_vector=FrameRoleFeatures.to_input(frame_inds=frame_inds,
+                                                    frame_sent_roles=frame_sent_roles,
+                                                    size=len(terms),
+                                                    filler=cls.FRAME_SENT_ROLES_PAD_VALUE),
+            e1_ind=subj_ind,
+            e2_ind=obj_ind,
             expected_size=window_size,
             filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
@@ -278,6 +268,9 @@ class InputSample(InputSampleBase):
             start_offset=x_feature.StartIndex,
             end_offset=x_feature.EndIndex,
             filler=cls.SYNONYMS_PAD_VALUE)
+
+        shifted_subj_ind = shift_index(subj_ind)
+        shifted_obj_ind = shift_index(obj_ind)
 
         dist_from_subj = DistanceFeatures.distance_feature(position=shifted_subj_ind, size=terms_per_context)
         dist_from_obj = DistanceFeatures.distance_feature(position=shifted_obj_ind, size=terms_per_context)

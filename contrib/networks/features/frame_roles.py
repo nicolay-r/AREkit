@@ -26,14 +26,14 @@ class FrameRoleFeatures(object):
         return result
 
     @staticmethod
-    def to_input(shifted_frame_inds, frame_sent_roles, size, filler):
-        assert(isinstance(shifted_frame_inds, list))
+    def to_input(frame_inds, frame_sent_roles, size, filler):
+        assert(isinstance(frame_inds, list))
         assert(isinstance(frame_sent_roles, list))
-        assert(len(shifted_frame_inds) == len(frame_sent_roles))
+        assert(len(frame_inds) == len(frame_sent_roles))
 
         vector = create_filled_array(size=size, value=filler)
 
-        for frame_ind, frame_ind_in_sample in enumerate(shifted_frame_inds):
+        for frame_ind, frame_ind_in_sample in enumerate(frame_inds):
             if frame_ind_in_sample >= len(vector):
                 continue
             vector[frame_ind_in_sample] = frame_sent_roles[frame_ind]

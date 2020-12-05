@@ -76,8 +76,8 @@ class TestTfInputFeatures(unittest.TestCase):
 
                 x_feature = IndicesFeature.from_vector_to_be_fitted(
                     value_vector=terms,
-                    e1_in=s_ind,
-                    e2_in=t_ind,
+                    e1_ind=s_ind,
+                    e2_ind=t_ind,
                     expected_size=random.randint(50, 60),
                     filler=u"<PAD>")
 

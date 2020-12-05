@@ -1,17 +1,15 @@
-import collections
-from arekit.common.entities.base import Entity
+from arekit.contrib.networks.features.utils import create_zeros
 
 
-def create_term_types(terms):
-    assert (isinstance(terms, collections.Iterable))
-    feature = []
-    for term in terms:
-        if isinstance(term, unicode):
-            feature.append(0)
-        elif isinstance(term, Entity):
-            feature.append(1)
-        else:
-            feature.append(-1)
+def calculate_term_types(terms, entity_inds_set):
+    assert(isinstance(terms, list))
+    assert(isinstance(entity_inds_set, set))
 
-    return feature
+    vector = create_zeros(size=len(terms))
+
+    for t_index, term in enumerate(terms):
+        if t_index in entity_inds_set:
+            vector[t_index] = 1
+
+    return vector
 
