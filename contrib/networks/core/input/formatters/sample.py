@@ -30,6 +30,7 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         # insert indices
         dtypes_list.append((const.FrameVariantIndices, unicode))
         dtypes_list.append((const.FrameRoles, unicode))
+        dtypes_list.append((const.SynonymSubject, unicode))
         dtypes_list.append((const.SynonymObject, unicode))
         dtypes_list.append((const.Entities, unicode))
 
