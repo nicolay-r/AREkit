@@ -14,7 +14,9 @@ from arekit.contrib.networks.sample import InputSample
 
 class TestSamplesIteration(unittest.TestCase):
 
-    def test_simple(self):
+    __show_shifted_examples = False
+
+    def test_show_all_samples(self):
         vocab_filepath = u"test_data/vocab.txt.gz"
         samples_filepath = u"test_data/sample_train.tsv.gz"
         words_vocab = self.__read_vocab(vocab_filepath)
@@ -23,8 +25,11 @@ class TestSamplesIteration(unittest.TestCase):
 
         self.__test_core(words_vocab=words_vocab,
                          config=config,
-                         samples_filepath=samples_filepath,
-                         has_title=True)
+                         samples_filepath=samples_filepath)
+
+    def test_show_shifted_examples_only(self):
+        self.__show_shifted_examples = True
+        self.test_show_all_samples()
 
     # region private methods
 
@@ -60,7 +65,7 @@ class TestSamplesIteration(unittest.TestCase):
             words.append(value)
         return u" ".join(words)
 
-    def __test_core(self, words_vocab, config, samples_filepath, has_title):
+    def __test_core(self, words_vocab, config, samples_filepath):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(samples_filepath, unicode))
 
@@ -68,22 +73,11 @@ class TestSamplesIteration(unittest.TestCase):
         labels_scaler = ThreeLabelScaler()
         for i, row in enumerate(self.__iter_tsv_gzip(input_file=samples_filepath)):
 
+            # Perform row parsing process.
             row = ParsedSampleRow(row, labels_scaler=labels_scaler)
 
-            print u"------------------"
-            print u"INPUT SAMPLE DATA"
-            print u"------------------"
-            print u"id: {}".format(row.SampleID)
-            print u"label: {}".format(row.Sentiment)
-            print u"subj_ind: {}".format(row.SubjectIndex)
-            print u"obj_ind: {}".format(row.ObjectIndex)
-            print u"frame_inds: {}".format(row.TextFrameVariantIndices)
-            print u"frame_roles_uint: {}".format(row.TextFrameVariantRoles)
-            print u"syn_obj: {}".format(row.SynonymObjectInds)
-            print u"syn_subj: {}".format(row.SynonymSubjectInds)
-            print u"terms:".format(row.Terms)
-
-            print self.__terms_to_text_line(terms=row.Terms, frame_inds_set=set(row.TextFrameVariantIndices))
+            subj_ind = row.SubjectIndex
+            obj_ind = row.ObjectIndex
 
             sample = InputSample.create_from_parameters(
                 input_sample_id=row.SampleID,
@@ -100,6 +94,25 @@ class TestSamplesIteration(unittest.TestCase):
                 frame_sent_roles=row.TextFrameVariantRoles,
                 syn_subj_inds=row.SynonymSubjectInds,
                 syn_obj_inds=row.SynonymObjectInds)
+
+            if sample._shift_index_dbg == 0 and self.__show_shifted_examples:
+                continue
+
+            print u"------------------"
+            print u"INPUT SAMPLE DATA"
+            print u"------------------"
+            print u"offset index (debug): {}".format(sample._shift_index_dbg)
+            print u"id: {}".format(row.SampleID)
+            print u"label: {}".format(row.Sentiment)
+            print u"subj_ind: {}".format(subj_ind)
+            print u"obj_ind: {}".format(obj_ind)
+            print u"frame_inds: {}".format(row.TextFrameVariantIndices)
+            print u"frame_roles_uint: {}".format(row.TextFrameVariantRoles)
+            print u"syn_obj: {}".format(row.SynonymObjectInds)
+            print u"syn_subj: {}".format(row.SynonymSubjectInds)
+            print u"terms:".format(row.Terms)
+
+            print self.__terms_to_text_line(terms=row.Terms, frame_inds_set=set(row.TextFrameVariantIndices))
 
             print u"------------------"
             print u"NETWORK INPUT DATA"

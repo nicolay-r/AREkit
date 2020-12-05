@@ -10,10 +10,11 @@ class InputSampleBase(object):
     Description of a single sample (context) of a model
     """
 
-    def __init__(self, input_sample_id, values):
+    def __init__(self, shift_index_dbg, input_sample_id, values):
+        assert(isinstance(shift_index_dbg, int))
         assert(isinstance(input_sample_id, unicode))
         assert(isinstance(values, list))
-
+        self._shift_index_dbg = shift_index_dbg
         self.__input_sample_id = input_sample_id
         self.__values = OrderedDict(values)
 

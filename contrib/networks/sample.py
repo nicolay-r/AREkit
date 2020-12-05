@@ -6,10 +6,10 @@ import numpy as np
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.networks.features.dist import DistanceFeatures
-from arekit.contrib.networks.features.frame_roles import FrameRoleFeatures
-from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
+from arekit.contrib.networks.features.sample_dist import DistanceFeatures
+from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
+from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.networks.features.term_part_of_speech import calculate_term_pos
 from arekit.contrib.networks.features.term_types import calculate_term_types
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
@@ -48,7 +48,8 @@ class InputSample(InputSampleBase):
     TERM_TYPE_PAD_VALUE = -1
     SYNONYMS_PAD_VALUE = 0
 
-    def __init__(self, X,
+    def __init__(self,
+                 X,
                  subj_ind,
                  obj_ind,
                  syn_subj_inds,
@@ -61,7 +62,8 @@ class InputSample(InputSampleBase):
                  term_type,
                  frame_indices,
                  frame_sent_roles,
-                 input_sample_id):
+                 input_sample_id,
+                 shift_index_dbg=0):
         assert(isinstance(X, np.ndarray))
         assert(isinstance(subj_ind, int))
         assert(isinstance(obj_ind, int))
@@ -75,6 +77,7 @@ class InputSample(InputSampleBase):
         assert(isinstance(term_type, np.ndarray))
         assert(isinstance(frame_indices, np.ndarray))
         assert(isinstance(frame_sent_roles, np.ndarray))
+        assert(isinstance(shift_index_dbg, int))
 
         values = [(InputSample.I_X_INDS, X),
                   (InputSample.I_SUBJ_IND, subj_ind),
@@ -90,7 +93,8 @@ class InputSample(InputSampleBase):
                   (InputSample.I_FRAME_SENT_ROLES, frame_sent_roles),
                   (InputSample.I_TERM_TYPE, term_type)]
 
-        super(InputSample, self).__init__(input_sample_id=input_sample_id,
+        super(InputSample, self).__init__(shift_index_dbg=shift_index_dbg,
+                                          input_sample_id=input_sample_id,
                                           values=values)
 
     # region class methods
@@ -189,7 +193,13 @@ class InputSample(InputSampleBase):
         assert(subj_ind != obj_ind)
 
         def shift_index(ind):
-            return ind - x_feature.StartIndex
+            return ind - get_start_offset()
+
+        def get_start_offset():
+            return x_feature.StartIndex
+
+        def get_end_offset():
+            return x_feature.EndIndex
 
         entities_set = set(chain(syn_obj_inds, syn_subj_inds))
 
@@ -252,21 +262,21 @@ class InputSample(InputSampleBase):
 
         frames_feature = PointersFeature.create_shifted_and_fit(
             original_value=frame_inds,
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
+            start_offset=get_start_offset(),
+            end_offset=get_end_offset(),
             expected_size=frames_per_context,
             filler=cls.FRAMES_PAD_VALUE)
 
         syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
             original_value=syn_subj_inds,
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
+            start_offset=get_start_offset(),
+            end_offset=get_end_offset(),
             filler=cls.SYNONYMS_PAD_VALUE)
 
         syn_obj_inds_feature = PointersFeature.create_shifted_and_fit(
             original_value=syn_obj_inds,
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
+            start_offset=get_start_offset(),
+            end_offset=get_end_offset(),
             filler=cls.SYNONYMS_PAD_VALUE)
 
         shifted_subj_ind = shift_index(subj_ind)
@@ -304,7 +314,8 @@ class InputSample(InputSampleBase):
                    term_type=np.array(term_type_feature.ValueVector),
                    frame_indices=np.array(frames_feature.ValueVector),
                    frame_sent_roles=np.array(frame_sent_roles_feature.ValueVector),
-                   input_sample_id=input_sample_id)
+                   input_sample_id=input_sample_id,
+                   shift_index_dbg=get_start_offset())
 
     # endregion
 
