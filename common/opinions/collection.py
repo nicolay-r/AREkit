@@ -128,12 +128,15 @@ class OpinionCollection(object):
             message = u"'{s}' for end {e} does not exist in read-only SynonymsCollection".format(
                 s=value,
                 e=end_type).encode('utf-8')
+
+            # Logging the related information.
             if error_on_synonym_end_missed:
                 raise Exception(message)
             else:
-                # Rejecting opinion.
                 logger.info(message)
-                return False
+
+            # Rejecting.
+            return False
 
         if opinion.is_loop(self.__synonyms):
             # Ignoring loops.
@@ -154,7 +157,7 @@ class OpinionCollection(object):
             elif show_duplications:
                 logger.info(message)
 
-            # Leaving this opinion.
+            # Rejecting.
             return False
 
         # Perform registration.
