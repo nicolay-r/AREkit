@@ -11,12 +11,10 @@ from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.utils import check_files_existance
 
-from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
-from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -189,6 +187,10 @@ class HandledData(object):
                 subj_ind=row.SubjectIndex,
                 obj_ind=row.ObjectIndex,
                 words_vocab=vocab,
+                frame_inds=row.TextFrameVariantIndices,
+                frame_sent_roles=row.TextFrameVariantRoles,
+                syn_obj_inds=row.SynonymObjectInds,
+                syn_subj_inds=row.SynonymSubjectInds,
                 terms_per_context=terms_per_context,
                 frames_per_context=frames_per_context,
                 synonyms_per_context=synonyms_per_context,
