@@ -3,13 +3,11 @@ import gzip
 import sys
 import unittest
 
+sys.path.append('../../../')
+
 from arekit.common.experiment import const
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
-
-sys.path.append('../../../')
-
-from arekit.common.utils import split_by_whitespaces
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 
@@ -21,7 +19,7 @@ class TestSamplesIteration(unittest.TestCase):
         samples_filepath = u"test_data/sample_train.tsv.gz"
         words_vocab = self.__read_vocab(vocab_filepath)
         config = DefaultNetworkConfig()
-        config.modify_terms_per_context(35)
+        config.modify_terms_per_context(50)
 
         self.__test_core(words_vocab=words_vocab,
                          config=config,
@@ -52,6 +50,16 @@ class TestSamplesIteration(unittest.TestCase):
                 words[w] = w_ind
         return words
 
+    def __terms_to_text_line(self, terms, frame_inds_set):
+        assert(isinstance(frame_inds_set, set))
+        words = []
+        for t_index, t_value in enumerate(terms):
+            value = t_value
+            if t_index in frame_inds_set:
+                value = u"[[{}]]".format(t_value)
+            words.append(value)
+        return u" ".join(words)
+
     def __test_core(self, words_vocab, config, samples_filepath, has_title):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(samples_filepath, unicode))
@@ -67,13 +75,15 @@ class TestSamplesIteration(unittest.TestCase):
             print u"------------------"
             print u"id: {}".format(row.SampleID)
             print u"label: {}".format(row.Sentiment)
-            print u"terms: {}".format(row.Terms)
             print u"subj_ind: {}".format(row.SubjectIndex)
             print u"obj_ind: {}".format(row.ObjectIndex)
             print u"frame_inds: {}".format(row.TextFrameVariantIndices)
             print u"frame_roles_uint: {}".format(row.TextFrameVariantRoles)
             print u"syn_obj: {}".format(row.SynonymObjectInds)
             print u"syn_subj: {}".format(row.SynonymSubjectInds)
+            print u"terms:".format(row.Terms)
+
+            print self.__terms_to_text_line(terms=row.Terms, frame_inds_set=set(row.TextFrameVariantIndices))
 
             sample = InputSample.create_from_parameters(
                 input_sample_id=row.SampleID,
