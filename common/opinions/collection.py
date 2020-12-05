@@ -148,11 +148,14 @@ class OpinionCollection(object):
                 s=opinion.SourceValue,
                 t=opinion.TargetValue).encode('utf-8')
 
+            # Logging the related information.
             if error_on_existence:
                 raise Exception(message)
             elif show_duplications:
                 logger.info(message)
-                return False
+
+            # Leaving this opinion.
+            return False
 
         # Perform registration.
         self.__by_synonyms[key] = opinion
