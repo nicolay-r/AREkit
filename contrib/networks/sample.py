@@ -5,13 +5,13 @@ import numpy as np
 
 import arekit.contrib.networks.core.mappers.pos
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
-from arekit.common.entities.base import Entity
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.features.dist import DistanceFeatures
 from arekit.contrib.networks.features.frame_roles import FrameRoleFeatures
 from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
+from arekit.contrib.networks.features.term_types import create_term_types
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
 from arekit.processing.pos.base import POSTagger
 
@@ -238,7 +238,7 @@ class InputSample(InputSampleBase):
             filler=cls.POS_PAD_VALUE)
 
         term_type_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=InputSample.__create_term_types(terms),
+            value_vector=create_term_types(terms),
             e1_in=subj_ind,
             e2_in=obj_ind,
             expected_size=window_size,
@@ -312,40 +312,6 @@ class InputSample(InputSampleBase):
                    frame_indices=np.array(frames_feature.ValueVector),
                    frame_sent_roles=np.array(frame_sent_roles_feature.ValueVector),
                    input_sample_id=input_sample_id)
-
-    # endregion
-
-    # region private methods
-
-    @staticmethod
-    def __is_synonym_entity(term, e_value, synonyms):
-
-        if not isinstance(term, Entity):
-            return False
-
-        e_group_index = synonyms.get_synonym_group_index(e_value)
-
-        if not synonyms.contains_synonym_value(term.Value):
-            if e_value != term.Value:
-                return False
-        elif e_group_index != synonyms.get_synonym_group_index(term.Value):
-            return False
-
-        return True
-
-    @staticmethod
-    def __create_term_types(terms):
-        assert(isinstance(terms, collections.Iterable))
-        feature = []
-        for term in terms:
-            if isinstance(term, unicode):
-                feature.append(0)
-            elif isinstance(term, Entity):
-                feature.append(1)
-            else:
-                feature.append(-1)
-
-        return feature
 
     # endregion
 

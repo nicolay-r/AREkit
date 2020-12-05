@@ -1,4 +1,4 @@
-import numpy as np
+from arekit.contrib.networks.features.utils import create_zeros
 
 
 class DistanceFeatures(object):
@@ -10,18 +10,14 @@ class DistanceFeatures(object):
 
     @staticmethod
     def distance_feature(position, size):
-        result = DistanceFeatures.__create_zeros(size)
+        result = create_zeros(size)
         for i in xrange(len(result)):
             result[i] = i - position if i - position >= 0 else i - position + size
         return result
 
     @staticmethod
     def distance_abs_nearest_feature(positions, size):
-        result = DistanceFeatures.__create_zeros(size)
+        result = create_zeros(size)
         for i in xrange(len(result)):
             result[i] = min([abs(i - p) for p in positions])
         return result
-
-    @staticmethod
-    def __create_zeros(size):
-        return np.zeros(size, dtype=np.int32)

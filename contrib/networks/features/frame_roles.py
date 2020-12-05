@@ -1,10 +1,9 @@
-import numpy as np
-
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.frames.polarity import FramePolarity
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.contrib.networks.features.utils import create_filled_array
 
 
 class FrameRoleFeatures(object):
@@ -32,7 +31,7 @@ class FrameRoleFeatures(object):
         assert(isinstance(frame_sent_roles, list))
         assert(len(shifted_frame_inds) == len(frame_sent_roles))
 
-        vector = FrameRoleFeatures.create_filled_array(size=size, value=filler)
+        vector = create_filled_array(size=size, value=filler)
 
         for frame_ind, frame_ind_in_sample in enumerate(shifted_frame_inds):
             if frame_ind_in_sample >= len(vector):
