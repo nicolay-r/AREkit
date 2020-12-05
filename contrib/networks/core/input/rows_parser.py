@@ -22,8 +22,10 @@ parse_value = {
         __process_indices_list(value) if isinstance(value, unicode) else empty_list,
     network_input_const.SynonymObject: lambda value: __process_indices_list(value),
     network_input_const.SynonymSubject: lambda value: __process_indices_list(value),
+    network_input_const.Entities: lambda value: __process_indices_list(value),
     "text_a": lambda value: filter_whitespaces([term for term in split_by_whitespaces(value)])
 }
+
 
 class ParsedSampleRow(object):
     """
