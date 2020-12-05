@@ -14,9 +14,10 @@ from arekit.contrib.networks.sample import InputSample
 
 class TestSamplesIteration(unittest.TestCase):
 
+    __show_examples = False
     __show_shifted_examples = False
 
-    def test_show_all_samples(self):
+    def test_check_all_samples(self):
         vocab_filepath = u"test_data/vocab.txt.gz"
         samples_filepath = u"test_data/sample_train.tsv.gz"
         words_vocab = self.__read_vocab(vocab_filepath)
@@ -27,9 +28,14 @@ class TestSamplesIteration(unittest.TestCase):
                          config=config,
                          samples_filepath=samples_filepath)
 
+    def test_show_all_samples(self):
+        self.__show_examples = True
+        self.test_check_all_samples()
+
     def test_show_shifted_examples_only(self):
+        self.__show_examples = True
         self.__show_shifted_examples = True
-        self.test_show_all_samples()
+        self.test_check_all_samples()
 
     # region private methods
 
@@ -98,27 +104,28 @@ class TestSamplesIteration(unittest.TestCase):
             if sample._shift_index_dbg == 0 and self.__show_shifted_examples:
                 continue
 
-            print u"------------------"
-            print u"INPUT SAMPLE DATA"
-            print u"------------------"
-            print u"offset index (debug): {}".format(sample._shift_index_dbg)
-            print u"id: {}".format(row.SampleID)
-            print u"label: {}".format(row.Sentiment)
-            print u"subj_ind: {}".format(subj_ind)
-            print u"obj_ind: {}".format(obj_ind)
-            print u"frame_inds: {}".format(row.TextFrameVariantIndices)
-            print u"frame_roles_uint: {}".format(row.TextFrameVariantRoles)
-            print u"syn_obj: {}".format(row.SynonymObjectInds)
-            print u"syn_subj: {}".format(row.SynonymSubjectInds)
-            print u"terms:".format(row.Terms)
+            if self.__show_examples:
+                print u"------------------"
+                print u"INPUT SAMPLE DATA"
+                print u"------------------"
+                print u"offset index (debug): {}".format(sample._shift_index_dbg)
+                print u"id: {}".format(row.SampleID)
+                print u"label: {}".format(row.Sentiment)
+                print u"subj_ind: {}".format(subj_ind)
+                print u"obj_ind: {}".format(obj_ind)
+                print u"frame_inds: {}".format(row.TextFrameVariantIndices)
+                print u"frame_roles_uint: {}".format(row.TextFrameVariantRoles)
+                print u"syn_obj: {}".format(row.SynonymObjectInds)
+                print u"syn_subj: {}".format(row.SynonymSubjectInds)
+                print u"terms:".format(row.Terms)
 
-            print self.__terms_to_text_line(terms=row.Terms, frame_inds_set=set(row.TextFrameVariantIndices))
+                print self.__terms_to_text_line(terms=row.Terms, frame_inds_set=set(row.TextFrameVariantIndices))
 
-            print u"------------------"
-            print u"NETWORK INPUT DATA"
-            print u"------------------"
-            for key, value in sample:
-                print u"{key}:\n{value}".format(key=key, value=value)
+                print u"------------------"
+                print u"NETWORK INPUT DATA"
+                print u"------------------"
+                for key, value in sample:
+                    print u"{key}:\n{value}".format(key=key, value=value)
 
             samples.append(sample)
 
