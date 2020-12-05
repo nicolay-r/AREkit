@@ -1,7 +1,11 @@
-import csv
+import pandas as pd
 import gzip
 import sys
 import unittest
+
+from arekit.common.experiment import const
+from arekit.common.experiment.scales.three import ThreeLabelScaler
+from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
 sys.path.append('../../../')
 
@@ -12,16 +16,33 @@ from arekit.contrib.networks.sample import InputSample
 
 class TestSamplesIteration(unittest.TestCase):
 
-    @staticmethod
-    def iter_tsv_gzip(input_file):
-        """Reads a tab separated value file."""
-        with gzip.open(input_file, mode="rt") as f:
-            reader = csv.reader(f, delimiter="\t")
-            for line in reader:
-                yield line
+    def test_simple(self):
+        vocab_filepath = u"test_data/vocab.txt.gz"
+        samples_filepath = u"test_data/sample_train.tsv.gz"
+        words_vocab = self.__read_vocab(vocab_filepath)
+        config = DefaultNetworkConfig()
+        config.modify_terms_per_context(35)
+
+        self.__test_core(words_vocab=words_vocab,
+                         config=config,
+                         samples_filepath=samples_filepath,
+                         has_title=True)
+
+    # region private methods
 
     @staticmethod
-    def read_vocab(input_file):
+    def __iter_tsv_gzip(input_file):
+        """Reads a tab separated value file."""
+        df = pd.read_csv(input_file,
+                         compression='gzip',
+                         sep='\t',
+                         encoding='utf-8')
+
+        for row_index, _ in enumerate(df[const.ID]):
+            yield df.iloc[row_index]
+
+    @staticmethod
+    def __read_vocab(input_file):
         words = {}
         with gzip.open(input_file, mode="rt") as f:
             for w_ind, line in enumerate(f.readlines()):
@@ -31,60 +52,55 @@ class TestSamplesIteration(unittest.TestCase):
                 words[w] = w_ind
         return words
 
-    def test_simple(self):
-        vocab_filepath = u"test_data/vocab.txt.gz"
-        samples_filepath = u"test_data/sample_train.tsv.gz"
-        words_vocab = self.read_vocab(vocab_filepath)
-        config = DefaultNetworkConfig()
-        config.modify_terms_per_context(35)
-
-        self.__test_core(words_vocab=words_vocab,
-                         config=config,
-                         samples_filepath=samples_filepath)
-
-    # region private methods
-
-    def __test_core(self, words_vocab, config, samples_filepath):
+    def __test_core(self, words_vocab, config, samples_filepath, has_title):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(samples_filepath, unicode))
 
         samples = []
-        for line in self.iter_tsv_gzip(input_file=samples_filepath):
-            _id, label, text, subj_ind, obj_ind = line
+        labels_scaler = ThreeLabelScaler()
+        for i, row in enumerate(self.__iter_tsv_gzip(input_file=samples_filepath)):
 
-            _id = _id.decode('utf-8')
-            text = text.decode('utf-8')
+            row = ParsedSampleRow(row, labels_scaler=labels_scaler)
 
             print u"------------------"
             print u"INPUT SAMPLE DATA"
             print u"------------------"
-            print u"id: {}".format(_id)
-            print u"label: {}".format(label)
-            print u"terms: {}".format(text)
-            print u"subj_ind: {}".format(subj_ind)
-            print u"obj_ind: {}".format(obj_ind)
+            print u"id: {}".format(row.SampleID)
+            print u"label: {}".format(row.Sentiment)
+            print u"terms: {}".format(row.Terms)
+            print u"subj_ind: {}".format(row.SubjectIndex)
+            print u"obj_ind: {}".format(row.ObjectIndex)
+            print u"frame_inds: {}".format(row.TextFrameVariantIndices)
+            print u"frame_roles_uint: {}".format(row.TextFrameVariantRoles)
+            print u"syn_obj: {}".format(row.SynonymObjectInds)
+            print u"syn_subj: {}".format(row.SynonymSubjectInds)
 
             sample = InputSample.create_from_parameters(
-                input_sample_id=_id,
-                terms=split_by_whitespaces(text),
-                subj_ind=int(subj_ind),
-                obj_ind=int(obj_ind),
+                input_sample_id=row.SampleID,
+                terms=row.Terms,
+                subj_ind=int(row.SubjectIndex),
+                obj_ind=int(row.ObjectIndex),
                 words_vocab=words_vocab,
-                is_external_vocab=False,
+                is_external_vocab=True,
                 pos_tagger=config.PosTagger,
                 terms_per_context=config.TermsPerContext,
                 frames_per_context=config.FramesPerContext,
-                synonyms_per_context=config.SynonymsPerContext)
+                synonyms_per_context=config.SynonymsPerContext,
+                frame_inds=row.TextFrameVariantIndices,
+                frame_sent_roles=row.TextFrameVariantRoles,
+                syn_subj_inds=row.SynonymSubjectInds,
+                syn_obj_inds=row.SynonymObjectInds)
 
             print u"------------------"
             print u"NETWORK INPUT DATA"
             print u"------------------"
             for key, value in sample:
-                print u"{key}\n{value}".format(key=key, value=value)
+                print u"{key}:\n{value}".format(key=key, value=value)
 
             samples.append(sample)
 
     # endregion
+
 
 if __name__ == '__main__':
     unittest.main()
