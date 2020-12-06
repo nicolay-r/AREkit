@@ -1,14 +1,10 @@
 import collections
-import logging
 
+from arekit.common import log_utils
 from arekit.common.labels.base import Label
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.enums import OpinionEndTypes
 from arekit.common.synonyms import SynonymsCollection
-
-
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 
 class OpinionCollection(object):
@@ -125,15 +121,10 @@ class OpinionCollection(object):
                 self.__add_synonym(value)
                 continue
 
-            message = u"'{s}' for end {e} does not exist in read-only SynonymsCollection".format(
-                s=value,
-                e=end_type).encode('utf-8')
-
-            # Logging the related information.
-            if error_on_synonym_end_missed:
-                raise Exception(message)
-            else:
-                logger.info(message)
+            log_utils.log_synonym_for_entity_does_not_exist(
+                entity_value=value,
+                end_type=end_type,
+                raise_exception=error_on_synonym_end_missed)
 
             # Rejecting.
             return False
@@ -147,15 +138,9 @@ class OpinionCollection(object):
         assert(isinstance(key, unicode))
         if key in self.__by_synonyms:
 
-            message = u"'{s}->{t}' already exists in collection".format(
-                s=opinion.SourceValue,
-                t=opinion.TargetValue).encode('utf-8')
-
-            # Logging the related information.
-            if error_on_existence:
-                raise Exception(message)
-            elif show_duplications:
-                logger.info(message)
+            log_utils.log_opinion_already_exist(opinion=opinion,
+                                                raise_exception=error_on_existence,
+                                                display_log=show_duplications)
 
             # Rejecting.
             return False
