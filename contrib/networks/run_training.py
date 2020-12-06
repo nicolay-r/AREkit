@@ -114,4 +114,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+    def _after_running(self):
+        self._experiment.DataIO.Callback.on_experiment_finished()
+
     # endregion

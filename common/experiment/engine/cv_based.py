@@ -19,9 +19,13 @@ class ExperimentEngine(object):
         raise NotImplementedError()
 
     def _before_running(self):
-        """ Optional method that allows to implement actions before engine started.
+        """ Optional method that allows to implement actions before experiment iterations.
         """
         pass
+
+    def _after_running(self):
+        """ Optional method that allows to implement actions after experiment iterations.
+        """
 
     # endregion
 
@@ -33,3 +37,5 @@ class ExperimentEngine(object):
 
         for iter_index, _ in enumerate(self._experiment.DocumentOperations.DataFolding.iter_states()):
             self._handle_iteration(iter_index)
+
+        self._after_running()

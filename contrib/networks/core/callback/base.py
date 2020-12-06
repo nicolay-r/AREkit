@@ -26,3 +26,7 @@ class Callback(object):
     def on_fit_finished(self):
         # Do nothing by default.
         pass
+
+    def on_experiment_finished(self):
+        # Do nothing by default
+        pass
