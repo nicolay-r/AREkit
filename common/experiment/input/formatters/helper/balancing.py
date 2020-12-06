@@ -18,12 +18,9 @@ class SampleRowBalancerHelper(object):
         return df[df[const.LABEL] == uint_label]
 
     @staticmethod
-    def __get_largest_class_size(df, uint_labels):
-
-        sizes = [len(SampleRowBalancerHelper.__get_class(df=df, uint_label=uint_label))
-                 for uint_label in uint_labels]
-
-        return max(sizes)
+    def __get_class_sizes(df, uint_labels):
+        return [len(SampleRowBalancerHelper.__get_class(df=df, uint_label=uint_label))
+                for uint_label in uint_labels]
 
     @staticmethod
     def __fill_blank(label_df, blank_df, seed=1):
@@ -45,7 +42,7 @@ class SampleRowBalancerHelper(object):
     # endregion
 
     @staticmethod
-    def balance_oversampling(df, create_blank_df, label_provider):
+    def calculate_balanced_df(df, create_blank_df, label_provider):
         """
         Balancing related dataframe by amount of examples per class
         create_blank_df: func(size) -> df
@@ -54,20 +51,36 @@ class SampleRowBalancerHelper(object):
         assert(isinstance(label_provider, LabelProvider))
         assert(callable(create_blank_df))
 
-        output_labels = label_provider.OutputLabelsUint
+        output_labels_uint = label_provider.OutputLabelsUint
 
-        class_size = SampleRowBalancerHelper.__get_largest_class_size(df=df, uint_labels=output_labels)
+        original_class_sizes = SampleRowBalancerHelper.__get_class_sizes(df=df, uint_labels=output_labels_uint)
+
+        larges_class_size = max(original_class_sizes)
 
         balanced = [SampleRowBalancerHelper.__fill_blank(
-                        label_df=SampleRowBalancerHelper.__get_class(df=df, uint_label=label),
-                        blank_df=create_blank_df(class_size))
-                    for label in output_labels]
+                        label_df=SampleRowBalancerHelper.__get_class(df=df, uint_label=uint_label),
+                        blank_df=create_blank_df(larges_class_size))
+                    for label_ind, uint_label in enumerate(output_labels_uint)
+                    if original_class_sizes[label_ind] > 0]
 
         balanced_df = pd.concat(balanced)
 
         balanced_df.sort_values(by=[const.ID],
                                 inplace=True,
                                 ascending=True)
+
+        balanced_class_sizes = SampleRowBalancerHelper.__get_class_sizes(df=balanced_df,
+                                                                         uint_labels=output_labels_uint)
+
+        logger.info(u"Rows count for uint labels [original]: {}".format(
+            ["{} ({})".format(str(class_uint), str(count))
+             for class_uint, count in enumerate(original_class_sizes) if count > 0]))
+
+        logger.info(u"Rows count for uint labels [balanced]: {}".format(
+            ["{} ({})".format(str(class_uint), str(count))
+             for class_uint, count in enumerate(balanced_class_sizes) if count > 0]))
+
+        logger.info(u"Rows count [balanced, total]: {}".format(sum(balanced_class_sizes)))
 
         return balanced_df
 

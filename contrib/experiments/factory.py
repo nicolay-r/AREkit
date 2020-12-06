@@ -34,7 +34,7 @@ def create_experiment(exp_type,
         return RuAttitudesExperiment(exp_data=experiment_data,
                                      version=ruattitudes_version,
                                      experiment_io_type=experiment_io_type,
-                                     load_ruatittudes=is_training)
+                                     load_ruatittudes=True)  # The present limitation.
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
         # Supervised learning with an application of distant supervision in training process.

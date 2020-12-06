@@ -7,16 +7,22 @@ import const as network_input_const
 
 empty_list = []
 
+
+def __process_indices_list(value):
+    return [int(v) for v in unicode(value).split(network_input_const.ArgsSep)]
+
+
 parse_value = {
     const.ID: lambda value: value,
     const.S_IND: lambda value: value,
     const.T_IND: lambda value: value,
     network_input_const.FrameVariantIndices: lambda value:
-        value.split(network_input_const.ArgsSep) if isinstance(value, unicode) else empty_list,
+        __process_indices_list(value) if isinstance(value, unicode) else empty_list,
     network_input_const.FrameRoles: lambda value:
-        value.split(network_input_const.ArgsSep) if isinstance(value, unicode) else empty_list,
-    network_input_const.SynonymObject: lambda value: unicode(value).split(network_input_const.ArgsSep),
-    network_input_const.SynonymSubject: lambda value: unicode(value).split(network_input_const.ArgsSep),
+        __process_indices_list(value) if isinstance(value, unicode) else empty_list,
+    network_input_const.SynonymObject: lambda value: __process_indices_list(value),
+    network_input_const.SynonymSubject: lambda value: __process_indices_list(value),
+    network_input_const.Entities: lambda value: __process_indices_list(value),
     "text_a": lambda value: filter_whitespaces([term for term in split_by_whitespaces(value)])
 }
 
@@ -72,6 +78,10 @@ class ParsedSampleRow(object):
     @property
     def TextFrameVariantRoles(self):
         return self.__params[network_input_const.FrameRoles]
+
+    @property
+    def EntityInds(self):
+        return self.__params[network_input_const.Entities]
 
     @property
     def SynonymObjectInds(self):

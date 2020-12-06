@@ -40,10 +40,9 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
         target = self.__target(doc_id)
         return target.try_read_neutrally_annotated_opinion_collection(doc_id=doc_id, data_type=data_type)
 
-    def save_neutrally_annotated_opinion_collection(self, collection, labels_fmt, doc_id, data_type):
+    def save_neutrally_annotated_opinion_collection(self, collection, doc_id, data_type):
         target = self.__target(doc_id)
         return target.save_neutrally_annotated_opinion_collection(collection=collection,
-                                                                  labels_fmt=labels_fmt,
                                                                   doc_id=doc_id,
                                                                   data_type=data_type)
 

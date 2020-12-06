@@ -31,7 +31,7 @@ class NetworkInputEncoder(object):
     @staticmethod
     def to_tsv_with_embedding_and_vocabulary(
             opin_ops, doc_ops, exp_data, exp_io, data_type, term_embedding_pairs,
-            parsed_news_collection, terms_per_context):
+            parsed_news_collection, terms_per_context, balance):
         """
         Performs encodding for all the data_types supported by experiment.
         """
@@ -43,6 +43,7 @@ class NetworkInputEncoder(object):
         assert(isinstance(term_embedding_pairs, list))
         assert(isinstance(parsed_news_collection, ParsedNewsCollection))
         assert(isinstance(terms_per_context, int))
+        assert(isinstance(balance, bool))
 
         predefined_embedding = exp_data.WordEmbedding
         predefined_embedding.set_stemmer(exp_data.Stemmer)
@@ -77,7 +78,7 @@ class NetworkInputEncoder(object):
                 text_provider=text_provider,
                 synonyms_collection=opin_ops.SynonymsCollection,
                 frames_collection=exp_data.FramesCollection,
-                balance=False),
+                balance=balance and data_type == DataType.Train),
             write_sample_header=True)
 
         return term_embedding_pairs

@@ -27,7 +27,6 @@ from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.nn import NeuralNetwork
-from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -128,6 +127,7 @@ class BaseTensorflowModel(BaseModel):
     def fit(self, epochs_count):
         assert(isinstance(epochs_count, int))
         assert(self.__sess is not None)
+        assert(isinstance(self.__callback, Callback))
 
         operation_cancel = OperationCancellation()
         bags_collection = self.get_bags_collection(DataType.Train)
@@ -136,6 +136,11 @@ class BaseTensorflowModel(BaseModel):
         # However this is not a precise value.
         minibatches_count = bags_collection.get_groups_count(bags_per_group)
         logger.info("Minibatches passing per epoch count: ~{} (Might be greater or equal, as the last bag is expanded)".format(minibatches_count))
+
+        if self.__callback is not None:
+            # This might be used to perform
+            # evaluation for original state.
+            self.__callback.on_fit_started(operation_cancel)
 
         for epoch_index in xrange(epochs_count):
 
@@ -148,21 +153,19 @@ class BaseTensorflowModel(BaseModel):
                 minibatches_iter=bags_collection.iter_by_groups(bags_per_group=bags_per_group),
                 total=minibatches_count)
 
-            if self.Callback is not None:
-                self.Callback.on_epoch_finished(avg_fit_cost=e_fit_cost,
-                                                avg_fit_acc=e_fit_acc,
-                                                epoch_index=epoch_index,
-                                                operation_cancel=operation_cancel)
+            if self.__callback is not None:
+                self.__callback.on_epoch_finished(avg_fit_cost=e_fit_cost,
+                                                  avg_fit_acc=e_fit_acc,
+                                                  epoch_index=epoch_index,
+                                                  operation_cancel=operation_cancel)
 
             self.__current_epoch_index += 1
 
-        if self.Callback is not None:
-            self.Callback.on_fit_finished()
+        if self.__callback is not None:
+            self.__callback.on_fit_finished()
 
     def predict(self, data_type=DataType.Test):
-        """
-        dest_data_type: unicode
-            DataType.Train or DataTypes.Test
+        """ Fills the related labeling collection.
         """
         labeling_collection = self.get_samples_labeling_collection(data_type=data_type)
 
@@ -170,10 +173,8 @@ class BaseTensorflowModel(BaseModel):
                                        samples_labeling_collection=labeling_collection)
 
         predict_log = labeling.predict(labeling_callback=lambda: self.__samples_labeling(data_type=data_type))
-        output = NetworkOutputEncoder(sample_ids_with_labels_iter=labeling_collection.iter_labeled_sample_row_ids(),
-                                      labels_scaler=self.__label_scaler)
 
-        return predict_log, output
+        return predict_log
 
     def get_hidden_parameters(self):
         names = []

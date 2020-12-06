@@ -1,6 +1,7 @@
+import collections
+
 import numpy as np
 
-from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
@@ -19,14 +20,14 @@ class BagsCollection(object):
 
     @classmethod
     def from_formatted_samples(cls,
-                               samples_reader,
+                               formatted_samples_iter,
                                bag_size,
                                label_scaler,
                                create_sample_func,
                                create_empty_sample_func,
                                shuffle,
                                desc=None):
-        assert(isinstance(samples_reader, InputSampleReader))
+        assert(isinstance(formatted_samples_iter, collections.Iterable))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(bag_size, int) and bag_size > 0)
         assert(callable(create_sample_func))
@@ -35,9 +36,7 @@ class BagsCollection(object):
 
         bags = []
 
-        linked_rows_iter = progress_bar_iter(
-            iterable=samples_reader.iter_rows_linked_by_text_opinions(),
-            desc=desc)
+        linked_rows_iter = progress_bar_iter(iterable=formatted_samples_iter, desc=desc)
 
         for linked_rows in linked_rows_iter:
             assert(len(linked_rows) > 0)

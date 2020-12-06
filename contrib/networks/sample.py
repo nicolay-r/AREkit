@@ -1,18 +1,19 @@
-import collections
 import random
+from itertools import chain
 
 import numpy as np
 
-import arekit.contrib.networks.core.mappers.pos
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
-from arekit.common.entities.base import Entity
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.networks.features.dist import DistanceFeatures
-from arekit.contrib.networks.features.frame_roles import FrameRoleFeatures
-from arekit.contrib.networks.features.inds import IndicesFeature
 from arekit.contrib.networks.features.pointers import PointersFeature
+from arekit.contrib.networks.features.sample_dist import DistanceFeatures
+from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
+from arekit.contrib.networks.features.term_indices import IndicesFeature
+from arekit.contrib.networks.features.term_part_of_speech import calculate_term_pos
+from arekit.contrib.networks.features.term_types import calculate_term_types
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
+from arekit.processing.pos.base import POSTagger
 
 
 class InputSample(InputSampleBase):
@@ -47,7 +48,8 @@ class InputSample(InputSampleBase):
     TERM_TYPE_PAD_VALUE = -1
     SYNONYMS_PAD_VALUE = 0
 
-    def __init__(self, X,
+    def __init__(self,
+                 X,
                  subj_ind,
                  obj_ind,
                  syn_subj_inds,
@@ -60,7 +62,8 @@ class InputSample(InputSampleBase):
                  term_type,
                  frame_indices,
                  frame_sent_roles,
-                 input_sample_id):
+                 input_sample_id,
+                 shift_index_dbg=0):
         assert(isinstance(X, np.ndarray))
         assert(isinstance(subj_ind, int))
         assert(isinstance(obj_ind, int))
@@ -74,6 +77,7 @@ class InputSample(InputSampleBase):
         assert(isinstance(term_type, np.ndarray))
         assert(isinstance(frame_indices, np.ndarray))
         assert(isinstance(frame_sent_roles, np.ndarray))
+        assert(isinstance(shift_index_dbg, int))
 
         values = [(InputSample.I_X_INDS, X),
                   (InputSample.I_SUBJ_IND, subj_ind),
@@ -89,17 +93,21 @@ class InputSample(InputSampleBase):
                   (InputSample.I_FRAME_SENT_ROLES, frame_sent_roles),
                   (InputSample.I_TERM_TYPE, term_type)]
 
-        super(InputSample, self).__init__(input_sample_id=input_sample_id,
+        super(InputSample, self).__init__(shift_index_dbg=shift_index_dbg,
+                                          input_sample_id=input_sample_id,
                                           values=values)
 
     # region class methods
 
     @classmethod
-    def create_empty(cls, config):
-        assert(isinstance(config, DefaultNetworkConfig))
-        blank_synonyms = np.zeros(config.SynonymsPerContext)
-        blank_terms = np.zeros(config.TermsPerContext)
-        blank_frames = np.full(shape=config.FramesPerContext,
+    def create_empty(cls, terms_per_context, frames_per_context, synonyms_per_context):
+        assert(isinstance(terms_per_context, int))
+        assert(isinstance(frames_per_context, int))
+        assert(isinstance(synonyms_per_context, int))
+
+        blank_synonyms = np.zeros(synonyms_per_context)
+        blank_terms = np.zeros(terms_per_context)
+        blank_frames = np.full(shape=frames_per_context,
                                fill_value=cls.FRAMES_PAD_VALUE)
         return cls(X=blank_terms,
                    subj_ind=0,
@@ -150,47 +158,58 @@ class InputSample(InputSampleBase):
         # placeholed when the related term has not been found in vocabulary.
         return word_vocab[term] if term in word_vocab else cls.TERM_VALUE_MISSING
 
-
     @classmethod
-    def from_tsv_row(cls,
-                     input_sample_id,  # row_id
-                     terms,            # list of terms, that might be found in words_vocab
-                     is_external_vocab,
-                     subj_ind,
-                     obj_ind,
-                     words_vocab,      # for indexing input (all the vocabulary, obtained from offsets.py)
-                     config,           # for terms_per_context, frames_per_context.
-                     frame_inds=None,
-                     frame_sent_roles=None,
-                     syn_subj_inds=None,
-                     syn_obj_inds=None):
+    def create_from_parameters(cls,
+                               input_sample_id,  # row_id
+                               terms,  # list of terms, that might be found in words_vocab
+                               entity_inds,
+                               is_external_vocab,
+                               subj_ind,
+                               obj_ind,
+                               words_vocab,  # for indexing input (all the vocabulary, obtained from offsets.py)
+                               pos_tagger,
+                               terms_per_context,  # for terms_per_context, frames_per_context.
+                               frames_per_context,
+                               synonyms_per_context,
+                               syn_subj_inds,
+                               syn_obj_inds,
+                               frame_inds,
+                               frame_sent_roles):
         """
         Here we first need to perform indexing of terms. Therefore, mark entities, frame_variants among them.
         None parameters considered as optional.
         """
         assert(isinstance(terms, list))
-        assert(isinstance(frame_inds, list) or frame_inds is None)
+        assert(isinstance(entity_inds, list))
+        assert(isinstance(frame_inds, list))
+        assert(isinstance(frame_sent_roles, list))
         assert(isinstance(words_vocab, dict))
         assert(isinstance(subj_ind, int) and 0 <= subj_ind < len(terms))
         assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
+        assert(isinstance(pos_tagger, POSTagger))
+        assert(isinstance(terms_per_context, int))
+        assert(isinstance(frames_per_context, int))
+        assert(isinstance(synonyms_per_context, int))
+        assert(isinstance(syn_subj_inds, list))
+        assert(isinstance(syn_obj_inds, list))
         assert(subj_ind != obj_ind)
 
         def shift_index(ind):
-            return ind - x_feature.StartIndex
+            return ind - get_start_offset()
 
-        def shift_indices(inds):
-            return [shift_index(ind) for ind in inds]
+        def get_start_offset():
+            return x_feature.StartIndex
+
+        def get_end_offset():
+            return x_feature.EndIndex
+
+        entities_set = set(entity_inds)
 
         # Composing vectors
-        x_indices = [cls.__get_index_by_term(term, words_vocab, is_external_vocab)
-                     for term in terms]
-
-        pos_vector = arekit.contrib.networks.core.mappers.pos.iter_pos_indices_for_terms(
-            terms=terms,
-            pos_tagger=config.PosTagger)
+        x_indices = np.array([cls.__get_index_by_term(term, words_vocab, is_external_vocab) for term in terms])
 
         # Check an ability to create sample by analyzing required window size.
-        window_size = config.TermsPerContext
+        window_size = terms_per_context
         dist_between_entities = TextOpinionHelper.calc_dist_between_text_opinion_end_indices(
             pos1_ind=subj_ind,
             pos2_ind=obj_ind)
@@ -209,82 +228,79 @@ class InputSample(InputSampleBase):
                                                       dist=dist_between_entities,
                                                       window=window_size))
 
-        # Composing Features
         x_feature = IndicesFeature.from_vector_to_be_fitted(
             value_vector=x_indices,
-            e1_in=subj_ind,
-            e2_in=obj_ind,
+            e1_ind=subj_ind,
+            e2_ind=obj_ind,
             expected_size=window_size,
             filler=cls.X_PAD_VALUE)
 
         pos_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=pos_vector,
-            e1_in=subj_ind,
-            e2_in=obj_ind,
+            value_vector=calculate_term_pos(terms=terms,
+                                            entity_inds_set=entities_set,
+                                            pos_tagger=pos_tagger),
+            e1_ind=subj_ind,
+            e2_ind=obj_ind,
             expected_size=window_size,
             filler=cls.POS_PAD_VALUE)
 
         term_type_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=InputSample.__create_term_types(terms),
-            e1_in=subj_ind,
-            e2_in=obj_ind,
+            value_vector=calculate_term_types(terms=terms,
+                                              entity_inds_set=entities_set),
+            e1_ind=subj_ind,
+            e2_ind=obj_ind,
             expected_size=window_size,
             filler=cls.TERM_TYPE_PAD_VALUE)
 
-        shifted_subj_ind = shift_index(subj_ind)
-        shifted_obj_ind = shift_index(obj_ind)
-
-        frame_inds_list = [] if frame_inds is None else frame_inds
-
-        frame_sent_roles_vector = FrameRoleFeatures.to_input(
-            shifted_frame_inds=shift_indices(frame_inds_list),
-            frame_sent_roles=frame_sent_roles,
-            terms_per_context=config.TermsPerContext,
-            filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
-
         frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=frame_sent_roles_vector,
-            e1_in=shifted_subj_ind,
-            e2_in=shifted_obj_ind,
+            value_vector=FrameRoleFeatures.to_input(frame_inds=frame_inds,
+                                                    frame_sent_roles=frame_sent_roles,
+                                                    size=len(terms),
+                                                    filler=cls.FRAME_SENT_ROLES_PAD_VALUE),
+            e1_ind=subj_ind,
+            e2_ind=obj_ind,
             expected_size=window_size,
             filler=cls.FRAME_SENT_ROLES_PAD_VALUE)
 
         frames_feature = PointersFeature.create_shifted_and_fit(
-            original_value=frame_inds_list,
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
-            expected_size=config.FramesPerContext,
+            original_value=frame_inds,
+            start_offset=get_start_offset(),
+            end_offset=get_end_offset(),
+            expected_size=frames_per_context,
             filler=cls.FRAMES_PAD_VALUE)
 
         syn_subj_inds_feature = PointersFeature.create_shifted_and_fit(
-            original_value=[subj_ind] if syn_subj_inds is None else syn_subj_inds,
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
+            original_value=syn_subj_inds,
+            start_offset=get_start_offset(),
+            end_offset=get_end_offset(),
             filler=cls.SYNONYMS_PAD_VALUE)
 
         syn_obj_inds_feature = PointersFeature.create_shifted_and_fit(
-            original_value=[obj_ind] if syn_obj_inds is None else syn_obj_inds,
-            start_offset=x_feature.StartIndex,
-            end_offset=x_feature.EndIndex,
+            original_value=syn_obj_inds,
+            start_offset=get_start_offset(),
+            end_offset=get_end_offset(),
             filler=cls.SYNONYMS_PAD_VALUE)
 
-        dist_from_subj = DistanceFeatures.distance_feature(position=shifted_subj_ind, size=config.TermsPerContext)
-        dist_from_obj = DistanceFeatures.distance_feature(position=shifted_obj_ind, size=config.TermsPerContext)
+        shifted_subj_ind = shift_index(subj_ind)
+        shifted_obj_ind = shift_index(obj_ind)
+
+        dist_from_subj = DistanceFeatures.distance_feature(position=shifted_subj_ind, size=terms_per_context)
+        dist_from_obj = DistanceFeatures.distance_feature(position=shifted_obj_ind, size=terms_per_context)
 
         dist_nearest_subj = DistanceFeatures.distance_abs_nearest_feature(
             positions=syn_subj_inds_feature.ValueVector,
-            size=config.TermsPerContext)
+            size=terms_per_context)
 
         dist_nearest_obj = DistanceFeatures.distance_abs_nearest_feature(
             positions=syn_obj_inds_feature.ValueVector,
-            size=config.TermsPerContext)
+            size=terms_per_context)
 
         pad_right_or_crop_inplace(lst=syn_subj_inds_feature.ValueVector,
-                                  pad_size=config.SynonymsPerContext,
+                                  pad_size=synonyms_per_context,
                                   filler=cls.SYNONYMS_PAD_VALUE)
 
         pad_right_or_crop_inplace(lst=syn_obj_inds_feature.ValueVector,
-                                  pad_size=config.SynonymsPerContext,
+                                  pad_size=synonyms_per_context,
                                   filler=cls.SYNONYMS_PAD_VALUE)
 
         return cls(X=np.array(x_feature.ValueVector),
@@ -300,41 +316,8 @@ class InputSample(InputSampleBase):
                    term_type=np.array(term_type_feature.ValueVector),
                    frame_indices=np.array(frames_feature.ValueVector),
                    frame_sent_roles=np.array(frame_sent_roles_feature.ValueVector),
-                   input_sample_id=input_sample_id)
-
-    # endregion
-
-    # region private methods
-
-    @staticmethod
-    def __is_synonym_entity(term, e_value, synonyms):
-
-        if not isinstance(term, Entity):
-            return False
-
-        e_group_index = synonyms.get_synonym_group_index(e_value)
-
-        if not synonyms.contains_synonym_value(term.Value):
-            if e_value != term.Value:
-                return False
-        elif e_group_index != synonyms.get_synonym_group_index(term.Value):
-            return False
-
-        return True
-
-    @staticmethod
-    def __create_term_types(terms):
-        assert(isinstance(terms, collections.Iterable))
-        feature = []
-        for term in terms:
-            if isinstance(term, unicode):
-                feature.append(0)
-            elif isinstance(term, Entity):
-                feature.append(1)
-            else:
-                feature.append(-1)
-
-        return feature
+                   input_sample_id=input_sample_id,
+                   shift_index_dbg=get_start_offset())
 
     # endregion
 

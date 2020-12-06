@@ -5,7 +5,7 @@
 </p>
 
 **AREkit** (Attitude and Relation Extraction Toolkit) -- is a python toolkit, devoted to 
-**sentiment attitude extraction** task. Please proceed to [[about.md]](about.md) for more details.
+**sentiment attitude extraction** task. Please proceed to [[ABOUT.md]](ABOUT.md) for more details.
 
 ## Dependencies
 

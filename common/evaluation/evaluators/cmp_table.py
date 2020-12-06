@@ -16,6 +16,10 @@ class DocumentCompareTable:
         assert(isinstance(cmp_table, pd.DataFrame))
         self.__cmp_table = cmp_table
 
+    @property
+    def DataframeTable(self):
+        return self.__cmp_table
+
     def __filter_by_label(self, col_name, label):
         assert(isinstance(col_name, str))
         assert(isinstance(label, Label))

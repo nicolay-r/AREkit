@@ -8,6 +8,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.io_utils import BaseIOUtils
+from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +89,8 @@ class BaseExperiment(object):
         assert(isinstance(evaluator, BaseEvaluator))
 
         # evaluate every document.
-        result = evaluator.evaluate(cmp_pairs=cmp_pairs_iter)
+        logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc=u"Evaluate", unit=u'pairs')
+        result = evaluator.evaluate(cmp_pairs=logged_cmp_pairs_it)
         assert(isinstance(result, BaseEvalResult))
 
         # calculate results.

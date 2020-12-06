@@ -2,8 +2,6 @@ import glob
 import logging
 import os
 import shutil
-from os.path import join, exists
-from arekit.common.utils import create_dir_if_not_exists
 
 
 def setup_logger():

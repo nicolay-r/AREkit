@@ -3,6 +3,7 @@ from arekit.common.frames.collection import FramesCollection
 from arekit.common.frames.polarity import FramePolarity
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.contrib.networks.features.utils import create_filled_array
 
 
 class FrameRoleFeatures(object):
@@ -25,19 +26,17 @@ class FrameRoleFeatures(object):
         return result
 
     @staticmethod
-    def to_input(shifted_frame_inds, frame_sent_roles, terms_per_context, filler):
-        assert(isinstance(shifted_frame_inds, list) or shifted_frame_inds is None)
-        assert(isinstance(frame_sent_roles, list) or frame_sent_roles is None)
+    def to_input(frame_inds, frame_sent_roles, size, filler):
+        assert(isinstance(frame_inds, list))
+        assert(isinstance(frame_sent_roles, list))
+        assert(len(frame_inds) == len(frame_sent_roles))
 
-        vector = [filler] * terms_per_context
+        vector = create_filled_array(size=size, value=filler)
 
-        if frame_sent_roles is None or shifted_frame_inds is None:
-            return vector
-
-        assert(len(shifted_frame_inds) == len(frame_sent_roles))
-
-        for i, frame_ind in shifted_frame_inds:
-            vector[frame_ind] = frame_sent_roles[i]
+        for frame_ind, frame_ind_in_sample in enumerate(frame_inds):
+            if frame_ind_in_sample >= len(vector):
+                continue
+            vector[frame_ind_in_sample] = frame_sent_roles[frame_ind]
 
         return vector
 

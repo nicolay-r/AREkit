@@ -281,4 +281,4 @@ class DefaultNetworkConfig(object):
         ]
 
     def get_parameters(self):
-        return [list(p) for p in zip(*self._internal_get_parameters())]
+        return [list(p) for p in self._internal_get_parameters()]

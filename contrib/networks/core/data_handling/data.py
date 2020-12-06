@@ -1,23 +1,20 @@
 import collections
 import logging
 
-import numpy as np
-
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.labeling import LabeledCollection
-from arekit.common.labels.base import Label
 from arekit.common.model.labeling.single import SingleLabelsHelper
+from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.utils import check_files_existance
 
-from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
-from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -44,83 +41,74 @@ class HandledData(object):
     # endregion
 
     @staticmethod
-    def need_serialize(experiment):
-        return not HandledData.__check_files_existed(
+    def check_files_existed(experiment):
+        return HandledData.__check_files_existed(
             data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             experiment_io=experiment.ExperimentIO)
 
     @staticmethod
-    def serialize_from_experiment(experiment, terms_per_context):
+    def serialize_from_experiment(experiment, terms_per_context, balance):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
+        assert(isinstance(balance, bool))
 
         HandledData.__perform_writing(experiment=experiment,
-                                      terms_per_context=terms_per_context)
+                                      terms_per_context=terms_per_context,
+                                      balance=balance)
 
     @classmethod
     def create_empty(cls):
         return cls(labeled_collections={},
                    bags_collection={})
 
-    def perform_reading_and_initialization(self, experiment, bags_collection_type, config):
+    def perform_reading_and_initialization(self, doc_ops, exp_io, vocab,
+                                           labels_scaler, bags_collection_type, config):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
         """
-        assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(doc_ops, DocumentOperations))
 
-        files_existed = HandledData.__check_files_existed(
-            data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
-            experiment_io=experiment.ExperimentIO)
-
-        if not files_existed:
-            raise Exception(u"Data has not been initialized/serialized: `{}`".format(experiment.Name))
-
-        # Reading embedding.
-        embedding_filepath = experiment.ExperimentIO.get_loading_embedding_filepath()
-        npz_embedding_data = np.load(embedding_filepath)
-        config.set_term_embedding(npz_embedding_data['arr_0'])
-        logger.info("Embedding read [size={size}]: {filepath}".format(
-            size=config.TermEmbeddingMatrix.shape,
-            filepath=embedding_filepath))
-
-        # Reading vocabulary
-        vocab_filepath = experiment.ExperimentIO.get_loading_vocab_filepath()
-        npz_vocab_data = np.load(vocab_filepath)
-        vocab = dict(npz_vocab_data['arr_0'])
-        logger.info("Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
-                                                                       filepath=vocab_filepath))
+        stat_labeled_sample_row_ids = None
+        dtypes_set = set(doc_ops.DataFolding.iter_supported_data_types())
 
         # Reading from serialized information
-        for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+        for data_type in dtypes_set:
 
-            labeled_sample_row_ids = self.__read_data_type(
+            # Extracting such information from serialized files.
+            bags_collection, labeled_sample_row_ids = self.__read_for_data_type(
                 data_type=data_type,
-                experiment_io=experiment.ExperimentIO,
-                labels_scaler=experiment.DataIO.LabelsScaler,
+                experiment_io=exp_io,
+                labels_scaler=labels_scaler,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
                 config=config)
 
-            if data_type != DataType.Train:
-                continue
+            # Saving into dictionaries.
+            self.__bags_collection[data_type] = bags_collection
+            self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
 
-            labels_helper = SingleLabelsHelper(label_scaler=experiment.DataIO.LabelsScaler)
-            norm, _ = self.get_statistic(labeled_sample_row_ids=labeled_sample_row_ids,
-                                         labels_helper=labels_helper)
-            config.set_class_weights(norm)
+            if data_type == DataType.Train:
+                stat_labeled_sample_row_ids = labeled_sample_row_ids
 
-        config.notify_initialization_completed()
+        # Calculate class weights.
+        if stat_labeled_sample_row_ids is not None:
+            labels_helper = SingleLabelsHelper(label_scaler=labels_scaler)
+            normalized_label_stat, _ = calculate_labels_distribution_stat(
+                labeled_sample_row_ids=stat_labeled_sample_row_ids,
+                labels_helper=labels_helper)
+            config.set_class_weights(normalized_label_stat)
 
     # region writing methods
 
     @staticmethod
-    def __perform_writing(experiment, terms_per_context):
+    def __perform_writing(experiment, terms_per_context, balance):
         """
         Perform experiment input serialization
         """
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
+        assert(isinstance(balance, bool))
 
         term_embedding_pairs = []
 
@@ -143,7 +131,8 @@ class HandledData(object):
                 data_type=data_type,
                 term_embedding_pairs=term_embedding_pairs,
                 parsed_news_collection=parsed_news_collection,
-                terms_per_context=terms_per_context)
+                terms_per_context=terms_per_context,
+                balance=balance)
 
         # Save embedding and related vocabulary.
         NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
@@ -170,64 +159,49 @@ class HandledData(object):
 
     # region reading methods
 
-    def __read_data_type(self, data_type, experiment_io, labels_scaler, bags_collection_type, vocab, config):
+    def __read_for_data_type(self, data_type, experiment_io, labels_scaler,
+                             bags_collection_type, vocab, config):
+
+        terms_per_context = config.TermsPerContext
+        frames_per_context = config.FramesPerContext
+        synonyms_per_context = config.SynonymsPerContext
 
         samples_reader = NetworkInputSampleReader.from_tsv(
             filepath=experiment_io.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
 
-        labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
-
-        self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
-
-        self.__bags_collection[data_type] = bags_collection_type.from_formatted_samples(
+        bags_collection = bags_collection_type.from_formatted_samples(
+            formatted_samples_iter=samples_reader.iter_rows_linked_by_text_opinions(),
             desc="Filling bags collection [{}]".format(data_type),
-            samples_reader=samples_reader,
             bag_size=config.BagSize,
             shuffle=True,
             label_scaler=labels_scaler,
-            create_empty_sample_func=lambda: InputSample.create_empty(config),
-            create_sample_func=lambda row: self.__create_input_sample(
-                row=row,
-                config=config,
-                vocab=vocab,
-                is_external_vocab=experiment_io.has_model_predefined_state()))
+            create_empty_sample_func=lambda: InputSample.create_empty(
+                terms_per_context=terms_per_context,
+                frames_per_context=frames_per_context,
+                synonyms_per_context=synonyms_per_context),
+            create_sample_func=lambda row: InputSample.create_from_parameters(
+                input_sample_id=row.SampleID,
+                terms=row.Terms,
+                entity_inds=row.EntityInds,
+                is_external_vocab=experiment_io.has_model_predefined_state(),
+                subj_ind=row.SubjectIndex,
+                obj_ind=row.ObjectIndex,
+                words_vocab=vocab,
+                frame_inds=row.TextFrameVariantIndices,
+                frame_sent_roles=row.TextFrameVariantRoles,
+                syn_obj_inds=row.SynonymObjectInds,
+                syn_subj_inds=row.SynonymSubjectInds,
+                terms_per_context=terms_per_context,
+                frames_per_context=frames_per_context,
+                synonyms_per_context=synonyms_per_context,
+                pos_tagger=config.PosTagger))
 
-        return labeled_sample_row_ids
+        labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
+
+        return bags_collection, labeled_sample_row_ids
 
     # endregion
-
-    @staticmethod
-    def get_statistic(labeled_sample_row_ids, labels_helper):
-        assert(isinstance(labeled_sample_row_ids, collections.Iterable))
-
-        stat = [0] * labels_helper.get_classes_count()
-
-        for _, label in labeled_sample_row_ids:
-            assert(isinstance(label, Label))
-            stat[labels_helper.label_to_uint(label)] += 1
-
-        total = sum(stat)
-        norm = [100.0 * value / total if total > 0 else 0 for value in stat]
-        return norm, stat
-
-    @staticmethod
-    def __create_input_sample(row, config, vocab, is_external_vocab):
-        """
-        Creates an input for Neural Network model
-        """
-        assert(isinstance(row, ParsedSampleRow))
-        assert(isinstance(config, DefaultNetworkConfig))
-        assert(isinstance(vocab, dict))
-
-        return InputSample.from_tsv_row(
-            input_sample_id=row.SampleID,
-            terms=row.Terms,
-            is_external_vocab=is_external_vocab,
-            subj_ind=row.SubjectIndex,
-            obj_ind=row.ObjectIndex,
-            words_vocab=vocab,
-            config=config)
 
     @staticmethod
     def __create_collection(data_types, collection_by_dtype_func):

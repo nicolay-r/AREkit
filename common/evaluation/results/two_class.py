@@ -40,7 +40,7 @@ class TwoClassEvalResult(BaseEvalResult):
         assert(doc_id not in self.__documents)
         assert(isinstance(cmp_table, DocumentCompareTable))
 
-        self.add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
+        self._add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
 
         f1 = calc_f1(pos_prec=pos_prec,
                      neg_prec=neg_prec,
@@ -86,3 +86,9 @@ class TwoClassEvalResult(BaseEvalResult):
     def iter_document_results(self):
         for doc_id, info in self.__documents.iteritems():
             yield doc_id, info
+
+    def iter_dataframe_cmp_tables(self):
+        for doc_id in self.__documents.keys():
+            cmp_table = self._cmp_tables[doc_id]
+            assert(isinstance(cmp_table, DocumentCompareTable))
+            yield doc_id, cmp_table.DataframeTable
