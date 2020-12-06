@@ -13,7 +13,6 @@ class TwoClassEvalResult(BaseEvalResult):
     C_NEG_RECALL = u'neg_recall'
     C_F1_POS = u'f1_pos'
     C_F1_NEG = u'f1_neg'
-    C_F1 = u'f1'
 
     def __init__(self):
         super(TwoClassEvalResult, self).__init__()

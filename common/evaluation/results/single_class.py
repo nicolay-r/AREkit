@@ -8,7 +8,6 @@ class SingleClassEvalResult(BaseEvalResult):
 
     C_PREC = u'prec'
     C_RECALL = u'recall'
-    C_F1 = u'f1'
 
     def __init__(self):
         super(SingleClassEvalResult, self).__init__()
@@ -19,6 +18,13 @@ class SingleClassEvalResult(BaseEvalResult):
     @property
     def Result(self):
         return self.__result
+
+    def get_result_as_str(self):
+        return str(self.__result)
+
+    def get_result_by_metric(self, metric_name):
+        assert(isinstance(metric_name, unicode))
+        return self.__result[metric_name]
 
     def add_document_results(self, doc_id, cmp_table, prec, recall):
         assert(doc_id not in self.__documents)
