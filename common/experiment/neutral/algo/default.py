@@ -23,7 +23,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
             max allowed distance in term (less than passed value)
         """
         assert(isinstance(ignored_entity_values, list) or ignored_entity_values is None)
-        assert(isinstance(dist_in_terms_bound, int))
+        assert(isinstance(dist_in_terms_bound, int) or dist_in_terms_bound is None)
 
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
 
@@ -84,7 +84,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
         t_dist = self.__text_opinion_helper.calc_dist_between_entities(
             news_id=news_id, e1=e1, e2=e2, distance_type=DistanceType.InTerms)
 
-        if t_dist > self.__dist_in_terms_bound:
+        if self.__dist_in_terms_bound is not None and t_dist > self.__dist_in_terms_bound:
             return
 
         if sentiment_opinions is not None:
