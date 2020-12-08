@@ -11,6 +11,7 @@ class SynonymsCollection(object):
         assert(isinstance(stemmer, Stemmer))
         self.__by_index = by_index
         self.__by_synonym = by_synonym
+        # TODO. stemmer should be a part of the nested RuSentRel Synonyms Collection.
         self.__stemmer = stemmer
         self.__is_read_only = is_read_only
 
@@ -20,6 +21,7 @@ class SynonymsCollection(object):
     def IsReadOnly(self):
         return self.__is_read_only
 
+    # TODO. This should be a part of the nested RuSentRel Synonyms Collection.
     @property
     def Stemmer(self):
         return self.__stemmer
@@ -63,6 +65,7 @@ class SynonymsCollection(object):
 
     # region public 'create' methods
 
+    # TODO. This should be a part of the nested RuSentRel Synonyms Collection.
     @staticmethod
     def create_synonym_id(stemmer, value):
         assert(isinstance(stemmer, Stemmer))
@@ -105,7 +108,7 @@ class SynonymsCollection(object):
 
     # endregion
 
-    # region overriden methods
+    # region overridden methods
 
     def __len__(self):
         return len(self.__by_index)
