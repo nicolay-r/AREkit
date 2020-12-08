@@ -12,28 +12,17 @@ from arekit.common.bound import Bound
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 
-from arekit.processing.lemmatization.mystem import MystemWrapper
-
+from arekit.contrib.source.tests.utils import read_rusentrel_synonyms_collection
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
 class TestRuSentRel(unittest.TestCase):
 
     __version = RuSentRelVersions.V11
-
-    def __read_synonyms_collection(self):
-
-        # Initializing stemmer
-        stemmer = MystemWrapper()
-
-        # Reading synonyms collection.
-        return RuSentRelSynonymsCollection.load_collection(stemmer=stemmer,
-                                                           version=self.__version)
 
     def __iter_by_docs(self, synonyms):
         for doc_id in RuSentRelIOUtils.iter_collection_indices(self.__version):
@@ -55,7 +44,7 @@ class TestRuSentRel(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        synonyms = self.__read_synonyms_collection()
+        synonyms = read_rusentrel_synonyms_collection(version=self.__version)
         for news, opinions in self.__iter_by_docs(synonyms):
             logger.info(u"NewsID: {}".format(news.ID))
 
@@ -93,7 +82,7 @@ class TestRuSentRel(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        synonyms = self.__read_synonyms_collection()
+        synonyms = read_rusentrel_synonyms_collection(self.__version)
         for news, opinions in self.__iter_by_docs(synonyms):
 
             logger.info(u"NewsID: {}".format(news.ID))
