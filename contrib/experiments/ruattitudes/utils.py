@@ -32,7 +32,7 @@ def read_ruattitudes_in_memory(version, keep_doc_ids_only, used_doc_ids_set=None
     it_formatted_and_logged = progress_bar_iter(
         iterable=__iter_id_with_news(news_it=it,
                                      keep_doc_ids_only=keep_doc_ids_only),
-        desc=u"Loading RuAttitudes Collection",
+        desc=u"Loading RuAttitudes Collection [{}]".format(u"doc ids only" if keep_doc_ids_only else u"fully"),
         unit=u'docs')
 
     for news_id, news in it_formatted_and_logged:
