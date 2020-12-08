@@ -12,6 +12,7 @@ def create_experiment(exp_type,
                       rusentrel_version,
                       is_training,
                       experiment_io_type,
+                      extra_name_suffix,
                       ruattitudes_version=None):
     """ This method allows to instanciate all the supported experiments
         by `contrib/experiments/` module of AREkit framework.
@@ -27,13 +28,15 @@ def create_experiment(exp_type,
         return RuSentRelExperiment(exp_data=experiment_data,
                                    version=rusentrel_version,
                                    folding_type=folding_type,
-                                   experiment_io_type=experiment_io_type)
+                                   experiment_io_type=experiment_io_type,
+                                   extra_name_suffix=extra_name_suffix)
 
     if exp_type == ExperimentTypes.RuAttitudes:
         # Application of the distant supervision only (assumes for pretraining purposes)
         return RuAttitudesExperiment(exp_data=experiment_data,
                                      version=ruattitudes_version,
                                      experiment_io_type=experiment_io_type,
+                                     extra_name_suffix=extra_name_suffix,
                                      load_ruatittudes=True)  # The present limitation.
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
@@ -42,4 +45,5 @@ def create_experiment(exp_type,
                                                   exp_data=experiment_data,
                                                   rusentrel_version=rusentrel_version,
                                                   folding_type=folding_type,
-                                                  experiment_io_type=experiment_io_type)
+                                                  experiment_io_type=experiment_io_type,
+                                                  extra_name_suffix=extra_name_suffix)

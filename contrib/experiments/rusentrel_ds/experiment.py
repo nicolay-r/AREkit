@@ -26,7 +26,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, exp_data, experiment_io_type, folding_type, ruattitudes_version, rusentrel_version):
+    def __init__(self, exp_data, experiment_io_type, folding_type,
+                 ruattitudes_version, rusentrel_version, extra_name_suffix):
         assert(isinstance(ruattitudes_version, RuAttitudesVersions))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
@@ -92,17 +93,14 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             ruattitudes_op=ruattitudes_op,
             is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))
 
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(exp_data=exp_data,
-                                                                 doc_ops=doc_ops,
-                                                                 opin_ops=opin_ops,
-                                                                 experiment_io=experiment_io)
-
-        # Composing experiment name
-        self.__name = u"rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
+        exp_name = u"rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
             rsr_version=self.__rusentrel_version.value,
             ra_version=self.__ruattitudes_version.value,
             folding_type=self.DocumentOperations.DataFolding.Name)
 
-    @property
-    def Name(self):
-        return self.__name
+        super(RuSentRelWithRuAttitudesExperiment, self).__init__(exp_data=exp_data,
+                                                                 doc_ops=doc_ops,
+                                                                 opin_ops=opin_ops,
+                                                                 experiment_io=experiment_io,
+                                                                 name=exp_name,
+                                                                 extra_name_suffix=extra_name_suffix)

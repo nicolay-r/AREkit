@@ -22,7 +22,7 @@ class RuSentRelExperiment(BaseExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, folding_type):
+    def __init__(self, exp_data, experiment_io_type, version, folding_type, extra_name_suffix):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
@@ -50,16 +50,12 @@ class RuSentRelExperiment(BaseExperiment):
                                               version=version,
                                               get_synonyms_func=lambda: synonyms)
 
+        exp_name= u"rsr-{version}-{format}".format(version=version.value,
+                                                   format=doc_ops.DataFolding.Name)
+
         super(RuSentRelExperiment, self).__init__(exp_data=exp_data,
                                                   experiment_io=experiment_io,
                                                   doc_ops=doc_ops,
-                                                  opin_ops=opin_ops)
-
-        # Setup experiment name.
-        self.__name = u"rsr-{version}-{format}".format(version=version.value,
-                                                       format=doc_ops.DataFolding.Name)
-
-    @property
-    def Name(self):
-        return self.__name
-
+                                                  opin_ops=opin_ops,
+                                                  name=exp_name,
+                                                  extra_name_suffix=extra_name_suffix)

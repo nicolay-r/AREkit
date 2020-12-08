@@ -17,11 +17,12 @@ class RuAttitudesExperiment(BaseExperiment):
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, load_ruatittudes):
+    def __init__(self, exp_data, experiment_io_type, version, load_ruatittudes, extra_name_suffix):
         assert(isinstance(version, RuAttitudesVersions))
         assert(isinstance(load_ruatittudes, bool))
 
         self.__version = version
+        self.__extra_name_suffix = extra_name_suffix
 
         logger.info("Init experiment io ...")
         experiment_io = experiment_io_type(self)
@@ -46,13 +47,11 @@ class RuAttitudesExperiment(BaseExperiment):
         opin_ops = RuAttitudesOpinionOperations(synonyms=synonyms,
                                                 ru_attitudes=ru_attitudes)
 
+        exp_name = u"ra-{ra_version}".format(ra_version=self.__version.value)
+
         super(RuAttitudesExperiment, self).__init__(exp_data=exp_data,
                                                     experiment_io=experiment_io,
                                                     opin_ops=opin_ops,
-                                                    doc_ops=doc_ops)
-
-    @property
-    def Name(self):
-        return u"ra-{ra_version}".format(ra_version=self.__version.value)
-
-
+                                                    doc_ops=doc_ops,
+                                                    name=exp_name,
+                                                    extra_name_suffix=extra_name_suffix)
