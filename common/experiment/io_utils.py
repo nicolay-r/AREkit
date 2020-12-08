@@ -24,15 +24,17 @@ class BaseIOUtils(object):
         """ Represents an experiment dir of specific label scale format,
             defined by labels scaler.
         """
-        src_dir = self.get_experiment_sources_dir()
+        return join_dir_with_subfolder_name(subfolder_name=self.__get_experiment_folder_name(),
+                                            dir=self.get_experiment_sources_dir())
 
-        e_name = u"{name}_{scale}l".format(name=self._experiment.Name,
-                                           scale=str(self._experiment.DataIO.LabelsScaler.LabelsCount))
-
-        return join_dir_with_subfolder_name(subfolder_name=e_name,
-                                            dir=src_dir)
+    def get_experiment_folder(self):
+        return self.__get_experiment_folder_name()
 
     # region protected methods
+
+    def __get_experiment_folder_name(self):
+        return u"{name}_{scale}l".format(name=self._experiment.Name,
+                                         scale=str(self._experiment.DataIO.LabelsScaler.LabelsCount))
 
     def _experiment_iter_index(self):
         return self._experiment.DocumentOperations.DataFolding.IterationIndex
