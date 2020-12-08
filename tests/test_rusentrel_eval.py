@@ -73,13 +73,16 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         # Iter cmp opinions.
         cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
             doc_ids=ZippedResultsIOUtils.iter_doc_ids(res_version),
-            read_etalon_collection_func=lambda doc_id: OpinionCollection.init_as_custom(
-                RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id),
-                synonyms),
-            read_result_collection_func=lambda doc_id: OpinionCollection.init_as_custom(
-                ZippedResultsIOUtils.iter_doc_opinions(doc_id=doc_id,
-                                                       result_version=res_version),
-                synonyms))
+            read_etalon_collection_func=lambda doc_id: OpinionCollection(
+                opinions=RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id),
+                synonyms=synonyms,
+                error_on_duplicates=True,
+                error_on_synonym_end_missed=True),
+            read_result_collection_func=lambda doc_id: OpinionCollection(
+                opinions=ZippedResultsIOUtils.iter_doc_opinions(doc_id=doc_id, result_version=res_version),
+                synonyms=synonyms,
+                error_on_duplicates=True,
+                error_on_synonym_end_missed=False))
 
         # getting evaluator.
         evaluator = TwoClassEvaluator()
