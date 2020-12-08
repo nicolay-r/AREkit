@@ -18,7 +18,8 @@ class TestPartOfSpeech(unittest.TestCase):
 
     def test_ruattitudes_news_text_parsing(self):
         news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.Debug,
-                                                  get_news_index_func=lambda: 0)
+                                                  get_news_index_func=lambda _: 0,
+                                                  return_inds_only=False)
 
         for news in news_it:
 

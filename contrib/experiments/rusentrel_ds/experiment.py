@@ -26,8 +26,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, exp_data, experiment_io_type, folding_type,
-                 ruattitudes_version, rusentrel_version, extra_name_suffix):
+    def __init__(self, exp_data, experiment_io_type, folding_type, ruattitudes_version,
+                 rusentrel_version, load_docs, extra_name_suffix):
         assert(isinstance(ruattitudes_version, RuAttitudesVersions))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
@@ -65,7 +65,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
 
         # Loading ru_attitudes in memory
         ru_attitudes = read_ruattitudes_in_memory(version=ruattitudes_version,
-                                                  used_doc_ids_set=set(rusentrel_doc.DataFolding.iter_doc_ids()))
+                                                  used_doc_ids_set=set(rusentrel_doc.DataFolding.iter_doc_ids()),
+                                                  keep_doc_ids_only=not load_docs)
 
         # RuAttitudes doc operations init.
         ruatttiudes_folding = create_ruattitudes_experiment_data_folding(

@@ -17,9 +17,9 @@ class RuAttitudesExperiment(BaseExperiment):
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, load_ruatittudes, extra_name_suffix):
+    def __init__(self, exp_data, experiment_io_type, version, load_docs, extra_name_suffix):
         assert(isinstance(version, RuAttitudesVersions))
-        assert(isinstance(load_ruatittudes, bool))
+        assert(isinstance(load_docs, bool))
 
         self.__version = version
         self.__extra_name_suffix = extra_name_suffix
@@ -28,8 +28,9 @@ class RuAttitudesExperiment(BaseExperiment):
         experiment_io = experiment_io_type(self)
 
         logger.info("Loading RuAttitudes collection optionally [{version}] ...".format(version=version))
-        ru_attitudes = read_ruattitudes_in_memory(version=version, used_doc_ids_set=None) \
-            if load_ruatittudes else None
+        ru_attitudes = read_ruattitudes_in_memory(version=version,
+                                                  used_doc_ids_set=None,
+                                                  keep_doc_ids_only=not load_docs)
 
         logger.info("Read synonyms collection ...")
         synonyms = RuAttitudesSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
