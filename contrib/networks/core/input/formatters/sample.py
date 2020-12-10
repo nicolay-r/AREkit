@@ -2,9 +2,11 @@ from arekit.common.entities.base import Entity
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.experiment.scales.three import ThreeLabelScaler
+from arekit.common.languages.pos import PartOfSpeechType
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.core.input import const
+from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
 
 
@@ -13,8 +15,11 @@ class NetworkSampleFormatter(BaseSampleFormatter):
     Provides additional features, frame-based especially
     """
 
-    def __init__(self, data_type, label_provider, text_provider, synonyms_collection, frames_collection, balance):
+    def __init__(self, data_type, label_provider, text_provider, synonyms_collection, frames_collection,
+                 pos_terms_mapper, balance):
         assert(isinstance(label_provider, LabelProvider))
+        assert(isinstance(pos_terms_mapper, PosTermsMapper))
+
         super(NetworkSampleFormatter, self).__init__(data_type=data_type,
                                                      label_provider=label_provider,
                                                      text_provider=text_provider,
@@ -23,6 +28,7 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         self.__synonyms_collection = synonyms_collection
         self.__frames_collection = frames_collection
         self.__frame_role_label_scaler = ThreeLabelScaler()
+        self.__pos_terms_mapper = pos_terms_mapper
 
     def _get_columns_list_with_types(self):
         dtypes_list = super(NetworkSampleFormatter, self)._get_columns_list_with_types()
@@ -33,6 +39,7 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         dtypes_list.append((const.SynonymSubject, unicode))
         dtypes_list.append((const.SynonymObject, unicode))
         dtypes_list.append((const.Entities, unicode))
+        dtypes_list.append((const.PosTags, unicode))
 
         return dtypes_list
 
@@ -67,8 +74,11 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         # Synonyms for target.
         uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=t_ind)
 
-        # Entitity indicies from the related context.
-        entity_inds = list(self.__iter_indices(terms=terms, filter=lambda t: isinstance(t, Entity)))
+        # Entity indicies from the related context.
+        entity_inds = list(self.__iter_indices(terms=terms, filter=lambda t: self.__is_entity(t)))
+
+        # Part of speech tags
+        pos_int_tags = [int(pos_tag) for pos_tag in self.__pos_terms_mapper.iter_mapped(terms)]
 
         # Saving.
         row[const.FrameVariantIndices] = self.__to_arg(uint_frame_inds)
@@ -76,8 +86,13 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         row[const.SynonymSubject] = self.__to_arg(uint_syn_s_inds)
         row[const.SynonymObject] = self.__to_arg(uint_syn_t_inds)
         row[const.Entities] = self.__to_arg(entity_inds)
+        row[const.PosTags] = self.__to_arg(pos_int_tags)
 
     # region private methods
+
+    @staticmethod
+    def __is_entity(t):
+        return isinstance(t, Entity)
 
     def __create_synonyms_set(self, terms, term_ind):
         e = terms[term_ind]

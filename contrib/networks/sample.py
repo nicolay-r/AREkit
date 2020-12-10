@@ -1,5 +1,4 @@
 import random
-from itertools import chain
 
 import numpy as np
 
@@ -10,10 +9,8 @@ from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.sample_dist import DistanceFeatures
 from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
 from arekit.contrib.networks.features.term_indices import IndicesFeature
-from arekit.contrib.networks.features.term_part_of_speech import calculate_term_pos
 from arekit.contrib.networks.features.term_types import calculate_term_types
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
-from arekit.processing.pos.base import POSTagger
 
 
 class InputSample(InputSampleBase):
@@ -167,13 +164,13 @@ class InputSample(InputSampleBase):
                                subj_ind,
                                obj_ind,
                                words_vocab,  # for indexing input (all the vocabulary, obtained from offsets.py)
-                               pos_tagger,
                                terms_per_context,  # for terms_per_context, frames_per_context.
                                frames_per_context,
                                synonyms_per_context,
                                syn_subj_inds,
                                syn_obj_inds,
                                frame_inds,
+                               pos_tags,
                                frame_sent_roles):
         """
         Here we first need to perform indexing of terms. Therefore, mark entities, frame_variants among them.
@@ -186,12 +183,13 @@ class InputSample(InputSampleBase):
         assert(isinstance(words_vocab, dict))
         assert(isinstance(subj_ind, int) and 0 <= subj_ind < len(terms))
         assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
-        assert(isinstance(pos_tagger, POSTagger))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(frames_per_context, int))
         assert(isinstance(synonyms_per_context, int))
         assert(isinstance(syn_subj_inds, list))
         assert(isinstance(syn_obj_inds, list))
+        assert(isinstance(pos_tags, list))
+        assert(len(terms) == len(pos_tags))
         assert(subj_ind != obj_ind)
 
         def shift_index(ind):
@@ -236,9 +234,7 @@ class InputSample(InputSampleBase):
             filler=cls.X_PAD_VALUE)
 
         pos_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=calculate_term_pos(terms=terms,
-                                            entity_inds_set=entities_set,
-                                            pos_tagger=pos_tagger),
+            value_vector=np.array(pos_tags),
             e1_ind=subj_ind,
             e2_ind=obj_ind,
             expected_size=window_size,

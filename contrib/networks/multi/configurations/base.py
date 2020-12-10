@@ -64,6 +64,10 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     # endregion
 
+    def set_pos_count(self, value):
+        super(BaseMultiInstanceConfig, self).set_pos_count(value)
+        self.__context_config.set_pos_count(value)
+
     def set_contexts_per_opinion(self, value):
         self.__contexts_per_opinion = value
 

@@ -15,6 +15,7 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
+from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.contrib.networks.core.input.formatters.sample import NetworkSampleFormatter
@@ -78,7 +79,8 @@ class NetworkInputEncoder(object):
                 text_provider=text_provider,
                 synonyms_collection=opin_ops.SynonymsCollection,
                 frames_collection=exp_data.FramesCollection,
-                balance=balance and data_type == DataType.Train),
+                balance=balance and data_type == DataType.Train,
+                pos_terms_mapper=PosTermsMapper(exp_data.PosTagger)),
             write_sample_header=True)
 
         return term_embedding_pairs

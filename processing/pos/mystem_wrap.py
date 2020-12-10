@@ -16,14 +16,6 @@ class POSMystemWrapper(RussianPOSTagger):
         assert(isinstance(mystem, Mystem))
         self.__mystem = mystem
 
-    # region properties
-
-    @property
-    def POSCount(self):
-        return PartOfSpeechTypesService.get_mystem_pos_count()
-
-    # endregion
-
     # region private methods
 
     @staticmethod

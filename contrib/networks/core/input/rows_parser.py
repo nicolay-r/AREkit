@@ -12,6 +12,10 @@ def __process_indices_list(value):
     return [int(v) for v in unicode(value).split(network_input_const.ArgsSep)]
 
 
+def __process_int_values_list(value):
+    return __process_indices_list(value)
+
+
 parse_value = {
     const.ID: lambda value: value,
     const.S_IND: lambda value: value,
@@ -23,6 +27,7 @@ parse_value = {
     network_input_const.SynonymObject: lambda value: __process_indices_list(value),
     network_input_const.SynonymSubject: lambda value: __process_indices_list(value),
     network_input_const.Entities: lambda value: __process_indices_list(value),
+    network_input_const.PosTags: lambda value: __process_int_values_list(value),
     "text_a": lambda value: filter_whitespaces([term for term in split_by_whitespaces(value)])
 }
 
@@ -70,6 +75,10 @@ class ParsedSampleRow(object):
     @property
     def Sentiment(self):
         return self.__sentiment
+
+    @property
+    def POSTags(self):
+        return self.__params[network_input_const.PosTags]
 
     @property
     def TextFrameVariantIndices(self):

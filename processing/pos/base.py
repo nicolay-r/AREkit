@@ -1,9 +1,5 @@
 class POSTagger:
 
-    @property
-    def POSCount(self):
-        raise NotImplementedError()
-
     def get_term_pos(self, term):
         raise NotImplementedError()
 

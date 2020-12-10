@@ -195,7 +195,8 @@ class HandledData(object):
                 terms_per_context=terms_per_context,
                 frames_per_context=frames_per_context,
                 synonyms_per_context=synonyms_per_context,
-                pos_tagger=config.PosTagger))
+                # TODO. Use the latter from row.
+                pos_tagger=None))
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
 

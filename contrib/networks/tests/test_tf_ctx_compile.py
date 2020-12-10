@@ -4,6 +4,7 @@ import unittest
 
 sys.path.append('../../../')
 
+from arekit.common.languages.ru.pos_service import PartOfSpeechTypesService
 from arekit.contrib.networks.tests.tf_networks.utils import init_config
 from arekit.contrib.networks.tests.tf_networks.supported import get_supported
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -18,6 +19,7 @@ class TestContextNetworkCompilation(unittest.TestCase):
         for config, network in get_supported():
             assert(isinstance(config, DefaultNetworkConfig))
             config.modify_classes_count(3)
+            config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
 
             logger.info("Compile: {}".format(type(network)))
             logger.info("Clases count: {}".format(config.ClassesCount))

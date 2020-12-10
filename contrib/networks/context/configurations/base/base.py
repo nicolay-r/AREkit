@@ -16,7 +16,7 @@ class DefaultNetworkConfig(object):
     __embedding_dropout_keep_prob = 1.0
 
     __classes_count = None
-    __default_pos_tagger = POSMystemWrapper(MystemWrapper().MystemInstance)
+    __pos_count = None
     __terms_per_context = 50
     __synonyms_per_context = 3
     __frames_per_context = 5
@@ -171,6 +171,9 @@ class DefaultNetworkConfig(object):
         assert(len(class_weights) == self.__classes_count)
         self.__class_weights = class_weights
 
+    def set_pos_count(self, value):
+        self.__pos_count = value
+
     def notify_initialization_completed(self):
         pass
 
@@ -183,8 +186,8 @@ class DefaultNetworkConfig(object):
         return self.__classes_count
 
     @property
-    def PosTagger(self):
-        return self.__default_pos_tagger
+    def PosCount(self):
+        return self.__pos_count
 
     @property
     def ClassWeights(self):
@@ -259,7 +262,6 @@ class DefaultNetworkConfig(object):
             ("base:dropout (keep prob)", self.DropoutKeepProb),
             ("base:classes_count", self.ClassesCount),
             ("base:class_weights", self.ClassWeights),
-            ("base:default_pos_tagger", self.PosTagger),
             ("base:terms_per_context", self.TermsPerContext),
             ("base:synonyms_per_context", self.SynonymsPerContext),
             ("base:bags_per_minibatch", self.BagsPerMinibatch),

@@ -8,7 +8,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRel
 logger = logging.getLogger(__name__)
 
 
-class RuSentRelSynonymsCollection:
+class RuSentRelSynonymsCollection(object):
 
     @staticmethod
     def load_collection(stemmer, is_read_only=True, debug=False, version=RuSentRelVersions.V11):
