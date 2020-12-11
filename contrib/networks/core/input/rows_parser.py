@@ -77,7 +77,7 @@ class ParsedSampleRow(object):
         return self.__sentiment
 
     @property
-    def POSTags(self):
+    def PartOfSpeechTags(self):
         return self.__params[network_input_const.PosTags]
 
     @property

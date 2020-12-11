@@ -195,8 +195,7 @@ class HandledData(object):
                 terms_per_context=terms_per_context,
                 frames_per_context=frames_per_context,
                 synonyms_per_context=synonyms_per_context,
-                # TODO. Use the latter from row.
-                pos_tagger=None))
+                pos_tags=row.PartOfSpeechTags))
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
 
