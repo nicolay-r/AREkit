@@ -31,7 +31,7 @@ class Embedding(object):
     # region classmethods
 
     @classmethod
-    def from_list_of_word_embedding_pairs(cls, word_embedding_pairs):
+    def from_word_embedding_pairs_iter(cls, word_embedding_pairs):
         assert(isinstance(word_embedding_pairs, collections.Iterable))
 
         matrix = []

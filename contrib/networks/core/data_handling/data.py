@@ -110,7 +110,7 @@ class HandledData(object):
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
 
-        term_embedding_pairs = []
+        term_embedding_pairs = collections.OrderedDict()
 
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
@@ -123,7 +123,7 @@ class HandledData(object):
             parsed_news_collection = ParsedNewsCollection(parsed_news_it=parsed_news_it, notify=True)
 
             # Composing input.
-            term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
+            NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
                 exp_io=experiment.ExperimentIO,
                 exp_data=experiment.DataIO,
                 opin_ops=experiment.OpinionOperations,

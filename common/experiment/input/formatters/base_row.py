@@ -77,6 +77,8 @@ class BaseRowsFormatter(object):
                                  column=column,
                                  value=value)
 
+        logger.info(self._df.info())
+
     def __iter__(self):
         for row in self._df.iterrows():
             yield row

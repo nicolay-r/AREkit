@@ -1,4 +1,5 @@
 import logging
+from collections import OrderedDict
 
 import numpy as np
 
@@ -41,7 +42,7 @@ class NetworkInputEncoder(object):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(exp_data, NetworkSerializationData))
         assert(isinstance(exp_io, BaseIOUtils))
-        assert(isinstance(term_embedding_pairs, list))
+        assert(isinstance(term_embedding_pairs, OrderedDict))
         assert(isinstance(parsed_news_collection, ParsedNewsCollection))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
@@ -57,7 +58,10 @@ class NetworkInputEncoder(object):
 
         text_provider = NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,
-            pair_handling_func=lambda pair: term_embedding_pairs.append(pair))
+            pair_handling_func=lambda pair: NetworkInputEncoder.__add_term_embedding(
+                dict_data=term_embedding_pairs,
+                term=pair[0],
+                emb_vector=pair[1]))
 
         text_opinion_helper = TextOpinionHelper(lambda news_id: parsed_news_collection.get_by_news_id(news_id))
 
@@ -83,16 +87,20 @@ class NetworkInputEncoder(object):
                 pos_terms_mapper=PosTermsMapper(exp_data.PosTagger)),
             write_sample_header=True)
 
-        return term_embedding_pairs
+    @staticmethod
+    def __add_term_embedding(dict_data, term, emb_vector):
+        if term in dict_data:
+            return
+        dict_data[term] = emb_vector
 
     @staticmethod
     def compose_and_save_term_embeddings_and_vocabulary(experiment_io, term_embedding_pairs):
         assert(isinstance(experiment_io, NetworkIOUtils))
-        assert(isinstance(term_embedding_pairs, list))
+        assert(isinstance(term_embedding_pairs, OrderedDict))
 
         # Save embedding information additionally.
-        term_embedding = Embedding.from_list_of_word_embedding_pairs(
-            word_embedding_pairs=term_embedding_pairs)
+        term_embedding = Embedding.from_word_embedding_pairs_iter(
+            word_embedding_pairs=term_embedding_pairs.iteritems())
 
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
@@ -108,3 +116,6 @@ class NetworkInputEncoder(object):
         logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
                                                                          filepath=vocab_filepath))
         np.savez(vocab_filepath, vocab)
+
+        # Remove bindings from the local namespace
+        del embedding_matrix

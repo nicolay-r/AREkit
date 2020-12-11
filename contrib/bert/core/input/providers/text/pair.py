@@ -35,11 +35,12 @@ class PairTextProvider(BaseSingleTextProvider):
             yield col_name
         yield self.TEXT_B
 
-    def add_text_in_row(self, row, sentence_terms, s_ind, t_ind, expected_label):
+    def add_text_in_row(self, set_text_func, sentence_terms, s_ind, t_ind, expected_label):
+        assert(callable(set_text_func))
         assert(isinstance(expected_label, Label))
 
         # We consider text_a as a default, i.e. the formatting provided by a base provider.
-        super(PairTextProvider, self).add_text_in_row(row=row,
+        super(PairTextProvider, self).add_text_in_row(set_text_func=set_text_func,
                                                       sentence_terms=sentence_terms,
                                                       s_ind=s_ind,
                                                       t_ind=t_ind,
@@ -54,12 +55,13 @@ class PairTextProvider(BaseSingleTextProvider):
         self._mapper.set_s_ind(0)
         self._mapper.set_t_ind(len(inner_terms)-1)
 
-        inner_context = self._compose_text(sentence_terms=inner_terms)
+        inner_context = self.__handle_terms_and_compose_text(sentence_terms=inner_terms)
 
-        row[self.TEXT_B] = self.__text_b_template.format(
+        column = self.TEXT_B
+        value = self.__text_b_template.format(
             subject=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Subject),
             object=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Object),
             context=self._process_text(inner_context),
             label=self.__labels_formatter.label_to_str(expected_label))
 
-        return row
+        set_text_func(column=column, value=value)

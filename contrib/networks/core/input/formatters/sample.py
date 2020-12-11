@@ -2,7 +2,6 @@ from arekit.common.entities.base import Entity
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.experiment.scales.three import ThreeLabelScaler
-from arekit.common.languages.pos import PartOfSpeechType
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.core.input import const
@@ -106,7 +105,7 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         # Guarantee the presence of the term_ind
         inds_set.add(term_ind)
 
-        return sorted(list(inds_set))
+        return sorted(inds_set)
 
     @staticmethod
     def __iter_indices(terms, filter):
