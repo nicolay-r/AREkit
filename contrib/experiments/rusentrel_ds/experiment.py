@@ -16,6 +16,7 @@ from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.synonyms_helper import RuAttitudesSynonymsCollectionHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.synonyms import StemmerBasedSynonymCollection
+from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 
 logger = logging.getLogger(__name__)
 
@@ -40,15 +41,11 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__rusentrel_version = rusentrel_version
 
         logger.info("Read synonyms collection [RuSentRel]...")
-        rusentrel_synonyms = StemmerBasedSynonymCollection.load_collection(stemmer=exp_data.Stemmer,
-                                                                           version=rusentrel_version)
-
-        logger.info("Read synonyms collection [RuAttitudes]...")
-        ruattitudes_synonyms = RuAttitudesSynonymsCollectionHelper.load_collection(stemmer=exp_data.Stemmer,
-                                                                                   version=ruattitudes_version)
-
-        logger.info("Merging collections [RuSentRel <- RuAttitudes]...")
-        joined_synonyms = None
+        synonyms = StemmerBasedSynonymCollection(
+            iter_group_values_lists=self.__iter_synonyms_group_lists(),
+            stemmer=exp_data.Stemmer,
+            is_read_only=True,
+            debug=False)
 
         # RuSentRel doc operations init.
         rusentrel_folding = create_rusentrel_experiment_data_folding(
@@ -61,7 +58,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_doc = RuSentrelDocumentOperations(exp_data=exp_data,
                                                     version=rusentrel_version,
                                                     folding=rusentrel_folding,
-                                                    get_synonyms_func=lambda: rusentrel_synonyms)
+                                                    get_synonyms_func=lambda: synonyms)
 
         # Loading ru_attitudes in memory
         ru_attitudes = read_ruattitudes_in_memory(version=ruattitudes_version,
@@ -79,9 +76,9 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_data,
                                                   version=rusentrel_version,
                                                   experiment_io=experiment_io,
-                                                  synonyms=rusentrel_synonyms)
+                                                  synonyms=synonyms)
 
-        ruattitudes_op = RuAttitudesOpinionOperations(synonyms=ruattitudes_synonyms,
+        ruattitudes_op = RuAttitudesOpinionOperations(synonyms=synonyms,
                                                       ru_attitudes=ru_attitudes)
 
         # Init experiment doc_ops and opin_ops
@@ -89,7 +86,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                              ruattitudes_doc=ruattitudes_doc)
 
         opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
-            synonyms=joined_synonyms,
+            synonyms=synonyms,
             rusentrel_op=rusentrel_op,
             ruattitudes_op=ruattitudes_op,
             is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))
@@ -97,7 +94,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         exp_name = u"rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
             rsr_version=self.__rusentrel_version.value,
             ra_version=self.__ruattitudes_version.value,
-            folding_type=self.DocumentOperations.DataFolding.Name)
+            folding_type=doc_ops.DataFolding.Name)
 
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(exp_data=exp_data,
                                                                  doc_ops=doc_ops,
@@ -105,3 +102,9 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                                  experiment_io=experiment_io,
                                                                  name=exp_name,
                                                                  extra_name_suffix=extra_name_suffix)
+
+    def __iter_synonyms_group_lists(self):
+        for group in RuSentRelSynonymsCollectionHelper.iter_groups(self.__rusentrel_version):
+            yield group
+        for group in RuAttitudesSynonymsCollectionHelper.iter_groups(self.__ruattitudes_version):
+            yield group

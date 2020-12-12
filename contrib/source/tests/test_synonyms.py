@@ -34,10 +34,6 @@ class TestSynonymsCollection(unittest.TestCase):
         for value in synonyms.iter_synonym_values(value=searching_value):
             print value
 
-    def test_merging(self):
-        # TODO.
-        pass
-
 
 if __name__ == '__main__':
     unittest.main()
