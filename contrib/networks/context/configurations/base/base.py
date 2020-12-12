@@ -2,8 +2,6 @@ import datetime
 
 import tensorflow as tf
 from arekit.common.model.labeling.modes import LabelCalculationMode
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 
 class DefaultNetworkConfig(object):
