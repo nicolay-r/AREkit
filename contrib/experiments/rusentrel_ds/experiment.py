@@ -66,10 +66,10 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                   keep_doc_ids_only=not load_docs)
 
         # RuAttitudes doc operations init.
-        ruatttiudes_folding = create_ruattitudes_experiment_data_folding(
+        ruattiudes_folding = create_ruattitudes_experiment_data_folding(
             doc_ids_to_fold=list(ru_attitudes.iterkeys()))
         ruattitudes_doc = RuAttitudesDocumentOperations(exp_data=exp_data,
-                                                        folding=ruatttiudes_folding,
+                                                        folding=ruattiudes_folding,
                                                         ru_attitudes=ru_attitudes)
 
         # Init opinions
