@@ -4,6 +4,7 @@ import sys
 import unittest
 from pymystem3 import Mystem
 
+
 sys.path.append('../../../')
 
 from arekit.common.entities.base import Entity
@@ -15,7 +16,7 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 from arekit.contrib.networks.tests.text.news import init_rusentrel_doc
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
+from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
@@ -34,7 +35,7 @@ class TestTfInputFeatures(unittest.TestCase):
         cls.stemmer = MystemWrapper()
         cls.entities_formatter = RussianEntitiesCasedFormatter(
             pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
-        cls.synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=cls.stemmer)
+        cls.synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=cls.stemmer)
         cls.frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V10)
         cls.unique_frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
             variants_with_id=cls.frames_collection.iter_frame_id_and_variants(),

@@ -13,9 +13,9 @@ from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperat
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.ruattitudes.synonyms import RuAttitudesSynonymsCollection
+from arekit.contrib.source.ruattitudes.synonyms_helper import RuAttitudesSynonymsCollectionHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
+from arekit.contrib.source.rusentrel.synonyms import StemmerBasedSynonymCollection
 
 logger = logging.getLogger(__name__)
 
@@ -40,12 +40,12 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__rusentrel_version = rusentrel_version
 
         logger.info("Read synonyms collection [RuSentRel]...")
-        rusentrel_synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
-                                                                         version=rusentrel_version)
+        rusentrel_synonyms = StemmerBasedSynonymCollection.load_collection(stemmer=exp_data.Stemmer,
+                                                                           version=rusentrel_version)
 
         logger.info("Read synonyms collection [RuAttitudes]...")
-        ruattitudes_synonyms = RuAttitudesSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
-                                                                             version=ruattitudes_version)
+        ruattitudes_synonyms = RuAttitudesSynonymsCollectionHelper.load_collection(stemmer=exp_data.Stemmer,
+                                                                                   version=ruattitudes_version)
 
         logger.info("Merging collections [RuSentRel <- RuAttitudes]...")
         joined_synonyms = None

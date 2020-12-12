@@ -15,7 +15,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
+from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
@@ -68,7 +68,7 @@ class TestRuSentRelEvaluation(unittest.TestCase):
 
         # Initializing stemmer.
         stemmer = MystemWrapper()
-        synonyms = RuSentRelSynonymsCollection.load_collection(stemmer)
+        synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer)
 
         # Iter cmp opinions.
         cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(

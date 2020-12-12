@@ -3,6 +3,7 @@ import sys
 
 sys.path.append('../')
 
+from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
@@ -12,7 +13,6 @@ from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTer
 from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 
 # Setup logging format
@@ -21,7 +21,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 stemmer = MystemWrapper()
 label_provider = BinaryLabelProvider(label_scaler=ThreeLabelScaler())
-synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer, is_read_only=True)
+synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=stemmer, is_read_only=True)
 terms_mapper = OpinionContainingTextTermsMapper(entity_formatter=StringEntitiesSimpleFormatter(), synonyms=synonyms)
 
 formatter = BaseSampleFormatter(

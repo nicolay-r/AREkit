@@ -7,7 +7,7 @@ from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOper
 from arekit.contrib.experiments.rusentrel.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
+from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -31,8 +31,8 @@ class RuSentRelExperiment(BaseExperiment):
         experiment_io = experiment_io_type(self)
 
         logger.info("Read synonyms collection ...")
-        synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
-                                                               version=version)
+        synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=exp_data.Stemmer,
+                                                                     version=version)
 
         logger.info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,

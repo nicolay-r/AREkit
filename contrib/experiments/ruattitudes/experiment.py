@@ -6,7 +6,7 @@ from arekit.contrib.experiments.ruattitudes.folding import create_ruattitudes_ex
 from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.ruattitudes.synonyms import RuAttitudesSynonymsCollection
+from arekit.contrib.source.ruattitudes.synonyms_helper import RuAttitudesSynonymsCollectionHelper
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -33,8 +33,8 @@ class RuAttitudesExperiment(BaseExperiment):
                                                   keep_doc_ids_only=not load_docs)
 
         logger.info("Read synonyms collection ...")
-        synonyms = RuAttitudesSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
-                                                                 version=version)
+        synonyms = RuAttitudesSynonymsCollectionHelper.load_collection(stemmer=exp_data.Stemmer,
+                                                                       version=version)
 
         folding = create_ruattitudes_experiment_data_folding(
             doc_ids_to_fold=list(ru_attitudes.iterkeys()))
