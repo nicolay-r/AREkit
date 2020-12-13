@@ -42,13 +42,12 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
         return dtypes_list
 
-    def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
+    def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
         assert(isinstance(parsed_news, ParsedNews))
 
         super(NetworkSampleFormatter, self)._fill_row_core(
             row=row,
-            opinion_provider=opinion_provider,
             linked_wrap=linked_wrap,
             index_in_linked=index_in_linked,
             etalon_label=etalon_label,

@@ -3,7 +3,6 @@ from collections import OrderedDict
 
 import numpy as np
 
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.embeddings.base import Embedding
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.data_type import DataType
@@ -14,7 +13,6 @@ from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormat
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
@@ -33,7 +31,7 @@ class NetworkInputEncoder(object):
     @staticmethod
     def to_tsv_with_embedding_and_vocabulary(
             opin_ops, doc_ops, exp_data, exp_io, data_type, term_embedding_pairs,
-            parsed_news_collection, terms_per_context, balance):
+            iter_parsed_news_func, terms_per_context, balance):
         """
         Performs encodding for all the data_types supported by experiment.
         """
@@ -43,9 +41,9 @@ class NetworkInputEncoder(object):
         assert(isinstance(exp_data, NetworkSerializationData))
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(term_embedding_pairs, OrderedDict))
-        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
+        assert(callable(iter_parsed_news_func))
 
         predefined_embedding = exp_data.WordEmbedding
         predefined_embedding.set_stemmer(exp_data.Stemmer)
@@ -63,8 +61,6 @@ class NetworkInputEncoder(object):
                 term=pair[0],
                 emb_vector=pair[1]))
 
-        text_opinion_helper = TextOpinionHelper(lambda news_id: parsed_news_collection.get_by_news_id(news_id))
-
         # Encoding input
         BaseInputEncoder.to_tsv(
             sample_filepath=exp_io.get_input_sample_filepath(data_type=data_type),
@@ -74,9 +70,8 @@ class NetworkInputEncoder(object):
                 doc_ops=doc_ops,
                 opin_ops=opin_ops,
                 data_type=data_type,
-                iter_news_ids=parsed_news_collection.iter_news_ids(),
-                terms_per_context=terms_per_context,
-                text_opinion_helper=text_opinion_helper),
+                parsed_news_it_func=iter_parsed_news_func,
+                terms_per_context=terms_per_context),
             sample_formatter=NetworkSampleFormatter(
                 data_type=data_type,
                 label_provider=MultipleLabelProvider(label_scaler=exp_data.LabelsScaler),

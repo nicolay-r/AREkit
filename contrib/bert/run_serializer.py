@@ -1,4 +1,3 @@
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.formats.base import BaseExperiment
@@ -6,7 +5,6 @@ from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
-from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.contrib.bert.samplers.factory import create_bert_sample_formatter
 
 
@@ -43,15 +41,6 @@ class BertExperimentInputSerializer(ExperimentEngine):
             balance=self.__balance_train_samples,
             synonyms=self._experiment.OpinionOperations.SynonymsCollection)
 
-        # Load parsed news collections in memory.
-        parsed_news_it = self._experiment.DocumentOperations.iter_parsed_news(
-            self._experiment.DocumentOperations.iter_news_indices(data_type))
-        parsed_news_collection = ParsedNewsCollection(parsed_news_it=parsed_news_it, notify=True)
-
-        # Compose text opinion helper.
-        # Taken from Neural networks formatter.
-        text_opinion_helper = TextOpinionHelper(lambda news_id: parsed_news_collection.get_by_news_id(news_id))
-
         # Perform data serialization to *.tsv format.
         BaseInputEncoder.to_tsv(
             sample_filepath=self._experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),
@@ -61,11 +50,16 @@ class BertExperimentInputSerializer(ExperimentEngine):
                 doc_ops=self._experiment.DocumentOperations,
                 opin_ops=self._experiment.OpinionOperations,
                 data_type=data_type,
-                iter_news_ids=parsed_news_collection.iter_news_ids(),
-                terms_per_context=self._experiment.DataIO.TermsPerContext,
-                text_opinion_helper=text_opinion_helper),
+                parsed_news_it_func=lambda: self.__iter_parsed_news(
+                    doc_ops=self._experiment.DocumentOperations,
+                    data_type=data_type),
+                terms_per_context=self._experiment.DataIO.TermsPerContext),
             sample_formatter=sample_formatter,
             write_sample_header=self.__write_sample_header)
+
+    @staticmethod
+    def __iter_parsed_news(doc_ops, data_type):
+        return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
 
     # endregion
 

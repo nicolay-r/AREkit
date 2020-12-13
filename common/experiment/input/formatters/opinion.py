@@ -1,11 +1,14 @@
 import logging
 from collections import OrderedDict
+
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.dataset.text_opinions.enums import EntityEndType
+from arekit.common.news.parsed.base import ParsedNews
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -31,25 +34,26 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
         return dtypes_list
 
     @staticmethod
-    def __create_opinion_row(opinion_provider, linked_wrapper):
+    def __create_opinion_row(parsed_news, linked_wrapper):
         """
         row format: [id, src, target, label]
         """
-        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(linked_wrapper, LinkedTextOpinionsWrapper))
 
         row = OrderedDict()
 
-        src_value = opinion_provider.get_entity_value(
+        src_value = TextOpinionHelper.extract_entity_value(
+            parsed_news=parsed_news,
             text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Source)
 
-        target_value = opinion_provider.get_entity_value(
+        target_value = TextOpinionHelper.extract_entity_value(
+            parsed_news=parsed_news,
             text_opinion=linked_wrapper.First,
             end_type=EntityEndType.Target)
 
         row[const.ID] = MultipleIDProvider.create_opinion_id(
-            opinion_provider=opinion_provider,
             linked_opinions=linked_wrapper,
             index_in_linked=0)
 
@@ -68,14 +72,12 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(balance=False,
                                                                     supported_labels=None)
 
-        for linked_wrapper in linked_iter:
+        for parsed_news, linked_wrapper in linked_iter:
             if idle_mode:
                 yield None
             else:
-                yield BaseOpinionsFormatter.__create_opinion_row(
-                    opinion_provider=opinion_provider,
-                    linked_wrapper=linked_wrapper)
-
+                yield BaseOpinionsFormatter.__create_opinion_row(parsed_news=parsed_news,
+                                                                 linked_wrapper=linked_wrapper)
 
     # endregion
 

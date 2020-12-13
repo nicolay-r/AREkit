@@ -5,40 +5,29 @@ from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.linked.data import LinkedDataWrapper
-from arekit.common.linked.text_opinions.collection import LinkedTextOpinionCollection
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.sample import InputSampleBase
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 
 # region private methods
 
-def __iter_linked_wraps(doc_ops, opin_ops, data_type, iter_doc_ids):
-    assert(isinstance(doc_ops, DocumentOperations))
-    assert(isinstance(opin_ops, OpinionOperations))
+def __iter_linked_text_opinion_lists(news, opin_ops, data_type, filter_text_opinion_func):
+    assert(isinstance(news, News))
+    assert(callable(filter_text_opinion_func))
 
-    for doc_id in iter_doc_ids:
-
-        # TODO. Use iter_parsed_news
-        news = doc_ops.read_news(doc_id=doc_id)
-        assert(isinstance(news, News))
-
-        for opinion in opin_ops.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type):
-            yield news.extract_linked_text_opinions(opinion)
-
+    for opinion in opin_ops.iter_opinions_for_extraction(doc_id=news.ID, data_type=data_type):
+        linked_text_opinions = news.extract_linked_text_opinions(opinion)
+        assert(linked_text_opinions, LinkedTextOpinionsWrapper)
+        yield filter(filter_text_opinion_func, linked_text_opinions)
 
 # endregions
 
 
-def extract_text_opinions(doc_ops,
-                          opin_ops,
-                          data_type,
-                          iter_doc_ids,
-                          text_opinion_helper,
-                          terms_per_context):
+def iter_linked_text_opins(doc_ops, opin_ops, data_type, parsed_news_it, terms_per_context):
     """
     Extracting text-level opinions based on doc-level opinions in documents,
     obtained by information in experiment.
@@ -49,27 +38,29 @@ def extract_text_opinions(doc_ops,
     assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(data_type, DataType))
-    assert(isinstance(terms_per_context, int))
-    assert(isinstance(iter_doc_ids, collections.Iterable))
-    assert(isinstance(text_opinion_helper, TextOpinionHelper))
-    assert(terms_per_context > 0)
+    assert(isinstance(parsed_news_it, collections.Iterable))
 
-    linked_text_opinions = LinkedTextOpinionCollection()
+    curr_id = 0
 
-    wraps_iter = __iter_linked_wraps(doc_ops=doc_ops,
-                                     opin_ops=opin_ops,
-                                     data_type=data_type,
-                                     iter_doc_ids=iter_doc_ids)
+    for parsed_news in parsed_news_it:
 
-    for linked_wrap in wraps_iter:
-        linked_text_opinions.try_add_text_opinions(
-            text_opinions_iter=linked_wrap,
-            check_opinion_correctness=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
+        linked_text_opinion_lists = __iter_linked_text_opinion_lists(
+            news=doc_ops.read_news(doc_id=parsed_news.RelatedNewsID),
+            data_type=data_type,
+            opin_ops=opin_ops,
+            filter_text_opinion_func=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
+                parsed_news=parsed_news,
                 text_opinion=text_opinion,
-                text_opinion_helper=text_opinion_helper,
                 window_size=terms_per_context))
 
-    return linked_text_opinions
+        for linked_text_opinion_list in linked_text_opinion_lists:
+
+            # Assign IDs.
+            for text_opinion in linked_text_opinion_list:
+                text_opinion.set_text_opinion_id(curr_id)
+                curr_id += 1
+
+            yield parsed_news, LinkedTextOpinionsWrapper(linked_text_opinion_list)
 
 
 def fill_opinion_collection(collection, linked_data_iter, labels_helper, to_opinion_func, label_calc_mode):

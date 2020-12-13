@@ -1,4 +1,3 @@
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 
 
@@ -18,19 +17,21 @@ class BaseIDProvider(object):
     # region 'create' methods
 
     @staticmethod
-    def create_opinion_id(opinion_provider, linked_opinions, index_in_linked):
-        assert(isinstance(opinion_provider, OpinionProvider))
+    def create_opinion_id(linked_opinions, index_in_linked):
         assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
 
         template = u''.join([BaseIDProvider.OPINION,
                              BaseIDProvider.INDEX])
 
-        return template.format(linked_opinions.First.TextOpinionID,
+        text_opinion_id = linked_opinions.First.TextOpinionID
+        assert(isinstance(text_opinion_id, int))
+
+        return template.format(text_opinion_id,
                                index_in_linked)
 
     @staticmethod
-    def create_sample_id(opinion_provider, linked_opinions, index_in_linked, label_scaler):
+    def create_sample_id(linked_opinions, index_in_linked, label_scaler):
         raise NotImplementedError()
 
     @staticmethod

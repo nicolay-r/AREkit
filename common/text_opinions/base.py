@@ -64,9 +64,10 @@ class TextOpinion(object):
 
     # region public methods
 
-    def set_text_opinion_id(self, relation_id):
-        assert(isinstance(relation_id, int))
-        self.__text_opinion_id = relation_id
+    def set_text_opinion_id(self, text_opinion_id):
+        assert(self.__text_opinion_id is None)
+        assert(isinstance(text_opinion_id, int))
+        self.__text_opinion_id = text_opinion_id
 
     def set_label(self, label):
         assert(isinstance(label, Label))

@@ -1,5 +1,8 @@
 import logging
 from collections import OrderedDict
+
+from arekit.common.dataset.text_opinions.enums import EntityEndType
+from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.common.experiment import const
@@ -98,14 +101,13 @@ class BaseSampleFormatter(BaseRowsFormatter):
     def _iter_sentence_terms(parsed_news, sentence_ind):
         return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
 
-    def _fill_row_core(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label,
+    def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
 
         def __assign_value(column, value):
             row[column] = value
 
         row[const.ID] = self.__row_ids_provider.create_sample_id(
-            opinion_provider=opinion_provider,
             linked_opinions=linked_wrap,
             index_in_linked=index_in_linked,
             label_scaler=self._label_provider.LabelScaler)
@@ -129,7 +131,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         row[const.S_IND] = s_ind
         row[const.T_IND] = t_ind
 
-    def __create_row(self, row, opinion_provider, linked_wrap, index_in_linked, etalon_label, idle_mode):
+    def __create_row(self, row, parsed_news, linked_wrap, index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -138,7 +140,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
             row with key values
         """
         assert(isinstance(row, OrderedDict))
-        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
@@ -149,15 +151,17 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         text_opinion = linked_wrap[index_in_linked]
 
-        parsed_news, sentence_ind = opinion_provider.get_opinion_location(text_opinion)
         s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
 
         row.clear()
 
         self._fill_row_core(row=row,
                             parsed_news=parsed_news,
-                            sentence_ind=sentence_ind,
-                            opinion_provider=opinion_provider,
+                            sentence_ind=TextOpinionHelper.extract_entity_position(
+                                parsed_news=parsed_news,
+                                text_opinion=text_opinion,
+                                end_type=EntityEndType.Source,
+                                position_type=TermPositionTypes.SentenceIndex),
                             linked_wrap=linked_wrap,
                             index_in_linked=index_in_linked,
                             etalon_label=etalon_label,
@@ -165,10 +169,11 @@ class BaseSampleFormatter(BaseRowsFormatter):
                             t_ind=t_ind)
         return row
 
-    def __provide_rows(self, row_dict, opinion_provider, linked_wrap, index_in_linked, idle_mode):
+    def __provide_rows(self, row_dict, parsed_news, linked_wrap, index_in_linked, idle_mode):
         """
         Providing Rows depending on row_id_formatter type
         """
+        assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(row_dict, OrderedDict))
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
@@ -179,7 +184,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
             """
             for label in self._label_provider.SupportedLabels:
                 yield self.__create_row(row=row_dict,
-                                        opinion_provider=opinion_provider,
+                                        parsed_news=parsed_news,
                                         linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
                                         index_in_linked=index_in_linked,
                                         etalon_label=origin.Sentiment,
@@ -187,7 +192,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         if isinstance(self.__row_ids_provider, MultipleIDProvider):
             yield self.__create_row(row=row_dict,
-                                    opinion_provider=opinion_provider,
+                                    parsed_news=parsed_news,
                                     linked_wrap=linked_wrap,
                                     index_in_linked=index_in_linked,
                                     etalon_label=origin.Sentiment,
@@ -218,13 +223,13 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         row_dict = OrderedDict()
 
-        for linked_wrap in linked_iter:
+        for parsed_news, linked_wrap in linked_iter:
 
             for i in range(len(linked_wrap)):
 
                 rows_it = self.__provide_rows(
+                    parsed_news=parsed_news,
                     row_dict=row_dict,
-                    opinion_provider=opinion_provider,
                     linked_wrap=linked_wrap,
                     index_in_linked=i,
                     idle_mode=idle_mode)

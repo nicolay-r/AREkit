@@ -1,4 +1,3 @@
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
@@ -12,16 +11,13 @@ class BinaryIDProvider(BaseIDProvider):
     LABEL = u'l{}' + BaseIDProvider.SEPARATOR
 
     @staticmethod
-    def create_sample_id(opinion_provider, linked_opinions, index_in_linked, label_scaler):
-        assert(isinstance(opinion_provider, OpinionProvider))
+    def create_sample_id(linked_opinions, index_in_linked, label_scaler):
         assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
         assert(isinstance(label_scaler, BaseLabelScaler))
 
-        o_id = BaseIDProvider.create_opinion_id(
-            opinion_provider=opinion_provider,
-            linked_opinions=linked_opinions,
-            index_in_linked=index_in_linked)
+        o_id = BaseIDProvider.create_opinion_id(linked_opinions=linked_opinions,
+                                                index_in_linked=index_in_linked)
 
         template = u''.join([u"{}", BinaryIDProvider.LABEL])
 

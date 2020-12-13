@@ -6,7 +6,7 @@ import pandas as pd
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.common.utils import progress_bar_defined
+from arekit.common.utils import progress_bar_defined, progress_bar_iter
 
 logger = logging.getLogger(__name__)
 
@@ -56,9 +56,10 @@ class BaseRowsFormatter(object):
     def format(self, opinion_provider):
         assert(isinstance(opinion_provider, OpinionProvider))
 
-        logger.info(u"Calculating rows count ... ")
-        rows_count = sum(1 for _ in self._iter_by_rows(opinion_provider, idle_mode=True))
-        logger.info(u"Completed!")
+        logged_rows_it = progress_bar_iter(self._iter_by_rows(opinion_provider, idle_mode=True),
+                                           desc=u"Calculating rows count",
+                                           unit=u"rows")
+        rows_count = sum(1 for _ in logged_rows_it)
 
         logger.info(u"Filling with blank rows: {}".format(rows_count))
         self.__fill_with_blank_rows(rows_count)
