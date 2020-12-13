@@ -217,13 +217,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(idle_mode, bool))
 
-        linked_iter = opinion_provider.iter_linked_opinion_wrappers(
-            balance=self.__balance,
-            supported_labels=self._label_provider.SupportedLabels)
-
         row_dict = OrderedDict()
 
-        for parsed_news, linked_wrap in linked_iter:
+        for parsed_news, linked_wrap in opinion_provider.iter_linked_opinion_wrappers():
 
             for i in range(len(linked_wrap)):
 

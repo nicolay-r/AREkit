@@ -69,10 +69,7 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(idle_mode, bool))
 
-        linked_iter = opinion_provider.iter_linked_opinion_wrappers(balance=False,
-                                                                    supported_labels=None)
-
-        for parsed_news, linked_wrapper in linked_iter:
+        for parsed_news, linked_wrapper in opinion_provider.iter_linked_opinion_wrappers():
             if idle_mode:
                 yield None
             else:
