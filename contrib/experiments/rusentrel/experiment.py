@@ -7,7 +7,7 @@ from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOper
 from arekit.contrib.experiments.rusentrel.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
+from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +22,7 @@ class RuSentRelExperiment(BaseExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, folding_type):
+    def __init__(self, exp_data, experiment_io_type, version, folding_type, extra_name_suffix):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
@@ -31,8 +31,8 @@ class RuSentRelExperiment(BaseExperiment):
         experiment_io = experiment_io_type(self)
 
         logger.info("Read synonyms collection ...")
-        synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=exp_data.Stemmer,
-                                                               version=version)
+        synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=exp_data.Stemmer,
+                                                                     version=version)
 
         logger.info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
@@ -50,16 +50,12 @@ class RuSentRelExperiment(BaseExperiment):
                                               version=version,
                                               get_synonyms_func=lambda: synonyms)
 
+        exp_name= u"rsr-{version}-{format}".format(version=version.value,
+                                                   format=doc_ops.DataFolding.Name)
+
         super(RuSentRelExperiment, self).__init__(exp_data=exp_data,
                                                   experiment_io=experiment_io,
                                                   doc_ops=doc_ops,
-                                                  opin_ops=opin_ops)
-
-        # Setup experiment name.
-        self.__name = u"rsr-{version}-{format}".format(version=version.value,
-                                                       format=doc_ops.DataFolding.Name)
-
-    @property
-    def Name(self):
-        return self.__name
-
+                                                  opin_ops=opin_ops,
+                                                  name=exp_name,
+                                                  extra_name_suffix=extra_name_suffix)

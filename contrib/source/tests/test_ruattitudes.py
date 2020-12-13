@@ -8,8 +8,9 @@ sys.path.append('../../../../')
 
 from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
+from arekit.common.utils import progress_bar_iter
 
-from arekit.contrib.source.ruattitudes.synonyms import RuAttitudesSynonymsCollection
+from arekit.contrib.source.ruattitudes.synonyms_helper import RuAttitudesSynonymsCollectionHelper
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -33,7 +34,8 @@ class TestRuAttitudes(unittest.TestCase):
     def test_indices(self):
         ids = set()
         for news in tqdm(RuAttitudesCollection.iter_news(version=self.ra_version,
-                                                         get_news_index_func=lambda: len(ids))):
+                                                         get_news_index_func=lambda _: len(ids),
+                                                         return_inds_only=False)):
             assert(isinstance(news, RuAttitudesNews))
             assert(news.ID not in ids)
             ids.add(news.ID)
@@ -43,8 +45,8 @@ class TestRuAttitudes(unittest.TestCase):
         stemmer = MystemWrapper()
 
         # Synonyms collection reading test
-        return RuAttitudesSynonymsCollection.load_collection(stemmer=stemmer,
-                                                             version=TestRuAttitudes.ra_version)
+        return RuAttitudesSynonymsCollectionHelper.load_collection(stemmer=stemmer,
+                                                                   version=TestRuAttitudes.ra_version)
 
     def test_parsing(self):
         # Initializing stemmer
@@ -57,7 +59,8 @@ class TestRuAttitudes(unittest.TestCase):
         news_readed = 0
 
         news_it = RuAttitudesCollection.iter_news(version=self.ra_version,
-                                                  get_news_index_func=lambda: news_readed)
+                                                  get_news_index_func=lambda _: news_readed,
+                                                  return_inds_only=False)
 
         for news in tqdm(news_it):
 
@@ -80,12 +83,25 @@ class TestRuAttitudes(unittest.TestCase):
 
             news_readed += 1
 
+    def test_iter_news_inds(self):
+        # iterating through collection
+        news_ids_it = RuAttitudesCollection.iter_news(version=self.ra_version,
+                                                      get_news_index_func=lambda ind: ind + 1,
+                                                      return_inds_only=True)
+
+        it = progress_bar_iter(iterable=news_ids_it,
+                               desc=u"Extracting document ids",
+                               unit=u"docs")
+
+        print u"Total documents count: {}".format(max(it))
+
     def test_reading(self):
 
         # iterating through collection
         news_readed = 0
         news_it = RuAttitudesCollection.iter_news(version=self.ra_version,
-                                                  get_news_index_func=lambda: news_readed)
+                                                  get_news_index_func=lambda _: news_readed,
+                                                  return_inds_only=False)
         for news in news_it:
             assert(isinstance(news, RuAttitudesNews))
 

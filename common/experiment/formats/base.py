@@ -15,21 +15,29 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    def __init__(self, exp_data, experiment_io, opin_ops, doc_ops):
+    def __init__(self, exp_data, experiment_io, opin_ops, doc_ops, name, extra_name_suffix):
         assert(isinstance(exp_data, DataIO))
         assert(isinstance(experiment_io, BaseIOUtils))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(name, unicode))
+        assert(isinstance(extra_name_suffix, unicode))
         self.__experiment_data = exp_data
         self.__experiment_io = experiment_io
         self.__opin_operations = opin_ops
         self.__doc_operations = doc_ops
 
+        # Suffix allows to provide additional experiment setups
+        # In a form of a string, which might be behind the original
+        # experiment implementation, such as:
+        # input samples balancing usage, ditances for samples filtration, etc..
+        self.__name = u"{name}-{suffix}".format(name=name, suffix=extra_name_suffix)
+
     # region Properties
 
     @property
     def Name(self):
-        raise NotImplementedError()
+        return self.__name
 
     @property
     def DataIO(self):

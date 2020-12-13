@@ -8,7 +8,7 @@ class RuAttitudesDocumentOperations(DocumentOperations):
 
     def __init__(self, exp_data, folding, ru_attitudes):
         assert(isinstance(exp_data, DataIO))
-        assert(isinstance(ru_attitudes, dict) or ru_attitudes is None)
+        assert(isinstance(ru_attitudes, dict))
         super(RuAttitudesDocumentOperations, self).__init__(folding)
         self.__exp_data = exp_data
         self.__ru_attitudes = ru_attitudes

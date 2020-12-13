@@ -10,3 +10,7 @@ class NetworkSerializationData(SerializationData):
     @property
     def WordEmbedding(self):
         raise NotImplementedError()
+
+    @property
+    def PosTagger(self):
+        raise NotImplementedError()

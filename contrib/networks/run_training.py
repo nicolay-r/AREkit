@@ -48,7 +48,8 @@ class NetworksTrainingEngine(ExperimentEngine):
         handled_data = HandledData.create_empty()
 
         if not HandledData.check_files_existed(self._experiment):
-            raise Exception(u"Data has not been initialized/serialized: `{}`".format(self._experiment.Name))
+            exp_folder = self._experiment.ExperimentIO.get_experiment_folder()
+            raise Exception(u"Data has not been initialized/serialized: `{}`".format(exp_folder))
 
         # Reading embedding.
         embedding_filepath = self._experiment.ExperimentIO.get_loading_embedding_filepath()
@@ -113,5 +114,8 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+    def _after_running(self):
+        self._experiment.DataIO.Callback.on_experiment_finished()
 
     # endregion

@@ -37,6 +37,11 @@ class DocumentOperations(object):
         """ Provides a news indices, related to a particular `data_type`
         """
         data_types_splits = self.__folding.fold_doc_ids_set()
+
+        if data_type not in data_types_splits:
+            return
+            yield
+
         for doc_id in data_types_splits[data_type]:
             yield doc_id
 

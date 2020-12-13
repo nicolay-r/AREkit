@@ -9,7 +9,7 @@ from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesPars
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
+from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.parser import TextParser
 
@@ -18,7 +18,8 @@ class TestPartOfSpeech(unittest.TestCase):
 
     def test_ruattitudes_news_text_parsing(self):
         news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.Debug,
-                                                  get_news_index_func=lambda: 0)
+                                                  get_news_index_func=lambda _: 0,
+                                                  return_inds_only=False)
 
         for news in news_it:
 
@@ -35,7 +36,7 @@ class TestPartOfSpeech(unittest.TestCase):
 
     def test_rusentrel_news_text_parsing(self):
         stemmer = MystemWrapper()
-        synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer)
+        synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=stemmer)
         news = RuSentRelNews.read_document(doc_id=1,
                                            synonyms=synonyms,
                                            version=RuSentRelVersions.V11)

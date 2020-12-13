@@ -8,7 +8,6 @@ from arekit.common.experiment.input.providers.row_ids.multiple import MultipleID
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
-from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.common.utils import check_files_existance
 
 from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
@@ -110,27 +109,24 @@ class HandledData(object):
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
 
-        term_embedding_pairs = []
+        term_embedding_pairs = collections.OrderedDict()
 
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
             # Create annotated collection per each type.
             experiment.DataIO.NeutralAnnotator.serialize_missed_collections(data_type=data_type)
 
-            # Load parsed news collections in memory.
-            parsed_news_it = experiment.DocumentOperations.iter_parsed_news(
-                experiment.DocumentOperations.iter_news_indices(data_type))
-            parsed_news_collection = ParsedNewsCollection(parsed_news_it=parsed_news_it, notify=True)
-
             # Composing input.
-            term_embedding_pairs = NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
+            NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
                 exp_io=experiment.ExperimentIO,
                 exp_data=experiment.DataIO,
                 opin_ops=experiment.OpinionOperations,
                 doc_ops=experiment.DocumentOperations,
                 data_type=data_type,
                 term_embedding_pairs=term_embedding_pairs,
-                parsed_news_collection=parsed_news_collection,
+                iter_parsed_news_func=lambda: HandledData.__iter_parsed_news_func(
+                    doc_ops=experiment.DocumentOperations,
+                    data_type=data_type),
                 terms_per_context=terms_per_context,
                 balance=balance)
 
@@ -138,6 +134,11 @@ class HandledData(object):
         NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
             experiment_io=experiment.ExperimentIO,
             term_embedding_pairs=term_embedding_pairs)
+
+    @staticmethod
+    def __iter_parsed_news_func(doc_ops, data_type):
+        assert(isinstance(doc_ops, DocumentOperations))
+        return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
 
     @staticmethod
     def __check_files_existed(data_types_iter, experiment_io):
@@ -195,7 +196,7 @@ class HandledData(object):
                 terms_per_context=terms_per_context,
                 frames_per_context=frames_per_context,
                 synonyms_per_context=synonyms_per_context,
-                pos_tagger=config.PosTagger))
+                pos_tags=row.PartOfSpeechTags))
 
         labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
 

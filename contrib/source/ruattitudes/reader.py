@@ -27,6 +27,31 @@ class RuAttitudesFormatReader(object):
     # region private methods
 
     @staticmethod
+    def iter_news_inds(input_file, get_news_index_func):
+        assert(callable(get_news_index_func))
+
+        title = None
+        local_news_ind = 0
+        has_sentences = False
+
+        for line in RuAttitudesFormatReader.__iter_lines(input_file):
+
+            if RuAttitudesFormatReader.__check_is_title(line):
+                # We use a placeholder, there is no need in actual value out there.
+                title = u"title"
+                has_sentences = True
+
+            if RuAttitudesFormatReader.__check_is_news_sep(line=line, title=title):
+                yield RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
+                                                                  local_index=local_news_ind)
+                local_news_ind += 1
+                title = None
+
+        if has_sentences:
+            yield RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
+                                                              local_index=local_news_ind)
+
+    @staticmethod
     def iter_news(input_file, get_news_index_func):
         assert(callable(get_news_index_func))
 
@@ -39,11 +64,11 @@ class RuAttitudesFormatReader(object):
         objects_list = []
         s_index = 0
         objects_in_prior_sentences_count = 0
+        local_news_ind = 0
 
         label_scaler = ThreeLabelScaler()
 
-        for line in input_file.readlines():
-            line = line.decode('utf-8')
+        for line in RuAttitudesFormatReader.__iter_lines(input_file):
 
             if RuAttitudesFormatReader.FILE_KEY in line:
                 pass
@@ -68,7 +93,7 @@ class RuAttitudesFormatReader(object):
             if RuAttitudesFormatReader.SINDEX_KEY in line:
                 s_index = RuAttitudesFormatReader.__parse_sentence_index(line)
 
-            if RuAttitudesFormatReader.TITLE_KEY in line:
+            if RuAttitudesFormatReader.__check_is_title(line):
                 title = RuAttitudesSentence(is_title=True,
                                             text=RuAttitudesFormatReader.__parse_sentence(line, True),
                                             sentence_opins=opinions_list,
@@ -91,9 +116,12 @@ class RuAttitudesFormatReader(object):
                 assert(text_terms_count == t_len or text_terms_count is None)
                 reset = True
 
-            if RuAttitudesFormatReader.NEWS_SEP_KEY in line and title is not None:
+            if RuAttitudesFormatReader.__check_is_news_sep(line=line, title=title):
+                news_index = RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
+                                                                         local_index=local_news_ind)
                 yield RuAttitudesNews(sentences=sentences,
-                                      news_index=get_news_index_func())
+                                      news_index=news_index)
+                local_news_ind += 1
                 sentences = []
                 reset = True
 
@@ -107,11 +135,31 @@ class RuAttitudesFormatReader(object):
                 reset = False
 
         if len(sentences) > 0:
+            news_index = RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
+                                                                     local_index=local_news_ind)
             yield RuAttitudesNews(sentences=sentences,
-                                  news_index=get_news_index_func())
+                                  news_index=news_index)
             sentences = []
 
         assert(len(sentences) == 0)
+
+    @staticmethod
+    def __assign_news_index(news_index_func, local_index):
+        assert(callable(news_index_func))
+        return news_index_func(local_index)
+
+    @staticmethod
+    def __check_is_news_sep(line, title):
+        return RuAttitudesFormatReader.NEWS_SEP_KEY in line and title is not None
+
+    @staticmethod
+    def __check_is_title(line):
+        return RuAttitudesFormatReader.TITLE_KEY in line
+
+    @staticmethod
+    def __iter_lines(input_file):
+        for line in input_file.readlines():
+            yield line.decode('utf-8')
 
     @staticmethod
     def __calculate_terms_in_line(line):

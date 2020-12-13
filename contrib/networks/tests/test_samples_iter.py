@@ -93,12 +93,12 @@ class TestSamplesIteration(unittest.TestCase):
                 obj_ind=int(row.ObjectIndex),
                 words_vocab=words_vocab,
                 is_external_vocab=True,
-                pos_tagger=config.PosTagger,
                 terms_per_context=config.TermsPerContext,
                 frames_per_context=config.FramesPerContext,
                 synonyms_per_context=config.SynonymsPerContext,
                 frame_inds=row.TextFrameVariantIndices,
                 frame_sent_roles=row.TextFrameVariantRoles,
+                pos_tags=row.PartOfSpeechTags,
                 syn_subj_inds=row.SynonymSubjectInds,
                 syn_obj_inds=row.SynonymObjectInds)
 
@@ -120,6 +120,7 @@ class TestSamplesIteration(unittest.TestCase):
                 print u"syn_obj: {}".format(row.SynonymObjectInds)
                 print u"syn_subj: {}".format(row.SynonymSubjectInds)
                 print u"terms:".format(row.Terms)
+                print u"pos_tags:".format(row.PartOfSpeechTags)
 
                 print self.__terms_to_text_line(terms=row.Terms, frame_inds_set=set(row.TextFrameVariantIndices))
 

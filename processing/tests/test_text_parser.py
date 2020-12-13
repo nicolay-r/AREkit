@@ -1,6 +1,7 @@
 import logging
 import unittest
 
+from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.tests.text.debug_text import debug_show_news_terms
 from arekit.processing.text.parser import TextParser
@@ -10,7 +11,6 @@ from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollection
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 
@@ -38,7 +38,7 @@ class TestTextParser(unittest.TestCase):
                                             frame_variants_collection=frame_variants)
 
         # Reading synonyms collection.
-        synonyms = RuSentRelSynonymsCollection.load_collection(stemmer=stemmer)
+        synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=stemmer)
 
         version = RuSentRelVersions.V11
         for doc_id in RuSentRelIOUtils.iter_collection_indices(version):

@@ -11,15 +11,14 @@ class NetworkSingleTextProvider(BaseSingleTextProvider):
         assert(isinstance(text_terms_mapper, StringWithEmbeddingNetworkTermMapping))
         assert(callable(pair_handling_func))
         super(NetworkSingleTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
-
         self.__write_embedding_pair_func = pair_handling_func
 
-    def _compose_text(self, sentence_terms):
-        terms = []
-        for pair in self._mapper.iter_mapped(sentence_terms):
-            term, embedding = pair
-            self.__write_embedding_pair_func(pair)
-            terms.append(term)
+    def _mapped_data_to_str(self, m_data):
+        # In this case, m_term consist of
+        # 1. Term;
+        # 2. Embedding.
+        term, _ = m_data
+        return term
 
-        return self.TERMS_SEPARATOR.join(terms)
-
+    def _handle_mapped_data(self, m_data):
+        self.__write_embedding_pair_func(m_data)

@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)
@@ -40,25 +41,25 @@ class BaseNeutralAnnotator(object):
     # region private methods
 
     def __iter_neutral_collections(self, data_type, filter_func):
-        docs_to_annot = list(filter(filter_func, self._DocOps.iter_doc_ids_to_neutrally_annotate()))
+        docs_to_annot_list = filter(filter_func,
+                                    self._DocOps.iter_doc_ids_to_neutrally_annotate())
 
-        if len(docs_to_annot) == 0:
+        if len(docs_to_annot_list) == 0:
             logger.info("[{}]: OK!".format(data_type))
             return
 
-        self._before_neutral_collections_iter(docs_to_annot)
+        logged_parsed_news_iter = progress_bar_iter(
+            iterable=self._DocOps.iter_parsed_news(docs_to_annot_list),
+            desc="Creating neutral-examples [{}]".format(data_type))
 
-        for doc_id in progress_bar_iter(docs_to_annot, desc="Creating neutral-examples [{}]".format(data_type)):
-            yield doc_id, self._create_collection_core(doc_id=doc_id, data_type=data_type)
+        for parsed_news in logged_parsed_news_iter:
+            assert(isinstance(parsed_news, ParsedNews))
+            yield parsed_news.RelatedNewsID, \
+                  self._create_collection_core(parsed_news=parsed_news, data_type=data_type)
 
     # endregion
 
-    def _before_neutral_collections_iter(self, doc_ids_to_annot):
-        """ Might be and actually for annot algorith initialization process.
-        """
-        pass
-
-    def _create_collection_core(self, doc_id, data_type):
+    def _create_collection_core(self, parsed_news, data_type):
         raise NotImplementedError
 
     # region public methods

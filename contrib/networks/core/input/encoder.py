@@ -1,8 +1,8 @@
 import logging
+from collections import OrderedDict
 
 import numpy as np
 
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.embeddings.base import Embedding
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.data_type import DataType
@@ -13,8 +13,8 @@ from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormat
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.common.news.parsed.collection import ParsedNewsCollection
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
+from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.contrib.networks.core.input.formatters.sample import NetworkSampleFormatter
@@ -31,7 +31,7 @@ class NetworkInputEncoder(object):
     @staticmethod
     def to_tsv_with_embedding_and_vocabulary(
             opin_ops, doc_ops, exp_data, exp_io, data_type, term_embedding_pairs,
-            parsed_news_collection, terms_per_context, balance):
+            iter_parsed_news_func, terms_per_context, balance):
         """
         Performs encodding for all the data_types supported by experiment.
         """
@@ -40,10 +40,10 @@ class NetworkInputEncoder(object):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(exp_data, NetworkSerializationData))
         assert(isinstance(exp_io, BaseIOUtils))
-        assert(isinstance(term_embedding_pairs, list))
-        assert(isinstance(parsed_news_collection, ParsedNewsCollection))
+        assert(isinstance(term_embedding_pairs, OrderedDict))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
+        assert(callable(iter_parsed_news_func))
 
         predefined_embedding = exp_data.WordEmbedding
         predefined_embedding.set_stemmer(exp_data.Stemmer)
@@ -56,9 +56,10 @@ class NetworkInputEncoder(object):
 
         text_provider = NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,
-            pair_handling_func=lambda pair: term_embedding_pairs.append(pair))
-
-        text_opinion_helper = TextOpinionHelper(lambda news_id: parsed_news_collection.get_by_news_id(news_id))
+            pair_handling_func=lambda pair: NetworkInputEncoder.__add_term_embedding(
+                dict_data=term_embedding_pairs,
+                term=pair[0],
+                emb_vector=pair[1]))
 
         # Encoding input
         BaseInputEncoder.to_tsv(
@@ -69,28 +70,32 @@ class NetworkInputEncoder(object):
                 doc_ops=doc_ops,
                 opin_ops=opin_ops,
                 data_type=data_type,
-                iter_news_ids=parsed_news_collection.iter_news_ids(),
-                terms_per_context=terms_per_context,
-                text_opinion_helper=text_opinion_helper),
+                parsed_news_it_func=iter_parsed_news_func,
+                terms_per_context=terms_per_context),
             sample_formatter=NetworkSampleFormatter(
                 data_type=data_type,
                 label_provider=MultipleLabelProvider(label_scaler=exp_data.LabelsScaler),
                 text_provider=text_provider,
                 synonyms_collection=opin_ops.SynonymsCollection,
                 frames_collection=exp_data.FramesCollection,
-                balance=balance and data_type == DataType.Train),
+                balance=balance and data_type == DataType.Train,
+                pos_terms_mapper=PosTermsMapper(exp_data.PosTagger)),
             write_sample_header=True)
 
-        return term_embedding_pairs
+    @staticmethod
+    def __add_term_embedding(dict_data, term, emb_vector):
+        if term in dict_data:
+            return
+        dict_data[term] = emb_vector
 
     @staticmethod
     def compose_and_save_term_embeddings_and_vocabulary(experiment_io, term_embedding_pairs):
         assert(isinstance(experiment_io, NetworkIOUtils))
-        assert(isinstance(term_embedding_pairs, list))
+        assert(isinstance(term_embedding_pairs, OrderedDict))
 
         # Save embedding information additionally.
-        term_embedding = Embedding.from_list_of_word_embedding_pairs(
-            word_embedding_pairs=term_embedding_pairs)
+        term_embedding = Embedding.from_word_embedding_pairs_iter(
+            word_embedding_pairs=term_embedding_pairs.iteritems())
 
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
@@ -106,3 +111,6 @@ class NetworkInputEncoder(object):
         logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
                                                                          filepath=vocab_filepath))
         np.savez(vocab_filepath, vocab)
+
+        # Remove bindings from the local namespace
+        del embedding_matrix
