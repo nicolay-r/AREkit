@@ -27,12 +27,23 @@ class BaseRowsFormatter(object):
     # region protected methods
 
     def _get_columns_list_with_types(self):
-        dtypes_list = []
+        dtypes_list = list()
         dtypes_list.append((BaseRowsFormatter.ROW_ID, 'int32'))
         return dtypes_list
 
-    @staticmethod
-    def _iter_by_rows(opinion_provider, idle_mode):
+    def _iter_by_rows(self, opinion_provider, idle_mode):
+        assert(isinstance(opinion_provider, OpinionProvider))
+
+        for parsed_news, linked_wrapper in opinion_provider.iter_linked_opinion_wrappers():
+
+            rows_it = self._provide_rows(parsed_news=parsed_news,
+                                         linked_wrapper=linked_wrapper,
+                                         idle_mode=idle_mode)
+
+            for row in rows_it:
+                yield row
+
+    def _provide_rows(self, parsed_news, linked_wrapper, idle_mode):
         raise NotImplementedError()
 
     def _create_empty_df(self):
