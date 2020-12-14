@@ -103,18 +103,19 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
 
     opinions_source = exp_io.get_input_opinions_filepath(data_type=data_type)
 
+    cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
+
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
         output_filepath=result_filepath,
         opinions_reader=InputOpinionReader.from_tsv(opinions_source),
         labels_scaler=labels_scaler,
         opinion_operations=opin_ops,
+        keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         label_calculation_mode=LabelCalculationMode.AVERAGE,
         output=MulticlassOutput(labels_scaler),
         keep_news_ids_from_samples_reader=True,
         keep_ids_from_samples_reader=False)
-
-    cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
 
     # Save collection.
     save_opinion_collections(
@@ -122,7 +123,6 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         create_file_func=lambda doc_id: exp_io.create_result_opinion_collection_filepath(data_type=data_type,
                                                                                          doc_id=doc_id,
                                                                                          epoch_index=epoch_index),
-        keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         save_to_file_func=lambda filepath, collection: opin_fmt.save_to_file(collection=collection,
                                                                              filepath=filepath,
                                                                              labels_formatter=labels_formatter))
