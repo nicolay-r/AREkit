@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment import const
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
@@ -65,6 +66,7 @@ def evaluate_model(experiment, data_type, epoch_index, model,
     __convert_output_to_opinion_collections(
         exp_io=experiment.ExperimentIO,
         opin_ops=experiment.OpinionOperations,
+        doc_ops=experiment.DocumentOperations,
         labels_scaler=experiment.DataIO.LabelsScaler,
         opin_fmt=experiment.DataIO.OpinionFormatter,
         data_type=data_type,
@@ -87,10 +89,11 @@ def evaluate_model(experiment, data_type, epoch_index, model,
     return result
 
 
-def __convert_output_to_opinion_collections(exp_io, opin_ops, labels_scaler, opin_fmt,
+def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_fmt,
                                             result_filepath, data_type, epoch_index,
                                             labels_formatter):
     assert(isinstance(opin_ops, OpinionOperations))
+    assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(exp_io, NetworkIOUtils))
     assert(isinstance(opin_fmt, OpinionCollectionsFormatter))
@@ -100,12 +103,15 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, labels_scaler, opi
 
     opinions_source = exp_io.get_input_opinions_filepath(data_type=data_type)
 
+    cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
+
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
         output_filepath=result_filepath,
         opinions_reader=InputOpinionReader.from_tsv(opinions_source),
         labels_scaler=labels_scaler,
         opinion_operations=opin_ops,
+        keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         label_calculation_mode=LabelCalculationMode.AVERAGE,
         output=MulticlassOutput(labels_scaler),
         keep_news_ids_from_samples_reader=True,
