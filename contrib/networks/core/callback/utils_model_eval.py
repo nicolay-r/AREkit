@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment import const
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
@@ -63,6 +64,7 @@ def evaluate_model(experiment, data_type, epoch_index, model,
 
     # Convert output to result.
     __convert_output_to_opinion_collections(
+        doc_ops=experiment.DocumentOperations,
         exp_io=experiment.ExperimentIO,
         opin_ops=experiment.OpinionOperations,
         labels_scaler=experiment.DataIO.LabelsScaler,
@@ -87,10 +89,11 @@ def evaluate_model(experiment, data_type, epoch_index, model,
     return result
 
 
-def __convert_output_to_opinion_collections(exp_io, opin_ops, labels_scaler, opin_fmt,
+def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_fmt,
                                             result_filepath, data_type, epoch_index,
                                             labels_formatter):
     assert(isinstance(opin_ops, OpinionOperations))
+    assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(exp_io, NetworkIOUtils))
     assert(isinstance(opin_fmt, OpinionCollectionsFormatter))
@@ -111,12 +114,15 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, labels_scaler, opi
         keep_news_ids_from_samples_reader=True,
         keep_ids_from_samples_reader=False)
 
+    cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
+
     # Save collection.
     save_opinion_collections(
         opinion_collection_iter=__log_wrap_collections_conversion_iter(collections_iter),
         create_file_func=lambda doc_id: exp_io.create_result_opinion_collection_filepath(data_type=data_type,
                                                                                          doc_id=doc_id,
                                                                                          epoch_index=epoch_index),
+        keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         save_to_file_func=lambda filepath, collection: opin_fmt.save_to_file(collection=collection,
                                                                              filepath=filepath,
                                                                              labels_formatter=labels_formatter))
