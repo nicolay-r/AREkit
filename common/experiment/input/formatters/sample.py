@@ -213,7 +213,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         assert(isinstance(idle_mode, bool))
 
         linked_iter = opinion_provider.iter_linked_opinion_wrappers(
-            balance=self.__balance,
+            balance=False,
             supported_labels=self._label_provider.SupportedLabels)
 
         row_dict = OrderedDict()
