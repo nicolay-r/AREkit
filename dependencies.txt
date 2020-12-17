@@ -1,5 +1,5 @@
 pymystem3
 pandas==0.20.3
-gensim==0.13.4
+gensim==2.3.0
 scipy==0.18.1
 texterra==1.0.1
