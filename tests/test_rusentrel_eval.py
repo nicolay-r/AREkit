@@ -35,6 +35,9 @@ class ResultVersions(Enum):
     # results check.
     DSAttCNNFixedE40 = u"ds_att-cnn-fixed_e40.zip"
 
+    # Could not reproduce F1=0.40, only f1=0.37 in 0.20.5
+    PCNNLrecFixedE29 = u"pcnn-lrec-ds-e27-fixed.zip"
+
 
 class ZippedResultsIOUtils(ZipArchiveUtils):
 
@@ -122,6 +125,9 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         self.__test_core(ResultVersions.AttPCNNCV3e40i0)
         self.__test_core(ResultVersions.AttPCNNCV3e40i1)
         self.__test_core(ResultVersions.AttPCNNCV3e40i2)
+
+    def test_pcnn_lrec(self):
+        self.__test_core(ResultVersions.PCNNLrecFixedE29)
 
 
 if __name__ == '__main__':

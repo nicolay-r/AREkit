@@ -3,6 +3,7 @@ from arekit.common.embeddings.base import Embedding
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
+from arekit.common.experiment.input.term_to_group import term_to_group_func
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.core.input.embedding.custom import create_term_embedding
@@ -31,7 +32,8 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         super(StringWithEmbeddingNetworkTermMapping, self).__init__(
             entity_formatter=string_entities_formatter,
-            synonyms=synonyms)
+            term_to_group_func=lambda value: term_to_group_func(value=value,
+                                                                synonyms=synonyms))
 
         self.__predefined_embedding = predefined_embedding
         self.__string_emb_entity_formatter = string_emb_entity_formatter

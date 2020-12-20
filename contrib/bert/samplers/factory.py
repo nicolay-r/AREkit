@@ -1,4 +1,5 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
+from arekit.common.experiment.input.term_to_group import term_to_group_func
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.bert.label.str_rus_fmt import RussianThreeScaleRussianLabelsFormatter
 from arekit.contrib.bert.samplers.base import create_simple_sample_formatter
@@ -22,8 +23,11 @@ def create_bert_sample_formatter(data_type, formatter_type, label_scaler, balanc
     assert(isinstance(entity_formatter, StringEntitiesFormatter))
 
     l_formatter = RussianThreeScaleRussianLabelsFormatter()
-    text_terms_mapper = BertDefaultStringTextTermsMapper(entity_formatter=entity_formatter,
-                                                         synonyms=synonyms)
+    text_terms_mapper = BertDefaultStringTextTermsMapper(
+        entity_formatter=entity_formatter,
+        term_to_group_func=lambda value: term_to_group_func(
+            value=value,
+            synonyms=synonyms))
 
     if formatter_type == BertSampleFormatterTypes.CLASSIF_M:
         return create_simple_sample_formatter(data_type=data_type,
