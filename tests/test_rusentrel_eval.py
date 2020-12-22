@@ -39,6 +39,18 @@ class ResultVersions(Enum):
     PCNNLrecFixedE29 = u"pcnn-lrec-ds-e27-fixed.zip"
 
 
+# Expected F1-values for every result.
+f1_rusentrel_v11_results = {
+    ResultVersions.DSAttCNNFixedE40: 0.40848820278013587,
+    ResultVersions.AttPCNNCV3e40i0: 0.31908734912456854,
+    ResultVersions.AttPCNNCV3e40i1: 0.29308682656891705,
+    ResultVersions.AttPCNNCV3e40i2: 0.27847993499755,
+    ResultVersions.AttCNNFixed: 0.2992231753125483,
+    ResultVersions.AttPCNNFixed: 0.3476705309623523,
+    ResultVersions.PCNNLrecFixedE29: 0.3710003588082132
+}
+
+
 class ZippedResultsIOUtils(ZipArchiveUtils):
 
     @staticmethod
@@ -65,6 +77,9 @@ class TestRuSentRelEvaluation(unittest.TestCase):
 
     __display_cmp_table = False
     __rusentrel_version = RuSentRelVersions.V11
+
+    def __is_equal_results(self, v1, v2):
+        self.assert_(abs(v1 - v2) < 1e-10)
 
     def __test_core(self, res_version):
         assert(isinstance(res_version, ResultVersions))
@@ -111,6 +126,9 @@ class TestRuSentRelEvaluation(unittest.TestCase):
                 for doc_id, df_cmp_table in result.iter_dataframe_cmp_tables():
                     print u"{}:\t{}\n".format(doc_id, df_cmp_table)
             print "------------------------"
+
+        self.__is_equal_results(v1=result.get_result_by_metric(TwoClassEvalResult.C_F1),
+                                v2=f1_rusentrel_v11_results[res_version])
 
     def test_ann_cnn(self):
         self.__test_core(ResultVersions.AttCNNFixed)
