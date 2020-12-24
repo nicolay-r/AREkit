@@ -91,13 +91,12 @@ class DefaultNetworkConfig(object):
     def LayerRegularizer(self):
         return self.__default_regularizer
 
-    @property
-    def EmbeddingInitializer(self):
-        return tf.contrib.layers.xavier_initializer()
-
     # endregion
 
     # region public methods
+
+    def create_embedding_initializer(self):
+        return self._create_default_embedding_initializer()
 
     def modify_use_entity_types_in_embedding(self, value):
         assert(isinstance(value, bool))
@@ -256,6 +255,9 @@ class DefaultNetworkConfig(object):
         return self.__use_entity_types_as_context_feature
 
     # endregion
+
+    def _create_default_embedding_initializer(self):
+        return tf.contrib.layers.xavier_initializer()
 
     def _create_optimizer(self):
         return tf.train.AdadeltaOptimizer(learning_rate=self.__learning_rate,

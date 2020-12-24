@@ -308,11 +308,14 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
         for name, value in super(SingleInstanceNeuralNetwork, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
+        # TODO. This should be a part of the sample.
         yield u'x', self.__input[InputSample.I_X_INDS]
         yield u'obj_ind', self.__input[InputSample.I_OBJ_IND]
         yield u'subj_ind', self.__input[InputSample.I_SUBJ_IND]
         yield u'frame_inds', self.__input[InputSample.I_FRAME_INDS]
         yield u'frame_sent_role_inds', self.__input[InputSample.I_FRAME_SENT_ROLES]
+
+        # Provide base input paramaters.
         yield u'y_labels', self.Labels
         yield u'y_etalon_labels', self.__y
 
@@ -359,19 +362,19 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
                                       shape=self.__cfg.TermEmbeddingShape)
 
         self.__dist_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=self.__cfg.EmbeddingInitializer,
+                                          initializer=self.__cfg.create_embedding_initializer(),
                                           shape=[self.__cfg.TermsPerContext, self.__cfg.DistanceEmbeddingSize],
                                           trainable=True,
                                           name="dist_emb")
 
         self.__pos_emb = tf.get_variable(dtype=tf.float32,
-                                         initializer=self.__cfg.EmbeddingInitializer,
+                                         initializer=self.__cfg.create_embedding_initializer(),
                                          shape=[self.__cfg.PosCount, self.__cfg.PosEmbeddingSize],
                                          trainable=True,
                                          name="pos_emb")
 
         self.__sent_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=self.__cfg.EmbeddingInitializer,
+                                          initializer=self.__cfg.create_embedding_initializer(),
                                           shape=[3, self.__cfg.SentimentEmbeddingSize],
                                           trainable=True,
                                           name="sent_emb")
