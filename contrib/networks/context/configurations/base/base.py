@@ -22,11 +22,13 @@ class DefaultNetworkConfig(object):
     __bag_size = 1
     __learning_rate = 0.1
 
-    __default_weight_initializer = tf.random_normal_initializer(mean=0, stddev=1.0)
-    __default_bias_initializer = tf.zeros_initializer(dtype=tf.float32)
+    # Assumes to be initilalized as __init__ stage.
+    __default_weight_initializer = None
+    __default_bias_initializer = None
     __default_regularizer = None
 
-    __optimiser = None  # Assumes to be initialized later
+    # Assumes to be initialized after all settings will be declared.
+    __optimiser = None
 
     __term_embedding_matrix = None   # Includes embeddings of: words, entities, tokens.
     __class_weights = None
@@ -44,7 +46,8 @@ class DefaultNetworkConfig(object):
     # endregion
 
     def __init__(self):
-        self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
+        self.__default_weight_initializer = tf.random_normal_initializer(mean=0, stddev=1.0)
+        self.__default_bias_initializer = tf.zeros_initializer(dtype=tf.float32)
 
     # region properties
 
@@ -168,9 +171,13 @@ class DefaultNetworkConfig(object):
 
     def init_config_depended_parameters(self):
         assert(self.__optimiser is None)
+        assert(self.__default_regularizer is None)
 
         # Initialize optimizer.
         self.__optimiser = self._create_optimizer()
+
+        # Initialize default l2-regularizer.
+        self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
 
     # endregion
 
