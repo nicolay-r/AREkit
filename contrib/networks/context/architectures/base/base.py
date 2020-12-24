@@ -357,24 +357,30 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
         return embedded_terms
 
     def __init_embedding_hidden_states(self):
+        assert(self.__cfg.TermsPerContext is not None)
+        assert(self.__cfg.DistanceEmbeddingSize is not None)
+        assert(self.__cfg.PosCount is not None)
+        assert(self.__cfg.SentimentEmbeddingSize is not None)
+        assert(self.__cfg.TermEmbeddingShape is not None)
+
         self.__term_emb = tf.constant(value=self.__cfg.TermEmbeddingMatrix,
                                       dtype=tf.float32,
                                       shape=self.__cfg.TermEmbeddingShape)
 
         self.__dist_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=self.__cfg.create_embedding_initializer(),
+                                          initializer=tf.contrib.layers.xavier_initializer(),
                                           shape=[self.__cfg.TermsPerContext, self.__cfg.DistanceEmbeddingSize],
                                           trainable=True,
                                           name="dist_emb")
 
         self.__pos_emb = tf.get_variable(dtype=tf.float32,
-                                         initializer=self.__cfg.create_embedding_initializer(),
+                                         initializer=tf.contrib.layers.xavier_initializer(),
                                          shape=[self.__cfg.PosCount, self.__cfg.PosEmbeddingSize],
                                          trainable=True,
                                          name="pos_emb")
 
         self.__sent_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=self.__cfg.create_embedding_initializer(),
+                                          initializer=tf.contrib.layers.xavier_initializer(),
                                           shape=[3, self.__cfg.SentimentEmbeddingSize],
                                           trainable=True,
                                           name="sent_emb")
