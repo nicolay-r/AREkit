@@ -1,5 +1,6 @@
 import collections
 
+from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.labels.base import Label
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.opinions.base import Opinion
@@ -17,9 +18,12 @@ class SentimentLabel(Label):
 
 class SingleClassEvaluator(BaseEvaluator):
 
-    def __init__(self, create_synonyms_collection_func):
+    def __init__(self,
+                 create_synonyms_collection_func,
+                 eval_mode=EvaluationModes.Extraction):
         assert(callable(create_synonyms_collection_func))
-        super(SingleClassEvaluator, self).__init__()
+        super(SingleClassEvaluator, self).__init__(eval_mode=eval_mode)
+
         self.__create_synonyms_collection_func = create_synonyms_collection_func
         self.__sentiment_label = SentimentLabel()
 
