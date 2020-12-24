@@ -1,4 +1,5 @@
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
+from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.evaluators.utils import label_to_str
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -6,9 +7,14 @@ from arekit.common.opinions.collection import OpinionCollection
 
 class BaseEvaluator(object):
 
+    def __init__(self, eval_mode=EvaluationModes.Extraction):
+        assert(isinstance(eval_mode, EvaluationModes))
+        self.__eval_mode = eval_mode
+
     def evaluate(self, cmp_pairs):
         raise NotImplementedError()
 
+    # TODO. Refactor this. Provide iterator for cmp results of opinion comparisons.
     @staticmethod
     def calc_difference(etalon_opins, test_opins):
         assert(isinstance(etalon_opins, OpinionCollection))
