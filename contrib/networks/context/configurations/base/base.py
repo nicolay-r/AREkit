@@ -26,10 +26,7 @@ class DefaultNetworkConfig(object):
     __default_bias_initializer = tf.zeros_initializer(dtype=tf.float32)
     __default_regularizer = None
 
-    __optimiser = tf.train.AdadeltaOptimizer(
-        learning_rate=__learning_rate,
-        epsilon=10e-6,
-        rho=0.95)
+    __optimiser = None  # Assumes to be initialized later
 
     __term_embedding_matrix = None   # Includes embeddings of: words, entities, tokens.
     __class_weights = None
@@ -119,9 +116,6 @@ class DefaultNetworkConfig(object):
         assert(isinstance(value, float))
         self.__l2_reg = value
 
-    def modify_optimizer(self, value):
-        self.__optimiser = value
-
     def modify_weight_initializer(self, value):
         self.__default_weight_initializer = value
 
@@ -172,8 +166,11 @@ class DefaultNetworkConfig(object):
     def set_pos_count(self, value):
         self.__pos_count = value
 
-    def notify_initialization_completed(self):
-        pass
+    def init_config_depended_parameters(self):
+        assert(self.__optimiser is None)
+
+        # Initialize optimizer.
+        self.__optimiser = self._create_optimizer()
 
     # endregion
 
@@ -252,6 +249,11 @@ class DefaultNetworkConfig(object):
         return self.__use_entity_types_as_context_feature
 
     # endregion
+
+    def _create_optimizer(self):
+        return tf.train.AdadeltaOptimizer(learning_rate=self.__learning_rate,
+                                          epsilon=10e-6,
+                                          rho=0.95)
 
     def _internal_get_parameters(self):
         return [

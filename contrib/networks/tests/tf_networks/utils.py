@@ -8,5 +8,5 @@ def init_config(config):
     config.modify_classes_count(3)
     config.set_term_embedding(np.zeros((100, 100)))
     config.set_class_weights([1] * config.ClassesCount)
-    config.notify_initialization_completed()
+    config.init_config_depended_parameters()
     return config
