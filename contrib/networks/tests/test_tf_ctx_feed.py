@@ -56,13 +56,13 @@ class TestContextNetworkFeeding(unittest.TestCase):
         assert(callable(create_minibatch_func))
 
         labels_scaler = ThreeLabelScaler()
-        config = init_config(network_config)
+        init_config(network_config)
         # Init network.
-        network.compile(config=config, reset_graph=True)
-        minibatch = create_minibatch_func(config=config,
+        network.compile(config=network_config, reset_graph=True)
+        minibatch = create_minibatch_func(config=network_config,
                                           labels_scaler=labels_scaler)
 
-        network_optimiser = config.Optimiser.minimize(network.Cost)
+        network_optimiser = network_config.Optimiser.minimize(network.Cost)
 
         with TestContextNetworkFeeding.init_session() as sess:
             # Save graph

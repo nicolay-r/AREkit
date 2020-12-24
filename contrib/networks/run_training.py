@@ -75,7 +75,7 @@ class NetworksTrainingEngine(ExperimentEngine):
             config=self.__config)
 
         # Notify other subscribers that initialization process has been completed.
-        self.__config.init_config_depended_parameters()
+        self.__config.init_config_dependent_parameters()
 
         # Setup callback
         callback = self._experiment.DataIO.Callback

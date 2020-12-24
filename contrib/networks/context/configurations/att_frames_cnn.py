@@ -23,9 +23,9 @@ class AttentionFramesCNNConfig(AttentionCNNBaseConfig):
     def get_attention_parameters(self):
         return self.__attention_config.get_parameters()
 
-    def init_config_depended_parameters(self):
+    def init_config_dependent_parameters(self):
         assert(self.__attention is None)
-        super(AttentionFramesCNNConfig, self).init_config_depended_parameters()
+        super(AttentionFramesCNNConfig, self).init_config_dependent_parameters()
 
         self.__attention = InteractiveMLPAttention(
             cfg=self.__attention_config,

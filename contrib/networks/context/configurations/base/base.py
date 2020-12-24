@@ -22,12 +22,10 @@ class DefaultNetworkConfig(object):
     __bag_size = 1
     __learning_rate = 0.1
 
-    # Assumes to be initilalized as __init__ stage.
+    # Assumes to be initialized after all settings will be declared.
     __default_weight_initializer = None
     __default_bias_initializer = None
     __default_regularizer = None
-
-    # Assumes to be initialized after all settings will be declared.
     __optimiser = None
 
     __term_embedding_matrix = None   # Includes embeddings of: words, entities, tokens.
@@ -46,8 +44,7 @@ class DefaultNetworkConfig(object):
     # endregion
 
     def __init__(self):
-        self.__default_weight_initializer = tf.random_normal_initializer(mean=0, stddev=1.0)
-        self.__default_bias_initializer = tf.zeros_initializer(dtype=tf.float32)
+        pass
 
     # region properties
 
@@ -168,7 +165,7 @@ class DefaultNetworkConfig(object):
     def set_pos_count(self, value):
         self.__pos_count = value
 
-    def init_config_depended_parameters(self):
+    def init_config_dependent_parameters(self):
         assert(self.__optimiser is None)
         assert(self.__default_regularizer is None)
 
@@ -177,6 +174,14 @@ class DefaultNetworkConfig(object):
 
         # Initialize default l2-regularizer.
         self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
+
+        # Initializing default (optionally).
+        if self.__default_weight_initializer is None:
+            self.__default_weight_initializer = tf.contrib.layers.xavier_initializer()
+
+        # Initialize bias initializer (optionally).
+        if self.__default_bias_initializer is None:
+            self.__default_bias_initializer = tf.zeros_initializer(dtype=tf.float32)
 
     # endregion
 
