@@ -368,19 +368,19 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
                                       shape=self.__cfg.TermEmbeddingShape)
 
         self.__dist_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=tf.contrib.layers.xavier_initializer(),
+                                          initializer=self.__cfg.EmbeddingInitializer,
                                           shape=[self.__cfg.TermsPerContext, self.__cfg.DistanceEmbeddingSize],
                                           trainable=True,
                                           name="dist_emb")
 
         self.__pos_emb = tf.get_variable(dtype=tf.float32,
-                                         initializer=tf.contrib.layers.xavier_initializer(),
+                                         initializer=self.__cfg.EmbeddingInitializer,
                                          shape=[self.__cfg.PosCount, self.__cfg.PosEmbeddingSize],
                                          trainable=True,
                                          name="pos_emb")
 
         self.__sent_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=tf.contrib.layers.xavier_initializer(),
+                                          initializer=self.__cfg.EmbeddingInitializer,
                                           shape=[3, self.__cfg.SentimentEmbeddingSize],
                                           trainable=True,
                                           name="sent_emb")
