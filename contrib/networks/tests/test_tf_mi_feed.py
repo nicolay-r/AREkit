@@ -26,7 +26,9 @@ class TestMultiInstanceFeed(unittest.TestCase):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         bags = []
         label = PositiveLabel()
-        empty_sample = InputSample.create_empty(config)
+        empty_sample = InputSample.create_empty(terms_per_context=config.TermsPerContext,
+                                                frames_per_context=config.FramesPerContext,
+                                                synonyms_per_context=config.SynonymsPerContext)
         for i in range(config.BagsPerMinibatch):
             bag = Bag(label)
             for j in range(config.BagSize):
