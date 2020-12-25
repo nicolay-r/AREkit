@@ -1,6 +1,5 @@
 import unittest
-
-from arekit.contrib.networks.types import ModelNamesService
+from arekit.contrib.networks.enum_name_types import ModelNamesService
 
 
 class TestModelNamesService(unittest.TestCase):
