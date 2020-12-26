@@ -86,10 +86,11 @@ class TestRuSentRelEvaluation(unittest.TestCase):
     def __create_stemmer():
         return MystemWrapper()
 
-    def __iter_synonyms_group_lists(self):
-        for group in RuSentRelSynonymsCollectionHelper.iter_groups(self.__rusentrel_version):
+    @staticmethod
+    def __iter_synonyms_group_lists(ra_version):
+        for group in RuSentRelSynonymsCollectionHelper.iter_groups(TestRuSentRelEvaluation.__rusentrel_version):
             yield group
-        for group in RuAttitudesSynonymsCollectionHelper.iter_groups(RuAttitudesVersions.V20LargeNeut):
+        for group in RuAttitudesSynonymsCollectionHelper.iter_groups(ra_version):
             yield group
 
     def __is_equal_results(self, v1, v2):
@@ -166,10 +167,21 @@ class TestRuSentRelEvaluation(unittest.TestCase):
     def test_pcnn_lrec(self):
         self.__test_core(ResultVersions.PCNNLrecFixedE29)
 
-    def test_rsr_ra_20_merged_collection(self):
+    def test_rsr_ra_20ln_merged_collection(self):
 
         synonyms = StemmerBasedSynonymCollection(
-            iter_group_values_lists=self.__iter_synonyms_group_lists(),
+            iter_group_values_lists=self.__iter_synonyms_group_lists(RuAttitudesVersions.V20LargeNeut),
+            stemmer=self.__create_stemmer(),
+            is_read_only=True,
+            debug=False)
+
+        self.__test_core(ResultVersions.PCNNLrecFixedE29,
+                         synonyms=synonyms)
+
+    def test_rsr_ra_12_merged_collection(self):
+
+        synonyms = StemmerBasedSynonymCollection(
+            iter_group_values_lists=self.__iter_synonyms_group_lists(RuAttitudesVersions.V12),
             stemmer=self.__create_stemmer(),
             is_read_only=True,
             debug=False)
