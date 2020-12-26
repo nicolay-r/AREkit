@@ -41,9 +41,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
         # TODO. exp_io.read_etalon_opinion_collection()
 
         doc_id = parsed_news.RelatedNewsID
-        collection = self._OpinOps.read_etalon_opinion_collection(doc_id)
-        return self._OpinOps.create_opinion_collection(
-            opinions=list(self.__iter_opinion_as_neutral(collection)))
+        return self._OpinOps.read_etalon_opinion_collection(doc_id)
 
     # endregion
 

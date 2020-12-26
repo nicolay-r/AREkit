@@ -26,4 +26,4 @@ def log_opinion_already_exist(opinion, raise_exception, display_log):
     if raise_exception:
         raise Exception(message)
     elif display_log:
-        logger.info(message)
+        logger.info(message + u' [REJECTED]')

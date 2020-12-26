@@ -52,7 +52,7 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
                                                      doc_id=doc_id,
                                                      epoch_index=epoch_index)
 
-    def create_opinion_collection(self, opinions=None):
-        return self.__rusentrel_op.create_opinion_collection(opinions)
+    def create_opinion_collection(self):
+        return self.__rusentrel_op.create_opinion_collection()
 
     # endregion

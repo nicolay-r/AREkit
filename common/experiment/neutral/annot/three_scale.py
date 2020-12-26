@@ -4,6 +4,7 @@ from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotati
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.experiment.data_type import DataType
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.opinions.collection import OpinionCollection
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -39,7 +40,16 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
             entities_collection=news.get_entities_collection(),
             sentiment_opinions=opinions if data_type == DataType.Train else None)
 
-        return self._OpinOps.create_opinion_collection(neutral_opins_it)
+        collection = self._OpinOps.create_opinion_collection()
+        assert(isinstance(collection, OpinionCollection))
+
+        # Filling. Keep all the opinions without duplications.
+        for opinion in neutral_opins_it:
+            if collection.has_synonymous_opinion(opinion):
+                continue
+            collection.add_opinion(opinion)
+
+        return collection
 
     # endregion
 

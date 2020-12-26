@@ -33,8 +33,10 @@ class TestRuSentRel(unittest.TestCase):
 
             opins_it = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id)
 
-            opinions = OpinionCollection.init_as_custom(opinions=opins_it,
-                                                        synonyms=synonyms)
+            opinions = OpinionCollection(opinions=opins_it,
+                                         synonyms=synonyms,
+                                         error_on_duplicates=True,
+                                         error_on_synonym_end_missed=True)
             yield news, opinions
 
     def test_reading(self):
