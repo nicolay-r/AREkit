@@ -2,6 +2,8 @@ import logging
 import random
 import sys
 import unittest
+
+import numpy as np
 from pymystem3 import Mystem
 
 
@@ -75,7 +77,7 @@ class TestTfInputFeatures(unittest.TestCase):
                                                         position_type=TermPositionTypes.IndexInSentence)
 
                 x_feature = IndicesFeature.from_vector_to_be_fitted(
-                    value_vector=terms,
+                    value_vector=np.array(terms),
                     e1_ind=s_ind,
                     e2_ind=t_ind,
                     expected_size=random.randint(50, 60),
