@@ -3,7 +3,7 @@ import unittest
 
 sys.path.append('../')
 
-from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
+from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.experiments.common import entity_to_group_func
@@ -22,8 +22,8 @@ class TestInputBalancing(unittest.TestCase):
 
         stemmer = MystemWrapper()
         label_provider = BinaryLabelProvider(label_scaler=ThreeLabelScaler())
-        synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=stemmer,
-                                                                     is_read_only=True)
+        synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
+                                                                       is_read_only=True)
         terms_mapper = OpinionContainingTextTermsMapper(
             entity_formatter=StringEntitiesSimpleFormatter(),
             entity_to_group_func=lambda entity: entity_to_group_func(entity=entity,

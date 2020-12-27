@@ -12,14 +12,14 @@ from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
+from arekit.contrib.experiments.rusentrel_ds.experiment import RuSentRelWithRuAttitudesExperiment
+from arekit.contrib.experiments.synonyms.collection import StemmerBasedSynonymCollection
+from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.ruattitudes.synonyms_helper import RuAttitudesSynonymsCollectionHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
-from arekit.contrib.source.rusentrel.synonyms import StemmerBasedSynonymCollection
-from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
@@ -86,13 +86,6 @@ class TestRuSentRelEvaluation(unittest.TestCase):
     def __create_stemmer():
         return MystemWrapper()
 
-    @staticmethod
-    def __iter_synonyms_group_lists(ra_version):
-        for group in RuSentRelSynonymsCollectionHelper.iter_groups(TestRuSentRelEvaluation.__rusentrel_version):
-            yield group
-        for group in RuAttitudesSynonymsCollectionHelper.iter_groups(ra_version):
-            yield group
-
     def __is_equal_results(self, v1, v2):
         self.assert_(abs(v1 - v2) < 1e-10)
 
@@ -105,7 +98,8 @@ class TestRuSentRelEvaluation(unittest.TestCase):
             # This is a default collection which we used
             # to provide the results in `f1_rusentrel_v11_results`.
             stemmer = self.__create_stemmer()
-            actual_synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer)
+            actual_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
+                                                                                  version=self.__rusentrel_version)
         else:
             actual_synonyms = synonyms
 
@@ -170,7 +164,9 @@ class TestRuSentRelEvaluation(unittest.TestCase):
     def test_rsr_ra_12_merged_collection(self):
 
         synonyms = StemmerBasedSynonymCollection(
-            iter_group_values_lists=self.__iter_synonyms_group_lists(RuAttitudesVersions.V12),
+            iter_group_values_lists=RuSentRelWithRuAttitudesExperiment._iter_synonyms_group_lists(
+                rusentrel_version=RuSentRelVersions.V11,
+                ruattitudes_version=RuAttitudesVersions.V12),
             stemmer=self.__create_stemmer(),
             is_read_only=True,
             debug=False)

@@ -1,31 +1,17 @@
-from arekit.common.synonyms import SynonymsCollection
-from arekit.processing.lemmatization.base import Stemmer
+from arekit.contrib.source.rusentrel.utils import iter_synonym_groups
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils
 
 
-class StemmerBasedSynonymCollection(SynonymsCollection):
+class RuSentRelSynonymsCollectionHelper(object):
 
-    def __init__(self, iter_group_values_lists, stemmer, is_read_only, debug):
-        assert(isinstance(stemmer, Stemmer))
-        self.__stemmer = stemmer
-        super(StemmerBasedSynonymCollection, self).__init__(iter_group_values_lists=iter_group_values_lists,
-                                                            is_read_only=is_read_only,
-                                                            debug=debug)
+    @staticmethod
+    def iter_groups(version):
+        it = RuSentRelIOUtils.iter_from_zip(
+            inner_path=RuSentRelIOUtils.get_synonyms_innerpath(),
+            process_func=lambda input_file: iter_synonym_groups(
+                input_file,
+                desc="Loading RuSentRel Collection"),
+            version=version)
 
-    # region private methods
-
-    def __create_sid(self, value):
-        # That may take a significant amount of time
-        # especially when stemmer is a Yandex Mystem module.
-        return self.__stemmer.lemmatize_to_str(value)
-
-    # endregion
-
-    # region protected methods
-
-    def _create_external_sid(self, value):
-        return self.__create_sid(value)
-
-    def _create_internal_sid(self, value):
-        return self.__create_sid(value)
-
-    # endregion
+        for group in it:
+            yield group

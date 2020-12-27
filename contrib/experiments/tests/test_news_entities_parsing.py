@@ -2,6 +2,7 @@ import unittest
 
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
@@ -9,7 +10,6 @@ from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesPars
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
-from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.parser import TextParser
 
@@ -36,10 +36,12 @@ class TestPartOfSpeech(unittest.TestCase):
 
     def test_rusentrel_news_text_parsing(self):
         stemmer = MystemWrapper()
-        synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=stemmer)
+        version = RuSentRelVersions.V11
+        synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
+                                                                       version=version)
         news = RuSentRelNews.read_document(doc_id=1,
                                            synonyms=synonyms,
-                                           version=RuSentRelVersions.V11)
+                                           version=version)
 
         assert(isinstance(news, RuSentRelNews))
         parsed_text = news.parse_sentence(8)
