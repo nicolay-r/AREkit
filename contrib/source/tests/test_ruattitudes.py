@@ -10,7 +10,6 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
 from arekit.common.utils import progress_bar_iter
 
-from arekit.contrib.source.ruattitudes.synonyms_helper import RuAttitudesSynonymsCollectionHelper
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -39,14 +38,6 @@ class TestRuAttitudes(unittest.TestCase):
             assert(isinstance(news, RuAttitudesNews))
             assert(news.ID not in ids)
             ids.add(news.ID)
-
-    def test_synonyms_collection_reading(self):
-        # Initializing stemmer
-        stemmer = MystemWrapper()
-
-        # Synonyms collection reading test
-        return RuAttitudesSynonymsCollectionHelper.load_collection(stemmer=stemmer,
-                                                                   version=TestRuAttitudes.ra_version)
 
     def test_parsing(self):
         # Initializing stemmer

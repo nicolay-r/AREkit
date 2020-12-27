@@ -4,7 +4,6 @@ from collections import OrderedDict
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.dataset.text_opinions.enums import EntityEndType
@@ -64,20 +63,12 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
         return row
 
-    @staticmethod
-    def _iter_by_rows(opinion_provider, idle_mode):
-        assert(isinstance(opinion_provider, OpinionProvider))
-        assert(isinstance(idle_mode, bool))
-
-        linked_iter = opinion_provider.iter_linked_opinion_wrappers(balance=False,
-                                                                    supported_labels=None)
-
-        for parsed_news, linked_wrapper in linked_iter:
-            if idle_mode:
-                yield None
-            else:
-                yield BaseOpinionsFormatter.__create_opinion_row(parsed_news=parsed_news,
-                                                                 linked_wrapper=linked_wrapper)
+    def _provide_rows(self, parsed_news, linked_wrapper, idle_mode):
+        if idle_mode:
+            yield None
+        else:
+            yield BaseOpinionsFormatter.__create_opinion_row(parsed_news=parsed_news,
+                                                             linked_wrapper=linked_wrapper)
 
     # endregion
 

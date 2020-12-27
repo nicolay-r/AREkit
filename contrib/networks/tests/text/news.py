@@ -22,7 +22,9 @@ def init_rusentrel_doc(doc_id, stemmer, synonyms, unique_frame_variants):
 
     opinions = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id)
 
-    collection = OpinionCollection.init_as_custom(opinions=opinions,
-                                                  synonyms=synonyms)
+    collection = OpinionCollection(opinions=opinions,
+                                   synonyms=synonyms,
+                                   error_on_duplicates=True,
+                                   error_on_synonym_end_missed=True)
 
     return news, parsed_news, collection

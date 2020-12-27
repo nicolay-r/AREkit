@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.labels.base import NeutralLabel
+from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.experiment.data_type import DataType
@@ -31,17 +32,16 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
                           target_value=opinion.TargetValue,
                           sentiment=NeutralLabel())
 
-    def _create_collection_core(self, doc_id, data_type):
-        assert(isinstance(doc_id, int))
+    def _create_collection_core(self, parsed_news, data_type):
+        assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(data_type, DataType))
 
         # TODO. Extract opinions from news.
         # TODO. exp_io.read_parsed_news.
         # TODO. exp_io.read_etalon_opinion_collection()
 
-        collection = self._OpinOps.read_etalon_opinion_collection(doc_id)
-        return self._OpinOps.create_opinion_collection(
-            opinions=list(self.__iter_opinion_as_neutral(collection)))
+        doc_id = parsed_news.RelatedNewsID
+        return self._OpinOps.read_etalon_opinion_collection(doc_id)
 
     # endregion
 

@@ -1,4 +1,3 @@
-import collections
 import logging
 from os.path import exists
 
@@ -21,9 +20,9 @@ class RuSentrelOpinionOperations(OpinionOperations):
     def __init__(self, experiment_data, experiment_io, synonyms, version):
         assert(isinstance(experiment_data, DataIO))
         assert(isinstance(version, RuSentRelVersions))
+        super(RuSentrelOpinionOperations, self).__init__()
 
-        super(RuSentrelOpinionOperations, self).__init__(synonyms)
-
+        self.__synonyms = synonyms
         self.__version = version
         self.__experiment_io = experiment_io
         self.__opinion_formatter = experiment_data.OpinionFormatter
@@ -61,15 +60,10 @@ class RuSentrelOpinionOperations(OpinionOperations):
         assert(isinstance(doc_id, int))
         opins_iter = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id,
                                                                        version=self.__version)
+        return self.__create_collection(opins_iter)
 
-        return OpinionCollection(opinions=opins_iter,
-                                 synonyms=self.SynonymsCollection,
-                                 error_on_duplicates=True,
-                                 error_on_synonym_end_missed=True)
-
-    def create_opinion_collection(self, opinions=None):
-        assert(isinstance(opinions, collections.Iterable) or opinions is None)
-        return self.__create_custom_collection(opinions)
+    def create_opinion_collection(self):
+        return self.__create_collection(None)
 
     def try_read_neutrally_annotated_opinion_collection(self, doc_id, data_type):
         filepath = self.__experiment_io.create_neutral_opinion_collection_filepath(
@@ -93,8 +87,8 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         """ Since evaluation supported only for neural networks,
-            we need to gaurantee the presence of a function that returns filepath
-            by using isisntance command.
+            we need to guarantee the presence of a function that returns filepath
+            by using isinstance command.
         """
         assert(isinstance(self.__experiment_io, NetworkIOUtils))
 
@@ -114,10 +108,12 @@ class RuSentrelOpinionOperations(OpinionOperations):
         opinions = self.__opinion_formatter.iter_opinions_from_file(filepath=filepath,
                                                                     labels_formatter=labels_fmt)
 
-        return self.__create_custom_collection(opinions)
+        return self.__create_collection(opinions)
 
-    def __create_custom_collection(self, opinions):
-        return OpinionCollection.init_as_custom(opinions=[] if opinions is None else opinions,
-                                                synonyms=self.SynonymsCollection)
+    def __create_collection(self, opinions):
+        return OpinionCollection(opinions=[] if opinions is None else opinions,
+                                 synonyms=self.__synonyms,
+                                 error_on_duplicates=True,
+                                 error_on_synonym_end_missed=True)
 
     # endregion

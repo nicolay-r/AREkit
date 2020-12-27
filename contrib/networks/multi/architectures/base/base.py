@@ -321,11 +321,14 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         for name, value in super(BaseMultiInstanceNeuralNetwork, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
+        # TODO. This should be a part of the sample.
         yield u'x', self.__input[InputSample.I_X_INDS]
         yield u'obj_ind', self.__input[InputSample.I_OBJ_IND]
         yield u'subj_ind', self.__input[InputSample.I_SUBJ_IND]
         yield u'frame_inds', self.__input[InputSample.I_FRAME_INDS]
         yield u'frame_sent_role_inds', self.__input[InputSample.I_FRAME_SENT_ROLES]
+
+        # Provide base input parameters.
         yield u'y_labels', self.Labels
         yield u'y_etalon_labels', self.__y
 

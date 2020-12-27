@@ -3,6 +3,7 @@ import logging
 import sys
 import unittest
 
+
 sys.path.append('../../../../')
 
 from arekit.common.labels.base import Label
@@ -12,7 +13,9 @@ from arekit.common.bound import Bound
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 
-from arekit.contrib.source.tests.utils import read_rusentrel_synonyms_collection
+from arekit.processing.lemmatization.mystem import MystemWrapper
+
+from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
@@ -24,6 +27,15 @@ class TestRuSentRel(unittest.TestCase):
 
     __version = RuSentRelVersions.V11
 
+    @staticmethod
+    def __read_rusentrel_synonyms_collection():
+        # Initializing stemmer
+        stemmer = MystemWrapper()
+
+        # Reading synonyms collection.
+        return RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
+                                                                   version=TestRuSentRel.__version)
+
     def __iter_by_docs(self, synonyms):
         for doc_id in RuSentRelIOUtils.iter_collection_indices(self.__version):
 
@@ -33,8 +45,10 @@ class TestRuSentRel(unittest.TestCase):
 
             opins_it = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id)
 
-            opinions = OpinionCollection.init_as_custom(opinions=opins_it,
-                                                        synonyms=synonyms)
+            opinions = OpinionCollection(opinions=opins_it,
+                                         synonyms=synonyms,
+                                         error_on_duplicates=True,
+                                         error_on_synonym_end_missed=True)
             yield news, opinions
 
     def test_reading(self):
@@ -44,7 +58,7 @@ class TestRuSentRel(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        synonyms = read_rusentrel_synonyms_collection(version=self.__version)
+        synonyms = TestRuSentRel.__read_rusentrel_synonyms_collection()
         for news, opinions in self.__iter_by_docs(synonyms):
             logger.info(u"NewsID: {}".format(news.ID))
 
@@ -82,7 +96,7 @@ class TestRuSentRel(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        synonyms = read_rusentrel_synonyms_collection(self.__version)
+        synonyms = TestRuSentRel.__read_rusentrel_synonyms_collection()
         for news, opinions in self.__iter_by_docs(synonyms):
 
             logger.info(u"NewsID: {}".format(news.ID))

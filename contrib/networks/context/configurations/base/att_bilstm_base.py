@@ -25,8 +25,9 @@ class AttentionBiLSTMBaseConfig(BiLSTMConfig):
 
     # region public methods
 
-    def notify_initialization_completed(self):
+    def init_config_dependent_parameters(self):
         assert(self.__attention is None)
+        super(AttentionBiLSTMBaseConfig, self).init_config_dependent_parameters()
 
         self.__attention = InteractiveMLPAttention(
             cfg=self.__attention_config,

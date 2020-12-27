@@ -39,28 +39,6 @@ class OpinionCollection(object):
                 error_on_existence=error_on_duplicates,
                 error_on_synonym_end_missed=error_on_synonym_end_missed)
 
-    # region class methods
-
-    @classmethod
-    def init_as_custom(cls, opinions, synonyms):
-        """
-        Perform initialization with a synonyms collection which might be partially incompatible
-        with opinion ends (values).
-        """
-        return cls(opinions=opinions,
-                   synonyms=synonyms,
-                   error_on_duplicates=False,
-                   error_on_synonym_end_missed=False)
-
-    @classmethod
-    def create_empty(cls, synonyms):
-        return cls(opinions=[],
-                   synonyms=synonyms,
-                   error_on_duplicates=True,
-                   error_on_synonym_end_missed=True)
-
-    # endregion
-
     # region public methods
 
     def has_synonymous_opinion(self, opinion, sentiment=None):

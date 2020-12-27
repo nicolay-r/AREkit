@@ -1,5 +1,6 @@
 import collections
 
+from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.results.two_class import TwoClassEvalResult
 from arekit.common.labels.base import PositiveLabel, NegativeLabel, Label
 from arekit.common.opinions.collection import OpinionCollection
@@ -10,8 +11,8 @@ from arekit.common.evaluation.evaluators.base import BaseEvaluator
 
 class TwoClassEvaluator(BaseEvaluator):
 
-    def __init__(self):
-        super(TwoClassEvaluator, self).__init__()
+    def __init__(self, eval_mode=EvaluationModes.Extraction):
+        super(TwoClassEvaluator, self).__init__(eval_mode=eval_mode)
         self.__pos_label = PositiveLabel()
         self.__neg_label = NegativeLabel()
 

@@ -39,7 +39,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
             label_scaler=self._experiment.DataIO.LabelsScaler,
             entity_formatter=self.__entity_formatter,
             balance=self.__balance_train_samples,
-            synonyms=self._experiment.OpinionOperations.SynonymsCollection)
+            entity_to_group_func=self._experiment.entity_to_group)
 
         # Perform data serialization to *.tsv format.
         BaseInputEncoder.to_tsv(

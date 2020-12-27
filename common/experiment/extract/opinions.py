@@ -22,7 +22,13 @@ def __iter_linked_text_opinion_lists(news, opin_ops, data_type, filter_text_opin
     for opinion in opin_ops.iter_opinions_for_extraction(doc_id=news.ID, data_type=data_type):
         linked_text_opinions = news.extract_linked_text_opinions(opinion)
         assert(linked_text_opinions, LinkedTextOpinionsWrapper)
-        yield filter(filter_text_opinion_func, linked_text_opinions)
+
+        filtered_text_opinions = filter(filter_text_opinion_func, linked_text_opinions)
+
+        if len(filtered_text_opinions) == 0:
+            continue
+
+        yield filtered_text_opinions
 
 # endregions
 

@@ -17,7 +17,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
     TOKEN_RANDOM_SEED_OFFSET = 12345
 
     def __init__(self,
-                 synonyms,
+                 entity_to_group_func,
                  predefined_embedding,
                  string_entities_formatter,
                  string_emb_entity_formatter):
@@ -31,7 +31,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         super(StringWithEmbeddingNetworkTermMapping, self).__init__(
             entity_formatter=string_entities_formatter,
-            synonyms=synonyms)
+            entity_to_group_func=entity_to_group_func)
 
         self.__predefined_embedding = predefined_embedding
         self.__string_emb_entity_formatter = string_emb_entity_formatter

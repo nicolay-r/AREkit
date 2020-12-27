@@ -1,5 +1,4 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.bert.label.str_rus_fmt import RussianThreeScaleRussianLabelsFormatter
 from arekit.contrib.bert.samplers.base import create_simple_sample_formatter
 from arekit.contrib.bert.samplers.nli_b import NliBinarySampleFormatter
@@ -11,19 +10,19 @@ from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 
 
 def create_bert_sample_formatter(data_type, formatter_type, label_scaler, balance,
-                                 entity_formatter,
-                                 synonyms):
+                                 entity_formatter, entity_to_group_func):
     """
     This is a factory method, which allows to instantiate any of the
     supported bert_sample_encoders
     """
     assert(isinstance(formatter_type, BertSampleFormatterTypes))
-    assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
+    assert(callable(entity_to_group_func))
     assert(isinstance(entity_formatter, StringEntitiesFormatter))
 
     l_formatter = RussianThreeScaleRussianLabelsFormatter()
-    text_terms_mapper = BertDefaultStringTextTermsMapper(entity_formatter=entity_formatter,
-                                                         synonyms=synonyms)
+    text_terms_mapper = BertDefaultStringTextTermsMapper(
+        entity_formatter=entity_formatter,
+        entity_to_group_func=entity_to_group_func)
 
     if formatter_type == BertSampleFormatterTypes.CLASSIF_M:
         return create_simple_sample_formatter(data_type=data_type,

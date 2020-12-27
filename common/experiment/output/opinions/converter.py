@@ -13,11 +13,13 @@ class OutputToOpinionCollectionsConverter(object):
     def iter_opinion_collections(output_filepath,
                                  opinions_reader,
                                  labels_scaler,
+                                 keep_doc_id_func,
                                  opinion_operations,
                                  label_calculation_mode,
                                  output,
                                  keep_news_ids_from_samples_reader,
                                  keep_ids_from_samples_reader):
+        assert(callable(keep_doc_id_func))
         assert(isinstance(labels_scaler, BaseLabelScaler))
         assert(isinstance(output_filepath, unicode))
         assert(isinstance(opinions_reader, InputOpinionReader))
@@ -33,6 +35,9 @@ class OutputToOpinionCollectionsConverter(object):
         labels_helper = SingleLabelsHelper(labels_scaler)
 
         for news_id in output.iter_news_ids():
+
+            if not keep_doc_id_func(news_id):
+                continue
 
             collection = opinion_operations.create_opinion_collection()
 

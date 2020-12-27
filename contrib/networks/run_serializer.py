@@ -22,7 +22,7 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
         assert(isinstance(self._experiment.DataIO, SerializationData))
 
         # Performing data serialization.
-        if not HandledData.check_files_existed(self._experiment) and not self.__force_serialize:
+        if HandledData.check_files_existed(self._experiment) and not self.__force_serialize:
             return
 
         # Perform data serialization.

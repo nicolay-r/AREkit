@@ -22,14 +22,12 @@ class DefaultNetworkConfig(object):
     __bag_size = 1
     __learning_rate = 0.1
 
-    __default_weight_initializer = tf.random_normal_initializer(mean=0, stddev=1.0)
-    __default_bias_initializer = tf.zeros_initializer(dtype=tf.float32)
+    # Assumes to be initialized after all settings will be declared.
+    __default_weight_initializer = None
+    __default_bias_initializer = None
     __default_regularizer = None
-
-    __optimiser = tf.train.AdadeltaOptimizer(
-        learning_rate=__learning_rate,
-        epsilon=10e-6,
-        rho=0.95)
+    __default_embedding_initializer = None
+    __optimiser = None
 
     __term_embedding_matrix = None   # Includes embeddings of: words, entities, tokens.
     __class_weights = None
@@ -47,7 +45,7 @@ class DefaultNetworkConfig(object):
     # endregion
 
     def __init__(self):
-        self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
+        pass
 
     # region properties
 
@@ -93,7 +91,7 @@ class DefaultNetworkConfig(object):
 
     @property
     def EmbeddingInitializer(self):
-        return tf.contrib.layers.xavier_initializer()
+        return self.__default_embedding_initializer
 
     # endregion
 
@@ -118,9 +116,6 @@ class DefaultNetworkConfig(object):
     def modify_l2_reg(self, value):
         assert(isinstance(value, float))
         self.__l2_reg = value
-
-    def modify_optimizer(self, value):
-        self.__optimiser = value
 
     def modify_weight_initializer(self, value):
         self.__default_weight_initializer = value
@@ -172,8 +167,27 @@ class DefaultNetworkConfig(object):
     def set_pos_count(self, value):
         self.__pos_count = value
 
-    def notify_initialization_completed(self):
-        pass
+    def init_config_dependent_parameters(self):
+        assert(self.__optimiser is None)
+        assert(self.__default_regularizer is None)
+        assert(self.__default_embedding_initializer is None)
+
+        # Initialize optimizer.
+        self.__optimiser = self._create_optimizer()
+
+        # Initialize default l2-regularizer.
+        self.__default_regularizer = tf.contrib.layers.l2_regularizer(self.L2Reg)
+
+        # Initialize default embedding initializer.
+        self.__default_embedding_initializer = tf.contrib.layers.xavier_initializer()
+
+        # Initializing default (optionally).
+        if self.__default_weight_initializer is None:
+            self.__default_weight_initializer = tf.contrib.layers.xavier_initializer()
+
+        # Initialize bias initializer (optionally).
+        if self.__default_bias_initializer is None:
+            self.__default_bias_initializer = tf.zeros_initializer(dtype=tf.float32)
 
     # endregion
 
@@ -252,6 +266,11 @@ class DefaultNetworkConfig(object):
         return self.__use_entity_types_as_context_feature
 
     # endregion
+
+    def _create_optimizer(self):
+        return tf.train.AdadeltaOptimizer(learning_rate=self.__learning_rate,
+                                          epsilon=10e-6,
+                                          rho=0.95)
 
     def _internal_get_parameters(self):
         return [

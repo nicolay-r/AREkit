@@ -2,6 +2,8 @@ import logging
 import random
 import sys
 import unittest
+
+import numpy as np
 from pymystem3 import Mystem
 
 
@@ -16,8 +18,8 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 from arekit.contrib.networks.tests.text.news import init_rusentrel_doc
-from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.networks.features.term_indices import IndicesFeature
+from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
 
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from arekit.tests.text.utils import terms_to_str
@@ -35,7 +37,7 @@ class TestTfInputFeatures(unittest.TestCase):
         cls.stemmer = MystemWrapper()
         cls.entities_formatter = RussianEntitiesCasedFormatter(
             pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
-        cls.synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=cls.stemmer)
+        cls.synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=cls.stemmer)
         cls.frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V10)
         cls.unique_frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
             variants_with_id=cls.frames_collection.iter_frame_id_and_variants(),
@@ -75,7 +77,7 @@ class TestTfInputFeatures(unittest.TestCase):
                                                         position_type=TermPositionTypes.IndexInSentence)
 
                 x_feature = IndicesFeature.from_vector_to_be_fitted(
-                    value_vector=terms,
+                    value_vector=np.array(terms),
                     e1_ind=s_ind,
                     e2_ind=t_ind,
                     expected_size=random.randint(50, 60),

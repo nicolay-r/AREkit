@@ -122,6 +122,7 @@ class HandledData(object):
                 exp_data=experiment.DataIO,
                 opin_ops=experiment.OpinionOperations,
                 doc_ops=experiment.DocumentOperations,
+                entity_to_group_func=experiment.entity_to_group,
                 data_type=data_type,
                 term_embedding_pairs=term_embedding_pairs,
                 iter_parsed_news_func=lambda: HandledData.__iter_parsed_news_func(

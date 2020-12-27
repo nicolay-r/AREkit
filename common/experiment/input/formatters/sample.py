@@ -10,7 +10,6 @@ from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.data_type import DataType
@@ -210,32 +209,22 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
-    def _iter_by_rows(self, opinion_provider, idle_mode):
-        """
-        Iterate by rows that is assumes to be added as samples, using opinion_provider information
-        """
-        assert(isinstance(opinion_provider, OpinionProvider))
+    def _provide_rows(self, parsed_news, linked_wrapper, idle_mode):
         assert(isinstance(idle_mode, bool))
-
-        linked_iter = opinion_provider.iter_linked_opinion_wrappers(
-            balance=self.__balance,
-            supported_labels=self._label_provider.SupportedLabels)
 
         row_dict = OrderedDict()
 
-        for parsed_news, linked_wrap in linked_iter:
+        for index_in_linked in xrange(len(linked_wrapper)):
 
-            for i in range(len(linked_wrap)):
+            rows_it = self.__provide_rows(
+                parsed_news=parsed_news,
+                row_dict=row_dict,
+                linked_wrap=linked_wrapper,
+                index_in_linked=index_in_linked,
+                idle_mode=idle_mode)
 
-                rows_it = self.__provide_rows(
-                    parsed_news=parsed_news,
-                    row_dict=row_dict,
-                    linked_wrap=linked_wrap,
-                    index_in_linked=i,
-                    idle_mode=idle_mode)
-
-                for row in rows_it:
-                    yield row
+            for row in rows_it:
+                yield row
 
     # endregion
 

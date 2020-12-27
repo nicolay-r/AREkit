@@ -23,8 +23,9 @@ class AttentionEndsCNNConfig(AttentionCNNBaseConfig):
     def get_attention_parameters(self):
         return self.__attention_config.get_parameters()
 
-    def notify_initialization_completed(self):
+    def init_config_dependent_parameters(self):
         assert(self.__attention is None)
+        super(AttentionEndsCNNConfig, self).init_config_dependent_parameters()
 
         self.__attention = MLPAttention(
             cfg=self.__attention_config,

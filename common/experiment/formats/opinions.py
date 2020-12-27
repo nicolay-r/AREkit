@@ -1,20 +1,10 @@
-from arekit.common.synonyms import SynonymsCollection
-
-
 class OpinionOperations(object):
     """
     Provides operations with opinions and related collections
     """
 
-    def __init__(self, synonyms):
-        assert(isinstance(synonyms, SynonymsCollection))
-        self.__synonyms = synonyms
-
-    @property
-    def SynonymsCollection(self):
-        """ Synonyms collection utlized for named entities matching.
-        """
-        return self.__synonyms
+    def __init__(self):
+        pass
 
     # region annotation
 
@@ -53,7 +43,7 @@ class OpinionOperations(object):
 
     # region creation
 
-    def create_opinion_collection(self, opinions=None):
+    def create_opinion_collection(self):
         raise NotImplementedError("Collection creation does not supported by experiment.")
 
     # endregion

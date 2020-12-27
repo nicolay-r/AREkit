@@ -19,7 +19,6 @@ class IANBaseConfig(RNNConfig):
         # Reinitialize default parameters.
         super(IANBaseConfig, self).modify_bias_initializer(tf.zeros_initializer())
         super(IANBaseConfig, self).modify_weight_initializer(tf.random_uniform_initializer(-0.1, 0.1))
-        super(IANBaseConfig, self).modify_regularizer(tf.contrib.layers.l2_regularizer(self.L2Reg))
         super(IANBaseConfig, self).modify_l2_reg(0.001)
         super(IANBaseConfig, self).modify_cell_type(CellTypes.LSTM)
         super(IANBaseConfig, self).modify_hidden_size(128)

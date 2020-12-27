@@ -308,11 +308,14 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
         for name, value in super(SingleInstanceNeuralNetwork, self).iter_input_dependent_hidden_parameters():
             yield name, value
 
+        # TODO. This should be a part of the sample.
         yield u'x', self.__input[InputSample.I_X_INDS]
         yield u'obj_ind', self.__input[InputSample.I_OBJ_IND]
         yield u'subj_ind', self.__input[InputSample.I_SUBJ_IND]
         yield u'frame_inds', self.__input[InputSample.I_FRAME_INDS]
         yield u'frame_sent_role_inds', self.__input[InputSample.I_FRAME_SENT_ROLES]
+
+        # Provide base input paramaters.
         yield u'y_labels', self.Labels
         yield u'y_etalon_labels', self.__y
 
@@ -354,6 +357,12 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
         return embedded_terms
 
     def __init_embedding_hidden_states(self):
+        assert(self.__cfg.TermsPerContext is not None)
+        assert(self.__cfg.DistanceEmbeddingSize is not None)
+        assert(self.__cfg.PosCount is not None)
+        assert(self.__cfg.SentimentEmbeddingSize is not None)
+        assert(self.__cfg.TermEmbeddingShape is not None)
+
         self.__term_emb = tf.constant(value=self.__cfg.TermEmbeddingMatrix,
                                       dtype=tf.float32,
                                       shape=self.__cfg.TermEmbeddingShape)
