@@ -167,17 +167,6 @@ class TestRuSentRelEvaluation(unittest.TestCase):
     def test_pcnn_lrec(self):
         self.__test_core(ResultVersions.PCNNLrecFixedE29)
 
-    def test_rsr_ra_20ln_merged_collection(self):
-
-        synonyms = StemmerBasedSynonymCollection(
-            iter_group_values_lists=self.__iter_synonyms_group_lists(RuAttitudesVersions.V20LargeNeut),
-            stemmer=self.__create_stemmer(),
-            is_read_only=True,
-            debug=False)
-
-        self.__test_core(ResultVersions.PCNNLrecFixedE29,
-                         synonyms=synonyms)
-
     def test_rsr_ra_12_merged_collection(self):
 
         synonyms = StemmerBasedSynonymCollection(

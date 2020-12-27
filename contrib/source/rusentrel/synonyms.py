@@ -15,3 +15,8 @@ class StemmerBasedSynonymCollection(SynonymsCollection):
         # That may take a significant amount of time
         # especially when stemmer is a Yandex Mystem module.
         return self.__stemmer.lemmatize_to_str(value)
+
+    def _create_internal_sid(self, value):
+        # That may take a significant amount of time
+        # especially when stemmer is a Yandex Mystem module.
+        return self.__stemmer.lemmatize_to_str(value)

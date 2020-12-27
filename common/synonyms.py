@@ -11,7 +11,7 @@ class SynonymsCollection(object):
         assert(isinstance(debug, bool))
 
         # Assumes to be filled
-        self.__by_synonym = {}
+        self.__by_sid = {}
         self.__by_index = []
 
         self.__is_read_only = is_read_only
@@ -38,7 +38,7 @@ class SynonymsCollection(object):
             raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
 
         synonym_id = self.create_synonym_id(value)
-        self.__by_synonym[synonym_id] = self.__get_groups_count()
+        self.__by_sid[synonym_id] = self.__get_groups_count()
         self.__by_index.append([value])
 
     # endregion
@@ -56,6 +56,7 @@ class SynonymsCollection(object):
         assert(isinstance(value, unicode))
         return self.__get_group_index(value)
 
+    # TODO. Remove this, makes too complicated.
     def try_get_synonym_group_index(self, value, default=-1):
         return self.__get_group_index(value) if self.__contains_synonym_value(value) else default
 
@@ -68,12 +69,24 @@ class SynonymsCollection(object):
 
     # endregion
 
+    # region protected methods
+
+    def _contains_sid(self, v_id):
+        return v_id in self.__by_sid
+
+    def _create_internal_sid(self, value):
+        """ Utilized during filling stage.
+        """
+        raise NotImplementedError()
+
+    # endregion
+
     # region public 'iter' methods
 
     def iter_synonym_values(self, value):
         assert(isinstance(value, unicode))
-        id = self.create_synonym_id(value)
-        index = self.__by_synonym[id]
+        sid = self.create_synonym_id(value)
+        index = self.__by_sid[sid]
         return iter(self.__by_index[index])
 
     def iter_by_index(self):
@@ -99,14 +112,14 @@ class SynonymsCollection(object):
 
             value = synonym_value.strip()
 
-            synonym_id = self.create_synonym_id(value)
+            sid = self._create_internal_sid(value)
 
-            if synonym_id in self.__by_synonym and self.__debug:
+            if self._contains_sid(sid) and self.__debug:
                 log_utils.log_synonym_existed(value)
                 continue
 
             synonym_list.append(value)
-            self.__by_synonym[synonym_id] = group_index
+            self.__by_sid[sid] = group_index
 
         self.__by_index.append(synonym_list)
 
@@ -115,10 +128,11 @@ class SynonymsCollection(object):
 
     def __get_group_index(self, value):
         synonym_id = self.create_synonym_id(value)
-        return self.__by_synonym[synonym_id]
+        return self.__by_sid[synonym_id]
 
     def __contains_synonym_value(self, value):
-        return self.create_synonym_id(value) in self.__by_synonym
+        sid = self.create_synonym_id(value)
+        return self._contains_sid(sid)
 
     # endregion
 
