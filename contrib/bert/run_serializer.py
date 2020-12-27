@@ -4,6 +4,7 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
+from arekit.contrib.experiments.common import entity_to_group_func
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
 from arekit.contrib.bert.samplers.factory import create_bert_sample_formatter
 
@@ -39,7 +40,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
             label_scaler=self._experiment.DataIO.LabelsScaler,
             entity_formatter=self.__entity_formatter,
             balance=self.__balance_train_samples,
-            synonyms=self._experiment.OpinionOperations.SynonymsCollection)
+            entity_to_group_func=self._experiment.entity_to_group)
 
         # Perform data serialization to *.tsv format.
         BaseInputEncoder.to_tsv(

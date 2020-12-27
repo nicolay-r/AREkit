@@ -6,7 +6,7 @@ sys.path.append('../')
 from arekit.contrib.source.rusentrel.synonyms_helper import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.term_to_group import term_to_group_func
+from arekit.contrib.experiments.common import entity_to_group_func
 from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
@@ -26,8 +26,8 @@ class TestInputBalancing(unittest.TestCase):
                                                                      is_read_only=True)
         terms_mapper = OpinionContainingTextTermsMapper(
             entity_formatter=StringEntitiesSimpleFormatter(),
-            term_to_group_func=lambda value: term_to_group_func(value=value,
-                                                                synonyms=synonyms))
+            entity_to_group_func=lambda entity: entity_to_group_func(entity=entity,
+                                                                     synonyms=synonyms))
 
         formatter = BaseSampleFormatter(
             data_type=DataType.Train,

@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment.folding.types import FoldingType
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.contrib.experiments.common import entity_to_group_func
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiments.rusentrel.folding import create_rusentrel_experiment_data_folding
@@ -31,14 +32,14 @@ class RuSentRelExperiment(BaseExperiment):
         experiment_io = experiment_io_type(self)
 
         logger.info("Read synonyms collection ...")
-        synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=exp_data.Stemmer,
-                                                                     version=version)
+        self.__synonyms = RuSentRelSynonymsCollectionHelper.load_collection(stemmer=exp_data.Stemmer,
+                                                                            version=version)
 
         logger.info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
                                               version=version,
                                               experiment_io=experiment_io,
-                                              synonyms=synonyms)
+                                              synonyms=self.__synonyms)
 
         logger.info("Create document operations ... ")
         folding = create_rusentrel_experiment_data_folding(folding_type=folding_type,
@@ -48,10 +49,10 @@ class RuSentRelExperiment(BaseExperiment):
         doc_ops = RuSentrelDocumentOperations(exp_data=exp_data,
                                               folding=folding,
                                               version=version,
-                                              get_synonyms_func=lambda: synonyms)
+                                              get_synonyms_func=lambda: self.__synonyms)
 
-        exp_name= u"rsr-{version}-{format}".format(version=version.value,
-                                                   format=doc_ops.DataFolding.Name)
+        exp_name = u"rsr-{version}-{format}".format(version=version.value,
+                                                    format=doc_ops.DataFolding.Name)
 
         super(RuSentRelExperiment, self).__init__(exp_data=exp_data,
                                                   experiment_io=experiment_io,
@@ -59,3 +60,6 @@ class RuSentRelExperiment(BaseExperiment):
                                                   opin_ops=opin_ops,
                                                   name=exp_name,
                                                   extra_name_suffix=extra_name_suffix)
+
+    def entity_to_group(self, entity):
+        return entity_to_group_func(entity, synonyms=self.__synonyms)

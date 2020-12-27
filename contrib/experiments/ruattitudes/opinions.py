@@ -5,9 +5,9 @@ from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
 class RuAttitudesOpinionOperations(OpinionOperations):
 
-    def __init__(self, synonyms, ru_attitudes):
+    def __init__(self, ru_attitudes):
         assert(isinstance(ru_attitudes, dict) or ru_attitudes is None)
-        super(RuAttitudesOpinionOperations, self).__init__(synonyms)
+        super(RuAttitudesOpinionOperations, self).__init__()
 
         self.__ru_attitudes = ru_attitudes
 

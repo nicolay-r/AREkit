@@ -20,9 +20,9 @@ class RuSentrelOpinionOperations(OpinionOperations):
     def __init__(self, experiment_data, experiment_io, synonyms, version):
         assert(isinstance(experiment_data, DataIO))
         assert(isinstance(version, RuSentRelVersions))
+        super(RuSentrelOpinionOperations, self).__init__()
 
-        super(RuSentrelOpinionOperations, self).__init__(synonyms)
-
+        self.__synonyms = synonyms
         self.__version = version
         self.__experiment_io = experiment_io
         self.__opinion_formatter = experiment_data.OpinionFormatter
@@ -112,7 +112,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def __create_collection(self, opinions):
         return OpinionCollection(opinions=[] if opinions is None else opinions,
-                                 synonyms=self.SynonymsCollection,
+                                 synonyms=self.__synonyms,
                                  error_on_duplicates=True,
                                  error_on_synonym_end_missed=True)
 

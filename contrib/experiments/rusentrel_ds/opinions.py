@@ -6,11 +6,10 @@ from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperat
 
 class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
 
-    def __init__(self, synonyms, rusentrel_op, ruattitudes_op, is_rusentrel_doc):
+    def __init__(self, rusentrel_op, ruattitudes_op, is_rusentrel_doc):
         assert(isinstance(rusentrel_op, RuSentrelOpinionOperations))
         assert(isinstance(ruattitudes_op, RuAttitudesOpinionOperations))
-
-        super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__(synonyms)
+        super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__()
 
         self.__rusentrel_op = rusentrel_op
         self.__ruattitudes_op = ruattitudes_op

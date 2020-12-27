@@ -14,17 +14,19 @@ class NetworkSampleFormatter(BaseSampleFormatter):
     Provides additional features, frame-based especially
     """
 
-    def __init__(self, data_type, label_provider, text_provider, synonyms_collection, frames_collection,
+    def __init__(self, data_type, label_provider, text_provider,
+                 entity_to_group_func, frames_collection,
                  pos_terms_mapper, balance):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(pos_terms_mapper, PosTermsMapper))
+        assert(callable(entity_to_group_func))
 
         super(NetworkSampleFormatter, self).__init__(data_type=data_type,
                                                      label_provider=label_provider,
                                                      text_provider=text_provider,
                                                      balance=balance)
 
-        self.__synonyms_collection = synonyms_collection
+        self.__entity_to_group_func = entity_to_group_func
         self.__frames_collection = frames_collection
         self.__frame_role_label_scaler = ThreeLabelScaler()
         self.__pos_terms_mapper = pos_terms_mapper
@@ -93,12 +95,12 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         return isinstance(t, Entity)
 
     def __create_synonyms_set(self, terms, term_ind):
-        e = terms[term_ind]
-        assert(isinstance(e, Entity))
+        entity = terms[term_ind]
+        assert(isinstance(entity, Entity))
 
         # Searching for other synonyms among all the terms.
-        syn_s_group = self.__get_g(e.Value)
-        it = self.__iter_indices(terms=terms, filter=lambda t: self.__syn_check(t=t, g=syn_s_group))
+        group_ind = self.__entity_to_group_func(entity)
+        it = self.__iter_indices(terms=terms, filter=lambda t: self.__syn_check(term=t, group_ind=group_ind))
         inds_set = set(it)
 
         # Guarantee the presence of the term_ind
@@ -112,15 +114,12 @@ class NetworkSampleFormatter(BaseSampleFormatter):
             if filter(term):
                 yield t_ind
 
-    def __syn_check(self, t, g):
-        if not isinstance(t, Entity):
+    def __syn_check(self, term, group_ind):
+        if not isinstance(term, Entity):
             return False
-        if g < 0:
+        if group_ind is None:
             return False
-        return self.__get_g(t.Value) == g
-
-    def __get_g(self, value):
-        return self.__synonyms_collection.try_get_synonym_group_index(value)
+        return self.__entity_to_group_func(term) == group_ind
 
     @staticmethod
     def __to_arg(inds_iter):

@@ -56,12 +56,6 @@ class SynonymsCollection(object):
         assert(isinstance(value, unicode))
         return self.__get_group_index(value)
 
-    # TODO. Remove this, makes too complicated.
-    # TODO. Remove this, makes too complicated.
-    # TODO. Remove this, makes too complicated.
-    def try_get_synonym_group_index(self, value, default=-1):
-        return self.__get_group_index(value) if self.__contains_synonym_value(value) else default
-
     # endregion
 
     # region public 'create' methods

@@ -29,9 +29,9 @@ logging.basicConfig(level=logging.INFO)
 class NetworkInputEncoder(object):
 
     @staticmethod
-    def to_tsv_with_embedding_and_vocabulary(
-            opin_ops, doc_ops, exp_data, exp_io, data_type, term_embedding_pairs,
-            iter_parsed_news_func, terms_per_context, balance):
+    def to_tsv_with_embedding_and_vocabulary(opin_ops, doc_ops, exp_data, exp_io,
+                                             data_type, term_embedding_pairs, entity_to_group_func,
+                                             iter_parsed_news_func, terms_per_context, balance):
         """
         Performs encodding for all the data_types supported by experiment.
         """
@@ -42,6 +42,7 @@ class NetworkInputEncoder(object):
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(term_embedding_pairs, OrderedDict))
         assert(isinstance(terms_per_context, int))
+        assert(callable(entity_to_group_func))
         assert(isinstance(balance, bool))
         assert(callable(iter_parsed_news_func))
 
@@ -49,7 +50,7 @@ class NetworkInputEncoder(object):
         predefined_embedding.set_stemmer(exp_data.Stemmer)
 
         terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
-            synonyms=opin_ops.SynonymsCollection,
+            entity_to_group_func=entity_to_group_func,
             predefined_embedding=predefined_embedding,
             string_entities_formatter=exp_data.StringEntityFormatter,
             string_emb_entity_formatter=StringEntitiesSimpleFormatter())
@@ -76,7 +77,7 @@ class NetworkInputEncoder(object):
                 data_type=data_type,
                 label_provider=MultipleLabelProvider(label_scaler=exp_data.LabelsScaler),
                 text_provider=text_provider,
-                synonyms_collection=opin_ops.SynonymsCollection,
+                entity_to_group_func=entity_to_group_func,
                 frames_collection=exp_data.FramesCollection,
                 balance=balance and data_type == DataType.Train,
                 pos_terms_mapper=PosTermsMapper(exp_data.PosTagger)),
