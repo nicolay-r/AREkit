@@ -31,14 +31,14 @@ class SynonymsCollection(object):
     def add_synonym_value(self, value):
         assert(isinstance(value, unicode))
 
-        if self.contains_synonym_value(value):
+        if self.__contains_synonym_value(value):
             raise Exception((u"Collection already contains synonyms '{}'".format(value)).encode('utf-8'))
 
         if self.__is_read_only:
             raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
 
-        synonym_id = self.create_synonym_id(value)
-        self.__by_sid[synonym_id] = self.__get_groups_count()
+        sid = self._create_external_sid(value)
+        self.__by_sid[sid] = self.__get_groups_count()
         self.__by_index.append([value])
 
     # endregion
@@ -57,6 +57,8 @@ class SynonymsCollection(object):
         return self.__get_group_index(value)
 
     # TODO. Remove this, makes too complicated.
+    # TODO. Remove this, makes too complicated.
+    # TODO. Remove this, makes too complicated.
     def try_get_synonym_group_index(self, value, default=-1):
         return self.__get_group_index(value) if self.__contains_synonym_value(value) else default
 
@@ -65,7 +67,7 @@ class SynonymsCollection(object):
     # region public 'create' methods
 
     def create_synonym_id(self, value):
-        raise NotImplementedError()
+        return self._create_external_sid(value)
 
     # endregion
 
@@ -79,13 +81,16 @@ class SynonymsCollection(object):
         """
         raise NotImplementedError()
 
+    def _create_external_sid(self, value):
+        raise NotImplementedError()
+
     # endregion
 
     # region public 'iter' methods
 
     def iter_synonym_values(self, value):
         assert(isinstance(value, unicode))
-        sid = self.create_synonym_id(value)
+        sid = self._create_external_sid(value)
         index = self.__by_sid[sid]
         return iter(self.__by_index[index])
 
@@ -127,12 +132,11 @@ class SynonymsCollection(object):
         return len(self.__by_index)
 
     def __get_group_index(self, value):
-        synonym_id = self.create_synonym_id(value)
-        return self.__by_sid[synonym_id]
+        sid = self._create_external_sid(value)
+        return self.__by_sid[sid]
 
     def __contains_synonym_value(self, value):
-        sid = self.create_synonym_id(value)
-        return self._contains_sid(sid)
+        return self._contains_sid(self._create_external_sid(value))
 
     # endregion
 
