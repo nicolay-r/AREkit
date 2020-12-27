@@ -4,7 +4,6 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.contrib.experiments.common import entity_to_group_func
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
 from arekit.contrib.bert.samplers.factory import create_bert_sample_formatter
 

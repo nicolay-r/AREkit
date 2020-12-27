@@ -1,5 +1,4 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.contrib.experiments.common import entity_to_group_func
 from arekit.contrib.bert.label.str_rus_fmt import RussianThreeScaleRussianLabelsFormatter
 from arekit.contrib.bert.samplers.base import create_simple_sample_formatter
 from arekit.contrib.bert.samplers.nli_b import NliBinarySampleFormatter
