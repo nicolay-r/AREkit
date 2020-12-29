@@ -42,6 +42,8 @@ class ResultVersions(Enum):
     # Could not reproduce F1=0.40, only f1=0.37 in 0.20.5
     PCNNLrecFixedE29 = u"pcnn-lrec-ds-e27-fixed.zip"
 
+    CNNRsrRa20LargeNeut = u"rsr-ra-20-large-neut-cnn.zip"
+
 
 # Expected F1-values for every result.
 f1_rusentrel_v11_results = {
@@ -51,7 +53,8 @@ f1_rusentrel_v11_results = {
     ResultVersions.AttPCNNCV3e40i2: 0.27847993499755,
     ResultVersions.AttCNNFixed: 0.2992231753125483,
     ResultVersions.AttPCNNFixed: 0.3476705309623523,
-    ResultVersions.PCNNLrecFixedE29: 0.3710003588082132
+    ResultVersions.PCNNLrecFixedE29: 0.3710003588082132,
+    ResultVersions.CNNRsrRa20LargeNeut: 0.4166392079056299
 }
 
 
@@ -160,6 +163,9 @@ class TestRuSentRelEvaluation(unittest.TestCase):
 
     def test_pcnn_lrec(self):
         self.__test_core(ResultVersions.PCNNLrecFixedE29)
+
+    def test_rsr_ra_20_large_neut_cnn(self):
+        self.__test_core(ResultVersions.CNNRsrRa20LargeNeut)
 
     def test_rsr_ra_12_merged_collection(self):
 
