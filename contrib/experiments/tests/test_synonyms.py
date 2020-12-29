@@ -46,15 +46,6 @@ class TestSynonymsCollection(unittest.TestCase):
         for value in synonyms.iter_synonym_values(value=searching_value):
             print value
 
-    def test_synonyms_collection_reading(self):
-        # Initializing stemmer
-        stemmer = MystemWrapper()
-
-        # Synonyms collection reading test
-        return RuAttitudesSynonymsCollectionProvider.load_collection(
-            stemmer=stemmer,
-            version=TestSynonymsCollection.__ruattittudes_version)
-
 
 if __name__ == '__main__':
     unittest.main()

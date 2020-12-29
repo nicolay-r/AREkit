@@ -13,12 +13,9 @@ from arekit.contrib.experiments.rusentrel.folding import create_rusentrel_experi
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
-from arekit.contrib.experiments.synonyms.collection import StemmerBasedSynonymCollection
 from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.ruattitudes.synonyms import RuAttitudesSynonymsCollectionHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
 
 logger = logging.getLogger(__name__)
 
@@ -44,18 +41,9 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
 
         # Utilized for results evaluation.
         logger.info("Read synonyms collection [RuSentRel]...")
-        rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=exp_data.Stemmer,
-                                                                                 version=rusentrel_version)
-
-        # Utilized for input serialization.
-        logger.info("Read synonyms collection [RuSentRel]...")
-        self.__merged_synonyms = StemmerBasedSynonymCollection(
-            iter_group_values_lists=self._iter_synonyms_group_lists(
-                rusentrel_version=rusentrel_version,
-                ruattitudes_version=ruattitudes_version),
+        self.__rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
             stemmer=exp_data.Stemmer,
-            is_read_only=True,
-            debug=False)
+            version=rusentrel_version)
 
         # RuSentRel doc operations init.
         rusentrel_folding = create_rusentrel_experiment_data_folding(
@@ -68,7 +56,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_doc = RuSentrelDocumentOperations(exp_data=exp_data,
                                                     version=rusentrel_version,
                                                     folding=rusentrel_folding,
-                                                    get_synonyms_func=lambda: rusentrel_synonyms)
+                                                    get_synonyms_func=lambda: self.__rusentrel_synonyms)
 
         # Loading ru_attitudes in memory
         ru_attitudes = read_ruattitudes_in_memory(version=ruattitudes_version,
@@ -86,7 +74,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_data,
                                                   version=rusentrel_version,
                                                   experiment_io=experiment_io,
-                                                  synonyms=rusentrel_synonyms)
+                                                  synonyms=self.__rusentrel_synonyms)
 
         ruattitudes_op = RuAttitudesOpinionOperations(ru_attitudes=ru_attitudes)
 
@@ -111,14 +99,5 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                                  name=exp_name,
                                                                  extra_name_suffix=extra_name_suffix)
 
-    @staticmethod
-    def _iter_synonyms_group_lists(rusentrel_version, ruattitudes_version):
-        assert(isinstance(rusentrel_version, RuSentRelVersions))
-        assert(isinstance(ruattitudes_version, RuAttitudesVersions))
-        for group in RuSentRelSynonymsCollectionHelper.iter_groups(rusentrel_version):
-            yield group
-        for group in RuAttitudesSynonymsCollectionHelper.iter_groups(ruattitudes_version):
-            yield group
-
     def entity_to_group(self, entity):
-        return entity_to_group_func(entity, synonyms=self.__merged_synonyms)
+        return entity_to_group_func(entity, synonyms=self.__rusentrel_synonyms)
