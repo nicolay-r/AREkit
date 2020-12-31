@@ -10,4 +10,9 @@ def init_config(config):
     config.set_term_embedding(np.zeros((100, 100)))
     config.set_class_weights([1] * config.ClassesCount)
     config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
+
+    # Notify other subscribers that initialization process has been completed.
+    config.init_initializers()
+
+    # Init other config dependent parameters.
     config.init_config_dependent_parameters()

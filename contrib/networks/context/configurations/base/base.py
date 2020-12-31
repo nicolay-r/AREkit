@@ -168,6 +168,9 @@ class DefaultNetworkConfig(object):
         self.__pos_count = value
 
     def init_config_dependent_parameters(self):
+        pass
+
+    def init_initializers(self):
         assert(self.__optimiser is None)
         assert(self.__default_regularizer is None)
         assert(self.__default_embedding_initializer is None)
