@@ -7,8 +7,6 @@ class BaseTextOpinionCollection(object):
 
     def __init__(self, text_opinions):
         """
-        parsed_news_collection: ParsedNewsCollection
-            utilized as reference only (for Helper)
         text_opinions: list
             list of TextOpinion
         """
