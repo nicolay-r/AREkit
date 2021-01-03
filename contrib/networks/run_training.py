@@ -74,8 +74,8 @@ class NetworksTrainingEngine(ExperimentEngine):
             bags_collection_type=self.__bags_collection_type,
             config=self.__config)
 
-        # Notify other subscribers that initialization process has been completed.
-        self.__config.init_config_dependent_parameters()
+        # Update parameters after iteration preparation has been completed.
+        self.__config.reinit_config_dependent_parameters()
 
         # Setup callback
         callback = self._experiment.DataIO.Callback

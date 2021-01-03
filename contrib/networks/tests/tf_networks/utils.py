@@ -15,4 +15,4 @@ def init_config(config):
     config.init_initializers()
 
     # Init other config dependent parameters.
-    config.init_config_dependent_parameters()
+    config.reinit_config_dependent_parameters()

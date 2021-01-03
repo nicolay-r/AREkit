@@ -167,7 +167,7 @@ class DefaultNetworkConfig(object):
     def set_pos_count(self, value):
         self.__pos_count = value
 
-    def init_config_dependent_parameters(self):
+    def reinit_config_dependent_parameters(self):
         pass
 
     def init_initializers(self):
