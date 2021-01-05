@@ -45,11 +45,12 @@ class ResultVersions(Enum):
 
     CNNRsrRa20LargeNeut = u"rsr-ra-20-large-neut-cnn.zip"
 
-    SelfTest = u"self-rusentrel-11.zip"
+    SelfTestClassification = u"self-rusentrel-11.zip"
 
 
 # Expected F1-values for every result.
 f1_rusentrel_v11_results = {
+    # Extraction.
     ResultVersions.DSAttCNNFixedE40: 0.40848820278013587,
     ResultVersions.AttPCNNCV3e40i0: 0.31908734912456854,
     ResultVersions.AttPCNNCV3e40i1: 0.29308682656891705,
@@ -57,7 +58,9 @@ f1_rusentrel_v11_results = {
     ResultVersions.AttCNNFixed: 0.2992231753125483,
     ResultVersions.AttPCNNFixed: 0.3476705309623523,
     ResultVersions.PCNNLrecFixedE29: 0.3710003588082132,
-    ResultVersions.CNNRsrRa20LargeNeut: 0.4166392079056299
+    ResultVersions.CNNRsrRa20LargeNeut: 0.4166392079056299,
+    # Classification.
+    ResultVersions.SelfTestClassification: 1.0
 }
 
 
@@ -190,9 +193,8 @@ class TestRuSentRelEvaluation(unittest.TestCase):
                          synonyms=synonyms)
 
     def test_classification(self):
-        self.__test_core(ResultVersions.SelfTest,
-                         eval_mode=EvaluationModes.Classification,
-                         check_results=False)
+        self.__test_core(ResultVersions.SelfTestClassification,
+                         eval_mode=EvaluationModes.Classification)
 
 
 if __name__ == '__main__':

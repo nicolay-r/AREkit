@@ -32,10 +32,13 @@ class BaseEvaluator(object):
             has_opinion = test_opins.has_synonymous_opinion(o_etalon)
             o_test = None if not has_opinion else test_opins.get_synonymous_opinion(o_etalon)
 
-            if not has_opinion and self.__eval_mode == EvaluationModes.Classification:
+            if self.__eval_mode == EvaluationModes.Classification:
                 # In case of evaluation mode, we do not consider such
                 # cases when etalon opinion was not found in result.
-                continue
+                if not has_opinion:
+                    continue
+                # Otherwise provide the information for further comparison.
+                yield [o_etalon, o_etalon.Sentiment, o_test.Sentiment]
             elif self.__eval_mode == EvaluationModes.Extraction:
                 yield [o_etalon,
                        o_etalon.Sentiment,
