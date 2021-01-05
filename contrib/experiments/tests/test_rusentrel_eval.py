@@ -6,6 +6,7 @@ from os.path import dirname
 
 from enum import Enum
 
+from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.common.evaluation.results.two_class import TwoClassEvalResult
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
@@ -43,6 +44,8 @@ class ResultVersions(Enum):
     PCNNLrecFixedE29 = u"pcnn-lrec-ds-e27-fixed.zip"
 
     CNNRsrRa20LargeNeut = u"rsr-ra-20-large-neut-cnn.zip"
+
+    SelfTest = u"self-rusentrel-11.zip"
 
 
 # Expected F1-values for every result.
@@ -92,9 +95,13 @@ class TestRuSentRelEvaluation(unittest.TestCase):
     def __is_equal_results(self, v1, v2):
         self.assert_(abs(v1 - v2) < 1e-10)
 
-    def __test_core(self, res_version, synonyms=None):
+    def __test_core(self, res_version, synonyms=None,
+                    eval_mode=EvaluationModes.Extraction,
+                    check_results=True):
         assert(isinstance(res_version, ResultVersions))
         assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
+        assert(isinstance(eval_mode, EvaluationModes))
+        assert(isinstance(check_results, bool))
 
         # Initializing synonyms collection.
         if synonyms is None:
@@ -121,7 +128,7 @@ class TestRuSentRelEvaluation(unittest.TestCase):
                 error_on_synonym_end_missed=False))
 
         # getting evaluator.
-        evaluator = TwoClassEvaluator()
+        evaluator = TwoClassEvaluator(eval_mode=eval_mode)
 
         # evaluate every document.
         logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc=u"Evaluate", unit=u'pairs')
@@ -144,8 +151,10 @@ class TestRuSentRelEvaluation(unittest.TestCase):
                 for doc_id, df_cmp_table in result.iter_dataframe_cmp_tables():
                     print u"{}:\t{}\n".format(doc_id, df_cmp_table)
             print "------------------------"
-        self.__is_equal_results(v1=result.get_result_by_metric(TwoClassEvalResult.C_F1),
-                                v2=f1_rusentrel_v11_results[res_version])
+
+        if check_results:
+            self.__is_equal_results(v1=result.get_result_by_metric(TwoClassEvalResult.C_F1),
+                                    v2=f1_rusentrel_v11_results[res_version])
 
     def test_ann_cnn(self):
         self.__test_core(ResultVersions.AttCNNFixed)
@@ -179,6 +188,11 @@ class TestRuSentRelEvaluation(unittest.TestCase):
 
         self.__test_core(ResultVersions.PCNNLrecFixedE29,
                          synonyms=synonyms)
+
+    def test_classification(self):
+        self.__test_core(ResultVersions.SelfTest,
+                         eval_mode=EvaluationModes.Classification,
+                         check_results=False)
 
 
 if __name__ == '__main__':
