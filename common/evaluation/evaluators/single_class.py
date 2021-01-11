@@ -27,7 +27,9 @@ class SingleClassEvaluator(BaseEvaluator):
         self.__create_synonyms_collection_func = create_synonyms_collection_func
         self.__sentiment_label = SentimentLabel()
 
-    def calc_a_file(self, cmp_pair):
+    # region private methods
+
+    def __calc_for_pair(self, cmp_pair):
         assert(isinstance(cmp_pair, OpinionCollectionsToCompare))
 
         test_opins = self.__clone_with_different_label(opinions=cmp_pair.TestOpinionCollection,
@@ -55,12 +57,14 @@ class SingleClassEvaluator(BaseEvaluator):
 
         return new_collection
 
+    # endregion
+
     def evaluate(self, cmp_pairs):
         assert(isinstance(cmp_pairs, collections.Iterable))
 
         result = SingleClassEvalResult()
         for cmp_pair in cmp_pairs:
-            cmp_table, has_pos, has_neg = self.calc_a_file(cmp_pair)
+            cmp_table, has_pos, has_neg = self.__calc_for_pair(cmp_pair)
 
             p, r = metrics.calc_prec_and_recall(cmp_table=cmp_table,
                                                 label=self.__sentiment_label,

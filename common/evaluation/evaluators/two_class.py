@@ -16,7 +16,9 @@ class TwoClassEvaluator(BaseEvaluator):
         self.__pos_label = PositiveLabel()
         self.__neg_label = NegativeLabel()
 
-    def calc_a_file(self, cmp_pair):
+    # region private methods
+
+    def __calc_for_pair(self, cmp_pair):
         assert(isinstance(cmp_pair, OpinionCollectionsToCompare))
 
         cmp_table = self.calc_difference(etalon_opins=cmp_pair.EtalonOpinionCollection,
@@ -35,12 +37,14 @@ class TwoClassEvaluator(BaseEvaluator):
                 return True
         return False
 
+    # endregion
+
     def evaluate(self, cmp_pairs):
         assert(isinstance(cmp_pairs, collections.Iterable))
 
         result = TwoClassEvalResult()
         for cmp_pair in cmp_pairs:
-            cmp_table, has_pos, has_neg = self.calc_a_file(cmp_pair)
+            cmp_table, has_pos, has_neg = self.__calc_for_pair(cmp_pair)
 
             pos_prec, pos_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,
                                                                 label=self.__pos_label,

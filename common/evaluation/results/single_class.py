@@ -12,45 +12,50 @@ class SingleClassEvalResult(BaseEvalResult):
     def __init__(self):
         super(SingleClassEvalResult, self).__init__()
 
-        self.__documents = OrderedDict()
-        self.__result = None
+        self.__doc_results = OrderedDict()
+        # TODO. To Base.
+        self.__total_result = None
 
+    # TODO. To Base.
     @property
-    def Result(self):
-        return self.__result
+    def TotalResult(self):
+        return self.__total_result
 
-    def get_result_as_str(self):
-        return str(self.__result)
-
+    # TODO. To Base.
     def get_result_by_metric(self, metric_name):
         assert(isinstance(metric_name, unicode))
-        return self.__result[metric_name]
+        return self.__total_result[metric_name]
+
+    # TODO. To Base.
+    def iter_total_by_param_results(self):
+        assert(self.__total_result is not None)
+        return self.__total_result.iteritems()
 
     def add_document_results(self, doc_id, cmp_table, prec, recall):
-        assert(doc_id not in self.__documents)
+        assert(doc_id not in self.__doc_results)
         assert(isinstance(cmp_table, DocumentCompareTable))
 
         self._add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
         f1 = calc_f1_single_class(prec=prec, recall=recall)
 
-        self.__documents[doc_id] = OrderedDict()
-        self.__documents[doc_id][self.C_F1] = round(f1, 2)
-        self.__documents[doc_id][self.C_PREC] = round(prec, 4)
-        self.__documents[doc_id][self.C_RECALL] = round(recall, 5)
+        self.__doc_results[doc_id] = OrderedDict()
+        self.__doc_results[doc_id][self.C_F1] = f1
+        self.__doc_results[doc_id][self.C_PREC] = prec
+        self.__doc_results[doc_id][self.C_RECALL] = recall
 
     def calculate(self):
         prec, recall = (0.0, 0.0)
 
-        for info in self.__documents.itervalues():
+        for info in self.__doc_results.itervalues():
             prec += info[self.C_PREC]
             recall += info[self.C_RECALL]
 
-        prec /= len(self.__documents)
-        recall /= len(self.__documents)
+        prec /= len(self.__doc_results)
+        recall /= len(self.__doc_results)
 
         f1 = calc_f1_single_class(prec=prec, recall=recall)
 
-        self.__result = OrderedDict()
-        self.__result[self.C_F1] = f1
-        self.__result[self.C_PREC] = prec
-        self.__result[self.C_RECALL] = recall
+        self.__total_result = OrderedDict()
+        self.__total_result[self.C_F1] = f1
+        self.__total_result[self.C_PREC] = prec
+        self.__total_result[self.C_RECALL] = recall

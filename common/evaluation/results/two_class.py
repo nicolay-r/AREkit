@@ -17,26 +17,30 @@ class TwoClassEvalResult(BaseEvalResult):
     def __init__(self):
         super(TwoClassEvalResult, self).__init__()
 
-        self.__documents = OrderedDict()
-        self.__result = None
+        self.__doc_results = OrderedDict()
+        # TODO. To Base.
+        self.__total_result = None
 
-    def get_result_as_str(self):
-        return str(self.__result)
+    # TODO. To Base.
+    @property
+    def TotalResult(self):
+        return self.__total_result
 
+    # TODO. To Base.
     def get_result_by_metric(self, metric_name):
         assert(isinstance(metric_name, unicode))
-        return self.__result[metric_name]
+        return self.__total_result[metric_name]
 
-    def iter_results(self):
-        assert(self.__result is not None)
-        for metric_name, value in self.__result.iteritems():
-            yield metric_name, value
+    # TODO. To Base.
+    def iter_total_by_param_results(self):
+        assert(self.__total_result is not None)
+        return self.__total_result.iteritems()
 
     def add_document_results(self, doc_id,
                              cmp_table,
                              pos_prec, neg_prec,
                              pos_recall, neg_recall):
-        assert(doc_id not in self.__documents)
+        assert(doc_id not in self.__doc_results)
         assert(isinstance(cmp_table, DocumentCompareTable))
 
         self._add_cmp_table(doc_id=doc_id, cmp_table=cmp_table)
@@ -46,48 +50,41 @@ class TwoClassEvalResult(BaseEvalResult):
                      pos_recall=pos_recall,
                      neg_recall=neg_recall)
 
-        self.__documents[doc_id] = OrderedDict()
-        self.__documents[doc_id][self.C_F1] = round(f1, 2)
-        self.__documents[doc_id][self.C_POS_PREC] = round(pos_prec, 4)
-        self.__documents[doc_id][self.C_NEG_PREC] = round(neg_prec, 5)
-        self.__documents[doc_id][self.C_POS_RECALL] = round(pos_recall, 5)
-        self.__documents[doc_id][self.C_NEG_RECALL] = round(neg_recall, 5)
+        self.__doc_results[doc_id] = OrderedDict()
+        self.__doc_results[doc_id][self.C_F1] = f1
+        self.__doc_results[doc_id][self.C_POS_PREC] = pos_prec
+        self.__doc_results[doc_id][self.C_NEG_PREC] = neg_prec
+        self.__doc_results[doc_id][self.C_POS_RECALL] = pos_recall
+        self.__doc_results[doc_id][self.C_NEG_RECALL] = neg_recall
 
     def calculate(self):
         pos_prec, neg_prec, pos_recall, neg_recall = (0.0, 0.0, 0.0, 0.0)
 
-        for info in self.__documents.itervalues():
+        for info in self.__doc_results.itervalues():
             pos_prec += info[self.C_POS_PREC]
             neg_prec += info[self.C_NEG_PREC]
             pos_recall += info[self.C_POS_RECALL]
             neg_recall += info[self.C_NEG_RECALL]
 
-        if len(self.__documents) > 0:
-            pos_prec /= len(self.__documents)
-            neg_prec /= len(self.__documents)
-            pos_recall /= len(self.__documents)
-            neg_recall /= len(self.__documents)
+        if len(self.__doc_results) > 0:
+            pos_prec /= len(self.__doc_results)
+            neg_prec /= len(self.__doc_results)
+            pos_recall /= len(self.__doc_results)
+            neg_recall /= len(self.__doc_results)
 
         f1 = calc_f1(pos_prec=pos_prec,
                      neg_prec=neg_prec,
                      pos_recall=pos_recall,
                      neg_recall=neg_recall)
 
-        self.__result = OrderedDict()
-        self.__result[self.C_F1] = f1
-        self.__result[self.C_F1_POS] = calc_f1_single_class(prec=pos_prec, recall=pos_recall)
-        self.__result[self.C_F1_NEG] = calc_f1_single_class(prec=neg_prec, recall=neg_recall)
-        self.__result[self.C_POS_PREC] = pos_prec
-        self.__result[self.C_NEG_PREC] = neg_prec
-        self.__result[self.C_POS_RECALL] = pos_recall
-        self.__result[self.C_NEG_RECALL] = neg_recall
+        self.__total_result = OrderedDict()
+        self.__total_result[self.C_F1] = f1
+        self.__total_result[self.C_F1_POS] = calc_f1_single_class(prec=pos_prec, recall=pos_recall)
+        self.__total_result[self.C_F1_NEG] = calc_f1_single_class(prec=neg_prec, recall=neg_recall)
+        self.__total_result[self.C_POS_PREC] = pos_prec
+        self.__total_result[self.C_NEG_PREC] = neg_prec
+        self.__total_result[self.C_POS_RECALL] = pos_recall
+        self.__total_result[self.C_NEG_RECALL] = neg_recall
 
     def iter_document_results(self):
-        for doc_id, info in self.__documents.iteritems():
-            yield doc_id, info
-
-    def iter_dataframe_cmp_tables(self):
-        for doc_id in self.__documents.keys():
-            cmp_table = self._cmp_tables[doc_id]
-            assert(isinstance(cmp_table, DocumentCompareTable))
-            yield doc_id, cmp_table.DataframeTable
+        return self.__doc_results.iteritems()
