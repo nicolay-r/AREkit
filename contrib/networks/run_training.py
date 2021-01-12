@@ -89,8 +89,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                                     bags_collection_type=self.__bags_collection_type,
                                     callback=callback,
                                     nn_io=self._experiment.DataIO.ModelIO,
-                                    label_scaler=self._experiment.DataIO.LabelsScaler,
-                                    evaluator=self._experiment.DataIO.Evaluator)
+                                    label_scaler=self._experiment.DataIO.LabelsScaler)
 
         # Run model
         with callback:

@@ -45,13 +45,12 @@ class BaseTensorflowModel(BaseModel):
     FeedDictShow = False
 
     def __init__(self, nn_io, network, label_scaler,
-                 handled_data, evaluator, bags_collection_type,
+                 handled_data, bags_collection_type,
                  config, callback=None):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(handled_data, HandledData))
-        assert(isinstance(evaluator, BaseEvaluator) or evaluator is None)
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(callback, Callback) or callback is None)
         assert(isinstance(config, DefaultNetworkConfig))
