@@ -1,30 +1,44 @@
+from collections import OrderedDict
+
+from arekit.common.evaluation.cmp_opinions import OpinionCollectionsToCompare
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 
 
 class BaseEvalResult(object):
 
-    C_F1 = u'f1'
-
     def __init__(self):
         self._cmp_tables = {}
+        self._total_result = OrderedDict()
+
+    # region properties
 
     @property
     def TotalResult(self):
-        raise NotImplementedError()
+        return self._total_result
 
-    def get_result_by_metric(self, metric_name):
-        raise NotImplementedError()
+    # endregion
 
-    def iter_total_by_param_results(self):
-        raise NotImplementedError()
+    # region abstract methods
 
     def calculate(self):
         raise NotImplementedError()
 
-    def _add_cmp_table(self, doc_id, cmp_table):
-        assert(doc_id not in self._cmp_tables)
-        assert(isinstance(cmp_table, DocumentCompareTable))
-        self._cmp_tables[doc_id] = cmp_table
+    # endregion
+
+    def get_result_by_metric(self, metric_name):
+        assert(isinstance(metric_name, unicode))
+        return self._total_result[metric_name]
+
+    def iter_total_by_param_results(self):
+        assert(self._total_result is not None)
+        return self._total_result.iteritems()
 
     def iter_dataframe_cmp_tables(self):
         yield self._cmp_tables.iteritems()
+
+    def reg_doc(self, cmp_pair, cmp_table):
+        """ Registering cmp_table.
+        """
+        assert(isinstance(cmp_pair, OpinionCollectionsToCompare))
+        assert(isinstance(cmp_table, DocumentCompareTable))
+        self._cmp_tables[cmp_pair.DocumentID] = cmp_table
