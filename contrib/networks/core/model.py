@@ -206,6 +206,7 @@ class BaseTensorflowModel(BaseModel):
         assert(isinstance(minibatch, MiniBatch))
         assert(isinstance(data_type, DataType))
 
+        # TODO. Use label_to_uint_func
         network_input = minibatch.to_network_input(label_scaler=self.__label_scaler,
                                                    provide_labels=data_type != DataType.Test)
         if self.FeedDictShow:

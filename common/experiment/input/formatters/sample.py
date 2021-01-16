@@ -117,7 +117,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         if self.__is_train():
             row[const.LABEL] = self._label_provider.calculate_output_label(
+                # TODO. Use uint_label (Convert to uint)
                 expected_label=expected_label,
+                # TODO. Use uint_label (Convert to uint)
                 etalon_label=etalon_label)
 
         self.__text_provider.add_text_in_row(
@@ -186,6 +188,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
                                         parsed_news=parsed_news,
                                         linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
                                         index_in_linked=index_in_linked,
+                                        # TODO. provide uint_label
                                         etalon_label=origin.Sentiment,
                                         idle_mode=idle_mode)
 
@@ -194,6 +197,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
                                     parsed_news=parsed_news,
                                     linked_wrap=linked_wrap,
                                     index_in_linked=index_in_linked,
+                                    # TODO. provide uint_label
                                     etalon_label=origin.Sentiment,
                                     idle_mode=idle_mode)
 

@@ -72,6 +72,8 @@ class ParsedSampleRow(object):
     def ObjectIndex(self):
         return self.__params[const.T_IND]
 
+    # TODO. There is no need to use label scaler!!!.
+    # TODO. As we then perform a reversed conversion.
     @property
     def Sentiment(self):
         return self.__sentiment
@@ -102,4 +104,6 @@ class ParsedSampleRow(object):
 
     @classmethod
     def parse(cls, row, labels_scaler):
+        # TODO. There is no need to use label scaler!!!.
+        # TODO. As we then perform a reversed conversion.
         return cls(row=row, labels_scaler=labels_scaler)
