@@ -11,6 +11,9 @@ from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
 
+DEFAULT_CV_COUNT = 3
+
+
 def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_func, experiment_io):
     """ Supported data folding in experiments with RuSentRelCollection.
     """
@@ -53,7 +56,7 @@ def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_
 
         return TwoClassCVFolding(doc_ids_to_fold=all_doc_ids,
                                  supported_data_types=supported_data_types,
-                                 cv_count=3,
+                                 cv_count=DEFAULT_CV_COUNT,
                                  splitter=splitter)
 
     raise Exception("Folding type `{}` does not supported by RuSentRel experiment".format(folding_type))
