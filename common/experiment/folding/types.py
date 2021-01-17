@@ -11,3 +11,9 @@ class FoldingType(Enum):
     Assumes separation using k-fold cross-validation approach
     """
     CrossValidation = 2
+
+    @staticmethod
+    def from_str(value):
+        for t in FoldingType:
+            if t.value == value:
+                return t
