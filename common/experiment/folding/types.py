@@ -5,12 +5,12 @@ class FoldingType(Enum):
     """
     Assumes a fixed separation onto train and test collections
     """
-    Fixed = 1
+    Fixed = u'fx'
 
     """
     Assumes separation using k-fold cross-validation approach
     """
-    CrossValidation = 2
+    CrossValidation = u'cv'
 
     @staticmethod
     def from_str(value):
