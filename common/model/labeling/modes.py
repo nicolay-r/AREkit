@@ -1,3 +1,4 @@
+# TODO: Use enum instead.
 class LabelCalculationMode:
 
     FIRST_APPEARED = u'take_first_appeared'

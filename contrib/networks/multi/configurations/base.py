@@ -18,6 +18,7 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     # region properties
 
+    # TODO. NOT USED.
     @property
     def TextOpinionLabelCalculationMode(self):
         return LabelCalculationMode.FIRST_APPEARED
