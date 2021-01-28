@@ -1,6 +1,10 @@
+import collections
+
+from arekit.common.evaluation.cmp_opinions import OpinionCollectionsToCompare
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.evaluators.utils import label_to_str
+from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.labels.base import Label
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -11,6 +15,8 @@ class BaseEvaluator(object):
     def __init__(self, eval_mode):
         assert(isinstance(eval_mode, EvaluationModes))
         self.__eval_mode = eval_mode
+
+    # region private methods
 
     @staticmethod
     def __cmp_result(l1, l2):
@@ -32,10 +38,13 @@ class BaseEvaluator(object):
             has_opinion = test_opins.has_synonymous_opinion(o_etalon)
             o_test = None if not has_opinion else test_opins.get_synonymous_opinion(o_etalon)
 
-            if not has_opinion and self.__eval_mode == EvaluationModes.Classification:
+            if self.__eval_mode == EvaluationModes.Classification:
                 # In case of evaluation mode, we do not consider such
                 # cases when etalon opinion was not found in result.
-                continue
+                if not has_opinion:
+                    continue
+                # Otherwise provide the information for further comparison.
+                yield [o_etalon, o_etalon.Sentiment, o_test.Sentiment]
             elif self.__eval_mode == EvaluationModes.Extraction:
                 yield [o_etalon,
                        o_etalon.Sentiment,
@@ -58,10 +67,21 @@ class BaseEvaluator(object):
             elif self.__eval_mode == EvaluationModes.Extraction:
                 yield [o_test, None, o_test.Sentiment]
 
-    def evaluate(self, cmp_pairs):
+    # endregion
+
+    # region abstract methods
+
+    def _create_eval_result(self):
+        """ Provides instance which additionally performs all the necessary
+            metrics-based computations
+        """
         raise NotImplementedError()
 
-    def calc_difference(self, etalon_opins, test_opins):
+    # endregion
+
+    # region protected methods
+
+    def _calc_diff(self, etalon_opins, test_opins):
 
         cmp_table = DocumentCompareTable.create_template_df()
 
@@ -77,3 +97,25 @@ class BaseEvaluator(object):
                                     self.__cmp_result(l1=etalon_label, l2=result_label)]
 
         return DocumentCompareTable(cmp_table=cmp_table)
+
+    # endregion
+
+    def evaluate(self, cmp_pairs):
+        assert (isinstance(cmp_pairs, collections.Iterable))
+
+        # Composing result instance
+        result = self._create_eval_result()
+        assert(isinstance(result, BaseEvalResult))
+
+        # Providing compared pairs in a form of tables.
+        for cmp_pair in cmp_pairs:
+            assert(isinstance(cmp_pair, OpinionCollectionsToCompare))
+            cmp_table = self._calc_diff(etalon_opins=cmp_pair.EtalonOpinionCollection,
+                                        test_opins=cmp_pair.TestOpinionCollection)
+
+            result.reg_doc(cmp_pair=cmp_pair, cmp_table=cmp_table)
+
+        # Calculate an overall result.
+        result.calculate()
+
+        return result

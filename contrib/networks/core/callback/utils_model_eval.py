@@ -112,6 +112,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         labels_scaler=labels_scaler,
         opinion_operations=opin_ops,
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
+        # TODO. bring this onto parameters level.
         label_calculation_mode=LabelCalculationMode.AVERAGE,
         output=MulticlassOutput(labels_scaler),
         keep_news_ids_from_samples_reader=True,

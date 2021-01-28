@@ -23,9 +23,8 @@ class AttentionSynonymEndsCNNConfig(AttentionCNNBaseConfig):
     def get_attention_parameters(self):
         return self.__attention_config.get_parameters()
 
-    def init_config_dependent_parameters(self):
-        assert(self.__attention is None)
-        super(AttentionSynonymEndsCNNConfig, self).init_config_dependent_parameters()
+    def reinit_config_dependent_parameters(self):
+        super(AttentionSynonymEndsCNNConfig, self).reinit_config_dependent_parameters()
 
         self.__attention = InteractiveMLPAttention(
             cfg=self.__attention_config,

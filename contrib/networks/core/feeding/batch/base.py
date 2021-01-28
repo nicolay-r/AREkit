@@ -32,6 +32,7 @@ class MiniBatch(object):
 
     # region public methods
 
+    # TODO. Use label_to_uint_func
     def to_network_input(self, label_scaler, provide_labels):
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(provide_labels, bool))

@@ -22,12 +22,16 @@ class BagsCollection(object):
     def from_formatted_samples(cls,
                                formatted_samples_iter,
                                bag_size,
+                               # TODO. There is no need to use label scaler!!!.
+                               # TODO. As we then perform a reversed conversion.
                                label_scaler,
                                create_sample_func,
                                create_empty_sample_func,
                                shuffle,
                                desc=None):
         assert(isinstance(formatted_samples_iter, collections.Iterable))
+        # TODO. There is no need to use label scaler!!!.
+        # TODO. As we then perform a reversed conversion.
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(bag_size, int) and bag_size > 0)
         assert(callable(create_sample_func))

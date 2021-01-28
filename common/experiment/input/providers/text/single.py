@@ -26,7 +26,7 @@ class BaseSingleTextProvider(object):
         # Optionally handle mapped data.
         pass
 
-    def __handle_terms_and_compose_text(self, sentence_terms):
+    def _handle_terms_and_compose_text(self, sentence_terms):
         str_terms = []
 
         for m_data in self._mapper.iter_mapped(sentence_terms):
@@ -42,4 +42,4 @@ class BaseSingleTextProvider(object):
         self._mapper.set_s_ind(s_ind)
         self._mapper.set_t_ind(t_ind)
         set_text_func(column=self.TEXT_A,
-                      value=self._process_text(text=self.__handle_terms_and_compose_text(sentence_terms)))
+                      value=self._process_text(text=self._handle_terms_and_compose_text(sentence_terms)))

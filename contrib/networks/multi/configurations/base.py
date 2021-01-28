@@ -18,6 +18,7 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
 
     # region properties
 
+    # TODO. NOT USED.
     @property
     def TextOpinionLabelCalculationMode(self):
         return LabelCalculationMode.FIRST_APPEARED
@@ -99,9 +100,9 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
         super(BaseMultiInstanceConfig, self).modify_use_class_weights(value)
         self.__context_config.modify_use_class_weights(value)
 
-    def init_config_dependent_parameters(self):
-        super(BaseMultiInstanceConfig, self).init_config_dependent_parameters()
-        self.__context_config.init_config_dependent_parameters()
+    def reinit_config_dependent_parameters(self):
+        super(BaseMultiInstanceConfig, self).reinit_config_dependent_parameters()
+        self.__context_config.reinit_config_dependent_parameters()
 
     def fix_context_parameters(self):
         self.__context_parameters_fix()

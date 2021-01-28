@@ -9,6 +9,7 @@ class StringLabelsFormatter(object):
 
     def str_to_label(self, value):
         assert(isinstance(value, unicode))
+        assert(value in self.__stol)
         return self.__stol[value]
 
     def label_to_str(self, label):

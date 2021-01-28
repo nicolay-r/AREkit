@@ -74,8 +74,8 @@ class NetworksTrainingEngine(ExperimentEngine):
             bags_collection_type=self.__bags_collection_type,
             config=self.__config)
 
-        # Notify other subscribers that initialization process has been completed.
-        self.__config.init_config_dependent_parameters()
+        # Update parameters after iteration preparation has been completed.
+        self.__config.reinit_config_dependent_parameters()
 
         # Setup callback
         callback = self._experiment.DataIO.Callback
@@ -89,8 +89,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                                     bags_collection_type=self.__bags_collection_type,
                                     callback=callback,
                                     nn_io=self._experiment.DataIO.ModelIO,
-                                    label_scaler=self._experiment.DataIO.LabelsScaler,
-                                    evaluator=self._experiment.DataIO.Evaluator)
+                                    label_scaler=self._experiment.DataIO.LabelsScaler)
 
         # Run model
         with callback:
@@ -114,6 +113,9 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+        # Notify other subscribers that initialization process has been completed.
+        self.__config.init_initializers()
 
     def _after_running(self):
         self._experiment.DataIO.Callback.on_experiment_finished()

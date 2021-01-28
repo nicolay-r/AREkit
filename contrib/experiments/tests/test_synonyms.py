@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 
-from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider, \
-    RuAttitudesSynonymsCollectionProvider
+from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -45,15 +44,6 @@ class TestSynonymsCollection(unittest.TestCase):
         print u"-------"
         for value in synonyms.iter_synonym_values(value=searching_value):
             print value
-
-    def test_synonyms_collection_reading(self):
-        # Initializing stemmer
-        stemmer = MystemWrapper()
-
-        # Synonyms collection reading test
-        return RuAttitudesSynonymsCollectionProvider.load_collection(
-            stemmer=stemmer,
-            version=TestSynonymsCollection.__ruattittudes_version)
 
 
 if __name__ == '__main__':

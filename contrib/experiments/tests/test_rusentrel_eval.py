@@ -6,16 +6,14 @@ from os.path import dirname
 
 from enum import Enum
 
+from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.common.evaluation.results.two_class import TwoClassEvalResult
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
-from arekit.contrib.experiments.rusentrel_ds.experiment import RuSentRelWithRuAttitudesExperiment
-from arekit.contrib.experiments.synonyms.collection import StemmerBasedSynonymCollection
 from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
@@ -42,16 +40,24 @@ class ResultVersions(Enum):
     # Could not reproduce F1=0.40, only f1=0.37 in 0.20.5
     PCNNLrecFixedE29 = u"pcnn-lrec-ds-e27-fixed.zip"
 
+    CNNRsrRa20LargeNeut = u"rsr-ra-20-large-neut-cnn.zip"
+
+    SelfTestClassification = u"self-rusentrel-11.zip"
+
 
 # Expected F1-values for every result.
 f1_rusentrel_v11_results = {
-    ResultVersions.DSAttCNNFixedE40: 0.40848820278013587,
-    ResultVersions.AttPCNNCV3e40i0: 0.31908734912456854,
-    ResultVersions.AttPCNNCV3e40i1: 0.29308682656891705,
-    ResultVersions.AttPCNNCV3e40i2: 0.27847993499755,
-    ResultVersions.AttCNNFixed: 0.2992231753125483,
-    ResultVersions.AttPCNNFixed: 0.3476705309623523,
-    ResultVersions.PCNNLrecFixedE29: 0.3710003588082132
+    # Extraction.
+    ResultVersions.DSAttCNNFixedE40: 0.408487389179856,
+    ResultVersions.AttPCNNCV3e40i0: 0.31908777332585647,
+    ResultVersions.AttPCNNCV3e40i1: 0.2930870695297444,
+    ResultVersions.AttPCNNCV3e40i2: 0.2784798325065801,
+    ResultVersions.AttCNNFixed: 0.299223261072169,
+    ResultVersions.AttPCNNFixed: 0.3476699877690299,
+    ResultVersions.PCNNLrecFixedE29: 0.37100110911501544,
+    ResultVersions.CNNRsrRa20LargeNeut: 0.4166391654898648,
+    # Classification.
+    ResultVersions.SelfTestClassification: 1.0
 }
 
 
@@ -87,11 +93,16 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         return MystemWrapper()
 
     def __is_equal_results(self, v1, v2):
+        print abs(v1 - v2) < 1e-10
         self.assert_(abs(v1 - v2) < 1e-10)
 
-    def __test_core(self, res_version, synonyms=None):
+    def __test_core(self, res_version, synonyms=None,
+                    eval_mode=EvaluationModes.Extraction,
+                    check_results=True):
         assert(isinstance(res_version, ResultVersions))
         assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
+        assert(isinstance(eval_mode, EvaluationModes))
+        assert(isinstance(check_results, bool))
 
         # Initializing synonyms collection.
         if synonyms is None:
@@ -118,7 +129,7 @@ class TestRuSentRelEvaluation(unittest.TestCase):
                 error_on_synonym_end_missed=False))
 
         # getting evaluator.
-        evaluator = TwoClassEvaluator()
+        evaluator = TwoClassEvaluator(eval_mode=eval_mode)
 
         # evaluate every document.
         logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc=u"Evaluate", unit=u'pairs')
@@ -132,7 +143,7 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         for doc_id, doc_info in result.iter_document_results():
             print u"{}:\t{}".format(doc_id, doc_info)
         print "------------------------"
-        print result.get_result_as_str()
+        print str(result.TotalResult)
         print "------------------------"
 
         # Display cmp tables (optionally).
@@ -141,8 +152,10 @@ class TestRuSentRelEvaluation(unittest.TestCase):
                 for doc_id, df_cmp_table in result.iter_dataframe_cmp_tables():
                     print u"{}:\t{}\n".format(doc_id, df_cmp_table)
             print "------------------------"
-        self.__is_equal_results(v1=result.get_result_by_metric(TwoClassEvalResult.C_F1),
-                                v2=f1_rusentrel_v11_results[res_version])
+
+        if check_results:
+            self.__is_equal_results(v1=result.get_result_by_metric(TwoClassEvalResult.C_F1),
+                                    v2=f1_rusentrel_v11_results[res_version])
 
     def test_ann_cnn(self):
         self.__test_core(ResultVersions.AttCNNFixed)
@@ -161,18 +174,12 @@ class TestRuSentRelEvaluation(unittest.TestCase):
     def test_pcnn_lrec(self):
         self.__test_core(ResultVersions.PCNNLrecFixedE29)
 
-    def test_rsr_ra_12_merged_collection(self):
+    def test_rsr_ra_20_large_neut_cnn(self):
+        self.__test_core(ResultVersions.CNNRsrRa20LargeNeut)
 
-        synonyms = StemmerBasedSynonymCollection(
-            iter_group_values_lists=RuSentRelWithRuAttitudesExperiment._iter_synonyms_group_lists(
-                rusentrel_version=RuSentRelVersions.V11,
-                ruattitudes_version=RuAttitudesVersions.V12),
-            stemmer=self.__create_stemmer(),
-            is_read_only=True,
-            debug=False)
-
-        self.__test_core(ResultVersions.PCNNLrecFixedE29,
-                         synonyms=synonyms)
+    def test_classification(self):
+        self.__test_core(ResultVersions.SelfTestClassification,
+                         eval_mode=EvaluationModes.Classification)
 
 
 if __name__ == '__main__':

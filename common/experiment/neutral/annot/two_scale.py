@@ -36,12 +36,21 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(data_type, DataType))
 
-        # TODO. Extract opinions from news.
-        # TODO. exp_io.read_parsed_news.
-        # TODO. exp_io.read_etalon_opinion_collection()
-
         doc_id = parsed_news.RelatedNewsID
-        return self._OpinOps.read_etalon_opinion_collection(doc_id)
+        neut_collection = self._OpinOps.create_opinion_collection()
+        assert(isinstance(neut_collection, OpinionCollection))
+
+        # We copy all the opinions from etalon collection
+        # into neutral one with the replaced sentiment values.
+        # as we treat such opinions as neutral one since only NeutralLabels
+        # could be casted into correct string.
+        for opinion in self._OpinOps.read_etalon_opinion_collection(doc_id):
+            neut_collection.add_opinion(Opinion(source_value=opinion.SourceValue,
+                                                target_value=opinion.TargetValue,
+                                                sentiment=NeutralLabel()))
+
+        return neut_collection
+
 
     # endregion
 

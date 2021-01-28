@@ -1,4 +1,3 @@
-from arekit.common.experiment.cv.base import TwoClassCVFolding
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.model.model_io import BaseModelIO
 
@@ -49,9 +48,3 @@ class DataIO(object):
         """
         assert(isinstance(model_io, BaseModelIO))
         self.__model_io = model_io
-
-    def set_cv_folding_algorithm(self, cv_folding_algo):
-        """ Providing cv_folding algorithm instance.
-        """
-        assert(isinstance(cv_folding_algo, TwoClassCVFolding))
-        self.__cv_folding_algo = cv_folding_algo

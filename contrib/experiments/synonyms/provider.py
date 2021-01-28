@@ -1,22 +1,7 @@
 from arekit.contrib.experiments.synonyms.collection import StemmerBasedSynonymCollection
-from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.ruattitudes.synonyms import RuAttitudesSynonymsCollectionHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
 from arekit.processing.lemmatization.base import Stemmer
-
-
-class RuAttitudesSynonymsCollectionProvider(object):
-
-    @staticmethod
-    def load_collection(stemmer, is_read_only=True, debug=False, version=RuAttitudesVersions.V11):
-        assert(isinstance(stemmer, Stemmer))
-
-        return StemmerBasedSynonymCollection(
-            iter_group_values_lists=RuAttitudesSynonymsCollectionHelper.iter_groups(version),
-            stemmer=stemmer,
-            debug=debug,
-            is_read_only=is_read_only)
 
 
 class RuSentRelSynonymsCollectionProvider(object):

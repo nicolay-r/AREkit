@@ -55,13 +55,12 @@ class PairTextProvider(BaseSingleTextProvider):
         self._mapper.set_s_ind(0)
         self._mapper.set_t_ind(len(inner_terms)-1)
 
-        inner_context = self.__handle_terms_and_compose_text(sentence_terms=inner_terms)
+        inner_context = self._handle_terms_and_compose_text(sentence_terms=inner_terms)
 
-        column = self.TEXT_B
         value = self.__text_b_template.format(
             subject=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Subject),
             object=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Object),
             context=self._process_text(inner_context),
             label=self.__labels_formatter.label_to_str(expected_label))
 
-        set_text_func(column=column, value=value)
+        set_text_func(column=self.TEXT_B, value=value)
