@@ -110,6 +110,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         output_filepath=result_filepath,
         opinions_reader=InputOpinionReader.from_tsv(opinions_source),
         labels_scaler=labels_scaler,
+        # TODO. Use create_opin_collection_func instead
         opinion_operations=opin_ops,
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         # TODO. bring this onto parameters level.
