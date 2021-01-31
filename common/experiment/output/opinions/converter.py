@@ -14,8 +14,7 @@ class OutputToOpinionCollectionsConverter(object):
                                  opinions_reader,
                                  labels_scaler,
                                  keep_doc_id_func,
-                                 # TODO. Use create_opin_collection_func instead
-                                 opinion_operations,
+                                 create_opinion_collection_func,
                                  label_calculation_mode,
                                  output,
                                  keep_news_ids_from_samples_reader,
@@ -24,8 +23,7 @@ class OutputToOpinionCollectionsConverter(object):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         assert(isinstance(output_filepath, unicode))
         assert(isinstance(opinions_reader, InputOpinionReader))
-        # TODO. Use create_opin_collection_func instead
-        assert(isinstance(opinion_operations, OpinionOperations))
+        assert(callable(create_opinion_collection_func))
         assert(isinstance(label_calculation_mode, unicode))
         assert(isinstance(output, BaseOutput))
         assert(isinstance(keep_news_ids_from_samples_reader, bool))
@@ -41,8 +39,7 @@ class OutputToOpinionCollectionsConverter(object):
             if not keep_doc_id_func(news_id):
                 continue
 
-            # TODO. Use create_opin_collection_func instead
-            collection = opinion_operations.create_opinion_collection()
+            collection = create_opinion_collection_func()
 
             linked_iter = output.iter_linked_opinions(news_id=news_id,
                                                       opinions_reader=opinions_reader)
