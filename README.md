@@ -30,7 +30,13 @@ Then install dependencies as follows:
 pip install -r dependencies.txt
 ```
 
-## Research Applications & References
+## References
+
+### Applications
+
+> TODO. Provide the list of all the applications, which are independed from the particular conferences.
+
+### Papers
 
 * Attention-Based Neural Networks for Sentiment Attitude Extraction using Distant Supervision 
 [[ACM-DOI]](https://doi.org/10.1145/3405962.3405985)
