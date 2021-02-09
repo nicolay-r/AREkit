@@ -1,5 +1,4 @@
 from arekit.common.experiment.extract.opinions import fill_opinion_collection
-from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.experiment.scales.base import BaseLabelScaler
