@@ -38,6 +38,7 @@ class BaseOutput(object):
         self.__df.set_index(const.ID)
 
     def iter_news_ids(self):
+        assert(const.NEWS_ID in self.__df.columns)
         return set(self.__df[const.NEWS_ID])
 
     def iter_linked_opinions(self, news_id, opinions_reader):
