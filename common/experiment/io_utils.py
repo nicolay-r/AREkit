@@ -80,6 +80,9 @@ class BaseIOUtils(object):
 
         return join(annot_dir, filename)
 
+    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
+        raise NotImplementedError()
+
     # endregion
 
     # region private methods

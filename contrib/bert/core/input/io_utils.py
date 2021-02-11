@@ -28,6 +28,8 @@ class BertIOUtils(BaseIOUtils):
 
         return filepath
 
+    # region private methods
+
     def __get_eval_root_filepath(self, data_type, epoch_index):
         assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int))
@@ -41,3 +43,4 @@ class BertIOUtils(BaseIOUtils):
 
         return result_dir
 
+    # endregion
