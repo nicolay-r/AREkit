@@ -8,34 +8,40 @@ from arekit.common.opinions.base import Opinion
 
 
 class BaseOutput(object):
+    """ Results output represents a table, which stored in pandas dataframe.
+        This dataframe assumes to provide the following columns:
+            - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
+            - news_id -- is a related news_id towards which the related output corresponds to.
+            - labels -- uint labels (amount of columns depends on the scaler)
+    """
 
-    def __init__(self, ids_formatter):
+    def __init__(self, ids_formatter, has_output_header):
         assert(isinstance(ids_formatter, BaseIDProvider))
+        assert(isinstance(has_output_header, bool))
         self.__ids_formatter = ids_formatter
+        self.__has_output_header = has_output_header
         self.__df = None
 
     @property
     def _IdsFormatter(self):
         return self.__ids_formatter
 
+    @property
+    def _DataFrame(self):
+        return self.__df
+
+    def _csv_to_dataframe(self, filepath):
+        return pd.read_csv(filepath,
+                           sep='\t',
+                           index_col=False,
+                           header='infer' if self.__has_output_header else None,
+                           encoding='utf-8')
+
     # region public methods
 
-    def init_from_tsv(self, filepath, read_header):
+    def init_from_tsv(self, filepath):
         assert(isinstance(filepath, unicode))
-        assert(isinstance(read_header, bool))
-        self.__df = pd.read_csv(filepath,
-                                sep='\t',
-                                index_col=False,
-                                header='infer' if read_header else None,
-                                encoding='utf-8')
-
-    def insert_news_ids_values(self, news_ids_values):
-        self.__df.insert(1, const.NEWS_ID, news_ids_values)
-
-    def insert_ids_values(self, ids_values):
-        self.__df.insert(0, const.ID, ids_values)
-        self.__df.columns = [const.ID] + [''] * (self.__df.shape[1] - 1)
-        self.__df.set_index(const.ID)
+        self.__df = self._csv_to_dataframe(filepath=filepath)
 
     def iter_news_ids(self):
         assert(const.NEWS_ID in self.__df.columns)

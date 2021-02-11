@@ -10,9 +10,10 @@ from arekit.common.experiment.scales.base import BaseLabelScaler
 
 class MulticlassOutput(BaseOutput):
 
-    def __init__(self, labels_scaler):
+    def __init__(self, labels_scaler, has_output_header):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(MulticlassOutput, self).__init__(ids_formatter=MultipleIDProvider())
+        super(MulticlassOutput, self).__init__(ids_formatter=MultipleIDProvider(),
+                                               has_output_header=has_output_header)
         self.__labels_scaler = labels_scaler
 
     # region protected methods
