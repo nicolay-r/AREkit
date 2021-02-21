@@ -39,6 +39,20 @@ class OpinionCollection(object):
                 error_on_existence=error_on_duplicates,
                 error_on_synonym_end_missed=error_on_synonym_end_missed)
 
+        self.__error_on_duplicates = error_on_duplicates
+        self.__error_on_synonym_end_missed = error_on_synonym_end_missed
+
+    def copy(self, filter_opinion_func=None):
+        assert(callable(filter_opinion_func) or filter_opinion_func is None)
+
+        predicate = lambda _: True if filter_opinion_func is None else filter_opinion_func
+
+        return OpinionCollection(opinions=[opinion for _, opinion in self.__by_synonyms.iteritems()
+                                           if predicate(opinion)],
+                                 synonyms=self.__synonyms,
+                                 error_on_duplicates=self.__error_on_duplicates,
+                                 error_on_synonym_end_missed=self.__error_on_synonym_end_missed)
+
     # region public methods
 
     def has_synonymous_opinion(self, opinion, sentiment=None):
