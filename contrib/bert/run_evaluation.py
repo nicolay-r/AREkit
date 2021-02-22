@@ -49,7 +49,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_doc_ids_to_compare())
 
         with callback:
-            for epoch_index in range(100):
+            for epoch_index in range(self.__max_epochs_count):
 
                 result_filename_template = self.__eval_helper.get_results_filename(
                     iter_index=iter_index,
