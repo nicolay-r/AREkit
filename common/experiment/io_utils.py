@@ -3,6 +3,7 @@ from os.path import join
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
+from arekit.common.experiment.neutral.annot.factory import get_annotator_type
 from arekit.common.utils import join_dir_with_subfolder_name
 
 
@@ -84,11 +85,12 @@ class BaseIOUtils(object):
         raise NotImplementedError()
 
     def _get_neutral_annot_name(self):
-        """ NOTE: limitation of this approach is that it depends
-            and requires the existence of NeutralAnnotator instance.
-            The latter could be managed by overriding this method.
+        """ We use custom implementation as it allows to
+            be independent from NeutralAnnotator instance.
         """
-        return self._experiment.DataIO.NeutralAnnotator.Name
+        scaler = self._experiment.DataIO.LabelsScaler
+        annot_type = get_annotator_type(labels_count=scaler.LabelsCount)
+        return annot_type.name
 
     # endregion
 
