@@ -35,8 +35,8 @@ class BaseEvaluator(object):
         for o_etalon in etalon_opins:
             assert(isinstance(o_etalon, Opinion))
 
-            has_opinion = test_opins.has_synonymous_opinion(o_etalon)
-            o_test = None if not has_opinion else test_opins.get_synonymous_opinion(o_etalon)
+            o_test = test_opins.try_get_synonyms_opinion(o_etalon)
+            has_opinion = o_test is not None
 
             if self.__eval_mode == EvaluationModes.Classification:
                 # In case of evaluation mode, we do not consider such
