@@ -33,17 +33,12 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
 
-        logger.info("Init experiment io ...")
-        experiment_io = experiment_io_type(self)
-
         self.__ruattitudes_version = ruattitudes_version
         self.__rusentrel_version = rusentrel_version
+        self.__rusentrel_synonyms = None
 
-        # Utilized for results evaluation.
-        logger.info("Read synonyms collection [RuSentRel]...")
-        self.__rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
-            stemmer=exp_data.Stemmer,
-            version=rusentrel_version)
+        logger.info("Init experiment io ...")
+        experiment_io = experiment_io_type(self)
 
         # RuSentRel doc operations init.
         rusentrel_folding = create_rusentrel_experiment_data_folding(
@@ -56,7 +51,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_doc = RuSentrelDocumentOperations(exp_data=exp_data,
                                                     version=rusentrel_version,
                                                     folding=rusentrel_folding,
-                                                    get_synonyms_func=lambda: self.__rusentrel_synonyms)
+                                                    get_synonyms_func=self._get_or_load_synonyms_collection)
 
         # Loading ru_attitudes in memory
         ru_attitudes = read_ruattitudes_in_memory(version=ruattitudes_version,
@@ -74,7 +69,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_data,
                                                   version=rusentrel_version,
                                                   experiment_io=experiment_io,
-                                                  synonyms=self.__rusentrel_synonyms)
+                                                  get_synonyms_func=self._get_or_load_synonyms_collection)
 
         ruattitudes_op = RuAttitudesOpinionOperations(ru_attitudes=ru_attitudes)
 
@@ -98,6 +93,15 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                                  experiment_io=experiment_io,
                                                                  name=exp_name,
                                                                  extra_name_suffix=extra_name_suffix)
+
+    def _get_or_load_synonyms_collection(self):
+        if self.__rusentrel_synonyms is None:
+            logger.info("Read synonyms collection [RuSentRel]...")
+            self.__rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+                stemmer=self.DataIO.Stemmer,
+                version=self.__rusentrel_version)
+
+        return self.__rusentrel_synonyms
 
     def entity_to_group(self, entity):
         return entity_to_group_func(entity, synonyms=self.__rusentrel_synonyms)

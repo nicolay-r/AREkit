@@ -17,12 +17,12 @@ logging.basicConfig(level=logging.INFO)
 
 class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, experiment_data, experiment_io, synonyms, version):
+    def __init__(self, experiment_data, experiment_io, get_synonyms_func, version):
         assert(isinstance(experiment_data, DataIO))
         assert(isinstance(version, RuSentRelVersions))
         super(RuSentrelOpinionOperations, self).__init__()
 
-        self.__synonyms = synonyms
+        self.__get_synonyms_func = get_synonyms_func
         self.__version = version
         self.__experiment_io = experiment_io
         self.__opinion_formatter = experiment_data.OpinionFormatter
@@ -112,7 +112,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def __create_collection(self, opinions):
         return OpinionCollection(opinions=[] if opinions is None else opinions,
-                                 synonyms=self.__synonyms,
+                                 synonyms=self.__get_synonyms_func(),
                                  error_on_duplicates=True,
                                  error_on_synonym_end_missed=True)
 

@@ -28,18 +28,17 @@ class RuSentRelExperiment(BaseExperiment):
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
 
+        self.__rsr_version = version
+        self.__synonyms = None
+
         logger.info("Init experiment io ...")
         experiment_io = experiment_io_type(self)
-
-        logger.info("Read synonyms collection ...")
-        self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=exp_data.Stemmer,
-                                                                              version=version)
 
         logger.info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
                                               version=version,
                                               experiment_io=experiment_io,
-                                              synonyms=self.__synonyms)
+                                              get_synonyms_func=self._get_or_load_synonyms_collection)
 
         logger.info("Create document operations ... ")
         folding = create_rusentrel_experiment_data_folding(folding_type=folding_type,
@@ -49,7 +48,7 @@ class RuSentRelExperiment(BaseExperiment):
         doc_ops = RuSentrelDocumentOperations(exp_data=exp_data,
                                               folding=folding,
                                               version=version,
-                                              get_synonyms_func=lambda: self.__synonyms)
+                                              get_synonyms_func=self._get_or_load_synonyms_collection)
 
         exp_name = u"rsr-{version}-{format}".format(version=version.value,
                                                     format=doc_ops.DataFolding.Name)
@@ -60,6 +59,15 @@ class RuSentRelExperiment(BaseExperiment):
                                                   opin_ops=opin_ops,
                                                   name=exp_name,
                                                   extra_name_suffix=extra_name_suffix)
+
+    def _get_or_load_synonyms_collection(self):
+        if self.__synonyms is None:
+            logger.info("Read synonyms collection ...")
+            self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+                stemmer=self.DataIO.Stemmer,
+                version=self.__rsr_version)
+
+        return self.__synonyms
 
     def entity_to_group(self, entity):
         return entity_to_group_func(entity, synonyms=self.__synonyms)
