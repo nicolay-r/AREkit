@@ -83,18 +83,26 @@ class BaseEvaluator(object):
 
     def _calc_diff(self, etalon_opins, test_opins):
 
-        cmp_table = DocumentCompareTable.create_template_df()
-
         it = self.__iter_diff_core(etalon_opins=etalon_opins,
                                    test_opins=test_opins)
 
-        for o_ind, args in enumerate(it):
+        # Cache all rows into `rows` array
+        rows = []
+        for args in it:
             opin, etalon_label, result_label = args
-            cmp_table.loc[o_ind] = [opin.SourceValue.encode('utf-8'),
-                                    opin.TargetValue.encode('utf-8'),
-                                    None if etalon_label is None else label_to_str(etalon_label),
-                                    None if result_label is None else label_to_str(result_label),
-                                    self.__cmp_result(l1=etalon_label, l2=result_label)]
+
+            row = [opin.SourceValue.encode('utf-8'),
+                   opin.TargetValue.encode('utf-8'),
+                   None if etalon_label is None else label_to_str(etalon_label),
+                   None if result_label is None else label_to_str(result_label),
+                   self.__cmp_result(l1=etalon_label, l2=result_label)]
+
+            rows.append(row)
+
+        # Filling dataframe.
+        cmp_table = DocumentCompareTable.create_template_df(rows_count=len(rows))
+        for o_ind, row in enumerate(rows):
+            cmp_table.loc[o_ind] = row
 
         return DocumentCompareTable(cmp_table=cmp_table)
 

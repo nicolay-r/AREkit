@@ -6,6 +6,7 @@ from arekit.common.labels.base import Label
 
 class DocumentCompareTable:
 
+    C_ID = 'id'
     C_WHO = 'who'
     C_TO = 'to'
     C_ORIG = 'how_orig'
@@ -27,12 +28,21 @@ class DocumentCompareTable:
         return DocumentCompareTable(cmp_table=self.__cmp_table[(self.__cmp_table[col_name] == label_str)])
 
     @staticmethod
-    def create_template_df():
-        return pd.DataFrame(columns=[DocumentCompareTable.C_WHO,
-                                     DocumentCompareTable.C_TO,
-                                     DocumentCompareTable.C_ORIG,
-                                     DocumentCompareTable.C_RES,
-                                     DocumentCompareTable.C_CMP])
+    def create_template_df(rows_count):
+        """ Increasing performance by filling dataframe with blank rows.
+        """
+        df = pd.DataFrame(columns=[DocumentCompareTable.C_ID,
+                                   DocumentCompareTable.C_WHO,
+                                   DocumentCompareTable.C_TO,
+                                   DocumentCompareTable.C_ORIG,
+                                   DocumentCompareTable.C_RES,
+                                   DocumentCompareTable.C_CMP])
+
+        # filling with blank rows.
+        df[DocumentCompareTable.C_ID] = range(rows_count)
+        df.set_index(DocumentCompareTable.C_ID, inplace=True)
+
+        return df
 
     @classmethod
     def load(cls, filepath):
