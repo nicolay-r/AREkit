@@ -14,6 +14,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     """ For three scale classification task.
     """
 
+    name = u"annot-3-scale"
     IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
 
     def __init__(self, distance_in_terms_between_bounds):
@@ -24,7 +25,7 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     @property
     def Name(self):
-        return u"annot-3-scale"
+        return ThreeScaleNeutralAnnotator.name
 
     # region private methods
 

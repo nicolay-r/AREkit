@@ -83,6 +83,13 @@ class BaseIOUtils(object):
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 
+    def _get_neutral_annot_name(self):
+        """ NOTE: limitation of this approach is that it depends
+            and requires the existence of NeutralAnnotator instance.
+            The latter could be managed by overriding this method.
+        """
+        return self._experiment.DataIO.NeutralAnnotator.Name
+
     # endregion
 
     # region private methods
@@ -93,6 +100,6 @@ class BaseIOUtils(object):
 
     def __get_neutral_annotation_dir(self):
         return join_dir_with_subfolder_name(dir=self.get_target_dir(),
-                                            subfolder_name=self._experiment.DataIO.NeutralAnnotator.Name)
+                                            subfolder_name=self._get_neutral_annot_name())
 
     # endregion
