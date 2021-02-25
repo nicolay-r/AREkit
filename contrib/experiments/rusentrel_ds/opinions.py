@@ -1,24 +1,23 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
 
 
 class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
 
-    def __init__(self, rusentrel_op, ruattitudes_op, is_rusentrel_doc):
+    def __init__(self, rusentrel_op, get_ruattitudes_op, is_rusentrel_doc):
         assert(isinstance(rusentrel_op, RuSentrelOpinionOperations))
-        assert(isinstance(ruattitudes_op, RuAttitudesOpinionOperations))
+        assert(callable(get_ruattitudes_op))
         super(RuSentrelWithRuAttitudesOpinionOperations, self).__init__()
 
         self.__rusentrel_op = rusentrel_op
-        self.__ruattitudes_op = ruattitudes_op
+        self.__get_ruattitudes_op = get_ruattitudes_op
         self.__is_rusentrel_doc = is_rusentrel_doc
 
     def __target(self, doc_id):
         if self.__is_rusentrel_doc(doc_id):
             return self.__rusentrel_op
-        return self.__ruattitudes_op
+        return self.__get_ruattitudes_op()
 
     # region CVBasedOpinionOperations
 

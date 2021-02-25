@@ -14,7 +14,7 @@ class BaseExperimentDataFolding(object):
 
     @property
     def Name(self):
-        return
+        raise NotImplementedError()
 
     @property
     def IterationIndex(self):

@@ -4,9 +4,9 @@ from os.path import exists
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiments.rusentrel.labels_formatter import RuSentRelNeutralLabelsFormatter
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
@@ -17,12 +17,12 @@ logging.basicConfig(level=logging.INFO)
 
 class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, experiment_data, experiment_io, synonyms, version):
+    def __init__(self, experiment_data, experiment_io, get_synonyms_func, version):
         assert(isinstance(experiment_data, DataIO))
         assert(isinstance(version, RuSentRelVersions))
         super(RuSentrelOpinionOperations, self).__init__()
 
-        self.__synonyms = synonyms
+        self.__get_synonyms_func = get_synonyms_func
         self.__version = version
         self.__experiment_io = experiment_io
         self.__opinion_formatter = experiment_data.OpinionFormatter
@@ -90,7 +90,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
             we need to guarantee the presence of a function that returns filepath
             by using isinstance command.
         """
-        assert(isinstance(self.__experiment_io, NetworkIOUtils))
+        assert(isinstance(self.__experiment_io, BaseIOUtils))
 
         filepath = self.__experiment_io.create_result_opinion_collection_filepath(
             data_type=data_type,
@@ -112,7 +112,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def __create_collection(self, opinions):
         return OpinionCollection(opinions=[] if opinions is None else opinions,
-                                 synonyms=self.__synonyms,
+                                 synonyms=self.__get_synonyms_func(),
                                  error_on_duplicates=True,
                                  error_on_synonym_end_missed=True)
 

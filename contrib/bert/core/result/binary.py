@@ -13,9 +13,10 @@ class BertBinaryOutput(BaseOutput):
     YES = u'yes'
     NO = u'no'
 
-    def __init__(self, labels_scaler):
+    def __init__(self, labels_scaler, has_output_header):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertBinaryOutput, self).__init__(ids_formatter=BinaryIDProvider())
+        super(BertBinaryOutput, self).__init__(ids_formatter=BinaryIDProvider(),
+                                               has_output_header=has_output_header)
         self.__labels_scaler = labels_scaler
 
     @property

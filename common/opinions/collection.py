@@ -39,27 +39,27 @@ class OpinionCollection(object):
                 error_on_existence=error_on_duplicates,
                 error_on_synonym_end_missed=error_on_synonym_end_missed)
 
+        self.__error_on_duplicates = error_on_duplicates
+        self.__error_on_synonym_end_missed = error_on_synonym_end_missed
+
+    def copy(self, filter_opinion_func=None):
+        assert(callable(filter_opinion_func) or filter_opinion_func is None)
+
+        predicate = lambda _: True if filter_opinion_func is None else filter_opinion_func
+
+        return OpinionCollection(opinions=[opinion for _, opinion in self.__by_synonyms.iteritems()
+                                           if predicate(opinion)],
+                                 synonyms=self.__synonyms,
+                                 error_on_duplicates=self.__error_on_duplicates,
+                                 error_on_synonym_end_missed=self.__error_on_synonym_end_missed)
+
     # region public methods
 
+    def try_get_synonyms_opinion(self, opinion, sentiment=None):
+        return self.__try_get_synonyms_opinion(opinion=opinion, sentiment=sentiment)
+
     def has_synonymous_opinion(self, opinion, sentiment=None):
-        assert(isinstance(opinion, Opinion))
-        assert(sentiment is None or isinstance(sentiment, Label))
-
-        for end_type in OpinionEndTypes:
-            if not opinion.has_synonym_for_end(synonyms=self.__synonyms, end_type=end_type):
-                return False
-
-        s_id = opinion.create_synonym_id(self.__synonyms)
-        if s_id in self.__by_synonyms:
-            f_o = self.__by_synonyms[s_id]
-            return True if sentiment is None else f_o.sentiment == sentiment
-
-        return False
-
-    def get_synonymous_opinion(self, opinion):
-        assert(isinstance(opinion, Opinion))
-        s_id = opinion.create_synonym_id(self.__synonyms)
-        return self.__by_synonyms[s_id]
+        return self.__try_get_synonyms_opinion(opinion=opinion, sentiment=sentiment) is not None
 
     def add_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
@@ -78,6 +78,26 @@ class OpinionCollection(object):
     # endregion
 
     # region private methods
+
+    def __try_get_synonyms_opinion(self, opinion, sentiment=None):
+        assert(isinstance(opinion, Opinion))
+        assert(sentiment is None or isinstance(sentiment, Label))
+
+        for end_type in OpinionEndTypes:
+            if not opinion.has_synonym_for_end(synonyms=self.__synonyms, end_type=end_type):
+                return None
+
+        s_id = opinion.create_synonym_id(self.__synonyms)
+        if s_id not in self.__by_synonyms:
+            return None
+
+        f_o = self.__by_synonyms[s_id]
+        if sentiment is None:
+            return f_o
+        elif f_o.sentiment == sentiment:
+            return f_o
+        else:
+            return None
 
     def __add_synonym(self, value):
         self.__synonyms.add_synonym_value(value)

@@ -3,6 +3,7 @@ from os.path import join
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
+from arekit.common.experiment.neutral.annot.factory import get_annotator_type
 from arekit.common.utils import join_dir_with_subfolder_name
 
 
@@ -80,6 +81,17 @@ class BaseIOUtils(object):
 
         return join(annot_dir, filename)
 
+    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
+        raise NotImplementedError()
+
+    def _get_neutral_annot_name(self):
+        """ We use custom implementation as it allows to
+            be independent from NeutralAnnotator instance.
+        """
+        scaler = self._experiment.DataIO.LabelsScaler
+        annot_type = get_annotator_type(labels_count=scaler.LabelsCount)
+        return annot_type.name
+
     # endregion
 
     # region private methods
@@ -90,6 +102,6 @@ class BaseIOUtils(object):
 
     def __get_neutral_annotation_dir(self):
         return join_dir_with_subfolder_name(dir=self.get_target_dir(),
-                                            subfolder_name=self._experiment.DataIO.NeutralAnnotator.Name)
+                                            subfolder_name=self._get_neutral_annot_name())
 
     # endregion

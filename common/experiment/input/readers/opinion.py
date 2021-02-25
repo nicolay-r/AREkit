@@ -10,10 +10,10 @@ class InputOpinionReader(BaseInputReader):
         super(InputOpinionReader, self).__init__(df)
 
     @classmethod
-    def from_tsv(cls, filepath):
+    def from_tsv(cls, filepath, compression='gzip'):
         df = pd.read_csv(filepath,
                          sep='\t',
-                         compression='gzip')
+                         compression=compression)
 
         return cls(df)
 

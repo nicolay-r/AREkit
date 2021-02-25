@@ -110,13 +110,12 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         output_filepath=result_filepath,
         opinions_reader=InputOpinionReader.from_tsv(opinions_source),
         labels_scaler=labels_scaler,
-        opinion_operations=opin_ops,
+        create_opinion_collection_func=opin_ops.create_opinion_collection,
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         # TODO. bring this onto parameters level.
         label_calculation_mode=LabelCalculationMode.AVERAGE,
-        output=MulticlassOutput(labels_scaler),
-        keep_news_ids_from_samples_reader=True,
-        keep_ids_from_samples_reader=False)
+        output=MulticlassOutput(labels_scaler=labels_scaler,
+                                has_output_header=True))
 
     # Save collection.
     save_opinion_collections(

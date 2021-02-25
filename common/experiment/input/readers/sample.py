@@ -28,7 +28,7 @@ class InputSampleReader(BaseInputReader):
         return self._df[const.ID].astype(unicode).tolist()
 
     def iter_news_ids(self):
-        return self._df[const.NEWS_ID]
+        return self._df[const.NEWS_ID].astype(int).tolist()
 
     def iter_rows_linked_by_text_opinions(self):
         """
