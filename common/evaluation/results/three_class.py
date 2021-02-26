@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from arekit.common.evaluation.results import metrics
 from arekit.common.evaluation.results.base import BaseEvalResult
+from arekit.common.evaluation.results.metrics import calc_precision_micro, calc_recall_micro
 from arekit.common.evaluation.results.utils import calc_f1_3c_macro, calc_f1_single_class
 from arekit.common.labels.base import NegativeLabel, PositiveLabel, NeutralLabel, Label
 from arekit.common.opinions.collection import OpinionCollection
@@ -18,9 +19,12 @@ class ThreeClassEvalResult(BaseEvalResult):
     C_POS_RECALL = u'pos_recall'
     C_NEG_RECALL = u'neg_recall'
     C_NEU_RECALL = u'neu_recall'
+    C_PREC_MICRO = u'prec_micro'
+    C_RECALL_MICRO = u'recall_micro'
     C_F1_POS = u'f1_pos'
     C_F1_NEG = u'f1_neg'
     C_F1_NEU = u'f1_neu'
+    C_F1_MICRO = u'f1_micro'
 
     def __init__(self):
         super(ThreeClassEvalResult, self).__init__()
@@ -85,10 +89,23 @@ class ThreeClassEvalResult(BaseEvalResult):
         self.__doc_results[doc_id][self.C_POS_RECALL] = pos_recall
         self.__doc_results[doc_id][self.C_NEG_RECALL] = neg_recall
         self.__doc_results[doc_id][self.C_NEU_RECALL] = neu_recall
+        self.__doc_results[doc_id][self.C_PREC_MICRO] = calc_precision_micro(
+            get_result_by_label_func=cmp_table.filter_result_column_by_label,
+            labels=[self.__pos_label, self.__neg_label, self.__neu_label])
+        self.__doc_results[doc_id][self.C_RECALL_MICRO] = calc_recall_micro(
+            get_origin_answers_by_label_func=cmp_table.filter_original_column_by_label,
+            get_result_answers_by_label_func=cmp_table.filter_result_column_by_label,
+            labels=[self.__pos_label, self.__neg_label, self.__neu_label])
 
     def calculate(self):
-        pos_prec_macro, neg_prec_macro, neu_prec_macro, pos_recall_macro, neg_recall_macro, neu_recall_macro = \
-            (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+        pos_prec_macro = 0.0
+        neg_prec_macro = 0.0
+        neu_prec_macro = 0.0
+        pos_recall_macro = 0.0
+        neg_recall_macro = 0.0
+        neu_recall_macro = 0.0
+        prec_micro_macro = 0.0
+        recall_micro_macro = 0.0
 
         for info in self.__doc_results.itervalues():
             pos_prec_macro += info[self.C_POS_PREC]
@@ -97,6 +114,8 @@ class ThreeClassEvalResult(BaseEvalResult):
             pos_recall_macro += info[self.C_POS_RECALL]
             neg_recall_macro += info[self.C_NEG_RECALL]
             neu_recall_macro += info[self.C_NEU_RECALL]
+            prec_micro_macro += info[self.C_PREC_MICRO]
+            recall_micro_macro += info[self.C_RECALL_MICRO]
 
         if len(self.__doc_results) > 0:
             pos_prec_macro /= len(self.__doc_results)
@@ -105,6 +124,8 @@ class ThreeClassEvalResult(BaseEvalResult):
             pos_recall_macro /= len(self.__doc_results)
             neg_recall_macro /= len(self.__doc_results)
             neu_recall_macro /= len(self.__doc_results)
+            prec_micro_macro /= len(self.__doc_results)
+            recall_micro_macro /= len(self.__doc_results)
 
         f1 = calc_f1_3c_macro(pos_prec=pos_prec_macro, neg_prec=neg_prec_macro, neu_prec=neu_prec_macro,
                               pos_recall=pos_recall_macro, neg_recall=neg_recall_macro, neu_recall=neu_recall_macro)
@@ -120,6 +141,9 @@ class ThreeClassEvalResult(BaseEvalResult):
         self._total_result[self.C_POS_RECALL] = pos_recall_macro
         self._total_result[self.C_NEG_RECALL] = neg_recall_macro
         self._total_result[self.C_NEU_RECALL] = neu_recall_macro
+        self._total_result[self.C_PREC_MICRO] = prec_micro_macro
+        self._total_result[self.C_RECALL_MICRO] = recall_micro_macro
+        self._total_result[self.C_F1_MICRO] = calc_f1_single_class(prec=prec_micro_macro, recall=recall_micro_macro)
 
     def iter_document_results(self):
         return self.__doc_results.iteritems()
