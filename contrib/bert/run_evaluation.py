@@ -50,6 +50,10 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         labels_formatter = RuSentRelLabelsFormatter()
         cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_doc_ids_to_compare())
 
+        if callback.check_log_exists():
+            print "Skipping [Log file already exist]"
+            return
+
         with callback:
             for epoch_index in reversed(range(self.__max_epochs_count)):
 
@@ -60,13 +64,9 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 result_filepath = join(self.__get_target_dir(), result_filename_template)
 
                 if not exists(result_filepath):
-                    if self.__eval_last_only:
-                        break
-                    else:
-                        continue
+                    continue
 
-                print "Found:", result_filepath
-
+                print "Starting evaluation for: {}".format(result_filepath)
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
                 output = GoogleBertMulticlassOutput(
@@ -108,7 +108,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                                        epoch_index=epoch_index)
 
                 if self.__eval_last_only:
-                    break
+                    print "Evaluation done [Evaluating last only]"
+                    return
 
     def _before_running(self):
         # Providing a root dir for logging.
