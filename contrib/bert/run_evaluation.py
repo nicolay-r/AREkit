@@ -60,7 +60,10 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 result_filepath = join(self.__get_target_dir(), result_filename_template)
 
                 if not exists(result_filepath):
-                    continue
+                    if self.__eval_last_only:
+                        break
+                    else:
+                        continue
 
                 print "Found:", result_filepath
 
