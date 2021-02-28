@@ -16,15 +16,17 @@ from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 
 class LanguageModelExperimentEvaluator(ExperimentEngine):
 
-    def __init__(self, experiment, data_type, eval_helper, max_epochs_count):
+    def __init__(self, experiment, data_type, eval_helper, max_epochs_count, eval_last_only=True):
         assert(isinstance(eval_helper, EvalHelper))
         assert(isinstance(max_epochs_count, int))
+        assert(isinstance(eval_last_only, bool))
 
         super(LanguageModelExperimentEvaluator, self).__init__(experiment)
 
         self.__data_type = data_type
         self.__eval_helper = eval_helper
         self.__max_epochs_count = max_epochs_count
+        self.__eval_last_only = eval_last_only
 
     def __get_target_dir(self):
         return self._experiment.ExperimentIO.get_target_dir()
@@ -49,7 +51,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_doc_ids_to_compare())
 
         with callback:
-            for epoch_index in range(self.__max_epochs_count):
+            for epoch_index in reversed(range(self.__max_epochs_count)):
 
                 result_filename_template = self.__eval_helper.get_results_filename(
                     iter_index=iter_index,
@@ -101,6 +103,9 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 callback.write_results(result=result,
                                        data_type=self.__data_type,
                                        epoch_index=epoch_index)
+
+                if self.__eval_last_only:
+                    break
 
     def _before_running(self):
         # Providing a root dir for logging.
