@@ -36,6 +36,16 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         exp_data = self._experiment.DataIO
         assert(isinstance(exp_data, TrainingData))
 
+        target_dir = self._experiment.ExperimentIO.get_target_dir()
+        if not exists(target_dir):
+            print u"Target dir does not exist. Skipping"
+            return
+
+        exp_dir = self._experiment.ExperimentIO.get_experiment_folder()
+        if not exists(exp_dir):
+            print u"Experiment dir does not exist. Skipping"
+            return
+
         # Setup callback.
         callback = exp_data.Callback
         assert(isinstance(callback, Callback))
@@ -115,3 +125,4 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         # Providing a root dir for logging.
         callback = self._experiment.DataIO.Callback
         callback.set_log_dir(self.__get_target_dir())
+
