@@ -30,7 +30,11 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         self.__eval_last_only = eval_last_only
 
     def __get_target_dir(self):
-        return self._experiment.ExperimentIO.get_target_dir()
+        # NOTE: we wrap original dir using eval_helper implementation.
+        # The latter allows us support a custom dir modifications while all the
+        # required data stays unchanged in terms of paths.
+        original_target_dir = self._experiment.ExperimentIO.get_target_dir()
+        return self.__eval_helper.get_results_dir(original_target_dir)
 
     def _handle_iteration(self, iter_index):
         exp_io = self._experiment.ExperimentIO
@@ -74,13 +78,15 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         with callback:
             for epoch_index in reversed(range(self.__max_epochs_count)):
 
-                result_filename_template = self.__eval_helper.get_results_filename(
+                target_dir = self.__get_target_dir()
+                result_filename = self.__eval_helper.get_results_filename(
                     iter_index=iter_index,
                     epoch_index=epoch_index)
 
-                result_filepath = join(self.__get_target_dir(), result_filename_template)
+                result_filepath = join(target_dir, result_filename)
 
                 if not exists(result_filepath):
+                    print "Result filepath was not found: {}".format(result_filepath)
                     continue
 
                 print "Starting evaluation for: {}".format(result_filepath)
