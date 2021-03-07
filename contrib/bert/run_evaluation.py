@@ -8,6 +8,7 @@ from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.model.labeling.modes import LabelCalculationMode
+from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.bert.callback import Callback
 from arekit.contrib.bert.output.eval_helper import EvalHelper
 from arekit.contrib.bert.output.google_bert import GoogleBertMulticlassOutput
@@ -36,13 +37,19 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         exp_data = self._experiment.DataIO
         assert(isinstance(exp_data, TrainingData))
 
-        target_dir = self._experiment.ExperimentIO.get_target_dir()
-        if not exists(target_dir):
-            print u"Target dir does not exist. Skipping"
+        model_dir = self._experiment.ExperimentIO.get_target_dir()
+        if not exists(model_dir):
+            print model_dir
+            print u"Model dir does not exist. Skipping"
             return
 
-        exp_dir = self._experiment.ExperimentIO.get_experiment_folder()
+        # NOTE: since get_target_dir overrides the base implementation,
+        # here we need to manually implement exp_dir (as in BaseIOUtils).
+        exp_dir = join_dir_with_subfolder_name(
+            subfolder_name=self._experiment.ExperimentIO.get_experiment_folder_name(),
+            dir=self._experiment.ExperimentIO.get_experiment_sources_dir())
         if not exists(exp_dir):
+            print exp_dir
             print u"Experiment dir does not exist. Skipping"
             return
 
