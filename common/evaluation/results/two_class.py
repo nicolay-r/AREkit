@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from arekit.common.evaluation.results import metrics
 from arekit.common.evaluation.results.base import BaseEvalResult
-from arekit.common.evaluation.results.utils import calc_f1_single_class, calc_f1
+from arekit.common.evaluation.results.utils import calc_f1_single_class, calc_f1_macro
 from arekit.common.labels.base import PositiveLabel, NegativeLabel, Label
 from arekit.common.opinions.collection import OpinionCollection
 
@@ -53,10 +53,10 @@ class TwoClassEvalResult(BaseEvalResult):
                                                             opinions_exist=has_neg)
 
         # Add document results.
-        f1 = calc_f1(pos_prec=pos_prec,
-                     neg_prec=neg_prec,
-                     pos_recall=pos_recall,
-                     neg_recall=neg_recall)
+        f1 = calc_f1_macro(pos_prec=pos_prec,
+                           neg_prec=neg_prec,
+                           pos_recall=pos_recall,
+                           neg_recall=neg_recall)
 
         # Filling results.
         doc_id = cmp_pair.DocumentID
@@ -68,33 +68,33 @@ class TwoClassEvalResult(BaseEvalResult):
         self.__doc_results[doc_id][self.C_NEG_RECALL] = neg_recall
 
     def calculate(self):
-        pos_prec, neg_prec, pos_recall, neg_recall = (0.0, 0.0, 0.0, 0.0)
+        pos_prec_macro, neg_prec_macro, pos_recall_macro, neg_recall_macro = (0.0, 0.0, 0.0, 0.0)
 
         for info in self.__doc_results.itervalues():
-            pos_prec += info[self.C_POS_PREC]
-            neg_prec += info[self.C_NEG_PREC]
-            pos_recall += info[self.C_POS_RECALL]
-            neg_recall += info[self.C_NEG_RECALL]
+            pos_prec_macro += info[self.C_POS_PREC]
+            neg_prec_macro += info[self.C_NEG_PREC]
+            pos_recall_macro += info[self.C_POS_RECALL]
+            neg_recall_macro += info[self.C_NEG_RECALL]
 
         if len(self.__doc_results) > 0:
-            pos_prec /= len(self.__doc_results)
-            neg_prec /= len(self.__doc_results)
-            pos_recall /= len(self.__doc_results)
-            neg_recall /= len(self.__doc_results)
+            pos_prec_macro /= len(self.__doc_results)
+            neg_prec_macro /= len(self.__doc_results)
+            pos_recall_macro /= len(self.__doc_results)
+            neg_recall_macro /= len(self.__doc_results)
 
-        f1 = calc_f1(pos_prec=pos_prec,
-                     neg_prec=neg_prec,
-                     pos_recall=pos_recall,
-                     neg_recall=neg_recall)
+        f1 = calc_f1_macro(pos_prec=pos_prec_macro,
+                           neg_prec=neg_prec_macro,
+                           pos_recall=pos_recall_macro,
+                           neg_recall=neg_recall_macro)
 
         # Filling total result.
         self._total_result[self.C_F1] = f1
-        self._total_result[self.C_F1_POS] = calc_f1_single_class(prec=pos_prec, recall=pos_recall)
-        self._total_result[self.C_F1_NEG] = calc_f1_single_class(prec=neg_prec, recall=neg_recall)
-        self._total_result[self.C_POS_PREC] = pos_prec
-        self._total_result[self.C_NEG_PREC] = neg_prec
-        self._total_result[self.C_POS_RECALL] = pos_recall
-        self._total_result[self.C_NEG_RECALL] = neg_recall
+        self._total_result[self.C_F1_POS] = calc_f1_single_class(prec=pos_prec_macro, recall=pos_recall_macro)
+        self._total_result[self.C_F1_NEG] = calc_f1_single_class(prec=neg_prec_macro, recall=neg_recall_macro)
+        self._total_result[self.C_POS_PREC] = pos_prec_macro
+        self._total_result[self.C_NEG_PREC] = neg_prec_macro
+        self._total_result[self.C_POS_RECALL] = pos_recall_macro
+        self._total_result[self.C_NEG_RECALL] = neg_recall_macro
 
     def iter_document_results(self):
         return self.__doc_results.iteritems()

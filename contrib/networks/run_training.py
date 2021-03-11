@@ -48,8 +48,8 @@ class NetworksTrainingEngine(ExperimentEngine):
         handled_data = HandledData.create_empty()
 
         if not HandledData.check_files_existed(self._experiment):
-            exp_folder = self._experiment.ExperimentIO.get_experiment_folder()
-            raise Exception(u"Data has not been initialized/serialized: `{}`".format(exp_folder))
+            exp_folder_name = self._experiment.ExperimentIO.get_experiment_folder_name()
+            raise Exception(u"Data has not been initialized/serialized: `{}`".format(exp_folder_name))
 
         # Reading embedding.
         embedding_filepath = self._experiment.ExperimentIO.get_loading_embedding_filepath()

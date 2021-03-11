@@ -28,7 +28,7 @@ class BaseIOUtils(object):
         return join_dir_with_subfolder_name(subfolder_name=self.__get_experiment_folder_name(),
                                             dir=self.get_experiment_sources_dir())
 
-    def get_experiment_folder(self):
+    def get_experiment_folder_name(self):
         return self.__get_experiment_folder_name()
 
     # region protected methods

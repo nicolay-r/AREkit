@@ -35,6 +35,26 @@ def calc_precision(result_answers, answer_exist):
         return 0.0 if answer_exist else 1.0
 
 
+def calc_precision_micro(get_result_by_label_func, labels):
+    assert(callable(get_result_by_label_func))
+    assert(isinstance(labels, list))
+    results = [get_result_by_label_func(label) for label in labels]
+    tp_sum = sum([len(res.filter_comparison_true()) for res in results])
+    tp_fn_sum = sum([len(res) for res in results])
+    return (1.0 * tp_sum) / tp_fn_sum
+
+
+def calc_recall_micro(get_origin_answers_by_label_func,
+                      get_result_answers_by_label_func,
+                      labels):
+    assert(callable(get_origin_answers_by_label_func))
+    assert(callable(get_result_answers_by_label_func))
+    results = [get_result_answers_by_label_func(label) for label in labels]
+    tp_sum = sum([len(res.filter_comparison_true()) for res in results])
+    tp_fp_sum = sum([len(get_origin_answers_by_label_func(label)) for label in labels])
+    return (1.0 * tp_sum) / tp_fp_sum
+
+
 def calc_prec_and_recall(cmp_table,
                          label,
                          opinions_exist):
