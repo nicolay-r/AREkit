@@ -13,6 +13,7 @@ def create_experiment(exp_type,
                       load_ruattitude_docs,
                       experiment_io_type,
                       extra_name_suffix,
+                      do_log=True,
                       ruattitudes_version=None):
     """ This method allows to instanciate all the supported experiments
         by `contrib/experiments/` module of AREkit framework.
@@ -29,7 +30,8 @@ def create_experiment(exp_type,
                                    version=rusentrel_version,
                                    folding_type=folding_type,
                                    experiment_io_type=experiment_io_type,
-                                   extra_name_suffix=extra_name_suffix)
+                                   extra_name_suffix=extra_name_suffix,
+                                   do_log=do_log)
 
     if exp_type == ExperimentTypes.RuAttitudes:
         # Application of the distant supervision only (assumes for pretraining purposes)
@@ -37,7 +39,8 @@ def create_experiment(exp_type,
                                      version=ruattitudes_version,
                                      experiment_io_type=experiment_io_type,
                                      load_docs=load_ruattitude_docs,
-                                     extra_name_suffix=extra_name_suffix)
+                                     extra_name_suffix=extra_name_suffix,
+                                     do_log=do_log)
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
         # Supervised learning with an application of distant supervision in training process.
@@ -47,4 +50,5 @@ def create_experiment(exp_type,
                                                   folding_type=folding_type,
                                                   experiment_io_type=experiment_io_type,
                                                   load_docs=load_ruattitude_docs,
-                                                  extra_name_suffix=extra_name_suffix)
+                                                  extra_name_suffix=extra_name_suffix,
+                                                  do_log=do_log)

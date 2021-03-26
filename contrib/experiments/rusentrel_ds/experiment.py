@@ -17,7 +17,9 @@ from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollec
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
+
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
@@ -27,16 +29,21 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     """
 
     def __init__(self, exp_data, experiment_io_type, folding_type, ruattitudes_version,
-                 rusentrel_version, load_docs, extra_name_suffix):
+                 rusentrel_version, load_docs, extra_name_suffix, do_log=True):
         assert(isinstance(ruattitudes_version, RuAttitudesVersions))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
+        assert(isinstance(do_log, bool))
+
+        # Setup logging option.
+        self._init_log_flag(do_log)
 
         self.__ruattitudes_version = ruattitudes_version
         self.__rusentrel_version = rusentrel_version
         self.__load_docs = load_docs
         self.__exp_data = exp_data
+        self.__do_log = do_log
 
         # To be initialized later (on demand)
         self.__rusentrel_synonyms = None
@@ -44,7 +51,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__ruattitudes_doc = None
         self.__ru_attitudes_op = None
 
-        logger.info("Init experiment io ...")
+        self.log_info(u"Init experiment io ...")
         experiment_io = experiment_io_type(self)
 
         # RuSentRel doc operations init.
@@ -128,7 +135,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
 
     def _get_or_load_synonyms_collection(self):
         if self.__rusentrel_synonyms is None:
-            logger.info("Read synonyms collection [RuSentRel]...")
+            self.log_info(u"Read synonyms collection [RuSentRel]...")
             self.__rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
                 stemmer=self.DataIO.Stemmer,
                 version=self.__rusentrel_version)

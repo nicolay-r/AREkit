@@ -23,24 +23,29 @@ class RuSentRelExperiment(BaseExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, folding_type, extra_name_suffix):
+    def __init__(self, exp_data, experiment_io_type, version, folding_type, extra_name_suffix,
+                 do_log=True):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
+        assert(isinstance(do_log, bool))
+
+        # Setup logging option.
+        self._init_log_flag(do_log)
 
         self.__rsr_version = version
         self.__synonyms = None
 
-        logger.info("Init experiment io ...")
+        self.log_info(u"Init experiment io ...")
         experiment_io = experiment_io_type(self)
 
-        logger.info("Create opinion operations ... ")
+        self.log_info(u"Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
                                               version=version,
                                               experiment_io=experiment_io,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
-        logger.info("Create document operations ... ")
+        self.log_info(u"Create document operations ... ")
         folding = create_rusentrel_experiment_data_folding(folding_type=folding_type,
                                                            version=version,
                                                            docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
@@ -60,14 +65,18 @@ class RuSentRelExperiment(BaseExperiment):
                                                   name=exp_name,
                                                   extra_name_suffix=extra_name_suffix)
 
+    # region protected methods
+
     def _get_or_load_synonyms_collection(self):
         if self.__synonyms is None:
-            logger.info("Read synonyms collection ...")
+            self.log_info(u"Read synonyms collection ...")
             self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
                 stemmer=self.DataIO.Stemmer,
                 version=self.__rsr_version)
 
         return self.__synonyms
+
+    # endregion
 
     def entity_to_group(self, entity):
         return entity_to_group_func(entity, synonyms=self.__synonyms)

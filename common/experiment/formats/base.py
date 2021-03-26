@@ -22,6 +22,7 @@ class BaseExperiment(object):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(name, unicode))
         assert(isinstance(extra_name_suffix, unicode))
+
         self.__experiment_data = exp_data
         self.__experiment_io = experiment_io
         self.__opin_operations = opin_ops
@@ -61,6 +62,16 @@ class BaseExperiment(object):
         return self.__doc_operations
 
     # endregion
+
+    def _init_log_flag(self, do_log):
+        assert(isinstance(do_log, bool))
+        self._do_log = do_log
+
+    def log_info(self, message, forced=False):
+        assert (isinstance(message, unicode))
+        if not self._do_log and not forced:
+            return
+        logger.info(message)
 
     def entity_to_group(self, entity):
         """ This function provides provides integer group for a particular entity

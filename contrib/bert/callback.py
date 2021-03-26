@@ -6,6 +6,9 @@ class Callback(object):
     def set_log_dir(self, target_dir):
         raise NotImplementedError()
 
+    def check_log_exists(self):
+        raise NotImplementedError()
+
     def write_results(self, result, data_type, epoch_index):
         raise NotImplementedError()
 
