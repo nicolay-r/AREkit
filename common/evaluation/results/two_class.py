@@ -7,6 +7,8 @@ from arekit.common.labels.base import PositiveLabel, NegativeLabel, Label
 from arekit.common.opinions.collection import OpinionCollection
 
 
+# TODO. This class suppose to be a part of the RuSentRel experiment.
+# (It refers to sentiment labels which should be moved out of core)
 class TwoClassEvalResult(BaseEvalResult):
 
     C_F1 = u'f1'

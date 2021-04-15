@@ -88,6 +88,10 @@ def fill_opinion_collection(collection, linked_data_iter, labels_helper, to_opin
 
         assert(isinstance(agg_opinion, Opinion))
 
+        # TODO. this limitation actually comes from the RuSentRel task, in which
+        # we deal with only sentiment opinions in result collection.
+        # As a result we reject non sentiment opinions.
+        # In generalization purposes, this restriction should be provided in other way!
         if isinstance(agg_opinion.Sentiment, NeutralLabel):
             continue
 

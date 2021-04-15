@@ -5,6 +5,8 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 
 
+# TODO. This class suppose to be a part of the RuSentRel experiment.
+# (It refers to sentiment labels which should be moved out of core)
 class ThreeClassEvaluator(BaseEvaluator):
 
     def __init__(self, data_type):

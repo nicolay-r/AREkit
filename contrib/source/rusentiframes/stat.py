@@ -152,7 +152,6 @@ def __about(frames_collection, stemmer, pos_tagger):
 
 
 def about_version(version=RuSentiFramesVersions.V20):
-    assert(isinstance(version, unicode))
     stemmer = MystemWrapper()
     pos_tagger = POSMystemWrapper(stemmer.MystemInstance)
     frames_collection = RuSentiFramesCollection.read_collection(version=version)
