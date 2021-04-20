@@ -58,7 +58,7 @@ class TestContextNetworkFeeding(unittest.TestCase):
         labels_scaler = ThreeLabelScaler()
         init_config(network_config)
         # Init network.
-        network.compile(config=network_config, reset_graph=True)
+        network.compile(config=network_config, reset_graph=True, graph_seed=42)
         minibatch = create_minibatch_func(config=network_config,
                                           labels_scaler=labels_scaler)
 

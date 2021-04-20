@@ -104,8 +104,8 @@ class BaseTensorflowModel(BaseModel):
         """
         self.__sess.close()
 
-    def run_training(self, epochs_count):
-        self.__network.compile(self.Config, reset_graph=True)
+    def run_training(self, epochs_count, seed):
+        self.__network.compile(self.Config, reset_graph=True, graph_seed=seed)
         self.set_optimiser()
         self.__notify_initialized()
 

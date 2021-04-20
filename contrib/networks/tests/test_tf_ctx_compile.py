@@ -25,7 +25,7 @@ class TestContextNetworkCompilation(unittest.TestCase):
             logger.info("Clases count: {}".format(config.ClassesCount))
 
             init_config(config)
-            network.compile(config, reset_graph=True)
+            network.compile(config, reset_graph=True, graph_seed=42)
 
 
 if __name__ == '__main__':

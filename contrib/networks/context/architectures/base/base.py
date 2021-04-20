@@ -131,14 +131,18 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
         self.__init_embedding_hidden_states()
         self.init_body_dependent_hidden_states()
 
-    def compile(self, config, reset_graph):
+    def compile(self, config, reset_graph, graph_seed=None):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(reset_graph, bool))
+        assert(isinstance(graph_seed, int) or graph_seed is None)
 
         self.__cfg = config
 
         if reset_graph:
             tf.reset_default_graph()
+
+        if graph_seed is not None:
+            tf.set_random_seed(graph_seed)
 
         self.init_input()
         self.__init_embedding_hidden_states()

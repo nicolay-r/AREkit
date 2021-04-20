@@ -64,11 +64,15 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
 
     # region body
 
-    def compile(self, config, reset_graph):
+    def compile(self, config, reset_graph, graph_seed=None):
         assert(isinstance(config, BaseMultiInstanceConfig))
+        assert(isinstance(graph_seed, int) or graph_seed is None)
 
         self.__cfg = config
         tf.reset_default_graph()
+
+        if graph_seed is not None:
+            tf.set_random_seed(graph_seed)
 
         with tf.variable_scope(self.__ctx_network_scope):
             self.__context_network.compile_hidden_states_only(config=config.ContextConfig)
