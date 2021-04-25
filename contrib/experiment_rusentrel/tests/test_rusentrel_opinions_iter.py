@@ -13,7 +13,8 @@ from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opi
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.tests.text.news import init_rusentrel_doc
-from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
+
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter

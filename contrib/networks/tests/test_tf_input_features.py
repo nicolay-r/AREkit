@@ -19,13 +19,14 @@ from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 from arekit.contrib.networks.tests.text.news import init_rusentrel_doc
 from arekit.contrib.networks.features.term_indices import IndicesFeature
-from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
 
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from arekit.tests.text.utils import terms_to_str
 
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 
 
 class TestTfInputFeatures(unittest.TestCase):

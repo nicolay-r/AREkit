@@ -15,7 +15,8 @@ from arekit.common.opinions.collection import OpinionCollection
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
-from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity

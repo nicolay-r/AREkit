@@ -1,4 +1,4 @@
-from arekit.contrib.experiments.synonyms.collection import StemmerBasedSynonymCollection
+from arekit.contrib.experiment_rusentrel.synonyms.collection import StemmerBasedSynonymCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
 from arekit.processing.lemmatization.base import Stemmer
