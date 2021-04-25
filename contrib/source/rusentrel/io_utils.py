@@ -56,29 +56,51 @@ class RuSentRelIOUtils(ZipArchiveUtils):
             raise NotImplementedError("Collection does not supported")
         return True
 
+    @staticmethod
+    def __number_from_string(s):
+        digit_chars = [chr for chr in s if chr.isdigit()]
+
+        if len(digit_chars) == 0:
+            return None
+
+        return int(u"".join(digit_chars))
+
+    @staticmethod
+    def __iter_indicies_from_dataset(version, folder_name):
+        assert(isinstance(folder_name, unicode))
+        assert(RuSentRelIOUtils.__is_supported(version))
+
+        used = set()
+
+        for filename in RuSentRelIOUtils.iter_filenames_from_zip(version):
+            if not folder_name in filename:
+                continue
+
+            index = RuSentRelIOUtils.__number_from_string(filename)
+
+            if index is None:
+                continue
+
+            if index in used:
+                continue
+
+            used.add(index)
+
+            yield index
+
     # region public methods
 
     @staticmethod
     def iter_test_indices(version):
         assert(RuSentRelIOUtils.__is_supported(version))
-
-        if version == RuSentRelVersions.V11:
-            missed = [70]
-            for i in xrange(RuSentRelIOUtils.__sep_doc_id, 76):
-                if i in missed:
-                    continue
-                yield i
+        for index in RuSentRelIOUtils.__iter_indicies_from_dataset(version=version, folder_name=u"test/"):
+            yield index
 
     @staticmethod
     def iter_train_indices(version):
         assert(RuSentRelIOUtils.__is_supported(version))
-
-        if version == RuSentRelVersions.V11:
-            missed = [9, 22, 26]
-            for i in xrange(1, RuSentRelIOUtils.__sep_doc_id):
-                if i in missed:
-                    continue
-                yield i
+        for index in RuSentRelIOUtils.__iter_indicies_from_dataset(version=version, folder_name=u"train/"):
+            yield index
 
     @staticmethod
     def iter_collection_indices(version):
