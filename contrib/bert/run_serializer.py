@@ -5,12 +5,14 @@ from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.neutral.run import perform_neutral_annotation
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_formatter
 
 
 class BertExperimentInputSerializer(ExperimentEngine):
 
     def __init__(self, experiment,
+                 labels_formatter,
                  skip_if_folder_exists,
                  sample_formatter_type,
                  entity_formatter,
@@ -19,6 +21,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(skip_if_folder_exists, bool))
         assert(isinstance(write_sample_header, bool))
+        assert(isinstance(labels_formatter, StringLabelsFormatter))
         super(BertExperimentInputSerializer, self).__init__(experiment)
 
         self.__skip_if_folder_exists = skip_if_folder_exists
@@ -26,6 +29,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         self.__entity_formatter = entity_formatter
         self.__sample_formatter_type = sample_formatter_type
         self.__balance_train_samples = balance_train_samples
+        self.__labels_formatter = labels_formatter
 
     # region private methods
 
@@ -35,6 +39,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         # Create samples formatter.
         sample_formatter = create_bert_sample_formatter(
             data_type=data_type,
+            labels_formatter=self.__labels_formatter,
             formatter_type=self.__sample_formatter_type,
             label_scaler=self._experiment.DataIO.LabelsScaler,
             entity_formatter=self.__entity_formatter,
