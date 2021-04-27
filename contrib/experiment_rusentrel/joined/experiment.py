@@ -2,18 +2,18 @@ import logging
 
 from arekit.common.experiment.folding.types import FoldingType
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.contrib.experiments.common import entity_to_group_func
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.contrib.experiments.ruattitudes.documents import RuAttitudesDocumentOperations
-from arekit.contrib.experiments.ruattitudes.folding import create_ruattitudes_experiment_data_folding
-from arekit.contrib.experiments.ruattitudes.opinions import RuAttitudesOpinionOperations
-from arekit.contrib.experiments.ruattitudes.utils import read_ruattitudes_in_memory
-from arekit.contrib.experiments.rusentrel.documents import RuSentrelDocumentOperations
-from arekit.contrib.experiments.rusentrel.folding import create_rusentrel_experiment_data_folding
-from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
-from arekit.contrib.experiments.rusentrel_ds.documents import RuSentrelWithRuAttitudesDocumentOperations
-from arekit.contrib.experiments.rusentrel_ds.opinions import RuSentrelWithRuAttitudesOpinionOperations
-from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
+from arekit.contrib.experiment_rusentrel.ds.documents import RuAttitudesDocumentOperations
+from arekit.contrib.experiment_rusentrel.ds.folding import create_ruattitudes_experiment_data_folding
+from arekit.contrib.experiment_rusentrel.ds.opinions import RuAttitudesOpinionOperations
+from arekit.contrib.experiment_rusentrel.ds.utils import read_ruattitudes_in_memory
+from arekit.contrib.experiment_rusentrel.joined.documents import RuSentrelWithRuAttitudesDocumentOperations
+from arekit.contrib.experiment_rusentrel.joined.opinions import RuSentrelWithRuAttitudesOpinionOperations
+from arekit.contrib.experiment_rusentrel.sl.documents import RuSentrelDocumentOperations
+from arekit.contrib.experiment_rusentrel.sl.folding import create_rusentrel_experiment_data_folding
+from arekit.contrib.experiment_rusentrel.sl.opinions import RuSentrelOpinionOperations
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 

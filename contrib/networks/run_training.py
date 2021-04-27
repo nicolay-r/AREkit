@@ -21,11 +21,14 @@ class NetworksTrainingEngine(ExperimentEngine):
     def __init__(self, bags_collection_type, experiment,
                  load_model, config,
                  create_network_func,
-                 prepare_model_root=True):
+                 prepare_model_root=True,
+                 seed=None):
         assert(callable(create_network_func))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(load_model, bool))
+        assert(isinstance(seed, int) or seed is None)
+
         super(NetworksTrainingEngine, self).__init__(experiment)
 
         self.__clear_model_root_before_experiment = prepare_model_root
@@ -33,6 +36,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         self.__create_network_func = create_network_func
         self.__bags_collection_type = bags_collection_type
         self.__load_model = load_model
+        self.__seed = seed
 
     def __get_model_dir(self):
         return self._experiment.DataIO.ModelIO.get_model_dir()
@@ -93,7 +97,7 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Run model
         with callback:
-            model.run_training(epochs_count=callback.Epochs)
+            model.run_training(epochs_count=callback.Epochs, seed=self.__seed)
 
         del network
         del model

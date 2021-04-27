@@ -1,6 +1,6 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.contrib.experiments.rusentrel.opinions import RuSentrelOpinionOperations
+from arekit.contrib.experiment_rusentrel.sl.opinions import RuSentrelOpinionOperations
 
 
 class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):

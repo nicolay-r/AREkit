@@ -1,7 +1,7 @@
 import logging
 import unittest
 
-from arekit.contrib.experiments.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.tests.text.debug_text import debug_show_news_terms
 from arekit.processing.text.parser import TextParser

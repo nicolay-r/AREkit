@@ -1,9 +1,9 @@
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.folding.types import FoldingType
-from arekit.contrib.experiments.ruattitudes.experiment import RuAttitudesExperiment
-from arekit.contrib.experiments.rusentrel.experiment import RuSentRelExperiment
-from arekit.contrib.experiments.rusentrel_ds.experiment import RuSentRelWithRuAttitudesExperiment
-from arekit.contrib.experiments.types import ExperimentTypes
+from arekit.contrib.experiment_rusentrel.ds.experiment import RuAttitudesExperiment
+from arekit.contrib.experiment_rusentrel.joined.experiment import RuSentRelWithRuAttitudesExperiment
+from arekit.contrib.experiment_rusentrel.sl.experiment import RuSentRelExperiment
+from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
 
 
 def create_experiment(exp_type,

@@ -27,7 +27,7 @@ class TestMultiInstanceCompile(unittest.TestCase):
 
         network = MaxPoolingOverSentences(context_network=context_network)
         init_config(config)
-        network.compile(config, reset_graph=True)
+        network.compile(config, reset_graph=True, graph_seed=42)
 
     def test(self):
         logging.basicConfig(level=logging.INFO)

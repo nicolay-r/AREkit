@@ -6,7 +6,6 @@ import tensorflow as tf
 
 from tensorflow.python.training.saver import Saver
 
-from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
@@ -104,8 +103,8 @@ class BaseTensorflowModel(BaseModel):
         """
         self.__sess.close()
 
-    def run_training(self, epochs_count):
-        self.__network.compile(self.Config, reset_graph=True)
+    def run_training(self, epochs_count, seed):
+        self.__network.compile(self.Config, reset_graph=True, graph_seed=seed)
         self.set_optimiser()
         self.__notify_initialized()
 
