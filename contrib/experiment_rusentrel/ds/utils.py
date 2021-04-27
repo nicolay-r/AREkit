@@ -1,6 +1,7 @@
 import logging
 
 from arekit.common.utils import progress_bar_iter
+from arekit.contrib.experiment_rusentrel.scales.ruattitudes import ExperimentRuAttitudesLabelScaler
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
@@ -27,6 +28,7 @@ def read_ruattitudes_in_memory(version, keep_doc_ids_only, used_doc_ids_set=None
 
     it = RuAttitudesCollection.iter_news(version=version,
                                          get_news_index_func=lambda _: id_offset + len(d),
+                                         label_scaler=ExperimentRuAttitudesLabelScaler(),
                                          return_inds_only=keep_doc_ids_only)
 
     it_formatted_and_logged = progress_bar_iter(

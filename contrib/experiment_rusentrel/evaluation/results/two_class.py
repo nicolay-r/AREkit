@@ -4,8 +4,8 @@ from arekit.common.evaluation.results import metrics
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.results.utils import calc_f1_single_class, calc_f1_macro
 from arekit.common.labels.base import Label
-from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiment_rusentrel.labels import NegativeLabel, PositiveLabel
 
 
 class TwoClassEvalResult(BaseEvalResult):

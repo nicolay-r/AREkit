@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import NeutralLabel
-from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
+from arekit.contrib.experiment_rusentrel.labels import PositiveLabel, NegativeLabel
 
 
 class ThreeLabelScaler(BaseLabelScaler):

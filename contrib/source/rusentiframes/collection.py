@@ -30,15 +30,18 @@ class RuSentiFramesCollection(FramesCollection):
     # region classmethods
 
     @classmethod
-    def read_collection(cls, version):
+    def read_collection(cls, version,
+                        labels_fmt=RuSentiFramesLabelsFormatter(),
+                        effect_labels_fmt=RuSentiFramesEffectLabelsFormatter()):
         assert(isinstance(version, RuSentiFramesVersions))
+        assert(isinstance(labels_fmt, RuSentiFramesLabelsFormatter))
 
         return RuSentiFramesIOUtils.read_from_zip(
             inner_path=RuSentiFramesIOUtils.get_collection_filepath(),
             process_func=lambda input_file: cls.__from_json(
                 input_file=input_file,
-                labels_fmt=RuSentiFramesLabelsFormatter(),
-                effect_labels_fmt=RuSentiFramesEffectLabelsFormatter()),
+                labels_fmt=labels_fmt,
+                effect_labels_fmt=effect_labels_fmt),
             version=version)
 
     @classmethod

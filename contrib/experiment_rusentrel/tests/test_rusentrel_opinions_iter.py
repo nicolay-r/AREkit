@@ -16,6 +16,10 @@ from arekit.contrib.source.tests.text.news import init_rusentrel_doc
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 
+from arekit.contrib.experiment_rusentrel.label_fmts.rusentiframes import \
+    ExperimentRuSentiFramesLabelsFormatter, \
+    ExperimentRuSentiFramesEffectLabelsFormatter
+
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.common.frame_variants.collection import FrameVariantsCollection
@@ -36,7 +40,10 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
             pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
         cls.stemmer = MystemWrapper()
         cls.synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=cls.stemmer)
-        cls.frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V10)
+        cls.frames_collection = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V10,
+            labels_fmt=ExperimentRuSentiFramesLabelsFormatter(),
+            effect_labels_fmt=ExperimentRuSentiFramesEffectLabelsFormatter())
         cls.unique_frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
             variants_with_id=cls.frames_collection.iter_frame_id_and_variants(),
             stemmer=cls.stemmer)

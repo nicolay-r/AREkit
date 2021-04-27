@@ -2,6 +2,7 @@ import unittest
 
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.contrib.experiment_rusentrel.scales.ruattitudes import ExperimentRuAttitudesLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -19,6 +20,7 @@ class TestPartOfSpeech(unittest.TestCase):
     def test_ruattitudes_news_text_parsing(self):
         news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.Debug,
                                                   get_news_index_func=lambda _: 0,
+                                                  label_scaler=ExperimentRuAttitudesLabelScaler(),
                                                   return_inds_only=False)
 
         for news in news_it:

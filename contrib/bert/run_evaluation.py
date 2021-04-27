@@ -79,6 +79,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         samples_tsv_filepath = exp_io.get_input_sample_filepath(self.__data_type)
 
         row_id_provider = MultipleIDProvider()
+        # TODO. This should be removed as this is a part of the particular
+        # experiment, not source!.
         labels_formatter = RuSentRelLabelsFormatter()
         cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_doc_ids_to_compare())
 

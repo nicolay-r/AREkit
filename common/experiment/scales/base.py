@@ -3,7 +3,13 @@ from collections import OrderedDict
 from arekit.common.labels.base import Label
 
 
+# TODO. This should be moved at common/labels/scaler.py
+# TODO. This should be moved at common/labels/scaler.py
+# TODO. This should be moved at common/labels/scaler.py
 class BaseLabelScaler(object):
+    """ NOTE:
+        Scaler -- set up conversion from int/uint to label and vice versa.
+    """
 
     def __init__(self, uint_dict, int_dict):
         assert(isinstance(uint_dict, OrderedDict))
@@ -37,6 +43,15 @@ class BaseLabelScaler(object):
             if v == value:
                 return label
 
+    @staticmethod
+    def __has_value(value, d):
+        assert(isinstance(value, int))
+        assert(isinstance(d, OrderedDict))
+        for label, v in d.iteritems():
+            if v == value:
+                return True
+        return False
+
     # endregion
 
     def classes_count(self):
@@ -53,6 +68,9 @@ class BaseLabelScaler(object):
 
     def int_to_label(self, value):
         return self.__itol(value, self.__int_dict)
+
+    def support_int_value(self, value):
+        return self.__has_value(value, self.__int_dict)
 
     def invert_label(self, label):
         raise NotImplementedError()
