@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from arekit.common.labels.base import NegativeLabel, NeutralLabel, PositiveLabel
+from arekit.common.labels.base import NeutralLabel
+from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 

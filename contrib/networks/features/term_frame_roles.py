@@ -1,8 +1,8 @@
-from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.frames.polarity import FramePolarity
 from arekit.common.labels.base import NeutralLabel
 from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.contrib.experiment_rusentrel.scales.three import ThreeLabelScaler
 from arekit.contrib.networks.features.utils import create_filled_array
 
 

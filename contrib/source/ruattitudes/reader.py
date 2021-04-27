@@ -1,5 +1,5 @@
-from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.utils import split_by_whitespaces
+from arekit.contrib.experiment_rusentrel.scales.three import ThreeLabelScaler
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion

@@ -1,5 +1,5 @@
-from arekit.common.experiment.scales.three import ThreeLabelScaler
-from arekit.common.experiment.scales.two import TwoLabelScaler
+from arekit.contrib.experiment_rusentrel.scales.three import ThreeLabelScaler
+from arekit.contrib.experiment_rusentrel.scales.two import TwoLabelScaler
 
 
 def create_labels_scaler(labels_count):

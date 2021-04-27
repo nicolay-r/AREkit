@@ -1,4 +1,4 @@
-from arekit.common.labels.base import NegativeLabel, PositiveLabel
+from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 

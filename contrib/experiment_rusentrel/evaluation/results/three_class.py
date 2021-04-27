@@ -4,12 +4,11 @@ from arekit.common.evaluation.results import metrics
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.results.metrics import calc_precision_micro, calc_recall_micro
 from arekit.common.evaluation.results.utils import calc_f1_3c_macro, calc_f1_single_class
-from arekit.common.labels.base import NegativeLabel, PositiveLabel, NeutralLabel, Label
+from arekit.common.labels.base import NeutralLabel, Label
+from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
 from arekit.common.opinions.collection import OpinionCollection
 
 
-# TODO. This class suppose to be a part of the RuSentRel experiment.
-# (It refers to sentiment labels which should be moved out of core)
 class ThreeClassEvalResult(BaseEvalResult):
     """ This evaluation considered both sentiment and non-sentiment (neutral).
     """

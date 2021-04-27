@@ -4,8 +4,8 @@ import unittest
 
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.sample import InputSampleReader
-from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.contrib.bert.output.google_bert import GoogleBertMulticlassOutput
+from arekit.contrib.experiment_rusentrel.scales.three import ThreeLabelScaler
 
 sys.path.append('../../')
 

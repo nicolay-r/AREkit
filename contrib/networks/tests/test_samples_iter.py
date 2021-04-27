@@ -6,7 +6,7 @@ import unittest
 sys.path.append('../../../')
 
 from arekit.common.experiment import const
-from arekit.common.experiment.scales.three import ThreeLabelScaler
+from arekit.contrib.experiment_rusentrel.scales.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample

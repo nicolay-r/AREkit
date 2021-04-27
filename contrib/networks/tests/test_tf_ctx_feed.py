@@ -4,11 +4,12 @@ import unittest
 import tensorflow as tf
 import logging
 
+
 sys.path.append('../../../')
 
 from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.experiment_rusentrel.scales.three import ThreeLabelScaler
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
