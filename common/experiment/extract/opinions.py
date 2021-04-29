@@ -82,7 +82,7 @@ def fill_opinion_collection(collection, linked_data_iter, labels_helper, to_opin
 
         agg_label = labels_helper.aggregate_labels(
             labels_list=list(linked.iter_labels()),
-            label_creation_mode=label_calc_mode)
+            label_calc_mode=label_calc_mode)
 
         agg_opinion = to_opinion_func(linked.First, agg_label)
 
