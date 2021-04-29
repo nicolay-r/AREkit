@@ -2,10 +2,11 @@ import logging
 import sys
 import unittest
 
+
 sys.path.append('../../../')
 
-from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.labels.base import PositiveLabel
+from arekit.common.labels.base import NeutralLabel
+from arekit.common.labels.scaler import BaseLabelScaler
 
 from arekit.contrib.networks.tests.tf_networks.supported import get_supported
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
@@ -25,7 +26,7 @@ class TestMultiInstanceFeed(unittest.TestCase):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(labels_scaler, BaseLabelScaler))
         bags = []
-        label = PositiveLabel()
+        label = NeutralLabel()
         empty_sample = InputSample.create_empty(terms_per_context=config.TermsPerContext,
                                                 frames_per_context=config.FramesPerContext,
                                                 synonyms_per_context=config.SynonymsPerContext)

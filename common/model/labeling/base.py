@@ -1,4 +1,4 @@
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 
 
 class LabelsHelper(object):
@@ -16,7 +16,7 @@ class LabelsHelper(object):
     def get_classes_count(self):
         return len(self._label_scaler.ordered_suppoted_labels())
 
-    def aggregate_labels(self, labels_list, label_creation_mode):
+    def aggregate_labels(self, labels_list, label_calc_mode):
         raise NotImplementedError()
 
     @staticmethod

@@ -6,10 +6,11 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.sl.labels_formatter import RuSentRelNeutralLabelsFormatter
+from arekit.contrib.experiment_rusentrel.labels.formatters.neut_label import RuSentRelNeutralLabelsFormatter
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -26,7 +27,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__version = version
         self.__experiment_io = experiment_io
         self.__opinion_formatter = experiment_data.OpinionFormatter
-        self.__result_labels_fmt = RuSentRelLabelsFormatter()
+        self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = RuSentRelNeutralLabelsFormatter()
 
     # region CVBasedOperations

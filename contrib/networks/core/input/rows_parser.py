@@ -1,7 +1,7 @@
 import pandas as pd
 
 from arekit.common.experiment import const
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import filter_whitespaces, split_by_whitespaces
 import const as network_input_const
 

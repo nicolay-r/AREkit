@@ -13,8 +13,10 @@ from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opi
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.tests.text.news import init_rusentrel_doc
-
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import \
+    ExperimentRuSentiFramesLabelsFormatter, \
+    ExperimentRuSentiFramesEffectLabelsFormatter
 
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
@@ -36,7 +38,10 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
             pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
         cls.stemmer = MystemWrapper()
         cls.synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=cls.stemmer)
-        cls.frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V10)
+        cls.frames_collection = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V10,
+            labels_fmt=ExperimentRuSentiFramesLabelsFormatter(),
+            effect_labels_fmt=ExperimentRuSentiFramesEffectLabelsFormatter())
         cls.unique_frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
             variants_with_id=cls.frames_collection.iter_frame_id_and_variants(),
             stemmer=cls.stemmer)
@@ -47,11 +52,10 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
 
         r = []
         for i, term in enumerate(terms):
-            result = None
             if isinstance(term, Entity):
                 if i == s_ind:
                     result = entities_formatter.to_string(term, EntityType.Subject)
-                if i == t_ind:
+                elif i == t_ind:
                     result = entities_formatter.to_string(term, EntityType.Object)
                 else:
                     result = entities_formatter.to_string(term, EntityType.Other)

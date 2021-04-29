@@ -1,5 +1,6 @@
-from arekit.common.experiment.scales.three import ThreeLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import split_by_whitespaces
+from arekit.contrib.source.ruattitudes.conts import NEG_INT_VALUE, POS_INT_VALUE
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
@@ -52,8 +53,11 @@ class RuAttitudesFormatReader(object):
                                                               local_index=local_news_ind)
 
     @staticmethod
-    def iter_news(input_file, get_news_index_func):
+    def iter_news(input_file, get_news_index_func, label_scaler):
         assert(callable(get_news_index_func))
+        assert(isinstance(label_scaler, BaseLabelScaler))
+        assert(label_scaler.support_int_value(POS_INT_VALUE))
+        assert(label_scaler.support_int_value(NEG_INT_VALUE))
 
         reset = False
         title = None
@@ -65,8 +69,6 @@ class RuAttitudesFormatReader(object):
         s_index = 0
         objects_in_prior_sentences_count = 0
         local_news_ind = 0
-
-        label_scaler = ThreeLabelScaler()
 
         for line in RuAttitudesFormatReader.__iter_lines(input_file):
 
@@ -177,7 +179,7 @@ class RuAttitudesFormatReader(object):
     @staticmethod
     def __parse_sentence_opin(line, objects_list, label_scaler):
         assert(isinstance(objects_list, list))
-        assert(isinstance(label_scaler, ThreeLabelScaler))
+        assert(isinstance(label_scaler, BaseLabelScaler))
 
         line = line[len(RuAttitudesFormatReader.OPINION_KEY):]
 

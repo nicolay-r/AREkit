@@ -7,12 +7,12 @@ from os.path import dirname
 from enum import Enum
 
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
-from arekit.common.evaluation.evaluators.two_class import TwoClassEvaluator
-from arekit.common.evaluation.results.two_class import TwoClassEvalResult
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
+from arekit.contrib.experiment_rusentrel.evaluation.evaluators.two_class import TwoClassEvaluator
+from arekit.contrib.experiment_rusentrel.evaluation.results.two_class import TwoClassEvalResult
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter

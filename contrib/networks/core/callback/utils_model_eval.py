@@ -9,7 +9,7 @@ from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.output.multiple import MulticlassOutput
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.formatter import OpinionCollectionsFormatter
@@ -26,7 +26,8 @@ logger = logging.getLogger(__name__)
 
 
 def evaluate_model(experiment, data_type, epoch_index, model,
-                   labels_formatter, save_hidden_params, log_dir):
+                   labels_formatter, save_hidden_params,
+                   label_calc_mode, log_dir):
     """ Performs Model Evaluation on a particular state (i.e. epoch),
         for a particular data type.
     """
@@ -69,9 +70,11 @@ def evaluate_model(experiment, data_type, epoch_index, model,
         doc_ops=experiment.DocumentOperations,
         labels_scaler=experiment.DataIO.LabelsScaler,
         opin_fmt=experiment.DataIO.OpinionFormatter,
+        supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,
         epoch_index=epoch_index,
         result_filepath=result_filepath,
+        label_calc_mode=label_calc_mode,
         labels_formatter=labels_formatter)
 
     # Evaluate.
@@ -91,7 +94,7 @@ def evaluate_model(experiment, data_type, epoch_index, model,
 
 def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_fmt,
                                             result_filepath, data_type, epoch_index,
-                                            labels_formatter):
+                                            supported_collection_labels, label_calc_mode, labels_formatter):
     assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
@@ -99,6 +102,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
     assert(isinstance(opin_fmt, OpinionCollectionsFormatter))
     assert(isinstance(data_type, DataType))
     assert(isinstance(epoch_index, int))
+    assert(isinstance(label_calc_mode, LabelCalculationMode))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
     opinions_source = exp_io.get_input_opinions_filepath(data_type=data_type)
@@ -112,8 +116,8 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         labels_scaler=labels_scaler,
         create_opinion_collection_func=opin_ops.create_opinion_collection,
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
-        # TODO. bring this onto parameters level.
-        label_calculation_mode=LabelCalculationMode.AVERAGE,
+        label_calculation_mode=label_calc_mode,
+        supported_labels=supported_collection_labels,
         output=MulticlassOutput(labels_scaler=labels_scaler,
                                 has_output_header=True))
 

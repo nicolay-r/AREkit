@@ -69,31 +69,30 @@ def iter_linked_text_opins(doc_ops, opin_ops, data_type, parsed_news_it, terms_p
             yield parsed_news, LinkedTextOpinionsWrapper(linked_text_opinion_list)
 
 
-def fill_opinion_collection(collection, linked_data_iter, labels_helper, to_opinion_func, label_calc_mode):
+def fill_opinion_collection(collection, linked_data_iter, labels_helper, to_opinion_func,
+                            label_calc_mode, supported_labels=None):
     """ to_opinion_func: (item, label) -> opinion
     """
     assert(isinstance(collection, OpinionCollection))
     assert(isinstance(linked_data_iter, collections.Iterable))
     assert(isinstance(labels_helper, LabelsHelper))
     assert(callable(to_opinion_func))
+    assert(isinstance(supported_labels, set) or supported_labels is None)
 
     for linked in linked_data_iter:
         assert(isinstance(linked, LinkedDataWrapper))
 
         agg_label = labels_helper.aggregate_labels(
             labels_list=list(linked.iter_labels()),
-            label_creation_mode=label_calc_mode)
+            label_calc_mode=label_calc_mode)
 
         agg_opinion = to_opinion_func(linked.First, agg_label)
 
         assert(isinstance(agg_opinion, Opinion))
 
-        # TODO. this limitation actually comes from the RuSentRel task, in which
-        # we deal with only sentiment opinions in result collection.
-        # As a result we reject non sentiment opinions.
-        # In generalization purposes, this restriction should be provided in other way!
-        if isinstance(agg_opinion.Sentiment, NeutralLabel):
-            continue
+        if supported_labels is not None:
+            if agg_opinion.Sentiment not in supported_labels:
+                continue
 
         if collection.has_synonymous_opinion(agg_opinion):
             continue

@@ -4,12 +4,13 @@ import unittest
 import tensorflow as tf
 import logging
 
+
 sys.path.append('../../../')
 
-from arekit.common.experiment.scales.base import BaseLabelScaler
-from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.experiment.data_type import DataType
+from arekit.common.labels.scaler import BaseLabelScaler
 
+from arekit.contrib.networks.tests.labels import TestThreeLabelScaler
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.tests.tf_networks.supported import get_supported
@@ -55,7 +56,7 @@ class TestContextNetworkFeeding(unittest.TestCase):
         assert(isinstance(network_config, DefaultNetworkConfig))
         assert(callable(create_minibatch_func))
 
-        labels_scaler = ThreeLabelScaler()
+        labels_scaler = TestThreeLabelScaler()
         init_config(network_config)
         # Init network.
         network.compile(config=network_config, reset_graph=True, graph_seed=42)

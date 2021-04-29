@@ -1,7 +1,7 @@
-from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.frames.polarity import FramePolarity
 from arekit.common.labels.base import NeutralLabel
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.features.utils import create_filled_array
 
@@ -10,7 +10,7 @@ class FrameRoleFeatures(object):
 
     @staticmethod
     def from_tsv(frame_variants, frames_collection, three_label_scaler):
-        assert(isinstance(three_label_scaler, ThreeLabelScaler))
+        assert(isinstance(three_label_scaler, BaseLabelScaler))
 
         result = []
 
@@ -46,7 +46,7 @@ class FrameRoleFeatures(object):
     def __extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_collection, three_label_scaler):
         assert(isinstance(text_frame_variant, TextFrameVariant))
         assert(isinstance(frames_collection, FramesCollection))
-        assert(isinstance(three_label_scaler, ThreeLabelScaler))
+        assert(isinstance(three_label_scaler, BaseLabelScaler))
 
         frame_id = text_frame_variant.Variant.FrameID
         polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)

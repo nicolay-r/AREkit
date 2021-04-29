@@ -3,12 +3,13 @@ import gzip
 import sys
 import unittest
 
+
 sys.path.append('../../../')
 
 from arekit.common.experiment import const
-from arekit.common.experiment.scales.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.contrib.networks.tests.labels import TestThreeLabelScaler
 from arekit.contrib.networks.sample import InputSample
 
 
@@ -76,7 +77,7 @@ class TestSamplesIteration(unittest.TestCase):
         assert(isinstance(samples_filepath, unicode))
 
         samples = []
-        labels_scaler = ThreeLabelScaler()
+        labels_scaler = TestThreeLabelScaler()
         for i, row in enumerate(self.__iter_tsv_gzip(input_file=samples_filepath)):
 
             # Perform row parsing process.

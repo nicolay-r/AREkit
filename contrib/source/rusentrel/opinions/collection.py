@@ -1,3 +1,5 @@
+from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.contrib.source.rusentrel.const import POS_LABEL_STR, NEG_LABEL_STR
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
@@ -9,7 +11,9 @@ class RuSentRelOpinionCollection:
     """
 
     @staticmethod
-    def iter_opinions_from_doc(doc_id, version=RuSentRelVersions.V11):
+    def iter_opinions_from_doc(doc_id,
+                               labels_fmt=RuSentRelLabelsFormatter(),
+                               version=RuSentRelVersions.V11):
         """
         doc_id:
         synonyms: None or SynonymsCollection
@@ -17,8 +21,9 @@ class RuSentRelOpinionCollection:
         version:
         """
         assert(isinstance(version, RuSentRelVersions))
-
-        labels_fmt = RuSentRelLabelsFormatter()
+        assert(isinstance(labels_fmt, StringLabelsFormatter))
+        assert(labels_fmt.supports_value(POS_LABEL_STR))
+        assert(labels_fmt.supports_value(NEG_LABEL_STR))
 
         return RuSentRelIOUtils.iter_from_zip(
             inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id),

@@ -1,4 +1,4 @@
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.model.model_io import BaseModelIO
 
 
@@ -32,6 +32,12 @@ class DataIO(object):
     @property
     def Stemmer(self):
         return self.__stemmer
+
+    @property
+    def SupportedCollectionLabels(self):
+        """ All labels considered as supported and might appear in OpinionCollection by default.
+        """
+        return None
 
     # region not implemented properties
 

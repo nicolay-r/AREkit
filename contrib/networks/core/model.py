@@ -6,8 +6,8 @@ import tensorflow as tf
 
 from tensorflow.python.training.saver import Saver
 
-from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.experiment.labeling import LabeledCollection
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
 from arekit.common.utils import progress_bar_defined

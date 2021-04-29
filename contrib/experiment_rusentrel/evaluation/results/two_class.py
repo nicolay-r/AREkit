@@ -3,12 +3,11 @@ from collections import OrderedDict
 from arekit.common.evaluation.results import metrics
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.results.utils import calc_f1_single_class, calc_f1_macro
-from arekit.common.labels.base import PositiveLabel, NegativeLabel, Label
+from arekit.common.labels.base import Label
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNegativeLabel, ExperimentPositiveLabel
 
 
-# TODO. This class suppose to be a part of the RuSentRel experiment.
-# (It refers to sentiment labels which should be moved out of core)
 class TwoClassEvalResult(BaseEvalResult):
 
     C_F1 = u'f1'
@@ -22,8 +21,8 @@ class TwoClassEvalResult(BaseEvalResult):
     def __init__(self):
         super(TwoClassEvalResult, self).__init__()
         self.__doc_results = OrderedDict()
-        self.__pos_label = PositiveLabel()
-        self.__neg_label = NegativeLabel()
+        self.__pos_label = ExperimentPositiveLabel()
+        self.__neg_label = ExperimentNegativeLabel()
 
     @staticmethod
     def __has_opinions_with_label(opinions, label):

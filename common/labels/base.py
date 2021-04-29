@@ -15,13 +15,5 @@ class Label(object):
         return self.__class__.__name__
 
 
-class PositiveLabel(Label):
-    pass
-
-
-class NegativeLabel(Label):
-    pass
-
-
 class NeutralLabel(Label):
     pass

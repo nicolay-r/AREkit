@@ -1,12 +1,10 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
-from arekit.common.evaluation.results.three_class import ThreeClassEvalResult
 from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiment_rusentrel.evaluation.results.three_class import ThreeClassEvalResult
 
 
-# TODO. This class suppose to be a part of the RuSentRel experiment.
-# (It refers to sentiment labels which should be moved out of core)
 class ThreeClassEvaluator(BaseEvaluator):
 
     def __init__(self, data_type):
