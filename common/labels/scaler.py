@@ -3,9 +3,6 @@ from collections import OrderedDict
 from arekit.common.labels.base import Label
 
 
-# TODO. This should be moved at common/labels/scaler.py
-# TODO. This should be moved at common/labels/scaler.py
-# TODO. This should be moved at common/labels/scaler.py
 class BaseLabelScaler(object):
     """ NOTE:
         Scaler -- set up conversion from int/uint to label and vice versa.

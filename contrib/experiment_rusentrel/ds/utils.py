@@ -1,7 +1,7 @@
 import logging
 
 from arekit.common.utils import progress_bar_iter
-from arekit.contrib.experiment_rusentrel.scales.ruattitudes import ExperimentRuAttitudesLabelScaler
+from arekit.contrib.experiment_rusentrel.labels.scalers.ruattitudes import ExperimentRuAttitudesLabelScaler
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews

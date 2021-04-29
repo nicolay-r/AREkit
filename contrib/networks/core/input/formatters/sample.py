@@ -1,9 +1,9 @@
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.base import LabelProvider
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
-from arekit.contrib.experiment_rusentrel.scales.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input import const
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
@@ -16,9 +16,11 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
     def __init__(self, data_type, label_provider, text_provider,
                  entity_to_group_func, frames_collection,
+                 frame_role_label_scaler,
                  pos_terms_mapper, balance):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(pos_terms_mapper, PosTermsMapper))
+        assert(isinstance(frame_role_label_scaler, BaseLabelScaler))
         assert(callable(entity_to_group_func))
 
         super(NetworkSampleFormatter, self).__init__(data_type=data_type,
@@ -28,7 +30,7 @@ class NetworkSampleFormatter(BaseSampleFormatter):
 
         self.__entity_to_group_func = entity_to_group_func
         self.__frames_collection = frames_collection
-        self.__frame_role_label_scaler = ThreeLabelScaler()
+        self.__frame_role_label_scaler = frame_role_label_scaler
         self.__pos_terms_mapper = pos_terms_mapper
 
     def _get_columns_list_with_types(self):

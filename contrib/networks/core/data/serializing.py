@@ -8,6 +8,10 @@ class NetworkSerializationData(SerializationData):
                                                        stemmer=stemmer)
 
     @property
+    def FrameRolesLabelScaler(self):
+        raise NotImplementedError()
+
+    @property
     def WordEmbedding(self):
         raise NotImplementedError()
 

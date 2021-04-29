@@ -13,10 +13,8 @@ from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opi
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.tests.text.news import init_rusentrel_doc
-
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-
-from arekit.contrib.experiment_rusentrel.label_fmts.rusentiframes import \
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import \
     ExperimentRuSentiFramesLabelsFormatter, \
     ExperimentRuSentiFramesEffectLabelsFormatter
 
@@ -54,11 +52,10 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
 
         r = []
         for i, term in enumerate(terms):
-            result = None
             if isinstance(term, Entity):
                 if i == s_ind:
                     result = entities_formatter.to_string(term, EntityType.Subject)
-                if i == t_ind:
+                elif i == t_ind:
                     result = entities_formatter.to_string(term, EntityType.Object)
                 else:
                     result = entities_formatter.to_string(term, EntityType.Other)

@@ -2,7 +2,7 @@ import unittest
 
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
-from arekit.contrib.experiment_rusentrel.scales.ruattitudes import ExperimentRuAttitudesLabelScaler
+from arekit.contrib.experiment_rusentrel.labels.scalers.ruattitudes import ExperimentRuAttitudesLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions

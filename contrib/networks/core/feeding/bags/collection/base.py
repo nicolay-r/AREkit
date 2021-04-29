@@ -2,7 +2,7 @@ import collections
 
 import numpy as np
 
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 

@@ -6,7 +6,7 @@ import unittest
 sys.path.append('../../../')
 
 from arekit.common.labels.base import NeutralLabel
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 
 from arekit.contrib.networks.tests.tf_networks.supported import get_supported
 from arekit.contrib.networks.core.feeding.bags.bag import Bag

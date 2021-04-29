@@ -7,7 +7,7 @@ sys.path.append('../')
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.experiment_rusentrel.scales.three import ThreeLabelScaler
+from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter

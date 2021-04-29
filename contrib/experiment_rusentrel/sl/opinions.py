@@ -6,12 +6,10 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.label_fmts.rusentrel import RuSentRelExperimentLabelsFormatter
-
+from arekit.contrib.experiment_rusentrel.labels.formatters.neut_label import RuSentRelNeutralLabelsFormatter
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-
-from arekit.contrib.experiment_rusentrel.label_fmts.neut_label import RuSentRelNeutralLabelsFormatter
 
 
 logger = logging.getLogger(__name__)

@@ -6,7 +6,7 @@ from arekit.common.evaluation.results.metrics import calc_precision_micro, calc_
 from arekit.common.evaluation.results.utils import calc_f1_3c_macro, calc_f1_single_class
 from arekit.common.labels.base import NeutralLabel, Label
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.labels import PositiveLabel, NegativeLabel
+from arekit.contrib.experiment_rusentrel.labels.types import PositiveLabel, NegativeLabel
 
 
 class ThreeClassEvalResult(BaseEvalResult):

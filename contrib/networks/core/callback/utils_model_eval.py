@@ -9,7 +9,7 @@ from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.output.multiple import MulticlassOutput
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.formatter import OpinionCollectionsFormatter

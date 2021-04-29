@@ -1,4 +1,4 @@
-from arekit.contrib.experiment_rusentrel.labels import PositiveLabel, NegativeLabel
+from arekit.contrib.experiment_rusentrel.labels.types import NegativeLabel, PositiveLabel
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 
 

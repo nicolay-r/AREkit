@@ -1,5 +1,5 @@
 from arekit.common.labels.base import NeutralLabel
-from arekit.contrib.experiment_rusentrel.labels import PositiveLabel, NegativeLabel
+from arekit.contrib.experiment_rusentrel.labels.types import PositiveLabel, NegativeLabel
 from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
 
 

@@ -2,8 +2,8 @@ import collections
 import gzip
 
 from arekit.common.experiment import const
-from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import Label
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import create_dir_if_not_exists
 
 

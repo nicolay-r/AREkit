@@ -1,4 +1,4 @@
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 
 
 class LabelsHelper(object):

@@ -1,4 +1,4 @@
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import split_by_whitespaces
 from arekit.contrib.source.ruattitudes.conts import NEG_INT_VALUE, POS_INT_VALUE
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews

@@ -1,6 +1,6 @@
 from collections import OrderedDict
-from arekit.common.experiment.scales.base import BaseLabelScaler
 from arekit.common.labels.base import Label
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.contrib.source.ruattitudes.conts import \
     NEG_INT_VALUE, POS_INT_VALUE, \
     RU_ATTITUDES_POS_LABEL, RU_ATTITUDES_NEG_LABEL, NEU_INT_VALUE, RU_ATTITUDES_NEU_LABEL

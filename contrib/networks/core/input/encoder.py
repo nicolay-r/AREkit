@@ -77,6 +77,7 @@ class NetworkInputEncoder(object):
                 data_type=data_type,
                 label_provider=MultipleLabelProvider(label_scaler=exp_data.LabelsScaler),
                 text_provider=text_provider,
+                frame_role_label_scaler=exp_data.FrameRolesLabelScaler,
                 entity_to_group_func=entity_to_group_func,
                 frames_collection=exp_data.FramesCollection,
                 balance=balance and data_type == DataType.Train,

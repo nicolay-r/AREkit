@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from arekit.common.experiment.scales.base import BaseLabelScaler
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.core.debug import DebugKeys
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
