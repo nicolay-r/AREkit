@@ -1,23 +1,26 @@
-# AREnets 0.20.6
+# Neural Network classifiers
 
-Implementation of neural-netwoks, based on Tensorflow for sentiment attitude extraction task.
+This contributional part provides Neural Networks implementation for (sentiment) 
+relation extraction task.
+Input embedding enlarged with the task specific features.
 
-### Dependencies
+## Contents
+* [List of features](#list-of-features)
+* [Models List](#models-list)
+* [API](#api)
 
-* python == 2.7.5
-* arekit == 0.20.6
-* tensorflow == 1.12.0
-* aresets == 0.20.6 (Only for some tests and application purposes) 
+## List of features
 
-### Core
+* Frame-Roles [[code]](features/term_frame_roles.py) -- frame variant sentiment label, for frames presented in context.
+* Distance-Feature [[code]](features/sample_dist.py):
+    * Distance from `Subject` to other context terms;
+    * Distance from `Object` to other context terms;
+    * Absolute distance to any `Subject` in context;
+    * Absolute distance to any `Object` in context;
+* Term-types [[code]](features/term_types.py)
+* Part-Of-Speech tags
 
-* **Network** [[base-class]](networks/core/nn.py);
-    * Model [[base-class]](networks/core/model.py);
-    * IO [[base-class]](networks/core/nn_io.py);
-    * Callback [[base-class]](networks/core/callback/base.py);
-
-### Neural Network Models
-
+## Models List
 
 * **Aspect-based Attentive encoders**:
     - Multilayer Perceptron (MLP)
@@ -71,11 +74,13 @@ Implementation of neural-netwoks, based on Tensorflow for sentiment attitude ext
     - Single MLP
         [[code]](networks/multi/architectures/base/base_single_mlp.py);
         
-### What could be also added
+### Could be added
 * Semantic Relation Classification via Hierarchical Recurrent Neural Network with Attention
 [[paper]](https://www.aclweb.org/anthology/C16-1119)
 
+## API
 
-## References
-
-TODO.
+* Network [[base-class]](networks/core/nn.py);
+* Model [[base-class]](networks/core/model.py);
+* IO [[base-class]](networks/core/nn_io.py);
+* Callback [[base-class]](networks/core/callback/base.py);
