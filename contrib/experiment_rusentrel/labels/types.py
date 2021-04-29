@@ -1,13 +1,13 @@
 from arekit.common.labels.base import Label
 
 
-class NegativeLabel(Label):
+class ExperimentNegativeLabel(Label):
     """ RuSentRel Experiment Positive Label.
     """
     pass
 
 
-class PositiveLabel(Label):
+class ExperimentPositiveLabel(Label):
     """ RuSentRel Experiment Negative Label.
     """
     pass

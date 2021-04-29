@@ -6,7 +6,7 @@ from arekit.common.evaluation.results.metrics import calc_precision_micro, calc_
 from arekit.common.evaluation.results.utils import calc_f1_3c_macro, calc_f1_single_class
 from arekit.common.labels.base import NeutralLabel, Label
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.labels.types import PositiveLabel, NegativeLabel
+from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
 
 
 class ThreeClassEvalResult(BaseEvalResult):
@@ -30,8 +30,8 @@ class ThreeClassEvalResult(BaseEvalResult):
     def __init__(self):
         super(ThreeClassEvalResult, self).__init__()
         self.__doc_results = OrderedDict()
-        self.__pos_label = PositiveLabel()
-        self.__neg_label = NegativeLabel()
+        self.__pos_label = ExperimentPositiveLabel()
+        self.__neg_label = ExperimentNegativeLabel()
         self.__neu_label = self.create_neutral_label()
 
     @staticmethod

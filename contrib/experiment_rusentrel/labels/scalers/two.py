@@ -1,15 +1,15 @@
 from collections import OrderedDict
 
 from arekit.common.labels.scaler import BaseLabelScaler
-from arekit.contrib.experiment_rusentrel.labels.types import PositiveLabel, NegativeLabel
+from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
 
 
 class TwoLabelScaler(BaseLabelScaler):
 
     def __init__(self):
 
-        uint_labels = [(PositiveLabel(), 0),
-                       (NegativeLabel(), 1)]
+        uint_labels = [(ExperimentPositiveLabel(), 0),
+                       (ExperimentNegativeLabel(), 1)]
 
         super(TwoLabelScaler, self).__init__(uint_dict=OrderedDict(uint_labels),
                                              int_dict=OrderedDict(uint_labels))

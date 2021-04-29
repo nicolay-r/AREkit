@@ -5,7 +5,7 @@ from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.results.utils import calc_f1_single_class, calc_f1_macro
 from arekit.common.labels.base import Label
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.labels.types import NegativeLabel, PositiveLabel
+from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNegativeLabel, ExperimentPositiveLabel
 
 
 class TwoClassEvalResult(BaseEvalResult):
@@ -21,8 +21,8 @@ class TwoClassEvalResult(BaseEvalResult):
     def __init__(self):
         super(TwoClassEvalResult, self).__init__()
         self.__doc_results = OrderedDict()
-        self.__pos_label = PositiveLabel()
-        self.__neg_label = NegativeLabel()
+        self.__pos_label = ExperimentPositiveLabel()
+        self.__neg_label = ExperimentNegativeLabel()
 
     @staticmethod
     def __has_opinions_with_label(opinions, label):
