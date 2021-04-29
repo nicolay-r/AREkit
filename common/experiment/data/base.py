@@ -33,6 +33,12 @@ class DataIO(object):
     def Stemmer(self):
         return self.__stemmer
 
+    @property
+    def SupportedCollectionLabels(self):
+        """ All labels considered as supported and might appear in OpinionCollection by default.
+        """
+        return None
+
     # region not implemented properties
 
     @property

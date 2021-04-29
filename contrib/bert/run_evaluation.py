@@ -124,6 +124,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                     create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
                     keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
                     label_calculation_mode=LabelCalculationMode.AVERAGE,
+                    supported_labels=exp_data.SupportedCollectionLabels,
                     output=output)
 
                 save_opinion_collections(

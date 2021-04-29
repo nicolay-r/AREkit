@@ -15,6 +15,7 @@ class OutputToOpinionCollectionsConverter(object):
                                  keep_doc_id_func,
                                  create_opinion_collection_func,
                                  label_calculation_mode,
+                                 supported_labels,
                                  output):
         assert(callable(keep_doc_id_func))
         assert(isinstance(labels_scaler, BaseLabelScaler))
@@ -22,6 +23,7 @@ class OutputToOpinionCollectionsConverter(object):
         assert(isinstance(opinions_reader, InputOpinionReader))
         assert(callable(create_opinion_collection_func))
         assert(isinstance(label_calculation_mode, unicode))
+        assert(isinstance(supported_labels, set) or supported_labels is None)
         assert(isinstance(output, BaseOutput))
 
         output.init_from_tsv(filepath=output_filepath)
@@ -43,7 +45,8 @@ class OutputToOpinionCollectionsConverter(object):
                 linked_data_iter=linked_iter,
                 labels_helper=labels_helper,
                 to_opinion_func=OutputToOpinionCollectionsConverter.__to_label,
-                label_calc_mode=label_calculation_mode)
+                label_calc_mode=label_calculation_mode,
+                supported_labels=supported_labels)
 
             yield news_id, collection
 

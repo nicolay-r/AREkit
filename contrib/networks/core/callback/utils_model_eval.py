@@ -70,6 +70,7 @@ def evaluate_model(experiment, data_type, epoch_index, model,
         doc_ops=experiment.DocumentOperations,
         labels_scaler=experiment.DataIO.LabelsScaler,
         opin_fmt=experiment.DataIO.OpinionFormatter,
+        supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,
         epoch_index=epoch_index,
         result_filepath=result_filepath,
@@ -93,7 +94,7 @@ def evaluate_model(experiment, data_type, epoch_index, model,
 
 def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_fmt,
                                             result_filepath, data_type, epoch_index,
-                                            label_calc_mode, labels_formatter):
+                                            supported_collection_labels, label_calc_mode, labels_formatter):
     assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
@@ -116,6 +117,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         create_opinion_collection_func=opin_ops.create_opinion_collection,
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         label_calculation_mode=label_calc_mode,
+        supported_labels=supported_collection_labels,
         output=MulticlassOutput(labels_scaler=labels_scaler,
                                 has_output_header=True))
 
