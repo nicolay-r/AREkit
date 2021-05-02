@@ -1,9 +1,11 @@
+import argparse
+
 from arekit.common.frame_variants.base import FrameVariant
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label
 from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions, RuSentiFramesVersionsService
 from arekit.contrib.source.rusentiframes.polarity import RuSentiFramesFramePolarity
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
@@ -158,4 +160,27 @@ def about_version(version=RuSentiFramesVersions.V20):
     frames_collection = RuSentiFramesCollection.read_collection(version=version)
     print "Lexicon version:", version
     return __about(frames_collection=frames_collection, stemmer=stemmer, pos_tagger=pos_tagger)
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(description="Collection stat writer")
+
+    default_name = RuSentiFramesVersionsService.get_name_by_type(RuSentiFramesVersions.V20)
+
+    parser.add_argument('--version',
+                        dest='version',
+                        type=unicode,
+                        default=default_name,
+                        choices=list(RuSentiFramesVersionsService.iter_supported_names()),
+                        nargs='?',
+                        help='Version of RuSentiFrames collection (Default: {})'.format(default_name))
+
+    # Parsing arguments.
+    args = parser.parse_args()
+
+    version = RuSentiFramesVersionsService.get_type_by_name(args.version)
+
+    # Writing statistics.
+    about_version(version)
 
