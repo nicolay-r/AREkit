@@ -61,6 +61,10 @@ def evaluate_model(experiment, data_type, epoch_index, model,
         column_extra_funcs=[
             (const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])
         ],
+
+        # TODO. Provide scaler from callback since the scaler utilized
+        # TODO. only during evaluation. Evaluation considered as an optional stage.
+        # TODO. and hence, label scaler could be a part of a callback.
         labels_scaler=experiment.DataIO.LabelsScaler)
 
     # Convert output to result.
@@ -68,6 +72,9 @@ def evaluate_model(experiment, data_type, epoch_index, model,
         exp_io=experiment.ExperimentIO,
         opin_ops=experiment.OpinionOperations,
         doc_ops=experiment.DocumentOperations,
+        # TODO. Provide scaler from callback since the scaler utilized
+        # TODO. only during evaluation. Evaluation considered as an optional stage.
+        # TODO. and hence, label scaler could be a part of a callback.
         labels_scaler=experiment.DataIO.LabelsScaler,
         opin_fmt=experiment.DataIO.OpinionFormatter,
         supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
