@@ -121,14 +121,14 @@ class POSMystemWrapper(RussianPOSTagger):
     @staticmethod
     def is_adjective(pos_type):
         assert(isinstance(pos_type, PartOfSpeechType))
-        return pos_type.upper() == PartOfSpeechType.ADJ
+        return pos_type == PartOfSpeechType.ADJ
 
     @staticmethod
     def is_noun(pos_type):
         assert(isinstance(pos_type, PartOfSpeechType))
-        return pos_type.upper() == PartOfSpeechType.NOUN
+        return pos_type == PartOfSpeechType.NOUN
 
     @staticmethod
     def is_verb(pos_type):
         assert(isinstance(pos_type, PartOfSpeechType))
-        return pos_type.upper() == PartOfSpeechType.VERB
+        return pos_type == PartOfSpeechType.VERB

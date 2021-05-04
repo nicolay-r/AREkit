@@ -35,6 +35,8 @@ class BaseIOUtils(object):
 
     def __get_experiment_folder_name(self):
         return u"{name}_{scale}l".format(name=self._experiment.Name,
+                                         # TODO. Provide Labels Count property.
+                                         # TODO. It could be then declared through labels scaler in nested classes.
                                          scale=str(self._experiment.DataIO.LabelsScaler.LabelsCount))
 
     def _experiment_iter_index(self):
@@ -88,6 +90,8 @@ class BaseIOUtils(object):
         """ We use custom implementation as it allows to
             be independent from NeutralAnnotator instance.
         """
+        # TODO. Provide Labels Count property.
+        # TODO. It could be then declared through labels scaler in nested classes.
         scaler = self._experiment.DataIO.LabelsScaler
         annot_type = get_annotator_type(labels_count=scaler.LabelsCount)
         return annot_type.name
