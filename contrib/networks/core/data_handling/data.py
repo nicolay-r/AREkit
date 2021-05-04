@@ -62,41 +62,41 @@ class HandledData(object):
                    bags_collection={})
 
     def perform_reading_and_initialization(self, doc_ops, exp_io, vocab,
-                                           labels_scaler, bags_collection_type, config):
+                                           labels_count, bags_collection_type, config):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
         """
         assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(labels_count, int) and labels_count > 0)
 
-        stat_labeled_sample_row_ids = None
+        stat_uint_labeled_sample_row_ids = None
         dtypes_set = set(doc_ops.DataFolding.iter_supported_data_types())
 
         # Reading from serialized information
         for data_type in dtypes_set:
 
             # Extracting such information from serialized files.
-            bags_collection, labeled_sample_row_ids = self.__read_for_data_type(
+            bags_collection, uint_labeled_sample_row_ids = self.__read_for_data_type(
                 data_type=data_type,
                 experiment_io=exp_io,
-                labels_scaler=labels_scaler,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
                 config=config)
 
             # Saving into dictionaries.
             self.__bags_collection[data_type] = bags_collection
-            self.__labeled_collections[data_type] = LabeledCollection(labeled_sample_row_ids=labeled_sample_row_ids)
+            self.__labeled_collections[data_type] = LabeledCollection(
+                uint_labeled_sample_row_ids=uint_labeled_sample_row_ids)
 
             if data_type == DataType.Train:
-                stat_labeled_sample_row_ids = labeled_sample_row_ids
+                stat_uint_labeled_sample_row_ids = uint_labeled_sample_row_ids
 
         # Calculate class weights.
-        if stat_labeled_sample_row_ids is not None:
-            labels_helper = SingleLabelsHelper(label_scaler=labels_scaler)
+        if stat_uint_labeled_sample_row_ids is not None:
             normalized_label_stat, _ = calculate_labels_distribution_stat(
-                labeled_sample_row_ids=stat_labeled_sample_row_ids,
-                labels_helper=labels_helper)
+                uint_labeled_sample_row_ids=stat_uint_labeled_sample_row_ids,
+                classes_count=labels_count)
             config.set_class_weights(normalized_label_stat)
 
     # region writing methods
@@ -162,8 +162,7 @@ class HandledData(object):
 
     # region reading methods
 
-    def __read_for_data_type(self, data_type, experiment_io, labels_scaler,
-                             bags_collection_type, vocab, config):
+    def __read_for_data_type(self, data_type, experiment_io, bags_collection_type, vocab, config):
 
         terms_per_context = config.TermsPerContext
         frames_per_context = config.FramesPerContext
@@ -178,7 +177,6 @@ class HandledData(object):
             desc="Filling bags collection [{}]".format(data_type),
             bag_size=config.BagSize,
             shuffle=True,
-            label_scaler=labels_scaler,
             create_empty_sample_func=lambda: InputSample.create_empty(
                 terms_per_context=terms_per_context,
                 frames_per_context=frames_per_context,
@@ -200,7 +198,7 @@ class HandledData(object):
                 synonyms_per_context=synonyms_per_context,
                 pos_tags=row.PartOfSpeechTags))
 
-        labeled_sample_row_ids = list(samples_reader.iter_labeled_sample_rows(label_scaler=labels_scaler))
+        labeled_sample_row_ids = list(samples_reader.iter_uint_labeled_sample_rows())
 
         return bags_collection, labeled_sample_row_ids
 

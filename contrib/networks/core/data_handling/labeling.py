@@ -11,7 +11,7 @@ class BaseSamplesLabeling(object):
         self.__labeling_collection = samples_labeling_collection
 
     def before_labeling(self):
-        return len(self.__labeling_collection._labels_defined) == 0
+        assert(self.__labeling_collection.is_empty())
 
     def predict(self, labeling_callback):
         assert(callable(labeling_callback))

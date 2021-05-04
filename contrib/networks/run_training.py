@@ -73,10 +73,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         handled_data.perform_reading_and_initialization(
             doc_ops=self._experiment.DocumentOperations,
             exp_io=self._experiment.ExperimentIO,
-            # TODO. Seems there is no need in scaler. (We read already serialzed data).
-            # TODO. Returns None.
-            # TODO. Returns None.
-            labels_scaler=self._experiment.DataIO.LabelsScaler,
+            labels_count=self._experiment.DataIO.LabelsCount,
             vocab=vocab,
             bags_collection_type=self.__bags_collection_type,
             config=self.__config)
@@ -95,11 +92,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                                     handled_data=handled_data,
                                     bags_collection_type=self.__bags_collection_type,
                                     callback=callback,
-                                    nn_io=self._experiment.DataIO.ModelIO,
-                                    # TODO. Seems there is no need in scaler.
-                                    # TODO. Returns None.
-                                    # TODO. Returns None.
-                                    label_scaler=self._experiment.DataIO.LabelsScaler)
+                                    nn_io=self._experiment.DataIO.ModelIO)
 
         # Run model
         with callback:

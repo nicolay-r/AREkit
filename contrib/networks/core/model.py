@@ -7,7 +7,6 @@ import tensorflow as tf
 from tensorflow.python.training.saver import Saver
 
 from arekit.common.experiment.labeling import LabeledCollection
-from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
 from arekit.common.utils import progress_bar_defined
@@ -43,12 +42,9 @@ class BaseTensorflowModel(BaseModel):
     SaveTensorflowModelStateOnFit = True
     FeedDictShow = False
 
-    def __init__(self, nn_io, network, label_scaler,
-                 handled_data, bags_collection_type,
-                 config, callback=None):
+    def __init__(self, nn_io, network, handled_data, bags_collection_type, config, callback=None):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
-        assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(handled_data, HandledData))
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(callback, Callback) or callback is None)
@@ -62,7 +58,6 @@ class BaseTensorflowModel(BaseModel):
         self.__init_helper = handled_data
         self.__network = network
         self.__callback = callback
-        self.__label_scaler = label_scaler
         self.__current_epoch_index = 0
 
         self.__config = config
@@ -205,9 +200,7 @@ class BaseTensorflowModel(BaseModel):
         assert(isinstance(minibatch, MiniBatch))
         assert(isinstance(data_type, DataType))
 
-        # TODO. Use label_to_uint_func
-        network_input = minibatch.to_network_input(label_scaler=self.__label_scaler,
-                                                   provide_labels=data_type != DataType.Test)
+        network_input = minibatch.to_network_input(provide_labels=data_type != DataType.Test)
         if self.FeedDictShow:
             MiniBatch.debug_output(network_input)
 
@@ -314,12 +307,12 @@ class BaseTensorflowModel(BaseModel):
             # apply labeling
             for bag_index, bag in enumerate(minibatch.iter_by_bags()):
 
-                label = self.__label_scaler.uint_to_label(value=int(uint_labels[bag_index]))
+                uint_label = int(uint_labels[bag_index])
 
                 for sample in bag:
                     if sample.ID < 0:
                         continue
-                    labeled_samples.apply_label(label, sample.ID)
+                    labeled_samples.apply_uint_label(uint_label, sample.ID)
 
         return predict_log
 

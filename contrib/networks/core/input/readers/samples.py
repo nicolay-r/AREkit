@@ -4,7 +4,7 @@ from arekit.common.experiment.input.readers.sample import InputSampleReader
 
 class NetworkInputSampleReader(InputSampleReader):
 
-    def iter_labeled_sample_rows(self, label_scaler):
+    def iter_uint_labeled_sample_rows(self):
         """
         Iter sample_ids with the related labels (if the latter presented in dataframe)
         TODO. This might be also improved via rows_parser usage.
@@ -16,7 +16,7 @@ class NetworkInputSampleReader(InputSampleReader):
             uint_label = int(self._df[const.LABEL][row_index]) if has_label else None
 
             if has_label:
-                yield sample_id, label_scaler.uint_to_label(uint_label)
+                yield sample_id, uint_label
             else:
                 yield sample_id, None
 

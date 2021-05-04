@@ -2,7 +2,6 @@ import collections
 
 import numpy as np
 
-from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 
@@ -22,17 +21,11 @@ class BagsCollection(object):
     def from_formatted_samples(cls,
                                formatted_samples_iter,
                                bag_size,
-                               # TODO. There is no need to use label scaler!!!.
-                               # TODO. As we then perform a reversed conversion.
-                               label_scaler,
                                create_sample_func,
                                create_empty_sample_func,
                                shuffle,
                                desc=None):
         assert(isinstance(formatted_samples_iter, collections.Iterable))
-        # TODO. There is no need to use label scaler!!!.
-        # TODO. As we then perform a reversed conversion.
-        assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(bag_size, int) and bag_size > 0)
         assert(callable(create_sample_func))
         assert(callable(create_empty_sample_func))
@@ -47,8 +40,7 @@ class BagsCollection(object):
 
             cls._fill_bags_list_with_linked_text_opinions(
                 bags=bags,
-                parsed_rows=[ParsedSampleRow.parse(row=row, labels_scaler=label_scaler)
-                             for row in linked_rows],
+                parsed_rows=[ParsedSampleRow.parse(row=row) for row in linked_rows],
                 bag_size=bag_size,
                 create_sample_func=create_sample_func,
                 create_empty_sample_func=create_empty_sample_func)

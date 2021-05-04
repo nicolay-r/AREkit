@@ -8,16 +8,16 @@ class Bag:
     and an attitude label
     """
 
-    def __init__(self, label):
-        assert(isinstance(label, Label) or label is None)
+    def __init__(self, uint_label):
+        assert(isinstance(uint_label, int) or uint_label is None)
         self.__samples = []
-        self.__label = label
+        self.__uint_label = uint_label
 
     # region properties
 
     @property
-    def BagLabel(self):
-        return self.__label
+    def UintBagLabel(self):
+        return self.__uint_label
 
     @property
     def Samples(self):
