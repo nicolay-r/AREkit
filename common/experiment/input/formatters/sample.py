@@ -3,8 +3,6 @@ from collections import OrderedDict
 
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
-from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
-from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider
 from arekit.common.experiment import const
 from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
@@ -18,6 +16,9 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
+
+from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
+from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -116,11 +117,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
         expected_label = linked_wrap.get_linked_label()
 
         if self.__is_train():
-            row[const.LABEL] = self._label_provider.calculate_output_label(
-                # TODO. Use uint_label (Convert to uint)
-                expected_label=expected_label,
-                # TODO. Use uint_label (Convert to uint)
-                etalon_label=etalon_label)
+            row[const.LABEL] = self._label_provider.calculate_output_uint_label(
+                expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
+                etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
 
         self.__text_provider.add_text_in_row(
             set_text_func=lambda column, value: __assign_value(column, value),

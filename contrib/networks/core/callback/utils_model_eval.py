@@ -25,13 +25,14 @@ from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 logger = logging.getLogger(__name__)
 
 
-def evaluate_model(experiment, data_type, epoch_index, model,
+def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
                    labels_formatter, save_hidden_params,
                    label_calc_mode, log_dir):
     """ Performs Model Evaluation on a particular state (i.e. epoch),
         for a particular data type.
     """
     assert(isinstance(labels_formatter, RuSentRelLabelsFormatter))
+    assert(isinstance(label_scaler, BaseLabelScaler))
     assert(isinstance(model, BaseTensorflowModel))
     assert(isinstance(data_type, DataType))
     assert(isinstance(epoch_index, int))
@@ -61,21 +62,14 @@ def evaluate_model(experiment, data_type, epoch_index, model,
         column_extra_funcs=[
             (const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])
         ],
-
-        # TODO. Provide scaler from callback since the scaler utilized
-        # TODO. only during evaluation. Evaluation considered as an optional stage.
-        # TODO. and hence, label scaler could be a part of a callback.
-        labels_scaler=experiment.DataIO.LabelsScaler)
+        labels_scaler=label_scaler)
 
     # Convert output to result.
     __convert_output_to_opinion_collections(
         exp_io=experiment.ExperimentIO,
         opin_ops=experiment.OpinionOperations,
         doc_ops=experiment.DocumentOperations,
-        # TODO. Provide scaler from callback since the scaler utilized
-        # TODO. only during evaluation. Evaluation considered as an optional stage.
-        # TODO. and hence, label scaler could be a part of a callback.
-        labels_scaler=experiment.DataIO.LabelsScaler,
+        labels_scaler=label_scaler,
         opin_fmt=experiment.DataIO.OpinionFormatter,
         supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,

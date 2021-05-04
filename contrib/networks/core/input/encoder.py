@@ -10,6 +10,7 @@ from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
+from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.io_utils import BaseIOUtils
@@ -75,7 +76,7 @@ class NetworkInputEncoder(object):
                 terms_per_context=terms_per_context),
             sample_formatter=NetworkSampleFormatter(
                 data_type=data_type,
-                label_provider=MultipleLabelProvider(label_scaler=exp_data.LabelsScaler),
+                label_provider=exp_data.LabelProvider,
                 text_provider=text_provider,
                 frame_role_label_scaler=exp_data.FrameRolesLabelScaler,
                 entity_to_group_func=entity_to_group_func,
