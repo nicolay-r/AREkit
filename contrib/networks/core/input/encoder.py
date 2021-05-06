@@ -10,8 +10,6 @@ from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
-from arekit.common.experiment.input.providers.label.base import LabelProvider
-from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
@@ -34,7 +32,7 @@ class NetworkInputEncoder(object):
                                              data_type, term_embedding_pairs, entity_to_group_func,
                                              iter_parsed_news_func, terms_per_context, balance):
         """
-        Performs encodding for all the data_types supported by experiment.
+        Performs encoding for all the data_types supported by experiment.
         """
         assert(isinstance(data_type, DataType))
         assert(isinstance(opin_ops, OpinionOperations))
@@ -47,12 +45,9 @@ class NetworkInputEncoder(object):
         assert(isinstance(balance, bool))
         assert(callable(iter_parsed_news_func))
 
-        predefined_embedding = exp_data.WordEmbedding
-        predefined_embedding.set_stemmer(exp_data.Stemmer)
-
         terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
             entity_to_group_func=entity_to_group_func,
-            predefined_embedding=predefined_embedding,
+            predefined_embedding=exp_data.WordEmbedding,
             string_entities_formatter=exp_data.StringEntityFormatter,
             string_emb_entity_formatter=StringEntitiesSimpleFormatter())
 
