@@ -4,6 +4,10 @@ from arekit.common.frame_variants.base import FrameVariant
 from arekit.processing.lemmatization.base import Stemmer
 
 
+# TODO. Stemmer utilized only for external indexing
+# TODO. The latter means that the stemmer could be departed from FrameVariantsCollection.
+# TODO. For example it means that we can implement a nested class from this one.
+# TODO. with stemmer.
 class FrameVariantsCollection:
 
     def __init__(self, variants, frames_list, stemmer):
@@ -18,6 +22,8 @@ class FrameVariantsCollection:
         self.__lemma_variants = self.__create_lemmatized_variants(stemmer)
         self.__frames_list = frames_list
 
+    # TODO. it could be non-class method, i.e. initialization from scrach
+    # TODO. which allows to fill collection from iterable.
     @classmethod
     def create_unique_variants_from_iterable(cls, variants_with_id, stemmer):
         assert(isinstance(variants_with_id, collections.Iterable))
