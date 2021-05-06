@@ -18,6 +18,11 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
+# TODO. To common as an abstract class.
+# TODO. Leave here implementation.
+# TODO. Use parser as an instance.
+# TODO. Use parser as an instance.
+# TODO. Use parser as an instance.
 class TextParser:
 
     def __init__(self):
@@ -26,6 +31,7 @@ class TextParser:
     @staticmethod
     def parse_news(news, parse_options):
         assert(isinstance(news, News))
+        # TODO. Declare Stemmer within a derived parse options.
         assert(isinstance(parse_options, NewsParseOptions))
 
         parsed_sentences = [TextParser.__parse_sentence(news, sent_ind, parse_options)
@@ -51,6 +57,9 @@ class TextParser:
     @staticmethod
     def __parse_sentence(news, sent_ind, parse_options):
         assert(isinstance(news, News))
+        # TODO. We may adopt a derived class from BaseParseOptions.
+        # TODO. We may adopt a derived class from BaseParseOptions.
+        # TODO. We may adopt a derived class from BaseParseOptions.
         assert(isinstance(parse_options, NewsParseOptions))
 
         if parse_options.ParseEntities:
@@ -58,13 +67,20 @@ class TextParser:
             terms_list = news.parse_sentence(sent_ind)
             return TextParser.__parse_string_list(terms_iter=terms_list,
                                                   skip_term=lambda term: isinstance(term, Entity),
+                                                  # TODO. Declare Stemmer within a derived parse options.
+                                                  # TODO. Declare Stemmer within a derived parse options.
+                                                  # TODO. Declare Stemmer within a derived parse options.
                                                   stemmer=parse_options.Stemmer)
 
         # Processing the ordinary sentence text.
         sentence = news.iter_sentences(sent_ind)
         return TextParser.__parse(text=sentence.Text,
+                                  # TODO. Declare Stemmer within a derived parse options.
+                                  # TODO. Declare Stemmer within a derived parse options.
+                                  # TODO. Declare Stemmer within a derived parse options.
                                   stemmer=parse_options.Stemmer)
 
+    # TODO. Move into core files within the related contrib (text-processing) folder.
     @staticmethod
     def __parse_frame_variants(parsed_news, frame_variant_collection):
         """
@@ -98,6 +114,7 @@ class TextParser:
 
         return ParsedText(terms=processed_terms, stemmer=stemmer)
 
+    # TODO. Move into core files within the related contrib (text-processing) folder.
     @staticmethod
     def __parse_core(text, keep_tokens=True):
         """
@@ -116,6 +133,7 @@ class TextParser:
 
         return terms
 
+    # TODO. Move into core files within the related contrib (text-processing) folder.
     @staticmethod
     def __process_words(words, keep_tokens):
         """
@@ -140,6 +158,7 @@ class TextParser:
 
         return parsed
 
+    # TODO. Move into core files within the related contrib (text-processing) folder.
     @staticmethod
     def __split_tokens(term):
         """

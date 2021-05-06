@@ -35,6 +35,9 @@ class RuSentrelDocumentOperations(DocumentOperations):
                                            synonyms=synonyms,
                                            version=self.__version)
 
+    # TODO. This should be removed, since parse-options considered as a part
+    # TODO. Of the text-parser instance!!!
+    # TODO. Parse options should not be related to the particular collection.
     def _create_parse_options(self):
         assert(isinstance(self.__exp_data, SerializationData))
         return RuSentRelNewsParseOptions(stemmer=self.__exp_data.Stemmer,

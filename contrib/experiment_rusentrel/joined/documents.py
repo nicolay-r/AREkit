@@ -50,6 +50,9 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
         for doc_id in ruattitudes_doc.iter_news_indices(data_type):
             yield doc_id
 
+    # TODO. This should be removed, since parse-options considered as a part
+    # TODO. Of the text-parser instance!!!
+    # TODO. Parse options should not be related to the particular collection.
     def _create_parse_options(self):
 
         # ParseOptions are independent from doc_operations.

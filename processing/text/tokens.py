@@ -3,6 +3,8 @@ from urlparse import urlparse
 from arekit.processing.text.token import Token
 
 
+# TODO. Leave it here but provide the base (BaseTokens) type.
+# TODO. With the related API at BaseTokens.
 class Tokens:
     """
     Tokens used to describe a non-word text units, such as punctuation,
