@@ -10,7 +10,7 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
-
+from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -81,11 +81,11 @@ class NetworksTrainingEngine(ExperimentEngine):
         # Update parameters after iteration preparation has been completed.
         self.__config.reinit_config_dependent_parameters()
 
-        # Setup callback
+        # Setup callback.
         callback = self._experiment.DataIO.Callback
         callback.on_experiment_iteration_begin()
 
-        # Initialize network and model
+        # Initialize network and model.
         network = self.__create_network_func()
         model = BaseTensorflowModel(network=network,
                                     config=self.__config,
@@ -94,9 +94,13 @@ class NetworksTrainingEngine(ExperimentEngine):
                                     callback=callback,
                                     nn_io=self._experiment.DataIO.ModelIO)
 
+        # Initialize model params instance.
+        model_params = NeuralNetworkModelParams(epochs_count=callback.Epochs)
+
         # Run model
         with callback:
-            model.run_training(epochs_count=callback.Epochs, seed=self.__seed)
+            model.run_training(model_params=model_params,
+                               seed=self.__seed)
 
         del network
         del model

@@ -25,6 +25,7 @@ from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.nn import NeuralNetwork
+from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 
 logger = logging.getLogger(__name__)
 
@@ -98,7 +99,9 @@ class BaseTensorflowModel(BaseModel):
         """
         self.__sess.close()
 
-    def run_training(self, epochs_count, seed):
+    def run_training(self, model_params, seed):
+        assert(isinstance(model_params, NeuralNetworkModelParams))
+
         self.__network.compile(self.Config, reset_graph=True, graph_seed=seed)
         self.set_optimiser()
         self.__notify_initialized()
@@ -110,7 +113,7 @@ class BaseTensorflowModel(BaseModel):
             logger.info(u"Loading model: {}".format(saved_model_path))
             self.load_model(saved_model_path)
 
-        self.fit(epochs_count=epochs_count)
+        self.fit(epochs_count=model_params.EpochsCount)
         self.__dispose_session()
 
     # endregion
