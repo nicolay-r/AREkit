@@ -112,8 +112,7 @@ class TestSamplesIteration(unittest.TestCase):
                 print u"------------------"
                 print u"offset index (debug): {}".format(sample._shift_index_dbg)
                 print u"id: {}".format(row.SampleID)
-                # TODO. Use uint_label
-                print u"label: {}".format(row.Sentiment)
+                print u"label: {}".format(row.UintLabel)
                 print u"entity_inds: {}".format(row.EntityInds)
                 print u"subj_ind: {}".format(subj_ind)
                 print u"obj_ind: {}".format(obj_ind)
