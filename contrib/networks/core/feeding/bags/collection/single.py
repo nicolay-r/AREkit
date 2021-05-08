@@ -25,8 +25,7 @@ class SingleBagsCollection(BagsCollection):
             assert(isinstance(parsed_row, ParsedSampleRow))
 
             if len(bags[-1]) == bag_size:
-                # TODO. Use uint_label
-                bags.append(Bag(parsed_row.Sentiment))
+                bags.append(Bag(parsed_row.UintLabel))
 
             s = create_sample_func(parsed_row)
             assert(isinstance(s, InputSample))
