@@ -60,8 +60,7 @@ class MultiInstanceBagsCollection(BagsCollection):
                         max_bag_size=bag_size,
                         create_empty_sample_func=create_empty_sample_func)
 
-                    # TODO. Use uint_label
-                    bags.append(Bag(uint_label=parsed_row.Sentiment))
+                    bags.append(Bag(uint_label=parsed_row.UintLabel))
 
             assert(isinstance(s, InputSampleBase))
             MultiInstanceBagsCollection.__last_bag(bags).add_sample(s)
