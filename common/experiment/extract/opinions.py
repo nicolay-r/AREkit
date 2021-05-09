@@ -3,7 +3,6 @@ import collections
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.labels.base import NeutralLabel
 from arekit.common.linked.data import LinkedDataWrapper
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.model.labeling.base import LabelsHelper

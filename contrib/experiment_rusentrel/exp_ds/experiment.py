@@ -2,10 +2,10 @@ import logging
 
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
-from arekit.contrib.experiment_rusentrel.ds.documents import RuAttitudesDocumentOperations
-from arekit.contrib.experiment_rusentrel.ds.folding import create_ruattitudes_experiment_data_folding
-from arekit.contrib.experiment_rusentrel.ds.opinions import RuAttitudesOpinionOperations
-from arekit.contrib.experiment_rusentrel.ds.utils import read_ruattitudes_in_memory
+from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
+from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
+from arekit.contrib.experiment_rusentrel.exp_ds.opinions import RuAttitudesOpinionOperations
+from arekit.contrib.experiment_rusentrel.exp_ds.utils import read_ruattitudes_in_memory
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 
 logger = logging.getLogger(__name__)

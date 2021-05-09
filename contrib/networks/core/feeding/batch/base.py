@@ -1,7 +1,6 @@
 import logging
 from collections import OrderedDict
 
-from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.core.debug import DebugKeys
 

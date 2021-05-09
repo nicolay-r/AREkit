@@ -1,8 +1,5 @@
 import collections
 
-from arekit.common.labels.base import Label
-from arekit.common.model.labeling.base import LabelsHelper
-
 
 def calculate_labels_distribution_stat(uint_labeled_sample_row_ids, classes_count):
     """ Provides avg. label probability stat.

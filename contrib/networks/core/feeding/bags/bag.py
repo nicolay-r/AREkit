@@ -1,4 +1,3 @@
-from arekit.common.labels.base import Label
 from arekit.contrib.networks.sample import InputSample
 
 

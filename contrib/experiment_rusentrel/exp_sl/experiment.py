@@ -4,9 +4,9 @@ from arekit.common.experiment.folding.types import FoldingType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
-from arekit.contrib.experiment_rusentrel.sl.documents import RuSentrelDocumentOperations
-from arekit.contrib.experiment_rusentrel.sl.folding import create_rusentrel_experiment_data_folding
-from arekit.contrib.experiment_rusentrel.sl.opinions import RuSentrelOpinionOperations
+from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
+from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
+from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 

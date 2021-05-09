@@ -1,6 +1,6 @@
 from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.contrib.experiment_rusentrel.ds.documents import RuAttitudesDocumentOperations
-from arekit.contrib.experiment_rusentrel.sl.documents import RuSentrelDocumentOperations
+from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
+from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 
 
 class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
