@@ -1,10 +1,10 @@
 from collections import OrderedDict
 
-from arekit.common.evaluation.results import metrics
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.results.utils import calc_f1_single_class, calc_f1_macro
 from arekit.common.labels.base import Label
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.contrib.experiment_rusentrel.evaluation.results import metrics
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNegativeLabel, ExperimentPositiveLabel
 
 
