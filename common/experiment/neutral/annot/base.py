@@ -20,11 +20,11 @@ class BaseNeutralAnnotator(object):
         self.__opin_ops = None
         self.__doc_ops = None
 
-    # region Properties
-
     @property
-    def Name(self):
+    def LabelsCount(self):
         raise NotImplementedError()
+
+    # region Properties
 
     @property
     def _OpinOps(self):

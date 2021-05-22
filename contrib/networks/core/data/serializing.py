@@ -4,8 +4,11 @@ from arekit.common.experiment.input.providers.label.multiple import MultipleLabe
 
 class NetworkSerializationData(SerializationData):
 
-    def __init__(self, labels_scaler, stemmer):
-        super(NetworkSerializationData, self).__init__(label_scaler=labels_scaler, stemmer=stemmer)
+    def __init__(self, labels_scaler, neutral_annot, stemmer):
+        super(NetworkSerializationData, self).__init__(
+            label_scaler=labels_scaler,
+            neutral_annot=neutral_annot,
+            stemmer=stemmer)
         self.__label_provider = MultipleLabelProvider(labels_scaler)
 
     @property

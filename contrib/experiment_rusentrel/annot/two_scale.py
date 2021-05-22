@@ -14,14 +14,12 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
     """ For two scale classification task.
     """
 
-    name = u"annot-2-scale"
-
     def __init__(self):
         super(TwoScaleNeutralAnnotator, self).__init__()
 
     @property
-    def Name(self):
-        return TwoScaleNeutralAnnotator.name
+    def LabelsCount(self):
+        return 2
 
     # region static methods
 

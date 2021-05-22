@@ -1,6 +1,6 @@
 import logging
 
-from arekit.common.experiment.neutral.algo.default import DefaultNeutralAnnotationAlgorithm
+from arekit.common.experiment.neutral.algo.base import BaseNeutralAnnotationAlgorithm
 from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.experiment.data_type import DataType
 from arekit.common.news.parsed.base import ParsedNews
@@ -14,18 +14,14 @@ class ThreeScaleNeutralAnnotator(BaseNeutralAnnotator):
     """ For three scale classification task.
     """
 
-    name = u"annot-3-scale"
-    IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
-
-    def __init__(self, distance_in_terms_between_bounds):
+    def __init__(self, algo):
         super(ThreeScaleNeutralAnnotator, self).__init__()
-        self.__algo = DefaultNeutralAnnotationAlgorithm(
-            dist_in_terms_bound=distance_in_terms_between_bounds,
-            ignored_entity_values=self.IGNORED_ENTITY_VALUES)
+        assert(isinstance(algo, BaseNeutralAnnotationAlgorithm))
+        self.__algo = algo
 
     @property
-    def Name(self):
-        return ThreeScaleNeutralAnnotator.name
+    def LabelsCount(self):
+        return 3
 
     # region private methods
 

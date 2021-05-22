@@ -1,5 +1,5 @@
 from arekit.common.experiment.data.base import DataIO
-from arekit.common.experiment.neutral.annot.factory import create_annotator
+from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.labels.scaler import BaseLabelScaler
 
 
@@ -7,14 +7,17 @@ class SerializationData(DataIO):
     """ Data, that is necessary for models training stage.
     """
 
-    def __init__(self, label_scaler, stemmer):
+    def __init__(self, label_scaler, neutral_annot, stemmer):
         assert(isinstance(label_scaler, BaseLabelScaler))
+        assert(isinstance(neutral_annot, BaseNeutralAnnotator))
         super(SerializationData, self).__init__(stemmer=stemmer)
 
         self.__label_scaler = label_scaler
-        self.__neutral_annot = create_annotator(
-            labels_count=self.LabelsCount,
-            dist_in_terms_between_opin_ends=self.DistanceInTermsBetweenOpinionEndsBound)
+
+        if self.LabelsCount != neutral_annot.LabelsCount:
+            raise Exception(u"Label scaler and neutral annotation are incompatible due to differs in labels count!")
+
+        self.__neutral_annot = neutral_annot
 
     @property
     def LabelsScaler(self):
@@ -34,10 +37,6 @@ class SerializationData(DataIO):
             declared in a particular experiment (see OpinionOperations).
         """
         return self.__neutral_annot
-
-    @property
-    def DistanceInTermsBetweenOpinionEndsBound(self):
-        raise NotImplementedError()
 
     @property
     def StringEntityFormatter(self):
