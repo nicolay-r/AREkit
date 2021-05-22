@@ -14,16 +14,18 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
     within a sentence which are not a part of sentiment.
     """
 
-    def __init__(self, dist_in_terms_bound, ignored_entity_values=None):
+    def __init__(self, dist_in_terms_bound, dist_in_sents=0, ignored_entity_values=None):
         """
         dist_in_terms_bound: int
             max allowed distance in term (less than passed value)
         """
         assert(isinstance(ignored_entity_values, list) or ignored_entity_values is None)
         assert(isinstance(dist_in_terms_bound, int) or dist_in_terms_bound is None)
+        assert(isinstance(dist_in_sents, int))
 
         self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
         self.__dist_in_terms_bound = dist_in_terms_bound
+        self.__dist_in_sents = dist_in_sents
 
     # region private methods
 
@@ -72,7 +74,7 @@ class DefaultNeutralAnnotationAlgorithm(BaseNeutralAnnotationAlgorithm):
                                                               e1=e1, e2=e2,
                                                               distance_type=DistanceType.InSentences)
 
-        if s_dist > 0:
+        if s_dist > self.__dist_in_sents:
             return
 
         t_dist = TextOpinionHelper.calc_dist_between_entities(parsed_news=parsed_news,
