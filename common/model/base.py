@@ -11,10 +11,6 @@ class BaseModel(object):
         assert(isinstance(io, BaseModelIO))
         self.__io = io
 
-        # TODO. move here evaluator from experiments
-
-    # TODO. move here property to access the evaluator.
-
     @property
     def IO(self):
         return self.__io

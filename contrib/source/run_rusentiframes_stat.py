@@ -74,11 +74,11 @@ def __get_variants_with_polarities(frames_collection, role_src, role_dest, label
     return list(__iter_unique_frame_variants(frames_collection, frame_ids))
 
 
-def __about(frames_collection, stemmer, pos_tagger):
+def __about(frames_collection, pos_tagger):
     all_frame_entries = list(frames_collection.iter_frame_id_and_variants())
-    unique_frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
-        variants_with_id=all_frame_entries,
-        stemmer=stemmer)
+
+    unique_frame_variants = FrameVariantsCollection()
+    unique_frame_variants.fill_from_iterable(variants_with_id=all_frame_entries)
 
     assert(isinstance(frames_collection, RuSentiFramesCollection))
     unique_variants = list(unique_frame_variants.iter_variants())
@@ -159,7 +159,7 @@ def about_version(version=RuSentiFramesVersions.V20):
     pos_tagger = POSMystemWrapper(stemmer.MystemInstance)
     frames_collection = RuSentiFramesCollection.read_collection(version=version)
     print "Lexicon version:", version
-    return __about(frames_collection=frames_collection, stemmer=stemmer, pos_tagger=pos_tagger)
+    return __about(frames_collection=frames_collection, pos_tagger=pos_tagger)
 
 
 if __name__ == "__main__":

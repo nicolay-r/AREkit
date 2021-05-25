@@ -6,18 +6,16 @@ sys.path.append('../../../../')
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
 class TestRuSentiFrameVariants(unittest.TestCase):
 
     @staticmethod
     def __iter_frame_variants():
-        stemmer = MystemWrapper()
         frames_collection = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
-        frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
-            variants_with_id=frames_collection.iter_frame_id_and_variants(),
-            stemmer=stemmer)
+
+        frame_variants = FrameVariantsCollection()
+        frame_variants.fill_from_iterable(variants_with_id=frames_collection.iter_frame_id_and_variants())
 
         for v, _ in frame_variants.iter_variants():
             yield v

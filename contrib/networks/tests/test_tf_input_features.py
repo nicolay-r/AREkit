@@ -40,9 +40,10 @@ class TestTfInputFeatures(unittest.TestCase):
             pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
         cls.synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=cls.stemmer)
         cls.frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V10)
-        cls.unique_frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
-            variants_with_id=cls.frames_collection.iter_frame_id_and_variants(),
-            stemmer=cls.stemmer)
+
+        cls.unique_frame_variants = FrameVariantsCollection()
+        cls.unique_frame_variants.fill_from_iterable(
+            variants_with_id=cls.frames_collection.iter_frame_id_and_variants())
 
     def test(self):
         logger = logging.getLogger(__name__)

@@ -29,9 +29,9 @@ class TestTextParser(unittest.TestCase):
 
         # frame and variants.
         frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
-        frame_variants = FrameVariantsCollection.create_unique_variants_from_iterable(
-            variants_with_id=frames.iter_frame_id_and_variants(),
-            stemmer=stemmer)
+        frame_variants = FrameVariantsCollection()
+        frame_variants.fill_from_iterable(
+            variants_with_id=frames.iter_frame_id_and_variants())
 
         # RuAttitudes options.
         options = RuSentRelNewsParseOptions(stemmer=stemmer,
