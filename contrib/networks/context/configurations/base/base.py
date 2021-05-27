@@ -1,7 +1,6 @@
 import datetime
 
 import tensorflow as tf
-from arekit.common.model.labeling.modes import LabelCalculationMode
 
 
 class DefaultNetworkConfig(object):
@@ -35,8 +34,6 @@ class DefaultNetworkConfig(object):
     __pos_emb_size = 5
     __sent_emb_size = 5
     __dist_emb_size = 5
-    # TODO. NOT USED.
-    __text_opinion_label_calc_mode = LabelCalculationMode.AVERAGE
 
     __use_entity_types_in_embedding = True              # Affects on result embedding of related entity: entity + type.
     __use_entity_types_as_context_feature = False       # TODO. Context based feature, i.e. declared for all terms
@@ -57,11 +54,6 @@ class DefaultNetworkConfig(object):
     @property
     def DistanceEmbeddingSize(self):
         return self.__dist_emb_size
-
-    # TODO. NOT USED.
-    @property
-    def TextOpinionLabelCalculationMode(self):
-        return self.__text_opinion_label_calc_mode
 
     @property
     def TermEmbeddingMatrix(self):
@@ -293,8 +285,6 @@ class DefaultNetworkConfig(object):
             ("base:pos_emb_size", self.PosEmbeddingSize),
             ("base:sentiment_emb_size", self.SentimentEmbeddingSize),
             ("base:dist_embedding_size", self.DistanceEmbeddingSize),
-            # TODO. NOT USED.
-            ("base:text_opinion_label_calc_mode", self.TextOpinionLabelCalculationMode),
             ("base:use_entity_types_as_context_feature", self.UseEntityTypeAsContextFeature),
             ("base:embedding dropout (keep prob)", self.EmbeddingDropoutKeepProb),
             ("base:optimizer", self.Optimiser),

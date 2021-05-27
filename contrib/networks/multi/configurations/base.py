@@ -1,6 +1,5 @@
 import tensorflow as tf
 
-from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
 
@@ -17,11 +16,6 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
         self.__context_parameters_fix()
 
     # region properties
-
-    # TODO. NOT USED.
-    @property
-    def TextOpinionLabelCalculationMode(self):
-        return LabelCalculationMode.FIRST_APPEARED
 
     @property
     def BagsPerMinibatch(self):
@@ -118,7 +112,6 @@ class BaseMultiInstanceConfig(DefaultNetworkConfig):
             ("mi:BagSize (ContextsPerOpinion)", self.BagSize),
             ("mi:LearningRate", self.LearningRate),
             ("mi:DropoutKeepProb", self.DropoutKeepProb),
-            ("mi:RelationLabelCalculationMode", self.TextOpinionLabelCalculationMode),
             ("mi:Optimiser", self.Optimiser)
         ]
 
