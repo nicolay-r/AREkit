@@ -6,6 +6,7 @@ from os.path import dirname
 
 from enum import Enum
 
+from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
@@ -13,9 +14,9 @@ from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.experiment_rusentrel.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.contrib.experiment_rusentrel.evaluation.results.two_class import TwoClassEvalResult
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import ExperimentRuSentiFramesLabelsFormatter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
@@ -74,12 +75,12 @@ class ZippedResultsIOUtils(ZipArchiveUtils):
             yield int(doc_id_str)
 
     @staticmethod
-    def iter_doc_opinions(doc_id, result_version):
+    def iter_doc_opinions(doc_id, result_version, labels_formatter):
         return ZippedResultsIOUtils.iter_from_zip(
             inner_path=path.join(u"{}.opin.txt".format(doc_id)),
             process_func=lambda input_file: RuSentRelOpinionCollectionFormatter._iter_opinions_from_file(
                 input_file=input_file,
-                labels_formatter=RuSentRelLabelsFormatter()),
+                labels_formatter=labels_formatter),
             version=result_version)
 
 
@@ -114,16 +115,24 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         else:
             actual_synonyms = synonyms
 
+        # Setup an experiment labels formatter.
+        labels_formatter = ExperimentRuSentiFramesLabelsFormatter()
+
         # Iter cmp opinions.
         cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
             doc_ids=ZippedResultsIOUtils.iter_doc_ids(res_version),
             read_etalon_collection_func=lambda doc_id: OpinionCollection(
-                opinions=RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id),
+                opinions=RuSentRelOpinionCollection.iter_opinions_from_doc(
+                    doc_id=doc_id,
+                    labels_fmt=labels_formatter),
                 synonyms=actual_synonyms,
                 error_on_duplicates=False,
                 error_on_synonym_end_missed=True),
             read_result_collection_func=lambda doc_id: OpinionCollection(
-                opinions=ZippedResultsIOUtils.iter_doc_opinions(doc_id=doc_id, result_version=res_version),
+                opinions=ZippedResultsIOUtils.iter_doc_opinions(
+                    doc_id=doc_id,
+                    result_version=res_version,
+                    labels_formatter=labels_formatter),
                 synonyms=actual_synonyms,
                 error_on_duplicates=False,
                 error_on_synonym_end_missed=False))
@@ -150,7 +159,8 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         if self.__display_cmp_table:
             with pd.option_context('display.max_rows', None, 'display.max_columns', None):
                 for doc_id, df_cmp_table in result.iter_dataframe_cmp_tables():
-                    print u"{}:\t{}\n".format(doc_id, df_cmp_table)
+                    assert(isinstance(df_cmp_table, DocumentCompareTable))
+                    print u"{}:\t{}\n".format(doc_id, df_cmp_table.DataframeTable)
             print "------------------------"
 
         if check_results:

@@ -81,7 +81,17 @@ class BaseEvaluator(object):
 
     # region protected methods
 
-    def _calc_diff(self, etalon_opins, test_opins):
+    def _check_is_supported(self, label, is_label_supported):
+        if label is None:
+            return True
+
+        if not is_label_supported(label):
+            raise Exception(u"Label \"{label}\" is not supported by {e}".format(
+                label=label_to_str(label),
+                e=type(self).__name__))
+
+    def _calc_diff(self, etalon_opins, test_opins, is_label_supported):
+        assert(callable(is_label_supported))
 
         it = self.__iter_diff_core(etalon_opins=etalon_opins,
                                    test_opins=test_opins)
@@ -90,6 +100,9 @@ class BaseEvaluator(object):
         rows = []
         for args in it:
             opin, etalon_label, result_label = args
+
+            self._check_is_supported(label=etalon_label, is_label_supported=is_label_supported)
+            self._check_is_supported(label=result_label, is_label_supported=is_label_supported)
 
             row = [opin.SourceValue.encode('utf-8'),
                    opin.TargetValue.encode('utf-8'),
@@ -119,7 +132,8 @@ class BaseEvaluator(object):
         for cmp_pair in cmp_pairs:
             assert(isinstance(cmp_pair, OpinionCollectionsToCompare))
             cmp_table = self._calc_diff(etalon_opins=cmp_pair.EtalonOpinionCollection,
-                                        test_opins=cmp_pair.TestOpinionCollection)
+                                        test_opins=cmp_pair.TestOpinionCollection,
+                                        is_label_supported=result.is_label_supported)
 
             result.reg_doc(cmp_pair=cmp_pair, cmp_table=cmp_table)
 

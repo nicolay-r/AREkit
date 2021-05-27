@@ -19,10 +19,15 @@ class TwoClassEvalResult(BaseEvalResult):
     C_F1_NEG = u'f1_neg'
 
     def __init__(self):
-        super(TwoClassEvalResult, self).__init__()
         self.__doc_results = OrderedDict()
+
         self.__pos_label = ExperimentPositiveLabel()
         self.__neg_label = ExperimentNegativeLabel()
+
+        super(TwoClassEvalResult, self).__init__(
+            supported_labels={self.__pos_label, self.__neg_label})
+
+        self.__using_labels = {self.__pos_label, self.__neg_label}
 
     @staticmethod
     def __has_opinions_with_label(opinions, label):
