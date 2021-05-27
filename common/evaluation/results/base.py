@@ -34,7 +34,7 @@ class BaseEvalResult(object):
         return self._total_result.iteritems()
 
     def iter_dataframe_cmp_tables(self):
-        yield self._cmp_tables.iteritems()
+        return self._cmp_tables.iteritems()
 
     def reg_doc(self, cmp_pair, cmp_table):
         """ Registering cmp_table.
