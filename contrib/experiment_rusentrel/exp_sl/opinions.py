@@ -6,7 +6,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.labels.formatters.neut_label import RuSentRelNeutralLabelsFormatter
+from arekit.contrib.experiment_rusentrel.labels.formatters.neut_label import ExperimentNeutralLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
@@ -28,7 +28,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__experiment_io = experiment_io
         self.__opinion_formatter = experiment_data.OpinionFormatter
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
-        self.__neutral_labels_fmt = RuSentRelNeutralLabelsFormatter()
+        self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
 
     # region CVBasedOperations
 
@@ -59,8 +59,10 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def read_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
-        opins_iter = RuSentRelOpinionCollection.iter_opinions_from_doc(doc_id=doc_id,
-                                                                       version=self.__version)
+        opins_iter = RuSentRelOpinionCollection.iter_opinions_from_doc(
+            doc_id=doc_id,
+            labels_fmt=self.__result_labels_fmt,
+            version=self.__version)
         return self.__create_collection(opins_iter)
 
     def create_opinion_collection(self):
