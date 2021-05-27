@@ -26,7 +26,7 @@ class RuAttitudesDocumentOperations(DocumentOperations):
         return RuAttitudesParseOptions(stemmer=self.__exp_data.Stemmer,
                                        frame_variants_collection=self.__exp_data.FrameVariantCollection)
 
-    def iter_doc_ids_to_neutrally_annotate(self):
+    def iter_doc_ids_to_annotate(self):
         return
         yield
 

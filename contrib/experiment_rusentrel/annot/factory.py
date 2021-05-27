@@ -1,8 +1,8 @@
-from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleNeutralAnnotator
-from arekit.contrib.experiment_rusentrel.annot.two_scale import TwoScaleNeutralAnnotator
+from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
+from arekit.contrib.experiment_rusentrel.annot.two_scale import TwoScaleTaskAnnotator
 
 
-class ExperimentNeutralAnnotatorFactory:
+class ExperimentAnnotatorFactory:
 
     @staticmethod
     def create(labels_count, create_algo):
@@ -10,8 +10,8 @@ class ExperimentNeutralAnnotatorFactory:
         assert(callable(create_algo))
 
         if labels_count == 2:
-            return TwoScaleNeutralAnnotator()
+            return TwoScaleTaskAnnotator()
         elif labels_count == 3:
-            return ThreeScaleNeutralAnnotator(create_algo())
+            return ThreeScaleTaskAnnotator(create_algo())
         else:
             raise NotImplementedError()

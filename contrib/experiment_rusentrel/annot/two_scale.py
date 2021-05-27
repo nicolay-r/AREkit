@@ -1,7 +1,7 @@
 import logging
 
-from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
-from arekit.common.labels.base import NeutralLabel
+from arekit.common.experiment.annot.base import BaseAnnotator
+from arekit.common.labels.base import NoLabel
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -10,12 +10,12 @@ from arekit.common.experiment.data_type import DataType
 logger = logging.getLogger(__name__)
 
 
-class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
+class TwoScaleTaskAnnotator(BaseAnnotator):
     """ For two scale classification task.
     """
 
     def __init__(self):
-        super(TwoScaleNeutralAnnotator, self).__init__()
+        super(TwoScaleTaskAnnotator, self).__init__()
 
     @property
     def LabelsCount(self):
@@ -23,16 +23,7 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
 
     # region static methods
 
-    @staticmethod
-    def __iter_opinion_as_neutral(collection):
-        assert(isinstance(collection, OpinionCollection))
-
-        for opinion in collection:
-            yield Opinion(source_value=opinion.SourceValue,
-                          target_value=opinion.TargetValue,
-                          sentiment=NeutralLabel())
-
-    def _create_collection_core(self, parsed_news, data_type):
+    def _annot_collection_core(self, parsed_news, data_type):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(data_type, DataType))
 
@@ -47,10 +38,9 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
         for opinion in self._OpinOps.read_etalon_opinion_collection(doc_id):
             neut_collection.add_opinion(Opinion(source_value=opinion.SourceValue,
                                                 target_value=opinion.TargetValue,
-                                                sentiment=NeutralLabel()))
+                                                sentiment=NoLabel()))
 
         return neut_collection
-
 
     # endregion
 
@@ -61,6 +51,6 @@ class TwoScaleNeutralAnnotator(BaseNeutralAnnotator):
         if data_type == DataType.Train:
             return
 
-        super(TwoScaleNeutralAnnotator, self).serialize_missed_collections(data_type)
+        super(TwoScaleTaskAnnotator, self).serialize_missed_collections(data_type)
 
     # endregion

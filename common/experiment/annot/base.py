@@ -9,9 +9,10 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class BaseNeutralAnnotator(object):
+class BaseAnnotator(object):
     """
-    Performs neutral annotation for different data_type.
+    Performs annotation for a particular data_type
+    using OpinOps and DocOps API.
     """
 
     def __init__(self):
@@ -40,26 +41,26 @@ class BaseNeutralAnnotator(object):
 
     # region private methods
 
-    def __iter_neutral_collections(self, data_type, filter_func):
+    def __iter_annotated_collections(self, data_type, filter_func):
         docs_to_annot_list = filter(filter_func,
-                                    self._DocOps.iter_doc_ids_to_neutrally_annotate())
+                                    self._DocOps.iter_doc_ids_to_annotate())
 
         if len(docs_to_annot_list) == 0:
-            logger.info("[{}]: OK!".format(data_type))
+            logger.info("[{}]: Nothing to annotate".format(data_type))
             return
 
         logged_parsed_news_iter = progress_bar_iter(
             iterable=self._DocOps.iter_parsed_news(docs_to_annot_list),
-            desc="Creating neutral-examples [{}]".format(data_type))
+            desc="Annotating parsed news [{}]".format(data_type))
 
         for parsed_news in logged_parsed_news_iter:
             assert(isinstance(parsed_news, ParsedNews))
             yield parsed_news.RelatedNewsID, \
-                  self._create_collection_core(parsed_news=parsed_news, data_type=data_type)
+                  self._annot_collection_core(parsed_news=parsed_news, data_type=data_type)
 
     # endregion
 
-    def _create_collection_core(self, parsed_news, data_type):
+    def _annot_collection_core(self, parsed_news, data_type):
         raise NotImplementedError
 
     # region public methods
@@ -72,12 +73,12 @@ class BaseNeutralAnnotator(object):
 
     def serialize_missed_collections(self, data_type):
 
-        filter_func = lambda doc_id: self._OpinOps.try_read_neutrally_annotated_opinion_collection(
+        filter_func = lambda doc_id: self._OpinOps.try_read_annotated_opinion_collection(
             doc_id=doc_id, data_type=data_type) is None
 
-        for doc_id, collection in self.__iter_neutral_collections(data_type, filter_func):
-            self._OpinOps.save_neutrally_annotated_opinion_collection(collection=collection,
-                                                                      doc_id=doc_id,
-                                                                      data_type=data_type)
+        for doc_id, collection in self.__iter_annotated_collections(data_type, filter_func):
+            self._OpinOps.save_annotated_opinion_collection(collection=collection,
+                                                            doc_id=doc_id,
+                                                            data_type=data_type)
 
     # endregion

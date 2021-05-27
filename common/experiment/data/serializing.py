@@ -1,5 +1,5 @@
+from arekit.common.experiment.annot.base import BaseAnnotator
 from arekit.common.experiment.data.base import DataIO
-from arekit.common.experiment.neutral.annot.base import BaseNeutralAnnotator
 from arekit.common.labels.scaler import BaseLabelScaler
 
 
@@ -7,17 +7,17 @@ class SerializationData(DataIO):
     """ Data, that is necessary for models training stage.
     """
 
-    def __init__(self, label_scaler, neutral_annot, stemmer):
+    def __init__(self, label_scaler, annot, stemmer):
         assert(isinstance(label_scaler, BaseLabelScaler))
-        assert(isinstance(neutral_annot, BaseNeutralAnnotator))
+        assert(isinstance(annot, BaseAnnotator))
         super(SerializationData, self).__init__(stemmer=stemmer)
 
         self.__label_scaler = label_scaler
 
-        if self.LabelsCount != neutral_annot.LabelsCount:
-            raise Exception(u"Label scaler and neutral annotation are incompatible due to differs in labels count!")
+        if self.LabelsCount != annot.LabelsCount:
+            raise Exception(u"Label scaler and annotator are incompatible due to differs in labels count!")
 
-        self.__neutral_annot = neutral_annot
+        self.__annot = annot
 
     @property
     def LabelsScaler(self):
@@ -31,12 +31,12 @@ class SerializationData(DataIO):
         return self.__label_scaler.LabelsCount
 
     @property
-    def NeutralAnnotator(self):
-        """ Provides an instance of neutral annotator that might be utlized
-            for neutral attitudes labeling for a specific set of documents,
+    def Annotator(self):
+        """ Provides an instance of annotator that might be utilized
+            for attitudes labeling within a specific set of documents,
             declared in a particular experiment (see OpinionOperations).
         """
-        return self.__neutral_annot
+        return self.__annot
 
     @property
     def StringEntityFormatter(self):

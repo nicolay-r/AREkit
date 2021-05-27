@@ -18,10 +18,10 @@ class DocumentOperations(object):
         """
         return self.__folding
 
-    def iter_doc_ids_to_neutrally_annotate(self):
-        """ provides set of documents that utilized by neutral annotator algorithm in order to
-            provide the related labeling of neutral attitudes in it.
-            By default we consider an empty set, so there is no need to utilize neutral annotator.
+    def iter_doc_ids_to_annotate(self):
+        """ provides set of documents that utilized by annotator algorithm in order to
+            provide the related labeling of annotated attitudes in it.
+            By default, we consider an empty set, so there is no need to utilize annotator.
         """
         raise NotImplementedError()
 

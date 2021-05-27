@@ -8,14 +8,14 @@ class OpinionOperations(object):
 
     # region annotation
 
-    def try_read_neutrally_annotated_opinion_collection(self, doc_id, data_type):
-        """ data_type denotes a set of neutral opinions, where in case of 'train' these are
+    def try_read_annotated_opinion_collection(self, doc_id, data_type):
+        """ data_type denotes a set of unlabeled opinions, where in case of 'train' these are
             opinions that were ADDITIONALLY found to sentiment, while for 'test' these are
             all the opinions that could be found in document.
         """
         raise NotImplementedError()
 
-    def save_neutrally_annotated_opinion_collection(self, collection, doc_id, data_type):
+    def save_annotated_opinion_collection(self, collection, doc_id, data_type):
         raise NotImplementedError()
 
     # endregion

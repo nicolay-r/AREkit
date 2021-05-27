@@ -1,6 +1,6 @@
 from arekit.common.frames.collection import FramesCollection
 from arekit.common.frames.polarity import FramePolarity
-from arekit.common.labels.base import NeutralLabel
+from arekit.common.labels.base import NoLabel
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.features.utils import create_filled_array
@@ -52,7 +52,7 @@ class FrameRoleFeatures(object):
         polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)
 
         if polarity is None:
-            return three_label_scaler.label_to_uint(label=NeutralLabel())
+            return three_label_scaler.label_to_uint(label=NoLabel())
 
         assert(isinstance(polarity, FramePolarity))
 

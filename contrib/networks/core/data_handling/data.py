@@ -113,7 +113,7 @@ class HandledData(object):
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
             # Create annotated collection per each type.
-            experiment.DataIO.NeutralAnnotator.serialize_missed_collections(data_type=data_type)
+            experiment.DataIO.Annotator.serialize_missed_collections(data_type=data_type)
 
             # Composing input.
             NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(

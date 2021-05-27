@@ -22,7 +22,7 @@ class RuSentrelDocumentOperations(DocumentOperations):
 
     # region DocumentOperations
 
-    def iter_doc_ids_to_neutrally_annotate(self):
+    def iter_doc_ids_to_annotate(self):
         return self.DataFolding.iter_doc_ids()
 
     def iter_doc_ids_to_compare(self):

@@ -3,7 +3,7 @@ import unittest
 
 sys.path.append('../')
 
-from arekit.common.labels.base import Label, NeutralLabel
+from arekit.common.labels.base import Label, NoLabel
 from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
 
 
@@ -13,10 +13,10 @@ class TestLabels(unittest.TestCase):
 
         pos_label = PositiveLabel()
         neg_label = NegativeLabel()
-        neutral_label = NeutralLabel()
+        no_label = NoLabel()
         label = Label()
 
-        self.assertTrue(neutral_label == neutral_label)
+        self.assertTrue(no_label == no_label)
         self.assertFalse(pos_label == neg_label)
         self.assertFalse(pos_label == label)
 

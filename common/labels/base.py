@@ -15,5 +15,5 @@ class Label(object):
         return self.__class__.__name__
 
 
-class NeutralLabel(Label):
+class NoLabel(Label):
     pass
