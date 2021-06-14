@@ -1,6 +1,5 @@
-from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import split_by_whitespaces
-from arekit.contrib.source.ruattitudes.conts import NEG_INT_VALUE, POS_INT_VALUE
+from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelConverter
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
@@ -53,11 +52,9 @@ class RuAttitudesFormatReader(object):
                                                               local_index=local_news_ind)
 
     @staticmethod
-    def iter_news(input_file, get_news_index_func, label_scaler):
+    def iter_news(input_file, get_news_index_func, label_converter):
         assert(callable(get_news_index_func))
-        assert(isinstance(label_scaler, BaseLabelScaler))
-        assert(label_scaler.support_int_value(POS_INT_VALUE))
-        assert(label_scaler.support_int_value(NEG_INT_VALUE))
+        assert(isinstance(label_converter, RuAttitudesLabelConverter))
 
         reset = False
         title = None
@@ -80,9 +77,10 @@ class RuAttitudesFormatReader(object):
                 objects_list.append(object)
 
             if RuAttitudesFormatReader.OPINION_KEY in line:
-                sentence_opin = RuAttitudesFormatReader.__parse_sentence_opin(line=line,
-                                                                              objects_list=objects_list,
-                                                                              label_scaler=label_scaler)
+                sentence_opin = RuAttitudesFormatReader.__parse_sentence_opin(
+                    line=line,
+                    objects_list=objects_list,
+                    label_converter=label_converter)
                 opinions_list.append(sentence_opin)
 
             if RuAttitudesFormatReader.FRAMEVAR_TITLE in line:
@@ -177,15 +175,15 @@ class RuAttitudesFormatReader(object):
         return text.strip()
 
     @staticmethod
-    def __parse_sentence_opin(line, objects_list, label_scaler):
+    def __parse_sentence_opin(line, objects_list, label_converter):
         assert(isinstance(objects_list, list))
-        assert(isinstance(label_scaler, BaseLabelScaler))
+        assert(isinstance(label_converter, RuAttitudesLabelConverter))
 
         line = line[len(RuAttitudesFormatReader.OPINION_KEY):]
 
         s_from = line.index(u'b:(')
         s_to = line.index(u')', s_from)
-        label = label_scaler.int_to_label(int(line[s_from+3:s_to]))
+        label = label_converter.int_to_label(int(line[s_from + 3:s_to]))
 
         o_from = line.index(u'oi:[')
         o_to = line.index(u']', o_from)

@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from arekit.common.labels.base import NeutralLabel
+from arekit.common.labels.base import NoLabel
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNegativeLabel, ExperimentPositiveLabel
 
@@ -9,11 +9,11 @@ class ThreeLabelScaler(BaseLabelScaler):
 
     def __init__(self):
 
-        uint_labels = [(NeutralLabel(), 0),
+        uint_labels = [(NoLabel(), 0),
                        (ExperimentPositiveLabel(), 1),
                        (ExperimentNegativeLabel(), 2)]
 
-        int_labels = [(NeutralLabel(), 0),
+        int_labels = [(NoLabel(), 0),
                       (ExperimentPositiveLabel(), 1),
                       (ExperimentNegativeLabel(), -1)]
 

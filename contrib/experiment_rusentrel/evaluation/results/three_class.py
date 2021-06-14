@@ -1,12 +1,13 @@
 from collections import OrderedDict
 
-from arekit.common.evaluation.results import metrics
 from arekit.common.evaluation.results.base import BaseEvalResult
-from arekit.common.evaluation.results.metrics import calc_precision_micro, calc_recall_micro
 from arekit.common.evaluation.results.utils import calc_f1_3c_macro, calc_f1_single_class
-from arekit.common.labels.base import NeutralLabel, Label
+from arekit.common.labels.base import Label
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
+from arekit.contrib.experiment_rusentrel.evaluation.results import metrics
+from arekit.contrib.experiment_rusentrel.evaluation.results.metrics import calc_precision_micro, calc_recall_micro
+from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel, \
+    ExperimentNeutralLabel
 
 
 class ThreeClassEvalResult(BaseEvalResult):
@@ -28,15 +29,18 @@ class ThreeClassEvalResult(BaseEvalResult):
     C_F1_MICRO = u'f1_micro'
 
     def __init__(self):
-        super(ThreeClassEvalResult, self).__init__()
-        self.__doc_results = OrderedDict()
         self.__pos_label = ExperimentPositiveLabel()
         self.__neg_label = ExperimentNegativeLabel()
         self.__neu_label = self.create_neutral_label()
 
+        super(ThreeClassEvalResult, self).__init__(
+            supported_labels={self.__pos_label, self.__neg_label, self.__neu_label})
+
+        self.__doc_results = OrderedDict()
+
     @staticmethod
     def create_neutral_label():
-        return NeutralLabel()
+        return ExperimentNeutralLabel()
 
     @staticmethod
     def __has_opinions_with_label(opinions, label):

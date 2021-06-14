@@ -35,14 +35,14 @@ class MultiInstanceBagsCollection(BagsCollection):
         assert(isinstance(bags, list))
         assert(callable(create_sample_func))
 
-        bags.append(Bag(parsed_rows[0].Sentiment))
+        bags.append(Bag(parsed_rows[0].UintLabel))
 
         for o_ind, parsed_row in enumerate(parsed_rows):
             assert(isinstance(parsed_row, ParsedSampleRow))
 
             if len(MultiInstanceBagsCollection.__last_bag(bags)) == bag_size:
                 # TODO. Use uint_label
-                bags.append(Bag(label=parsed_row.Sentiment))
+                bags.append(Bag(uint_label=parsed_row.UintLabel))
 
             s = create_sample_func(parsed_row)
 
@@ -60,8 +60,7 @@ class MultiInstanceBagsCollection(BagsCollection):
                         max_bag_size=bag_size,
                         create_empty_sample_func=create_empty_sample_func)
 
-                    # TODO. Use uint_label
-                    bags.append(Bag(label=parsed_row.Sentiment))
+                    bags.append(Bag(uint_label=parsed_row.UintLabel))
 
             assert(isinstance(s, InputSampleBase))
             MultiInstanceBagsCollection.__last_bag(bags).add_sample(s)

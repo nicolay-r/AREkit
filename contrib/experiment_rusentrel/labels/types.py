@@ -1,4 +1,8 @@
-from arekit.common.labels.base import Label
+from arekit.common.labels.base import Label, NoLabel
+
+
+class ExperimentNeutralLabel(NoLabel):
+    pass
 
 
 class ExperimentNegativeLabel(Label):

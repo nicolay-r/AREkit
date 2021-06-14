@@ -3,7 +3,6 @@ from os.path import join
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
-from arekit.common.experiment.neutral.annot.factory import get_annotator_type
 from arekit.common.utils import join_dir_with_subfolder_name
 
 
@@ -35,7 +34,7 @@ class BaseIOUtils(object):
 
     def __get_experiment_folder_name(self):
         return u"{name}_{scale}l".format(name=self._experiment.Name,
-                                         scale=str(self._experiment.DataIO.LabelsScaler.LabelsCount))
+                                         scale=str(self._experiment.DataIO.LabelsCount))
 
     def _experiment_iter_index(self):
         return self._experiment.DocumentOperations.DataFolding.IterationIndex
@@ -50,6 +49,12 @@ class BaseIOUtils(object):
         assert(isinstance(template, unicode))
         assert(isinstance(prefix, unicode))
         return join(out_dir, BaseIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+
+    def _get_annotator_name(self):
+        """ We use custom implementation as it allows to
+            be independent of NeutralAnnotator instance.
+        """
+        return u"annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
 
     # endregion
 
@@ -67,15 +72,18 @@ class BaseIOUtils(object):
                                   template=template,
                                   prefix=BaseSampleFormatter.formatter_type_log_name())
 
-    def create_neutral_opinion_collection_filepath(self, doc_id, data_type):
+    def create_annotated_collection_filepath(self, doc_id, data_type):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
 
-        annot_dir = self.__get_neutral_annotation_dir()
+        annot_dir = self.__get_annotator_dir()
 
         if annot_dir is None:
             raise NotImplementedError("Neutral root was not provided!")
 
+        # TODO. This should not depends on the neut.
+        # TODO. This should not depends on the neut.
+        # TODO. This should not depends on the neut.
         filename = u"art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
                                                            d_type=data_type.name)
 
@@ -83,14 +91,6 @@ class BaseIOUtils(object):
 
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
-
-    def _get_neutral_annot_name(self):
-        """ We use custom implementation as it allows to
-            be independent from NeutralAnnotator instance.
-        """
-        scaler = self._experiment.DataIO.LabelsScaler
-        annot_type = get_annotator_type(labels_count=scaler.LabelsCount)
-        return annot_type.name
 
     # endregion
 
@@ -100,8 +100,8 @@ class BaseIOUtils(object):
     def __generate_tsv_archive_filename(template, prefix):
         return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
 
-    def __get_neutral_annotation_dir(self):
+    def __get_annotator_dir(self):
         return join_dir_with_subfolder_name(dir=self.get_target_dir(),
-                                            subfolder_name=self._get_neutral_annot_name())
+                                            subfolder_name=self._get_annotator_name())
 
     # endregion

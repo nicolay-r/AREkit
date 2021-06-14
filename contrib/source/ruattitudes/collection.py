@@ -1,12 +1,12 @@
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions, RuAttitudesIOUtils
-from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
+from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelConverter
 from arekit.contrib.source.ruattitudes.reader import RuAttitudesFormatReader
 
 
 class RuAttitudesCollection(object):
 
     @staticmethod
-    def __get_reading_hanlder(input_file, read_inds_only, get_news_inds_func, label_scaler):
+    def __get_reading_handler(input_file, read_inds_only, get_news_inds_func, label_converter):
         assert(isinstance(read_inds_only, bool))
 
         if read_inds_only:
@@ -15,11 +15,11 @@ class RuAttitudesCollection(object):
         else:
             return RuAttitudesFormatReader.iter_news(
                 input_file=input_file,
-                label_scaler=RuAttitudesLabelScaler() if label_scaler is None else label_scaler,
+                label_converter=RuAttitudesLabelConverter() if label_converter is None else label_converter,
                 get_news_index_func=get_news_inds_func)
 
     @staticmethod
-    def iter_news(version, get_news_index_func, return_inds_only, label_scaler=None):
+    def iter_news(version, get_news_index_func, return_inds_only, label_convereter=None):
         """
         RuAttitudes collection reader from zip archive
         """
@@ -29,10 +29,10 @@ class RuAttitudesCollection(object):
 
         it = RuAttitudesIOUtils.iter_from_zip(
             inner_path=RuAttitudesIOUtils.get_collection_filepath(),
-            process_func=lambda input_filepath: RuAttitudesCollection.__get_reading_hanlder(
+            process_func=lambda input_filepath: RuAttitudesCollection.__get_reading_handler(
                 input_file=input_filepath,
                 read_inds_only=return_inds_only,
-                label_scaler=label_scaler,
+                label_converter=label_convereter,
                 get_news_inds_func=get_news_index_func),
             version=version)
 

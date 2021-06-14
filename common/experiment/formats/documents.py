@@ -18,10 +18,10 @@ class DocumentOperations(object):
         """
         return self.__folding
 
-    def iter_doc_ids_to_neutrally_annotate(self):
-        """ provides set of documents that utilized by neutral annotator algorithm in order to
-            provide the related labeling of neutral attitudes in it.
-            By default we consider an empty set, so there is no need to utilize neutral annotator.
+    def iter_doc_ids_to_annotate(self):
+        """ provides set of documents that utilized by annotator algorithm in order to
+            provide the related labeling of annotated attitudes in it.
+            By default, we consider an empty set, so there is no need to utilize annotator.
         """
         raise NotImplementedError()
 
@@ -49,10 +49,14 @@ class DocumentOperations(object):
         for doc_id in doc_inds:
             yield self.__parse_news(doc_id=doc_id)
 
+    # TODO. This should be removed, since parse-options considered as a part
+    # TODO. Of the text-parser instance!!!
     def _create_parse_options(self):
         raise NotImplementedError()
 
     def __parse_news(self, doc_id):
         news = self.read_news(doc_id=doc_id)
+        # TODO. Use text parser as an instance.
+        # TODO. (Current limitation: We depend on a particular text parser, which is not correct in general).
         return TextParser.parse_news(news=news,
                                      parse_options=self._create_parse_options())

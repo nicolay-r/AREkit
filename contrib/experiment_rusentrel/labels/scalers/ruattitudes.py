@@ -1,13 +1,13 @@
-from arekit.common.labels.base import NeutralLabel
-from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
-from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
+from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel, \
+    ExperimentNeutralLabel
+from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelConverter
 
 
-class ExperimentRuAttitudesLabelScaler(RuAttitudesLabelScaler):
+class ExperimentRuAttitudesLabelConverter(RuAttitudesLabelConverter):
 
     @classmethod
     def _neutral_label_instance(cls):
-        return NeutralLabel()
+        return ExperimentNeutralLabel()
 
     @classmethod
     def _positive_label_instance(cls):

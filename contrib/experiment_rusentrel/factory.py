@@ -1,8 +1,8 @@
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.ds.experiment import RuAttitudesExperiment
-from arekit.contrib.experiment_rusentrel.joined.experiment import RuSentRelWithRuAttitudesExperiment
-from arekit.contrib.experiment_rusentrel.sl.experiment import RuSentRelExperiment
+from arekit.contrib.experiment_rusentrel.exp_ds.experiment import RuAttitudesExperiment
+from arekit.contrib.experiment_rusentrel.exp_joined.experiment import RuSentRelWithRuAttitudesExperiment
+from arekit.contrib.experiment_rusentrel.exp_sl.experiment import RuSentRelExperiment
 from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
 
 

@@ -19,7 +19,6 @@ class LabelProvider(object):
     def OutputLabelsUint(self):
         raise NotImplementedError()
 
-    # TODO. Use uint_label
-    def calculate_output_label(self, expected_label, etalon_label):
+    def calculate_output_uint_label(self, expected_uint_label, etalon_uint_label):
         raise NotImplementedError()
 

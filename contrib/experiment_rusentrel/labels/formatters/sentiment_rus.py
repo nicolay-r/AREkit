@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from arekit.common.labels.base import NeutralLabel
+from arekit.common.labels.base import NoLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNegativeLabel, ExperimentPositiveLabel
 
@@ -14,6 +14,6 @@ class RussianThreeScaleRussianLabelsFormatter(StringLabelsFormatter):
 
         stol = {u'негативно': ExperimentNegativeLabel(),
                 u'позитивно': ExperimentPositiveLabel(),
-                u'нейтрально': NeutralLabel()}
+                u'нейтрально': NoLabel()}
 
         super(RussianThreeScaleRussianLabelsFormatter, self).__init__(stol=stol)

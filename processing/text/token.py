@@ -1,3 +1,4 @@
+# TODO. To common.
 class Token:
     """
     Token that stores original and resulted token values

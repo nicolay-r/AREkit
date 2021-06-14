@@ -88,7 +88,7 @@ class NetworkIOUtils(BaseIOUtils):
         # Perform access to the model, since all the IO information
         # that is related to the model, assumes to be stored in ModelIO.
         model_io = self._experiment.DataIO.ModelIO
-        assert(isinstance(model_io, BaseModelIO))
+        assert(isinstance(model_io, NeuralNetworkModelIO))
         return model_io.get_model_dir()
 
     def __get_eval_root_filepath(self, data_type, epoch_index):

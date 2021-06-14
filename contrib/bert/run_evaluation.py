@@ -8,6 +8,7 @@ from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.utils import join_dir_with_subfolder_name
@@ -22,10 +23,11 @@ logging.basicConfig(level=logging.INFO)
 class LanguageModelExperimentEvaluator(ExperimentEngine):
 
     def __init__(self, experiment, data_type, eval_helper, max_epochs_count,
-                 labels_formatter, eval_last_only=True):
+                 label_scaler, labels_formatter, eval_last_only=True):
         assert(isinstance(eval_helper, EvalHelper))
         assert(isinstance(max_epochs_count, int))
         assert(isinstance(eval_last_only, bool))
+        assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
 
         super(LanguageModelExperimentEvaluator, self).__init__(experiment=experiment)
@@ -35,6 +37,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         self.__max_epochs_count = max_epochs_count
         self.__eval_last_only = eval_last_only
         self.__labels_formatter = labels_formatter
+        self.__label_scaler = label_scaler
 
     def _log_info(self, message, forced=False):
         assert(isinstance(message, unicode))
@@ -111,7 +114,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
                 output = GoogleBertMulticlassOutput(
-                    labels_scaler=exp_data.LabelsScaler,
+                    labels_scaler=self.__label_scaler,
                     samples_reader=InputSampleReader.from_tsv(filepath=samples_tsv_filepath,
                                                               row_ids_provider=row_id_provider),
                     has_output_header=False)
@@ -120,7 +123,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
                     output_filepath=result_filepath,
                     opinions_reader=InputOpinionReader.from_tsv(opinions_tsv_filepath, compression='infer'),
-                    labels_scaler=exp_data.LabelsScaler,
+                    labels_scaler=self.__label_scaler,
                     create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
                     keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
                     label_calculation_mode=LabelCalculationMode.AVERAGE,

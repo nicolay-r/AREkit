@@ -5,7 +5,7 @@ Fixed:
 
 Changes:
 * Speed-up and engine optimizations:
-    * Optionally loading neutral annotator.
+    * Optionally loading annotator.
 * Multi-Instance networks: now we consider that the next appered context always continues the prior.
 (check out multi-instance bags creation for details)
 * Now shuffling in models performed for bags, not for bag groups.

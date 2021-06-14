@@ -1,7 +1,6 @@
 import pandas as pd
 
 from arekit.common.experiment import const
-from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import filter_whitespaces, split_by_whitespaces
 import const as network_input_const
 
@@ -38,17 +37,16 @@ class ParsedSampleRow(object):
     TODO. Use this class as API
     """
 
-    def __init__(self, row, labels_scaler):
+    def __init__(self, row):
         assert(isinstance(row, pd.Series))
-        assert(isinstance(labels_scaler, BaseLabelScaler))
 
-        self.__sentiment = None
+        self.__uint_label = None
         self.__params = {}
 
         for key, value in row.iteritems():
 
             if key == const.LABEL:
-                self.__sentiment = labels_scaler.uint_to_label(value)
+                self.__uint_label = value
                 continue
 
             if key not in parse_value:
@@ -72,11 +70,9 @@ class ParsedSampleRow(object):
     def ObjectIndex(self):
         return self.__params[const.T_IND]
 
-    # TODO. There is no need to use label scaler!!!.
-    # TODO. As we then perform a reversed conversion.
     @property
-    def Sentiment(self):
-        return self.__sentiment
+    def UintLabel(self):
+        return self.__uint_label
 
     @property
     def PartOfSpeechTags(self):
@@ -103,7 +99,5 @@ class ParsedSampleRow(object):
         return self.__params[network_input_const.SynonymSubject]
 
     @classmethod
-    def parse(cls, row, labels_scaler):
-        # TODO. There is no need to use label scaler!!!.
-        # TODO. As we then perform a reversed conversion.
-        return cls(row=row, labels_scaler=labels_scaler)
+    def parse(cls, row):
+        return cls(row=row)

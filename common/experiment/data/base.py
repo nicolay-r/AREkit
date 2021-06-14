@@ -1,4 +1,3 @@
-from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.model.model_io import BaseModelIO
 
 
@@ -8,18 +7,9 @@ class DataIO(object):
         (data-serialization, training, etc.).
     """
 
-    def __init__(self, labels_scaler, stemmer):
-        assert(isinstance(labels_scaler, BaseLabelScaler))
-        self.__labels_scale = labels_scaler
+    def __init__(self, stemmer):
         self.__stemmer = stemmer
         self.__model_io = None
-
-    @property
-    def LabelsScaler(self):
-        """ Declares the amount of labels utilized in experiment. The latter
-            is necessary for conversions from int (uint) to Labels and vice versa.
-        """
-        return self.__labels_scale
 
     @property
     def ModelIO(self):
@@ -28,6 +18,10 @@ class DataIO(object):
             a need to obtain model root directory.
         """
         return self.__model_io
+
+    @property
+    def LabelsCount(self):
+        raise NotImplementedError()
 
     @property
     def Stemmer(self):

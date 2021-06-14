@@ -1,7 +1,6 @@
 import logging
 from collections import OrderedDict
 
-from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.model.sample import InputSampleBase
 from arekit.contrib.networks.core.debug import DebugKeys
 
@@ -32,10 +31,7 @@ class MiniBatch(object):
 
     # region public methods
 
-    # TODO. Use label_to_uint_func
-    def to_network_input(self, label_scaler, provide_labels):
-        assert(isinstance(label_scaler, BaseLabelScaler))
-        assert(isinstance(provide_labels, bool))
+    def to_network_input(self, provide_labels):
 
         result = OrderedDict()
 
@@ -51,7 +47,7 @@ class MiniBatch(object):
         for bag in self.iter_by_bags():
             if self.I_LABELS not in result:
                 result[self.I_LABELS] = []
-            uint_label = label_scaler.label_to_uint(label=bag.BagLabel) if provide_labels else 0
+            uint_label = bag.UintBagLabel if provide_labels else 0
             result[self.I_LABELS].append(uint_label)
 
         if DebugKeys.MiniBatchShow:

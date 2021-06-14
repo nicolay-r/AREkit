@@ -4,7 +4,6 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.encoder import BaseInputEncoder
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.common.experiment.neutral.run import perform_neutral_annotation
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_formatter
 
@@ -77,9 +76,11 @@ class BertExperimentInputSerializer(ExperimentEngine):
             self.__handle_iteration(data_type)
 
     def _before_running(self):
-        perform_neutral_annotation(neutral_annotator=self._experiment.DataIO.NeutralAnnotator,
-                                   opin_ops=self._experiment.OpinionOperations,
-                                   doc_ops=self._experiment.DocumentOperations,
-                                   logger=self._logger)
+        self._logger.info("Perform annotation ...")
+        for data_type in self._experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+            self._experiment.DataIO.Annotator.serialize_missed_collections(
+                data_type=data_type,
+                opin_ops=self._experiment.OpinionOperations,
+                doc_ops=self._experiment.DocumentOperations)
 
     # endregion

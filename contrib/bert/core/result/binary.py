@@ -40,10 +40,8 @@ class BertBinaryOutput(BaseOutput):
         uint_label = self._IdsFormatter.parse_label_in_sample_id(sample_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)
 
-    # TODO. Replace with opinions reader.
     def _iter_by_opinions(self, linked_df, opinions_reader):
         assert(isinstance(linked_df, pd.DataFrame))
-        # TODO. Replace with opinions reader.
         assert(isinstance(opinions_reader, BaseOpinionsFormatter))
 
         for opinion_ind in self.__iter_linked_opinion_indices(linked_df=linked_df):
@@ -53,7 +51,6 @@ class BertBinaryOutput(BaseOutput):
 
             yield self._compose_opinion_by_opinion_id(
                 sample_id=opinion_df[const.ID].iloc[0],
-                # TODO. Replace with opinions reader.
                 opinions_reader=opinions_reader,
                 calc_label_func=lambda: self.__calculate_label(df=opinion_df))
 

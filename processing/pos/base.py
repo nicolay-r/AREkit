@@ -1,3 +1,4 @@
+# TODO. Move to base class.
 class POSTagger:
 
     def get_term_pos(self, term):

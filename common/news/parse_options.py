@@ -2,6 +2,8 @@ from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.processing.lemmatization.base import Stemmer
 
 
+# TODO. This class is weird.
+# TODO. All inherited types provide the same values for __init__.
 class NewsParseOptions(object):
 
     def __init__(self, parse_entities, frame_variants_collection, stemmer):
@@ -12,6 +14,10 @@ class NewsParseOptions(object):
         self.__frame_variants_collection = frame_variants_collection
         self.__stemmer = stemmer
 
+    # TODO. This class is weird.
+    # TODO. As this parameter related to the particular text-parser implementation.
+    # TODO. As this parameter related to the particular text-parser implementation.
+    # TODO. As this parameter related to the particular text-parser implementation.
     @property
     def Stemmer(self):
         return self.__stemmer

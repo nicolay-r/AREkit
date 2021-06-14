@@ -11,16 +11,11 @@ class BaseModel(object):
         assert(isinstance(io, BaseModelIO))
         self.__io = io
 
-        # TODO. move here evaluator from experiments
-
-    # TODO. move here property to access the evaluator.
-
     @property
     def IO(self):
         return self.__io
 
-    # TODO. Remove epochs count, since it is related to NeuralNetworks only.
-    def run_training(self, epochs_count, seed):
+    def run_training(self, model_params, seed):
         raise NotImplementedError()
 
     def predict(self, data_type=DataType.Test):
