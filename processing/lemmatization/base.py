@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
+# TODO. Move to base class.
+# TODO. Move to base class.
+# TODO. Move to base class.
 class Stemmer:
     """
     Interface
