@@ -9,7 +9,6 @@ from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.frame_variants.base import FrameVariant
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
 class TestRuSentiFrames(unittest.TestCase):
@@ -21,7 +20,6 @@ class TestRuSentiFrames(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        stemmer = MystemWrapper()
         frames = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
 
         for frame_id in frames.iter_frames_ids():
