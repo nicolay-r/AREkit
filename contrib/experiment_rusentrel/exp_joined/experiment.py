@@ -49,7 +49,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__rusentrel_synonyms = None
         self.__ru_attitudes = None
         self.__ruattitudes_doc = None
-        self.__ru_attitudes_op = None
+        self.__ruattitudes_op = None
 
         self.log_info(u"Init experiment io ...")
         experiment_io = experiment_io_type(self)
