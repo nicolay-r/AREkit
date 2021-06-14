@@ -1,4 +1,3 @@
-from arekit.common.experiment.annotate import do_annotation
 from arekit.common.experiment.data.serializing import SerializationData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.contrib.networks.core.data_handling.data import HandledData
@@ -31,9 +30,11 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
                                               balance=self.__balance)
 
     def _before_running(self):
-        do_annotation(annotator=self._experiment.DataIO.Annotator,
-                      opin_ops=self._experiment.OpinionOperations,
-                      doc_ops=self._experiment.DocumentOperations,
-                      logger=self._logger)
+        self._logger.info("Perform annotation ...")
+        for data_type in self._experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+            self._experiment.DataIO.Annotator.serialize_missed_collections(
+                data_type=data_type,
+                opin_ops=self._experiment.OpinionOperations,
+                doc_ops=self._experiment.DocumentOperations)
 
     # endregion
