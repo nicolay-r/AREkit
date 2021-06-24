@@ -9,8 +9,9 @@ sys.path.append('../../../')
 from arekit.common.experiment import const
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.networks.tests.labels import TestThreeLabelScaler
 from arekit.contrib.networks.sample import InputSample
+
+from arekit.tests.contrib.networks.labels import TestThreeLabelScaler
 
 
 class TestSamplesIteration(unittest.TestCase):

@@ -5,9 +5,10 @@ import unittest
 sys.path.append('../../../')
 
 from arekit.common.languages.ru.pos_service import PartOfSpeechTypesService
-from arekit.contrib.networks.tests.tf_networks.utils import init_config
-from arekit.contrib.networks.tests.tf_networks.supported import get_supported
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+
+from arekit.tests.contrib.networks.tf_networks.supported import get_supported
+from arekit.tests.contrib.networks.tf_networks.utils import init_config
 
 
 class TestContextNetworkCompilation(unittest.TestCase):

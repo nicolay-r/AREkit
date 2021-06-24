@@ -2,6 +2,8 @@ class Entity(object):
 
     def __init__(self, value, e_type, id_in_doc, group_index=None):
         assert(isinstance(value, unicode) and len(value) > 0)
+        if not isinstance(e_type, unicode):
+            print e_type
         assert(isinstance(e_type, unicode))
         assert(isinstance(group_index, int) or group_index is None)
         self.__value = value.lower()
