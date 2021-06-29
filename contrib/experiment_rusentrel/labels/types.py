@@ -2,6 +2,8 @@ from arekit.common.labels.base import Label, NoLabel
 
 
 class ExperimentNeutralLabel(NoLabel):
+    """ RuSentRel Experiment Neutral Label.
+    """
     pass
 
 

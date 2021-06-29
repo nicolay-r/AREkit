@@ -4,6 +4,10 @@ from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.scaler import BaseLabelScaler
 
 
+class TestNeutralLabel(NoLabel):
+    pass
+
+
 class TestPositiveLabel(Label):
     pass
 
@@ -16,11 +20,11 @@ class TestThreeLabelScaler(BaseLabelScaler):
 
     def __init__(self):
 
-        uint_labels = [(NoLabel(), 0),
+        uint_labels = [(TestNeutralLabel(), 0),
                        (TestPositiveLabel(), 1),
                        (TestNegativeLabel(), 2)]
 
-        int_labels = [(NoLabel(), 0),
+        int_labels = [(TestNeutralLabel(), 0),
                       (TestPositiveLabel(), 1),
                       (TestNegativeLabel(), -1)]
 
