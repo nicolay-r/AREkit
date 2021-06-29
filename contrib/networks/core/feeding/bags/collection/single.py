@@ -20,7 +20,7 @@ class SingleBagsCollection(BagsCollection):
         assert(isinstance(bags, list))
         assert(callable(create_sample_func))
 
-        bags.append(Bag(parsed_rows[0].Sentiment))
+        bags.append(Bag(parsed_rows[0].UintLabel))
         for parsed_row in parsed_rows:
             assert(isinstance(parsed_row, ParsedSampleRow))
 
