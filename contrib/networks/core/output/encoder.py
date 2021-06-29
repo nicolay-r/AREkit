@@ -2,7 +2,6 @@ import collections
 import gzip
 
 from arekit.common.experiment import const
-from arekit.common.labels.base import Label
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.utils import create_dir_if_not_exists
 
@@ -10,9 +9,9 @@ from arekit.common.utils import create_dir_if_not_exists
 class NetworkOutputEncoder(object):
 
     @staticmethod
-    def to_tsv(filepath, sample_id_with_labels_iter, labels_scaler,
+    def to_tsv(filepath, sample_id_with_uint_labels_iter, labels_scaler,
                column_extra_funcs=None, col_separator=u'\t'):
-        assert(isinstance(sample_id_with_labels_iter, collections.Iterable))
+        assert(isinstance(sample_id_with_uint_labels_iter, collections.Iterable))
         assert(isinstance(labels_scaler, BaseLabelScaler))
         assert(isinstance(column_extra_funcs, list) or column_extra_funcs is None)
 
@@ -28,11 +27,11 @@ class NetworkOutputEncoder(object):
             f.write(u"{}\n".format(col_separator.join(title)))
 
             # Writing contents.
-            for sample_id, label in sample_id_with_labels_iter:
-                assert(isinstance(label, Label))
+            for sample_id, uint_label in sample_id_with_uint_labels_iter:
+                assert(isinstance(uint_label, int))
 
                 labels = [u'0'] * labels_scaler.classes_count()
-                labels[labels_scaler.label_to_uint(label)] = u'1'
+                labels[uint_label] = u'1'
 
                 # Composing row contents.
                 contents = [sample_id]

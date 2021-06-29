@@ -55,10 +55,10 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
                                                                                 epoch_index=epoch_index)
     logger.info(u"Target output filepath: {}".format(result_filepath))
     labeling_collection = model.get_samples_labeling_collection(data_type=data_type)
-    sample_id_with_labels_iter = labeling_collection.iter_non_duplicated_labeled_sample_row_ids()
+    sample_id_with_uint_labels_iter = labeling_collection.iter_non_duplicated_labeled_sample_row_ids()
     NetworkOutputEncoder.to_tsv(
         filepath=result_filepath,
-        sample_id_with_labels_iter=__log_wrap_samples_iter(sample_id_with_labels_iter),
+        sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
         column_extra_funcs=[
             (const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])
         ],
