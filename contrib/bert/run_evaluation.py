@@ -140,7 +140,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                         self._experiment.DataIO.OpinionFormatter.save_to_file(
                             collection=collection,
                             filepath=filepath,
-                            labels_formatter=self.__labels_formatter))
+                            labels_formatter=self.__labels_formatter,
+                            error_on_non_supported=False))
 
                 # evaluate
                 result = self._experiment.evaluate(data_type=self.__data_type,

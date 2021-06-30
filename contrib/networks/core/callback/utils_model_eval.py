@@ -130,7 +130,8 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
                                                                                          epoch_index=epoch_index),
         save_to_file_func=lambda filepath, collection: opin_fmt.save_to_file(collection=collection,
                                                                              filepath=filepath,
-                                                                             labels_formatter=labels_formatter))
+                                                                             labels_formatter=labels_formatter,
+                                                                             error_on_non_supported=False))
 
 
 def __log_wrap_samples_iter(it):

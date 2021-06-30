@@ -11,30 +11,29 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
 
     # region protected public methods
 
-    def iter_opinions_from_file(self, filepath, labels_formatter):
+    def iter_opinions_from_file(self, filepath, labels_formatter, error_on_non_supported=True):
         """
         Important: For externaly saved collections (using save_to_file method) and related usage
-        NOTE: We consider only those opinions which labels could be obtained by provided labels_formatter
         """
         assert(isinstance(filepath, unicode))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(isinstance(error_on_non_supported, bool))
 
         with open(filepath, 'r') as input_file:
 
             it = RuSentRelOpinionCollectionFormatter._iter_opinions_from_file(
                 input_file=input_file,
-                labels_formatter=labels_formatter)
+                labels_formatter=labels_formatter,
+                error_on_non_supported=error_on_non_supported)
 
             for opinion in it:
                 yield opinion
 
-    def save_to_file(self, collection, filepath, labels_formatter):
-        """
-        NOTE: We consider only those opinions which labels could be obtained by provided labels_formatter
-        """
+    def save_to_file(self, collection, filepath, labels_formatter, error_on_non_supported=True):
         assert(isinstance(collection, OpinionCollection))
         assert(isinstance(filepath, unicode))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(isinstance(error_on_non_supported, bool))
 
         def __opinion_key(opinion):
             assert(isinstance(opinion, Opinion))
@@ -52,7 +51,11 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
                     labels_formatter=labels_formatter)
 
                 if str_value is None:
-                    continue
+                    if error_on_non_supported:
+                        raise Exception("Opinion label `{label}` is not supported by formatter".format(
+                            label=o.Sentiment))
+                    else:
+                        continue
 
                 f.write(str_value)
                 f.write(u'\n')
@@ -63,8 +66,9 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
     # endregion
 
     @staticmethod
-    def _iter_opinions_from_file(input_file, labels_formatter):
+    def _iter_opinions_from_file(input_file, labels_formatter, error_on_non_supported):
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(isinstance(error_on_non_supported, bool))
 
         for line in input_file.readlines():
 
@@ -78,7 +82,10 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
                 labels_formatter=labels_formatter)
 
             if str_opinion is None:
-                continue
+                if error_on_non_supported:
+                    raise Exception("Line '{line}' has non supported label")
+                else:
+                    continue
 
             yield str_opinion
 

@@ -109,7 +109,8 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def __custom_read(self, filepath, labels_fmt):
         opinions = self.__opinion_formatter.iter_opinions_from_file(filepath=filepath,
-                                                                    labels_formatter=labels_fmt)
+                                                                    labels_formatter=labels_fmt,
+                                                                    error_on_non_supported=False)
 
         return self.__create_collection(opinions)
 
