@@ -5,10 +5,8 @@ import unittest
 
 sys.path.append('../../../')
 
-from arekit.common.labels.base import NoLabel
 from arekit.common.labels.scaler import BaseLabelScaler
 
-from arekit.contrib.networks.tests.tf_networks.supported import get_supported
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
 from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
 
@@ -16,7 +14,10 @@ from arekit.contrib.networks.multi.configurations.max_pooling import MaxPoolingO
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
-from arekit.contrib.networks.tests.test_tf_ctx_feed import TestContextNetworkFeeding
+
+from arekit.tests.contrib.networks.labels import TestNeutralLabel
+from arekit.tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
+from arekit.tests.contrib.networks.tf_networks.supported import get_supported
 
 
 class TestMultiInstanceFeed(unittest.TestCase):
@@ -26,7 +27,7 @@ class TestMultiInstanceFeed(unittest.TestCase):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(labels_scaler, BaseLabelScaler))
         bags = []
-        label = NoLabel()
+        label = TestNeutralLabel()
         empty_sample = InputSample.create_empty(terms_per_context=config.TermsPerContext,
                                                 frames_per_context=config.FramesPerContext,
                                                 synonyms_per_context=config.SynonymsPerContext)

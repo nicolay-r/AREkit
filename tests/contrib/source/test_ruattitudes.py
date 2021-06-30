@@ -109,15 +109,22 @@ class TestRuAttitudes(unittest.TestCase):
 
         print u"Total documents count: {}".format(max(it))
 
-    def __test_reading(self, ra_version):
+    def __test_reading(self, ra_version, do_printing=True):
 
         # iterating through collection
         news_read = 0
         news_it = RuAttitudesCollection.iter_news(version=ra_version,
                                                   get_news_index_func=lambda _: news_read,
                                                   return_inds_only=False)
+
+        if not do_printing:
+            news_it = tqdm(news_it)
+
         for news in news_it:
             assert(isinstance(news, RuAttitudesNews))
+
+            if not do_printing:
+                continue
 
             logger.debug(u"News: {}".format(news.ID))
 
@@ -168,6 +175,11 @@ class TestRuAttitudes(unittest.TestCase):
 
     def test_reading(self):
         self.__test_reading(ra_version=self.__ra_versions[2])
+
+    def test_quick_reading_of_all_version(self):
+        for version in self.__ra_versions:
+            print "Testing version: {version}".format(version=version)
+            self.__test_reading(ra_version=version, do_printing=False)
 
 
 if __name__ == '__main__':

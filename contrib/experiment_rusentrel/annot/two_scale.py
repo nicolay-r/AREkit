@@ -1,11 +1,11 @@
 import logging
 
 from arekit.common.experiment.annot.base import BaseAnnotator
-from arekit.common.labels.base import NoLabel
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
         for opinion in opin_ops.read_etalon_opinion_collection(doc_id):
             neut_collection.add_opinion(Opinion(source_value=opinion.SourceValue,
                                                 target_value=opinion.TargetValue,
-                                                sentiment=NoLabel()))
+                                                sentiment=ExperimentNeutralLabel()))
 
         return neut_collection
 

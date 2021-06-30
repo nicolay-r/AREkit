@@ -1,10 +1,10 @@
 
 class OpinionCollectionsFormatter(object):
 
-    def iter_opinions_from_file(self, filepath, labels_formatter):
+    def iter_opinions_from_file(self, filepath, labels_formatter, error_on_non_supported):
         raise NotImplementedError()
 
-    def save_to_file(self, collection, filepath, labels_formatter):
+    def save_to_file(self, collection, filepath, labels_formatter, error_on_non_supported):
         raise NotImplementedError()
 
     def save_to_archive(self, collections_iter, labels_formatter):

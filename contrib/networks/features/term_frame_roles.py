@@ -52,7 +52,7 @@ class FrameRoleFeatures(object):
         polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)
 
         if polarity is None:
-            return three_label_scaler.label_to_uint(label=NoLabel())
+            return three_label_scaler.label_to_uint(label=three_label_scaler.get_no_label_instance())
 
         assert(isinstance(polarity, FramePolarity))
 

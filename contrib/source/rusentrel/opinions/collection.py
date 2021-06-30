@@ -29,5 +29,6 @@ class RuSentRelOpinionCollection:
             inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id),
             process_func=lambda input_file: RuSentRelOpinionCollectionFormatter._iter_opinions_from_file(
                 input_file=input_file,
-                labels_formatter=labels_fmt),
+                labels_formatter=labels_fmt,
+                error_on_non_supported=True),
             version=version)

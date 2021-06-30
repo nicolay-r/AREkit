@@ -17,7 +17,7 @@ from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesC
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
-from arekit.contrib.networks.tests.text.news import init_rusentrel_doc
+from arekit.tests.contrib.networks.text.news import init_rusentrel_doc
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions

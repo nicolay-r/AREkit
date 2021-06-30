@@ -8,7 +8,7 @@ sys.path.append('../../')
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.contrib.bert.output.google_bert import GoogleBertMulticlassOutput
-from arekit.contrib.bert.test.labels import TestThreeLabelScaler
+from arekit.tests.contrib.bert.labels import TestThreeLabelScaler
 
 
 class TestOutputFormatters(unittest.TestCase):

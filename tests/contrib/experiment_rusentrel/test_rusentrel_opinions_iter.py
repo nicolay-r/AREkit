@@ -10,9 +10,9 @@ sys.path.append('../../../../')
 from arekit.tests.text.utils import terms_to_str
 from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 
+from arekit.tests.contrib.source.text.news import init_rusentrel_doc
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.contrib.source.tests.text.news import init_rusentrel_doc
 from arekit.contrib.experiment_rusentrel.frame_variants import ExperimentFrameVariantsCollection
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import \
