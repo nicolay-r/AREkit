@@ -14,6 +14,7 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
     def iter_opinions_from_file(self, filepath, labels_formatter):
         """
         Important: For externaly saved collections (using save_to_file method) and related usage
+        NOTE: We consider only those opinions which labels could be obtained by provided labels_formatter
         """
         assert(isinstance(filepath, unicode))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
@@ -28,6 +29,9 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
                 yield opinion
 
     def save_to_file(self, collection, filepath, labels_formatter):
+        """
+        NOTE: We consider only those opinions which labels could be obtained by provided labels_formatter
+        """
         assert(isinstance(collection, OpinionCollection))
         assert(isinstance(filepath, unicode))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
@@ -43,19 +47,20 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
         with io.open(filepath, 'w') as f:
             for o in sorted_ops:
 
-                o_str = RuSentRelOpinionCollectionFormatter.__opinion_to_str(
+                str_value = RuSentRelOpinionCollectionFormatter.__try_opinion_to_str(
                     opinion=o,
                     labels_formatter=labels_formatter)
 
-                f.write(o_str)
+                if str_value is None:
+                    continue
+
+                f.write(str_value)
                 f.write(u'\n')
 
     def save_to_archive(self, collections_iter, labels_formatter):
         raise NotImplementedError()
 
     # endregion
-
-    # region private methods
 
     @staticmethod
     def _iter_opinions_from_file(input_file, labels_formatter):
@@ -68,21 +73,42 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
             if line == '\n':
                 continue
 
-            args = line.strip().split(',')
-            assert(len(args) >= 3)
+            str_opinion = RuSentRelOpinionCollectionFormatter.__try_str_to_opinion(
+                line=line,
+                labels_formatter=labels_formatter)
 
-            source_value = args[0].strip()
-            target_value = args[1].strip()
-            sentiment = labels_formatter.str_to_label(args[2].strip())
+            if str_opinion is None:
+                continue
 
-            yield Opinion(source_value=source_value,
-                          target_value=target_value,
-                          sentiment=sentiment)
+            yield str_opinion
+
+    # region private methods
 
     @staticmethod
-    def __opinion_to_str(opinion, labels_formatter):
+    def __try_str_to_opinion(line, labels_formatter):
+        args = line.strip().split(',')
+        assert (len(args) >= 3)
+
+        source_value = args[0].strip()
+        target_value = args[1].strip()
+        str_label = args[2].strip()
+
+        if not labels_formatter.supports_value(str_label):
+            return None
+
+        return Opinion(source_value=source_value,
+                       target_value=target_value,
+                       sentiment=labels_formatter.str_to_label(str_label))
+
+    @staticmethod
+    def __try_opinion_to_str(opinion, labels_formatter):
         assert(isinstance(opinion, Opinion))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+
+        label = opinion.Sentiment
+
+        if not labels_formatter.supports_label(label):
+            return None
 
         return u"{}, {}, {}, current".format(
             opinion.SourceValue,
