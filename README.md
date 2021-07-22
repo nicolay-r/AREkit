@@ -5,7 +5,7 @@
 </p>
 
 **AREkit** (Attitude and Relation Extraction Toolkit) -- is a python toolkit, devoted to 
-document level Attitude and Relation Extraction for text objects with objects-synonymy support.
+document level Attitude and Relation Extraction for text objects with entity-linking (EL) API support.
 
 ## Description
 
