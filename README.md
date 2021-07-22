@@ -10,11 +10,16 @@ document level Attitude and Relation Extraction for text objects with entity-lin
 ## Description
 
 Is an open-source and extensible toolkit focused on data preparation for document-level relation extraction organization. 
-It address the OpenNRE since *document-level RE setting is not widely explored* (2.4 [[paper]](https://aclanthology.org/D19-3029.pdf)).
-The core functionality includes (1) API for document presentation with EL (Entity Linking, i.e. Object Synonymy) support 
-for sentence level relations preparation (2) relations transferring from sentence-level onto document-level.
-It providers contrib modules of [neural networks](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/networks) (like OpenNRE) and 
-[BERT](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/bert) applicable for sentiment attitude extraction task.
+In complements the OpenNRE functionality since *document-level RE setting is not widely explored* (2.4 [[paper]](https://aclanthology.org/D19-3029.pdf)).
+The core functionality includes 
+(1) API for document presentation with EL (Entity Linking, i.e. Object Synonymy) support 
+for sentence level relations preparation (dubbed as contexts)
+(2) API for contexts extraction
+(3) relations transferring from sentence-level onto document-level, and more.
+It providers contrib modules of 
+[neural networks](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/networks) (like OpenNRE) and 
+[BERT](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/bert),
+both applicable for sentiment attitude extraction task.
 
 ## Dependencies
 
