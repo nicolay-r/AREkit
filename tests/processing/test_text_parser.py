@@ -3,7 +3,6 @@ import unittest
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.tests.text.debug_text import debug_show_news_terms
 from arekit.processing.text.parser import TextParser
 
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -13,6 +12,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRel
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.tests.processing.text.debug_text import debug_show_news_terms
 
 
 class TestTextParser(unittest.TestCase):
