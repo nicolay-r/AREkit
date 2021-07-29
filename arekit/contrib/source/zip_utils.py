@@ -1,6 +1,5 @@
+import utils
 import zipfile
-from os import path
-from os.path import dirname
 
 import enum
 
@@ -44,4 +43,4 @@ class ZipArchiveUtils(object):
 
     @staticmethod
     def get_data_root():
-        return path.join(dirname(__file__), u"data/")
+        return utils.get_default_download_dir()
