@@ -31,16 +31,8 @@ both applicable for sentiment attitude extraction task.
 
 ## Installation 
 
-Using [virtualenv](https://www.pythoncentral.io/how-to-install-virtualenv-python/). 
-Create virtual environment, suppose `my_env`, and activate it as follows:
 ```
-virtualenv my_env
-source my_env/bin/activate
-```
-
-Then install dependencies as follows:
-```
-pip install -r dependencies.txt
+pip install git+https://github.com/nicolay-r/AREkit.git@0.21.0-rc
 ```
 
 ## Deep-Learning Applications
