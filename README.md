@@ -21,14 +21,6 @@ It providers contrib modules of
 [BERT](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/bert),
 both applicable for sentiment attitude extraction task.
 
-## Dependencies
-
-* python == 2.7 (No doubts it will be updated to 3.4+)
-
-* pymystem3 == 0.1.9
-
-* pandas == 0.20.3
-
 ## Installation 
 
 ```
