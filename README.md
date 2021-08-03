@@ -31,9 +31,9 @@ pip install git+https://github.com/nicolay-r/AREkit.git@0.21.0-rc
 
 * Frame-Based attitude extraction workflow for news processing [[code]](https://github.com/nicolay-r/frame-based-attitude-extraction-workflow)
     * Represents an attitude annotation workflow based on [RuSentiFrames](https://github.com/nicolay-r/RuSentiFrames) lexicon which is utilized for news processing;
-* **AREnets** for analytical articles [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction)
+* **AREnets** for analytical articles [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction/tree/0.21.0)
     * Neural Networks application for attitude extraction from analytical articles;
-* **AREbert** for analytical articles processing [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction)
+* **AREbert** for analytical articles processing [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction/tree/0.21.0)
     * Analytical news formatter for BERT-based models;
 
 ## Related Frameworks
