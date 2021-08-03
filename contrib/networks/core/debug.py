@@ -1,2 +1,0 @@
-class DebugKeys:
-    MiniBatchShow = False

@@ -144,8 +144,8 @@ class TestRuAttitudes(unittest.TestCase):
                         target=target.Value,
                         label=str(sentence_opin.Sentiment.to_class_str()),
                         tag=sentence_opin.Tag,
-                        src_type=source.Type,
-                        target_type=target.Type).encode('utf-8')
+                        src_type=str(source.Type),
+                        target_type=str(target.Type)).encode('utf-8')
 
                     logger.debug(sentence.SentenceIndex)
                     logger.debug(s)

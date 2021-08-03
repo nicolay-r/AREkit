@@ -21,34 +21,20 @@ It providers contrib modules of
 [BERT](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/bert),
 both applicable for sentiment attitude extraction task.
 
-## Dependencies
-
-* python == 2.7 (No doubts it will be updated to 3.4+)
-
-* pymystem3 == 0.1.9
-
-* pandas == 0.20.3
-
 ## Installation 
 
-Using [virtualenv](https://www.pythoncentral.io/how-to-install-virtualenv-python/). 
-Create virtual environment, suppose `my_env`, and activate it as follows:
 ```
-virtualenv my_env
-source my_env/bin/activate
+pip install git+https://github.com/nicolay-r/AREkit.git@0.21.0-rc
 ```
 
-Then install dependencies as follows:
-```
-pip install -r dependencies.txt
-```
+## Deep-Learning Applications
 
-## Applications
-
-* **AREnets** [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction)
-    * Neural Networks for attitude extraction 
-* **AREbert** [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction)
-    * Input Formatter for BERT-based models
+* Frame-Based attitude extraction workflow for news processing [[code]](https://github.com/nicolay-r/frame-based-attitude-extraction-workflow)
+    * Represents an attitude annotation workflow based on [RuSentiFrames](https://github.com/nicolay-r/RuSentiFrames) lexicon which is utilized for news processing;
+* **AREnets** for analytical articles [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction/tree/0.21.0)
+    * Neural Networks application for attitude extraction from analytical articles;
+* **AREbert** for analytical articles processing [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction/tree/0.21.0)
+    * Analytical news formatter for BERT-based models;
 
 ## Related Frameworks
 
