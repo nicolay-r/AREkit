@@ -5,6 +5,10 @@ import unittest
 
 sys.path.append('../../../')
 
+from tests.contrib.networks.labels import TestNeutralLabel
+from tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
+from tests.contrib.networks.tf_networks.supported import get_supported
+
 from arekit.common.labels.scaler import BaseLabelScaler
 
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
@@ -15,9 +19,6 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 
-from tests.contrib.networks.labels import TestNeutralLabel
-from tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
-from tests.contrib.networks.tf_networks.supported import get_supported
 
 
 class TestMultiInstanceFeed(unittest.TestCase):

@@ -4,11 +4,11 @@ import unittest
 
 sys.path.append('../../../')
 
-from arekit.common.languages.ru.pos_service import PartOfSpeechTypesService
-from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-
 from tests.contrib.networks.tf_networks.supported import get_supported
 from tests.contrib.networks.tf_networks.utils import init_config
+
+from arekit.common.languages.ru.pos_service import PartOfSpeechTypesService
+from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
 
 class TestContextNetworkCompilation(unittest.TestCase):
