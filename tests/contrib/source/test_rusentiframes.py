@@ -46,7 +46,9 @@ class TestRuSentiFrames(unittest.TestCase):
 
         # frame variants.
         frame_variants = FrameVariantsCollection()
-        frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants())
+        frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants(),
+                                          overwrite_existed_variant=True,
+                                          raise_error_on_existed_variant=False)
 
         frame_variant = frame_variants.get_variant_by_value(u"хвалить")
 

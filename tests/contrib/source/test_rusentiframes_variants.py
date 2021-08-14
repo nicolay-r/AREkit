@@ -15,7 +15,9 @@ class TestRuSentiFrameVariants(unittest.TestCase):
         frames_collection = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
 
         frame_variants = FrameVariantsCollection()
-        frame_variants.fill_from_iterable(variants_with_id=frames_collection.iter_frame_id_and_variants())
+        frame_variants.fill_from_iterable(variants_with_id=frames_collection.iter_frame_id_and_variants(),
+                                          overwrite_existed_variant=True,
+                                          raise_error_on_existed_variant=False)
 
         for v, _ in frame_variants.iter_variants():
             yield v

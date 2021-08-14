@@ -1,6 +1,8 @@
 import logging
 import unittest
 
+from tests.processing.text.debug_text import debug_show_news_terms
+
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.parser import TextParser
@@ -12,7 +14,6 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRel
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.tests.processing.text.debug_text import debug_show_news_terms
 
 
 class TestTextParser(unittest.TestCase):
@@ -30,8 +31,9 @@ class TestTextParser(unittest.TestCase):
         # frame and variants.
         frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
         frame_variants = FrameVariantsCollection()
-        frame_variants.fill_from_iterable(
-            variants_with_id=frames.iter_frame_id_and_variants())
+        frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants(),
+                                          overwrite_existed_variant=True,
+                                          raise_error_on_existed_variant=False)
 
         # RuAttitudes options.
         options = RuSentRelNewsParseOptions(stemmer=stemmer,

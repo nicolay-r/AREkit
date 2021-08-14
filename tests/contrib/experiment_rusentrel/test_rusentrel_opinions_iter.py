@@ -7,10 +7,10 @@ from pymystem3 import Mystem
 
 sys.path.append('../../../../')
 
-from arekit.tests.text.utils import terms_to_str
-from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
+from tests.text.utils import terms_to_str
+from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 
-from arekit.tests.contrib.source.text.news import init_rusentrel_doc
+from tests.contrib.source.text.news import init_rusentrel_doc
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.experiment_rusentrel.frame_variants import ExperimentFrameVariantsCollection
@@ -45,7 +45,9 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
 
         cls.unique_frame_variants = ExperimentFrameVariantsCollection(stemmer=cls.stemmer)
         cls.unique_frame_variants.fill_from_iterable(
-            variants_with_id=cls.frames_collection.iter_frame_id_and_variants())
+            variants_with_id=cls.frames_collection.iter_frame_id_and_variants(),
+            overwrite_existed_variant=True,
+            raise_error_on_existed_variant=False)
 
     @staticmethod
     def __process(terms, entities_formatter, s_ind, t_ind):

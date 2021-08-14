@@ -29,8 +29,12 @@ class ExperimentFrameVariantsCollection(FrameVariantsCollection):
 
     # region public methods
 
-    def fill_from_iterable(self, variants_with_id):
-        super(ExperimentFrameVariantsCollection, self).fill_from_iterable(variants_with_id=variants_with_id)
+    def fill_from_iterable(self, variants_with_id, overwrite_existed_variant, raise_error_on_existed_variant):
+        super(ExperimentFrameVariantsCollection, self).fill_from_iterable(
+            variants_with_id=variants_with_id,
+            overwrite_existed_variant=overwrite_existed_variant,
+            raise_error_on_existed_variant=raise_error_on_existed_variant)
+
         self.__lemma_variants = self.__create_lemmatized_variants(variants=self.Variants,
                                                                   stemmer=self.__stemmer)
 

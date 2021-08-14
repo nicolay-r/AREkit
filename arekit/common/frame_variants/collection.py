@@ -26,19 +26,22 @@ class FrameVariantsCollection(object):
 
     # region public methods
 
-    def fill_from_iterable(self, variants_with_id):
+    def fill_from_iterable(self, variants_with_id, overwrite_existed_variant, raise_error_on_existed_variant):
         assert(isinstance(variants_with_id, collections.Iterable))
+        assert(isinstance(overwrite_existed_variant, bool))
+        assert(isinstance(raise_error_on_existed_variant, bool))
         assert(len(self.__variants) == 0)
         assert(len(self.__frames_list) == 0)
-
-        __check_uniqueness = False
 
         frames_dict = {}
         for frame_id, variant in variants_with_id:
             self.__register_frame(frames_dict, self.__frames_list, frame_id)
 
-            if variant in self.__variants and __check_uniqueness:
-                raise Exception("Variant already registered")
+            if variant in self.__variants:
+                if raise_error_on_existed_variant:
+                    raise Exception("Variant '{variant}' already registered".format(variant=variant))
+                if not overwrite_existed_variant:
+                    continue
 
             self.__variants[variant] = FrameVariant(variant, frame_id)
 
