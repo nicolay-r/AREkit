@@ -11,7 +11,7 @@ from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 
-from arekit.tests.contrib.networks.labels import TestThreeLabelScaler
+from tests.contrib.networks.labels import TestThreeLabelScaler
 
 
 class TestSamplesIteration(unittest.TestCase):

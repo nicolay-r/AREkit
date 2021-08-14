@@ -27,6 +27,12 @@ both applicable for sentiment attitude extraction task.
 pip install git+https://github.com/nicolay-r/AREkit.git@0.21.0-rc
 ```
 
+## Download Resources
+```python
+from arekit.data import download_data
+download_data()
+```
+
 ## Deep-Learning Applications
 
 * Frame-Based attitude extraction workflow for news processing [[code]](https://github.com/nicolay-r/frame-based-attitude-extraction-workflow)
@@ -39,3 +45,4 @@ pip install git+https://github.com/nicolay-r/AREkit.git@0.21.0-rc
 ## Related Frameworks
 
 *  **OpenNRE** [[github]](https://github.com/thunlp/OpenNRE) [[paper]](https://aclanthology.org/D19-3029.pdf)
+*  **DeRE** [[github]](https://github.com/ims-tcl/DeRE) [[paper]](https://aclanthology.org/D18-2008/)

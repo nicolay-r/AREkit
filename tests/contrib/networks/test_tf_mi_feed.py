@@ -15,9 +15,9 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 
-from arekit.tests.contrib.networks.labels import TestNeutralLabel
-from arekit.tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
-from arekit.tests.contrib.networks.tf_networks.supported import get_supported
+from tests.contrib.networks.labels import TestNeutralLabel
+from tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
+from tests.contrib.networks.tf_networks.supported import get_supported
 
 
 class TestMultiInstanceFeed(unittest.TestCase):

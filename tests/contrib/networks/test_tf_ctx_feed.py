@@ -15,8 +15,8 @@ from arekit.contrib.networks.core.feeding.bags.bag import Bag
 from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.nn import NeuralNetwork
 
-from arekit.tests.contrib.networks.tf_networks.supported import get_supported
-from arekit.tests.contrib.networks.tf_networks.utils import init_config
+from tests.contrib.networks.tf_networks.supported import get_supported
+from tests.contrib.networks.tf_networks.utils import init_config
 
 
 class TestContextNetworkFeeding(unittest.TestCase):

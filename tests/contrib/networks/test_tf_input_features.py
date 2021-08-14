@@ -9,24 +9,22 @@ from pymystem3 import Mystem
 
 sys.path.append('../../../')
 
+from tests.contrib.networks.text.news import init_rusentrel_doc
+from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
+from tests.text.utils import terms_to_str
+
 from arekit.common.entities.base import Entity
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
-
-from arekit.tests.contrib.networks.text.news import init_rusentrel_doc
 from arekit.contrib.networks.features.term_indices import IndicesFeature
-
-from arekit.tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
-from arekit.tests.text.utils import terms_to_str
-
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+
+from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 
 class TestTfInputFeatures(unittest.TestCase):
@@ -43,7 +41,9 @@ class TestTfInputFeatures(unittest.TestCase):
 
         cls.unique_frame_variants = FrameVariantsCollection()
         cls.unique_frame_variants.fill_from_iterable(
-            variants_with_id=cls.frames_collection.iter_frame_id_and_variants())
+            variants_with_id=cls.frames_collection.iter_frame_id_and_variants(),
+            overwrite_existed_variant=True,
+            raise_error_on_existed_variant=False)
 
     def test(self):
         logger = logging.getLogger(__name__)

@@ -78,7 +78,9 @@ def __about(frames_collection, pos_tagger):
     all_frame_entries = list(frames_collection.iter_frame_id_and_variants())
 
     unique_frame_variants = FrameVariantsCollection()
-    unique_frame_variants.fill_from_iterable(variants_with_id=all_frame_entries)
+    unique_frame_variants.fill_from_iterable(variants_with_id=all_frame_entries,
+                                             overwrite_existed_variant=True,
+                                             raise_error_on_existed_variant=False)
 
     assert(isinstance(frames_collection, RuSentiFramesCollection))
     unique_variants = list(unique_frame_variants.iter_variants())
