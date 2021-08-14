@@ -13,8 +13,10 @@ def download():
         # RuSentiFrames
         "rusentiframes-v1_0.zip": "https://www.dropbox.com/s/zvkis77li3f40bm/rusentiframes-v1_0.zip?dl=1",
         "rusentiframes-v2_0.zip": "https://www.dropbox.com/s/slbyma7eudmmugp/rusentiframes-v2_0.zip?dl=1",
-        # v1.0
-        "ruattitudes-v1_2.zip": "https://github.com/nicolay-r/ner-bilstm-crf-tensorflow/blob/master/ner/utils.py",
+        # RuAttitudes-v1.0 (Many variations)
+        "ruattitudes-v1_0.zip": "https://www.dropbox.com/s/wg6oa447msdytj3/ruattitudes-v1_0.zip?dl=1",
+        "ruattitudes-v1_1.zip": "https://www.dropbox.com/s/e3menx5iqyush19/ruattitudes-v1_1.zip?dl=1",
+        "ruattitudes-v1_2.zip": "https://www.dropbox.com/s/1psvsvy7n3hmpen/ruattitudes-v1_1-n.zip?dl=1",
         # RuAttitudes-v2.0 Base
         "ruattitudes-v2_0_base.zip": "https://www.dropbox.com/s/y39vqzzjumqhce1/ruattitudes_20_base.zip?dl=1",
         "ruattitudes-v2_0_base_neut.zip": "https://www.dropbox.com/s/3xh7gd004oyuwx5/ruattitudes_20_base_neut.zip?dl=1",
