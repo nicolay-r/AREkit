@@ -5,10 +5,12 @@ import unittest
 
 sys.path.append('../../../')
 
-from tests.contrib.networks.labels import TestNeutralLabel, TestThreeLabelScaler
+from tests.contrib.networks.labels import TestThreeLabelScaler
 from tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
 from tests.contrib.networks.tf_networks.supported import get_supported
 
+from arekit.contrib.networks.multi.configurations.att_self import AttSelfOverSentencesConfig
+from arekit.contrib.networks.multi.architectures.att_self import AttSelfOverSentences
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
 from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
 from arekit.contrib.networks.multi.configurations.max_pooling import MaxPoolingOverSentencesConfig
@@ -42,7 +44,7 @@ class TestMultiInstanceFeed(unittest.TestCase):
     def multiinstances_supported(ctx_config, ctx_network):
         return [
             (MaxPoolingOverSentencesConfig(ctx_config), MaxPoolingOverSentences(ctx_network)),
-            # (AttSelfOverSentencesConfig(ctx_config), AttSelfOverSentences(ctx_network))
+            (AttSelfOverSentencesConfig(ctx_config), AttSelfOverSentences(ctx_network))
         ]
 
     def test(self):
