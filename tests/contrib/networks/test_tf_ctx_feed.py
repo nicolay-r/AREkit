@@ -58,7 +58,7 @@ class TestContextNetworkFeeding(unittest.TestCase):
         init_config(network_config)
         # Init network.
         network.compile(config=network_config, reset_graph=True, graph_seed=42)
-        minibatch = create_minibatch_func(config=network_config, labels_count=labels_scaler)
+        minibatch = create_minibatch_func(config=network_config, labels_scaler=labels_scaler)
 
         network_optimiser = network_config.Optimiser.minimize(network.Cost)
 
