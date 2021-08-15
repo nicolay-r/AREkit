@@ -1,3 +1,5 @@
+from os.path import dirname, join
+
 import pandas as pd
 import gzip
 import sys
@@ -11,17 +13,18 @@ from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 
-from tests.contrib.networks.labels import TestThreeLabelScaler
-
 
 class TestSamplesIteration(unittest.TestCase):
 
     __show_examples = False
     __show_shifted_examples = False
 
+    def __get_local_dir(self, local_filepath):
+        return join(dirname(__file__), local_filepath)
+
     def test_check_all_samples(self):
-        vocab_filepath = u"test_data/vocab.txt.gz"
-        samples_filepath = u"test_data/sample-train.tsv.gz"
+        vocab_filepath = self.__get_local_dir(u"test_data/vocab.txt.gz")
+        samples_filepath = self.__get_local_dir(u"test_data/sample-train.tsv.gz")
         words_vocab = self.__read_vocab(vocab_filepath)
         config = DefaultNetworkConfig()
         config.modify_terms_per_context(50)
@@ -78,11 +81,10 @@ class TestSamplesIteration(unittest.TestCase):
         assert(isinstance(samples_filepath, unicode))
 
         samples = []
-        labels_scaler = TestThreeLabelScaler()
         for i, row in enumerate(self.__iter_tsv_gzip(input_file=samples_filepath)):
 
             # Perform row parsing process.
-            row = ParsedSampleRow(row, labels_scaler=labels_scaler)
+            row = ParsedSampleRow(row)
 
             subj_ind = row.SubjectIndex
             obj_ind = row.ObjectIndex
