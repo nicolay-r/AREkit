@@ -26,12 +26,12 @@ class TestMultiInstanceFeed(unittest.TestCase):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(labels_scaler, BaseLabelScaler))
         bags = []
-        label = TestNeutralLabel()
+        no_label = labels_scaler.get_no_label_instance()
         empty_sample = InputSample.create_empty(terms_per_context=config.TermsPerContext,
                                                 frames_per_context=config.FramesPerContext,
                                                 synonyms_per_context=config.SynonymsPerContext)
         for i in range(config.BagsPerMinibatch):
-            bag = Bag(label)
+            bag = Bag(labels_scaler.label_to_uint(no_label))
             for j in range(config.BagSize):
                 bag.add_sample(empty_sample)
             bags.append(bag)
