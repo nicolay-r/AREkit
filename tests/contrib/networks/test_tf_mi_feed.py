@@ -5,20 +5,18 @@ import unittest
 
 sys.path.append('../../../')
 
-from tests.contrib.networks.labels import TestNeutralLabel
+from tests.contrib.networks.labels import TestNeutralLabel, TestThreeLabelScaler
 from tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
 from tests.contrib.networks.tf_networks.supported import get_supported
 
-from arekit.common.labels.scaler import BaseLabelScaler
-
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
 from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
-
 from arekit.contrib.networks.multi.configurations.max_pooling import MaxPoolingOverSentencesConfig
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 
+from arekit.common.labels.scaler import BaseLabelScaler
 
 
 class TestMultiInstanceFeed(unittest.TestCase):
@@ -51,6 +49,8 @@ class TestMultiInstanceFeed(unittest.TestCase):
         logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
 
+        labels_scaler = TestThreeLabelScaler()
+
         for ctx_config, ctx_network in get_supported():
             for config, network in self.multiinstances_supported(ctx_config, ctx_network):
                 logger.info(type(network))
@@ -59,6 +59,7 @@ class TestMultiInstanceFeed(unittest.TestCase):
                                                       network_config=config,
                                                       create_minibatch_func=self.__create_minibatch,
                                                       logger=logger,
+                                                      labels_scaler=labels_scaler,
                                                       display_idp_values=False)
 
 

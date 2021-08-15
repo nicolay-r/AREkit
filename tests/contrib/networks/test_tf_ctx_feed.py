@@ -7,16 +7,18 @@ import logging
 
 sys.path.append('../../../')
 
+from tests.contrib.networks.labels import TestThreeLabelScaler
+from tests.contrib.networks.tf_networks.supported import get_supported
+from tests.contrib.networks.tf_networks.utils import init_config
+
 from arekit.common.experiment.data_type import DataType
+from arekit.common.labels.scaler import BaseLabelScaler
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
 from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.nn import NeuralNetwork
-
-from tests.contrib.networks.tf_networks.supported import get_supported
-from tests.contrib.networks.tf_networks.utils import init_config
 
 
 class TestContextNetworkFeeding(unittest.TestCase):
@@ -48,16 +50,18 @@ class TestContextNetworkFeeding(unittest.TestCase):
 
     @staticmethod
     def run_feeding(network, network_config, create_minibatch_func, logger,
+                    labels_scaler,
                     display_hidden_values=True,
                     display_idp_values=True):
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(network_config, DefaultNetworkConfig))
+        assert(isinstance(labels_scaler, BaseLabelScaler))
         assert(callable(create_minibatch_func))
 
         init_config(network_config)
         # Init network.
         network.compile(config=network_config, reset_graph=True, graph_seed=42)
-        minibatch = create_minibatch_func(config=network_config, labels_count=3)
+        minibatch = create_minibatch_func(config=network_config, labels_scaler=labels_scaler)
 
         network_optimiser = network_config.Optimiser.minimize(network.Cost)
 
@@ -107,11 +111,14 @@ class TestContextNetworkFeeding(unittest.TestCase):
         logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.DEBUG)
 
+        labels_scaler = TestThreeLabelScaler()
+
         for cfg, network in get_supported():
             logger.debug("Feed to the network: {}".format(type(network)))
             self.run_feeding(network=network,
                              network_config=cfg,
                              create_minibatch_func=self.create_minibatch,
+                             labels_scaler=labels_scaler,
                              logger=logger)
 
 
