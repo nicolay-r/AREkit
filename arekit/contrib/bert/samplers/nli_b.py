@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.bert.core.input.providers.text.pair import PairTextProvider
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider

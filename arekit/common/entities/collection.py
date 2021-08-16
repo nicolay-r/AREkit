@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.synonyms import SynonymsCollection
 
 

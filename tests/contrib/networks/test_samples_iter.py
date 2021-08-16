@@ -60,7 +60,7 @@ class TestSamplesIteration(unittest.TestCase):
         words = {}
         with gzip.open(input_file, mode="rt") as f:
             for w_ind, line in enumerate(f.readlines()):
-                w = line.decode('utf-8').strip()
+                w = line.strip()
                 if w in words:
                     raise Exception("Word already presented: {}".format(w).encode('utf-8'))
                 words[w] = w_ind

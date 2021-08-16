@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from urllib.parse import urlparse
 from arekit.processing.text.token import Token
 

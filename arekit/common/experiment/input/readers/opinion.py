@@ -23,8 +23,8 @@ class InputOpinionReader(BaseInputReader):
         opinion_row = self._df[self._df[const.ID] == opinion_id]
         df_row = opinion_row.iloc[0]
 
-        source = df_row[const.SOURCE].decode('utf-8')
-        target = df_row[const.TARGET].decode('utf-8')
+        source = df_row[const.SOURCE]
+        target = df_row[const.TARGET]
 
         return source, target
 

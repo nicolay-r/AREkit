@@ -104,8 +104,8 @@ class BaseEvaluator(object):
             self._check_is_supported(label=etalon_label, is_label_supported=is_label_supported)
             self._check_is_supported(label=result_label, is_label_supported=is_label_supported)
 
-            row = [opin.SourceValue.encode('utf-8'),
-                   opin.TargetValue.encode('utf-8'),
+            row = [opin.SourceValue,
+                   opin.TargetValue,
                    None if etalon_label is None else label_to_str(etalon_label),
                    None if result_label is None else label_to_str(result_label),
                    self.__cmp_result(l1=etalon_label, l2=result_label)]

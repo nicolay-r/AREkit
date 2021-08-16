@@ -72,13 +72,13 @@ class TestRuSentRel(unittest.TestCase):
                     opinion.Sentiment.to_class_str(),
                     # Considering synonyms.
                     synonyms.get_synonym_group_index(opinion.SourceValue),
-                    synonyms.get_synonym_group_index(opinion.TargetValue)).encode('utf-8'))
+                    synonyms.get_synonym_group_index(opinion.TargetValue)))
 
             # Example: Access to the read NEWS collection.
             for sentence in news.iter_sentences(return_text=False):
                 assert(isinstance(sentence, RuSentRelSentence))
                 # Access to text.
-                logger.info("\tSentence: '{}'".format(sentence.Text.strip()).encode('utf-8'))
+                logger.info("\tSentence: '{}'".format(sentence.Text.strip()))
                 # Access to inner entities.
                 for entity, bound in sentence.iter_entity_with_local_bounds():
                     assert(isinstance(entity, RuSentRelEntity))
@@ -88,7 +88,7 @@ class TestRuSentRel(unittest.TestCase):
                         entity.Type,
                         bound.Position,
                         bound.Position + bound.Length,
-                        entity.IdInDocument).encode('utf-8'))
+                        entity.IdInDocument))
 
     def test_linked_text_opinion_extraction(self):
 
@@ -107,7 +107,7 @@ class TestRuSentRel(unittest.TestCase):
             assert(isinstance(first_opinion, Opinion))
 
             print("'{src}'->'{tgt}'".format(src=first_opinion.SourceValue,
-                                             tgt=first_opinion.TargetValue).encode('utf-8'))
+                                            tgt=first_opinion.TargetValue))
 
             linked_text_opinions = news.extract_linked_text_opinions(first_opinion)
             assert(isinstance(linked_text_opinions, LinkedTextOpinionsWrapper))

@@ -19,13 +19,13 @@ def debug_show_news_terms(parsed_news):
 def debug_show_terms(terms):
     for term in terms:
         if isinstance(term, str):
-            logger.debug("Word:\t\t'{}'".format(term.encode('utf-8')))
+            logger.debug("Word:\t\t'{}'".format(term))
         elif isinstance(term, Token):
-            logger.debug("Token:\t\t'{}' ('{}')".format(term.get_token_value().encode('utf-8'),
-                                                       term.get_meta_value().encode('utf-8')))
+            logger.debug("Token:\t\t'{}' ('{}')".format(term.get_token_value(),
+                                                        term.get_meta_value()))
         elif isinstance(term, Entity):
-            logger.debug("Entity:\t\t'{}'".format(term.Value.encode('utf-8')))
+            logger.debug("Entity:\t\t'{}'".format(term.Value))
         elif isinstance(term, TextFrameVariant):
-            logger.debug("TextFV:\t\t'{}'".format(term.Variant.get_value().encode('utf-8')))
+            logger.debug("TextFV:\t\t'{}'".format(term.Variant.get_value()))
         else:
             raise Exception("unsuported type {}".format(term))

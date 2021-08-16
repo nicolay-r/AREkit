@@ -131,7 +131,7 @@ class TestRuAttitudes(unittest.TestCase):
             for sentence in news.iter_sentences(return_text=False):
                 assert(isinstance(sentence, RuAttitudesSentence))
                 # text
-                logger.debug(sentence.Text.encode('utf-8'))
+                logger.debug(sentence.Text)
                 # objects
                 logger.debug(",".join([object.Value for object in sentence.iter_objects()]))
                 # attitudes
@@ -145,7 +145,7 @@ class TestRuAttitudes(unittest.TestCase):
                         label=str(sentence_opin.Sentiment.to_class_str()),
                         tag=sentence_opin.Tag,
                         src_type=str(source.Type),
-                        target_type=str(target.Type)).encode('utf-8')
+                        target_type=str(target.Type))
 
                     logger.debug(sentence.SentenceIndex)
                     logger.debug(s)
@@ -158,7 +158,7 @@ class TestRuAttitudes(unittest.TestCase):
                     logger.debug("'{source}'->'{target}' ({s_count})".format(
                         source=o.SourceValue,
                         target=o.TargetValue,
-                        s_count=len(sentences)).encode('utf-8'))
+                        s_count=len(sentences)))
 
             news_read += 1
 

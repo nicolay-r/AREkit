@@ -11,7 +11,7 @@ def log_synonym_existed(value):
 def log_synonym_for_entity_does_not_exist(entity_value, end_type, raise_exception):
     message = "'{s}' for end {e} does not exist in read-only SynonymsCollection".format(
         s=entity_value,
-        e=end_type).encode('utf-8')
+        e=end_type)
 
     if raise_exception:
         raise Exception(message)

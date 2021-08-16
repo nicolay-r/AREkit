@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion

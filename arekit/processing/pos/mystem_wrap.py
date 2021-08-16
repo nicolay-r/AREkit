@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.languages.pos import PartOfSpeechType
 from arekit.common.languages.ru.cases import RussianCases, RussianCasesService
 from arekit.common.languages.ru.number import RussianNumberType, RussianNumberTypeService

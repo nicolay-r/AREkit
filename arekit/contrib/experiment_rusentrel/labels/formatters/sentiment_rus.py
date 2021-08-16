@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNegativeLabel, ExperimentPositiveLabel, \
     ExperimentNeutralLabel

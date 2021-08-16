@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.entities.types import EntityType
 from arekit.common.labels.base import Label

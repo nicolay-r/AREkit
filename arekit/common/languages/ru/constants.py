@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 class RussianConstants:
 
     PrepositionSet = {'к', 'на', 'по', 'с', 'до', 'в', 'во', "у", "а"}

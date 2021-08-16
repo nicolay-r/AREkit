@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-from os.path import join, dirname, abspath
+from os.path import join, dirname
 import sys
 import unittest
 

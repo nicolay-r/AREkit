@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider

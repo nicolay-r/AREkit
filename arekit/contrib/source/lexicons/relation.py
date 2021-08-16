@@ -23,14 +23,14 @@ class RelationLexicon(object):
     def __create_key(l, r):
         assert(type(l) == str)
         assert(type(r) == str)
-        return ('<->'.join([l.encode('utf-8'), r.encode('utf-8')])).decode('utf-8')
+        return '<->'.join([l, r])
 
     def get_score(self, left, right):
         assert(type(left) == str)
         assert(type(right) == str)
 
-        lr_key = self.__create_key(left, right).encode('utf-8')
-        rl_key = self.__create_key(right, left).encode('utf-8')
+        lr_key = self.__create_key(left, right)
+        rl_key = self.__create_key(right, left)
 
         lr_score = self.__lexicon[lr_key == self.__lexicon['relation']]
         rl_score = self.__lexicon[rl_key == self.__lexicon['relation']]
