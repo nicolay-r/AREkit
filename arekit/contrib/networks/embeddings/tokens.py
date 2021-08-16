@@ -1,7 +1,7 @@
 import numpy as np
 
+from arekit.contrib.networks.embeddings.base import Embedding
 from arekit.processing.text.tokens import Tokens
-from arekit.common.embeddings.base import Embedding
 
 
 class TokenEmbedding(Embedding):

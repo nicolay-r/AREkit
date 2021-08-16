@@ -3,7 +3,6 @@ from collections import OrderedDict
 
 import numpy as np
 
-from arekit.common.embeddings.base import Embedding
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
@@ -20,6 +19,7 @@ from arekit.contrib.networks.core.input.formatters.sample import NetworkSampleFo
 from arekit.contrib.networks.core.input.providers.text.single import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
+from arekit.contrib.networks.embeddings.base import Embedding
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
