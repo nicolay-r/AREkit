@@ -14,6 +14,7 @@ def download():
         "rusentiframes-v1_0.zip": "https://www.dropbox.com/s/zvkis77li3f40bm/rusentiframes-v1_0.zip?dl=1",
         "rusentiframes-v2_0.zip": "https://www.dropbox.com/s/slbyma7eudmmugp/rusentiframes-v2_0.zip?dl=1",
         # RuAttitudes-v1.0 (Many variations)
+        "ruattitudes-dbg.zip": "https://www.dropbox.com/s/5lmqw9kyb4tfm94/ruattitudes-dbg.zip?dl=1",
         "ruattitudes-v1_0.zip": "https://www.dropbox.com/s/wg6oa447msdytj3/ruattitudes-v1_0.zip?dl=1",
         "ruattitudes-v1_1.zip": "https://www.dropbox.com/s/e3menx5iqyush19/ruattitudes-v1_1.zip?dl=1",
         "ruattitudes-v1_2.zip": "https://www.dropbox.com/s/1psvsvy7n3hmpen/ruattitudes-v1_1-n.zip?dl=1",
