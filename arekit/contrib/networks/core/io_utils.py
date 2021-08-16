@@ -3,7 +3,6 @@ from os.path import join
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.common.model.model_io import BaseModelIO
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 
 logger = logging.getLogger(__name__)
