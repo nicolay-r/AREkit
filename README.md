@@ -1,5 +1,7 @@
 # AREkit 0.21.1
 
+![](https://img.shields.io/badge/Python-3.6-brightgreen.svg)
+
 <p align="center">
     <img src="logo.png"/>
 </p>
