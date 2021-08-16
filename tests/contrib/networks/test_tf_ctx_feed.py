@@ -37,7 +37,8 @@ class TestContextNetworkFeeding(unittest.TestCase):
 
         bags = []
         for i in range(config.BagsPerMinibatch):
-            uint_label = random.randint(0, labels_scaler.LabelsCount)
+            # Generate labels withing the following region: [0, labels_count)
+            uint_label = random.randint(0, labels_scaler.LabelsCount - 1)
             bag = Bag(uint_label=uint_label)
             for j in range(config.BagSize):
                 bag.add_sample(InputSample._generate_test(config))
