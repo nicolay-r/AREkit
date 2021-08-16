@@ -7,7 +7,7 @@ def download():
 
     data = {
         # RuSentiLex
-        "rusentilex.zip": "https://www.dropbox.com/s/bdsl3kney30y45z/rusentilex.zip?dl=0",
+        "rusentilex.zip": "https://www.dropbox.com/s/bdsl3kney30y45z/rusentilex.zip?dl=1",
         # RuSentRel-v1.1
         "rusentrel-v1_1.zip": "https://www.dropbox.com/s/6aw5jv84jf5hrl2/rusentrel-v1_1.zip?dl=1",
         # RuSentiFrames
