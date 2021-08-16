@@ -51,7 +51,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__ruattitudes_doc = None
         self.__ruattitudes_op = None
 
-        self.log_info(u"Init experiment io ...")
+        self.log_info("Init experiment io ...")
         experiment_io = experiment_io_type(self)
 
         # RuSentRel doc operations init.
@@ -84,7 +84,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             get_ruattitudes_op=self.__get_or_load_ruattitudes_opin_ops,
             is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))
 
-        exp_name = u"rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
+        exp_name = "rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
             rsr_version=self.__rusentrel_version.value,
             ra_version=self.__ruattitudes_version.value,
             folding_type=doc_ops.DataFolding.Name)
@@ -122,7 +122,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
 
         # RuAttitudes doc operations init.
         ruattiudes_folding = create_ruattitudes_experiment_data_folding(
-            doc_ids_to_fold=list(ru_attitudes.iterkeys()))
+            doc_ids_to_fold=list(ru_attitudes.keys()))
 
         # Completing initialization.
         self.__ruattitudes_doc = RuAttitudesDocumentOperations(
@@ -135,7 +135,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
 
     def _get_or_load_synonyms_collection(self):
         if self.__rusentrel_synonyms is None:
-            self.log_info(u"Read synonyms collection [RuSentRel]...")
+            self.log_info("Read synonyms collection [RuSentRel]...")
             self.__rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
                 stemmer=self.DataIO.Stemmer,
                 version=self.__rusentrel_version)

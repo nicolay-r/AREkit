@@ -8,18 +8,18 @@ from arekit.contrib.source.ruattitudes.text_object import TextObject
 
 class RuAttitudesFormatReader(object):
 
-    NEWS_SEP_KEY = u'--------'
-    FILE_KEY = u"File:"
-    OBJ_KEY = u"Object:"
-    TITLE_KEY = u"Title:"
-    SINDEX_KEY = u"Sentence:"
-    OPINION_KEY = u"Attitude:"
-    STEXT_KEY = u"Text:"
-    TERMS_IN_TITLE = u"TermsInTitle:"
-    TERMS_IN_TEXT = u"TermsInText:"
-    FRAMEVAR_TITLE = u"FrameVariant:"
+    NEWS_SEP_KEY = '--------'
+    FILE_KEY = "File:"
+    OBJ_KEY = "Object:"
+    TITLE_KEY = "Title:"
+    SINDEX_KEY = "Sentence:"
+    OPINION_KEY = "Attitude:"
+    STEXT_KEY = "Text:"
+    TERMS_IN_TITLE = "TermsInTitle:"
+    TERMS_IN_TEXT = "TermsInText:"
+    FRAMEVAR_TITLE = "FrameVariant:"
 
-    AUTH_LABEL = u'<AUTH>'
+    AUTH_LABEL = '<AUTH>'
 
     def __iter__(self):
         pass
@@ -38,7 +38,7 @@ class RuAttitudesFormatReader(object):
 
             if RuAttitudesFormatReader.__check_is_title(line):
                 # We use a placeholder, there is no need in actual value out there.
-                title = u"title"
+                title = "title"
                 has_sentences = True
 
             if RuAttitudesFormatReader.__check_is_news_sep(line=line, title=title):
@@ -163,7 +163,7 @@ class RuAttitudesFormatReader(object):
 
     @staticmethod
     def __calculate_terms_in_line(line):
-        assert(isinstance(line, unicode))
+        assert(isinstance(line, str))
         return len(split_by_whitespaces(line))
 
     @staticmethod
@@ -181,19 +181,19 @@ class RuAttitudesFormatReader(object):
 
         line = line[len(RuAttitudesFormatReader.OPINION_KEY):]
 
-        s_from = line.index(u'b:(')
-        s_to = line.index(u')', s_from)
+        s_from = line.index('b:(')
+        s_to = line.index(')', s_from)
         label = label_converter.int_to_label(int(line[s_from + 3:s_to]))
 
-        o_from = line.index(u'oi:[')
-        o_to = line.index(u']', o_from)
-        source_object_id_in_sentence, target_object_id_in_sentence = line[o_from + 4:o_to].split(u',')
+        o_from = line.index('oi:[')
+        o_to = line.index(']', o_from)
+        source_object_id_in_sentence, target_object_id_in_sentence = line[o_from + 4:o_to].split(',')
 
         source_object_id_in_sentence = int(source_object_id_in_sentence)
         target_object_id_in_sentence = int(target_object_id_in_sentence)
 
-        s_from = line.index(u'si:{')
-        s_to = line.index(u'}', s_from)
+        s_from = line.index('si:{')
+        s_to = line.index('}', s_from)
         opninion_key = line[s_from+4:s_to]
 
         sentence_opin = SentenceOpinion(source_id=source_object_id_in_sentence,
@@ -207,30 +207,30 @@ class RuAttitudesFormatReader(object):
 
     @staticmethod
     def __parse_object(line):
-        assert(isinstance(line, unicode))
+        assert(isinstance(line, str))
 
         line = line[len(RuAttitudesFormatReader.OBJ_KEY):]
 
-        obj_ind_begin = line.index(u'oi:[', 0)
-        obj_ind_end = line.index(u']', obj_ind_begin + 1)
+        obj_ind_begin = line.index('oi:[', 0)
+        obj_ind_end = line.index(']', obj_ind_begin + 1)
 
-        o_begin = line.index(u"'", 0)
-        o_end = line.index(u"'", o_begin + 1)
+        o_begin = line.index("'", 0)
+        o_end = line.index("'", o_begin + 1)
 
-        b_from = line.index(u'b:(')
-        b_to = line.index(u')', b_from)
+        b_from = line.index('b:(')
+        b_to = line.index(')', b_from)
 
         id_in_sentence = int(line[obj_ind_begin + 4:obj_ind_end])
-        term_index, length = line[b_from+3:b_to].split(u',')
+        term_index, length = line[b_from+3:b_to].split(',')
         value = line[o_begin + 1:o_end]
 
         obj_type = RuAttitudesFormatReader.__try_get_type(line)
 
-        sg_from = line.index(u'si:{')
-        sg_to = line.index(u'}', sg_from)
+        sg_from = line.index('si:{')
+        sg_to = line.index('}', sg_from)
         group_index = int(line[sg_from+4:sg_to])
 
-        is_auth = u'<AUTH>' in line
+        is_auth = '<AUTH>' in line
 
         text_object = TextObject(id_in_sentence=id_in_sentence,
                                  value=value,
@@ -261,7 +261,7 @@ class RuAttitudesFormatReader(object):
     def __try_get_type(line):
 
         # Tag, utilized in RuAttitudes-2.0 format.
-        template = u'type:'
+        template = 'type:'
         if template in line:
             is_auth = RuAttitudesFormatReader.AUTH_LABEL in line
             t_from = line.index(template)
@@ -269,10 +269,10 @@ class RuAttitudesFormatReader(object):
             return line[t_from + len(template):t_to].strip()
 
         # Tag, utilized in RuAttitudes-1.* format.
-        template = u't:['
+        template = 't:['
         if template in line:
             t_from = line.index(template)
-            t_to = line.index(u']', t_from)
+            t_to = line.index(']', t_from)
             return line[t_from + len(template):t_to].strip()
 
     # endregion

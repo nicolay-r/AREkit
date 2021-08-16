@@ -40,7 +40,7 @@ class BaseOutput(object):
     # region public methods
 
     def init_from_tsv(self, filepath):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         self.__df = self._csv_to_dataframe(filepath=filepath)
 
     def iter_news_ids(self):
@@ -70,7 +70,7 @@ class BaseOutput(object):
         raise NotImplementedError()
 
     def _compose_opinion_by_opinion_id(self, sample_id, opinions_reader, calc_label_func):
-        assert(isinstance(sample_id, unicode))
+        assert(isinstance(sample_id, str))
         assert(isinstance(opinions_reader, InputOpinionReader))
         assert(callable(calc_label_func))
 

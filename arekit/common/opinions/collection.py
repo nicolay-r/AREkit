@@ -47,7 +47,7 @@ class OpinionCollection(object):
 
         predicate = lambda _: True if filter_opinion_func is None else filter_opinion_func
 
-        return OpinionCollection(opinions=[opinion for _, opinion in self.__by_synonyms.iteritems()
+        return OpinionCollection(opinions=[opinion for _, opinion in self.__by_synonyms.items()
                                            if predicate(opinion)],
                                  synonyms=self.__synonyms,
                                  error_on_duplicates=self.__error_on_duplicates,
@@ -133,7 +133,7 @@ class OpinionCollection(object):
 
         key = opinion.create_synonym_id(self.__synonyms)
 
-        assert(isinstance(key, unicode))
+        assert(isinstance(key, str))
         if key in self.__by_synonyms:
 
             log_utils.log_opinion_already_exist(opinion=opinion,

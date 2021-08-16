@@ -2,13 +2,13 @@ import pandas as pd
 
 from arekit.common.experiment import const
 from arekit.common.utils import filter_whitespaces, split_by_whitespaces
-import const as network_input_const
+from . import const as network_input_const
 
 empty_list = []
 
 
 def __process_indices_list(value):
-    return [int(v) for v in unicode(value).split(network_input_const.ArgsSep)]
+    return [int(v) for v in str(value).split(network_input_const.ArgsSep)]
 
 
 def __process_int_values_list(value):
@@ -20,9 +20,9 @@ parse_value = {
     const.S_IND: lambda value: value,
     const.T_IND: lambda value: value,
     network_input_const.FrameVariantIndices: lambda value:
-        __process_indices_list(value) if isinstance(value, unicode) else empty_list,
+        __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.FrameRoles: lambda value:
-        __process_indices_list(value) if isinstance(value, unicode) else empty_list,
+        __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.SynonymObject: lambda value: __process_indices_list(value),
     network_input_const.SynonymSubject: lambda value: __process_indices_list(value),
     network_input_const.Entities: lambda value: __process_indices_list(value),
@@ -43,7 +43,7 @@ class ParsedSampleRow(object):
         self.__uint_label = None
         self.__params = {}
 
-        for key, value in row.iteritems():
+        for key, value in row.items():
 
             if key == const.LABEL:
                 self.__uint_label = value

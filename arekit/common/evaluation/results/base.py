@@ -31,15 +31,15 @@ class BaseEvalResult(object):
         return label in self.__supported_labels
 
     def get_result_by_metric(self, metric_name):
-        assert(isinstance(metric_name, unicode))
+        assert(isinstance(metric_name, str))
         return self._total_result[metric_name]
 
     def iter_total_by_param_results(self):
         assert(self._total_result is not None)
-        return self._total_result.iteritems()
+        return iter(self._total_result.items())
 
     def iter_dataframe_cmp_tables(self):
-        return self._cmp_tables.iteritems()
+        return iter(self._cmp_tables.items())
 
     def reg_doc(self, cmp_pair, cmp_table):
         """ Registering cmp_table.

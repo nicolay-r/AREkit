@@ -4,7 +4,7 @@ from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLa
 
 class RuSentRelDefaultNeutralAnnotationAlgorithm(DefaultSingleLabelAnnotationAlgorithm):
 
-    IGNORED_ENTITY_VALUES = [u"author", u"unknown"]
+    IGNORED_ENTITY_VALUES = ["author", "unknown"]
 
     def __init__(self, dist_in_terms_bound):
         super(RuSentRelDefaultNeutralAnnotationAlgorithm, self).__init__(

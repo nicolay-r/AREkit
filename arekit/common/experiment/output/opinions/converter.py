@@ -20,7 +20,7 @@ class OutputToOpinionCollectionsConverter(object):
                                  output):
         assert(callable(keep_doc_id_func))
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        assert(isinstance(output_filepath, unicode))
+        assert(isinstance(output_filepath, str))
         assert(isinstance(opinions_reader, InputOpinionReader))
         assert(callable(create_opinion_collection_func))
         assert(isinstance(label_calculation_mode, LabelCalculationMode))

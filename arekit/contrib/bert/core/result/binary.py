@@ -10,8 +10,8 @@ from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProv
 
 class BertBinaryOutput(BaseOutput):
 
-    YES = u'yes'
-    NO = u'no'
+    YES = 'yes'
+    NO = 'no'
 
     def __init__(self, labels_scaler, has_output_header):
         assert(isinstance(labels_scaler, BaseLabelScaler))

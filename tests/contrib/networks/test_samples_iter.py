@@ -23,8 +23,8 @@ class TestSamplesIteration(unittest.TestCase):
         return join(dirname(__file__), local_filepath)
 
     def test_check_all_samples(self):
-        vocab_filepath = self.__get_local_dir(u"test_data/vocab.txt.gz")
-        samples_filepath = self.__get_local_dir(u"test_data/sample-train.tsv.gz")
+        vocab_filepath = self.__get_local_dir("test_data/vocab.txt.gz")
+        samples_filepath = self.__get_local_dir("test_data/sample-train.tsv.gz")
         words_vocab = self.__read_vocab(vocab_filepath)
         config = DefaultNetworkConfig()
         config.modify_terms_per_context(50)
@@ -62,7 +62,7 @@ class TestSamplesIteration(unittest.TestCase):
             for w_ind, line in enumerate(f.readlines()):
                 w = line.decode('utf-8').strip()
                 if w in words:
-                    raise Exception(u"Word already presented: {}".format(w).encode('utf-8'))
+                    raise Exception("Word already presented: {}".format(w).encode('utf-8'))
                 words[w] = w_ind
         return words
 
@@ -72,13 +72,13 @@ class TestSamplesIteration(unittest.TestCase):
         for t_index, t_value in enumerate(terms):
             value = t_value
             if t_index in frame_inds_set:
-                value = u"[[{}]]".format(t_value)
+                value = "[[{}]]".format(t_value)
             words.append(value)
-        return u" ".join(words)
+        return " ".join(words)
 
     def __test_core(self, words_vocab, config, samples_filepath):
         assert(isinstance(config, DefaultNetworkConfig))
-        assert(isinstance(samples_filepath, unicode))
+        assert(isinstance(samples_filepath, str))
 
         samples = []
         for i, row in enumerate(self.__iter_tsv_gzip(input_file=samples_filepath)):
@@ -110,29 +110,29 @@ class TestSamplesIteration(unittest.TestCase):
                 continue
 
             if self.__show_examples:
-                print u"------------------"
-                print u"INPUT SAMPLE DATA"
-                print u"------------------"
-                print u"offset index (debug): {}".format(sample._shift_index_dbg)
-                print u"id: {}".format(row.SampleID)
-                print u"label: {}".format(row.UintLabel)
-                print u"entity_inds: {}".format(row.EntityInds)
-                print u"subj_ind: {}".format(subj_ind)
-                print u"obj_ind: {}".format(obj_ind)
-                print u"frame_inds: {}".format(row.TextFrameVariantIndices)
-                print u"frame_roles_uint: {}".format(row.TextFrameVariantRoles)
-                print u"syn_obj: {}".format(row.SynonymObjectInds)
-                print u"syn_subj: {}".format(row.SynonymSubjectInds)
-                print u"terms:".format(row.Terms)
-                print u"pos_tags:".format(row.PartOfSpeechTags)
+                print("------------------")
+                print("INPUT SAMPLE DATA")
+                print("------------------")
+                print("offset index (debug): {}".format(sample._shift_index_dbg))
+                print("id: {}".format(row.SampleID))
+                print("label: {}".format(row.UintLabel))
+                print("entity_inds: {}".format(row.EntityInds))
+                print("subj_ind: {}".format(subj_ind))
+                print("obj_ind: {}".format(obj_ind))
+                print("frame_inds: {}".format(row.TextFrameVariantIndices))
+                print("frame_roles_uint: {}".format(row.TextFrameVariantRoles))
+                print("syn_obj: {}".format(row.SynonymObjectInds))
+                print("syn_subj: {}".format(row.SynonymSubjectInds))
+                print("terms:".format(row.Terms))
+                print("pos_tags:".format(row.PartOfSpeechTags))
 
-                print self.__terms_to_text_line(terms=row.Terms, frame_inds_set=set(row.TextFrameVariantIndices))
+                print(self.__terms_to_text_line(terms=row.Terms, frame_inds_set=set(row.TextFrameVariantIndices)))
 
-                print u"------------------"
-                print u"NETWORK INPUT DATA"
-                print u"------------------"
+                print("------------------")
+                print("NETWORK INPUT DATA")
+                print("------------------")
                 for key, value in sample:
-                    print u"{key}:\n{value}".format(key=key, value=value)
+                    print("{key}:\n{value}".format(key=key, value=value))
 
             samples.append(sample)
 

@@ -15,8 +15,8 @@ from arekit.contrib.bert.output.google_bert import GoogleBertMulticlassOutput
 class TestOutputFormatters(unittest.TestCase):
 
     __current_dir = dirname(__file__)
-    __input_samples_filepath = join(__current_dir, u"data/test_sample_3l.tsv.gz")
-    __google_bert_output_filepath_sample = join(__current_dir, u"data/test_google_bert_output_3l.tsv")
+    __input_samples_filepath = join(__current_dir, "data/test_sample_3l.tsv.gz")
+    __google_bert_output_filepath_sample = join(__current_dir, "data/test_google_bert_output_3l.tsv")
 
     def test_google_bert_output_formatter(self):
         row_ids_provider = MultipleIDProvider()
@@ -32,12 +32,12 @@ class TestOutputFormatters(unittest.TestCase):
 
         df = output._DataFrame
 
-        print df.columns
-        print df
+        print(df.columns)
+        print(df)
 
         # Check that all columns has string type.
         for c in df.columns:
-            self.assert_(isinstance(c, str))
+            self.assertTrue(isinstance(c, str))
 
 
 if __name__ == '__main__':

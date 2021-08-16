@@ -57,12 +57,12 @@ class TestPartOfSpeech(unittest.TestCase):
 
     def __print_parsed_text(self, parsed_text):
         assert(isinstance(parsed_text, list))
-        print u"Length: {}".format(len(parsed_text))
+        print("Length: {}".format(len(parsed_text)))
         for t in parsed_text:
             if isinstance(t, Entity):
-                print u"<{}>".format(t.Value),
+                print("<{}>".format(t.Value), end=' ')
             else:
-                print u"'{}'".format(t),
+                print("'{}'".format(t), end=' ')
 
 
 if __name__ == '__main__':

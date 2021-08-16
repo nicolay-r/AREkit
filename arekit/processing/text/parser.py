@@ -50,7 +50,7 @@ class TextParser:
 
     @staticmethod
     def __parse(text, stemmer=None):
-        assert(isinstance(text, unicode))
+        assert(isinstance(text, str))
         terms = TextParser.__parse_core(text)
         return ParsedText(terms, stemmer=stemmer)
 
@@ -125,7 +125,7 @@ class TextParser:
         return: list
             list of unicode parsed_news, where each term: word or token
         """
-        assert(isinstance(text, unicode))
+        assert(isinstance(text, str))
         assert(isinstance(keep_tokens, bool))
 
         terms = TextParser.__process_words(words=split_by_whitespaces(text),
@@ -184,9 +184,9 @@ class TextParser:
                 l += 1
 
             # Number.
-            elif unicode.isdigit(term[l]):
+            elif str.isdigit(term[l]):
                 k = l + 1
-                while k < len(term) and unicode.isdigit(term[k]):
+                while k < len(term) and str.isdigit(term[k]):
                     k += 1
                 token = Tokens.try_create_number(term[l:k])
                 assert(token is not None)

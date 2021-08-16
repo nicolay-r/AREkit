@@ -10,13 +10,13 @@ from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNegativeL
 
 class TwoClassEvalResult(BaseEvalResult):
 
-    C_F1 = u'f1'
-    C_POS_PREC = u'pos_prec'
-    C_NEG_PREC = u'neg_prec'
-    C_POS_RECALL = u'pos_recall'
-    C_NEG_RECALL = u'neg_recall'
-    C_F1_POS = u'f1_pos'
-    C_F1_NEG = u'f1_neg'
+    C_F1 = 'f1'
+    C_POS_PREC = 'pos_prec'
+    C_NEG_PREC = 'neg_prec'
+    C_POS_RECALL = 'pos_recall'
+    C_NEG_RECALL = 'neg_recall'
+    C_F1_POS = 'f1_pos'
+    C_F1_NEG = 'f1_neg'
 
     def __init__(self):
         self.__doc_results = OrderedDict()
@@ -76,7 +76,7 @@ class TwoClassEvalResult(BaseEvalResult):
     def calculate(self):
         pos_prec_macro, neg_prec_macro, pos_recall_macro, neg_recall_macro = (0.0, 0.0, 0.0, 0.0)
 
-        for info in self.__doc_results.itervalues():
+        for info in self.__doc_results.values():
             pos_prec_macro += info[self.C_POS_PREC]
             neg_prec_macro += info[self.C_NEG_PREC]
             pos_recall_macro += info[self.C_POS_RECALL]
@@ -103,4 +103,4 @@ class TwoClassEvalResult(BaseEvalResult):
         self._total_result[self.C_NEG_RECALL] = neg_recall_macro
 
     def iter_document_results(self):
-        return self.__doc_results.iteritems()
+        return iter(self.__doc_results.items())

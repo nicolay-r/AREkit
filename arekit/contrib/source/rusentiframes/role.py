@@ -1,8 +1,8 @@
 class FrameRole(object):
 
     def __init__(self, source, description):
-        assert(isinstance(source, unicode))
-        assert(isinstance(description, unicode))
+        assert(isinstance(source, str))
+        assert(isinstance(description, str))
         self.__source = source
         self.__description = description
 

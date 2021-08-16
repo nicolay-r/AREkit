@@ -37,12 +37,12 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         dtypes_list = super(NetworkSampleFormatter, self)._get_columns_list_with_types()
 
         # insert indices
-        dtypes_list.append((const.FrameVariantIndices, unicode))
-        dtypes_list.append((const.FrameRoles, unicode))
-        dtypes_list.append((const.SynonymSubject, unicode))
-        dtypes_list.append((const.SynonymObject, unicode))
-        dtypes_list.append((const.Entities, unicode))
-        dtypes_list.append((const.PosTags, unicode))
+        dtypes_list.append((const.FrameVariantIndices, str))
+        dtypes_list.append((const.FrameRoles, str))
+        dtypes_list.append((const.SynonymSubject, str))
+        dtypes_list.append((const.SynonymObject, str))
+        dtypes_list.append((const.Entities, str))
+        dtypes_list.append((const.PosTags, str))
 
         return dtypes_list
 
@@ -113,7 +113,7 @@ class NetworkSampleFormatter(BaseSampleFormatter):
     @staticmethod
     def __iter_indices(terms, filter):
         for t_ind, term in enumerate(terms):
-            if filter(term):
+            if list(filter(term)):
                 yield t_ind
 
     def __syn_check(self, term, group_ind):

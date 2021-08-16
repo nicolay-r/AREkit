@@ -46,7 +46,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
     @staticmethod
     def formatter_type_log_name():
-        return u"sample"
+        return "sample"
 
     # region Private methods
 
@@ -67,7 +67,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
         """
         dtypes_list = super(BaseSampleFormatter, self)._get_columns_list_with_types()
 
-        dtypes_list.append((const.ID, unicode))
+        dtypes_list.append((const.ID, str))
         dtypes_list.append((const.NEWS_ID, 'int32'))
 
         # insert labels
@@ -76,7 +76,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         # insert text columns
         for col_name in self.__text_provider.iter_columns():
-            dtypes_list.append((col_name, unicode))
+            dtypes_list.append((col_name, str))
 
         # insert indices
         dtypes_list.append((const.S_IND, 'int32'))
@@ -217,7 +217,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         row_dict = OrderedDict()
 
-        for index_in_linked in xrange(len(linked_wrapper)):
+        for index_in_linked in range(len(linked_wrapper)):
 
             rows_it = self.__provide_rows(
                 parsed_news=parsed_news,
@@ -237,23 +237,23 @@ class BaseSampleFormatter(BaseRowsFormatter):
         return df
 
     def _fast_init_df(self, df, rows_count):
-        df[self.ROW_ID] = range(rows_count)
+        df[self.ROW_ID] = list(range(rows_count))
         df.set_index(self.ROW_ID, inplace=True)
 
     def save(self, filepath, write_header):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
 
         if self.__balance:
-            logger.info(u"Start balancing...")
+            logger.info("Start balancing...")
             balanced_df = SampleRowBalancerHelper.calculate_balanced_df(
                 df=self._df,
                 create_blank_df=lambda size: self._create_blank_df(size),
                 label_provider=self._label_provider)
-            logger.info(u"Balancing completed!")
+            logger.info("Balancing completed!")
             self.dispose_dataframe()
             self._df = balanced_df
 
-        logger.info(u"Saving... {shape}: {filepath}".format(
+        logger.info("Saving... {shape}: {filepath}".format(
             shape=self._df.shape,  # self._df.shape,
             filepath=filepath))
         self._df.sort_values(by=[const.ID], ascending=True)
@@ -265,7 +265,7 @@ class BaseSampleFormatter(BaseRowsFormatter):
                         float_format="%.0f",
                         compression='gzip',
                         header=write_header)
-        logger.info(u"Saving completed!")
+        logger.info("Saving completed!")
         logger.info(self._df.info())
 
     def __len__(self):

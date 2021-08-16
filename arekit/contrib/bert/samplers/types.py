@@ -27,11 +27,11 @@ class BertSampleFormatterTypes(Enum):
 class SampleFormattersService(object):
 
     __fmt_names = {
-        BertSampleFormatterTypes.CLASSIF_M: u'c_m',
-        BertSampleFormatterTypes.QA_M: u"qa_m",
-        BertSampleFormatterTypes.NLI_M: u'nli_m',
-        BertSampleFormatterTypes.QA_B: u"qa_b",
-        BertSampleFormatterTypes.NLI_B: u"nli_b"
+        BertSampleFormatterTypes.CLASSIF_M: 'c_m',
+        BertSampleFormatterTypes.QA_M: "qa_m",
+        BertSampleFormatterTypes.NLI_M: 'nli_m',
+        BertSampleFormatterTypes.QA_B: "qa_b",
+        BertSampleFormatterTypes.NLI_B: "nli_b"
     }
 
     # region private methods
@@ -75,7 +75,7 @@ class SampleFormattersService(object):
 
     @staticmethod
     def find_fmt_type_by_name(name):
-        for fmt_type, fmt_type_name in SampleFormattersService.__fmt_names.iteritems():
+        for fmt_type, fmt_type_name in SampleFormattersService.__fmt_names.items():
             if fmt_type_name == name:
                 return fmt_type
-        raise NotImplemented(u"Formatting type '{}' does not supported".format(name))
+        raise NotImplemented("Formatting type '{}' does not supported".format(name))

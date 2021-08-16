@@ -10,13 +10,13 @@ class StringLabelsFormatter(object):
     def __init__(self, stol):
         assert(isinstance(stol, dict))
         self._stol = stol
-        self.__supported_labels = set(self._stol.itervalues())
+        self.__supported_labels = set(self._stol.values())
 
     def __is_label_supported(self, label):
         return label in self.__supported_labels
 
     def str_to_label(self, value):
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
         assert(value in self._stol)
         return self._stol[value]
 
@@ -27,7 +27,7 @@ class StringLabelsFormatter(object):
             raise Exception("Label {label} is not supported. Supported labels: [{values}]".format(
                 label=label, values=self.__supported_labels))
 
-        for value, supported_label in self._stol.iteritems():
+        for value, supported_label in self._stol.items():
             if supported_label == label:
                 return value
 
@@ -35,6 +35,6 @@ class StringLabelsFormatter(object):
         return label in self.__supported_labels
 
     def supports_value(self, value):
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
         return value in self._stol
 

@@ -31,10 +31,10 @@ class SampleRowBalancerHelper(object):
         labels_count = len(label_df)
 
         if labels_count > 0:
-            for row_index in xrange(len(blank_df)):
+            for row_index in range(len(blank_df)):
                 keep_row_index = row_index if row_index < labels_count else random.randint(0, labels_count - 1)
                 row = label_df.iloc[keep_row_index]
-                for column, value in row.iteritems():
+                for column, value in row.items():
                     blank_df.at[row_index, column] = value
 
         return blank_df
@@ -72,15 +72,15 @@ class SampleRowBalancerHelper(object):
         balanced_class_sizes = SampleRowBalancerHelper.__get_class_sizes(df=balanced_df,
                                                                          uint_labels=output_labels_uint)
 
-        logger.info(u"Rows count for uint labels [original]: {}".format(
+        logger.info("Rows count for uint labels [original]: {}".format(
             ["{} ({})".format(str(class_uint), str(count))
              for class_uint, count in enumerate(original_class_sizes) if count > 0]))
 
-        logger.info(u"Rows count for uint labels [balanced]: {}".format(
+        logger.info("Rows count for uint labels [balanced]: {}".format(
             ["{} ({})".format(str(class_uint), str(count))
              for class_uint, count in enumerate(balanced_class_sizes) if count > 0]))
 
-        logger.info(u"Rows count [balanced, total]: {}".format(sum(balanced_class_sizes)))
+        logger.info("Rows count [balanced, total]: {}".format(sum(balanced_class_sizes)))
 
         return balanced_df
 

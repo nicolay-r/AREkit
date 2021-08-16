@@ -15,8 +15,8 @@ class BaseLabelScaler(object):
         self.__uint_dict = uint_dict
         self.__int_dict = int_dict
 
-        self.__ordered_labels = list(uint_dict.iterkeys())
-        self.__no_label_instance = self.__find_no_label_instance(uint_dict.iterkeys())
+        self.__ordered_labels = list(uint_dict.keys())
+        self.__no_label_instance = self.__find_no_label_instance(iter(uint_dict.keys()))
 
     @property
     def LabelsCount(self):
@@ -50,7 +50,7 @@ class BaseLabelScaler(object):
     def __itol(value, d):
         assert(isinstance(value, int))
         assert(isinstance(d, OrderedDict))
-        for label, v in d.iteritems():
+        for label, v in d.items():
             if v == value:
                 return label
 
@@ -58,7 +58,7 @@ class BaseLabelScaler(object):
     def __has_value(value, d):
         assert(isinstance(value, int))
         assert(isinstance(d, OrderedDict))
-        for label, v in d.iteritems():
+        for label, v in d.items():
             if v == value:
                 return True
         return False

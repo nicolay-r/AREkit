@@ -42,7 +42,7 @@ class SimpleCrossValidataionSplitter(CrossValidationSplitter):
         chunks = self.__chunk_it(doc_ids, cv_count)
 
         for test_index, chunk in enumerate(chunks):
-            train_indices = range(len(chunks))
+            train_indices = list(range(len(chunks)))
             train_indices.remove(test_index)
 
             large = [v for train_index in train_indices for v in chunks[train_index]]

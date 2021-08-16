@@ -22,7 +22,7 @@ class QaMultipleSampleFormatter(BaseSampleFormatter):
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
-        text_b_template = u'Что вы думаете по поводу отношения {subject} к {object} в контексте : << {context} >> ?'
+        text_b_template = 'Что вы думаете по поводу отношения {subject} к {object} в контексте : << {context} >> ?'
         super(QaMultipleSampleFormatter, self).__init__(
             data_type=data_type,
             text_provider=PairTextProvider(

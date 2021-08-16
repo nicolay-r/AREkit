@@ -10,9 +10,9 @@ class BaseIDProvider(object):
     i -- index in lined (for example: i=3 => 03)
     """
 
-    SEPARATOR = u'_'
-    OPINION = u"o{}" + SEPARATOR
-    INDEX = u"i{}" + SEPARATOR
+    SEPARATOR = '_'
+    OPINION = "o{}" + SEPARATOR
+    INDEX = "i{}" + SEPARATOR
 
     # region 'create' methods
 
@@ -21,7 +21,7 @@ class BaseIDProvider(object):
         assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
         assert(isinstance(index_in_linked, int))
 
-        template = u''.join([BaseIDProvider.OPINION,
+        template = ''.join([BaseIDProvider.OPINION,
                              BaseIDProvider.INDEX])
 
         text_opinion_id = linked_opinions.First.TextOpinionID
@@ -37,21 +37,21 @@ class BaseIDProvider(object):
     @staticmethod
     def create_pattern(id_value, p_type):
         assert(isinstance(id_value, int))
-        assert(isinstance(p_type, unicode))
+        assert(isinstance(p_type, str))
         return p_type.format(id_value)
 
     # endregion
 
     @staticmethod
     def convert_sample_id_to_opinion_id(sample_id):
-        assert(isinstance(sample_id, unicode))
+        assert(isinstance(sample_id, str))
         return sample_id[:sample_id.index(BaseIDProvider.INDEX[0])] + BaseIDProvider.INDEX.format(0)
 
     # region 'parse' methods
 
     @staticmethod
     def _parse(row_id, pattern):
-        assert(isinstance(pattern, unicode))
+        assert(isinstance(pattern, str))
 
         _from = row_id.index(pattern[0]) + 1
         _to = row_id.index(BaseIDProvider.SEPARATOR, _from, len(row_id))
@@ -60,12 +60,12 @@ class BaseIDProvider(object):
 
     @staticmethod
     def parse_opinion_in_opinion_id(opinion_id):
-        assert(isinstance(opinion_id, unicode))
+        assert(isinstance(opinion_id, str))
         return BaseIDProvider._parse(opinion_id, BaseIDProvider.OPINION)
 
     @staticmethod
     def parse_opinion_in_sample_id(sample_id):
-        assert(isinstance(sample_id, unicode))
+        assert(isinstance(sample_id, str))
         return BaseIDProvider._parse(sample_id, BaseIDProvider.OPINION)
 
     # endregion

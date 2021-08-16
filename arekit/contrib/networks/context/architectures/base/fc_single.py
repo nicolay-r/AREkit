@@ -39,7 +39,7 @@ class FullyConnectedLayer(SingleInstanceNeuralNetwork):
     # region public 'iter' methods
 
     def iter_hidden_parameters(self):
-        for key, value in self.__hidden.iteritems():
+        for key, value in self.__hidden.items():
             yield key, value
 
     # endregion

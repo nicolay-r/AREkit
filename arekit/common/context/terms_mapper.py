@@ -16,7 +16,7 @@ class TextTermsMapper(object):
 
         for i, term in enumerate(terms):
 
-            if isinstance(term, unicode):
+            if isinstance(term, str):
                 m_term = self.map_word(i, term)
             elif isinstance(term, Token):
                 m_term = self.map_token(i, term)

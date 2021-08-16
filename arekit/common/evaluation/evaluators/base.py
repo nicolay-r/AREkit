@@ -61,8 +61,8 @@ class BaseEvaluator(object):
             if self.__eval_mode == EvaluationModes.Classification:
                 # That could not be possible, since we perform
                 # classification of already provided opinions.
-                raise Exception(u"Opinion of test collection (`{s}`->`{t}`) was not "
-                                u"found in etalon collection!".format(s=o_test.SourceValue,
+                raise Exception("Opinion of test collection (`{s}`->`{t}`) was not "
+                                "found in etalon collection!".format(s=o_test.SourceValue,
                                                                       t=o_test.TargetValue))
             elif self.__eval_mode == EvaluationModes.Extraction:
                 yield [o_test, None, o_test.Sentiment]
@@ -86,7 +86,7 @@ class BaseEvaluator(object):
             return True
 
         if not is_label_supported(label):
-            raise Exception(u"Label \"{label}\" is not supported by {e}".format(
+            raise Exception("Label \"{label}\" is not supported by {e}".format(
                 label=label_to_str(label),
                 e=type(self).__name__))
 

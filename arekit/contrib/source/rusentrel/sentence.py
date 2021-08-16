@@ -11,7 +11,7 @@ class RuSentRelSentence(BaseNewsSentence):
 
     # TODO. Remove begin / end parameters
     def __init__(self, text, char_ind_begin, char_ind_end):
-        assert(isinstance(text, unicode) and len(text) > 0)
+        assert(isinstance(text, str) and len(text) > 0)
         assert(isinstance(char_ind_begin, int))
         assert(isinstance(char_ind_end, int))
 

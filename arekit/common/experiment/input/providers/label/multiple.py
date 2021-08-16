@@ -11,5 +11,5 @@ class MultipleLabelProvider(LabelProvider):
 
     @property
     def OutputLabelsUint(self):
-        return map(lambda label: self.LabelScaler.label_to_uint(label), self.SupportedLabels)
+        return [self.LabelScaler.label_to_uint(label) for label in self.SupportedLabels]
 

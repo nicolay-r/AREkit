@@ -22,7 +22,7 @@ class MultiInstanceMiniBatch(MiniBatch):
                 assert(isinstance(sample, InputSampleBase))
                 for arg, value in sample:
                     if arg not in result:
-                        result[arg] = [[None] * len(bag) for _ in xrange(len(self.Bags))]
+                        result[arg] = [[None] * len(bag) for _ in range(len(self.Bags))]
                     result[arg][bag_index][sample_index] = value
 
         for bag in self.iter_by_bags():

@@ -119,7 +119,7 @@ class InputSample(InputSampleBase):
                    dist_nearest_obj=blank_terms,
                    frame_sent_roles=blank_terms,
                    frame_indices=blank_frames,
-                   input_sample_id=u"1")
+                   input_sample_id="1")
 
     @classmethod
     def _generate_test(cls, config):
@@ -141,7 +141,7 @@ class InputSample(InputSampleBase):
                    dist_nearest_obj=blank_terms,
                    frame_sent_roles=blank_terms,
                    frame_indices=blank_frames,
-                   input_sample_id=u"1")
+                   input_sample_id="1")
 
     @classmethod
     def __get_index_by_term(cls, term, word_vocab, is_external_vocab):

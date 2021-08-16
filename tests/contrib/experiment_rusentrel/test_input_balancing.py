@@ -48,11 +48,11 @@ class TestInputBalancing(unittest.TestCase):
             create_blank_df=lambda size: formatter._create_blank_df(size),
             label_provider=label_provider)
 
-        print "Original:"
-        print df.shape
+        print("Original:")
+        print(df.shape)
 
-        print "Balanced:"
-        print balanced_df.shape
+        print("Balanced:")
+        print(balanced_df.shape)
 
 
 if __name__ == '__main__':

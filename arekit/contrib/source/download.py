@@ -1,4 +1,4 @@
-import utils
+from . import utils
 from os.path import join
 
 
@@ -26,6 +26,6 @@ def download():
     }
 
     # Perform downloading ...
-    for local_name, url_link in data.iteritems():
+    for local_name, url_link in data.items():
         utils.download(dest_file_path=join(root_dir, local_name),
                        source_url=url_link)

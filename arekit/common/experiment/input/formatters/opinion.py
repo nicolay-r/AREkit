@@ -22,14 +22,14 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
 
     @staticmethod
     def formatter_type_log_name():
-        return u"opinion"
+        return "opinion"
 
     def _get_columns_list_with_types(self):
         dtypes_list = super(BaseOpinionsFormatter, self)._get_columns_list_with_types()
-        dtypes_list.append((const.ID, unicode))
+        dtypes_list.append((const.ID, str))
         dtypes_list.append((const.NEWS_ID, 'int32'))
-        dtypes_list.append((const.SOURCE, unicode))
-        dtypes_list.append((const.TARGET, unicode))
+        dtypes_list.append((const.SOURCE, str))
+        dtypes_list.append((const.TARGET, str))
         return dtypes_list
 
     @staticmethod
@@ -73,7 +73,7 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
     # endregion
 
     def save(self, filepath):
-        logger.info(u"Saving... : {}".format(filepath))
+        logger.info("Saving... : {}".format(filepath))
         self._df.sort_values(by=[const.ID], ascending=True)
         self._df.to_csv(filepath,
                         sep='\t',
@@ -81,5 +81,5 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
                         columns=[c for c in self._df.columns if c != self.ROW_ID],
                         index=False,
                         compression='gzip')
-        logger.info(u"Saving completed!")
+        logger.info("Saving completed!")
 

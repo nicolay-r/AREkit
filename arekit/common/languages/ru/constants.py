@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 class RussianConstants:
 
-    PrepositionSet = {u'к', u'на', u'по', u'с', u'до', u'в', u'во', u"у", u"а"}
+    PrepositionSet = {'к', 'на', 'по', 'с', 'до', 'в', 'во', "у", "а"}
 
     def __init__(self):
         pass

@@ -10,10 +10,10 @@ class TextObject(object):
 
     def __init__(self, id_in_sentence, value, obj_type, position, terms_count, syn_group_index, is_auth):
         assert(isinstance(id_in_sentence, int))
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
         assert(isinstance(position, int))
         assert(isinstance(terms_count, int) and terms_count > 0)
-        assert(isinstance(obj_type, unicode) or obj_type is None)
+        assert(isinstance(obj_type, str) or obj_type is None)
         assert(isinstance(syn_group_index, int))
         assert(isinstance(is_auth, bool))
         self.__value = value
@@ -25,7 +25,7 @@ class TextObject(object):
 
     def to_entity(self, to_doc_id_func):
         assert(callable(to_doc_id_func))
-        return Entity(value=self.__value if len(self.__value) > 0 else u'[empty]',
+        return Entity(value=self.__value if len(self.__value) > 0 else '[empty]',
                       e_type=self.__type,
                       id_in_doc=to_doc_id_func(self.__id_in_sentence),
                       group_index=self.__syn_group_index)

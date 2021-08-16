@@ -12,8 +12,8 @@ class FrameVariantsSearcher(object):
 
     @staticmethod
     def __check_all_words_within(terms, start_index, last_index):
-        for i in xrange(start_index, last_index + 1):
-            if not isinstance(terms[i], unicode):
+        for i in range(start_index, last_index + 1):
+            if not isinstance(terms[i], str):
                 return False
         return True
 
@@ -29,14 +29,14 @@ class FrameVariantsSearcher(object):
         assert(isinstance(parsed_text, ParsedText))
         assert(issubclass(locale_mods, BaseLanguageMods))
 
-        lemmas = [locale_mods.replace_specific_word_chars(lemma) if isinstance(lemma, unicode) else lemma
+        lemmas = [locale_mods.replace_specific_word_chars(lemma) if isinstance(lemma, str) else lemma
                   for lemma in parsed_text.iter_terms(term_format=TermFormat.Lemma)]
 
         start_ind = 0
         last_ind = 0
         max_variant_len = max([len(variant) for _, variant in frame_variants.iter_variants()])
         while start_ind < len(lemmas):
-            for ctx_size in reversed(range(1, max_variant_len)):
+            for ctx_size in reversed(list(range(1, max_variant_len))):
 
                 last_ind = start_ind + ctx_size - 1
 
@@ -51,7 +51,7 @@ class FrameVariantsSearcher(object):
                 if not is_all_words_within:
                     continue
 
-                ctx_value = u" ".join(lemmas[start_ind:last_ind + 1])
+                ctx_value = " ".join(lemmas[start_ind:last_ind + 1])
 
                 if not frame_variants.has_variant(ctx_value):
                     continue

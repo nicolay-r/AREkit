@@ -23,10 +23,10 @@ class TestSynonymsCollection(unittest.TestCase):
     def test(self):
         synonyms = self.__read_synonyms_collection()
 
-        for group_index in xrange(len(synonyms)):
+        for group_index in range(len(synonyms)):
             for group_item in synonyms.iter_group(group_index):
-                print group_item
-            print "---"
+                print(group_item)
+            print("---")
 
     def test_iter_by_index(self):
         synonyms = self.__read_synonyms_collection()
@@ -34,16 +34,16 @@ class TestSynonymsCollection(unittest.TestCase):
         for item in synonyms.iter_by_index():
             assert(isinstance(item, list))
             for word in item:
-                print word
-            print "==="
+                print(word)
+            print("===")
 
     def test_iter_synonym_values(self):
-        searching_value = u'америка'
+        searching_value = 'америка'
         synonyms = self.__read_synonyms_collection()
-        print u"Request: {}".format(searching_value)
-        print u"-------"
+        print("Request: {}".format(searching_value))
+        print("-------")
         for value in synonyms.iter_synonym_values(value=searching_value):
-            print value
+            print(value)
 
 
 if __name__ == '__main__':

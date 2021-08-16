@@ -85,7 +85,7 @@ class TestContextNetworkFeeding(unittest.TestCase):
                               feed_dict=feed_dict)
 
             # Printing graph
-            print result
+            print(result)
             writer.close()
 
             # Show hidden parameters

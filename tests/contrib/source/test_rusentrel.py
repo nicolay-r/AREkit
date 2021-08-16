@@ -10,7 +10,7 @@ class TestRuSentRel(unittest.TestCase):
     def test_iter_train_indices(self):
         train_indices = list(RuSentRelIOUtils.iter_train_indices(self.rsr_version))
         for i in train_indices:
-            print i,
+            print(i, end=' ')
 
         for i in range(1, 46):
 

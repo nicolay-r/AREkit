@@ -5,11 +5,11 @@ from arekit.common.embeddings.base import Embedding
 logger = logging.getLogger(__name__)
 
 
-def create_term_embedding(term, embedding, check, word_separator=u' '):
+def create_term_embedding(term, embedding, check, word_separator=' '):
     """
     Embedding algorithm based on parts (trigrams originally)
     """
-    assert(isinstance(term, unicode))
+    assert(isinstance(term, str))
     assert(isinstance(embedding, Embedding))
 
     if term in embedding:
@@ -22,7 +22,7 @@ def create_term_embedding(term, embedding, check, word_separator=u' '):
 
     # In order to prevent a problem of the further separations during reading process.
     # it is necessary to replace the separators with the other chars.
-    word = word.replace(word_separator, u'-')
+    word = word.replace(word_separator, '-')
 
     return word, embedding
 
@@ -32,8 +32,8 @@ def __compose_from_parts(term, embedding, check, word_separator, max_part_size=3
     term = term.strip()
 
     if check:
-        if u' ' in term:
-            print u"FAILED: [{}]".format(term)
+        if ' ' in term:
+            print("FAILED: [{}]".format(term))
 
     # perform lowercasing
     if do_lowercase:
@@ -53,13 +53,13 @@ def __compose_from_parts(term, embedding, check, word_separator, max_part_size=3
 
 
 def __get_from_embedding(term, embedding, check):
-    if u' ' in term:
-        print u"EXISTED IN EMBEDDING: [{}]".format(term)
+    if ' ' in term:
+        print("EXISTED IN EMBEDDING: [{}]".format(term))
     return embedding.try_get_related_word(term), embedding[term]
 
 
 def __create_embedding_for_word(word, max_part_size, embedding):
-    assert(isinstance(word, unicode))
+    assert(isinstance(word, str))
     assert(isinstance(embedding, Embedding))
 
     if word in embedding:
@@ -93,8 +93,8 @@ def __create_embedding_for_word(word, max_part_size, embedding):
 
     debug = False
     if debug:
-        w_debug = u''.join([u'?' if i in missings else ch
+        w_debug = ''.join(['?' if i in missings else ch
                             for i, ch in enumerate(word)])
-        logger.debug(u'Embedded: {}'.format(w_debug).encode('utf-8'))
+        logger.debug('Embedded: {}'.format(w_debug).encode('utf-8'))
 
     return vector, count

@@ -70,8 +70,8 @@ class VanillaCNN(SingleInstanceNeuralNetwork):
         return g
 
     def init_logits_unscaled(self, context_embedding):
-        W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
-        b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
+        W = [tensor for var_name, tensor in self.__hidden.items() if 'W' in var_name]
+        b = [tensor for var_name, tensor in self.__hidden.items() if 'b' in var_name]
         activations = [tf.tanh] * len(W)
         activations.append(None)
         result, result_dropout = layers.get_k_layer_pair_logits(g=context_embedding,
@@ -121,7 +121,7 @@ class VanillaCNN(SingleInstanceNeuralNetwork):
             dtype=tf.float32)
 
     def iter_hidden_parameters(self):
-        for key, value in self.__hidden.iteritems():
+        for key, value in self.__hidden.items():
             yield key, value
 
     @staticmethod

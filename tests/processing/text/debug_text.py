@@ -18,7 +18,7 @@ def debug_show_news_terms(parsed_news):
 
 def debug_show_terms(terms):
     for term in terms:
-        if isinstance(term, unicode):
+        if isinstance(term, str):
             logger.debug("Word:\t\t'{}'".format(term.encode('utf-8')))
         elif isinstance(term, Token):
             logger.debug("Token:\t\t'{}' ('{}')".format(term.get_token_value().encode('utf-8'),

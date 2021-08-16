@@ -22,7 +22,7 @@ class BaseRowsFormatter(object):
 
     @staticmethod
     def formatter_type_log_name():
-        return u""
+        return ""
 
     # region protected methods
 
@@ -59,7 +59,7 @@ class BaseRowsFormatter(object):
 
     def __fill_with_blank_rows(self, rows_count):
         assert(isinstance(rows_count, int))
-        self._df[self.ROW_ID] = range(rows_count)
+        self._df[self.ROW_ID] = list(range(rows_count))
         self._df.set_index(self.ROW_ID, inplace=True)
 
     # endregion
@@ -68,15 +68,15 @@ class BaseRowsFormatter(object):
         assert(isinstance(opinion_provider, OpinionProvider))
 
         logged_rows_it = progress_bar_iter(self._iter_by_rows(opinion_provider, idle_mode=True),
-                                           desc=u"Calculating rows count",
-                                           unit=u"rows")
+                                           desc="Calculating rows count",
+                                           unit="rows")
         rows_count = sum(1 for _ in logged_rows_it)
 
-        logger.info(u"Filling with blank rows: {}".format(rows_count))
+        logger.info("Filling with blank rows: {}".format(rows_count))
         self.__fill_with_blank_rows(rows_count)
-        logger.info(u"Completed!")
+        logger.info("Completed!")
 
-        desc = u"{fmt}-{dtype}".format(fmt=self.formatter_type_log_name(),
+        desc = "{fmt}-{dtype}".format(fmt=self.formatter_type_log_name(),
                                        dtype=self._data_type)
 
         it = progress_bar_defined(iterable=self._iter_by_rows(opinion_provider, idle_mode=False),
@@ -84,7 +84,7 @@ class BaseRowsFormatter(object):
                                   total=rows_count)
 
         for row_index, row in enumerate(it):
-            for column, value in row.iteritems():
+            for column, value in row.items():
                 self.__set_value(row_ind=row_index,
                                  column=column,
                                  value=value)

@@ -5,5 +5,5 @@ from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLa
 class ExperimentNeutralLabelsFormatter(StringLabelsFormatter):
 
     def __init__(self):
-        stol = {u'neu': ExperimentNeutralLabel()}
+        stol = {'neu': ExperimentNeutralLabel()}
         super(ExperimentNeutralLabelsFormatter, self).__init__(stol=stol)

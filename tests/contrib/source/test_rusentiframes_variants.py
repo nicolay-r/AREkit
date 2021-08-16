@@ -25,7 +25,7 @@ class TestRuSentiFrameVariants(unittest.TestCase):
     def test_iter_frame_variants(self):
         frame_values_list = list(self.__iter_frame_variants())
         for frame_variant in frame_values_list:
-            print u'"{}"'.format(frame_variant)
+            print('"{}"'.format(frame_variant))
 
 
 if __name__ == '__main__':

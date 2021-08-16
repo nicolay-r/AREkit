@@ -24,7 +24,7 @@ class BertIOUtils(BaseIOUtils):
 
         model_eval_root = self.__get_eval_root_filepath(data_type=data_type, epoch_index=epoch_index)
 
-        filepath = join(model_eval_root, u"{}.opin.txt".format(doc_id))
+        filepath = join(model_eval_root, "{}.opin.txt".format(doc_id))
 
         return filepath
 
@@ -36,7 +36,7 @@ class BertIOUtils(BaseIOUtils):
 
         result_dir = join(
             self.get_target_dir(),
-            join(u"eval/{data_type}/{iter_index}/{epoch_index}".format(
+            join("eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type.name,
                 iter_index=self._experiment_iter_index(),
                 epoch_index=str(epoch_index))))

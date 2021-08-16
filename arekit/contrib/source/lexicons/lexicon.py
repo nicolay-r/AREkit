@@ -20,12 +20,12 @@ class Lexicon(object):
         return cls(df)
 
     def get_score(self, lemma):
-        assert(type(lemma) == unicode)
+        assert(type(lemma) == str)
         s = self.__lexicon_df[lemma.encode('utf-8') == self.__lexicon_df[self.TermKey]]
         return s[self.ToneKey].values[0] if len(s) > 0 else 0
 
     def has_term(self, term):
-        assert(type(term) == unicode)
+        assert(type(term) == str)
         s = self.__lexicon_df[term.encode('utf-8') == self.__lexicon_df[self.TermKey]]
         return len(s) > 0
 
@@ -34,7 +34,7 @@ class Lexicon(object):
             yield term
 
     def __contains__(self, item):
-        assert(isinstance(item, unicode))
+        assert(isinstance(item, str))
         result = self.__lexicon_df[self.__lexicon_df[self.TermKey] == item.encode('utf-8')]
         return len(result) > 0
 

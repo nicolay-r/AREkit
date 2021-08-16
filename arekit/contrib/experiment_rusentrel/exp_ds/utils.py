@@ -34,13 +34,13 @@ def read_ruattitudes_in_memory(version, keep_doc_ids_only, used_doc_ids_set=None
     it_formatted_and_logged = progress_bar_iter(
         iterable=__iter_id_with_news(news_it=it,
                                      keep_doc_ids_only=keep_doc_ids_only),
-        desc=u"Loading RuAttitudes Collection [{}]".format(u"doc ids only" if keep_doc_ids_only else u"fully"),
-        unit=u'docs')
+        desc="Loading RuAttitudes Collection [{}]".format("doc ids only" if keep_doc_ids_only else "fully"),
+        unit='docs')
 
     for news_id, news in it_formatted_and_logged:
         if used_doc_ids_set is not None:
             if news_id in used_doc_ids_set:
-                logger.info(u"Document with id='{}' already used. Skipping".format(news_id))
+                logger.info("Document with id='{}' already used. Skipping".format(news_id))
                 continue
 
         d[news_id] = news

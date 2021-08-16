@@ -15,7 +15,7 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
         """
         Important: For externaly saved collections (using save_to_file method) and related usage
         """
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(error_on_non_supported, bool))
 
@@ -31,7 +31,7 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
 
     def save_to_file(self, collection, filepath, labels_formatter, error_on_non_supported=True):
         assert(isinstance(collection, OpinionCollection))
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(error_on_non_supported, bool))
 
@@ -58,7 +58,7 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
                         continue
 
                 f.write(str_value)
-                f.write(u'\n')
+                f.write('\n')
 
     def save_to_archive(self, collections_iter, labels_formatter):
         raise NotImplementedError()
@@ -117,7 +117,7 @@ class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
         if not labels_formatter.supports_label(label):
             return None
 
-        return u"{}, {}, {}, current".format(
+        return "{}, {}, {}, current".format(
             opinion.SourceValue,
             opinion.TargetValue,
             labels_formatter.label_to_str(opinion.Sentiment))

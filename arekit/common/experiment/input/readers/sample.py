@@ -14,7 +14,7 @@ class InputSampleReader(BaseInputReader):
 
     @classmethod
     def from_tsv(cls, filepath, row_ids_provider):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         assert(isinstance(row_ids_provider, BaseIDProvider))
 
         df = pd.read_csv(filepath,
@@ -25,7 +25,7 @@ class InputSampleReader(BaseInputReader):
         return cls(df=df, row_ids_provider=row_ids_provider)
 
     def extract_ids(self):
-        return self._df[const.ID].astype(unicode).tolist()
+        return self._df[const.ID].astype(str).tolist()
 
     def iter_news_ids(self):
         return self._df[const.NEWS_ID].astype(int).tolist()
@@ -42,7 +42,7 @@ class InputSampleReader(BaseInputReader):
         current_opinion_id = undefined
 
         for row_index, sample_id in enumerate(self._df[const.ID]):
-            sample_id = unicode(sample_id)
+            sample_id = str(sample_id)
 
             news_id = self._df.iloc[row_index][const.NEWS_ID]
             opinion_id = self.__row_ids_provider.parse_opinion_in_sample_id(sample_id)

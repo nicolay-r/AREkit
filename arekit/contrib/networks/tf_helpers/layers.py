@@ -20,7 +20,7 @@ def get_k_layer_logits(g, W, b, dropout_keep_prob=None, activations=None):
 
     res = g
 
-    for i in xrange(len(W)):
+    for i in range(len(W)):
 
         logger.debug("LOG: r_shape={}".format(res.shape))
         logger.debug("LOG: i={}".format(i))

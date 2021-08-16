@@ -9,11 +9,11 @@ class RuSentiFramesIOUtils(ZipArchiveUtils):
 
     @staticmethod
     def get_archive_filepath(version):
-        assert(isinstance(version, unicode))
-        return path.join(RuSentiFramesIOUtils.get_data_root(), u"rusentiframes-{version}.zip".format(version=version))
+        assert(isinstance(version, str))
+        return path.join(RuSentiFramesIOUtils.get_data_root(), "rusentiframes-{version}.zip".format(version=version))
 
     @staticmethod
     def get_collection_filepath():
-        return u"frames.json"
+        return "frames.json"
 
     # endregion

@@ -33,7 +33,7 @@ class BaseIOUtils(object):
     # region protected methods
 
     def __get_experiment_folder_name(self):
-        return u"{name}_{scale}l".format(name=self._experiment.Name,
+        return "{name}_{scale}l".format(name=self._experiment.Name,
                                          scale=str(self._experiment.DataIO.LabelsCount))
 
     def _experiment_iter_index(self):
@@ -41,20 +41,20 @@ class BaseIOUtils(object):
 
     def _filename_template(self, data_type):
         assert(isinstance(data_type, DataType))
-        return u"{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
+        return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
                                                   iter_index=self._experiment_iter_index())
 
     @staticmethod
     def _get_filepath(out_dir, template, prefix):
-        assert(isinstance(template, unicode))
-        assert(isinstance(prefix, unicode))
+        assert(isinstance(template, str))
+        assert(isinstance(prefix, str))
         return join(out_dir, BaseIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
 
     def _get_annotator_name(self):
         """ We use custom implementation as it allows to
             be independent of NeutralAnnotator instance.
         """
-        return u"annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
+        return "annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
 
     # endregion
 
@@ -84,7 +84,7 @@ class BaseIOUtils(object):
         # TODO. This should not depends on the neut.
         # TODO. This should not depends on the neut.
         # TODO. This should not depends on the neut.
-        filename = u"art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
+        filename = "art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
                                                            d_type=data_type.name)
 
         return join(annot_dir, filename)
@@ -98,7 +98,7 @@ class BaseIOUtils(object):
 
     @staticmethod
     def __generate_tsv_archive_filename(template, prefix):
-        return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
+        return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
 
     def __get_annotator_dir(self):
         return join_dir_with_subfolder_name(dir=self.get_target_dir(),

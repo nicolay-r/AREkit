@@ -14,19 +14,19 @@ class ThreeClassEvalResult(BaseEvalResult):
     """ This evaluation considered both sentiment and non-sentiment (neutral).
     """
 
-    C_F1 = u'f1'
-    C_POS_PREC = u'pos_prec'
-    C_NEG_PREC = u'neg_prec'
-    C_NEU_PREC = u'neu_prec'
-    C_POS_RECALL = u'pos_recall'
-    C_NEG_RECALL = u'neg_recall'
-    C_NEU_RECALL = u'neu_recall'
-    C_PREC_MICRO = u'prec_micro'
-    C_RECALL_MICRO = u'recall_micro'
-    C_F1_POS = u'f1_pos'
-    C_F1_NEG = u'f1_neg'
-    C_F1_NEU = u'f1_neu'
-    C_F1_MICRO = u'f1_micro'
+    C_F1 = 'f1'
+    C_POS_PREC = 'pos_prec'
+    C_NEG_PREC = 'neg_prec'
+    C_NEU_PREC = 'neu_prec'
+    C_POS_RECALL = 'pos_recall'
+    C_NEG_RECALL = 'neg_recall'
+    C_NEU_RECALL = 'neu_recall'
+    C_PREC_MICRO = 'prec_micro'
+    C_RECALL_MICRO = 'recall_micro'
+    C_F1_POS = 'f1_pos'
+    C_F1_NEG = 'f1_neg'
+    C_F1_NEU = 'f1_neu'
+    C_F1_MICRO = 'f1_micro'
 
     def __init__(self):
         self.__pos_label = ExperimentPositiveLabel()
@@ -112,7 +112,7 @@ class ThreeClassEvalResult(BaseEvalResult):
         prec_micro_macro = 0.0
         recall_micro_macro = 0.0
 
-        for info in self.__doc_results.itervalues():
+        for info in self.__doc_results.values():
             pos_prec_macro += info[self.C_POS_PREC]
             neg_prec_macro += info[self.C_NEG_PREC]
             neu_prec_macro += info[self.C_NEU_PREC]
@@ -151,4 +151,4 @@ class ThreeClassEvalResult(BaseEvalResult):
         self._total_result[self.C_F1_MICRO] = calc_f1_single_class(prec=prec_micro_macro, recall=recall_micro_macro)
 
     def iter_document_results(self):
-        return self.__doc_results.iteritems()
+        return iter(self.__doc_results.items())

@@ -8,8 +8,8 @@ class Opinion(object):
     """
 
     def __init__(self, source_value, target_value, sentiment):
-        assert(isinstance(source_value, unicode))
-        assert(isinstance(target_value, unicode))
+        assert(isinstance(source_value, str))
+        assert(isinstance(target_value, str))
         assert(isinstance(sentiment, Label))
         assert(',' not in source_value)  # Could be removed.
         assert(',' not in target_value)  # Could be removed.
@@ -66,7 +66,7 @@ class Opinion(object):
     def create_synonym_id(self, synonyms):
         assert(isinstance(synonyms, SynonymsCollection))
         s_ind, t_ind = self.__get_end_synonym_inds(synonyms)
-        return u"{}_{}".format(s_ind, t_ind)
+        return "{}_{}".format(s_ind, t_ind)
 
     def has_synonym_for_end(self, synonyms, end_type):
         assert(isinstance(synonyms, SynonymsCollection))

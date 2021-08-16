@@ -93,7 +93,7 @@ class NetworkInputEncoder(object):
 
         # Save embedding information additionally.
         term_embedding = Embedding.from_word_embedding_pairs_iter(
-            word_embedding_pairs=term_embedding_pairs.iteritems())
+            word_embedding_pairs=iter(term_embedding_pairs.items()))
 
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)

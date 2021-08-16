@@ -14,8 +14,8 @@ logging.basicConfig(level=logging.INFO)
 ########################################
 # Predefined Hidden parameters templates
 ########################################
-__hiddenParams_template = u'hparams_{}_e{}'
-__input_dependent_params_template = u'idparams_{data}_e{epoch_index}'
+__hiddenParams_template = 'hparams_{}_e{}'
+__input_dependent_params_template = 'idparams_{data}_e{epoch_index}'
 
 
 def save_model_hidden_values(log_dir, model, epoch_index, save_hidden_parameters):
@@ -31,7 +31,7 @@ def save_model_hidden_values(log_dir, model, epoch_index, save_hidden_parameters
 
     for value_index, name in enumerate(names):
         variable_path = join(log_dir, __hiddenParams_template.format(name, epoch_index))
-        logger.info(u"Save hidden values: {}".format(variable_path))
+        logger.info("Save hidden values: {}".format(variable_path))
         create_dir_if_not_exists(variable_path)
         np.save(variable_path, values[value_index])
 
@@ -48,17 +48,17 @@ def save_minibatch_all_input_dependent_hidden_values(log_dir, data_type, epoch_i
 
 
 def __save_minibatch_variable_values(log_dir, data_type, epoch_index, predict_log, var_name):
-    assert(isinstance(log_dir, unicode))
+    assert(isinstance(log_dir, str))
     assert(isinstance(predict_log, NetworkInputDependentVariables))
-    assert(isinstance(var_name, unicode))
+    assert(isinstance(var_name, str))
 
-    filename = __input_dependent_params_template.format(data=u'{}-{}'.format(var_name, data_type),
+    filename = __input_dependent_params_template.format(data='{}-{}'.format(var_name, data_type),
                                                         epoch_index=epoch_index)
 
     vars_path = join(log_dir, filename)
     create_dir_if_not_exists(vars_path)
 
-    msg = u"Save input dependent hidden values in a list using np.savez: {}".format(vars_path)
+    msg = "Save input dependent hidden values in a list using np.savez: {}".format(vars_path)
     logger.info(msg)
 
     id_and_value_pairs = list(predict_log.iter_by_parameter_values(var_name))

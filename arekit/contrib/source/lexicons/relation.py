@@ -21,13 +21,13 @@ class RelationLexicon(object):
 
     @staticmethod
     def __create_key(l, r):
-        assert(type(l) == unicode)
-        assert(type(r) == unicode)
+        assert(type(l) == str)
+        assert(type(r) == str)
         return ('<->'.join([l.encode('utf-8'), r.encode('utf-8')])).decode('utf-8')
 
     def get_score(self, left, right):
-        assert(type(left) == unicode)
-        assert(type(right) == unicode)
+        assert(type(left) == str)
+        assert(type(right) == str)
 
         lr_key = self.__create_key(left, right).encode('utf-8')
         rl_key = self.__create_key(right, left).encode('utf-8')

@@ -37,7 +37,7 @@ def split_by_whitespaces(text):
     Assumes to perform a word separation including a variety of space entries.
     In terms of the latter we consider any whitespace separator.
     """
-    assert(isinstance(text, unicode))
+    assert(isinstance(text, str))
     return text.split()
 
 
@@ -64,10 +64,10 @@ def progress_bar_iter(iterable, desc="", unit='it'):
 def join_dir_with_subfolder_name(subfolder_name, dir):
     """ Returns subfolder in in directory
     """
-    assert(isinstance(subfolder_name, unicode))
-    assert(isinstance(dir, unicode))
+    assert(isinstance(subfolder_name, str))
+    assert(isinstance(dir, str))
 
-    target_dir = join(dir, u"{}/".format(subfolder_name))
+    target_dir = join(dir, "{}/".format(subfolder_name))
     return target_dir
 
 

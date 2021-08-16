@@ -26,24 +26,24 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 class ResultVersions(Enum):
 
     # Results with a fixed document separation.
-    AttCNNFixed = u"att-cnn-fixed-20e-f1-41.zip"
-    AttPCNNFixed = u"att-pcnn-fixed-26e-f1-41.zip"
+    AttCNNFixed = "att-cnn-fixed-20e-f1-41.zip"
+    AttPCNNFixed = "att-pcnn-fixed-26e-f1-41.zip"
 
     # Results with cv split.
-    AttPCNNCV3e40i0 = u"cv3_att-pcnn_e40_i0.zip"
-    AttPCNNCV3e40i1 = u"cv3_att-pcnn_e40_i1.zip"
-    AttPCNNCV3e40i2 = u"cv3_att-pcnn_e40_i2.zip"
+    AttPCNNCV3e40i0 = "cv3_att-pcnn_e40_i0.zip"
+    AttPCNNCV3e40i1 = "cv3_att-pcnn_e40_i1.zip"
+    AttPCNNCV3e40i2 = "cv3_att-pcnn_e40_i2.zip"
 
     # Distant Supervision + Supervised Learning.
     # results check.
-    DSAttCNNFixedE40 = u"ds_att-cnn-fixed_e40.zip"
+    DSAttCNNFixedE40 = "ds_att-cnn-fixed_e40.zip"
 
     # Could not reproduce F1=0.40, only f1=0.37 in 0.20.5
-    PCNNLrecFixedE29 = u"pcnn-lrec-ds-e27-fixed.zip"
+    PCNNLrecFixedE29 = "pcnn-lrec-ds-e27-fixed.zip"
 
-    CNNRsrRa20LargeNeut = u"rsr-ra-20-large-neut-cnn.zip"
+    CNNRsrRa20LargeNeut = "rsr-ra-20-large-neut-cnn.zip"
 
-    SelfTestClassification = u"self-rusentrel-11.zip"
+    SelfTestClassification = "self-rusentrel-11.zip"
 
 
 # Expected F1-values for every result.
@@ -66,7 +66,7 @@ class ZippedResultsIOUtils(ZipArchiveUtils):
 
     @staticmethod
     def get_archive_filepath(result_version):
-        return path.join(dirname(__file__), u"data/{version}".format(version=result_version))
+        return path.join(dirname(__file__), "data/{version}".format(version=result_version))
 
     @staticmethod
     def iter_doc_ids(result_version):
@@ -77,7 +77,7 @@ class ZippedResultsIOUtils(ZipArchiveUtils):
     @staticmethod
     def iter_doc_opinions(doc_id, result_version, labels_formatter):
         return ZippedResultsIOUtils.iter_from_zip(
-            inner_path=path.join(u"{}.opin.txt".format(doc_id)),
+            inner_path=path.join("{}.opin.txt".format(doc_id)),
             process_func=lambda input_file: RuSentRelOpinionCollectionFormatter._iter_opinions_from_file(
                 input_file=input_file,
                 labels_formatter=labels_formatter,
@@ -95,8 +95,8 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         return MystemWrapper()
 
     def __is_equal_results(self, v1, v2):
-        print abs(v1 - v2) < 1e-10
-        self.assert_(abs(v1 - v2) < 1e-10)
+        print(abs(v1 - v2) < 1e-10)
+        self.assertTrue(abs(v1 - v2) < 1e-10)
 
     def __test_core(self, res_version, synonyms=None,
                     eval_mode=EvaluationModes.Extraction,
@@ -142,7 +142,7 @@ class TestRuSentRelEvaluation(unittest.TestCase):
         evaluator = TwoClassEvaluator(eval_mode=eval_mode)
 
         # evaluate every document.
-        logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc=u"Evaluate", unit=u'pairs')
+        logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc="Evaluate", unit='pairs')
         result = evaluator.evaluate(cmp_pairs=logged_cmp_pairs_it)
         assert(isinstance(result, TwoClassEvalResult))
 
@@ -151,18 +151,18 @@ class TestRuSentRelEvaluation(unittest.TestCase):
 
         # logging all the result information.
         for doc_id, doc_info in result.iter_document_results():
-            print u"{}:\t{}".format(doc_id, doc_info)
-        print "------------------------"
-        print str(result.TotalResult)
-        print "------------------------"
+            print("{}:\t{}".format(doc_id, doc_info))
+        print("------------------------")
+        print(str(result.TotalResult))
+        print("------------------------")
 
         # Display cmp tables (optionally).
         if self.__display_cmp_table:
             with pd.option_context('display.max_rows', None, 'display.max_columns', None):
                 for doc_id, df_cmp_table in result.iter_dataframe_cmp_tables():
                     assert(isinstance(df_cmp_table, DocumentCompareTable))
-                    print u"{}:\t{}\n".format(doc_id, df_cmp_table.DataframeTable)
-            print "------------------------"
+                    print("{}:\t{}\n".format(doc_id, df_cmp_table.DataframeTable))
+            print("------------------------")
 
         if check_results:
             self.__is_equal_results(v1=result.get_result_by_metric(TwoClassEvalResult.C_F1),

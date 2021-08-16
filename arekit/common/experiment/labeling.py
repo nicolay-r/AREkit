@@ -29,7 +29,7 @@ class LabeledCollection:
         Applies label if the latter has not been provided before for sample_row_id
         """
         assert(isinstance(uint_label, int))
-        assert(isinstance(sample_row_id, unicode))
+        assert(isinstance(sample_row_id, str))
 
         if sample_row_id not in self._uint_labels_defined:
             self._uint_labels_defined[sample_row_id] = uint_label
@@ -38,5 +38,5 @@ class LabeledCollection:
         self._uint_labels_defined.clear()
 
     def iter_non_duplicated_labeled_sample_row_ids(self):
-        for sample_id, _ in self.__original_labels_by_row_id_dict.iteritems():
+        for sample_id, _ in self.__original_labels_by_row_id_dict.items():
             yield sample_id, self._uint_labels_defined[sample_id]

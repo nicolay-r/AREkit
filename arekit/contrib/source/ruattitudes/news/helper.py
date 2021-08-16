@@ -18,7 +18,7 @@ class RuAttitudesNewsHelper(object):
         doc_opinions = RuAttitudesNewsHelper.build_opinion_dict(news=news)
         assert(isinstance(doc_opinions, dict))
 
-        for sentence_opin_tag, value in doc_opinions.iteritems():
+        for sentence_opin_tag, value in doc_opinions.items():
 
             opinion, related_sentences = RuAttitudesNewsHelper.__extract_opinion_with_related_sentences(
                 news=news,

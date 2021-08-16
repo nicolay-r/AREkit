@@ -11,9 +11,9 @@ class ExperimentTypes(Enum):
 class ExperimentTypesService:
 
     __names = {
-        u'rsr': ExperimentTypes.RuSentRel,
-        u'ra': ExperimentTypes.RuAttitudes,
-        u'rsr+ra': ExperimentTypes.RuSentRelWithRuAttitudes
+        'rsr': ExperimentTypes.RuSentRel,
+        'ra': ExperimentTypes.RuAttitudes,
+        'rsr+ra': ExperimentTypes.RuSentRelWithRuAttitudes
     }
 
     @staticmethod
@@ -22,5 +22,5 @@ class ExperimentTypesService:
 
     @staticmethod
     def iter_supported_names():
-        return iter(ExperimentTypesService.__names.keys())
+        return iter(list(ExperimentTypesService.__names.keys()))
 

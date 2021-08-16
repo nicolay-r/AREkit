@@ -5,8 +5,8 @@ from arekit.contrib.networks.tf_helpers.cell_types import CellTypes
 
 class StatesAggregationModes:
 
-    AVERAGE = u'avg'
-    LAST_IN_SEQUENCE = u'last'
+    AVERAGE = 'avg'
+    LAST_IN_SEQUENCE = 'last'
 
 
 class IANBaseConfig(RNNConfig):
@@ -45,7 +45,7 @@ class IANBaseConfig(RNNConfig):
     # region public methods
 
     def modify_states_aggregation_mode(self, value):
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
         self.__states_aggregation_mode = value
 
     def _internal_get_parameters(self):

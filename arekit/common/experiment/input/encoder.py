@@ -9,8 +9,8 @@ class BaseInputEncoder(object):
     @staticmethod
     def to_tsv(opinion_filepath, sample_filepath, opinion_provider,
                opinion_formatter, sample_formatter, write_sample_header):
-        assert(isinstance(opinion_filepath, unicode))
-        assert(isinstance(sample_filepath, unicode))
+        assert(isinstance(opinion_filepath, str))
+        assert(isinstance(sample_filepath, str))
         assert(isinstance(opinion_formatter, BaseOpinionsFormatter))
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(sample_formatter, BaseSampleFormatter))

@@ -11,7 +11,7 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
         assert(isinstance(splitter, CrossValidationSplitter))
 
         if len(supported_data_types) > 2:
-            raise NotImplementedError(u"Experiments with such amount of data-types are not supported!")
+            raise NotImplementedError("Experiments with such amount of data-types are not supported!")
 
         super(TwoClassCVFolding, self).__init__(doc_ids_to_fold=doc_ids_to_fold,
                                                 supported_data_types=supported_data_types)
@@ -27,7 +27,7 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
 
     @property
     def Name(self):
-        return u"cv{0}".format(self.__cv_count)
+        return "cv{0}".format(self.__cv_count)
 
     # endregion
 
@@ -47,7 +47,7 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
             }
 
         if self.__splitter is None:
-            raise NotImplementedError(u"Splitter has not been intialized!")
+            raise NotImplementedError("Splitter has not been intialized!")
 
         it = self.__splitter.items_to_cv_pairs(doc_ids=set(doc_ids),
                                                cv_count=self.__cv_count)
@@ -70,6 +70,6 @@ class TwoClassCVFolding(BaseExperimentDataFolding):
     def get_current_state(self):
         """ Providing current iteration index.
         """
-        return unicode(self._iteration_index)
+        return str(self._iteration_index)
 
     # endregion

@@ -14,10 +14,10 @@ from arekit.contrib.source.rusentiframes.state import FrameState
 
 class RuSentiFramesCollection(FramesCollection):
 
-    __frames_key = u"frames"
-    __polarity_key = u"polarity"
-    __state_key = u"state"
-    __effect_key = u"effect"
+    __frames_key = "frames"
+    __polarity_key = "polarity"
+    __state_key = "state"
+    __effect_key = "effect"
 
     def __init__(self, data, labels_fmt, effect_labels_fmt):
         assert(isinstance(data, dict))
@@ -57,12 +57,12 @@ class RuSentiFramesCollection(FramesCollection):
 
     def try_get_frame_sentiment_polarity(self, frame_id):
         return self.try_get_frame_polarity(frame_id=frame_id,
-                                           role_src=u'a0',
-                                           role_dest=u'a1')
+                                           role_src='a0',
+                                           role_dest='a1')
 
     def try_get_frame_polarity(self, frame_id, role_src, role_dest):
-        assert(isinstance(role_src, unicode))
-        assert(isinstance(role_dest, unicode))
+        assert(isinstance(role_src, str))
+        assert(isinstance(role_dest, str))
 
         if not self.__check_has_frame_polarity_key(frame_id):
             return None
@@ -77,12 +77,12 @@ class RuSentiFramesCollection(FramesCollection):
     # region public 'get' methods
 
     def get_frame_roles(self, frame_id):
-        assert(isinstance(frame_id, unicode))
+        assert(isinstance(frame_id, str))
         return [FrameRole(source=key, description=value)
-                for key, value in self.__data[frame_id][u"roles"].iteritems()]
+                for key, value in self.__data[frame_id]["roles"].items()]
 
     def get_frame_polarities(self, frame_id):
-        assert(isinstance(frame_id, unicode))
+        assert(isinstance(frame_id, str))
 
         if not self.__check_has_frame_polarity_key(frame_id):
             return []
@@ -91,7 +91,7 @@ class RuSentiFramesCollection(FramesCollection):
                 for args in self.__data[frame_id][self.__frames_key][self.__polarity_key]]
 
     def get_frame_states(self, frame_id):
-        assert(isinstance(frame_id, unicode))
+        assert(isinstance(frame_id, str))
 
         if self.__state_key not in self.__data[frame_id][self.__frames_key]:
             return []
@@ -100,19 +100,19 @@ class RuSentiFramesCollection(FramesCollection):
                 for args in self.__data[frame_id][self.__frames_key][self.__state_key]]
 
     def get_frame_titles(self, frame_id):
-        assert(isinstance(frame_id, unicode))
-        return self.__data[frame_id][u"title"]
+        assert(isinstance(frame_id, str))
+        return self.__data[frame_id]["title"]
 
     def get_frame_variants(self, frame_id):
-        return self.__data[frame_id][u"variants"]
+        return self.__data[frame_id]["variants"]
 
     def get_frame_values(self, frame_id):
-        assert(isinstance(frame_id, unicode))
+        assert(isinstance(frame_id, str))
         # TODO. Not implemented yet.
         pass
 
     def get_frame_effects(self, frame_id):
-        assert(isinstance(frame_id, unicode))
+        assert(isinstance(frame_id, str))
 
         if self.__effect_key not in self.__data[frame_id][self.__frames_key]:
             return []
@@ -125,11 +125,11 @@ class RuSentiFramesCollection(FramesCollection):
     # region public 'iter' methods
 
     def iter_frames_ids(self):
-        for frame_id in self.__data.iterkeys():
+        for frame_id in self.__data.keys():
             yield frame_id
 
     def iter_frame_id_and_variants(self):
-        for id, frame in self.__data.iteritems():
+        for id, frame in self.__data.items():
             for variant in frame["variants"]:
                 yield id, variant
 

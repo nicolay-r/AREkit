@@ -13,16 +13,16 @@ class EntityFormatterTypes(Enum):
 class EntityFormattersService:
 
     __names = {
-        u"rus-cased-fmt": EntityFormatterTypes.RussianCased,
-        u'rus-simple': EntityFormatterTypes.RussianSimple,
-        u'simple-uppercase': EntityFormatterTypes.SimpleUppercase,
-        u'simple': EntityFormatterTypes.Simple,
-        u'sharp-simple': EntityFormatterTypes.SimpleSharpPrefixed,
+        "rus-cased-fmt": EntityFormatterTypes.RussianCased,
+        'rus-simple': EntityFormatterTypes.RussianSimple,
+        'simple-uppercase': EntityFormatterTypes.SimpleUppercase,
+        'simple': EntityFormatterTypes.Simple,
+        'sharp-simple': EntityFormatterTypes.SimpleSharpPrefixed,
     }
 
     @staticmethod
     def __iter_supported_names():
-        return iter(EntityFormattersService.__names.keys())
+        return iter(list(EntityFormattersService.__names.keys()))
 
     @staticmethod
     def get_type_by_name(name):

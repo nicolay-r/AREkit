@@ -1,4 +1,4 @@
-import utils
+from . import utils
 import zipfile
 
 import enum
@@ -16,7 +16,7 @@ class ZipArchiveUtils(object):
         process_func:
             func which receives a file reader
         """
-        assert(isinstance(inner_path, unicode))
+        assert(isinstance(inner_path, str))
         assert(callable(process_func))
         assert(isinstance(version, enum.Enum))
 
@@ -26,7 +26,7 @@ class ZipArchiveUtils(object):
 
     @classmethod
     def iter_from_zip(cls, inner_path, process_func, version):
-        assert(isinstance(inner_path, unicode))
+        assert(isinstance(inner_path, str))
         assert(callable(process_func))
         assert(isinstance(version, enum.Enum))
 

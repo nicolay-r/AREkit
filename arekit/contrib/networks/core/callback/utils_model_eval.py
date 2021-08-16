@@ -53,7 +53,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     # Create and save output.
     result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
                                                                                 epoch_index=epoch_index)
-    logger.info(u"Target output filepath: {}".format(result_filepath))
+    logger.info("Target output filepath: {}".format(result_filepath))
     labeling_collection = model.get_samples_labeling_collection(data_type=data_type)
     sample_id_with_uint_labels_iter = labeling_collection.iter_non_duplicated_labeled_sample_row_ids()
     NetworkOutputEncoder.to_tsv(
@@ -136,11 +136,11 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
 
 def __log_wrap_samples_iter(it):
     return progress_bar_iter(iterable=it,
-                             desc=u'Writing output',
-                             unit=u'rows')
+                             desc='Writing output',
+                             unit='rows')
 
 
 def __log_wrap_collections_conversion_iter(it):
     return progress_bar_iter(iterable=it,
-                             desc=u"Converting: Output Rows -> Opinion Collections",
-                             unit=u"colls")
+                             desc="Converting: Output Rows -> Opinion Collections",
+                             unit="colls")

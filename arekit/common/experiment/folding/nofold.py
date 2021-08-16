@@ -7,14 +7,14 @@ class NoFolding(BaseExperimentDataFolding):
 
     def __init__(self, doc_ids_to_fold, supported_data_types):
         if len(supported_data_types) > 1:
-            raise NotImplementedError(u"Experiments with such amount of data-types are not supported!")
+            raise NotImplementedError("Experiments with such amount of data-types are not supported!")
 
         super(NoFolding, self).__init__(doc_ids_to_fold=doc_ids_to_fold,
                                         supported_data_types=supported_data_types)
 
     @property
     def Name(self):
-        return u"na"
+        return "na"
 
     def fold_doc_ids_set(self):
         return {
@@ -24,4 +24,4 @@ class NoFolding(BaseExperimentDataFolding):
     def get_current_state(self):
         """ Returns in order to be compatible with cv-based experiment format.
         """
-        return u"0"
+        return "0"

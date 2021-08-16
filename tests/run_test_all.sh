@@ -5,4 +5,4 @@
 pip install -e ../ --no-deps
 
 # Run all unit tests.
-python2.7 -m unittest discover .
+python -m pytest --html=pytest_report.html --self-contained-html --continue-on-collection-errors .

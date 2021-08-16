@@ -15,10 +15,10 @@ class StringEntitiesSimpleFormatter(StringEntitiesFormatter):
         assert(isinstance(entity_type, EntityType))
 
         if entity_type == EntityType.Other:
-            return u"e"
+            return "e"
         elif entity_type == EntityType.Object or entity_type == EntityType.SynonymObject:
-            return u"object"
+            return "object"
         elif entity_type == EntityType.Subject or entity_type == EntityType.SynonymSubject:
-            return u"subject"
+            return "subject"
 
         return None

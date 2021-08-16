@@ -39,18 +39,18 @@ class DocumentCompareTable:
                                    DocumentCompareTable.C_CMP])
 
         # filling with blank rows.
-        df[DocumentCompareTable.C_ID] = range(rows_count)
+        df[DocumentCompareTable.C_ID] = list(range(rows_count))
         df.set_index(DocumentCompareTable.C_ID, inplace=True)
 
         return df
 
     @classmethod
     def load(cls, filepath):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         return cls(cmp_table=pd.DataFrame.from_csv(filepath))
 
     def save(self, filepath):
-        assert(isinstance(filepath, unicode))
+        assert(isinstance(filepath, str))
         self.__cmp_table.to_csv(filepath)
 
     def filter_result_column_by_label(self, label):

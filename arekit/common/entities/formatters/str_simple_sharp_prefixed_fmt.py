@@ -8,8 +8,8 @@ class SharpPrefixedEntitiesSimpleFormatter(StringEntitiesFormatter):
         assert(isinstance(entity_type, EntityType))
 
         if (entity_type == EntityType.Object) or (entity_type == EntityType.SynonymObject):
-            return u"#O"
+            return "#O"
         elif (entity_type == EntityType.Subject) or (entity_type == EntityType.SynonymSubject):
-            return u"#S"
+            return "#S"
         elif entity_type == EntityType.Other:
-            return u"#E"
+            return "#E"

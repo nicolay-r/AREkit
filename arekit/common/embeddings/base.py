@@ -90,7 +90,7 @@ class Embedding(object):
         returns: pair
             (processed_term, index)
         """
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
 
         has_index = self.__index_by_word[word] if word in self.__index_by_word else None
         word = word if has_index else None
@@ -119,12 +119,12 @@ class Embedding(object):
         return self.__words[index]
 
     def try_find_index_by_word(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         _, index = self.__hadler_core(word)
         return index
 
     def try_find_index_by_plain_word(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         _, index = self.__hadler_core(word)
         return index
 
@@ -138,12 +138,12 @@ class Embedding(object):
     # region overriden methods
 
     def __contains__(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         _, index = self.__hadler_core(word)
         return index is not None
 
     def __getitem__(self, word):
-        assert(isinstance(word, unicode))
+        assert(isinstance(word, str))
         _, index = self.__hadler_core(word)
         return self._matrix[index]
 
