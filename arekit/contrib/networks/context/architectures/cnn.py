@@ -128,7 +128,7 @@ class VanillaCNN(SingleInstanceNeuralNetwork):
     def padding(embedded_data, window_size):
         assert(isinstance(window_size, int) and window_size > 0)
 
-        left_padding = (window_size - 1) / 2
+        left_padding = int((window_size - 1) / 2)
         right_padding = (window_size - 1) - left_padding
         return tf.pad(embedded_data, [[0, 0],
                                       [left_padding, right_padding],
