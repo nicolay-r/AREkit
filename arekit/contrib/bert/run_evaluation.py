@@ -4,8 +4,8 @@ from os.path import exists, join
 from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
-from arekit.common.experiment.input.readers.opinion import InputOpinionReader
-from arekit.common.experiment.input.readers.sample import InputSampleReader
+from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.labels.scaler import BaseLabelScaler
@@ -115,14 +115,14 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 # consist of label probabilities per every class
                 output = GoogleBertMulticlassOutput(
                     labels_scaler=self.__label_scaler,
-                    samples_reader=InputSampleReader.from_tsv(filepath=samples_tsv_filepath,
-                                                              row_ids_provider=row_id_provider),
+                    samples_reader=TsvInputSampleReader.from_tsv(filepath=samples_tsv_filepath,
+                                                                 row_ids_provider=row_id_provider),
                     has_output_header=False)
 
                 # iterate opinion collections.
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
                     output_filepath=result_filepath,
-                    opinions_reader=InputOpinionReader.from_tsv(opinions_tsv_filepath, compression='infer'),
+                    opinions_reader=TsvInputOpinionReader.from_tsv(opinions_tsv_filepath, compression='infer'),
                     labels_scaler=self.__label_scaler,
                     create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
                     keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,

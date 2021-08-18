@@ -1,8 +1,11 @@
 from arekit.common.experiment import const
-from arekit.common.experiment.input.readers.sample import InputSampleReader
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 
 
-class NetworkInputSampleReader(InputSampleReader):
+# TODO. This should be an extension. There is no need in inheritance from TSV !!!
+# TODO. This should be an extension. There is no need in inheritance from TSV !!!
+# TODO. This should be an extension. There is no need in inheritance from TSV !!!
+class NetworkInputSampleReader(TsvInputSampleReader):
 
     def iter_uint_labeled_sample_rows(self):
         """

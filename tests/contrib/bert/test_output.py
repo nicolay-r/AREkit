@@ -2,12 +2,12 @@ from os.path import join, dirname
 import sys
 import unittest
 
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 
 sys.path.append('../../')
 
 from tests.contrib.bert.labels import TestThreeLabelScaler
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
-from arekit.common.experiment.input.readers.sample import InputSampleReader
 from arekit.contrib.bert.output.google_bert import GoogleBertMulticlassOutput
 
 
@@ -20,8 +20,8 @@ class TestOutputFormatters(unittest.TestCase):
     def test_google_bert_output_formatter(self):
         row_ids_provider = MultipleIDProvider()
 
-        samples_reader = InputSampleReader.from_tsv(filepath=self.__input_samples_filepath,
-                                                    row_ids_provider=row_ids_provider)
+        samples_reader = TsvInputSampleReader.from_tsv(filepath=self.__input_samples_filepath,
+                                                       row_ids_provider=row_ids_provider)
 
         output = GoogleBertMulticlassOutput(samples_reader=samples_reader,
                                             labels_scaler=TestThreeLabelScaler(),

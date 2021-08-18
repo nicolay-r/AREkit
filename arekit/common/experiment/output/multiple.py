@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 
 from arekit.common.experiment import const
-from arekit.common.experiment.input.readers.opinion import InputOpinionReader
 from arekit.common.experiment.output.base import BaseOutput
+from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 
@@ -31,7 +31,7 @@ class MulticlassOutput(BaseOutput):
 
     def _iter_by_opinions(self, linked_df, opinions_reader):
         assert(isinstance(linked_df, pd.DataFrame))
-        assert(isinstance(opinions_reader, InputOpinionReader))
+        assert(isinstance(opinions_reader, TsvInputOpinionReader))
 
         for index, series in linked_df.iterrows():
             yield self._compose_opinion_by_opinion_id(

@@ -104,9 +104,9 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
             logger.info(str_terms_joined)
 
             logger.info(" ".join(self.__process(terms=terms,
-                                                 entities_formatter=self.entities_formatter,
-                                                 s_ind=s_ind,
-                                                 t_ind=t_ind)))
+                                                entities_formatter=self.entities_formatter,
+                                                s_ind=s_ind,
+                                                t_ind=t_ind)))
 
             self.assertTrue(isinstance(terms[s_ind], Entity))
             self.assertTrue(isinstance(terms[t_ind], Entity))
