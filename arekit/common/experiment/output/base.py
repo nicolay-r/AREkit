@@ -2,7 +2,7 @@ import pandas as pd
 
 from arekit.common.experiment import const
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
-from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
+from arekit.common.experiment.input.readers.base_opinion import BaseInputOpinionReader
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 
@@ -49,7 +49,7 @@ class BaseOutput(object):
 
     def iter_linked_opinions(self, news_id, opinions_reader):
         assert(isinstance(news_id, int))
-        assert(isinstance(opinions_reader, TsvInputOpinionReader))
+        assert(isinstance(opinions_reader, BaseInputOpinionReader))
 
         for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
             assert(isinstance(linked_df, pd.DataFrame))
@@ -71,7 +71,7 @@ class BaseOutput(object):
 
     def _compose_opinion_by_opinion_id(self, sample_id, opinions_reader, calc_label_func):
         assert(isinstance(sample_id, str))
-        assert(isinstance(opinions_reader, TsvInputOpinionReader))
+        assert(isinstance(opinions_reader, BaseInputOpinionReader))
         assert(callable(calc_label_func))
 
         opinion_id = self.__ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)
