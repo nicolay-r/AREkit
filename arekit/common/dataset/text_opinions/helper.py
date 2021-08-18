@@ -86,7 +86,7 @@ class TextOpinionHelper(object):
         assert(isinstance(text_opinion, TextOpinion))
         assert(parsed_news.RelatedNewsID == text_opinion.NewsID)
         end_id = TextOpinionHelper.__get_end_id(text_opinion=text_opinion,
-                                                             end_type=end_type)
+                                                end_type=end_type)
         return parsed_news.get_entity_position(end_id, position_type)
 
     @staticmethod

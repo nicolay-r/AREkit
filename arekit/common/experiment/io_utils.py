@@ -85,7 +85,7 @@ class BaseIOUtils(object):
         # TODO. This should not depends on the neut.
         # TODO. This should not depends on the neut.
         filename = "art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
-                                                           d_type=data_type.name)
+                                                          d_type=data_type.name)
 
         return join(annot_dir, filename)
 

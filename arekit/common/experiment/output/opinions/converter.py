@@ -1,5 +1,5 @@
 from arekit.common.experiment.extract.opinions import fill_opinion_collection
-from arekit.common.experiment.input.readers.opinion import InputOpinionReader
+from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
 from arekit.common.experiment.output.base import BaseOutput
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.model.labeling.modes import LabelCalculationMode
@@ -21,7 +21,7 @@ class OutputToOpinionCollectionsConverter(object):
         assert(callable(keep_doc_id_func))
         assert(isinstance(labels_scaler, BaseLabelScaler))
         assert(isinstance(output_filepath, str))
-        assert(isinstance(opinions_reader, InputOpinionReader))
+        assert(isinstance(opinions_reader, TsvInputOpinionReader))
         assert(callable(create_opinion_collection_func))
         assert(isinstance(label_calculation_mode, LabelCalculationMode))
         assert(isinstance(supported_labels, set) or supported_labels is None)

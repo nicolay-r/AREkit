@@ -1,5 +1,5 @@
 from arekit.common.experiment import const
-from arekit.common.experiment.input.readers.sample import InputSampleReader
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.output.multiple import MulticlassOutput
 
 
@@ -14,7 +14,7 @@ class GoogleBertMulticlassOutput(MulticlassOutput):
     """
 
     def __init__(self, samples_reader, labels_scaler, has_output_header):
-        assert(isinstance(samples_reader, InputSampleReader))
+        assert(isinstance(samples_reader, TsvInputSampleReader))
         super(GoogleBertMulticlassOutput, self).__init__(labels_scaler=labels_scaler,
                                                          has_output_header=has_output_header)
         self.__samples_reader = samples_reader

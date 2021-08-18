@@ -22,7 +22,7 @@ class BaseIDProvider(object):
         assert(isinstance(index_in_linked, int))
 
         template = ''.join([BaseIDProvider.OPINION,
-                             BaseIDProvider.INDEX])
+                            BaseIDProvider.INDEX])
 
         text_opinion_id = linked_opinions.First.TextOpinionID
         assert(isinstance(text_opinion_id, int))
