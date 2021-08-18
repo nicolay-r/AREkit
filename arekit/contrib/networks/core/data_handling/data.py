@@ -59,6 +59,9 @@ class HandledData(object):
         return cls(labeled_collections={},
                    bags_collection={})
 
+    # TODO. Remove DocOps from here.
+    # TODO. Remove DocOps from here.
+    # TODO. Remove DocOps from here.
     def perform_reading_and_initialization(self, doc_ops, exp_io, vocab,
                                            labels_count, bags_collection_type, config):
         """
@@ -168,6 +171,8 @@ class HandledData(object):
         frames_per_context = config.FramesPerContext
         synonyms_per_context = config.SynonymsPerContext
 
+        # TODO. Provide samples reader from the outside.
+        # TODO. (This allows us to support diffrent input formats rahter than TSV.
         samples_reader = NetworkInputSampleReader.from_tsv(
             filepath=experiment_io.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
