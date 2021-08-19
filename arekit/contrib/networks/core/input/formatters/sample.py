@@ -66,9 +66,12 @@ class NetworkSampleFormatter(BaseSampleFormatter):
         uint_frame_inds = list(self.__iter_indices(terms=terms, filter=lambda t: isinstance(t, TextFrameVariant)))
 
         # Compose frame sentiment.
-        uint_frame_roles = FrameRoleFeatures.from_tsv(frame_variants=[terms[fi] for fi in uint_frame_inds],
-                                                      frames_collection=self.__frames_collection,
-                                                      three_label_scaler=self.__frame_role_label_scaler)
+        uint_frame_roles = list(
+            map(lambda variant: FrameRoleFeatures.extract_uint_frame_variant_sentiment_role(
+                    text_frame_variant=variant,
+                    frames_collection=self.__frames_collection,
+                    three_label_scaler=self.__frame_role_label_scaler),
+                [terms[frame_ind] for frame_ind in uint_frame_inds]))
 
         # Synonyms for source.
         uint_syn_s_inds = self.__create_synonyms_set(terms=terms, term_ind=s_ind)

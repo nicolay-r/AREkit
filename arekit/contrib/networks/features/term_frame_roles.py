@@ -7,24 +7,7 @@ from arekit.contrib.networks.features.utils import create_filled_array
 
 class FrameRoleFeatures(object):
 
-    @staticmethod
-    def from_tsv(frame_variants, frames_collection, three_label_scaler):
-        assert(isinstance(three_label_scaler, BaseLabelScaler))
-
-        result = []
-
-        for variant in frame_variants:
-
-            value = FrameRoleFeatures.__extract_uint_frame_variant_sentiment_role(
-                text_frame_variant=variant,
-                frames_collection=frames_collection,
-                three_label_scaler=three_label_scaler)
-
-            result.append(value)
-
-        return result
-
-    @staticmethod
+    @ staticmethod
     def to_input(frame_inds, frame_sent_roles, size, filler):
         assert(isinstance(frame_inds, list))
         assert(isinstance(frame_sent_roles, list))
@@ -39,10 +22,8 @@ class FrameRoleFeatures(object):
 
         return vector
 
-    # region private methods
-
     @staticmethod
-    def __extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_collection, three_label_scaler):
+    def extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_collection, three_label_scaler):
         assert(isinstance(text_frame_variant, TextFrameVariant))
         assert(isinstance(frames_collection, FramesCollection))
         assert(isinstance(three_label_scaler, BaseLabelScaler))
@@ -60,5 +41,3 @@ class FrameRoleFeatures(object):
             return three_label_scaler.label_to_uint(label=inv_label)
 
         return three_label_scaler.label_to_uint(polarity.Label)
-
-    # endregion
