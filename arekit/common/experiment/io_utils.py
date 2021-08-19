@@ -34,7 +34,7 @@ class BaseIOUtils(object):
 
     def __get_experiment_folder_name(self):
         return "{name}_{scale}l".format(name=self._experiment.Name,
-                                         scale=str(self._experiment.DataIO.LabelsCount))
+                                        scale=str(self._experiment.DataIO.LabelsCount))
 
     def _experiment_iter_index(self):
         return self._experiment.DocumentOperations.DataFolding.IterationIndex
@@ -42,7 +42,7 @@ class BaseIOUtils(object):
     def _filename_template(self, data_type):
         assert(isinstance(data_type, DataType))
         return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
-                                                  iter_index=self._experiment_iter_index())
+                                                 iter_index=self._experiment_iter_index())
 
     @staticmethod
     def _get_filepath(out_dir, template, prefix):
@@ -67,6 +67,7 @@ class BaseIOUtils(object):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self.get_target_dir(),
                                   template=template,
+                                  # TODO. formatter_type_log_name -- in nested formatter.
                                   prefix=BaseOpinionsFormatter.formatter_type_log_name())
 
     # TODO. This method limits the functionality
@@ -76,6 +77,7 @@ class BaseIOUtils(object):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self.get_target_dir(),
                                   template=template,
+                                  # TODO. formatter_type_log_name -- in nested formatter.
                                   prefix=BaseSampleFormatter.formatter_type_log_name())
 
     def create_annotated_collection_filepath(self, doc_id, data_type):
