@@ -6,10 +6,19 @@ from arekit.common.utils import create_dir_if_not_exists
 
 class BaseInputEncoder(object):
 
+    # TODO. Use serialize
+    # TODO. Use serialize
+    # TODO. Use serialize
     @staticmethod
     def to_tsv(opinion_filepath, sample_filepath, opinion_provider,
                opinion_formatter, sample_formatter, write_sample_header):
+        # TODO. Remove filepaths.
+        # TODO. Remove filepaths.
+        # TODO. Remove filepaths.
         assert(isinstance(opinion_filepath, str))
+        # TODO. Remove filepaths.
+        # TODO. Remove filepaths.
+        # TODO. Remove filepaths.
         assert(isinstance(sample_filepath, str))
         assert(isinstance(opinion_formatter, BaseOpinionsFormatter))
         assert(isinstance(opinion_provider, OpinionProvider))

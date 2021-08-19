@@ -47,7 +47,13 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
         # Perform data serialization to *.tsv format.
         BaseInputEncoder.to_tsv(
+            # TODO. Remove filepaths.
+            # TODO. Remove filepaths.
+            # TODO. Remove filepaths.
             sample_filepath=self._experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type),
+            # TODO. Remove filepaths.
+            # TODO. Remove filepaths.
+            # TODO. Remove filepaths.
             opinion_filepath=self._experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type),
             opinion_formatter=BaseOpinionsFormatter(data_type),
             opinion_provider=OpinionProvider.from_experiment(

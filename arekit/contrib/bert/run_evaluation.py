@@ -66,6 +66,12 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
         # NOTE: since get_target_dir overrides the base implementation,
         # here we need to manually implement exp_dir (as in BaseIOUtils).
+        # TODO. exp_dir creation should be outside of the run_evaluation script.
+        # TODO. exp_dir creation should be outside of the run_evaluation script.
+        # TODO. exp_dir creation should be outside of the run_evaluation script.
+        # TODO. For global generalization purposes.
+        # TODO. For global generalization purposes.
+        # TODO. For global generalization purposes.
         exp_dir = join_dir_with_subfolder_name(
             subfolder_name=self._experiment.ExperimentIO.get_experiment_folder_name(),
             dir=self._experiment.ExperimentIO.get_experiment_sources_dir())
@@ -79,6 +85,9 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         assert(isinstance(callback, Callback))
         callback.set_iter_index(iter_index)
 
+        # TODO. These parameters (filepaths) should be declared ouside of this class.
+        # TODO. These parameters (filepaths) should be declared ouside of this class.
+        # TODO. These parameters (filepaths) should be declared ouside of this class.
         # Providing opinions reader.
         opinions_tsv_filepath = exp_io.get_input_opinions_filepath(self.__data_type)
         # Providing samples reader.
@@ -122,6 +131,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 # iterate opinion collections.
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
                     output_filepath=result_filepath,
+                    # TODO. Move outside (should be customized).
                     opinions_reader=TsvInputOpinionReader.from_tsv(opinions_tsv_filepath, compression='infer'),
                     labels_scaler=self.__label_scaler,
                     create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,

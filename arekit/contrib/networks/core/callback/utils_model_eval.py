@@ -50,12 +50,19 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     samples_reader = NetworkInputSampleReader.from_tsv(samples_filepath, MultipleIDProvider())
     news_id_by_sample_id = samples_reader.calculate_news_id_by_sample_id_dict()
 
+    # TODO. Filepath-dependency should be removed!
+    # TODO. Filepath-dependency should be removed!
+    # TODO. Filepath-dependency should be removed!
     # Create and save output.
     result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
                                                                                 epoch_index=epoch_index)
     logger.info("Target output filepath: {}".format(result_filepath))
     labeling_collection = model.get_samples_labeling_collection(data_type=data_type)
     sample_id_with_uint_labels_iter = labeling_collection.iter_non_duplicated_labeled_sample_row_ids()
+
+    # TODO. This is a limitation, as we focus only tsv.
+    # TODO. This is a limitation, as we focus only tsv.
+    # TODO. This is a limitation, as we focus only tsv.
     NetworkOutputEncoder.to_tsv(
         filepath=result_filepath,
         sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
@@ -93,6 +100,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     return result
 
 
+# TODO. Pass TsvInputOpinionReader.
 def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_fmt,
                                             result_filepath, data_type, epoch_index,
                                             supported_collection_labels, label_calc_mode, labels_formatter):
@@ -113,6 +121,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
         output_filepath=result_filepath,
+        # TODO. Move outside (should be customized)
         opinions_reader=TsvInputOpinionReader.from_tsv(opinions_source),
         labels_scaler=labels_scaler,
         create_opinion_collection_func=opin_ops.create_opinion_collection,

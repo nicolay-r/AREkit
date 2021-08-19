@@ -10,6 +10,7 @@ class RuAttitudesDocumentOperations(DocumentOperations):
         assert(isinstance(exp_data, DataIO))
         assert(isinstance(ru_attitudes, dict))
         super(RuAttitudesDocumentOperations, self).__init__(folding)
+        # TODO. exp_data should be removed.
         self.__exp_data = exp_data
         self.__ru_attitudes = ru_attitudes
 

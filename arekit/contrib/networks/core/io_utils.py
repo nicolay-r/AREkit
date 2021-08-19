@@ -16,7 +16,13 @@ class NetworkIOUtils(BaseIOUtils):
         - embedding vocabulary.
     """
 
+    # TODO. Move it outside.
+    # TODO. Move it outside.
+    # TODO. Move it outside.
     TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding-{cv_index}'
+    # TODO. Move it outside too.
+    # TODO. Move it outside too.
+    # TODO. Move it outside too.
     VOCABULARY_FILENAME_TEMPLATE = "vocab-{cv_index}.txt"
 
     # region public methods
@@ -50,6 +56,9 @@ class NetworkIOUtils(BaseIOUtils):
     def get_saving_embedding_filepath(self):
         return self.__get_default_embedding_filepath()
 
+    # TODO. Filepath-dependency should be removed!
+    # TODO. Filepath-dependency should be removed!
+    # TODO. Filepath-dependency should be removed!
     def get_output_model_results_filepath(self, data_type, epoch_index):
 
         f_name_template = self._filename_template(data_type=data_type)

@@ -16,6 +16,7 @@ class RuSentrelDocumentOperations(DocumentOperations):
         assert(isinstance(version, RuSentRelVersions))
         assert(callable(get_synonyms_func))
         super(RuSentrelDocumentOperations, self).__init__(folding=folding)
+        # TODO. exp_data should be removed.
         self.__exp_data = exp_data
         self.__version = version
         self.__get_synonyms_func = get_synonyms_func

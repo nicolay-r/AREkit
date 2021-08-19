@@ -63,11 +63,13 @@ class NetworksTrainingEngine(ExperimentEngine):
                                                                        filepath=embedding_filepath))
 
         # Reading vocabulary
+        # TODO. This is suppose to be an external loader.
+        # TODO. Provider, which returns dictionary.
         vocab_filepath = self._experiment.ExperimentIO.get_loading_vocab_filepath()
         npz_vocab_data = np.load(vocab_filepath)
         vocab = dict(npz_vocab_data['arr_0'])
         logger.info("Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
-                                                                        filepath=vocab_filepath))
+                                                                       filepath=vocab_filepath))
 
         # Performing samples reading process.
         handled_data.perform_reading_and_initialization(

@@ -44,6 +44,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         super(BaseSampleFormatter, self).__init__(data_type=data_type)
 
+    # TODO. Move into nested class.
+    # TODO. Move into nested class.
+    # TODO. Move into nested class.
     @staticmethod
     def formatter_type_log_name():
         return "sample"
@@ -240,6 +243,9 @@ class BaseSampleFormatter(BaseRowsFormatter):
         df[self.ROW_ID] = list(range(rows_count))
         df.set_index(self.ROW_ID, inplace=True)
 
+    # TODO. Saving should be optional as now it limits potential storing formats.
+    # TODO. Saving should be optional as now it limits potential storing formats.
+    # TODO. Saving should be optional as now it limits potential storing formats.
     def save(self, filepath, write_header):
         assert(isinstance(filepath, str))
 

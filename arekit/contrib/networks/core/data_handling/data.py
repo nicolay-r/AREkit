@@ -151,7 +151,11 @@ class HandledData(object):
         for data_type in data_types_iter:
 
             filepaths = [
+                # TODO. Samples path checking should be removed!!!
+                # TODO. (We make keep them in memory and hence there is no need in the related check).
                 experiment_io.get_input_sample_filepath(data_type=data_type),
+                # TODO. Samples path checking should be removed!!!
+                # TODO. (We make keep them in memory and hence there is no need in the related check).
                 experiment_io.get_input_opinions_filepath(data_type=data_type),
                 experiment_io.get_saving_vocab_filepath(),
                 experiment_io.get_saving_embedding_filepath()

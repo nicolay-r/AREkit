@@ -27,10 +27,24 @@ logging.basicConfig(level=logging.INFO)
 
 class NetworkInputEncoder(object):
 
+    # TODO. Need to remove tsv from name and focus on generalized saving.
+    # TODO. Need to remove tsv from name and focus on generalized saving.
+    # TODO. Need to remove tsv from name and focus on generalized saving.
     @staticmethod
-    def to_tsv_with_embedding_and_vocabulary(opin_ops, doc_ops, exp_data, exp_io,
-                                             data_type, term_embedding_pairs, entity_to_group_func,
-                                             iter_parsed_news_func, terms_per_context, balance):
+    def to_tsv_with_embedding_and_vocabulary(
+            # TODO: remove
+            opin_ops, doc_ops,
+            exp_data,
+            # TODO: remove exp_io
+            exp_io,
+            data_type,
+            term_embedding_pairs,
+            entity_to_group_func,
+            # TODO. Remove.
+            iter_parsed_news_func,
+            # TODO. Remove.
+            terms_per_context,
+            balance):
         """
         Performs encoding for all the data_types supported by experiment.
         """
@@ -58,11 +72,15 @@ class NetworkInputEncoder(object):
                 term=pair[0],
                 emb_vector=pair[1]))
 
+        # TODO. Use serialize
+        # TODO. Use serialize
+        # TODO. Use serialize
         # Encoding input
         BaseInputEncoder.to_tsv(
             sample_filepath=exp_io.get_input_sample_filepath(data_type=data_type),
             opinion_filepath=exp_io.get_input_opinions_filepath(data_type=data_type),
             opinion_formatter=BaseOpinionsFormatter(data_type),
+            # TODO. Create opinion_provider func, based on data_type.
             opinion_provider=OpinionProvider.from_experiment(
                 doc_ops=doc_ops,
                 opin_ops=opin_ops,
