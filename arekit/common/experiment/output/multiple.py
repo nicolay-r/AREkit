@@ -16,11 +16,7 @@ class MulticlassOutput(BaseOutput):
                                                has_output_header=has_output_header)
         self.__labels_scaler = labels_scaler
 
-    # region protected methods
-
-    def _get_column_header(self):
-        return [str(self.__labels_scaler.label_to_uint(label))
-                for label in self.__labels_scaler.ordered_suppoted_labels()]
+    # region private methods
 
     def __calculate_label(self, row):
         """
@@ -28,6 +24,14 @@ class MulticlassOutput(BaseOutput):
         """
         labels_prob = [row[label] for label in self._get_column_header()]
         return self.__labels_scaler.uint_to_label(value=np.argmax(labels_prob))
+
+    # endregion
+
+    # region protected methods
+
+    def _get_column_header(self):
+        return [str(self.__labels_scaler.label_to_uint(label))
+                for label in self.__labels_scaler.ordered_suppoted_labels()]
 
     def _iter_by_opinions(self, linked_df, opinions_reader):
         assert(isinstance(linked_df, pd.DataFrame))
@@ -40,4 +44,3 @@ class MulticlassOutput(BaseOutput):
                 calc_label_func=lambda: self.__calculate_label(series))
 
     # endregion
-
