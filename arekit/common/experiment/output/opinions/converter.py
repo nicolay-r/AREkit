@@ -10,7 +10,9 @@ from arekit.common.opinions.base import Opinion
 class OutputToOpinionCollectionsConverter(object):
 
     @staticmethod
-    def iter_opinion_collections(output_filepath,
+    def iter_opinion_collections(
+                                 # TODO. Remove filepaths. #174.
+                                 output_filepath,
                                  opinions_reader,
                                  labels_scaler,
                                  keep_doc_id_func,
@@ -27,6 +29,7 @@ class OutputToOpinionCollectionsConverter(object):
         assert(isinstance(supported_labels, set) or supported_labels is None)
         assert(isinstance(output, BaseOutput))
 
+        # TODO. Remove filepaths. #174.
         output.init_from_tsv(filepath=output_filepath)
 
         labels_helper = SingleLabelsHelper(labels_scaler)

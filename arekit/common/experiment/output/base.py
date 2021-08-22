@@ -19,8 +19,13 @@ class BaseOutput(object):
         assert(isinstance(ids_formatter, BaseIDProvider))
         assert(isinstance(has_output_header, bool))
         self.__ids_formatter = ids_formatter
+        # TODO: To TSV-based instance. #174.
+        # TODO. To TSV-based class/instance. #174.
+        # TODO. To TSV-based class/instance. #174.
         self.__has_output_header = has_output_header
         self.__df = None
+
+    # region properties
 
     @property
     def _IdsFormatter(self):
@@ -30,6 +35,11 @@ class BaseOutput(object):
     def _DataFrame(self):
         return self.__df
 
+    # endregion
+
+    # TODO. To TSV-based class/instance. #174.
+    # TODO. To TSV-based class/instance. #174.
+    # TODO. To TSV-based class/instance. #174.
     def _csv_to_dataframe(self, filepath):
         return pd.read_csv(filepath,
                            sep='\t',
@@ -37,27 +47,20 @@ class BaseOutput(object):
                            header='infer' if self.__has_output_header else None,
                            encoding='utf-8')
 
-    # region public methods
+    # region private methods
 
-    def init_from_tsv(self, filepath):
-        assert(isinstance(filepath, str))
-        self.__df = self._csv_to_dataframe(filepath=filepath)
-
-    def iter_news_ids(self):
-        assert(const.NEWS_ID in self.__df.columns)
-        return set(self.__df[const.NEWS_ID])
-
-    def iter_linked_opinions(self, news_id, opinions_reader):
+    def __iter_linked_opinions_df(self, news_id):
         assert(isinstance(news_id, int))
-        assert(isinstance(opinions_reader, BaseInputOpinionReader))
 
-        for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
-            assert(isinstance(linked_df, pd.DataFrame))
+        news_df = self.__df[self.__df[const.NEWS_ID] == news_id]
+        opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
+                       for opinion_id in news_df[const.ID]]
 
-            opinions_iter = self._iter_by_opinions(linked_df=linked_df,
-                                                   opinions_reader=opinions_reader)
-
-            yield LinkedOpinionWrapper(linked_data=opinions_iter)
+        for opinion_id in set(opinion_ids):
+            opin_id_pattern = self.__ids_formatter.create_pattern(id_value=opinion_id,
+                                                                  p_type=BaseIDProvider.OPINION)
+            linked_opins_df = news_df[news_df[const.ID].str.contains(opin_id_pattern)]
+            yield linked_opins_df
 
     # endregion
 
@@ -83,20 +86,30 @@ class BaseOutput(object):
 
     # endregion
 
-    # region private methods
+    # region public methods
 
-    def __iter_linked_opinions_df(self, news_id):
-        assert(isinstance(news_id, int))
+    # TODO. To TSV-based class/instance. #174.
+    # TODO. To TSV-based class/instance. #174.
+    # TODO. To TSV-based class/instance. #174.
+    def init_from_tsv(self, filepath):
+        assert (isinstance(filepath, str))
+        self.__df = self._csv_to_dataframe(filepath=filepath)
 
-        news_df = self.__df[self.__df[const.NEWS_ID] == news_id]
-        opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
-                       for opinion_id in news_df[const.ID]]
+    def iter_news_ids(self):
+        assert (const.NEWS_ID in self.__df.columns)
+        return set(self.__df[const.NEWS_ID])
 
-        for opinion_id in set(opinion_ids):
-            opin_id_pattern = self.__ids_formatter.create_pattern(id_value=opinion_id,
-                                                                  p_type=BaseIDProvider.OPINION)
-            linked_opins_df = news_df[news_df[const.ID].str.contains(opin_id_pattern)]
-            yield linked_opins_df
+    def iter_linked_opinions(self, news_id, opinions_reader):
+        assert (isinstance(news_id, int))
+        assert (isinstance(opinions_reader, BaseInputOpinionReader))
+
+        for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
+            assert (isinstance(linked_df, pd.DataFrame))
+
+            opinions_iter = self._iter_by_opinions(linked_df=linked_df,
+                                                   opinions_reader=opinions_reader)
+
+            yield LinkedOpinionWrapper(linked_data=opinions_iter)
 
     # endregion
 
