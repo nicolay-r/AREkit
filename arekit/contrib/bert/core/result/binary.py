@@ -25,9 +25,6 @@ class BertBinaryOutput(BaseOutput):
         assert(isinstance(formatter, BinaryIDProvider))
         return formatter
 
-    def _get_column_header(self):
-        return [BertBinaryOutput.NO, BertBinaryOutput.YES]
-
     # region private methods
 
     def __calculate_label(self, df):
@@ -39,6 +36,20 @@ class BertBinaryOutput(BaseOutput):
         sample_id = df.loc[ind_max][const.ID]
         uint_label = self._IdsFormatter.parse_label_in_sample_id(sample_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)
+
+    def __iter_linked_opinion_indices(self, linked_df):
+        sample_ids = linked_df[const.ID].tolist()
+        all_news = [self._IdsFormatter.parse_index_in_sample_id(sample_id)
+                    for sample_id in sample_ids]
+        for news_id in set(all_news):
+            yield news_id
+
+    # endregion
+
+    # region protected methods
+
+    def _get_column_header(self):
+        return [BertBinaryOutput.NO, BertBinaryOutput.YES]
 
     def _iter_by_opinions(self, linked_df, opinions_reader):
         assert(isinstance(linked_df, pd.DataFrame))
@@ -53,12 +64,5 @@ class BertBinaryOutput(BaseOutput):
                 sample_id=opinion_df[const.ID].iloc[0],
                 opinions_reader=opinions_reader,
                 calc_label_func=lambda: self.__calculate_label(df=opinion_df))
-
-    def __iter_linked_opinion_indices(self, linked_df):
-        sample_ids = linked_df[const.ID].tolist()
-        all_news = [self._IdsFormatter.parse_index_in_sample_id(sample_id)
-                    for sample_id in sample_ids]
-        for news_id in set(all_news):
-            yield news_id
 
     # endregion
