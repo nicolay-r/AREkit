@@ -17,9 +17,7 @@ class RuSentRelNews(News):
         assert(isinstance(sentences, list))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
-        super(RuSentRelNews, self).__init__(news_id=doc_id,
-                                            sentences=sentences,
-                                            entities_parser=RuSentRelTextEntitiesParser())
+        super(RuSentRelNews, self).__init__(news_id=doc_id, sentences=sentences)
 
         self.__entities = entities
 
@@ -141,5 +139,10 @@ class RuSentRelNews(News):
 
     def get_entities_collection(self):
         return self.__entities
+
+    @staticmethod
+    def _sentence_to_terms_list_core(sentence):
+        with RuSentRelTextEntitiesParser() as parser:
+            return parser.parse(sentence)
 
     # endregion

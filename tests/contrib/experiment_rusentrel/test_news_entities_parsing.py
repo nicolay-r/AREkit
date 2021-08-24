@@ -27,7 +27,7 @@ class TestPartOfSpeech(unittest.TestCase):
 
             # Parse single sentence.
             assert(isinstance(news, RuAttitudesNews))
-            parsed_text = news.parse_sentence(0)
+            parsed_text = news.sentence_to_terms_list(0)
             self.__print_parsed_text(parsed_text)
 
             # Parse news via external parser.
@@ -46,7 +46,7 @@ class TestPartOfSpeech(unittest.TestCase):
                                            version=version)
 
         assert(isinstance(news, RuSentRelNews))
-        parsed_text = news.parse_sentence(8)
+        parsed_text = news.sentence_to_terms_list(8)
         self.__print_parsed_text(parsed_text)
 
         # Parse news via external parser.

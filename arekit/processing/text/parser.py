@@ -63,7 +63,7 @@ class TextParser:
 
         if parse_options.ParseEntities:
             # Providing a modified list with parsed unicode terms.
-            terms_list = news.parse_sentence(sent_ind)
+            terms_list = news.sentence_to_terms_list(sent_ind)
             return TextParser.__parse_string_list(terms_iter=terms_list,
                                                   skip_term=lambda term: isinstance(term, Entity),
                                                   # TODO. Declare Stemmer within a derived parse options.

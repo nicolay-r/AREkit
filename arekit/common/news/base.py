@@ -1,15 +1,10 @@
-from arekit.common.news.objects_parser import BaseObjectsParser
-
-
 class News(object):
 
-    def __init__(self, news_id, sentences, entities_parser):
+    def __init__(self, news_id, sentences):
         assert(isinstance(news_id, int))
         assert(isinstance(sentences, list))
-        assert(isinstance(entities_parser, BaseObjectsParser))
-        self.__news_id = news_id
-        self.__entities_parser = entities_parser
 
+        self.__news_id = news_id
         self._sentences = sentences
 
     # region properties
@@ -29,13 +24,10 @@ class News(object):
 
     # endregion
 
-    def parse_sentence(self, sent_ind):
+    def sentence_to_terms_list(self, sent_ind):
         assert(isinstance(sent_ind, int))
         sentence = self._sentences[sent_ind]
-        return self.__entities_parser.parse(sentence)
-
-    def get_entities_collection(self):
-        raise NotImplementedError("Document does not support entities collection generation.")
+        return self._sentence_to_terms_list_core(sentence)
 
     def iter_sentences(self, return_text):
         """
@@ -54,5 +46,15 @@ class News(object):
         """
         opinions: iterable Opinion
             is an iterable opinions that should be used to find a related text_opinion entries.
+        """
+        raise NotImplementedError()
+
+    def get_entities_collection(self):
+        raise NotImplementedError("Document does not support entities collection generation.")
+
+    @staticmethod
+    def _sentence_to_terms_list_core(sentence):
+        """
+        pipeline processing application towards the particular sentence.
         """
         raise NotImplementedError()
