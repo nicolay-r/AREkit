@@ -10,9 +10,7 @@ class RuAttitudesNews(News):
     def __init__(self, sentences, news_index):
         assert(len(sentences) > 0)
 
-        super(RuAttitudesNews, self).__init__(news_id=news_index,
-                                              sentences=sentences,
-                                              entities_parser=RuAttitudesTextEntitiesParser())
+        super(RuAttitudesNews, self).__init__(news_id=news_index, sentences=sentences)
 
         self.__set_owners()
         self.__objects_before_sentence = self.__cache_objects_declared_before()
@@ -59,6 +57,14 @@ class RuAttitudesNews(News):
         """
         assert(isinstance(opinion, Opinion))
         return LinkedTextOpinionsWrapper(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
+
+    def get_entities_collection(self):
+        raise Exception("Not Available for this type of collection")
+
+    @staticmethod
+    def _sentence_to_terms_list_core(sentence):
+        with RuAttitudesTextEntitiesParser() as parser:
+            return parser.parse(sentence)
 
     # endregion
 
