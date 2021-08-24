@@ -1,4 +1,4 @@
-from arekit.common.news.entities_parser import BaseEntitiesParser
+from arekit.common.news.objects_parser import BaseObjectsParser
 
 
 class News(object):
@@ -6,7 +6,7 @@ class News(object):
     def __init__(self, news_id, sentences, entities_parser):
         assert(isinstance(news_id, int))
         assert(isinstance(sentences, list))
-        assert(isinstance(entities_parser, BaseEntitiesParser))
+        assert(isinstance(entities_parser, BaseObjectsParser))
         self.__news_id = news_id
         self.__entities_parser = entities_parser
 
@@ -33,9 +33,6 @@ class News(object):
         assert(isinstance(sent_ind, int))
         sentence = self._sentences[sent_ind]
         return self.__entities_parser.parse(sentence)
-
-    def get_sentence(self, sent_ind):
-        return self._sentences[sent_ind]
 
     def get_entities_collection(self):
         raise NotImplementedError("Document does not support entities collection generation.")

@@ -46,9 +46,6 @@ class RuAttitudesNews(News):
 
     # region public methods
 
-    def get_sentence(self, index):
-        return self._sentences[index]
-
     def get_objects_declared_before(self, sentence_index):
         return self.__objects_before_sentence[sentence_index]
 
