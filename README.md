@@ -5,7 +5,8 @@
 </p>
 
 **AREkit** (Attitude and Relation Extraction Toolkit) -- is a python toolkit, devoted to 
-document level Attitude and Relation Extraction for text objects with entity-linking (EL) API support.
+document level Attitude and Relation Extraction between text objects from mass-media news 
+and analytical articles with entity-linking (EL) API support for objects.
 
 ## Description
 
@@ -17,8 +18,8 @@ for sentence level relations preparation (dubbed as contexts)
 (2) API for contexts extraction
 (3) relations transferring from sentence-level onto document-level, and more.
 It providers contrib modules of 
-[neural networks](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/networks) (like OpenNRE) and 
-[BERT](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/bert),
+[neural networks](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/arekit/contrib/networks) (like OpenNRE) and 
+[BERT](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/arekit/contrib/bert),
 both applicable for sentiment attitude extraction task.
 
 ## Installation 
