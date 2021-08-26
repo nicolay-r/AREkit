@@ -20,13 +20,6 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
     def __init__(self, data_type):
         super(BaseOpinionsFormatter, self).__init__(data_type=data_type)
 
-    # TODO. Move into nested class.
-    # TODO. Move into nested class.
-    # TODO. Move into nested class.
-    @staticmethod
-    def formatter_type_log_name():
-        return "opinion"
-
     def _get_columns_list_with_types(self):
         dtypes_list = super(BaseOpinionsFormatter, self)._get_columns_list_with_types()
         dtypes_list.append((const.ID, str))

@@ -44,13 +44,6 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         super(BaseSampleFormatter, self).__init__(data_type=data_type)
 
-    # TODO. Move into nested class.
-    # TODO. Move into nested class.
-    # TODO. Move into nested class.
-    @staticmethod
-    def formatter_type_log_name():
-        return "sample"
-
     # region Private methods
 
     @staticmethod

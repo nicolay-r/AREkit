@@ -68,7 +68,7 @@ class BaseIOUtils(object):
         return self._get_filepath(out_dir=self.get_target_dir(),
                                   template=template,
                                   # TODO. formatter_type_log_name -- in nested formatter.
-                                  prefix=BaseOpinionsFormatter.formatter_type_log_name())
+                                  prefix="opinion")
 
     # TODO. This method limits the functionality
     # TODO. This method limits the functionality
@@ -78,7 +78,7 @@ class BaseIOUtils(object):
         return self._get_filepath(out_dir=self.get_target_dir(),
                                   template=template,
                                   # TODO. formatter_type_log_name -- in nested formatter.
-                                  prefix=BaseSampleFormatter.formatter_type_log_name())
+                                  prefix="sample")
 
     def create_annotated_collection_filepath(self, doc_id, data_type):
         assert(isinstance(doc_id, int))

@@ -20,13 +20,6 @@ class BaseRowsFormatter(object):
         self._data_type = data_type
         self._df = self._create_empty_df()
 
-    # TODO. We may delete this as it is only for description purposes.
-    # TODO. We may delete this as it is only for description purposes.
-    # TODO. We may delete this as it is only for description purposes.
-    @staticmethod
-    def formatter_type_log_name():
-        return ""
-
     # region protected methods
 
     def _get_columns_list_with_types(self):
@@ -67,7 +60,7 @@ class BaseRowsFormatter(object):
 
     # endregion
 
-    def format(self, opinion_provider):
+    def format(self, opinion_provider, desc=""):
         assert(isinstance(opinion_provider, OpinionProvider))
 
         logged_rows_it = progress_bar_iter(self._iter_by_rows(opinion_provider, idle_mode=True),
@@ -79,12 +72,8 @@ class BaseRowsFormatter(object):
         self.__fill_with_blank_rows(rows_count)
         logger.info("Completed!")
 
-        # TODO. We may refactor this as it is only for description purposes.
-        desc = "{fmt}-{dtype}".format(fmt=self.formatter_type_log_name(),
-                                      dtype=self._data_type)
-
         it = progress_bar_defined(iterable=self._iter_by_rows(opinion_provider, idle_mode=False),
-                                  desc=desc,
+                                  desc="{fmt}-{dtype}".format(fmt=desc, dtype=self._data_type),
                                   total=rows_count)
 
         for row_index, row in enumerate(it):

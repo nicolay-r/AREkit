@@ -30,12 +30,12 @@ class BaseInputEncoder(object):
         create_dir_if_not_exists(sample_filepath)
 
         # Opinions
-        opinion_formatter.format(opinion_provider)
+        opinion_formatter.format(opinion_provider, desc="opinion")
         opinion_formatter.save(opinion_filepath)
         opinion_formatter.dispose_dataframe()
 
         # Samples
-        sample_formatter.format(opinion_provider)
+        sample_formatter.format(opinion_provider, desc="sample")
         sample_formatter.save(filepath=sample_filepath,
                               write_header=write_sample_header)
         sample_formatter.dispose_dataframe()
