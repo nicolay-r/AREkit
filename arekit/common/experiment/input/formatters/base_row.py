@@ -27,18 +27,6 @@ class BaseRowsFormatter(object):
         dtypes_list.append((BaseRowsFormatter.ROW_ID, 'int32'))
         return dtypes_list
 
-    def _iter_by_rows(self, opinion_provider, idle_mode):
-        assert(isinstance(opinion_provider, OpinionProvider))
-
-        for parsed_news, linked_wrapper in opinion_provider.iter_linked_opinion_wrappers():
-
-            rows_it = self._provide_rows(parsed_news=parsed_news,
-                                         linked_wrapper=linked_wrapper,
-                                         idle_mode=idle_mode)
-
-            for row in rows_it:
-                yield row
-
     def _provide_rows(self, parsed_news, linked_wrapper, idle_mode):
         raise NotImplementedError()
 
@@ -58,12 +46,24 @@ class BaseRowsFormatter(object):
         self._df[self.ROW_ID] = list(range(rows_count))
         self._df.set_index(self.ROW_ID, inplace=True)
 
+    def __iter_by_rows(self, opinion_provider, idle_mode):
+        assert(isinstance(opinion_provider, OpinionProvider))
+
+        for parsed_news, linked_wrapper in opinion_provider.iter_linked_opinion_wrappers():
+
+            rows_it = self._provide_rows(parsed_news=parsed_news,
+                                         linked_wrapper=linked_wrapper,
+                                         idle_mode=idle_mode)
+
+            for row in rows_it:
+                yield row
+
     # endregion
 
     def format(self, opinion_provider, desc=""):
         assert(isinstance(opinion_provider, OpinionProvider))
 
-        logged_rows_it = progress_bar_iter(self._iter_by_rows(opinion_provider, idle_mode=True),
+        logged_rows_it = progress_bar_iter(self.__iter_by_rows(opinion_provider, idle_mode=True),
                                            desc="Calculating rows count",
                                            unit="rows")
         rows_count = sum(1 for _ in logged_rows_it)
@@ -72,7 +72,7 @@ class BaseRowsFormatter(object):
         self.__fill_with_blank_rows(rows_count)
         logger.info("Completed!")
 
-        it = progress_bar_defined(iterable=self._iter_by_rows(opinion_provider, idle_mode=False),
+        it = progress_bar_defined(iterable=self.__iter_by_rows(opinion_provider, idle_mode=False),
                                   desc="{fmt}-{dtype}".format(fmt=desc, dtype=self._data_type),
                                   total=rows_count)
 
