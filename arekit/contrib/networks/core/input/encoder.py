@@ -79,7 +79,7 @@ class NetworkInputEncoder(object):
         BaseInputEncoder.to_tsv(
             sample_filepath=exp_io.get_input_sample_filepath(data_type=data_type),
             opinion_filepath=exp_io.get_input_opinions_filepath(data_type=data_type),
-            opinion_formatter=BaseOpinionsFormatter(data_type),
+            opinion_storage=BaseOpinionsFormatter(data_type),
             # TODO. Create opinion_provider func, based on data_type.
             opinion_provider=OpinionProvider.from_experiment(
                 doc_ops=doc_ops,
@@ -87,7 +87,7 @@ class NetworkInputEncoder(object):
                 data_type=data_type,
                 parsed_news_it_func=iter_parsed_news_func,
                 terms_per_context=terms_per_context),
-            sample_formatter=NetworkSampleFormatter(
+            sample_storage=NetworkSampleFormatter(
                 data_type=data_type,
                 label_provider=exp_data.LabelProvider,
                 text_provider=text_provider,

@@ -1,9 +1,6 @@
 import collections
 
-from arekit.common.dataset.text_opinions.enums import EntityEndType
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.entities.base import Entity
-from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
@@ -11,16 +8,11 @@ from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.news.base import News
 from arekit.common.news.parse_options import NewsParseOptions
-from arekit.common.news.parsed.term_position import TermPositionTypes
-from arekit.common.opinions.base import Opinion
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
-from arekit.contrib.networks.core.input.formatters.sample import NetworkSampleFormatter
-from arekit.contrib.networks.core.input.providers.text.single import NetworkSingleTextProvider
-from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
 from arekit.processing.lemmatization.base import Stemmer
@@ -58,13 +50,14 @@ def entity_to_group_func(entity, synonyms):
 
 def extract(text):
 
+    ########################
     # Step 1. Parse text.
+    ########################
 
     sentences = text  # TODO. split text onto sentences.
 
     news = News(news_id=0,
-                sentences=sentences,
-                entities_parser=None)   # TODO. Implement entities parser.
+                sentences=sentences)
 
     parse_options = NewsParseOptions(
         parse_entities=False,
