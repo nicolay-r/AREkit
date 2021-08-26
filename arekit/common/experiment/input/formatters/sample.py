@@ -93,39 +93,6 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return (s_ind, t_ind)
 
-    @staticmethod
-    def _iter_sentence_terms(parsed_news, sentence_ind):
-        return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
-
-    def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
-                       parsed_news, sentence_ind, s_ind, t_ind):
-
-        def __assign_value(column, value):
-            row[column] = value
-
-        row[const.ID] = self.__row_ids_provider.create_sample_id(
-            linked_opinions=linked_wrap,
-            index_in_linked=index_in_linked,
-            label_scaler=self._label_provider.LabelScaler)
-
-        row[const.NEWS_ID] = linked_wrap.First.NewsID
-
-        expected_label = linked_wrap.get_linked_label()
-
-        if self.__is_train():
-            row[const.LABEL] = self._label_provider.calculate_output_uint_label(
-                expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
-                etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
-
-        self.__text_provider.add_text_in_row(
-            set_text_func=lambda column, value: __assign_value(column, value),
-            sentence_terms=list(self._iter_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind)),
-            s_ind=s_ind,
-            t_ind=t_ind,
-            expected_label=expected_label)
-
-        row[const.S_IND] = s_ind
-        row[const.T_IND] = t_ind
 
     def __create_row(self, row, parsed_news, linked_wrap, index_in_linked, etalon_label, idle_mode):
         """
@@ -208,6 +175,10 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
+    # endregion
+
+    # region protected methods
+
     def _provide_rows(self, parsed_news, linked_wrapper, idle_mode):
         assert(isinstance(idle_mode, bool))
 
@@ -225,7 +196,39 @@ class BaseSampleFormatter(BaseRowsFormatter):
             for row in rows_it:
                 yield row
 
-    # endregion
+    @staticmethod
+    def _iter_sentence_terms(parsed_news, sentence_ind):
+        return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
+
+    def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
+                       parsed_news, sentence_ind, s_ind, t_ind):
+
+        def __assign_value(column, value):
+            row[column] = value
+
+        row[const.ID] = self.__row_ids_provider.create_sample_id(
+            linked_opinions=linked_wrap,
+            index_in_linked=index_in_linked,
+            label_scaler=self._label_provider.LabelScaler)
+
+        row[const.NEWS_ID] = linked_wrap.First.NewsID
+
+        expected_label = linked_wrap.get_linked_label()
+
+        if self.__is_train():
+            row[const.LABEL] = self._label_provider.calculate_output_uint_label(
+                expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
+                etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
+
+        self.__text_provider.add_text_in_row(
+            set_text_func=lambda column, value: __assign_value(column, value),
+            sentence_terms=list(self._iter_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind)),
+            s_ind=s_ind,
+            t_ind=t_ind,
+            expected_label=expected_label)
+
+        row[const.S_IND] = s_ind
+        row[const.T_IND] = t_ind
 
     def _create_blank_df(self, size):
         df = self._create_empty_df()
@@ -235,6 +238,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
     def _fast_init_df(self, df, rows_count):
         df[self.ROW_ID] = list(range(rows_count))
         df.set_index(self.ROW_ID, inplace=True)
+
+    # endregion
 
     # TODO. Saving should be optional as now it limits potential storing formats.
     # TODO. Saving should be optional as now it limits potential storing formats.
