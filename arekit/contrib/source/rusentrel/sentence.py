@@ -26,14 +26,6 @@ class RuSentRelSentence(BaseNewsSentence):
         assert(isinstance(entity, RuSentRelEntity))
         self.__entities.append(entity)
 
-    def iter_entity_ids(self):
-        for entity in self.__entities:
-            yield entity.IdInDocument
-
-    def iter_entities(self):
-        for entity in self.__entities:
-            yield entity
-
     def iter_entity_with_local_bounds(self):
         for entity in self.__entities:
             start = entity.CharIndexBegin - self.__begin
