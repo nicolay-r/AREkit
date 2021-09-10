@@ -24,6 +24,17 @@ class News(object):
 
     # endregion
 
+    # region protected methods
+
+    @staticmethod
+    def _sentence_to_terms_list_core(sentence):
+        """
+        pipeline processing application towards the particular sentence.
+        """
+        raise NotImplementedError()
+
+    # endregion
+
     def sentence_to_terms_list(self, sent_ind):
         assert(isinstance(sent_ind, int))
         sentence = self._sentences[sent_ind]
@@ -52,9 +63,3 @@ class News(object):
     def get_entities_collection(self):
         raise NotImplementedError("Document does not support entities collection generation.")
 
-    @staticmethod
-    def _sentence_to_terms_list_core(sentence):
-        """
-        pipeline processing application towards the particular sentence.
-        """
-        raise NotImplementedError()

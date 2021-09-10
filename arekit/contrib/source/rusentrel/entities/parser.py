@@ -1,4 +1,5 @@
 from arekit.common.news.objects_parser import BaseObjectsParser
+from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 
 
 class RuSentRelTextEntitiesParser(BaseObjectsParser):
@@ -9,4 +10,5 @@ class RuSentRelTextEntitiesParser(BaseObjectsParser):
 
     @staticmethod
     def __iter_subs_values_with_bounds(sentence):
+        assert(isinstance(sentence, RuSentRelSentence))
         return sentence.iter_entity_with_local_bounds()
