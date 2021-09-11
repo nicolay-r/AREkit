@@ -5,11 +5,12 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 from arekit.common.utils import check_files_existance
 
-from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
+from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
@@ -175,9 +176,7 @@ class HandledData(object):
         frames_per_context = config.FramesPerContext
         synonyms_per_context = config.SynonymsPerContext
 
-        # TODO. Provide samples reader from the outside.
-        # TODO. (This allows us to support diffrent input formats rahter than TSV.
-        samples_reader = NetworkInputSampleReader.from_tsv(
+        samples_reader = TsvInputSampleReader.from_tsv(
             filepath=experiment_io.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
 
@@ -207,7 +206,9 @@ class HandledData(object):
                 synonyms_per_context=synonyms_per_context,
                 pos_tags=row.PartOfSpeechTags))
 
-        labeled_sample_row_ids = list(samples_reader.iter_uint_labeled_sample_rows())
+        rows_it = NetworkInputSampleReaderHelper.iter_uint_labeled_sample_rows(samples_reader)
+
+        labeled_sample_row_ids = list(rows_it)
 
         return bags_collection, labeled_sample_row_ids
 

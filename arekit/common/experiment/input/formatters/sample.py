@@ -93,7 +93,8 @@ class BaseSampleFormatter(BaseRowsFormatter):
 
         return (s_ind, t_ind)
 
-
+    # TODO. This could be moved in another class, because here we fill passed row
+    # TODO. and we don't interact with df.
     def __create_row(self, row, parsed_news, linked_wrap, index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:

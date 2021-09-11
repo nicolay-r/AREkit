@@ -6,6 +6,7 @@ from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.output.multiple import MulticlassOutput
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
@@ -16,7 +17,6 @@ from arekit.common.opinions.formatter import OpinionCollectionsFormatter
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
-from arekit.contrib.networks.core.input.readers.samples import NetworkInputSampleReader
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
@@ -47,7 +47,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     # Getting access to the original samples with the related reader.
     # In this scenario, there is a need to obtain news ids for the related sample_id.
     samples_filepath = experiment.ExperimentIO.get_input_sample_filepath(data_type=data_type)
-    samples_reader = NetworkInputSampleReader.from_tsv(samples_filepath, MultipleIDProvider())
+    samples_reader = TsvInputSampleReader.from_tsv(samples_filepath, MultipleIDProvider())
     news_id_by_sample_id = samples_reader.calculate_news_id_by_sample_id_dict()
 
     # TODO. Filepath-dependency should be removed!
