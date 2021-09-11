@@ -38,6 +38,10 @@ class DataIO(object):
 
     # region not implemented properties
 
+    # TODO. Provider and move to ExperimentIO #188.
+    # TODO. Provider and move to ExperimentIO #188.
+    # TODO. Provider and move to ExperimentIO #188.
+    # TODO. Move into exp_io.
     @property
     def OpinionFormatter(self):
         """ Corresponds to `OpinionCollectionsFormatter` instance

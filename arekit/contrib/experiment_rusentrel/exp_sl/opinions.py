@@ -26,6 +26,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__get_synonyms_func = get_synonyms_func
         self.__version = version
         self.__experiment_io = experiment_io
+        # TODO. Provider #188.
         self.__opinion_formatter = experiment_data.OpinionFormatter
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
@@ -80,6 +81,8 @@ class RuSentrelOpinionOperations(OpinionOperations):
                                   labels_fmt=self.__neutral_labels_fmt)
 
     def save_annotated_opinion_collection(self, collection, doc_id, data_type):
+        # TODO. Refer to ExperimentIO in this part of code.
+        # TODO. to avoid file usages.
         filepath = self.__experiment_io.create_annotated_collection_filepath(
             doc_id=doc_id,
             data_type=data_type)
