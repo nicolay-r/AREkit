@@ -60,23 +60,19 @@ class HandledData(object):
         return cls(labeled_collections={},
                    bags_collection={})
 
-    # TODO. Remove DocOps from here.
-    # TODO. Remove DocOps from here.
-    # TODO. Remove DocOps from here.
-    def perform_reading_and_initialization(self, doc_ops, exp_io, vocab,
+    def perform_reading_and_initialization(self, dtypes, exp_io, vocab,
                                            labels_count, bags_collection_type, config):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
         """
-        assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(dtypes, collections.Iterable))
         assert(isinstance(labels_count, int) and labels_count > 0)
 
         stat_uint_labeled_sample_row_ids = None
-        dtypes_set = set(doc_ops.DataFolding.iter_supported_data_types())
 
         # Reading from serialized information
-        for data_type in dtypes_set:
+        for data_type in dtypes:
 
             # Extracting such information from serialized files.
             bags_collection, uint_labeled_sample_row_ids = self.__read_for_data_type(

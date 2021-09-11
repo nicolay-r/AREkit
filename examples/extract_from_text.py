@@ -114,7 +114,7 @@ def extract(text):
 
     # TODO. Provide samples reader.
     handled_data.perform_reading_and_initialization(
-        doc_ops=None,                                 # TODO. Will be removed.
+        dtypes=[DataType.Test],                                 # TODO. Will be removed.
         exp_io=None,
         vocab=None,
         labels_count=3,
