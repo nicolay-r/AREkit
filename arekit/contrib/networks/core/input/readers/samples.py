@@ -15,13 +15,8 @@ class NetworkInputSampleReader(TsvInputSampleReader):
         has_label = const.LABEL in self._df.columns
 
         for row_index, sample_id in self.__iter_rows():
-
             uint_label = int(self._df[const.LABEL][row_index]) if has_label else None
-
-            if has_label:
-                yield sample_id, uint_label
-            else:
-                yield sample_id, None
+            yield sample_id, uint_label
 
     def calculate_news_id_by_sample_id_dict(self):
         d = {}
