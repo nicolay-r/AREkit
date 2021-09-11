@@ -26,7 +26,7 @@ class GoogleBertMulticlassOutput(MulticlassOutput):
 
         # Exporting such information from samples.
         row_ids = self.__samples_reader.extract_ids()
-        news_ids = self.__samples_reader.iter_news_ids()
+        news_ids = self.__samples_reader.extract_news_ids()
 
         assert(len(row_ids) == len(news_ids) == len(df))
 
