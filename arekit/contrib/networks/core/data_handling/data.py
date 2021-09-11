@@ -5,6 +5,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
 from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
@@ -74,13 +75,19 @@ class HandledData(object):
         # Reading from serialized information
         for data_type in dtypes:
 
+            # Create samples reader.
+            samples_reader = TsvInputSampleReader.from_tsv(
+                filepath=exp_io.get_input_sample_filepath(data_type=data_type),
+                row_ids_provider=MultipleIDProvider())
+
             # Extracting such information from serialized files.
             bags_collection, uint_labeled_sample_row_ids = self.__read_for_data_type(
-                data_type=data_type,
-                experiment_io=exp_io,
+                samples_reader=samples_reader,
+                is_external_vocab=exp_io.has_model_predefined_state(),
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
-                config=config)
+                config=config,
+                desc="Filling bags collection [{}]".format(data_type))
 
             # Saving into dictionaries.
             self.__bags_collection[data_type] = bags_collection
@@ -166,19 +173,17 @@ class HandledData(object):
 
     # region reading methods
 
-    def __read_for_data_type(self, data_type, experiment_io, bags_collection_type, vocab, config):
+    def __read_for_data_type(self, samples_reader, is_external_vocab,
+                             bags_collection_type, vocab, config, desc=""):
+        assert(isinstance(samples_reader, BaseInputSampleReader))
 
         terms_per_context = config.TermsPerContext
         frames_per_context = config.FramesPerContext
         synonyms_per_context = config.SynonymsPerContext
 
-        samples_reader = TsvInputSampleReader.from_tsv(
-            filepath=experiment_io.get_input_sample_filepath(data_type=data_type),
-            row_ids_provider=MultipleIDProvider())
-
         bags_collection = bags_collection_type.from_formatted_samples(
             formatted_samples_iter=samples_reader.iter_rows_linked_by_text_opinions(),
-            desc="Filling bags collection [{}]".format(data_type),
+            desc=desc,
             bag_size=config.BagSize,
             shuffle=True,
             create_empty_sample_func=lambda: InputSample.create_empty(
@@ -189,7 +194,7 @@ class HandledData(object):
                 input_sample_id=row.SampleID,
                 terms=row.Terms,
                 entity_inds=row.EntityInds,
-                is_external_vocab=experiment_io.has_model_predefined_state(),
+                is_external_vocab=is_external_vocab,
                 subj_ind=row.SubjectIndex,
                 obj_ind=row.ObjectIndex,
                 words_vocab=vocab,
