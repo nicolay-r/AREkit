@@ -4,9 +4,7 @@ import logging
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
-from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 from arekit.common.utils import check_files_existance
@@ -68,6 +66,7 @@ class HandledData(object):
         Initializing core configuration.
         """
         assert(isinstance(dtypes, collections.Iterable))
+        assert(isinstance(exp_io, NetworkIOUtils))
         assert(isinstance(labels_count, int) and labels_count > 0)
 
         stat_uint_labeled_sample_row_ids = None
@@ -76,9 +75,7 @@ class HandledData(object):
         for data_type in dtypes:
 
             # Create samples reader.
-            samples_reader = TsvInputSampleReader.from_tsv(
-                filepath=exp_io.get_input_sample_filepath(data_type=data_type),
-                row_ids_provider=MultipleIDProvider())
+            samples_reader = exp_io.create_samples_reader(data_type)
 
             # Extracting such information from serialized files.
             bags_collection, uint_labeled_sample_row_ids = self.__read_for_data_type(

@@ -18,6 +18,9 @@ class BaseIOUtils(object):
         """
         raise NotImplementedError()
 
+    def create_samples_reader(self, data_type):
+        raise NotImplementedError()
+
     def get_target_dir(self):
         """ Represents an experiment dir of specific label scale format,
             defined by labels scaler.
@@ -57,26 +60,6 @@ class BaseIOUtils(object):
     # endregion
 
     # region public methods
-
-    # TODO. This method limits the functionality
-    # TODO. This method limits the functionality
-    # TODO. This method limits the functionality
-    def get_input_opinions_filepath(self, data_type):
-        template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self.get_target_dir(),
-                                  template=template,
-                                  # TODO. formatter_type_log_name -- in nested formatter.
-                                  prefix="opinion")
-
-    # TODO. This method limits the functionality
-    # TODO. This method limits the functionality
-    # TODO. This method limits the functionality
-    def get_input_sample_filepath(self, data_type):
-        template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self.get_target_dir(),
-                                  template=template,
-                                  # TODO. formatter_type_log_name -- in nested formatter.
-                                  prefix="sample")
 
     def create_annotated_collection_filepath(self, doc_id, data_type):
         assert(isinstance(doc_id, int))

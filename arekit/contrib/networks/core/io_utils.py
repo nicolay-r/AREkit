@@ -2,6 +2,8 @@ import logging
 from os.path import join
 
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 
@@ -26,6 +28,13 @@ class NetworkIOUtils(BaseIOUtils):
     VOCABULARY_FILENAME_TEMPLATE = "vocab-{cv_index}.txt"
 
     # region public methods
+
+    def create_samples_reader(self, data_type):
+        assert(isinstance(data_type, DataType))
+
+        return TsvInputSampleReader.from_tsv(
+            filepath=self.get_input_sample_filepath(data_type=data_type),
+            row_ids_provider=MultipleIDProvider())
 
     def get_loading_vocab_filepath(self):
         """ It is possible to load a predefined embedding from another experiment
@@ -118,3 +127,20 @@ class NetworkIOUtils(BaseIOUtils):
         return model_io.IsPretrainedStateProvided
 
     # endregion
+
+    # TODO. In nested class (user applications)
+    def get_input_opinions_filepath(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.get_target_dir(),
+                                  template=template,
+                                  # TODO. formatter_type_log_name -- in nested formatter.
+                                  prefix="opinion")
+
+    # TODO. In nested class (user applications)
+    def get_input_sample_filepath(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.get_target_dir(),
+                                  template=template,
+                                  # TODO. formatter_type_log_name -- in nested formatter.
+                                  prefix="sample")
+

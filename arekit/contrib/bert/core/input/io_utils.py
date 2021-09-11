@@ -44,3 +44,20 @@ class BertIOUtils(BaseIOUtils):
         return result_dir
 
     # endregion
+
+    # TODO. In nested class (user applications)
+    def get_input_opinions_filepath(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.get_target_dir(),
+                                  template=template,
+                                  # TODO. formatter_type_log_name -- in nested formatter.
+                                  prefix="opinion")
+
+
+    # TODO. In nested class (user applications)
+    def get_input_sample_filepath(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.get_target_dir(),
+                                  template=template,
+                                  # TODO. formatter_type_log_name -- in nested formatter.
+                                  prefix="sample")
