@@ -21,6 +21,9 @@ class BaseIOUtils(object):
     def create_samples_reader(self, data_type):
         raise NotImplementedError()
 
+    def create_opinions_reader(self, data_type):
+        raise NotImplementedError()
+
     def get_target_dir(self):
         """ Represents an experiment dir of specific label scale format,
             defined by labels scaler.

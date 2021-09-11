@@ -3,9 +3,6 @@ from os.path import exists, join
 
 from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
-from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
-from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
-from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.labels.scaler import BaseLabelScaler
@@ -85,15 +82,6 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         assert(isinstance(callback, Callback))
         callback.set_iter_index(iter_index)
 
-        # TODO. These parameters (filepaths) should be declared ouside of this class.
-        # TODO. These parameters (filepaths) should be declared ouside of this class.
-        # TODO. These parameters (filepaths) should be declared ouside of this class.
-        # Providing opinions reader.
-        opinions_tsv_filepath = exp_io.get_input_opinions_filepath(self.__data_type)
-        # Providing samples reader.
-        samples_tsv_filepath = exp_io.get_input_sample_filepath(self.__data_type)
-
-        row_id_provider = MultipleIDProvider()
         # TODO. This should be removed as this is a part of the particular
         # experiment, not source!.
         cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_doc_ids_to_compare())
@@ -123,16 +111,14 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
                 output = GoogleBertMulticlassOutput(
+                    samples_reader=exp_io.create_samples_reader(self.__data_type),
                     labels_scaler=self.__label_scaler,
-                    samples_reader=TsvInputSampleReader.from_tsv(filepath=samples_tsv_filepath,
-                                                                 row_ids_provider=row_id_provider),
                     has_output_header=False)
 
                 # iterate opinion collections.
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
                     output_filepath=result_filepath,
-                    # TODO. Move outside (should be customized).
-                    opinions_reader=TsvInputOpinionReader.from_tsv(opinions_tsv_filepath, compression='infer'),
+                    opinions_reader=exp_io.create_opinions_reader(self.__data_type),
                     labels_scaler=self.__label_scaler,
                     create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
                     keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,

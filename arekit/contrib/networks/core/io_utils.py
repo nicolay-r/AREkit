@@ -3,6 +3,7 @@ from os.path import join
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
 from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
@@ -35,6 +36,12 @@ class NetworkIOUtils(BaseIOUtils):
         return TsvInputSampleReader.from_tsv(
             filepath=self.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
+
+    def create_opinions_reader(self, data_type):
+        assert(isinstance(data_type, DataType))
+
+        opinions_source = self.get_input_opinions_filepath(data_type=data_type)
+        return TsvInputOpinionReader.from_tsv(opinions_source)
 
     def get_loading_vocab_filepath(self):
         """ It is possible to load a predefined embedding from another experiment

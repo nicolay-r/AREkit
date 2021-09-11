@@ -1,6 +1,9 @@
 from os.path import join
 
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.io_utils import BaseIOUtils
 
 
@@ -16,6 +19,15 @@ class BertIOUtils(BaseIOUtils):
         """
         return join(super(BertIOUtils, self).get_target_dir(),
                     self._experiment.DataIO.ModelIO.get_model_name())
+
+    def create_samples_reader(self, data_type):
+        samples_tsv_filepath = self.get_input_sample_filepath(data_type)
+        return TsvInputSampleReader.from_tsv(filepath=samples_tsv_filepath,
+                                             row_ids_provider=MultipleIDProvider())
+
+    def create_opinions_reader(self, data_type):
+        opinions_tsv_filepath = self.get_input_opinions_filepath(data_type)
+        return TsvInputOpinionReader.from_tsv(opinions_tsv_filepath, compression='infer')
 
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         """ Utilized for results evaluation.
