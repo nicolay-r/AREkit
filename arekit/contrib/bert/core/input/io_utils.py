@@ -65,7 +65,6 @@ class BertIOUtils(BaseIOUtils):
                                   # TODO. formatter_type_log_name -- in nested formatter.
                                   prefix="opinion")
 
-
     # TODO. In nested class (user applications)
     def get_input_sample_filepath(self, data_type):
         template = self._filename_template(data_type=data_type)
@@ -73,3 +72,25 @@ class BertIOUtils(BaseIOUtils):
                                   template=template,
                                   # TODO. formatter_type_log_name -- in nested formatter.
                                   prefix="sample")
+
+    # TODO. In nested class (user applications)
+    @staticmethod
+    def _get_filepath(out_dir, template, prefix):
+        assert(isinstance(template, str))
+        assert(isinstance(prefix, str))
+        return join(out_dir, BertIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+
+    # TODO. In nested class (user applications)
+    def _experiment_iter_index(self):
+        return self._experiment.DocumentOperations.DataFolding.IterationIndex
+
+    # TODO. In nested class (user applications)
+    def _filename_template(self, data_type):
+        assert(isinstance(data_type, DataType))
+        return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
+                                                 iter_index=self._experiment_iter_index())
+
+    # TODO. In nested class (user applications)
+    @staticmethod
+    def __generate_tsv_archive_filename(template, prefix):
+        return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)

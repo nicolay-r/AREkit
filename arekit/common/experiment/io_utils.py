@@ -40,19 +40,9 @@ class BaseIOUtils(object):
         return "{name}_{scale}l".format(name=self._experiment.Name,
                                         scale=str(self._experiment.DataIO.LabelsCount))
 
-    def _experiment_iter_index(self):
-        return self._experiment.DocumentOperations.DataFolding.IterationIndex
-
-    def _filename_template(self, data_type):
-        assert(isinstance(data_type, DataType))
-        return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
-                                                 iter_index=self._experiment_iter_index())
-
-    @staticmethod
-    def _get_filepath(out_dir, template, prefix):
-        assert(isinstance(template, str))
-        assert(isinstance(prefix, str))
-        return join(out_dir, BaseIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+    def __get_annotator_dir(self):
+        return join_dir_with_subfolder_name(dir=self.get_target_dir(),
+                                            subfolder_name=self._get_annotator_name())
 
     def _get_annotator_name(self):
         """ We use custom implementation as it allows to
@@ -86,14 +76,3 @@ class BaseIOUtils(object):
 
     # endregion
 
-    # region private methods
-
-    @staticmethod
-    def __generate_tsv_archive_filename(template, prefix):
-        return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
-
-    def __get_annotator_dir(self):
-        return join_dir_with_subfolder_name(dir=self.get_target_dir(),
-                                            subfolder_name=self._get_annotator_name())
-
-    # endregion
