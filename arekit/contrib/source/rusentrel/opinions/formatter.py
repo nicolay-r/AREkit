@@ -7,6 +7,8 @@ from arekit.common.utils import create_dir_if_not_exists
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
+# TODO. Rename this into OpinionCollectionProvider. #175.
+# TODO. Utilize it in `with` block!!! #175.
 class RuSentRelOpinionCollectionFormatter(OpinionCollectionsFormatter):
 
     # region protected public methods
