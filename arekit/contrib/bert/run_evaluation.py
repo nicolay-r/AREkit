@@ -117,6 +117,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
                 # iterate opinion collections.
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
+                    # TODO. prevent filepaths usage!
                     output_filepath=result_filepath,
                     opinions_reader=exp_io.create_opinions_reader(self.__data_type),
                     labels_scaler=self.__label_scaler,
@@ -133,7 +134,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                         doc_id=doc_id,
                         epoch_index=epoch_index),
                     save_to_file_func=lambda filepath, collection:
-                        self._experiment.DataIO.OpinionFormatter.save_to_file(
+                        self._experiment.DataIO.OpinionProvider.serialize(
                             collection=collection,
                             filepath=filepath,
                             labels_formatter=self.__labels_formatter,

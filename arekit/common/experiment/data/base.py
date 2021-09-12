@@ -43,7 +43,7 @@ class DataIO(object):
     # TODO. Provider and move to ExperimentIO #188.
     # TODO. Move into exp_io.
     @property
-    def OpinionFormatter(self):
+    def OpinionProvider(self):
         """ Corresponds to `OpinionCollectionsFormatter` instance
         """
         raise NotImplementedError()

@@ -18,7 +18,7 @@ from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
+from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
@@ -78,7 +78,7 @@ class ZippedResultsIOUtils(ZipArchiveUtils):
     def iter_doc_opinions(doc_id, result_version, labels_formatter):
         return ZippedResultsIOUtils.iter_from_zip(
             inner_path=path.join("{}.opin.txt".format(doc_id)),
-            process_func=lambda input_file: RuSentRelOpinionCollectionFormatter._iter_opinions_from_file(
+            process_func=lambda input_file: RuSentRelOpinionCollectionProvider._iter_opinions_from_file(
                 input_file=input_file,
                 labels_formatter=labels_formatter,
                 error_on_non_supported=True),

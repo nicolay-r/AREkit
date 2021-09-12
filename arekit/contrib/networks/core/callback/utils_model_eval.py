@@ -10,7 +10,7 @@ from arekit.common.experiment.output.opinions.writer import save_opinion_collect
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
-from arekit.common.opinions.formatter import OpinionCollectionsFormatter
+from arekit.common.opinions.provider import OpinionCollectionsProvider
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
@@ -72,7 +72,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
         opin_ops=experiment.OpinionOperations,
         doc_ops=experiment.DocumentOperations,
         labels_scaler=label_scaler,
-        opin_fmt=experiment.DataIO.OpinionFormatter,
+        opin_fmt=experiment.DataIO.OpinionProvider,
         supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,
         epoch_index=epoch_index,
@@ -105,7 +105,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
     assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(exp_io, NetworkIOUtils))
-    assert(isinstance(opin_fmt, OpinionCollectionsFormatter))
+    assert(isinstance(opin_fmt, OpinionCollectionsProvider))
     assert(isinstance(data_type, DataType))
     assert(isinstance(epoch_index, int))
     assert(isinstance(label_calc_mode, LabelCalculationMode))
@@ -132,10 +132,10 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         create_file_func=lambda doc_id: exp_io.create_result_opinion_collection_filepath(data_type=data_type,
                                                                                          doc_id=doc_id,
                                                                                          epoch_index=epoch_index),
-        save_to_file_func=lambda filepath, collection: opin_fmt.save_to_file(collection=collection,
-                                                                             filepath=filepath,
-                                                                             labels_formatter=labels_formatter,
-                                                                             error_on_non_supported=False))
+        save_to_file_func=lambda filepath, collection: opin_fmt.serialize(collection=collection,
+                                                                          filepath=filepath,
+                                                                          labels_formatter=labels_formatter,
+                                                                          error_on_non_supported=False))
 
 
 def __log_wrap_samples_iter(it):
