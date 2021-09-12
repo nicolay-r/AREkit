@@ -4,6 +4,7 @@ from arekit.common.experiment.cv.doc_stat.base import BaseDocumentStatGenerator
 from arekit.common.experiment.cv.splitters.base import CrossValidationSplitter
 
 
+# TODO. Move into the particular experiment issue #189
 class StatBasedCrossValidataionSplitter(CrossValidationSplitter):
     """ Sentence-based splitter.
     """
