@@ -175,6 +175,13 @@ class NetworkIOUtils(BaseIOUtils):
         return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
 
     # TODO. In nested class (user applications)
+    def _get_annotator_name(self):
+        """ We use custom implementation as it allows to
+            be independent of NeutralAnnotator instance.
+        """
+        return "annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
+
+    # TODO. In nested class (user applications)
     def __get_annotator_dir(self):
         return join_dir_with_subfolder_name(dir=self.get_target_dir(),
                                             subfolder_name=self._get_annotator_name())

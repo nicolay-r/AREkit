@@ -7,9 +7,9 @@ class BaseIOUtils(object):
         results -- evaluation of experiments.
     """
 
-    def __init__(self, experiment):
+    def __init__(self, experiment, opinion_collection_provider):
         self._experiment = experiment
-        self.__opinion_collection_provider = self.__create_opinion_collection_provider()
+        self.__opinion_collection_provider = opinion_collection_provider
 
     @property
     def OpinionCollectionProvider(self):
@@ -44,18 +44,9 @@ class BaseIOUtils(object):
 
     # region protected methods
 
-    def __create_opinion_collection_provider(self):
-        raise NotImplementedError()
-
     def __get_experiment_folder_name(self):
         return "{name}_{scale}l".format(name=self._experiment.Name,
                                         scale=str(self._experiment.DataIO.LabelsCount))
-
-    def _get_annotator_name(self):
-        """ We use custom implementation as it allows to
-            be independent of NeutralAnnotator instance.
-        """
-        return "annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
 
     # endregion
 
