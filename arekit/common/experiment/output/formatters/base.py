@@ -3,7 +3,7 @@ import pandas as pd
 from arekit.common.experiment import const
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.input.readers.base_opinion import BaseInputOpinionReader
-from arekit.common.experiment.output.base_provider import BaseOutputProvider
+from arekit.common.experiment.output.providers.base import BaseOutputProvider
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 

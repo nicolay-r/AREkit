@@ -2,7 +2,7 @@ import pandas as pd
 
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.experiment import const
-from arekit.common.experiment.output.base_formatter import BaseOutputFormatter
+from arekit.common.experiment.output.formatters.base import BaseOutputFormatter
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider

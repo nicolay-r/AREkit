@@ -4,10 +4,10 @@ from arekit.common.experiment import const
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.experiment.output.multiple_formatter import MulticlassOutputFormatter
+from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
-from arekit.common.experiment.output.tsv_provider import TsvBaseOutputProvider
+from arekit.common.experiment.output.providers.tsv import TsvBaseOutputProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode

@@ -1,5 +1,5 @@
 import pandas as pd
-from arekit.common.experiment.output.base_provider import BaseOutputProvider
+from arekit.common.experiment.output.providers.base import BaseOutputProvider
 
 
 class TsvBaseOutputProvider(BaseOutputProvider):

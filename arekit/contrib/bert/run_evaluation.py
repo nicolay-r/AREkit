@@ -3,7 +3,7 @@ from os.path import exists, join
 
 from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
-from arekit.common.experiment.output.multiple_formatter import MulticlassOutputFormatter
+from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.labels.scaler import BaseLabelScaler

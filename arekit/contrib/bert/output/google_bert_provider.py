@@ -1,5 +1,5 @@
 from arekit.common.experiment import const
-from arekit.common.experiment.output.tsv_provider import TsvBaseOutputProvider
+from arekit.common.experiment.output.providers.tsv import TsvBaseOutputProvider
 
 
 class GoogleBertOutputProvider(TsvBaseOutputProvider):
