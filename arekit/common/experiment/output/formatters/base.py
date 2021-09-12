@@ -19,14 +19,10 @@ class BaseOutputFormatter(object):
     def __init__(self, ids_formatter, output_provider):
         assert(isinstance(ids_formatter, BaseIDProvider))
         assert(isinstance(output_provider, BaseOutputProvider))
-        self.__ids_formatter = ids_formatter
+        self._ids_formatter = ids_formatter
         self.__provider = output_provider
 
     # region properties
-
-    @property
-    def _IdsFormatter(self):
-        return self.__ids_formatter
 
     @property
     def _df(self):
@@ -40,12 +36,12 @@ class BaseOutputFormatter(object):
         assert(isinstance(news_id, int))
 
         news_df = self._df[self._df[const.NEWS_ID] == news_id]
-        opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
+        opinion_ids = [self._ids_formatter.parse_opinion_in_opinion_id(opinion_id)
                        for opinion_id in news_df[const.ID]]
 
         for opinion_id in set(opinion_ids):
-            opin_id_pattern = self.__ids_formatter.create_pattern(id_value=opinion_id,
-                                                                  p_type=BaseIDProvider.OPINION)
+            opin_id_pattern = self._ids_formatter.create_pattern(id_value=opinion_id,
+                                                                 p_type=BaseIDProvider.OPINION)
             linked_opins_df = news_df[news_df[const.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
@@ -64,7 +60,7 @@ class BaseOutputFormatter(object):
         assert(isinstance(opinions_reader, BaseInputOpinionReader))
         assert(callable(calc_label_func))
 
-        opinion_id = self.__ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)
+        opinion_id = self._ids_formatter.convert_sample_id_to_opinion_id(sample_id=sample_id)
         source, target = opinions_reader.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
 
         return Opinion(source_value=source,
