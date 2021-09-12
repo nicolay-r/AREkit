@@ -70,15 +70,15 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
 
     # region public methods
 
-    def iter_opinions(self, filepath, labels_formatter, error_on_non_supported=True):
+    def iter_opinions(self, source, labels_formatter, error_on_non_supported=True):
         """
         Important: For externaly saved collections (using save_to_file method) and related usage
         """
-        assert(isinstance(filepath, str))
+        assert(isinstance(source, str))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(error_on_non_supported, bool))
 
-        with open(filepath, 'r') as input_file:
+        with open(source, 'r') as input_file:
 
             it = RuSentRelOpinionCollectionProvider._iter_opinions_from_file(
                 input_file=input_file,
@@ -88,9 +88,9 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
             for opinion in it:
                 yield opinion
 
-    def serialize(self, collection, filepath, labels_formatter, error_on_non_supported=True):
+    def serialize(self, collection, target, labels_formatter, error_on_non_supported=True):
         assert(isinstance(collection, OpinionCollection))
-        assert(isinstance(filepath, str))
+        assert(isinstance(target, str))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(error_on_non_supported, bool))
 
@@ -100,9 +100,9 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
 
         sorted_ops = sorted(collection, key=__opinion_key)
 
-        create_dir_if_not_exists(filepath)
+        create_dir_if_not_exists(target)
 
-        with io.open(filepath, 'w') as f:
+        with io.open(target, 'w') as f:
             for o in sorted_ops:
 
                 str_value = RuSentRelOpinionCollectionProvider.__try_opinion_to_str(

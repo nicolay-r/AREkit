@@ -134,7 +134,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
                                                                                          doc_id=doc_id,
                                                                                          epoch_index=epoch_index),
         save_to_file_func=lambda filepath, collection: opin_provider.serialize(collection=collection,
-                                                                               filepath=filepath,
+                                                                               target=filepath,
                                                                                labels_formatter=labels_formatter,
                                                                                error_on_non_supported=False))
 

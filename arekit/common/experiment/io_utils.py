@@ -68,7 +68,7 @@ class BaseIOUtils(object):
             check_existance=False)
 
         self.__opinion_collection_provider.serialize(
-            filepath=target,
+            target=target,
             collection=collection,
             labels_formatter=labels_formatter)
 
@@ -85,7 +85,7 @@ class BaseIOUtils(object):
             return None
 
         opinions = self.__opinion_collection_provider.iter_opinions(
-            filepath=target,
+            source=target,
             labels_formatter=labels_formatter,
             error_on_non_supported=False)
 

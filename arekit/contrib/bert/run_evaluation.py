@@ -136,7 +136,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                     save_to_file_func=lambda filepath, collection:
                         self._experiment.ExperimentIO.OpinionCollectionProvider.serialize(
                             collection=collection,
-                            filepath=filepath,
+                            target=filepath,
                             labels_formatter=self.__labels_formatter,
                             error_on_non_supported=False))
 

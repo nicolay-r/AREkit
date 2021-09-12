@@ -102,7 +102,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
     # region private provider methods
 
     def __custom_read(self, filepath, labels_fmt):
-        opinions = self.__opinion_provider.iter_opinions(filepath=filepath,
+        opinions = self.__opinion_provider.iter_opinions(source=filepath,
                                                          labels_formatter=labels_fmt,
                                                          error_on_non_supported=False)
 
