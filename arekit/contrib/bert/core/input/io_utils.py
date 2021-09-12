@@ -1,10 +1,11 @@
-from os.path import join
+from os.path import join, exists
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
 from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.io_utils import BaseIOUtils
+from arekit.common.utils import join_dir_with_subfolder_name
 
 
 class BertIOUtils(BaseIOUtils):
@@ -94,3 +95,30 @@ class BertIOUtils(BaseIOUtils):
     @staticmethod
     def __generate_tsv_archive_filename(template, prefix):
         return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
+
+    # TODO. In nested class (user applications)
+    def __get_annotator_dir(self):
+        return join_dir_with_subfolder_name(dir=self.get_target_dir(),
+                                            subfolder_name=self._get_annotator_name())
+
+    # TODO. In nested class (user applications)
+    def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
+        assert(isinstance(doc_id, int))
+        assert(isinstance(data_type, DataType))
+        assert(isinstance(check_existance, bool))
+
+        annot_dir = self.__get_annotator_dir()
+
+        if annot_dir is None:
+            raise NotImplementedError("Neutral root was not provided!")
+
+        # TODO. This should not depends on the neut.
+        filename = "art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
+                                                          d_type=data_type.name)
+
+        target = join(annot_dir, filename)
+
+        if check_existance and not exists(target):
+            return None
+
+        return target

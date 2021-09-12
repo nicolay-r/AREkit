@@ -1,6 +1,3 @@
-from os.path import join
-
-from arekit.common.experiment.data_type import DataType
 from arekit.common.utils import join_dir_with_subfolder_name
 
 
@@ -12,6 +9,11 @@ class BaseIOUtils(object):
 
     def __init__(self, experiment):
         self._experiment = experiment
+        self.__opinion_collection_provider = self.__create_opinion_collection_provider()
+
+    @property
+    def OpinionCollectionProvider(self):
+        return self.__opinion_collection_provider
 
     def get_experiment_sources_dir(self):
         """ Provides directory for samples.
@@ -22,6 +24,12 @@ class BaseIOUtils(object):
         raise NotImplementedError()
 
     def create_opinions_reader(self, data_type):
+        raise NotImplementedError()
+
+    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
+        raise NotImplementedError()
+
+    def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
         raise NotImplementedError()
 
     def get_target_dir(self):
@@ -36,13 +44,12 @@ class BaseIOUtils(object):
 
     # region protected methods
 
+    def __create_opinion_collection_provider(self):
+        raise NotImplementedError()
+
     def __get_experiment_folder_name(self):
         return "{name}_{scale}l".format(name=self._experiment.Name,
                                         scale=str(self._experiment.DataIO.LabelsCount))
-
-    def __get_annotator_dir(self):
-        return join_dir_with_subfolder_name(dir=self.get_target_dir(),
-                                            subfolder_name=self._get_annotator_name())
 
     def _get_annotator_name(self):
         """ We use custom implementation as it allows to
@@ -54,25 +61,35 @@ class BaseIOUtils(object):
 
     # region public methods
 
-    def create_annotated_collection_filepath(self, doc_id, data_type):
-        assert(isinstance(doc_id, int))
-        assert(isinstance(data_type, DataType))
+    def serialize_opinion_collection(self, collection, doc_id, data_type, labels_formatter):
+        target = self._create_annotated_collection_target(
+            doc_id=doc_id,
+            data_type=data_type,
+            check_existance=False)
 
-        annot_dir = self.__get_annotator_dir()
+        self.__opinion_collection_provider.serialize(
+            filepath=target,
+            collection=collection,
+            labels_formatter=labels_formatter)
 
-        if annot_dir is None:
-            raise NotImplementedError("Neutral root was not provided!")
+    def deserialize_opinion_collection(self, doc_id, data_type, labels_formatter, create_collection_func):
+        assert(callable(create_collection_func))
 
-        # TODO. This should not depends on the neut.
-        # TODO. This should not depends on the neut.
-        # TODO. This should not depends on the neut.
-        filename = "art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
-                                                          d_type=data_type.name)
+        target = self._create_annotated_collection_target(
+            doc_id=doc_id,
+            data_type=data_type,
+            check_existance=True)
 
-        return join(annot_dir, filename)
+        # Check existance of the target.
+        if target is None:
+            return None
 
-    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
-        raise NotImplementedError()
+        opinions = self.__opinion_collection_provider.iter_opinions(
+            filepath=target,
+            labels_formatter=labels_formatter,
+            error_on_non_supported=False)
+
+        return create_collection_func(opinions)
 
     # endregion
 

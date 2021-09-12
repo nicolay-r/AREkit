@@ -72,7 +72,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
         opin_ops=experiment.OpinionOperations,
         doc_ops=experiment.DocumentOperations,
         labels_scaler=label_scaler,
-        opin_fmt=experiment.DataIO.OpinionProvider,
+        opin_provider=experiment.ExperimentIO.OpinionCollectionProvider,
         supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,
         epoch_index=epoch_index,
@@ -97,7 +97,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
 
 # TODO. Pass TsvInputOpinionReader.
-def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_fmt,
+def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_provider,
                                             # TODO. Prevent filepaths usage!
                                             result_filepath, data_type, epoch_index,
                                             supported_collection_labels, label_calc_mode, labels_formatter):
@@ -105,7 +105,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
     assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(exp_io, NetworkIOUtils))
-    assert(isinstance(opin_fmt, OpinionCollectionsProvider))
+    assert(isinstance(opin_provider, OpinionCollectionsProvider))
     assert(isinstance(data_type, DataType))
     assert(isinstance(epoch_index, int))
     assert(isinstance(label_calc_mode, LabelCalculationMode))
@@ -127,15 +127,16 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
                                 has_output_header=True))
 
     # Save collection.
+    # TODO. Utilize exp_io.
     save_opinion_collections(
         opinion_collection_iter=__log_wrap_collections_conversion_iter(collections_iter),
         create_file_func=lambda doc_id: exp_io.create_result_opinion_collection_filepath(data_type=data_type,
                                                                                          doc_id=doc_id,
                                                                                          epoch_index=epoch_index),
-        save_to_file_func=lambda filepath, collection: opin_fmt.serialize(collection=collection,
-                                                                          filepath=filepath,
-                                                                          labels_formatter=labels_formatter,
-                                                                          error_on_non_supported=False))
+        save_to_file_func=lambda filepath, collection: opin_provider.serialize(collection=collection,
+                                                                               filepath=filepath,
+                                                                               labels_formatter=labels_formatter,
+                                                                               error_on_non_supported=False))
 
 
 def __log_wrap_samples_iter(it):

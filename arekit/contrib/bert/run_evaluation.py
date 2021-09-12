@@ -134,7 +134,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                         doc_id=doc_id,
                         epoch_index=epoch_index),
                     save_to_file_func=lambda filepath, collection:
-                        self._experiment.DataIO.OpinionProvider.serialize(
+                        self._experiment.ExperimentIO.OpinionCollectionProvider.serialize(
                             collection=collection,
                             filepath=filepath,
                             labels_formatter=self.__labels_formatter,

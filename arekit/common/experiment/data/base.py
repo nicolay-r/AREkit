@@ -36,20 +36,6 @@ class DataIO(object):
         """
         return None
 
-    # region not implemented properties
-
-    # TODO. Provider and move to ExperimentIO #188.
-    # TODO. Provider and move to ExperimentIO #188.
-    # TODO. Provider and move to ExperimentIO #188.
-    # TODO. Move into exp_io.
-    @property
-    def OpinionProvider(self):
-        """ Corresponds to `OpinionCollectionsFormatter` instance
-        """
-        raise NotImplementedError()
-
-    # endregion
-
     def set_model_io(self, model_io):
         """ Providing model_io in experiment data.
         """
