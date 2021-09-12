@@ -2,26 +2,26 @@ import pandas as pd
 
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.experiment import const
-from arekit.common.experiment.output.base import BaseOutput
+from arekit.common.experiment.output.base_formatter import BaseOutputFormatter
 from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider
 
 
-class BertBinaryOutput(BaseOutput):
+class BertBinaryOutputFormatter(BaseOutputFormatter):
 
     YES = 'yes'
     NO = 'no'
 
-    def __init__(self, labels_scaler, has_output_header):
+    def __init__(self, labels_scaler, output_provider):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertBinaryOutput, self).__init__(ids_formatter=BinaryIDProvider(),
-                                               has_output_header=has_output_header)
+        super(BertBinaryOutputFormatter, self).__init__(ids_formatter=BinaryIDProvider(),
+                                                        output_provider=output_provider)
         self.__labels_scaler = labels_scaler
 
     @property
     def _IdsFormatter(self):
-        formatter = super(BertBinaryOutput, self)._IdsFormatter
+        formatter = super(BertBinaryOutputFormatter, self)._IdsFormatter
         assert(isinstance(formatter, BinaryIDProvider))
         return formatter
 
@@ -32,7 +32,7 @@ class BertBinaryOutput(BaseOutput):
         Calculate label by relying on a 'YES' column probability values
         paper: https://www.aclweb.org/anthology/N19-1035.pdf
         """
-        ind_max = df[BertBinaryOutput.YES].idxmax()
+        ind_max = df[BertBinaryOutputFormatter.YES].idxmax()
         sample_id = df.loc[ind_max][const.ID]
         uint_label = self._IdsFormatter.parse_label_in_sample_id(sample_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)
@@ -49,7 +49,7 @@ class BertBinaryOutput(BaseOutput):
     # region protected methods
 
     def _get_column_header(self):
-        return [BertBinaryOutput.NO, BertBinaryOutput.YES]
+        return [BertBinaryOutputFormatter.NO, BertBinaryOutputFormatter.YES]
 
     def _iter_by_opinions(self, linked_df, opinions_reader):
         assert(isinstance(linked_df, pd.DataFrame))

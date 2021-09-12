@@ -1,8 +1,8 @@
 from arekit.common.experiment import const
-from arekit.common.experiment.output.multiple import MulticlassOutput
+from arekit.common.experiment.output.tsv_provider import TsvBaseOutputProvider
 
 
-class GoogleBertMulticlassOutput(MulticlassOutput):
+class GoogleBertOutputProvider(TsvBaseOutputProvider):
     """ This output assumes to be provided with only labels
         by default proposed here:
         https://github.com/google-research/bert
@@ -12,15 +12,14 @@ class GoogleBertMulticlassOutput(MulticlassOutput):
             - news_id -- is a related news_id towards which the related output corresponds to.
     """
 
-    def __init__(self, samples_reader, labels_scaler, has_output_header):
-        super(GoogleBertMulticlassOutput, self).__init__(labels_scaler=labels_scaler,
-                                                         has_output_header=has_output_header)
+    def __init__(self, samples_reader, has_output_header):
+        super(GoogleBertOutputProvider, self).__init__(has_output_header=has_output_header)
         self.__samples_reader = samples_reader
 
     # region protected methods
 
     def _csv_to_dataframe(self, filepath):
-        df = super(GoogleBertMulticlassOutput, self)._csv_to_dataframe(filepath=filepath)
+        df = super(GoogleBertOutputProvider, self)._csv_to_dataframe(filepath=filepath)
 
         # Exporting such information from samples.
         row_ids = self.__samples_reader.extract_ids()

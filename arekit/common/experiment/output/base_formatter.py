@@ -3,11 +3,12 @@ import pandas as pd
 from arekit.common.experiment import const
 from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.input.readers.base_opinion import BaseInputOpinionReader
+from arekit.common.experiment.output.base_provider import BaseOutputProvider
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 
 
-class BaseOutput(object):
+class BaseOutputFormatter(object):
     """ Results output represents a table, which stored in pandas dataframe.
         This dataframe assumes to provide the following columns:
             - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
@@ -15,15 +16,11 @@ class BaseOutput(object):
             - labels -- uint labels (amount of columns depends on the scaler)
     """
 
-    def __init__(self, ids_formatter, has_output_header):
+    def __init__(self, ids_formatter, output_provider):
         assert(isinstance(ids_formatter, BaseIDProvider))
-        assert(isinstance(has_output_header, bool))
+        assert(isinstance(output_provider, BaseOutputProvider))
         self.__ids_formatter = ids_formatter
-        # TODO: To TSV-based instance. #174.
-        # TODO. To TSV-based class/instance. #174.
-        # TODO. To TSV-based class/instance. #174.
-        self.__has_output_header = has_output_header
-        self.__df = None
+        self.__provider = output_provider
 
     # region properties
 
@@ -32,27 +29,17 @@ class BaseOutput(object):
         return self.__ids_formatter
 
     @property
-    def _DataFrame(self):
-        return self.__df
+    def _df(self):
+        return self.__provider.DataFrame
 
     # endregion
-
-    # TODO. To TSV-based class/instance. #174.
-    # TODO. To TSV-based class/instance. #174.
-    # TODO. To TSV-based class/instance. #174.
-    def _csv_to_dataframe(self, filepath):
-        return pd.read_csv(filepath,
-                           sep='\t',
-                           index_col=False,
-                           header='infer' if self.__has_output_header else None,
-                           encoding='utf-8')
 
     # region private methods
 
     def __iter_linked_opinions_df(self, news_id):
         assert(isinstance(news_id, int))
 
-        news_df = self.__df[self.__df[const.NEWS_ID] == news_id]
+        news_df = self._df[self._df[const.NEWS_ID] == news_id]
         opinion_ids = [self.__ids_formatter.parse_opinion_in_opinion_id(opinion_id)
                        for opinion_id in news_df[const.ID]]
 
@@ -88,16 +75,9 @@ class BaseOutput(object):
 
     # region public methods
 
-    # TODO. To TSV-based class/instance. #174.
-    # TODO. To TSV-based class/instance. #174.
-    # TODO. To TSV-based class/instance. #174.
-    def init_from_tsv(self, filepath):
-        assert (isinstance(filepath, str))
-        self.__df = self._csv_to_dataframe(filepath=filepath)
-
     def iter_news_ids(self):
-        assert (const.NEWS_ID in self.__df.columns)
-        return set(self.__df[const.NEWS_ID])
+        assert (const.NEWS_ID in self._df.columns)
+        return set(self._df[const.NEWS_ID])
 
     def iter_linked_opinions(self, news_id, opinions_reader):
         assert (isinstance(news_id, int))
@@ -111,7 +91,10 @@ class BaseOutput(object):
 
             yield LinkedOpinionWrapper(linked_data=opinions_iter)
 
+    def load(self, source):
+        self.__provider.load(source)
+
     # endregion
 
     def __len__(self):
-        return len(self.__df.index)
+        return len(self._df.index)

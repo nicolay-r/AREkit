@@ -4,9 +4,10 @@ from arekit.common.experiment import const
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.experiment.output.multiple import MulticlassOutput
+from arekit.common.experiment.output.multiple_formatter import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
+from arekit.common.experiment.output.tsv_provider import TsvBaseOutputProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
@@ -113,18 +114,19 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
 
     cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
 
+    output_provider = TsvBaseOutputProvider(has_output_header=True)
+    output_provider.load(result_filepath)
+
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
-        # TODO. prevent filepaths usage!
-        output_filepath=result_filepath,
         opinions_reader=exp_io.create_opinions_reader(data_type),
         labels_scaler=labels_scaler,
         create_opinion_collection_func=opin_ops.create_opinion_collection,
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         label_calculation_mode=label_calc_mode,
         supported_labels=supported_collection_labels,
-        output=MulticlassOutput(labels_scaler=labels_scaler,
-                                has_output_header=True))
+        output_formatter=MulticlassOutputFormatter(labels_scaler=labels_scaler,
+                                                   output_provider=output_provider))
 
     # Save collection.
     # TODO. Utilize exp_io.

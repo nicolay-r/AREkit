@@ -3,6 +3,7 @@ from os.path import exists, join
 
 from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
+from arekit.common.experiment.output.multiple_formatter import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.labels.scaler import BaseLabelScaler
@@ -11,7 +12,7 @@ from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.bert.callback import Callback
 from arekit.contrib.bert.output.eval_helper import EvalHelper
-from arekit.contrib.bert.output.google_bert import GoogleBertMulticlassOutput
+from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputProvider
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -110,22 +111,22 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
-                output = GoogleBertMulticlassOutput(
-                    samples_reader=exp_io.create_samples_reader(self.__data_type),
+                output = MulticlassOutputFormatter(
                     labels_scaler=self.__label_scaler,
-                    has_output_header=False)
+                    output_provider=GoogleBertOutputProvider(
+                        samples_reader=exp_io.create_samples_reader(self.__data_type),
+                        has_output_header=False))
+                output.load(source=result_filepath)
 
                 # iterate opinion collections.
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
-                    # TODO. prevent filepaths usage!
-                    output_filepath=result_filepath,
                     opinions_reader=exp_io.create_opinions_reader(self.__data_type),
                     labels_scaler=self.__label_scaler,
                     create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
                     keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
                     label_calculation_mode=LabelCalculationMode.AVERAGE,
                     supported_labels=exp_data.SupportedCollectionLabels,
-                    output=output)
+                    output_formatter=output)
 
                 save_opinion_collections(
                     opinion_collection_iter=collections_iter,

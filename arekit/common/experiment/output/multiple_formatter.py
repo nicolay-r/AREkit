@@ -2,18 +2,18 @@ import numpy as np
 import pandas as pd
 
 from arekit.common.experiment import const
-from arekit.common.experiment.output.base import BaseOutput
+from arekit.common.experiment.output.base_formatter import BaseOutputFormatter
 from arekit.common.experiment.input.readers.base_opinion import BaseInputOpinionReader
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 
 
-class MulticlassOutput(BaseOutput):
+class MulticlassOutputFormatter(BaseOutputFormatter):
 
-    def __init__(self, labels_scaler, has_output_header):
+    def __init__(self, labels_scaler, output_provider):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(MulticlassOutput, self).__init__(ids_formatter=MultipleIDProvider(),
-                                               has_output_header=has_output_header)
+        super(MulticlassOutputFormatter, self).__init__(ids_formatter=MultipleIDProvider(),
+                                                        output_provider=output_provider)
         self.__labels_scaler = labels_scaler
 
     # region private methods
