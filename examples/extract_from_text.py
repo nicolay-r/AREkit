@@ -14,7 +14,8 @@ from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
 from arekit.contrib.networks.core.model import BaseTensorflowModel
-from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
+
+from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.processing.text.parser import TextParser
 
@@ -146,10 +147,9 @@ def extract(text):
     # TODO. For now it is limited to tsv.
     # TODO. For now it is limited to tsv.
     # TODO. For now it is limited to tsv.
-    NetworkOutputEncoder.to_tsv(
-        filepath=None,
-        sample_id_with_uint_labels_iter=labeling_collection.iter_non_duplicated_labeled_sample_row_ids(),
-        labels_scaler=labels_scaler)
+    with TsvPredictProvider(filepath="out.txt") as out:
+        out.load(sample_id_with_uint_labels_iter=labeling_collection.iter_non_duplicated_labeled_sample_row_ids(),
+                 labels_scaler=labels_scaler)
 
 
 if __name__ == '__main__':

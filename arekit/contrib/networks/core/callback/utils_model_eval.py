@@ -18,7 +18,8 @@ from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputD
 from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
-from arekit.contrib.networks.core.output.encoder import NetworkOutputEncoder
+
+from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 
 logger = logging.getLogger(__name__)
@@ -57,15 +58,10 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     sample_id_with_uint_labels_iter = labeling_collection.iter_non_duplicated_labeled_sample_row_ids()
 
     # TODO. This is a limitation, as we focus only tsv.
-    # TODO. This is a limitation, as we focus only tsv.
-    # TODO. This is a limitation, as we focus only tsv.
-    NetworkOutputEncoder.to_tsv(
-        filepath=result_filepath,
-        sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
-        column_extra_funcs=[
-            (const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])
-        ],
-        labels_scaler=label_scaler)
+    with TsvPredictProvider(filepath=result_filepath) as out:
+        out.load(sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
+                 column_extra_funcs=[ (const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id]) ],
+                 labels_scaler=label_scaler)
 
     # Convert output to result.
     __convert_output_to_opinion_collections(
