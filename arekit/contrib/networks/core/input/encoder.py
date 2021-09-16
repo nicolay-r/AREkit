@@ -7,8 +7,8 @@ from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpl
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.experiment.input.encoder import BaseInputEncoder
-from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
+from arekit.common.experiment.input.encoder import BaseInputProvider
+from arekit.common.experiment.input.formatters.opinion import BaseOpinionsStorage
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
@@ -76,10 +76,10 @@ class NetworkInputEncoder(object):
         # TODO. Use serialize
         # TODO. Use serialize
         # Encoding input
-        BaseInputEncoder.to_tsv(
+        BaseInputProvider.save(
             sample_filepath=exp_io.get_input_sample_filepath(data_type=data_type),
             opinion_filepath=exp_io.get_input_opinions_filepath(data_type=data_type),
-            opinion_storage=BaseOpinionsFormatter(data_type),
+            opinion_storage=BaseOpinionsStorage(data_type),
             # TODO. Create opinion_provider func, based on data_type.
             opinion_provider=OpinionProvider.from_experiment(
                 doc_ops=doc_ops,

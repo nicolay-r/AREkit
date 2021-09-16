@@ -48,8 +48,6 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     news_id_by_sample_id = NetworkInputSampleReaderHelper.calculate_news_id_by_sample_id_dict(samples_reader)
 
     # TODO. Filepath-dependency should be removed!
-    # TODO. Filepath-dependency should be removed!
-    # TODO. Filepath-dependency should be removed!
     # Create and save output.
     result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
                                                                                 epoch_index=epoch_index)
@@ -60,7 +58,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     # TODO. This is a limitation, as we focus only tsv.
     with TsvPredictProvider(filepath=result_filepath) as out:
         out.load(sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
-                 column_extra_funcs=[ (const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id]) ],
+                 column_extra_funcs=[(const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])],
                  labels_scaler=label_scaler)
 
     # Convert output to result.

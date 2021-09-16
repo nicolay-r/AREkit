@@ -1,32 +1,15 @@
-import logging
 from collections import OrderedDict
 
+from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment import const
-from arekit.common.experiment.input.formatters.base_row import BaseRowsFormatter
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.providers.rows.base import BaseRowProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.news.parsed.base import ParsedNews
 
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
-
-class BaseOpinionsFormatter(BaseRowsFormatter):
-
-    # region methods
-
-    def __init__(self, data_type):
-        super(BaseOpinionsFormatter, self).__init__(data_type=data_type)
-
-    def _get_columns_list_with_types(self):
-        dtypes_list = super(BaseOpinionsFormatter, self)._get_columns_list_with_types()
-        dtypes_list.append((const.ID, str))
-        dtypes_list.append((const.NEWS_ID, 'int32'))
-        dtypes_list.append((const.SOURCE, str))
-        dtypes_list.append((const.TARGET, str))
-        return dtypes_list
+class BaseOpinionsRowProvider(BaseRowProvider):
 
     @staticmethod
     def __create_opinion_row(parsed_news, linked_wrapper):
@@ -63,19 +46,5 @@ class BaseOpinionsFormatter(BaseRowsFormatter):
         if idle_mode:
             yield None
         else:
-            yield BaseOpinionsFormatter.__create_opinion_row(parsed_news=parsed_news,
-                                                             linked_wrapper=linked_wrapper)
-
-    # endregion
-
-    def save(self, filepath):
-        logger.info("Saving... : {}".format(filepath))
-        self._df.sort_values(by=[const.ID], ascending=True)
-        self._df.to_csv(filepath,
-                        sep='\t',
-                        encoding='utf-8',
-                        columns=[c for c in self._df.columns if c != self.ROW_ID],
-                        index=False,
-                        compression='gzip')
-        logger.info("Saving completed!")
-
+            yield BaseOpinionsRowProvider.__create_opinion_row(parsed_news=parsed_news,
+                                                               linked_wrapper=linked_wrapper)

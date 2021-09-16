@@ -1,21 +1,23 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
+from arekit.common.experiment.input.storages.sample import BaseSampleStorage
 from arekit.common.labels.str_fmt import StringLabelsFormatter
-from arekit.contrib.bert.samplers.base import create_simple_sample_formatter
-from arekit.contrib.bert.samplers.nli_b import NliBinarySampleFormatter
-from arekit.contrib.bert.samplers.nli_m import NliMultipleSampleFormatter
-from arekit.contrib.bert.samplers.qa_b import QaBinarySampleFormatter
-from arekit.contrib.bert.samplers.qa_m import QaMultipleSampleFormatter
-from arekit.contrib.bert.samplers.types import BertSampleFormatterTypes
+from arekit.contrib.bert.samplers.base import create_simple_sample_provider
+from arekit.contrib.bert.samplers.nli_b import NliBinarySampleProvider
+from arekit.contrib.bert.samplers.nli_m import NliMultipleSampleProvider
+from arekit.contrib.bert.samplers.qa_b import QaBinarySampleProvider
+from arekit.contrib.bert.samplers.qa_m import QaMultipleSampleProvider
+from arekit.contrib.bert.samplers.types import BertSampleProviderTypes
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 
 
-def create_bert_sample_formatter(data_type, formatter_type, label_scaler, balance,
-                                 labels_formatter, entity_formatter, entity_to_group_func):
+def create_bert_sample_provider(storage, provider_type, label_scaler,
+                                labels_formatter, entity_formatter, entity_to_group_func):
     """
     This is a factory method, which allows to instantiate any of the
     supported bert_sample_encoders
     """
-    assert(isinstance(formatter_type, BertSampleFormatterTypes))
+    assert(isinstance(storage, BaseSampleStorage))
+    assert(isinstance(provider_type, BertSampleProviderTypes))
     assert(callable(entity_to_group_func))
     assert(isinstance(entity_formatter, StringEntitiesFormatter))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
@@ -24,34 +26,30 @@ def create_bert_sample_formatter(data_type, formatter_type, label_scaler, balanc
         entity_formatter=entity_formatter,
         entity_to_group_func=entity_to_group_func)
 
-    if formatter_type == BertSampleFormatterTypes.CLASSIF_M:
-        return create_simple_sample_formatter(data_type=data_type,
-                                              label_scaler=label_scaler,
-                                              text_terms_mapper=text_terms_mapper,
-                                              balance=balance)
-    if formatter_type == BertSampleFormatterTypes.NLI_M:
-        return NliMultipleSampleFormatter(data_type=data_type,
-                                          label_scaler=label_scaler,
-                                          labels_formatter=labels_formatter,
-                                          text_terms_mapper=text_terms_mapper,
-                                          balance=balance)
-    if formatter_type == BertSampleFormatterTypes.QA_M:
-        return QaMultipleSampleFormatter(data_type=data_type,
+    if provider_type == BertSampleProviderTypes.CLASSIF_M:
+        return create_simple_sample_provider(storage=storage,
+                                             label_scaler=label_scaler,
+                                             text_terms_mapper=text_terms_mapper)
+    if provider_type == BertSampleProviderTypes.NLI_M:
+        return NliMultipleSampleProvider(storage=storage,
                                          label_scaler=label_scaler,
                                          labels_formatter=labels_formatter,
-                                         text_terms_mapper=text_terms_mapper,
-                                         balance=balance)
-    if formatter_type == BertSampleFormatterTypes.NLI_B:
-        return NliBinarySampleFormatter(data_type=data_type,
+                                         text_terms_mapper=text_terms_mapper)
+    if provider_type == BertSampleProviderTypes.QA_M:
+        return QaMultipleSampleProvider(storage=storage,
                                         label_scaler=label_scaler,
                                         labels_formatter=labels_formatter,
-                                        text_terms_mapper=text_terms_mapper,
-                                        balance=balance)
-    if formatter_type == BertSampleFormatterTypes.QA_B:
-        return QaBinarySampleFormatter(data_type=data_type,
+                                        text_terms_mapper=text_terms_mapper)
+
+    if provider_type == BertSampleProviderTypes.NLI_B:
+        return NliBinarySampleProvider(storage=storage,
                                        label_scaler=label_scaler,
                                        labels_formatter=labels_formatter,
-                                       text_terms_mapper=text_terms_mapper,
-                                       balance=balance)
+                                       text_terms_mapper=text_terms_mapper)
+    if provider_type == BertSampleProviderTypes.QA_B:
+        return QaBinarySampleProvider(storage=storage,
+                                      label_scaler=label_scaler,
+                                      labels_formatter=labels_formatter,
+                                      text_terms_mapper=text_terms_mapper)
 
     return None

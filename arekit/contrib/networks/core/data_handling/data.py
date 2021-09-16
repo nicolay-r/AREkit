@@ -146,6 +146,7 @@ class HandledData(object):
         assert(isinstance(doc_ops, DocumentOperations))
         return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
 
+    # TODO: rename 'files' -> 'resources'
     @staticmethod
     def __check_files_existed(data_types_iter, experiment_io):
         assert(isinstance(experiment_io, NetworkIOUtils))

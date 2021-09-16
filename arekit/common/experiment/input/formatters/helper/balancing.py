@@ -42,16 +42,14 @@ class SampleRowBalancerHelper(object):
     # endregion
 
     @staticmethod
-    def calculate_balanced_df(df, create_blank_df, label_provider):
+    def calculate_balanced_df(df, create_blank_df, output_labels_uint):
         """
         Balancing related dataframe by amount of examples per class
         create_blank_df: func(size) -> df
         """
         assert(isinstance(df, pd.DataFrame))
-        assert(isinstance(label_provider, LabelProvider))
+        assert(isinstance(output_labels_uint, list))
         assert(callable(create_blank_df))
-
-        output_labels_uint = label_provider.OutputLabelsUint
 
         original_class_sizes = SampleRowBalancerHelper.__get_class_sizes(df=df, uint_labels=output_labels_uint)
 

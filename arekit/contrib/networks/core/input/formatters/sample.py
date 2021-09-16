@@ -1,5 +1,5 @@
 from arekit.common.entities.base import Entity
-from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
+from arekit.common.experiment.input.formatters.sample import BaseSampleStorage
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.news.parsed.base import ParsedNews
@@ -9,7 +9,7 @@ from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMap
 from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
 
 
-class NetworkSampleFormatter(BaseSampleFormatter):
+class NetworkSampleFormatter(BaseSampleStorage):
     """
     Provides additional features, frame-based especially
     """
