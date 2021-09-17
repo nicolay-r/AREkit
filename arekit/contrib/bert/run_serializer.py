@@ -38,7 +38,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         assert(isinstance(data_type, DataType))
 
         sample_storage = TsvSampleStorage(
-            data_type=data_type,
+            store_labels=data_type == DataType.Train,
             balance=self.__balance_train_samples,
             write_header=self.__write_sample_header,
             filepath=self._experiment.ExperimentIO.get_input_sample_filepath(

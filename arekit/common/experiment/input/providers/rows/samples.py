@@ -58,7 +58,7 @@ class BaseSampleRowProvider(BaseRowProvider):
 
         expected_label = linked_wrap.get_linked_label()
 
-        if self._storage.is_train():
+        if self._storage.StoreLabels:
             row[const.LABEL] = self._label_provider.calculate_output_uint_label(
                 expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
                 etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))

@@ -1,7 +1,6 @@
 import collections
 import logging
 from arekit.common.experiment import const
-from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.storages.base import BaseRowsStorage
 
 
@@ -17,17 +16,17 @@ class BaseSampleStorage(BaseRowsStorage):
     [id, text_a] -- for test
     """
 
-    def __init__(self, data_type):
-        super(BaseSampleStorage, self).__init__(data_type=data_type)
+    def __init__(self, store_labels):
+        assert(isinstance(store_labels, bool))
+        super(BaseSampleStorage, self).__init__()
+
+        self.__store_labels = store_labels
         self.__text_column_names = None
         self._output_labels_uint = None
 
-    # region private methods
-
-    def __is_train(self):
-        return self._data_type == DataType.Train
-
-    # endregion
+    @property
+    def StoreLabels(self):
+        return self.__store_labels
 
     # region protected methods
 
@@ -42,7 +41,7 @@ class BaseSampleStorage(BaseRowsStorage):
         dtypes_list.append((const.NEWS_ID, 'int32'))
 
         # insert labels
-        if self.__is_train():
+        if self.__store_labels:
             dtypes_list.append((const.LABEL, 'int32'))
 
         # insert text columns
@@ -76,9 +75,6 @@ class BaseSampleStorage(BaseRowsStorage):
         if self.__text_column_names is not None:
             raise Exception("Text column names already defined!")
         self.__text_column_names = list(text_column_names)
-
-    def is_train(self):
-        return self.__is_train()
 
     def save(self):
         """ This might be implemented in nested classes.

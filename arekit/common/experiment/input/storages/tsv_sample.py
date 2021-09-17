@@ -11,9 +11,9 @@ logging.basicConfig(level=logging.INFO)
 
 class TsvSampleStorage(BaseSampleStorage):
 
-    def __init__(self, filepath, data_type, balance, write_header):
+    def __init__(self, filepath, store_labels, balance, write_header):
         assert(isinstance(filepath, str))
-        super(TsvSampleStorage, self).__init__(data_type=data_type)
+        super(TsvSampleStorage, self).__init__(store_labels)
 
         self.__balance = balance
         self.__filepath = filepath

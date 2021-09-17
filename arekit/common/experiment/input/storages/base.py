@@ -4,8 +4,6 @@ import logging
 import numpy as np
 import pandas as pd
 
-from arekit.common.experiment.data_type import DataType
-
 logger = logging.getLogger(__name__)
 
 
@@ -13,9 +11,7 @@ class BaseRowsStorage(object):
 
     ROW_ID = 'row_id'
 
-    def __init__(self, data_type):
-        assert(isinstance(data_type, DataType))
-        self._data_type = data_type
+    def __init__(self):
         self._df = self._create_empty_df()
 
     # region protected methods
