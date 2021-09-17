@@ -8,8 +8,8 @@ logging.basicConfig(level=logging.INFO)
 
 class BaseOpinionsStorage(BaseRowsStorage):
 
-    def __init__(self, data_type):
-        super(BaseOpinionsStorage, self).__init__(data_type=data_type)
+    def __init__(self):
+        super(BaseOpinionsStorage, self).__init__()
 
     def _get_columns_list_with_types(self):
         dtypes_list = super(BaseOpinionsStorage, self)._get_columns_list_with_types()

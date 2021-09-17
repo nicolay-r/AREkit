@@ -1,56 +1,44 @@
 from arekit.common.entities.base import Entity
-from arekit.common.experiment.input.formatters.sample import BaseSampleStorage
 from arekit.common.experiment.input.providers.label.base import LabelProvider
+from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.core.input import const
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
+from arekit.contrib.networks.core.input.storage.sample import TsvNetworkSampleStorage
 from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
 
 
-class NetworkSampleFormatter(BaseSampleStorage):
-    """
-    Provides additional features, frame-based especially
-    """
+class NetworkSampleRowProvider(BaseSampleRowProvider):
 
-    def __init__(self, data_type, label_provider, text_provider,
-                 entity_to_group_func, frames_collection,
+    def __init__(self, storage,
+                 label_provider,
+                 text_provider,
+                 frames_collection,
+                 entity_to_group_func,
                  frame_role_label_scaler,
-                 pos_terms_mapper, balance):
+                 pos_terms_mapper):
+        assert(isinstance(storage, TsvNetworkSampleStorage))
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(pos_terms_mapper, PosTermsMapper))
         assert(isinstance(frame_role_label_scaler, BaseLabelScaler))
         assert(callable(entity_to_group_func))
 
-        super(NetworkSampleFormatter, self).__init__(data_type=data_type,
-                                                     label_provider=label_provider,
-                                                     text_provider=text_provider,
-                                                     balance=balance)
+        super(NetworkSampleRowProvider, self).__init__(storage=storage,
+                                                       label_provider=label_provider,
+                                                       text_provider=text_provider)
 
         self.__entity_to_group_func = entity_to_group_func
         self.__frames_collection = frames_collection
         self.__frame_role_label_scaler = frame_role_label_scaler
         self.__pos_terms_mapper = pos_terms_mapper
 
-    def _get_columns_list_with_types(self):
-        dtypes_list = super(NetworkSampleFormatter, self)._get_columns_list_with_types()
-
-        # insert indices
-        dtypes_list.append((const.FrameVariantIndices, str))
-        dtypes_list.append((const.FrameRoles, str))
-        dtypes_list.append((const.SynonymSubject, str))
-        dtypes_list.append((const.SynonymObject, str))
-        dtypes_list.append((const.Entities, str))
-        dtypes_list.append((const.PosTags, str))
-
-        return dtypes_list
-
     def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
         assert(isinstance(parsed_news, ParsedNews))
 
-        super(NetworkSampleFormatter, self)._fill_row_core(
+        super(NetworkSampleRowProvider, self)._fill_row_core(
             row=row,
             linked_wrap=linked_wrap,
             index_in_linked=index_in_linked,

@@ -12,7 +12,7 @@ from arekit.common.utils import check_files_existance
 from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
-from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
+from arekit.contrib.networks.core.input.encoder import NetworkInputProvider
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -42,7 +42,7 @@ class HandledData(object):
     def check_files_existed(experiment):
         return HandledData.__check_files_existed(
             data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
-            experiment_io=experiment.ExperimentIO)
+            exp_io=experiment.ExperimentIO)
 
     @staticmethod
     def serialize_from_experiment(experiment, terms_per_context, balance):
@@ -122,7 +122,7 @@ class HandledData(object):
                                                                      opin_ops=experiment.OpinionOperations)
 
             # Composing input.
-            NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
+            NetworkInputProvider.save(
                 exp_io=experiment.ExperimentIO,
                 exp_data=experiment.DataIO,
                 opin_ops=experiment.OpinionOperations,
@@ -137,7 +137,7 @@ class HandledData(object):
                 balance=balance)
 
         # Save embedding and related vocabulary.
-        NetworkInputEncoder.compose_and_save_term_embeddings_and_vocabulary(
+        NetworkInputProvider.compose_and_save_term_embeddings_and_vocabulary(
             experiment_io=experiment.ExperimentIO,
             term_embedding_pairs=term_embedding_pairs)
 
@@ -148,19 +148,19 @@ class HandledData(object):
 
     # TODO: rename 'files' -> 'resources'
     @staticmethod
-    def __check_files_existed(data_types_iter, experiment_io):
-        assert(isinstance(experiment_io, NetworkIOUtils))
+    def __check_files_existed(data_types_iter, exp_io):
+        assert(isinstance(exp_io, NetworkIOUtils))
         for data_type in data_types_iter:
 
             filepaths = [
                 # TODO. Samples path checking should be removed!!!
                 # TODO. (We make keep them in memory and hence there is no need in the related check).
-                experiment_io.get_input_sample_filepath(data_type=data_type),
+                exp_io.get_input_sample_filepath(data_type=data_type),
                 # TODO. Samples path checking should be removed!!!
                 # TODO. (We make keep them in memory and hence there is no need in the related check).
-                experiment_io.get_input_opinions_filepath(data_type=data_type),
-                experiment_io.get_saving_vocab_filepath(),
-                experiment_io.get_saving_embedding_filepath()
+                exp_io.get_input_opinions_filepath(data_type=data_type),
+                exp_io.get_saving_vocab_filepath(),
+                exp_io.get_saving_embedding_filepath()
             ]
 
             if not check_files_existance(filepaths=filepaths, logger=logger):

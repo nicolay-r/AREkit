@@ -26,6 +26,12 @@ class BaseIOUtils(object):
     def create_opinions_reader(self, data_type):
         raise NotImplementedError()
 
+    def create_samples_writer(self, data_type, balance):
+        raise NotImplementedError()
+
+    def create_opinions_writer(self, data_type):
+        raise NotImplementedError()
+
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 

@@ -45,8 +45,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
                 data_type=data_type))
 
         opinions_storage = TsvOpinionsStorage(
-            filepath=self._experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type),
-            data_type=data_type)
+            filepath=self._experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type))
 
         # Create samples formatter.
         sample_rows_provider = create_bert_sample_provider(

@@ -12,7 +12,7 @@ from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
-from arekit.contrib.networks.core.input.encoder import NetworkInputEncoder
+from arekit.contrib.networks.core.input.encoder import NetworkInputProvider
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 
 from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
@@ -95,7 +95,7 @@ def extract(text):
         terms_per_context=50)
 
     exp_data = None                  # embeddings, frames_collection, vocab, label_scaler, etc.
-    NetworkInputEncoder.to_tsv_with_embedding_and_vocabulary(
+    NetworkInputProvider.save(
         exp_io=None,                 # TOdO. Remove from method API.
         opin_ops=None,               # TODO. Remove from method API.
         doc_ops=None,                # TODO. Remove from method API.

@@ -5,8 +5,8 @@ from arekit.common.utils import create_dir_if_not_exists
 
 class TsvOpinionsStorage(BaseOpinionsStorage):
 
-    def __init__(self, filepath, data_type):
-        super(TsvOpinionsStorage, self).__init__(data_type=data_type)
+    def __init__(self, filepath):
+        super(TsvOpinionsStorage, self).__init__()
         self.__filepath = filepath
 
     def save(self):
