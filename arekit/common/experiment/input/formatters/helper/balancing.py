@@ -3,7 +3,6 @@ import pandas as pd
 import random
 
 from arekit.common.experiment import const
-from arekit.common.experiment.input.providers.label.base import LabelProvider
 
 
 logger = logging.getLogger(__name__)
