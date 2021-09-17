@@ -1,7 +1,7 @@
 import logging
 
 from arekit.common.experiment import const
-from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
+from arekit.common.experiment.input.storages.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.storages.sample import BaseSampleStorage
 from arekit.common.utils import create_dir_if_not_exists
 
