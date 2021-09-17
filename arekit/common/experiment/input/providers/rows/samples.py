@@ -26,12 +26,12 @@ class BaseSampleRowProvider(BaseRowProvider):
         assert(isinstance(storage, BaseSampleStorage))
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(text_provider, BaseSingleTextProvider))
-        super(BaseSampleRowProvider, storage).__init__(storage=storage)
+        super(BaseSampleRowProvider, self).__init__(storage=storage)
 
-        # defining all available labels
-        # (utilized in balancing).
+        # Initializing storage.
         self._storage.set_output_labels_uint(label_provider.OutputLabelsUint)
         self._storage.set_text_column_names(text_provider.iter_columns())
+        self._storage.init_empty()
 
         self._label_provider = label_provider
         self.__text_provider = text_provider

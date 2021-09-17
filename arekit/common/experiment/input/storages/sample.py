@@ -28,6 +28,14 @@ class BaseSampleStorage(BaseRowsStorage):
     def StoreLabels(self):
         return self.__store_labels
 
+    # region private methods
+
+    def __fast_init_df(self, df, rows_count):
+        df[self.ROW_ID] = list(range(rows_count))
+        df.set_index(self.ROW_ID, inplace=True)
+
+    # endregion
+
     # region protected methods
 
     def _get_columns_list_with_types(self):
@@ -55,15 +63,13 @@ class BaseSampleStorage(BaseRowsStorage):
         return dtypes_list
 
     def _create_blank_df(self, size):
-        df = self._create_empty_df()
-        self._fast_init_df(df=df, rows_count=size)
+        df = self._create_empty()
+        self.__fast_init_df(df=df, rows_count=size)
         return df
 
-    def _fast_init_df(self, df, rows_count):
-        df[self.ROW_ID] = list(range(rows_count))
-        df.set_index(self.ROW_ID, inplace=True)
-
     # endregion
+
+    # region public methods
 
     def set_output_labels_uint(self, labels_uint):
         if self._output_labels_uint is not None:
@@ -82,6 +88,8 @@ class BaseSampleStorage(BaseRowsStorage):
             to be saved into the particular target.
         """
         pass
+
+    # endregion
 
     def __len__(self):
         return len(self._df.index)

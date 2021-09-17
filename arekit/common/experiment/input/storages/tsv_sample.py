@@ -13,6 +13,7 @@ class TsvSampleStorage(BaseSampleStorage):
 
     def __init__(self, filepath, store_labels, balance, write_header):
         assert(isinstance(filepath, str))
+        assert(isinstance(balance, bool))
         super(TsvSampleStorage, self).__init__(store_labels)
 
         self.__balance = balance

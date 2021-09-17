@@ -30,7 +30,7 @@ class TestInputBalancing(unittest.TestCase):
             entity_to_group_func=lambda entity: entity_to_group_func(entity=entity,
                                                                      synonyms=synonyms))
 
-        storage = BaseSampleStorage(data_type=DataType.Train)
+        storage = BaseSampleStorage(store_labels=True)
 
         BaseSampleRowProvider(
             storage=storage,
