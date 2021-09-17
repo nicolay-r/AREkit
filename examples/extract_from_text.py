@@ -10,12 +10,13 @@ from arekit.common.news.base import News
 from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.synonyms import SynonymsCollection
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
+
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
-from arekit.contrib.networks.core.input.encoder import NetworkInputProvider
+from arekit.contrib.networks.core.input.provider import NetworkInputProvider
 from arekit.contrib.networks.core.model import BaseTensorflowModel
-
 from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
+
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.processing.text.parser import TextParser
 

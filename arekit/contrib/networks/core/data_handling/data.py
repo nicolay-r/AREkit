@@ -1,19 +1,21 @@
 import collections
 import logging
 
+from arekit.common.utils import check_files_existance
+
+from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
+
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
-from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
-from arekit.common.utils import check_files_existance
 
+from arekit.contrib.networks.core.input.provider import NetworkInputProvider
 from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
-from arekit.contrib.networks.core.input.encoder import NetworkInputProvider
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

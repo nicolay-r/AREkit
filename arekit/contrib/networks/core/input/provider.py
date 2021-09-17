@@ -41,7 +41,6 @@ class NetworkInputProvider(object):
         assert(isinstance(balance, bool))
 
         # Storages.
-
         terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
             entity_to_group_func=entity_to_group_func,
             predefined_embedding=exp_data.WordEmbedding,
