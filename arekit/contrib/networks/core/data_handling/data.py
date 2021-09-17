@@ -4,6 +4,7 @@ import logging
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
+from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
@@ -121,19 +122,27 @@ class HandledData(object):
                                                                      doc_ops=experiment.DocumentOperations,
                                                                      opin_ops=experiment.OpinionOperations)
 
+            opinion_provider = OpinionProvider.from_experiment(
+                doc_ops=experiment.DocumentOperations,
+                opin_ops=experiment.OpinionOperations,
+                data_type=data_type,
+                parsed_news_it_func=lambda: HandledData.__iter_parsed_news_func(
+                    doc_ops=experiment.DocumentOperations,
+                    data_type=data_type),
+                terms_per_context=terms_per_context)
+
             # Composing input.
             NetworkInputProvider.save(
-                exp_io=experiment.ExperimentIO,
+                opinion_provider=opinion_provider,
+                sample_storage=experiment.ExperimentIO.create_samples_writer(
+                    data_type=data_type,
+                    balance=balance),
+                opinions_storage=experiment.ExperimentIO.create_opinions_writer(
+                    data_type=data_type),
                 exp_data=experiment.DataIO,
-                opin_ops=experiment.OpinionOperations,
-                doc_ops=experiment.DocumentOperations,
                 entity_to_group_func=experiment.entity_to_group,
                 data_type=data_type,
                 term_embedding_pairs=term_embedding_pairs,
-                iter_parsed_news_func=lambda: HandledData.__iter_parsed_news_func(
-                    doc_ops=experiment.DocumentOperations,
-                    data_type=data_type),
-                terms_per_context=terms_per_context,
                 balance=balance)
 
         # Save embedding and related vocabulary.

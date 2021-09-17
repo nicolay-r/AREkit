@@ -96,12 +96,10 @@ def extract(text):
 
     exp_data = None                  # embeddings, frames_collection, vocab, label_scaler, etc.
     NetworkInputProvider.save(
-        exp_io=None,                 # TOdO. Remove from method API.
-        opin_ops=None,               # TODO. Remove from method API.
-        doc_ops=None,                # TODO. Remove from method API.
-        iter_parsed_news_func=None,  # TODO. Remove from method API.
-        terms_per_context=None,      # TODO. Remove from method API.
         balance=False,
+        sample_storage=None,
+        opinions_storage=None,
+        opinion_provider=opin_provider,
         exp_data=exp_data,
         data_type=DataType.Test,
         entity_to_group_func=entity_to_group_func,

@@ -5,12 +5,8 @@ import numpy as np
 
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.input.provider import BaseInputProvider
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
-from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
@@ -28,37 +24,23 @@ logging.basicConfig(level=logging.INFO)
 class NetworkInputProvider(object):
 
     @staticmethod
-    def save(
-            # TODO: remove
-            opin_ops, doc_ops,
-            exp_data,
-            # TODO: remove exp_io
-            exp_io,
-            data_type,
-            term_embedding_pairs,
-            entity_to_group_func,
-            # TODO. Remove.
-            iter_parsed_news_func,
-            # TODO. Remove.
-            terms_per_context,
-            balance):
+    def save(opinion_provider, exp_data,
+             sample_storage,
+             opinions_storage,
+             data_type,
+             term_embedding_pairs,
+             entity_to_group_func,
+             balance):
         """
         Performs encoding for all the data_types supported by experiment.
         """
         assert(isinstance(data_type, DataType))
-        assert(isinstance(opin_ops, OpinionOperations))
-        assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(exp_data, NetworkSerializationData))
-        assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(term_embedding_pairs, OrderedDict))
-        assert(isinstance(terms_per_context, int))
         assert(callable(entity_to_group_func))
         assert(isinstance(balance, bool))
-        assert(callable(iter_parsed_news_func))
 
         # Storages.
-        sample_storage = exp_io.create_samples_writer(data_type=data_type, balance=balance)
-        opinions_storage = exp_io.create_opinions_writer(data_type=data_type)
 
         terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
             entity_to_group_func=entity_to_group_func,
@@ -72,13 +54,6 @@ class NetworkInputProvider(object):
                 dict_data=term_embedding_pairs,
                 term=pair[0],
                 emb_vector=pair[1]))
-
-        opinion_provider = OpinionProvider.from_experiment(
-            doc_ops=doc_ops,
-            opin_ops=opin_ops,
-            data_type=data_type,
-            parsed_news_it_func=iter_parsed_news_func,
-            terms_per_context=terms_per_context)
 
         # Providers.
         sample_row_provider = NetworkSampleRowProvider(
