@@ -14,9 +14,10 @@ from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.experiment_rusentrel.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.contrib.experiment_rusentrel.evaluation.results.two_class import TwoClassEvalResult
-from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import ExperimentRuSentiFramesLabelsFormatter
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
@@ -117,7 +118,7 @@ class TestRuSentRelEvaluation(unittest.TestCase):
             actual_synonyms = synonyms
 
         # Setup an experiment labels formatter.
-        labels_formatter = ExperimentRuSentiFramesLabelsFormatter()
+        labels_formatter = RuSentRelExperimentLabelsFormatter()
 
         # Iter cmp opinions.
         cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
