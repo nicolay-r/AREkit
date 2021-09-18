@@ -4,8 +4,6 @@ from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.provider import BaseInputProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
-from arekit.common.experiment.input.storages.tsv_opinion import TsvOpinionsStorage
-from arekit.common.experiment.input.storages.tsv_sample import TsvSampleStorage
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 
@@ -17,16 +15,13 @@ class BertExperimentInputSerializer(ExperimentEngine):
                  skip_if_folder_exists,
                  sample_formatter_type,
                  entity_formatter,
-                 balance_train_samples,
-                 write_sample_header=True):
+                 balance_train_samples):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(skip_if_folder_exists, bool))
-        assert(isinstance(write_sample_header, bool))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         super(BertExperimentInputSerializer, self).__init__(experiment)
 
         self.__skip_if_folder_exists = skip_if_folder_exists
-        self.__write_sample_header = write_sample_header
         self.__entity_formatter = entity_formatter
         self.__sample_formatter_type = sample_formatter_type
         self.__balance_train_samples = balance_train_samples
@@ -37,26 +32,19 @@ class BertExperimentInputSerializer(ExperimentEngine):
     def __handle_iteration(self, data_type):
         assert(isinstance(data_type, DataType))
 
-        sample_storage = TsvSampleStorage(
-            store_labels=data_type == DataType.Train,
-            balance=self.__balance_train_samples,
-            write_header=self.__write_sample_header,
-            filepath=self._experiment.ExperimentIO.get_input_sample_filepath(
-                data_type=data_type))
-
-        opinions_storage = TsvOpinionsStorage(
-            filepath=self._experiment.ExperimentIO.get_input_opinions_filepath(data_type=data_type))
-
         # Create samples formatter.
         sample_rows_provider = create_bert_sample_provider(
-            storage=sample_storage,
+            storage=self._experiment.ExperimentIO.create_samples_writer(
+                data_type=data_type,
+                balance=self.__balance_train_samples),
             labels_formatter=self.__labels_formatter,
             provider_type=self.__sample_formatter_type,
             label_scaler=self._experiment.DataIO.LabelsScaler,
             entity_formatter=self.__entity_formatter,
             entity_to_group_func=self._experiment.entity_to_group)
 
-        opinions_row_provider = BaseOpinionsRowProvider(storage=opinions_storage)
+        opinions_row_provider = BaseOpinionsRowProvider(
+            storage=self._experiment.ExperimentIO.create_opinions_writer(data_type))
 
         # Perform data serialization to *.tsv format.
         BaseInputProvider.save(
