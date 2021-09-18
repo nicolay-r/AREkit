@@ -29,26 +29,26 @@ class RuAttitudesExperiment(BaseExperiment):
         self.__extra_name_suffix = extra_name_suffix
         self.__do_log = do_log
 
-        self.log_info(u"Init experiment io ...")
+        self.log_info("Init experiment io ...")
         experiment_io = experiment_io_type(self)
 
-        self.log_info(u"Loading RuAttitudes collection optionally [{version}] ...".format(version=version))
+        self.log_info("Loading RuAttitudes collection optionally [{version}] ...".format(version=version))
         ru_attitudes = read_ruattitudes_in_memory(version=version,
                                                   used_doc_ids_set=None,
                                                   keep_doc_ids_only=not load_docs)
 
         folding = create_ruattitudes_experiment_data_folding(
-            doc_ids_to_fold=list(ru_attitudes.iterkeys()))
+            doc_ids_to_fold=list(ru_attitudes.keys()))
 
-        self.log_info(u"Create document operations ... ")
+        self.log_info("Create document operations ... ")
         doc_ops = RuAttitudesDocumentOperations(exp_data=exp_data,
                                                 folding=folding,
                                                 ru_attitudes=ru_attitudes)
 
-        self.log_info(u"Create opinion operations ... ")
+        self.log_info("Create opinion operations ... ")
         opin_ops = RuAttitudesOpinionOperations(ru_attitudes=ru_attitudes)
 
-        exp_name = u"ra-{ra_version}".format(ra_version=self.__version.value)
+        exp_name = "ra-{ra_version}".format(ra_version=self.__version.value)
 
         super(RuAttitudesExperiment, self).__init__(exp_data=exp_data,
                                                     experiment_io=experiment_io,
@@ -58,7 +58,7 @@ class RuAttitudesExperiment(BaseExperiment):
                                                     extra_name_suffix=extra_name_suffix)
 
     def log_info(self, message, forced=False):
-        assert (isinstance(message, unicode))
+        assert (isinstance(message, str))
         if not self.__do_log and not forced:
             return
         logger.info(message)

@@ -3,7 +3,7 @@ from itertools import chain
 from enum import Enum
 
 
-class BertSampleFormatterTypes(Enum):
+class BertSampleProviderTypes(Enum):
     """
     Supported format types.
     """
@@ -27,25 +27,25 @@ class BertSampleFormatterTypes(Enum):
 class SampleFormattersService(object):
 
     __fmt_names = {
-        BertSampleFormatterTypes.CLASSIF_M: u'c_m',
-        BertSampleFormatterTypes.QA_M: u"qa_m",
-        BertSampleFormatterTypes.NLI_M: u'nli_m',
-        BertSampleFormatterTypes.QA_B: u"qa_b",
-        BertSampleFormatterTypes.NLI_B: u"nli_b"
+        BertSampleProviderTypes.CLASSIF_M: 'c_m',
+        BertSampleProviderTypes.QA_M: "qa_m",
+        BertSampleProviderTypes.NLI_M: 'nli_m',
+        BertSampleProviderTypes.QA_B: "qa_b",
+        BertSampleProviderTypes.NLI_B: "nli_b"
     }
 
     # region private methods
 
     @staticmethod
     def __iter_multiple():
-        yield BertSampleFormatterTypes.CLASSIF_M
-        yield BertSampleFormatterTypes.QA_M
-        yield BertSampleFormatterTypes.NLI_M
+        yield BertSampleProviderTypes.CLASSIF_M
+        yield BertSampleProviderTypes.QA_M
+        yield BertSampleProviderTypes.NLI_M
 
     @staticmethod
     def __iter_binary():
-        yield BertSampleFormatterTypes.QA_B
-        yield BertSampleFormatterTypes.NLI_B
+        yield BertSampleProviderTypes.QA_B
+        yield BertSampleProviderTypes.NLI_B
 
     @staticmethod
     def __iter_all():
@@ -56,12 +56,12 @@ class SampleFormattersService(object):
 
     @staticmethod
     def is_binary(formatter_type):
-        binary = list(BertSampleFormatterTypes.__iter_binary())
+        binary = list(BertSampleProviderTypes.__iter_binary())
         return formatter_type in binary
 
     @staticmethod
     def is_multiple(formatter_type):
-        multiple = list(BertSampleFormatterTypes.__iter_multiple())
+        multiple = list(BertSampleProviderTypes.__iter_multiple())
         return formatter_type in multiple
 
     @staticmethod
@@ -75,7 +75,7 @@ class SampleFormattersService(object):
 
     @staticmethod
     def find_fmt_type_by_name(name):
-        for fmt_type, fmt_type_name in SampleFormattersService.__fmt_names.iteritems():
+        for fmt_type, fmt_type_name in SampleFormattersService.__fmt_names.items():
             if fmt_type_name == name:
                 return fmt_type
-        raise NotImplemented(u"Formatting type '{}' does not supported".format(name))
+        raise NotImplemented("Formatting type '{}' does not supported".format(name))

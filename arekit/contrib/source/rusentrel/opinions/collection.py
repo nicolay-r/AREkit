@@ -2,7 +2,7 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.source.rusentrel.const import POS_LABEL_STR, NEG_LABEL_STR
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
-from arekit.contrib.source.rusentrel.opinions.formatter import RuSentRelOpinionCollectionFormatter
+from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 
 
 class RuSentRelOpinionCollection:
@@ -27,7 +27,7 @@ class RuSentRelOpinionCollection:
 
         return RuSentRelIOUtils.iter_from_zip(
             inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id),
-            process_func=lambda input_file: RuSentRelOpinionCollectionFormatter._iter_opinions_from_file(
+            process_func=lambda input_file: RuSentRelOpinionCollectionProvider._iter_opinions_from_file(
                 input_file=input_file,
                 labels_formatter=labels_fmt,
                 error_on_non_supported=True),

@@ -1,6 +1,7 @@
 import sys
 import unittest
 
+from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 
 sys.path.append('../')
 
@@ -8,9 +9,9 @@ from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelPro
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
-from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
-from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
+from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
+from arekit.common.experiment.input.storages.sample import BaseSampleStorage
+from arekit.common.experiment.input.storages.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
@@ -29,14 +30,19 @@ class TestInputBalancing(unittest.TestCase):
             entity_formatter=StringEntitiesSimpleFormatter(),
             entity_to_group_func=lambda entity: entity_to_group_func(entity=entity,
                                                                      synonyms=synonyms))
+        text_provider = BaseSingleTextProvider(terms_mapper)
 
-        formatter = BaseSampleFormatter(
-            data_type=DataType.Train,
+        columns_provider = SampleColumnsProvider(store_labels=True,
+                                                 text_column_names=list(text_provider.iter_columns()))
+
+        storage = BaseSampleStorage(columns_provider)
+
+        BaseSampleRowProvider(
+            storage=storage,
             label_provider=label_provider,
-            text_provider=BaseSingleTextProvider(terms_mapper),
-            balance=False)
+            text_provider=text_provider)
 
-        df = formatter._df
+        df = storage._df
 
         df = df.append({"row_id": 1, "id": 1, "label": 0, "text_a": "-", "s_ind": 0, "t_ind": 0}, ignore_index=True)
         df = df.append({"row_id": 1, "id": 2, "label": 1, "text_a": "-", "s_ind": 0, "t_ind": 0}, ignore_index=True)
@@ -45,14 +51,14 @@ class TestInputBalancing(unittest.TestCase):
 
         balanced_df = SampleRowBalancerHelper.calculate_balanced_df(
             df=df,
-            create_blank_df=lambda size: formatter._create_blank_df(size),
-            label_provider=label_provider)
+            create_blank_df=lambda size: storage._create_blank_df(size),
+            output_labels_uint=label_provider.OutputLabelsUint)
 
-        print "Original:"
-        print df.shape
+        print("Original:")
+        print(df.shape)
 
-        print "Balanced:"
-        print balanced_df.shape
+        print("Balanced:")
+        print(balanced_df.shape)
 
 
 if __name__ == '__main__':

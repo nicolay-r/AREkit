@@ -11,10 +11,10 @@ class NeuralNetworkModelIO(BaseModelIO):
                  source_dir=None,
                  embedding_filepath=None,
                  vocab_filepath=None):
-        assert(isinstance(target_dir, unicode))
-        assert(isinstance(full_model_name, unicode))
-        assert(isinstance(model_name_tag, unicode))
-        assert(isinstance(source_dir, unicode) or source_dir is None)
+        assert(isinstance(target_dir, str))
+        assert(isinstance(full_model_name, str))
+        assert(isinstance(model_name_tag, str))
+        assert(isinstance(source_dir, str) or source_dir is None)
 
         self.__target_dir = target_dir
         self.__full_model_name = full_model_name
@@ -37,8 +37,8 @@ class NeuralNetworkModelIO(BaseModelIO):
         # We separate models that were trained from scratch
         # from those that adopt a pre-trained state;
         # we provide a suffix '-ft' in case of the latter.
-        suffix = u"-ft" if self.__is_pretrained_state_provided() else u''
-        model_tag = u"-{}".format(self.__model_name_tag) if len(self.__model_name_tag) > 0 else u''
+        suffix = "-ft" if self.__is_pretrained_state_provided() else ''
+        model_tag = "-{}".format(self.__model_name_tag) if len(self.__model_name_tag) > 0 else ''
         return self.__full_model_name + suffix + model_tag
 
     def __get_target_subdir(self):

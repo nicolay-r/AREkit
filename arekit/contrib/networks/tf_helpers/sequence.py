@@ -4,7 +4,7 @@ from arekit.contrib.networks.tf_helpers.cell_types import CellTypes
 
 
 def get_cell(hidden_size, cell_type, lstm_initializer=None, dropout_rnn_keep_prob=1.0):
-    assert(isinstance(cell_type, unicode))
+    assert(isinstance(cell_type, str))
 
     cell = None
 

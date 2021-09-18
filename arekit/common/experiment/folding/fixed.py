@@ -12,7 +12,7 @@ class FixedFolding(BaseExperimentDataFolding):
 
     @property
     def Name(self):
-        return u"fixed"
+        return "fixed"
 
     def fold_doc_ids_set(self):
 
@@ -29,4 +29,4 @@ class FixedFolding(BaseExperimentDataFolding):
     def get_current_state(self):
         """ Returns in order to be compatible with cv-based experiment format.
         """
-        return u"0"
+        return "0"

@@ -11,7 +11,7 @@ class RuSentRelSentence(BaseNewsSentence):
 
     # TODO. Remove begin / end parameters
     def __init__(self, text, char_ind_begin, char_ind_end):
-        assert(isinstance(text, unicode) and len(text) > 0)
+        assert(isinstance(text, str) and len(text) > 0)
         assert(isinstance(char_ind_begin, int))
         assert(isinstance(char_ind_end, int))
 
@@ -25,14 +25,6 @@ class RuSentRelSentence(BaseNewsSentence):
     def add_local_entity(self, entity):
         assert(isinstance(entity, RuSentRelEntity))
         self.__entities.append(entity)
-
-    def iter_entity_ids(self):
-        for entity in self.__entities:
-            yield entity.IdInDocument
-
-    def iter_entities(self):
-        for entity in self.__entities:
-            yield entity
 
     def iter_entity_with_local_bounds(self):
         for entity in self.__entities:

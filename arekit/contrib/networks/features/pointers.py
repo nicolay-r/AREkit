@@ -1,4 +1,4 @@
-import utils
+from . import utils
 
 
 class PointersFeature(object):
@@ -31,10 +31,9 @@ class PointersFeature(object):
 
     @staticmethod
     def __shift_text_pointers(inds, begin, end, pad_value):
-        return map(lambda index: PointersFeature.__shift_index(w_begin=begin, w_end=end,
+        return [PointersFeature.__shift_index(w_begin=begin, w_end=end,
                                                                index=index,
-                                                               default=pad_value),
-                   inds)
+                                                               default=pad_value) for index in inds]
 
     @staticmethod
     def __fit_inplace(value, size, filler):

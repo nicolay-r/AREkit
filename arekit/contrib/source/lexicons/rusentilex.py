@@ -24,7 +24,7 @@ class RuSentiLexLexicon(Lexicon):
 
     @staticmethod
     def __get_archive_filepath():
-        return path.join(ZipArchiveUtils.get_data_root(), u"rusentilex.zip")
+        return path.join(ZipArchiveUtils.get_data_root(), "rusentilex.zip")
 
     @classmethod
     def from_zip(cls):

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from enum import Enum
 
 
@@ -14,11 +13,11 @@ class RussianNumberType(Enum):
 class RussianNumberTypeService(object):
 
     __russian = {
-        u'ед': RussianNumberType.Single,
-        u'мн': RussianNumberType.Plural
+        'ед': RussianNumberType.Single,
+        'мн': RussianNumberType.Plural
     }
 
     @staticmethod
     def iter_rus_mystem_tags():
-        for key, value in RussianNumberTypeService.__russian.iteritems():
+        for key, value in RussianNumberTypeService.__russian.items():
             yield key, value

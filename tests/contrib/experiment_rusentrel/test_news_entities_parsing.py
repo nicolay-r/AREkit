@@ -27,7 +27,7 @@ class TestPartOfSpeech(unittest.TestCase):
 
             # Parse single sentence.
             assert(isinstance(news, RuAttitudesNews))
-            parsed_text = news.parse_sentence(0)
+            parsed_text = news.sentence_to_terms_list(0)
             self.__print_parsed_text(parsed_text)
 
             # Parse news via external parser.
@@ -46,7 +46,7 @@ class TestPartOfSpeech(unittest.TestCase):
                                            version=version)
 
         assert(isinstance(news, RuSentRelNews))
-        parsed_text = news.parse_sentence(8)
+        parsed_text = news.sentence_to_terms_list(8)
         self.__print_parsed_text(parsed_text)
 
         # Parse news via external parser.
@@ -57,12 +57,12 @@ class TestPartOfSpeech(unittest.TestCase):
 
     def __print_parsed_text(self, parsed_text):
         assert(isinstance(parsed_text, list))
-        print u"Length: {}".format(len(parsed_text))
+        print("Length: {}".format(len(parsed_text)))
         for t in parsed_text:
             if isinstance(t, Entity):
-                print u"<{}>".format(t.Value),
+                print("<{}>".format(t.Value), end=' ')
             else:
-                print u"'{}'".format(t),
+                print("'{}'".format(t), end=' ')
 
 
 if __name__ == '__main__':

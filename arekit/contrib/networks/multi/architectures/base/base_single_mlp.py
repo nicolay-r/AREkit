@@ -8,8 +8,8 @@ class BaseMultiInstanceSingleMLP(BaseMultiInstanceNeuralNetwork):
     """
     Single output layer.
     """
-    H_W1 = u"W"
-    H_b1 = u"b"
+    H_W1 = "W"
+    H_b1 = "b"
 
     def __init__(self, context_network):
         super(BaseMultiInstanceSingleMLP, self).__init__(context_network)
@@ -37,8 +37,8 @@ class BaseMultiInstanceSingleMLP(BaseMultiInstanceNeuralNetwork):
             name=self.H_b1)
 
     def init_logits_unscaled(self, encoded_contexts):
-        W = [tensor for var_name, tensor in self.__hidden.iteritems() if 'W' in var_name]
-        b = [tensor for var_name, tensor in self.__hidden.iteritems() if 'b' in var_name]
+        W = [tensor for var_name, tensor in self.__hidden.items() if 'W' in var_name]
+        b = [tensor for var_name, tensor in self.__hidden.items() if 'b' in var_name]
         activations = [tf.tanh] * len(W) + [None]
         return get_k_layer_pair_logits(g=encoded_contexts,
                                        W=W,
@@ -50,7 +50,7 @@ class BaseMultiInstanceSingleMLP(BaseMultiInstanceNeuralNetwork):
         for name, value in super(BaseMultiInstanceSingleMLP, self).iter_hidden_parameters():
             yield name, value
 
-        for name, value in self.__hidden.iteritems():
+        for name, value in self.__hidden.items():
             yield name, value
 
     # endregion

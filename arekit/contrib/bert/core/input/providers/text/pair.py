@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.entities.types import EntityType
 from arekit.common.labels.base import Label
@@ -12,7 +11,7 @@ class PairTextProvider(BaseSingleTextProvider):
     Considered to utilize an inner part in context, between opinion participants.
     """
 
-    TEXT_B = u"text_b"
+    TEXT_B = "text_b"
 
     def __init__(self, text_b_template, labels_formatter, text_terms_mapper):
         """
@@ -21,7 +20,7 @@ class PairTextProvider(BaseSingleTextProvider):
             and {label} (optional)
         labels_formatter: StringLabelsFormatter
         """
-        assert(isinstance(text_b_template, unicode))
+        assert(isinstance(text_b_template, str))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         super(PairTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
         self.__text_b_template = text_b_template

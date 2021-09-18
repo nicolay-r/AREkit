@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.languages.pos import PartOfSpeechType
 from arekit.common.languages.ru.cases import RussianCases, RussianCasesService
 from arekit.common.languages.ru.number import RussianNumberType, RussianNumberTypeService
@@ -84,19 +83,19 @@ class POSMystemWrapper(RussianPOSTagger):
     # endregion
 
     def get_term_pos(self, term):
-        assert(isinstance(term, unicode))
+        assert(isinstance(term, str))
         analyzed = self.__mystem.analyze(term)
         return self.__extract_from_analysis(analyzed[0], self.__get_pos) \
             if len(analyzed) > 0 else PartOfSpeechType.Unknown
 
     def get_term_case(self, term):
-        assert(isinstance(term, unicode))
+        assert(isinstance(term, str))
         analyzed = self.__mystem.analyze(term)
         return self.__extract_from_analysis(analyzed[0], self.__get_russian_case) \
             if len(analyzed) > 0 else RussianCases.UNKN
 
     def get_term_number(self, term):
-        assert(isinstance(term, unicode))
+        assert(isinstance(term, str))
         analyzed = self.__mystem.analyze(term)
         return self.__extract_from_analysis(analyzed[0], self.__get_number) \
             if len(analyzed) > 0 else RussianNumberType.UNKN
@@ -104,7 +103,7 @@ class POSMystemWrapper(RussianPOSTagger):
     def get_terms_russian_cases(self, text):
         """ list of part of speech according to the certain word in text
         """
-        assert(isinstance(text, unicode))
+        assert(isinstance(text, str))
         cases = []
 
         analyzed = self.__mystem.analyze(text)

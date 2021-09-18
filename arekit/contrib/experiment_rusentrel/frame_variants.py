@@ -19,7 +19,7 @@ class ExperimentFrameVariantsCollection(FrameVariantsCollection):
         assert(isinstance(stemmer, Stemmer))
 
         lemma_variants = {}
-        for variant, frame_variant in variants.iteritems():
+        for variant, frame_variant in variants.items():
             key = stemmer.lemmatize_to_str(variant)
             if key in lemma_variants:
                 continue

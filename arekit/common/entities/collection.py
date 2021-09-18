@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.synonyms import SynonymsCollection
 
 
@@ -51,7 +50,7 @@ class EntityCollection(object):
         return self.__entities[index]
 
     def try_get_entities(self, value, group_key):
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
 
         if group_key == self.KeyType.BY_SYNONYMS:
             key = self.__synonyms.get_synonym_group_index(value)

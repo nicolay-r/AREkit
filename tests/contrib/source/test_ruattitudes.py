@@ -1,4 +1,3 @@
-#!/usr/bin/python2.7
 import logging
 import sys
 import unittest
@@ -40,14 +39,14 @@ class TestRuAttitudes(unittest.TestCase):
     # region private methods
 
     def __check_entities(self, news):
-        for sentence in news.iter_sentences(return_text=False):
+        for sentence in news.iter_sentences():
             assert (isinstance(sentence, RuAttitudesSentence))
             for s_obj in sentence.iter_objects():
                 assert (isinstance(s_obj, TextObject))
                 entity = s_obj.to_entity(lambda in_id: in_id)
                 assert (isinstance(entity, Entity))
                 self.assertTrue(entity.GroupIndex is not None,
-                                u"Group index [{news_id}] is None!".format(news_id=news.ID))
+                                "Group index [{news_id}] is None!".format(news_id=news.ID))
 
     def __iter_indices(self, ra_version):
         ids = set()
@@ -86,14 +85,14 @@ class TestRuAttitudes(unittest.TestCase):
             str_terms = []
             for t in terms:
                 if isinstance(t, Entity):
-                    str_terms.append(u"E")
+                    str_terms.append("E")
                 elif isinstance(t, Token):
                     str_terms.append(t.get_token_value())
                 else:
                     str_terms.append(t)
 
             for t in str_terms:
-                self.assertIsInstance(t, unicode)
+                self.assertIsInstance(t, str)
 
             news_read += 1
 
@@ -104,10 +103,10 @@ class TestRuAttitudes(unittest.TestCase):
                                                       return_inds_only=True)
 
         it = progress_bar_iter(iterable=news_ids_it,
-                               desc=u"Extracting document ids",
-                               unit=u"docs")
+                               desc="Extracting document ids",
+                               unit="docs")
 
-        print u"Total documents count: {}".format(max(it))
+        print("Total documents count: {}".format(max(it)))
 
     def __test_reading(self, ra_version, do_printing=True):
 
@@ -126,26 +125,26 @@ class TestRuAttitudes(unittest.TestCase):
             if not do_printing:
                 continue
 
-            logger.debug(u"News: {}".format(news.ID))
+            logger.debug("News: {}".format(news.ID))
 
-            for sentence in news.iter_sentences(return_text=False):
+            for sentence in news.iter_sentences():
                 assert(isinstance(sentence, RuAttitudesSentence))
                 # text
-                logger.debug(sentence.Text.encode('utf-8'))
+                logger.debug(sentence.Text)
                 # objects
-                logger.debug(u",".join([object.Value for object in sentence.iter_objects()]))
+                logger.debug(",".join([object.Value for object in sentence.iter_objects()]))
                 # attitudes
                 for sentence_opin in sentence.iter_sentence_opins():
                     assert(isinstance(sentence_opin, SentenceOpinion))
 
                     source, target = sentence.get_objects(sentence_opin)
-                    s = u"{src}->{target} ({label}) (t:[{src_type},{target_type}]) tag=[{tag}]".format(
+                    s = "{src}->{target} ({label}) (t:[{src_type},{target_type}]) tag=[{tag}]".format(
                         src=source.Value,
                         target=target.Value,
                         label=str(sentence_opin.Sentiment.to_class_str()),
                         tag=sentence_opin.Tag,
                         src_type=str(source.Type),
-                        target_type=str(target.Type)).encode('utf-8')
+                        target_type=str(target.Type))
 
                     logger.debug(sentence.SentenceIndex)
                     logger.debug(s)
@@ -155,10 +154,10 @@ class TestRuAttitudes(unittest.TestCase):
                 for o, sentences in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news):
                     assert(isinstance(o, Opinion))
                     assert(isinstance(sentences, list))
-                    logger.debug(u"'{source}'->'{target}' ({s_count})".format(
+                    logger.debug("'{source}'->'{target}' ({s_count})".format(
                         source=o.SourceValue,
                         target=o.TargetValue,
-                        s_count=len(sentences)).encode('utf-8'))
+                        s_count=len(sentences)))
 
             news_read += 1
 
@@ -178,7 +177,7 @@ class TestRuAttitudes(unittest.TestCase):
 
     def test_quick_reading_of_all_version(self):
         for version in self.__ra_versions:
-            print "Testing version: {version}".format(version=version)
+            print("Testing version: {version}".format(version=version))
             self.__test_reading(ra_version=version, do_printing=False)
 
 

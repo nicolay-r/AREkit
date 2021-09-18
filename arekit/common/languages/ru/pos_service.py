@@ -4,26 +4,26 @@ from arekit.common.languages.pos import PartOfSpeechType
 class PartOfSpeechTypesService(object):
 
     __pos_names = {
-        u"S": PartOfSpeechType.NOUN,
-        u"ADV": PartOfSpeechType.ADV,
-        u"ADVPRO": PartOfSpeechType.ADVPRO,
-        u"ANUM": PartOfSpeechType.ANUM,
-        u"APRO": PartOfSpeechType.APRO,
-        u"COM": PartOfSpeechType.COM,
-        u"CONJ": PartOfSpeechType.CONJ,
-        u"INTJ": PartOfSpeechType.INTJ,
-        u"NUM": PartOfSpeechType.NUM,
-        u"PART": PartOfSpeechType.PART,
-        u"PR": PartOfSpeechType.PR,
-        u"A": PartOfSpeechType.ADJ,
-        u"SPRO": PartOfSpeechType.SPRO,
-        u"V": PartOfSpeechType.VERB,
-        u"UNKN": PartOfSpeechType.Unknown,
-        u"EMPTY": PartOfSpeechType.Empty}
+        "S": PartOfSpeechType.NOUN,
+        "ADV": PartOfSpeechType.ADV,
+        "ADVPRO": PartOfSpeechType.ADVPRO,
+        "ANUM": PartOfSpeechType.ANUM,
+        "APRO": PartOfSpeechType.APRO,
+        "COM": PartOfSpeechType.COM,
+        "CONJ": PartOfSpeechType.CONJ,
+        "INTJ": PartOfSpeechType.INTJ,
+        "NUM": PartOfSpeechType.NUM,
+        "PART": PartOfSpeechType.PART,
+        "PR": PartOfSpeechType.PR,
+        "A": PartOfSpeechType.ADJ,
+        "SPRO": PartOfSpeechType.SPRO,
+        "V": PartOfSpeechType.VERB,
+        "UNKN": PartOfSpeechType.Unknown,
+        "EMPTY": PartOfSpeechType.Empty}
 
     @staticmethod
     def iter_mystem_tags():
-        for key, value in PartOfSpeechTypesService.__pos_names.iteritems():
+        for key, value in PartOfSpeechTypesService.__pos_names.items():
             yield key, value
 
     @staticmethod

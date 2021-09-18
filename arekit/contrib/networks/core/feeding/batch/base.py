@@ -62,7 +62,7 @@ class MiniBatch(object):
     @staticmethod
     def debug_output(result):
         logger.debug("-------------------")
-        for key, value in result.iteritems():
+        for key, value in result.items():
             logger.debug("{}: {}".format(key, value))
         logger.debug("-------------------")
 

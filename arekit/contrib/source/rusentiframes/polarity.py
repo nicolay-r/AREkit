@@ -9,8 +9,8 @@ class RuSentiFramesFramePolarity(FramePolarity):
     """
 
     def __init__(self, role_src, role_dest, label, prob):
-        assert(isinstance(role_src, unicode))
-        assert(isinstance(role_dest, unicode))
+        assert(isinstance(role_src, str))
+        assert(isinstance(role_dest, str))
         assert(isinstance(label, Label))
         assert(isinstance(prob, float))
         self.__role_src = role_src

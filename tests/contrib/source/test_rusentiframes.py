@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import logging
 import sys
 import unittest
@@ -24,25 +23,25 @@ class TestRuSentiFrames(unittest.TestCase):
 
         for frame_id in frames.iter_frames_ids():
             # id
-            logger.info(u"Frame: {}".format(frame_id))
+            logger.info("Frame: {}".format(frame_id))
             # titles
-            logger.info(u"Titles: {}".format(u",".join(frames.get_frame_titles(frame_id))))
+            logger.info("Titles: {}".format(",".join(frames.get_frame_titles(frame_id))))
             # variants
-            logger.info(u"Variants: {}".format(u",".join(frames.get_frame_variants(frame_id))))
+            logger.info("Variants: {}".format(",".join(frames.get_frame_variants(frame_id))))
             # roles
             for role in frames.get_frame_roles(frame_id):
-                logger.info(u"Role: {}".format(u" -- ".join([role.Source, role.Description])))
+                logger.info("Role: {}".format(" -- ".join([role.Source, role.Description])))
             # states
             for state in frames.get_frame_states(frame_id):
-                logger.info(u"State: {}".format(u",".join([state.Role, state.Label.to_class_str(), str(state.Prob)])))
+                logger.info("State: {}".format(",".join([state.Role, state.Label.to_class_str(), str(state.Prob)])))
             # polarity
             for polarity in frames.get_frame_polarities(frame_id):
-                logger.info(u"Polarity: {}".format(u",".join([polarity.Source,
+                logger.info("Polarity: {}".format(",".join([polarity.Source,
                                                               polarity.Destination,
                                                               polarity.Label.to_class_str()])))
 
-            has_a0_a1_pol = frames.try_get_frame_polarity(frame_id, role_src=u"a0", role_dest=u"a1")
-            logger.info(u"Has a0->a1 polarity: {}".format(has_a0_a1_pol is not None))
+            has_a0_a1_pol = frames.try_get_frame_polarity(frame_id, role_src="a0", role_dest="a1")
+            logger.info("Has a0->a1 polarity: {}".format(has_a0_a1_pol is not None))
 
         # frame variants.
         frame_variants = FrameVariantsCollection()
@@ -50,12 +49,12 @@ class TestRuSentiFrames(unittest.TestCase):
                                           overwrite_existed_variant=True,
                                           raise_error_on_existed_variant=False)
 
-        frame_variant = frame_variants.get_variant_by_value(u"хвалить")
+        frame_variant = frame_variants.get_variant_by_value("хвалить")
 
         assert(isinstance(frame_variant, FrameVariant))
 
-        logger.info(u"FrameVariantValue: {}".format(frame_variant.get_value()))
-        logger.info(u"FrameID: {}".format(frame_variant.FrameID))
+        logger.info("FrameVariantValue: {}".format(frame_variant.get_value()))
+        logger.info("FrameID: {}".format(frame_variant.FrameID))
 
 
 if __name__ == '__main__':

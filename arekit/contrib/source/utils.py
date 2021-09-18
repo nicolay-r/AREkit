@@ -27,7 +27,7 @@ def download(dest_file_path, source_url):
     """ Refered to https://github.com/nicolay-r/ner-bilstm-crf-tensorflow/blob/master/ner/utils.py
         Simple http file downloader
     """
-    print('Downloading from {src} to {dest}'.format(src=source_url, dest=dest_file_path))
+    print(('Downloading from {src} to {dest}'.format(src=source_url, dest=dest_file_path)))
 
     sys.stdout.flush()
     datapath = os.path.dirname(dest_file_path)

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.processing.pos.base import POSTagger
 
 

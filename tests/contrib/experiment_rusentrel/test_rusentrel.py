@@ -61,34 +61,34 @@ class TestRuSentRel(unittest.TestCase):
 
         synonyms = TestRuSentRel.__read_rusentrel_synonyms_collection()
         for news, opinions in self.__iter_by_docs(synonyms):
-            logger.info(u"NewsID: {}".format(news.ID))
+            logger.info("NewsID: {}".format(news.ID))
 
             # Example: Access to the read OPINIONS collection.
             for opinion in opinions:
                 assert(isinstance(opinion, Opinion))
-                logger.info(u"\t{}->{} ({}) [synonym groups opinion: {}->{}]".format(
+                logger.info("\t{}->{} ({}) [synonym groups opinion: {}->{}]".format(
                     opinion.SourceValue,
                     opinion.TargetValue,
                     opinion.Sentiment.to_class_str(),
                     # Considering synonyms.
                     synonyms.get_synonym_group_index(opinion.SourceValue),
-                    synonyms.get_synonym_group_index(opinion.TargetValue)).encode('utf-8'))
+                    synonyms.get_synonym_group_index(opinion.TargetValue)))
 
             # Example: Access to the read NEWS collection.
-            for sentence in news.iter_sentences(return_text=False):
+            for sentence in news.iter_sentences():
                 assert(isinstance(sentence, RuSentRelSentence))
                 # Access to text.
-                logger.info(u"\tSentence: '{}'".format(sentence.Text.strip()).encode('utf-8'))
+                logger.info("\tSentence: '{}'".format(sentence.Text.strip()))
                 # Access to inner entities.
                 for entity, bound in sentence.iter_entity_with_local_bounds():
                     assert(isinstance(entity, RuSentRelEntity))
                     assert(isinstance(bound, Bound))
-                    logger.info(u"\tEntity: {} ({}), text position: ({}-{}), IdInDocument: {}".format(
+                    logger.info("\tEntity: {} ({}), text position: ({}-{}), IdInDocument: {}".format(
                         entity.Value,
                         entity.Type,
                         bound.Position,
                         bound.Position + bound.Length,
-                        entity.IdInDocument).encode('utf-8'))
+                        entity.IdInDocument))
 
     def test_linked_text_opinion_extraction(self):
 
@@ -100,23 +100,23 @@ class TestRuSentRel(unittest.TestCase):
         synonyms = TestRuSentRel.__read_rusentrel_synonyms_collection()
         for news, opinions in self.__iter_by_docs(synonyms):
 
-            logger.info(u"NewsID: {}".format(news.ID))
+            logger.info("NewsID: {}".format(news.ID))
 
             # Example: Access to news text-level opinions.
             first_opinion = opinions[0]
             assert(isinstance(first_opinion, Opinion))
 
-            print u"'{src}'->'{tgt}'".format(src=first_opinion.SourceValue,
-                                             tgt=first_opinion.TargetValue).encode('utf-8')
+            print("'{src}'->'{tgt}'".format(src=first_opinion.SourceValue,
+                                            tgt=first_opinion.TargetValue))
 
             linked_text_opinions = news.extract_linked_text_opinions(first_opinion)
             assert(isinstance(linked_text_opinions, LinkedTextOpinionsWrapper))
-            print "Linked opinions count: {}".format(len(linked_text_opinions))
+            print("Linked opinions count: {}".format(len(linked_text_opinions)))
             for text_opinion in linked_text_opinions:
                 assert(isinstance(text_opinion, TextOpinion))
                 label = text_opinion.Sentiment
                 assert(isinstance(label, Label))
-                print "<{},{},{}>".format(text_opinion.SourceId, text_opinion.TargetId, str(label))
+                print("<{},{},{}>".format(text_opinion.SourceId, text_opinion.TargetId, str(label)))
 
 
 if __name__ == '__main__':

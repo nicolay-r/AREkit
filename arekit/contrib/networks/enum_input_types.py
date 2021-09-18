@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class ModelInputType(Enum):
-    SingleInstance = u'ctx'
-    MultiInstanceMaxPooling = u'mi-mp'
-    MultiInstanceWithSelfAttention = u'mi-self-att'
+    SingleInstance = 'ctx'
+    MultiInstanceMaxPooling = 'mi-mp'
+    MultiInstanceWithSelfAttention = 'mi-self-att'
 
 
 class ModelInputTypeService(object):
@@ -13,7 +13,7 @@ class ModelInputTypeService(object):
 
     @staticmethod
     def __iter_supported_names():
-        return iter(ModelInputTypeService.__names.keys())
+        return iter(list(ModelInputTypeService.__names.keys()))
 
     @staticmethod
     def get_type_by_name(name):

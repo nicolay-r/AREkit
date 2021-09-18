@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
@@ -18,9 +17,7 @@ class RuSentRelNews(News):
         assert(isinstance(sentences, list))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
-        super(RuSentRelNews, self).__init__(news_id=doc_id,
-                                            sentences=sentences,
-                                            entities_parser=RuSentRelTextEntitiesParser())
+        super(RuSentRelNews, self).__init__(news_id=doc_id, sentences=sentences)
 
         self.__entities = entities
 
@@ -81,7 +78,7 @@ class RuSentRelNews(News):
                 e_ind += 1
                 continue
 
-            if e.Value in [u'author', u'unknown']:
+            if e.Value in ['author', 'unknown']:
                 e_ind += 1
                 continue
 
@@ -104,7 +101,7 @@ class RuSentRelNews(News):
     def __read_sentences(input_file):
         sentences = []
         line_start = 0
-        unknown_entity = u"Unknown}"
+        unknown_entity = "Unknown}"
 
         for line in input_file.readlines():
 
@@ -117,7 +114,7 @@ class RuSentRelNews(News):
 
             line_end = line_start + len(line) - 1
 
-            if line != unicode('\r\n'):
+            if line != str('\r\n'):
                 s = RuSentRelSentence(text=line,
                                       char_ind_begin=line_start,
                                       char_ind_end=line_end)
@@ -142,5 +139,10 @@ class RuSentRelNews(News):
 
     def get_entities_collection(self):
         return self.__entities
+
+    @staticmethod
+    def _sentence_to_terms_list_core(sentence):
+        with RuSentRelTextEntitiesParser() as parser:
+            return parser.parse(sentence)
 
     # endregion

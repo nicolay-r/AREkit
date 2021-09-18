@@ -144,7 +144,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
                     """
                     return tf.squeeze(tf.gather(tensor, [i], axis=1), [1])
 
-                for param, value in self.__input.iteritems():
+                for param, value in self.__input.items():
                     self.__context_network.set_input_parameter(param=param,
                                                                value=__to_ctx(value))
 
@@ -211,7 +211,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
 
     def iter_hidden_parameters(self):
         for name, value in self.ContextNetwork.iter_hidden_parameters():
-            yield u'ctx_{}'.format(name), value
+            yield 'ctx_{}'.format(name), value
 
     # endregion
 
@@ -326,15 +326,15 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
             yield name, value
 
         # TODO. This should be a part of the sample.
-        yield u'x', self.__input[InputSample.I_X_INDS]
-        yield u'obj_ind', self.__input[InputSample.I_OBJ_IND]
-        yield u'subj_ind', self.__input[InputSample.I_SUBJ_IND]
-        yield u'frame_inds', self.__input[InputSample.I_FRAME_INDS]
-        yield u'frame_sent_role_inds', self.__input[InputSample.I_FRAME_SENT_ROLES]
+        yield 'x', self.__input[InputSample.I_X_INDS]
+        yield 'obj_ind', self.__input[InputSample.I_OBJ_IND]
+        yield 'subj_ind', self.__input[InputSample.I_SUBJ_IND]
+        yield 'frame_inds', self.__input[InputSample.I_FRAME_INDS]
+        yield 'frame_sent_role_inds', self.__input[InputSample.I_FRAME_SENT_ROLES]
 
         # Provide base input parameters.
-        yield u'y_labels', self.Labels
-        yield u'y_etalon_labels', self.__y
+        yield 'y_labels', self.Labels
+        yield 'y_etalon_labels', self.__y
 
     def create_feed_dict(self, input, data_type):
         assert(isinstance(input, dict))

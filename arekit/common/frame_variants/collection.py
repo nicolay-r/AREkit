@@ -16,7 +16,7 @@ class FrameVariantsCollection(object):
 
     @staticmethod
     def __register_frame(frames_dict, frames_list, id):
-        assert(isinstance(id, unicode))
+        assert(isinstance(id, str))
         if id not in frames_dict:
             frames_dict[id] = len(frames_list)
             frames_list.append(id)
@@ -55,7 +55,7 @@ class FrameVariantsCollection(object):
         return value in self.__variants
 
     def iter_variants(self):
-        for value, variant in self.__variants.iteritems():
+        for value, variant in self.__variants.items():
             yield value, variant
 
     # endregion

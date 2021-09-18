@@ -7,14 +7,14 @@ from arekit.processing.text.token import Token
 def terms_to_str(terms):
     r = []
     for t in terms:
-        if isinstance(t, unicode):
+        if isinstance(t, str):
             r.append(t)
         elif isinstance(t, Token):
             r.append(t.get_token_value())
         elif isinstance(t, Entity):
-            r.append(u"[{}]".format(t.Value))
+            r.append("[{}]".format(t.Value))
         elif isinstance(t, TextFrameVariant):
-            r.append(u"<{}>".format(t.Variant.get_value()))
+            r.append("<{}>".format(t.Variant.get_value()))
         elif isinstance(t, FrameVariant):
             r.append(t.get_value())
         else:

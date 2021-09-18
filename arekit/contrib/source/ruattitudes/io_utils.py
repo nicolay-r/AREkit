@@ -6,14 +6,14 @@ from arekit.contrib.source.zip_utils import ZipArchiveUtils
 
 
 class RuAttitudesVersions(Enum):
-    Debug = u"dbg"
-    V10 = u"v1_0"
-    V11 = u"v1_1"
-    V12 = u"v1_2"
-    V20Base = u'v2_0_base'
-    V20Large = u'v2_0_large'
-    V20BaseNeut = u'v2_0_base_neut'
-    V20LargeNeut = u'v2_0_large_neut'
+    Debug = "dbg"
+    V10 = "v1_0"
+    V11 = "v1_1"
+    V12 = "v1_2"
+    V20Base = 'v2_0_base'
+    V20Large = 'v2_0_large'
+    V20BaseNeut = 'v2_0_base_neut'
+    V20LargeNeut = 'v2_0_large_neut'
 
 
 class RuAttitudesVersionsService:
@@ -42,16 +42,16 @@ class RuAttitudesIOUtils(ZipArchiveUtils):
 
     @staticmethod
     def get_archive_filepath(version):
-        assert(isinstance(version, unicode))
+        assert(isinstance(version, str))
         return path.join(RuAttitudesIOUtils.get_data_root(),
-                         u"ruattitudes-{version}.zip".format(version=version))
+                         "ruattitudes-{version}.zip".format(version=version))
 
     @staticmethod
     def get_collection_filepath():
-        return u"collection.txt"
+        return "collection.txt"
 
     @classmethod
     def get_synonyms_innerpath(cls):
-        return u"synonyms.txt"
+        return "synonyms.txt"
 
     # endregion

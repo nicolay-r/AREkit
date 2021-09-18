@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import collections
 import logging
 
@@ -50,7 +49,7 @@ class TextParser:
 
     @staticmethod
     def __parse(text, stemmer=None):
-        assert(isinstance(text, unicode))
+        assert(isinstance(text, str))
         terms = TextParser.__parse_core(text)
         return ParsedText(terms, stemmer=stemmer)
 
@@ -64,7 +63,7 @@ class TextParser:
 
         if parse_options.ParseEntities:
             # Providing a modified list with parsed unicode terms.
-            terms_list = news.parse_sentence(sent_ind)
+            terms_list = news.sentence_to_terms_list(sent_ind)
             return TextParser.__parse_string_list(terms_iter=terms_list,
                                                   skip_term=lambda term: isinstance(term, Entity),
                                                   # TODO. Declare Stemmer within a derived parse options.
@@ -73,7 +72,7 @@ class TextParser:
                                                   stemmer=parse_options.Stemmer)
 
         # Processing the ordinary sentence text.
-        sentence = news.iter_sentences(sent_ind)
+        sentence = news.iter_sentences()
         return TextParser.__parse(text=sentence.Text,
                                   # TODO. Declare Stemmer within a derived parse options.
                                   # TODO. Declare Stemmer within a derived parse options.
@@ -125,7 +124,7 @@ class TextParser:
         return: list
             list of unicode parsed_news, where each term: word or token
         """
-        assert(isinstance(text, unicode))
+        assert(isinstance(text, str))
         assert(isinstance(keep_tokens, bool))
 
         terms = TextParser.__process_words(words=split_by_whitespaces(text),
@@ -184,9 +183,9 @@ class TextParser:
                 l += 1
 
             # Number.
-            elif unicode.isdigit(term[l]):
+            elif str.isdigit(term[l]):
                 k = l + 1
-                while k < len(term) and unicode.isdigit(term[k]):
+                while k < len(term) and str.isdigit(term[k]):
                     k += 1
                 token = Tokens.try_create_number(term[l:k])
                 assert(token is not None)

@@ -6,4 +6,4 @@ SynonymSubject = "syn_subjs"
 Entities = "entities"
 PosTags = "pos_tags"
 
-ArgsSep = u','
+ArgsSep = ','

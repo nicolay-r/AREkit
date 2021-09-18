@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 class NetworkInputDependentVariables:
 
-    __name_separator = u'>'
+    __name_separator = '>'
 
     def __init__(self):
         self.__text_opinion_ids = OrderedDict()
@@ -33,7 +33,7 @@ class NetworkInputDependentVariables:
         assert(len(tensor_values_list) == len(names_list))
 
         for name_ind, name in enumerate(names_list):
-            assert(isinstance(name, unicode))
+            assert(isinstance(name, str))
 
             if name not in self.__by_param_names:
                 self.__by_param_names[name] = []
@@ -55,13 +55,13 @@ class NetworkInputDependentVariables:
 
             # Save only first sentence ref.
             t_ind = 0
-            for b_ind in xrange(bags_per_minibatch):
+            for b_ind in range(bags_per_minibatch):
 
                 v = values_list[b_ind]
 
                 value = []
                 names = []
-                for s_index in xrange(len(v)):
+                for s_index in range(len(v)):
                     value.append(v[s_index])
                     names.append(str(text_opinion_ids[t_ind]))
                     t_ind += 1
@@ -74,6 +74,6 @@ class NetworkInputDependentVariables:
             yield self.__text_opinion_ids[param_name][i], tensor_value
 
     def iter_var_names(self):
-        return self.__by_param_names.iterkeys()
+        return iter(self.__by_param_names.keys())
 
     # endregion

@@ -56,7 +56,7 @@ class TestMultiInstanceFeed(unittest.TestCase):
         for ctx_config, ctx_network in get_supported():
             for config, network in self.multiinstances_supported(ctx_config, ctx_network):
                 logger.info(type(network))
-                logger.info(u'\t-> {}'.format(type(ctx_network)))
+                logger.info('\t-> {}'.format(type(ctx_network)))
                 TestContextNetworkFeeding.run_feeding(network=network,
                                                       network_config=config,
                                                       create_minibatch_func=self.__create_minibatch,

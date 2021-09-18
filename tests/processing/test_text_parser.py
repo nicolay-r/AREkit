@@ -30,7 +30,7 @@ class TestTextParser(unittest.TestCase):
         # frame and variants.
         frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
         frame_variants = FrameVariantsCollection()
-        print(type(frame_variants))
+        print((type(frame_variants)))
         frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants(),
                                           overwrite_existed_variant=True,
                                           raise_error_on_existed_variant=False)

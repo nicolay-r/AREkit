@@ -20,8 +20,8 @@ class BaseExperiment(object):
         assert(isinstance(experiment_io, BaseIOUtils))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
-        assert(isinstance(name, unicode))
-        assert(isinstance(extra_name_suffix, unicode))
+        assert(isinstance(name, str))
+        assert(isinstance(extra_name_suffix, str))
 
         self.__experiment_data = exp_data
         self.__experiment_io = experiment_io
@@ -32,7 +32,7 @@ class BaseExperiment(object):
         # In a form of a string, which might be behind the original
         # experiment implementation, such as:
         # input samples balancing usage, ditances for samples filtration, etc..
-        self.__name = u"{name}-{suffix}".format(name=name, suffix=extra_name_suffix)
+        self.__name = "{name}-{suffix}".format(name=name, suffix=extra_name_suffix)
 
     # region Properties
 
@@ -68,7 +68,7 @@ class BaseExperiment(object):
         self._do_log = do_log
 
     def log_info(self, message, forced=False):
-        assert (isinstance(message, unicode))
+        assert (isinstance(message, str))
         if not self._do_log and not forced:
             return
         logger.info(message)
@@ -101,7 +101,7 @@ class BaseExperiment(object):
 
         # Compose cmp pairs iterator.
         cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
-            doc_ids=filter(lambda doc_id: doc_id in cmp_doc_ids_set, doc_ids_iter),
+            doc_ids=[doc_id for doc_id in doc_ids_iter if doc_id in cmp_doc_ids_set],
             read_etalon_collection_func=lambda doc_id: self.__opin_operations.read_etalon_opinion_collection(
                 doc_id=doc_id),
             read_result_collection_func=lambda doc_id: self.__opin_operations.read_result_opinion_collection(
@@ -114,7 +114,7 @@ class BaseExperiment(object):
         assert(isinstance(evaluator, BaseEvaluator))
 
         # evaluate every document.
-        logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc=u"Evaluate", unit=u'pairs')
+        logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc="Evaluate", unit='pairs')
         result = evaluator.evaluate(cmp_pairs=logged_cmp_pairs_it)
         assert(isinstance(result, BaseEvalResult))
 

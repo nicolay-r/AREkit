@@ -112,7 +112,7 @@ class RCNN(FullyConnectedLayer):
         for key, value in super(RCNN, self).iter_hidden_parameters():
             yield key, value
 
-        for key, value in self.__hidden.iteritems():
+        for key, value in self.__hidden.items():
             yield key, value
 
     # endregion

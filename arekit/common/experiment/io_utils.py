@@ -1,8 +1,3 @@
-from os.path import join
-
-from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.formatters.opinion import BaseOpinionsFormatter
-from arekit.common.experiment.input.formatters.sample import BaseSampleFormatter
 from arekit.common.utils import join_dir_with_subfolder_name
 
 
@@ -12,12 +7,35 @@ class BaseIOUtils(object):
         results -- evaluation of experiments.
     """
 
-    def __init__(self, experiment):
+    def __init__(self, experiment, opinion_collection_provider):
         self._experiment = experiment
+        self.__opinion_collection_provider = opinion_collection_provider
+
+    @property
+    def OpinionCollectionProvider(self):
+        return self.__opinion_collection_provider
 
     def get_experiment_sources_dir(self):
         """ Provides directory for samples.
         """
+        raise NotImplementedError()
+
+    def create_samples_reader(self, data_type):
+        raise NotImplementedError()
+
+    def create_opinions_reader(self, data_type):
+        raise NotImplementedError()
+
+    def create_samples_writer(self, data_type, balance):
+        raise NotImplementedError()
+
+    def create_opinions_writer(self, data_type):
+        raise NotImplementedError()
+
+    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
+        raise NotImplementedError()
+
+    def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
         raise NotImplementedError()
 
     def get_target_dir(self):
@@ -33,75 +51,42 @@ class BaseIOUtils(object):
     # region protected methods
 
     def __get_experiment_folder_name(self):
-        return u"{name}_{scale}l".format(name=self._experiment.Name,
-                                         scale=str(self._experiment.DataIO.LabelsCount))
-
-    def _experiment_iter_index(self):
-        return self._experiment.DocumentOperations.DataFolding.IterationIndex
-
-    def _filename_template(self, data_type):
-        assert(isinstance(data_type, DataType))
-        return u"{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
-                                                  iter_index=self._experiment_iter_index())
-
-    @staticmethod
-    def _get_filepath(out_dir, template, prefix):
-        assert(isinstance(template, unicode))
-        assert(isinstance(prefix, unicode))
-        return join(out_dir, BaseIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
-
-    def _get_annotator_name(self):
-        """ We use custom implementation as it allows to
-            be independent of NeutralAnnotator instance.
-        """
-        return u"annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
+        return "{name}_{scale}l".format(name=self._experiment.Name,
+                                        scale=str(self._experiment.DataIO.LabelsCount))
 
     # endregion
 
     # region public methods
 
-    def get_input_opinions_filepath(self, data_type):
-        template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self.get_target_dir(),
-                                  template=template,
-                                  prefix=BaseOpinionsFormatter.formatter_type_log_name())
+    def serialize_opinion_collection(self, collection, doc_id, data_type, labels_formatter):
+        target = self._create_annotated_collection_target(
+            doc_id=doc_id,
+            data_type=data_type,
+            check_existance=False)
 
-    def get_input_sample_filepath(self, data_type):
-        template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self.get_target_dir(),
-                                  template=template,
-                                  prefix=BaseSampleFormatter.formatter_type_log_name())
+        self.__opinion_collection_provider.serialize(
+            target=target,
+            collection=collection,
+            labels_formatter=labels_formatter)
 
-    def create_annotated_collection_filepath(self, doc_id, data_type):
-        assert(isinstance(doc_id, int))
-        assert(isinstance(data_type, DataType))
+    def deserialize_opinion_collection(self, doc_id, data_type, labels_formatter, create_collection_func):
+        assert(callable(create_collection_func))
 
-        annot_dir = self.__get_annotator_dir()
+        target = self._create_annotated_collection_target(
+            doc_id=doc_id,
+            data_type=data_type,
+            check_existance=True)
 
-        if annot_dir is None:
-            raise NotImplementedError("Neutral root was not provided!")
+        # Check existance of the target.
+        if target is None:
+            return None
 
-        # TODO. This should not depends on the neut.
-        # TODO. This should not depends on the neut.
-        # TODO. This should not depends on the neut.
-        filename = u"art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
-                                                           d_type=data_type.name)
+        opinions = self.__opinion_collection_provider.iter_opinions(
+            source=target,
+            labels_formatter=labels_formatter,
+            error_on_non_supported=False)
 
-        return join(annot_dir, filename)
-
-    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
-        raise NotImplementedError()
+        return create_collection_func(opinions)
 
     # endregion
 
-    # region private methods
-
-    @staticmethod
-    def __generate_tsv_archive_filename(template, prefix):
-        return u"{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
-
-    def __get_annotator_dir(self):
-        return join_dir_with_subfolder_name(dir=self.get_target_dir(),
-                                            subfolder_name=self._get_annotator_name())
-
-    # endregion

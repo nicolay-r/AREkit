@@ -1,7 +1,7 @@
 from arekit.common.entities.base import Entity
 from arekit.common.entities.collection import EntityCollection
 from arekit.common.experiment.annot.base_annot import BaseAnnotationAlgorithm
-from arekit.common.labels.base import NoLabel, Label
+from arekit.common.labels.base import Label
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.opinions.base import Opinion
 from arekit.common.dataset.text_opinions.enums import DistanceType
@@ -35,10 +35,10 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
     def __create_key_by_entity_pair(e1, e2):
         assert(isinstance(e1, Entity))
         assert(isinstance(e2, Entity))
-        return u"{}_{}".format(e1.IdInDocument, e2.IdInDocument)
+        return "{}_{}".format(e1.IdInDocument, e2.IdInDocument)
 
     def __is_ignored_entity_value(self, entity_value):
-        assert(isinstance(entity_value, unicode))
+        assert(isinstance(entity_value, str))
         return entity_value in self.__ignored_entity_values
 
     def __iter_opinions_between_entities(self, relevant_pairs, entities_collection):

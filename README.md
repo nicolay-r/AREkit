@@ -1,11 +1,14 @@
-# AREkit 0.21.0
+# AREkit 0.21.1
+
+![](https://img.shields.io/badge/Python-3.6-brightgreen.svg)
 
 <p align="center">
     <img src="logo.png"/>
 </p>
 
 **AREkit** (Attitude and Relation Extraction Toolkit) -- is a python toolkit, devoted to 
-document level Attitude and Relation Extraction for text objects with entity-linking (EL) API support.
+document level Attitude and Relation Extraction between text objects from mass-media news 
+and analytical articles with entity-linking (EL) API support for objects.
 
 ## Description
 
@@ -17,14 +20,14 @@ for sentence level relations preparation (dubbed as contexts)
 (2) API for contexts extraction
 (3) relations transferring from sentence-level onto document-level, and more.
 It providers contrib modules of 
-[neural networks](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/networks) (like OpenNRE) and 
-[BERT](https://github.com/nicolay-r/AREkit/tree/0.21.0-rc/contrib/bert),
+[neural networks](https://github.com/nicolay-r/AREkit/tree/0.21.1-rc/arekit/contrib/networks) (like OpenNRE) and 
+[BERT](https://github.com/nicolay-r/AREkit/tree/0.21.1-rc/arekit/contrib/bert),
 both applicable for sentiment attitude extraction task.
 
 ## Installation 
 
 ```
-pip install git+https://github.com/nicolay-r/AREkit.git@0.21.0-rc
+pip install git+https://github.com/nicolay-r/AREkit.git@0.21.1-rc
 ```
 
 ## Download Resources
@@ -37,9 +40,9 @@ download_data()
 
 * Frame-Based attitude extraction workflow for news processing [[code]](https://github.com/nicolay-r/frame-based-attitude-extraction-workflow)
     * Represents an attitude annotation workflow based on [RuSentiFrames](https://github.com/nicolay-r/RuSentiFrames) lexicon which is utilized for news processing;
-* **AREnets** for analytical articles [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction/tree/0.21.0)
+* **AREnets** for analytical articles [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction/tree/0.21.1)
     * Neural Networks application for attitude extraction from analytical articles;
-* **AREbert** for analytical articles processing [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction/tree/0.21.0)
+* **AREbert** for analytical articles processing [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction/tree/0.21.1)
     * Analytical news formatter for BERT-based models;
 
 ## Related Frameworks

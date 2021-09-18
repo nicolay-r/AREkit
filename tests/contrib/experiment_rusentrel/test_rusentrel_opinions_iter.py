@@ -76,7 +76,7 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
 
         # Initialize specific document
         doc_id = 47
-        logger.info(u"NewsID: {}".format(doc_id))
+        logger.info("NewsID: {}".format(doc_id))
         news, parsed_news, opinions = init_rusentrel_doc(
             doc_id=doc_id,
             stemmer=self.stemmer,
@@ -91,7 +91,7 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
                                                       position_type=TermPositionTypes.SentenceIndex)
 
             terms = list(parsed_news.iter_sentence_terms(s_index, return_id=False))
-            str_terms_joined = u" ".join(terms_to_str(terms)).strip()
+            str_terms_joined = " ".join(terms_to_str(terms)).strip()
 
             s_ind = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
                                                     position_type=TermPositionTypes.IndexInSentence)
@@ -103,13 +103,13 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
             logger.info("'{}' -> '{}'".format(terms[s_ind], terms[t_ind]))
             logger.info(str_terms_joined)
 
-            logger.info(u" ".join(self.__process(terms=terms,
-                                                 entities_formatter=self.entities_formatter,
-                                                 s_ind=s_ind,
-                                                 t_ind=t_ind)))
+            logger.info(" ".join(self.__process(terms=terms,
+                                                entities_formatter=self.entities_formatter,
+                                                s_ind=s_ind,
+                                                t_ind=t_ind)))
 
-            self.assert_(isinstance(terms[s_ind], Entity))
-            self.assert_(isinstance(terms[t_ind], Entity))
+            self.assertTrue(isinstance(terms[s_ind], Entity))
+            self.assertTrue(isinstance(terms[t_ind], Entity))
 
 
 if __name__ == '__main__':

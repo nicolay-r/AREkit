@@ -13,7 +13,7 @@ class InputSampleBase(object):
 
     def __init__(self, shift_index_dbg, input_sample_id, values):
         assert(isinstance(shift_index_dbg, int))
-        assert(isinstance(input_sample_id, unicode))
+        assert(isinstance(input_sample_id, str))
         assert(isinstance(values, list))
         self._shift_index_dbg = shift_index_dbg
         self.__input_sample_id = input_sample_id
@@ -66,5 +66,5 @@ class InputSampleBase(object):
         return actual_dist < window
 
     def __iter__(self):
-        for key, value in self.__values.iteritems():
+        for key, value in self.__values.items():
             yield key, value

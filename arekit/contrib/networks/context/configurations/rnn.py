@@ -33,7 +33,7 @@ class RNNConfig(DefaultNetworkConfig):
     # region public methods
 
     def modify_cell_type(self, cell_type):
-        assert(isinstance(cell_type, unicode))
+        assert(isinstance(cell_type, str))
         self.__cell_type = cell_type
 
     def modify_hidden_size(self, value):

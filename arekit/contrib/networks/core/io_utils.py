@@ -1,9 +1,16 @@
 import logging
-from os.path import join
+from os.path import join, exists
 
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.input.providers.columns.opinion import OpinionColumnsProvider
+from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
+from arekit.common.experiment.input.storages.tsv_opinion import TsvOpinionsStorage
+from arekit.common.experiment.input.storages.tsv_sample import TsvSampleStorage
 from arekit.common.experiment.io_utils import BaseIOUtils
-from arekit.common.model.model_io import BaseModelIO
+from arekit.common.utils import join_dir_with_subfolder_name
+from arekit.contrib.networks.core.input.providers.columns import NetworkSampleColumnsProvider
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 
 logger = logging.getLogger(__name__)
@@ -17,10 +24,44 @@ class NetworkIOUtils(BaseIOUtils):
         - embedding vocabulary.
     """
 
-    TERM_EMBEDDING_FILENAME_TEMPLATE = u'term_embedding-{cv_index}'
-    VOCABULARY_FILENAME_TEMPLATE = u"vocab-{cv_index}.txt"
+    # TODO. Move it outside.
+    # TODO. Move it outside.
+    # TODO. Move it outside.
+    TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding-{cv_index}'
+    # TODO. Move it outside too.
+    # TODO. Move it outside too.
+    # TODO. Move it outside too.
+    VOCABULARY_FILENAME_TEMPLATE = "vocab-{cv_index}.txt"
 
     # region public methods
+
+    def create_samples_reader(self, data_type):
+        assert(isinstance(data_type, DataType))
+
+        return TsvInputSampleReader.from_tsv(
+            filepath=self.get_input_sample_filepath(data_type=data_type),
+            row_ids_provider=MultipleIDProvider())
+
+    def create_opinions_reader(self, data_type):
+        assert(isinstance(data_type, DataType))
+
+        opinions_source = self.get_input_opinions_filepath(data_type=data_type)
+        return TsvInputOpinionReader.from_tsv(opinions_source)
+
+    def create_opinions_writer(self, data_type):
+        return TsvOpinionsStorage(filepath=self.get_input_opinions_filepath(data_type),
+                                  column_provider=OpinionColumnsProvider())
+
+    def create_samples_writer(self, data_type, balance):
+        columns_provider = NetworkSampleColumnsProvider(
+            store_labels=data_type == DataType.Train,
+            text_column_names=None)
+
+        return TsvSampleStorage(
+            filepath=self.get_input_sample_filepath(data_type),
+            columns_provider=columns_provider,
+            balance=balance and data_type == DataType.Train,
+            write_header=True)
 
     def get_loading_vocab_filepath(self):
         """ It is possible to load a predefined embedding from another experiment
@@ -51,22 +92,25 @@ class NetworkIOUtils(BaseIOUtils):
     def get_saving_embedding_filepath(self):
         return self.__get_default_embedding_filepath()
 
+    # TODO. Filepath-dependency should be removed!
+    # TODO. Filepath-dependency should be removed!
+    # TODO. Filepath-dependency should be removed!
     def get_output_model_results_filepath(self, data_type, epoch_index):
 
         f_name_template = self._filename_template(data_type=data_type)
 
-        result_template = u"".join([f_name_template, u'-e{e_index}'.format(e_index=epoch_index)])
+        result_template = "".join([f_name_template, '-e{e_index}'.format(e_index=epoch_index)])
 
         return self._get_filepath(out_dir=self.__get_model_dir(),
                                   template=result_template,
-                                  prefix=u"result")
+                                  prefix="result")
 
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         assert(isinstance(epoch_index, int))
 
         model_eval_root = self.__get_eval_root_filepath(data_type=data_type, epoch_index=epoch_index)
 
-        filepath = join(model_eval_root, u"{}.opin.txt".format(doc_id))
+        filepath = join(model_eval_root, "{}.opin.txt".format(doc_id))
 
         return filepath
 
@@ -77,12 +121,12 @@ class NetworkIOUtils(BaseIOUtils):
     def __get_default_vocab_filepath(self):
         return join(self.get_target_dir(),
                     self.VOCABULARY_FILENAME_TEMPLATE.format(
-                        cv_index=self._experiment_iter_index()) + u'.npz')
+                        cv_index=self._experiment_iter_index()) + '.npz')
 
     def __get_default_embedding_filepath(self):
         return join(self.get_target_dir(),
                     self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                        cv_index=self._experiment_iter_index()) + u'.npz')
+                        cv_index=self._experiment_iter_index()) + '.npz')
 
     def __get_model_dir(self):
         # Perform access to the model, since all the IO information
@@ -97,7 +141,7 @@ class NetworkIOUtils(BaseIOUtils):
 
         result_dir = join(
             self.__get_model_dir(),
-            join(u"eval/{data_type}/{iter_index}/{epoch_index}".format(
+            join("eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type.name,
                 iter_index=self._experiment_iter_index(),
                 epoch_index=str(epoch_index))))
@@ -110,3 +154,77 @@ class NetworkIOUtils(BaseIOUtils):
         return model_io.IsPretrainedStateProvided
 
     # endregion
+
+    # TODO. In nested class (user applications)
+    def get_input_opinions_filepath(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.get_target_dir(),
+                                  template=template,
+                                  # TODO. formatter_type_log_name -- in nested formatter.
+                                  prefix="opinion")
+
+    # TODO. In nested class (user applications)
+    def get_input_sample_filepath(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.get_target_dir(),
+                                  template=template,
+                                  # TODO. formatter_type_log_name -- in nested formatter.
+                                  prefix="sample")
+
+    # TODO. In nested class (user applications)
+    @staticmethod
+    def _get_filepath(out_dir, template, prefix):
+        assert(isinstance(template, str))
+        assert(isinstance(prefix, str))
+        return join(out_dir, NetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+
+    # TODO. In nested class (user applications)
+    def _experiment_iter_index(self):
+        return self._experiment.DocumentOperations.DataFolding.IterationIndex
+
+    # TODO. In nested class (user applications)
+    def _filename_template(self, data_type):
+        assert(isinstance(data_type, DataType))
+        return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
+                                                 iter_index=self._experiment_iter_index())
+
+    # TODO. In nested class (user applications)
+    @staticmethod
+    def __generate_tsv_archive_filename(template, prefix):
+        return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
+
+    # TODO. In nested class (user applications)
+    def _get_annotator_name(self):
+        """ We use custom implementation as it allows to
+            be independent of NeutralAnnotator instance.
+        """
+        return "annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
+
+    # TODO. In nested class (user applications)
+    def __get_annotator_dir(self):
+        return join_dir_with_subfolder_name(dir=self.get_target_dir(),
+                                            subfolder_name=self._get_annotator_name())
+
+    # TODO. In nested class (user applications)
+    def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
+        assert(isinstance(doc_id, int))
+        assert(isinstance(data_type, DataType))
+        assert(isinstance(check_existance, bool))
+
+        annot_dir = self.__get_annotator_dir()
+
+        if annot_dir is None:
+            raise NotImplementedError("Neutral root was not provided!")
+
+        # TODO. This should not depends on the neut.
+        filename = "art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
+                                                          d_type=data_type.name)
+
+        target = join(annot_dir, filename)
+
+        if check_existance and not exists(target):
+            return None
+
+        return target
+
+

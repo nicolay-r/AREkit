@@ -1,3 +1,6 @@
+# TODO. depends on io, issue #189
+# TODO. Rename as BaseDocumentStatProvider!
+# TODO. Move into the particular experiment issue #189
 class BaseDocumentStatGenerator(object):
     """
     Provides statistic on certain document.
@@ -24,6 +27,7 @@ class BaseDocumentStatGenerator(object):
 
     # region public methods
 
+    # TODO. depends on io, issue #189
     def calculate_and_write_doc_stat(self, filepath, doc_ids_iter):
         with open(filepath, 'w') as f:
             for doc_id in doc_ids_iter:

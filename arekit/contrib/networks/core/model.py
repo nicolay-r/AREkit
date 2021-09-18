@@ -109,8 +109,8 @@ class BaseTensorflowModel(BaseModel):
         self.__initialize_session()
 
         if self.IO.IsPretrainedStateProvided:
-            saved_model_path = u"{}.state".format(self.IO.get_model_source_path_tf_prefix())
-            logger.info(u"Loading model: {}".format(saved_model_path))
+            saved_model_path = "{}.state".format(self.IO.get_model_source_path_tf_prefix())
+            logger.info("Loading model: {}".format(saved_model_path))
             self.load_model(saved_model_path)
 
         self.fit(epochs_count=model_params.EpochsCount)
@@ -138,7 +138,7 @@ class BaseTensorflowModel(BaseModel):
             # evaluation for original state.
             self.__callback.on_fit_started(operation_cancel)
 
-        for epoch_index in xrange(epochs_count):
+        for epoch_index in range(epochs_count):
 
             if operation_cancel.IsCancelled:
                 break
@@ -243,7 +243,7 @@ class BaseTensorflowModel(BaseModel):
 
         if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
             save_fp = self.IO.get_model_target_path_tf_prefix()
-            logger.info(u"Update TensorFlow model state: {}".format(save_fp))
+            logger.info("Update TensorFlow model state: {}".format(save_fp))
             self.save_model(save_path=save_fp)
 
         return fit_total_cost / groups_count, fit_total_acc / groups_count

@@ -8,13 +8,13 @@ class RuSentiFramesVersions(Enum):
     # Nicolay Rusnachenko, Natalia Loukachevitch, Elena Tutubalina
     # https://www.aclweb.org/anthology/R19-1118/
     # https://github.com/nicolay-r/RuSentiFrames/tree/v1.0
-    V10 = u"v1_0"
+    V10 = "v1_0"
 
     # Papers for description:
     # Sentiment Frames for Attitude Extraction in Russian (DIALOG-2020)
     # Natalia Loukachevitch, Nicolay Rusnachenko
     # https://github.com/nicolay-r/RuSentiFrames/tree/v2.0
-    V20 = u"v2_0"
+    V20 = "v2_0"
 
 
 class RuSentiFramesVersionsService:
@@ -34,7 +34,7 @@ class RuSentiFramesVersionsService:
             if version_type.value == name:
                 return version_type
 
-        raise Exception(u"RuSentiFrames version by name `{}` was hot found!".format(name))
+        raise Exception("RuSentiFrames version by name `{}` was hot found!".format(name))
 
     @staticmethod
     def iter_supported_names():

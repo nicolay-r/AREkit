@@ -36,16 +36,16 @@ class RuSentRelExperiment(BaseExperiment):
         self.__rsr_version = version
         self.__synonyms = None
 
-        self.log_info(u"Init experiment io ...")
+        self.log_info("Init experiment io ...")
         experiment_io = experiment_io_type(self)
 
-        self.log_info(u"Create opinion operations ... ")
+        self.log_info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
                                               version=version,
                                               experiment_io=experiment_io,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
-        self.log_info(u"Create document operations ... ")
+        self.log_info("Create document operations ... ")
         folding = create_rusentrel_experiment_data_folding(folding_type=folding_type,
                                                            version=version,
                                                            docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
@@ -55,7 +55,7 @@ class RuSentRelExperiment(BaseExperiment):
                                               version=version,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
-        exp_name = u"rsr-{version}-{format}".format(version=version.value,
+        exp_name = "rsr-{version}-{format}".format(version=version.value,
                                                     format=doc_ops.DataFolding.Name)
 
         super(RuSentRelExperiment, self).__init__(exp_data=exp_data,
@@ -69,7 +69,7 @@ class RuSentRelExperiment(BaseExperiment):
 
     def _get_or_load_synonyms_collection(self):
         if self.__synonyms is None:
-            self.log_info(u"Read synonyms collection ...")
+            self.log_info("Read synonyms collection ...")
             self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
                 stemmer=self.DataIO.Stemmer,
                 version=self.__rsr_version)

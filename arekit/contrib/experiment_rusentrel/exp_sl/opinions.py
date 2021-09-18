@@ -1,5 +1,4 @@
 import logging
-from os.path import exists
 
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data_type import DataType
@@ -26,7 +25,8 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__get_synonyms_func = get_synonyms_func
         self.__version = version
         self.__experiment_io = experiment_io
-        self.__opinion_formatter = experiment_data.OpinionFormatter
+        # TODO. This should be removed later, as we may utilize experiment_io API.
+        self.__opinion_provider = experiment_io.OpinionCollectionProvider
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
 
@@ -69,24 +69,18 @@ class RuSentrelOpinionOperations(OpinionOperations):
         return self.__create_collection(None)
 
     def try_read_annotated_opinion_collection(self, doc_id, data_type):
-        filepath = self.__experiment_io.create_annotated_collection_filepath(
+        return self.__experiment_io.deserialize_opinion_collection(
             doc_id=doc_id,
-            data_type=data_type)
-
-        if not exists(filepath):
-            return None
-
-        return self.__custom_read(filepath=filepath,
-                                  labels_fmt=self.__neutral_labels_fmt)
+            data_type=data_type,
+            labels_formatter=self.__neutral_labels_fmt,
+            create_collection_func=self.__create_collection)
 
     def save_annotated_opinion_collection(self, collection, doc_id, data_type):
-        filepath = self.__experiment_io.create_annotated_collection_filepath(
+        self.__experiment_io.serialize_opinion_collection(
+            collection=collection,
             doc_id=doc_id,
-            data_type=data_type)
-
-        self.__opinion_formatter.save_to_file(collection=collection,
-                                              filepath=filepath,
-                                              labels_formatter=self.__neutral_labels_fmt)
+            data_type=data_type,
+            labels_formatter=self.__neutral_labels_fmt)
 
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         """ Since evaluation supported only for neural networks,
@@ -108,9 +102,9 @@ class RuSentrelOpinionOperations(OpinionOperations):
     # region private provider methods
 
     def __custom_read(self, filepath, labels_fmt):
-        opinions = self.__opinion_formatter.iter_opinions_from_file(filepath=filepath,
-                                                                    labels_formatter=labels_fmt,
-                                                                    error_on_non_supported=False)
+        opinions = self.__opinion_provider.iter_opinions(source=filepath,
+                                                         labels_formatter=labels_fmt,
+                                                         error_on_non_supported=False)
 
         return self.__create_collection(opinions)
 

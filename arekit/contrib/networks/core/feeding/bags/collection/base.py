@@ -91,7 +91,7 @@ class BagsCollection(object):
                 text_opinion_ids_set=text_opinion_ids_set)
 
         end = 0
-        for index in xrange(self.get_groups_count(bags_per_group)):
+        for index in range(self.get_groups_count(bags_per_group)):
 
             begin = index * bags_per_group
             end = begin + bags_per_group

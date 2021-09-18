@@ -9,9 +9,9 @@ def log_synonym_existed(value):
 
 
 def log_synonym_for_entity_does_not_exist(entity_value, end_type, raise_exception):
-    message = u"'{s}' for end {e} does not exist in read-only SynonymsCollection".format(
+    message = "'{s}' for end {e} does not exist in read-only SynonymsCollection".format(
         s=entity_value,
-        e=end_type).encode('utf-8')
+        e=end_type)
 
     if raise_exception:
         raise Exception(message)
@@ -20,10 +20,10 @@ def log_synonym_for_entity_does_not_exist(entity_value, end_type, raise_exceptio
 
 
 def log_opinion_already_exist(opinion, raise_exception, display_log):
-    message = u"'{s}->{t}' already exists in collection".format(s=opinion.SourceValue,
+    message = "'{s}->{t}' already exists in collection".format(s=opinion.SourceValue,
                                                                 t=opinion.TargetValue).encode('utf-8')
 
     if raise_exception:
         raise Exception(message)
     elif display_log:
-        logger.info(message + u' [REJECTED]')
+        logger.info(message + ' [REJECTED]')

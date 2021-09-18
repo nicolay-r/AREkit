@@ -50,7 +50,7 @@ class ParsedText:
         assert(callable(filter) or filter is None)
         src = self.__src(term_format)
         for term in src:
-            if filter is not None and not filter(term):
+            if filter is not None and not list(filter(term)):
                 continue
             yield term
 
@@ -67,7 +67,7 @@ class ParsedText:
         PS: Might be significantly slow, depending on stemmer were used.
         """
         assert(isinstance(stemmer, Stemmer))
-        self.__lemmas = [u"".join(stemmer.lemmatize_to_list(t)) if isinstance(t, unicode) else t
+        self.__lemmas = ["".join(stemmer.lemmatize_to_list(t)) if isinstance(t, str) else t
                          for t in self.__terms]
 
     # endregion

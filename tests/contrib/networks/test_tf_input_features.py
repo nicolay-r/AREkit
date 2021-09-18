@@ -53,7 +53,7 @@ class TestTfInputFeatures(unittest.TestCase):
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():
 
-            logger.info(u"NewsID: {}".format(doc_id))
+            logger.info("NewsID: {}".format(doc_id))
 
             news, parsed_news, opinions = init_rusentrel_doc(
                 doc_id=doc_id,
@@ -83,17 +83,17 @@ class TestTfInputFeatures(unittest.TestCase):
                     e1_ind=s_ind,
                     e2_ind=t_ind,
                     expected_size=random.randint(50, 60),
-                    filler=u"<PAD>")
+                    filler="<PAD>")
 
                 cropped_terms = x_feature.ValueVector
                 subj_ind = s_ind - x_feature.StartIndex
                 obj_ind = t_ind - x_feature.StartIndex
 
                 logger.info(len(terms))
-                logger.info(u"Source Index: {}".format(subj_ind))
-                logger.info(u"Target Index: {}".format(obj_ind))
-                s = u" ".join(terms_to_str(cropped_terms))
-                logger.info(u"Result: {}".format(s))
+                logger.info("Source Index: {}".format(subj_ind))
+                logger.info("Target Index: {}".format(obj_ind))
+                s = " ".join(terms_to_str(cropped_terms))
+                logger.info("Result: {}".format(s))
 
                 assert(isinstance(x_feature.ValueVector[subj_ind], Entity))
                 assert(isinstance(x_feature.ValueVector[obj_ind], Entity))

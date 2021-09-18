@@ -1,11 +1,11 @@
 from arekit.common import utils
-from arekit.common.embeddings.base import Embedding
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.core.input.embedding.custom import create_term_embedding
+from arekit.contrib.networks.embeddings.base import Embedding
 
 
 class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):

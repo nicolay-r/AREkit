@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import collections
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection

@@ -29,13 +29,13 @@ class SynonymsCollection(object):
     # region public 'add' methods
 
     def add_synonym_value(self, value):
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
 
         if self.__contains_synonym_value(value):
-            raise Exception((u"Collection already contains synonyms '{}'".format(value)).encode('utf-8'))
+            raise Exception(("Collection already contains synonyms '{}'".format(value)).encode('utf-8'))
 
         if self.__is_read_only:
-            raise Exception((u"Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
+            raise Exception(("Failed to add '{}'. Synonym collection is read only!".format(value)).encode('utf-8'))
 
         sid = self._create_external_sid(value)
         self.__by_sid[sid] = self.__get_groups_count()
@@ -53,7 +53,7 @@ class SynonymsCollection(object):
     # region public 'get' methods
 
     def get_synonym_group_index(self, value):
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
         return self.__get_group_index(value)
 
     # endregion
@@ -83,7 +83,7 @@ class SynonymsCollection(object):
     # region public 'iter' methods
 
     def iter_synonym_values(self, value):
-        assert(isinstance(value, unicode))
+        assert(isinstance(value, str))
         sid = self._create_external_sid(value)
         index = self.__by_sid[sid]
         return iter(self.__by_index[index])

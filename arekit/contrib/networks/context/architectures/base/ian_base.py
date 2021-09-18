@@ -189,9 +189,9 @@ class IANBase(FullyConnectedLayer):
         for key, value in super(IANBase, self).iter_input_dependent_hidden_parameters():
             yield key, value
 
-        yield u'aspect_att', self.__aspect_att
-        yield u'context_att', self.__context_att
-        yield u'aspects', self.get_aspect_input()
+        yield 'aspect_att', self.__aspect_att
+        yield 'context_att', self.__context_att
+        yield 'aspects', self.get_aspect_input()
 
     # endregion
 

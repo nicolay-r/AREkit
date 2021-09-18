@@ -23,6 +23,9 @@ class DataIO(object):
     def LabelsCount(self):
         raise NotImplementedError()
 
+    # TODO. Stemmer might not be required in experiment at all.
+    # TODO. Stemmer might not be required in experiment at all.
+    # TODO. Stemmer might not be required in experiment at all.
     @property
     def Stemmer(self):
         return self.__stemmer
@@ -32,16 +35,6 @@ class DataIO(object):
         """ All labels considered as supported and might appear in OpinionCollection by default.
         """
         return None
-
-    # region not implemented properties
-
-    @property
-    def OpinionFormatter(self):
-        """ Corresponds to `OpinionCollectionsFormatter` instance
-        """
-        raise NotImplementedError()
-
-    # endregion
 
     def set_model_io(self, model_io):
         """ Providing model_io in experiment data.

@@ -24,7 +24,7 @@ def __iter_unique_frame_variants(frames_collection, frame_ids):
 
 def __get_frame_effects(frames_collection, role, label):
     assert(isinstance(frames_collection, RuSentiFramesCollection))
-    assert(isinstance(role, unicode))
+    assert(isinstance(role, str))
     assert(isinstance(label, Label))
 
     frame_ids = []
@@ -47,8 +47,8 @@ def __get_frame_effects(frames_collection, role, label):
 
 def __get_variants_with_polarities(frames_collection, role_src, role_dest, label):
     assert(isinstance(frames_collection, RuSentiFramesCollection))
-    assert(isinstance(role_dest, unicode))
-    assert(isinstance(role_src, unicode))
+    assert(isinstance(role_dest, str))
+    assert(isinstance(role_src, str))
     assert(isinstance(label, Label))
 
     frame_ids = []
@@ -109,58 +109,58 @@ def __about(frames_collection, pos_tagger):
     for frame_id in frames_collection.iter_frames_ids():
         titles.extend(frames_collection.get_frame_titles(frame_id))
 
-    print "Frames count:", len(list(frames_collection.iter_frames_ids()))
-    print "---------------"
-    print
+    print("Frames count:", len(list(frames_collection.iter_frames_ids())))
+    print("---------------")
+    print()
 
-    print "Quantitative characteristics of the RuSentiFrames entries:"
-    print "Verbs:", len(verbs)
-    print "Nouns:", len(nouns)
-    print "Phrases:", len(phrases)
-    print "Other:", len(other)
-    print "Unique entries:", len(unique_variants)
-    print "Total entries: ", len(all_frame_entries)
-    print
+    print("Quantitative characteristics of the RuSentiFrames entries:")
+    print("Verbs:", len(verbs))
+    print("Nouns:", len(nouns))
+    print("Phrases:", len(phrases))
+    print("Other:", len(other))
+    print("Unique entries:", len(unique_variants))
+    print("Total entries: ", len(all_frame_entries))
+    print()
 
-    print "The distribution of RuSentiFrames text entries according to attitudes:"
-    print "A0 to A1 Pos", len(__get_variants_with_polarities(frames_collection=frames_collection,
-                                                             role_src=u'a0',
-                                                             role_dest=u'a1',
-                                                             label=PositiveLabel()))
-    print "A0 to A1 Neg", len(__get_variants_with_polarities(frames_collection=frames_collection,
-                                                             role_src=u'a0',
-                                                             role_dest=u'a1',
-                                                             label=NegativeLabel()))
-    print "Author to A0 Pos", len(__get_variants_with_polarities(frames_collection=frames_collection,
-                                                                 role_src=u'author',
-                                                                 role_dest=u'a0',
-                                                                 label=PositiveLabel()))
-    print "Author to A0 Neg", len(__get_variants_with_polarities(frames_collection=frames_collection,
-                                                                 role_src=u'author',
-                                                                 role_dest=u'a0',
-                                                                 label=NegativeLabel()))
-    print "Author to A1 Pos", len(__get_variants_with_polarities(frames_collection=frames_collection,
-                                                                 role_src=u'author',
-                                                                 role_dest=u'a1',
-                                                                 label=PositiveLabel()))
-    print "Author to A1 Neg", len(__get_variants_with_polarities(frames_collection=frames_collection,
-                                                                 role_src=u'author',
-                                                                 role_dest=u'a1',
-                                                                 label=NegativeLabel()))
-    print
+    print("The distribution of RuSentiFrames text entries according to attitudes:")
+    print("A0 to A1 Pos", len(__get_variants_with_polarities(frames_collection=frames_collection,
+                                                             role_src='a0',
+                                                             role_dest='a1',
+                                                             label=PositiveLabel())))
+    print("A0 to A1 Neg", len(__get_variants_with_polarities(frames_collection=frames_collection,
+                                                             role_src='a0',
+                                                             role_dest='a1',
+                                                             label=NegativeLabel())))
+    print("Author to A0 Pos", len(__get_variants_with_polarities(frames_collection=frames_collection,
+                                                                 role_src='author',
+                                                                 role_dest='a0',
+                                                                 label=PositiveLabel())))
+    print("Author to A0 Neg", len(__get_variants_with_polarities(frames_collection=frames_collection,
+                                                                 role_src='author',
+                                                                 role_dest='a0',
+                                                                 label=NegativeLabel())))
+    print("Author to A1 Pos", len(__get_variants_with_polarities(frames_collection=frames_collection,
+                                                                 role_src='author',
+                                                                 role_dest='a1',
+                                                                 label=PositiveLabel())))
+    print("Author to A1 Neg", len(__get_variants_with_polarities(frames_collection=frames_collection,
+                                                                 role_src='author',
+                                                                 role_dest='a1',
+                                                                 label=NegativeLabel())))
+    print()
 
-    print "The distribution of RuSentiFrames text entries according to effects on main participants:"
-    print "A0 Pos", len(__get_frame_effects(frames_collection=frames_collection, role=u'a0', label=PositiveLabel()))
-    print "A0 Neg", len(__get_frame_effects(frames_collection=frames_collection, role=u'a0', label=NegativeLabel()))
-    print "A1 Pos", len(__get_frame_effects(frames_collection=frames_collection, role=u'a1', label=PositiveLabel()))
-    print "A1 Neg", len(__get_frame_effects(frames_collection=frames_collection, role=u'a1', label=NegativeLabel()))
+    print("The distribution of RuSentiFrames text entries according to effects on main participants:")
+    print("A0 Pos", len(__get_frame_effects(frames_collection=frames_collection, role='a0', label=PositiveLabel())))
+    print("A0 Neg", len(__get_frame_effects(frames_collection=frames_collection, role='a0', label=NegativeLabel())))
+    print("A1 Pos", len(__get_frame_effects(frames_collection=frames_collection, role='a1', label=PositiveLabel())))
+    print("A1 Neg", len(__get_frame_effects(frames_collection=frames_collection, role='a1', label=NegativeLabel())))
 
 
 def about_version(version=RuSentiFramesVersions.V20):
     stemmer = MystemWrapper()
     pos_tagger = POSMystemWrapper(stemmer.MystemInstance)
     frames_collection = RuSentiFramesCollection.read_collection(version=version)
-    print "Lexicon version:", version
+    print("Lexicon version:", version)
     return __about(frames_collection=frames_collection, pos_tagger=pos_tagger)
 
 
@@ -172,7 +172,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--version',
                         dest='version',
-                        type=unicode,
+                        type=str,
                         default=default_name,
                         choices=list(RuSentiFramesVersionsService.iter_supported_names()),
                         nargs='?',

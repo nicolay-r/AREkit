@@ -12,8 +12,8 @@ class SentenceOpinion(object):
     def __init__(self, source_id, target_id, source_value, target_value, sentiment, tag):
         assert(isinstance(source_id, int))
         assert(isinstance(target_id, int))
-        assert(isinstance(source_value, unicode))
-        assert(isinstance(target_value, unicode))
+        assert(isinstance(source_value, str))
+        assert(isinstance(target_value, str))
         assert(isinstance(sentiment, Label))
 
         self.__source_id = source_id

@@ -46,14 +46,14 @@ def iter_text_opinions_by_doc_opinion(rusentrel_news_id, doc_entities, opinion, 
     if source_entities is None:
         if debug:
             logger.info("Appropriate entity for '{}'->'...' has not been found".format(
-                opinion.SourceValue.encode('utf-8')))
+                opinion.SourceValue))
         return
         yield
 
     if target_entities is None:
         if debug:
             logger.info("Appropriate entity for '...'->'{}' has not been found".format(
-                opinion.TargetValue.encode('utf-8')))
+                opinion.TargetValue))
         return
         yield
 

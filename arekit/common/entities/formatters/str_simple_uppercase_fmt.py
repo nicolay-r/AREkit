@@ -10,11 +10,11 @@ class SimpleUppercasedEntityFormatter(StringEntitiesFormatter):
         assert(isinstance(entity_type, EntityType))
 
         if entity_type == EntityType.Other:
-            mask = u"ENTITY"
+            mask = "ENTITY"
         elif entity_type == EntityType.Subject or entity_type == EntityType.SynonymSubject:
-            mask = u"E_SUBJ"
+            mask = "E_SUBJ"
         elif entity_type == EntityType.Object or entity_type == EntityType.SynonymObject:
-            mask = u"E_OBJ"
+            mask = "E_OBJ"
         else:
             raise NotImplementedError()
 

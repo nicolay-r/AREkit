@@ -15,7 +15,7 @@ class SerializationData(DataIO):
         self.__label_scaler = label_scaler
 
         if self.LabelsCount != annot.LabelsCount:
-            raise Exception(u"Label scaler and annotator are incompatible due to differs in labels count!")
+            raise Exception("Label scaler and annotator are incompatible due to differs in labels count!")
 
         self.__annot = annot
 

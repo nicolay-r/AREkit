@@ -1,1 +1,2 @@
 pymystem3==0.2.0
+deep-pavlov==1.11.0

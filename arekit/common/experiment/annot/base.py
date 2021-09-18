@@ -28,8 +28,8 @@ class BaseAnnotator(object):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
 
-        docs_to_annot_list = filter(filter_func,
-                                    doc_ops.iter_doc_ids_to_annotate())
+        docs_to_annot_list = list(filter(filter_func,
+                                  doc_ops.iter_doc_ids_to_annotate()))
 
         if len(docs_to_annot_list) == 0:
             logger.info("[{}]: Nothing to annotate".format(data_type))

@@ -53,25 +53,27 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         if not HandledData.check_files_existed(self._experiment):
             exp_folder_name = self._experiment.ExperimentIO.get_experiment_folder_name()
-            raise Exception(u"Data has not been initialized/serialized: `{}`".format(exp_folder_name))
+            raise Exception("Data has not been initialized/serialized: `{}`".format(exp_folder_name))
 
         # Reading embedding.
         embedding_filepath = self._experiment.ExperimentIO.get_loading_embedding_filepath()
         npz_embedding_data = np.load(embedding_filepath)
         self.__config.set_term_embedding(npz_embedding_data['arr_0'])
-        logger.info(u"Embedding read [size={size}]: {filepath}".format(size=self.__config.TermEmbeddingMatrix.shape,
+        logger.info("Embedding read [size={size}]: {filepath}".format(size=self.__config.TermEmbeddingMatrix.shape,
                                                                        filepath=embedding_filepath))
 
         # Reading vocabulary
+        # TODO. This is suppose to be an external loader.
+        # TODO. Provider, which returns dictionary.
         vocab_filepath = self._experiment.ExperimentIO.get_loading_vocab_filepath()
         npz_vocab_data = np.load(vocab_filepath)
         vocab = dict(npz_vocab_data['arr_0'])
-        logger.info(u"Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
-                                                                        filepath=vocab_filepath))
+        logger.info("Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
+                                                                       filepath=vocab_filepath))
 
         # Performing samples reading process.
         handled_data.perform_reading_and_initialization(
-            doc_ops=self._experiment.DocumentOperations,
+            dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             exp_io=self._experiment.ExperimentIO,
             labels_count=self._experiment.DataIO.LabelsCount,
             vocab=vocab,

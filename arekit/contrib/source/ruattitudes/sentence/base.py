@@ -11,7 +11,7 @@ class RuAttitudesSentence(BaseNewsSentence):
         assert(isinstance(objects_list, list))
         assert(isinstance(sentence_index, int))
 
-        super(RuAttitudesSentence, self).__init__(text=text)
+        super(RuAttitudesSentence, self).__init__(text=split_by_whitespaces(text))
 
         self.__is_title = is_title
         self.__sentence_opins = sentence_opins
@@ -40,9 +40,6 @@ class RuAttitudesSentence(BaseNewsSentence):
     # endregion
 
     # region public methods
-
-    def get_text_as_list(self):
-        return split_by_whitespaces(self.Text)
 
     def set_owner(self, owner):
         if self.__owner is not None:

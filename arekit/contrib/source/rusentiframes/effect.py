@@ -4,7 +4,7 @@ from arekit.common.labels.base import Label
 class FrameEffect(object):
 
     def __init__(self, role, label, prob):
-        assert(isinstance(role, unicode))
+        assert(isinstance(role, str))
         assert(isinstance(label, Label))
         assert(isinstance(prob, float))
         self.__role = role

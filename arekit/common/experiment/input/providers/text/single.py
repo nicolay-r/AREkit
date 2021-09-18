@@ -4,8 +4,8 @@ from arekit.common.labels.base import Label
 
 class BaseSingleTextProvider(object):
 
-    TEXT_A = u'text_a'
-    TERMS_SEPARATOR = u" "
+    TEXT_A = 'text_a'
+    TERMS_SEPARATOR = " "
 
     def __init__(self, text_terms_mapper):
         assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
@@ -16,7 +16,7 @@ class BaseSingleTextProvider(object):
 
     @staticmethod
     def _process_text(text):
-        assert(isinstance(text, unicode))
+        assert(isinstance(text, str))
         return text.strip()
 
     def _mapped_data_to_str(self, m_data):

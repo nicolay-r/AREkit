@@ -6,7 +6,7 @@ from arekit.contrib.source.zip_utils import ZipArchiveUtils
 
 
 class RuSentRelVersions(Enum):
-    V11 = u"v1_1"
+    V11 = "v1_1"
 
 
 class RuSentRelIOUtils(ZipArchiveUtils):
@@ -15,39 +15,39 @@ class RuSentRelIOUtils(ZipArchiveUtils):
 
     @staticmethod
     def get_archive_filepath(version):
-        assert(version, unicode)
-        return path.join(RuSentRelIOUtils.get_data_root(), u"rusentrel-{}.zip".format(version))
+        assert(version, str)
+        return path.join(RuSentRelIOUtils.get_data_root(), "rusentrel-{}.zip".format(version))
 
     # region internal methods
 
     @staticmethod
-    def get_sentiment_opin_filepath(index, prefix=u'art'):
+    def get_sentiment_opin_filepath(index, prefix='art'):
         root = RuSentRelIOUtils.__get_root_by_index(index, is_opinion=True)
-        return path.join(root, u"{}{}.opin.txt".format(prefix, index))
+        return path.join(root, "{}{}.opin.txt".format(prefix, index))
 
     @staticmethod
     def get_entity_innerpath(index):
         assert(isinstance(index, int))
         inner_root = RuSentRelIOUtils.__get_root_by_index(index)
-        return path.join(inner_root, u"art{}.ann".format(index))
+        return path.join(inner_root, "art{}.ann".format(index))
 
     @staticmethod
     def get_news_innerpath(index):
         assert(isinstance(index, int))
         inner_root = RuSentRelIOUtils.__get_root_by_index(index)
-        return path.join(inner_root, u"art{}.txt".format(index))
+        return path.join(inner_root, "art{}.txt".format(index))
 
     @staticmethod
     def get_synonyms_innerpath():
-        return u"synonyms.txt"
+        return "synonyms.txt"
 
     # endregion
 
     @staticmethod
     def __get_root_by_index(doc_id, is_opinion=False):
         assert(isinstance(doc_id, int))
-        other_dir = u'etalon' if is_opinion else u'test'
-        return other_dir if doc_id >= RuSentRelIOUtils.__sep_doc_id else u"train"
+        other_dir = 'etalon' if is_opinion else 'test'
+        return other_dir if doc_id >= RuSentRelIOUtils.__sep_doc_id else "train"
 
     @staticmethod
     def __is_supported(version):
@@ -63,11 +63,11 @@ class RuSentRelIOUtils(ZipArchiveUtils):
         if len(digit_chars) == 0:
             return None
 
-        return int(u"".join(digit_chars))
+        return int("".join(digit_chars))
 
     @staticmethod
     def __iter_indicies_from_dataset(version, folder_name):
-        assert(isinstance(folder_name, unicode))
+        assert(isinstance(folder_name, str))
         assert(RuSentRelIOUtils.__is_supported(version))
 
         used = set()
@@ -93,13 +93,13 @@ class RuSentRelIOUtils(ZipArchiveUtils):
     @staticmethod
     def iter_test_indices(version):
         assert(RuSentRelIOUtils.__is_supported(version))
-        for index in RuSentRelIOUtils.__iter_indicies_from_dataset(version=version, folder_name=u"test/"):
+        for index in RuSentRelIOUtils.__iter_indicies_from_dataset(version=version, folder_name="test/"):
             yield index
 
     @staticmethod
     def iter_train_indices(version):
         assert(RuSentRelIOUtils.__is_supported(version))
-        for index in RuSentRelIOUtils.__iter_indicies_from_dataset(version=version, folder_name=u"train/"):
+        for index in RuSentRelIOUtils.__iter_indicies_from_dataset(version=version, folder_name="train/"):
             yield index
 
     @staticmethod

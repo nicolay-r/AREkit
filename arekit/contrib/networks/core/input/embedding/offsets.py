@@ -1,6 +1,5 @@
 import logging
-from arekit.common.embeddings.base import Embedding
-
+from arekit.contrib.networks.embeddings.base import Embedding
 
 logger = logging.getLogger(__name__)
 
@@ -43,10 +42,10 @@ class TermsEmbeddingOffsets(object):
 
         offsets = TermsEmbeddingOffsets(words_count=words_embedding.VocabularySize)
 
-        all_words = [(0, u'PADDING')]
+        all_words = [(0, 'PADDING')]
 
         for word, index in words_embedding.iter_vocabulary():
-            assert(isinstance(word, unicode))
+            assert(isinstance(word, str))
             all_words.append((offsets.get_word_index(index), word))
 
         assert(len(all_words) == offsets.TotalCount)

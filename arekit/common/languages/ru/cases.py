@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from enum import Enum
 
 
@@ -50,30 +49,30 @@ class RussianCases(Enum):
 class RussianCasesService(object):
 
     __english = {
-        u'nom': RussianCases.NOM,
-        u'gen': RussianCases.GEN,
-        u'dat': RussianCases.DAT,
-        u'acc': RussianCases.ACC,
-        u'ins': RussianCases.INS,
-        u'abl': RussianCases.ABL,
-        u'part': RussianCases.PART,
-        u'loc': RussianCases.LOC,
-        u'voc': RussianCases.VOC,
+        'nom': RussianCases.NOM,
+        'gen': RussianCases.GEN,
+        'dat': RussianCases.DAT,
+        'acc': RussianCases.ACC,
+        'ins': RussianCases.INS,
+        'abl': RussianCases.ABL,
+        'part': RussianCases.PART,
+        'loc': RussianCases.LOC,
+        'voc': RussianCases.VOC,
     }
 
     __mystem_russian = {
-        u'им': RussianCases.NOM,
-        u'род': RussianCases.GEN,
-        u'дат': RussianCases.DAT,
-        u'вин': RussianCases.ACC,
-        u'твор': RussianCases.INS,
-        u'пр': RussianCases.ABL,
-        u'парт': RussianCases.PART,
-        u'местн': RussianCases.LOC,
-        u'зват': RussianCases.VOC,
+        'им': RussianCases.NOM,
+        'род': RussianCases.GEN,
+        'дат': RussianCases.DAT,
+        'вин': RussianCases.ACC,
+        'твор': RussianCases.INS,
+        'пр': RussianCases.ABL,
+        'парт': RussianCases.PART,
+        'местн': RussianCases.LOC,
+        'зват': RussianCases.VOC,
     }
 
     @staticmethod
     def iter_rus_mystem_tags():
-        for key, value in RussianCasesService.__mystem_russian.iteritems():
+        for key, value in RussianCasesService.__mystem_russian.items():
             yield key, value
