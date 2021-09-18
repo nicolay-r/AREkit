@@ -1,14 +1,11 @@
-from arekit.common.experiment.input.storages.tsv_sample import TsvSampleStorage
+from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.contrib.networks.core.input import const
 
 
-# TODO. This should be refactored. #194.
-# TODO. This should be refactored. #194.
-# TODO. This should be refactored. #194.
-class TsvNetworkSampleStorage(TsvSampleStorage):
+class NetworkSampleColumnsProvider(SampleColumnsProvider):
 
-    def _get_columns_list_with_types(self):
-        dtypes_list = super(TsvNetworkSampleStorage, self)._get_columns_list_with_types()
+    def get_columns_list_with_types(self):
+        dtypes_list = super(NetworkSampleColumnsProvider, self).get_columns_list_with_types()
 
         # insert indices
         dtypes_list.append((const.FrameVariantIndices, str))

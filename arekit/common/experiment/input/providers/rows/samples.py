@@ -30,7 +30,6 @@ class BaseSampleRowProvider(BaseRowProvider):
 
         # Initializing storage.
         self._storage.set_output_labels_uint(label_provider.OutputLabelsUint)
-        self._storage.set_text_column_names(text_provider.iter_columns())
         self._storage.init_empty()
 
         self._label_provider = label_provider

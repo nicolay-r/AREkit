@@ -5,8 +5,8 @@ from arekit.common.utils import create_dir_if_not_exists
 
 class TsvOpinionsStorage(BaseOpinionsStorage):
 
-    def __init__(self, filepath):
-        super(TsvOpinionsStorage, self).__init__()
+    def __init__(self, filepath, column_provider):
+        super(TsvOpinionsStorage, self).__init__(column_provider)
         self.__filepath = filepath
 
     def save(self):
@@ -18,7 +18,7 @@ class TsvOpinionsStorage(BaseOpinionsStorage):
         self._df.to_csv(self.__filepath,
                         sep='\t',
                         encoding='utf-8',
-                        columns=[c for c in self._df.columns if c != self.ROW_ID],
+                        columns=[c for c in self._df.columns if c != self._columns_provider.ROW_ID],
                         index=False,
                         compression='gzip')
         logger.info("Saving completed!")

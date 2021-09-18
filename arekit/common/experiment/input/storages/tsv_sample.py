@@ -11,10 +11,10 @@ logging.basicConfig(level=logging.INFO)
 
 class TsvSampleStorage(BaseSampleStorage):
 
-    def __init__(self, filepath, store_labels, balance, write_header):
+    def __init__(self, filepath, columns_provider, balance, write_header):
         assert(isinstance(filepath, str))
         assert(isinstance(balance, bool))
-        super(TsvSampleStorage, self).__init__(store_labels)
+        super(TsvSampleStorage, self).__init__(columns_provider)
 
         self.__balance = balance
         self.__filepath = filepath
@@ -41,7 +41,7 @@ class TsvSampleStorage(BaseSampleStorage):
         self._df.to_csv(self.__filepath,
                         sep='\t',
                         encoding='utf-8',
-                        columns=[c for c in self._df.columns if c != self.ROW_ID],
+                        columns=[c for c in self._df.columns if c != self._columns_provider.ROW_ID],
                         index=False,
                         float_format="%.0f",
                         compression='gzip',

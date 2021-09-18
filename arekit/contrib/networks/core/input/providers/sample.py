@@ -6,7 +6,6 @@ from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.core.input import const
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
-from arekit.contrib.networks.core.input.storage.sample import TsvNetworkSampleStorage
 from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
 
 
@@ -19,7 +18,6 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                  entity_to_group_func,
                  frame_role_label_scaler,
                  pos_terms_mapper):
-        assert(isinstance(storage, TsvNetworkSampleStorage))
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(pos_terms_mapper, PosTermsMapper))
         assert(isinstance(frame_role_label_scaler, BaseLabelScaler))

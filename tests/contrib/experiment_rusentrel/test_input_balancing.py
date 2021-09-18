@@ -1,6 +1,8 @@
 import sys
 import unittest
 
+from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
+
 sys.path.append('../')
 
 from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
@@ -28,13 +30,17 @@ class TestInputBalancing(unittest.TestCase):
             entity_formatter=StringEntitiesSimpleFormatter(),
             entity_to_group_func=lambda entity: entity_to_group_func(entity=entity,
                                                                      synonyms=synonyms))
+        text_provider = BaseSingleTextProvider(terms_mapper)
 
-        storage = BaseSampleStorage(store_labels=True)
+        columns_provider = SampleColumnsProvider(store_labels=True,
+                                                 text_column_names=list(text_provider.iter_columns()))
+
+        storage = BaseSampleStorage(columns_provider)
 
         BaseSampleRowProvider(
             storage=storage,
             label_provider=label_provider,
-            text_provider=BaseSingleTextProvider(terms_mapper))
+            text_provider=text_provider)
 
         df = storage._df
 

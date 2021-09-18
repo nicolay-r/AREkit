@@ -11,9 +11,9 @@ from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpl
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
+from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
-from arekit.contrib.networks.core.input.providers.text.single import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
 from arekit.contrib.networks.embeddings.base import Embedding
