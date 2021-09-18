@@ -1,9 +1,9 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.input.provider import BaseInputProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
+from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 
@@ -47,7 +47,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
             storage=self._experiment.ExperimentIO.create_opinions_writer(data_type))
 
         # Perform data serialization to *.tsv format.
-        BaseInputProvider.save(
+        self.__save(
             sample_row_provider=sample_rows_provider,
             opinion_row_provider=opinions_row_provider,
             opinion_provider=OpinionProvider.from_experiment(
@@ -58,6 +58,22 @@ class BertExperimentInputSerializer(ExperimentEngine):
                     doc_ops=self._experiment.DocumentOperations,
                     data_type=data_type),
                 terms_per_context=self._experiment.DataIO.TermsPerContext))
+
+    @staticmethod
+    def __save(opinion_provider, opinion_row_provider, sample_row_provider):
+        assert (isinstance(opinion_provider, OpinionProvider))
+        assert (isinstance(opinion_row_provider, BaseOpinionsRowProvider))
+        assert (isinstance(sample_row_provider, BaseSampleRowProvider))
+
+        # Opinions
+        with opinion_provider as orp:
+            orp.format(opinion_provider, desc="opinion")
+            orp.save()
+
+        # Samples
+        with sample_row_provider as srp:
+            srp.format(opinion_provider, desc="sample")
+            srp.save()
 
     @staticmethod
     def __iter_parsed_news(doc_ops, data_type):

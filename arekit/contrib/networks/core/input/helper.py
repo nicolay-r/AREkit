@@ -3,10 +3,11 @@ from collections import OrderedDict
 
 import numpy as np
 
-from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.provider import BaseInputProvider
+from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
+from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
+from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
@@ -21,44 +22,74 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class NetworkInputProvider(object):
+class NetworkInputHelper(object):
+
+    # region private methods
 
     @staticmethod
-    def save(opinion_provider, exp_data,
-             sample_storage,
-             opinions_storage,
-             data_type,
-             term_embedding_pairs,
-             entity_to_group_func,
-             balance):
-        """
-        Performs encoding for all the data_types supported by experiment.
-        """
-        assert(isinstance(data_type, DataType))
+    def __perform_saving(opinion_provider, opinion_row_provider, sample_row_provider):
+        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(opinion_row_provider, BaseOpinionsRowProvider))
+        assert(isinstance(sample_row_provider, BaseSampleRowProvider))
+
+        # Opinions
+        with opinion_provider as orp:
+            orp.format(opinion_provider, desc="opinion")
+            orp.save()
+
+        # Samples
+        with sample_row_provider as srp:
+            srp.format(opinion_provider, desc="sample")
+            srp.save()
+
+    @staticmethod
+    def __add_term_embedding(dict_data, term, emb_vector):
+        if term in dict_data:
+            return
+        dict_data[term] = emb_vector
+
+    @staticmethod
+    def __create_text_provider(term_embedding_pairs, exp_data, entity_to_group_func):
         assert(isinstance(exp_data, NetworkSerializationData))
         assert(isinstance(term_embedding_pairs, OrderedDict))
         assert(callable(entity_to_group_func))
-        assert(isinstance(balance, bool))
 
-        # Storages.
         terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
             entity_to_group_func=entity_to_group_func,
             predefined_embedding=exp_data.WordEmbedding,
             string_entities_formatter=exp_data.StringEntityFormatter,
             string_emb_entity_formatter=StringEntitiesSimpleFormatter())
 
-        text_provider = NetworkSingleTextProvider(
+        return NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,
-            pair_handling_func=lambda pair: NetworkInputProvider.__add_term_embedding(
+            pair_handling_func=lambda pair: NetworkInputHelper.__add_term_embedding(
                 dict_data=term_embedding_pairs,
                 term=pair[0],
                 emb_vector=pair[1]))
+
+    # endregion
+
+    @staticmethod
+    def save(opinion_provider,
+             exp_data,
+             sample_storage,
+             opinions_storage,
+             data_type,
+             term_embedding_pairs,
+             entity_to_group_func):
+        """
+        Performs encoding for all the data_types supported by experiment.
+        """
+        assert(isinstance(data_type, DataType))
 
         # Providers.
         sample_row_provider = NetworkSampleRowProvider(
             storage=sample_storage,
             label_provider=exp_data.LabelProvider,
-            text_provider=text_provider,
+            text_provider=NetworkInputHelper.__create_text_provider(
+                term_embedding_pairs=term_embedding_pairs,
+                exp_data=exp_data,
+                entity_to_group_func=entity_to_group_func),
             frames_collection=exp_data.FramesCollection,
             frame_role_label_scaler=exp_data.FrameRolesLabelScaler,
             entity_to_group_func=entity_to_group_func,
@@ -66,16 +97,10 @@ class NetworkInputProvider(object):
         opinion_row_provider = BaseOpinionsRowProvider(storage=opinions_storage)
 
         # Encoding input
-        BaseInputProvider.save(
+        NetworkInputHelper.__perform_saving(
             opinion_provider=opinion_provider,
             opinion_row_provider=opinion_row_provider,
             sample_row_provider=sample_row_provider)
-
-    @staticmethod
-    def __add_term_embedding(dict_data, term, emb_vector):
-        if term in dict_data:
-            return
-        dict_data[term] = emb_vector
 
     @staticmethod
     def compose_and_save_term_embeddings_and_vocabulary(experiment_io, term_embedding_pairs):

@@ -9,8 +9,7 @@ from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynon
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.experiment.input.storages.sample import BaseSampleStorage
-from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.formatters.helper.balancing import SampleRowBalancerHelper
+from arekit.common.experiment.input.storages.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter

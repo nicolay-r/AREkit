@@ -11,8 +11,8 @@ from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
+from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 
-from arekit.contrib.networks.core.input.provider import NetworkInputProvider
 from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
@@ -134,7 +134,7 @@ class HandledData(object):
                 terms_per_context=terms_per_context)
 
             # Composing input.
-            NetworkInputProvider.save(
+            NetworkInputHelper.save(
                 opinion_provider=opinion_provider,
                 sample_storage=experiment.ExperimentIO.create_samples_writer(
                     data_type=data_type,
@@ -144,11 +144,10 @@ class HandledData(object):
                 exp_data=experiment.DataIO,
                 entity_to_group_func=experiment.entity_to_group,
                 data_type=data_type,
-                term_embedding_pairs=term_embedding_pairs,
-                balance=balance)
+                term_embedding_pairs=term_embedding_pairs)
 
         # Save embedding and related vocabulary.
-        NetworkInputProvider.compose_and_save_term_embeddings_and_vocabulary(
+        NetworkInputHelper.compose_and_save_term_embeddings_and_vocabulary(
             experiment_io=experiment.ExperimentIO,
             term_embedding_pairs=term_embedding_pairs)
 

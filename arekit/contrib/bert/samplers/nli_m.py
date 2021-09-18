@@ -1,4 +1,3 @@
-from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.experiment.input.storages.sample import BaseSampleStorage
 from arekit.contrib.bert.core.input.providers.text.pair import PairTextProvider
