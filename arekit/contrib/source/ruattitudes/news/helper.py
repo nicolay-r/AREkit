@@ -38,7 +38,7 @@ class RuAttitudesNewsHelper(object):
         opinion = None
         related_sentences = []
 
-        for sentence in news.iter_sentences(return_text=False):
+        for sentence in news.iter_sentences():
             assert(isinstance(sentence, RuAttitudesSentence))
 
             sentence_opin = sentence.find_sentence_opin_by_key(sentence_opin_tag)
@@ -60,7 +60,7 @@ class RuAttitudesNewsHelper(object):
     def __build_opinion_dict(news):
         opin_dict = {}
 
-        for s_ind, sentence in enumerate(news.iter_sentences(return_text=False)):
+        for s_ind, sentence in enumerate(news.iter_sentences()):
             assert(isinstance(sentence, RuAttitudesSentence))
             for sentence_opin in sentence.iter_sentence_opins():
                 assert(isinstance(sentence_opin, SentenceOpinion))

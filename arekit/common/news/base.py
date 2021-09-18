@@ -40,18 +40,9 @@ class News(object):
         sentence = self._sentences[sent_ind]
         return self._sentence_to_terms_list_core(sentence)
 
-    def iter_sentences(self, return_text):
-        """
-        return: list of string
-            iterates per raw sentences.
-        """
-        assert(isinstance(return_text, bool))
-
+    def iter_sentences(self):
         for sentence in self._sentences:
-            if return_text:
-                yield sentence.Text
-            else:
-                yield sentence
+            yield sentence
 
     def extract_linked_text_opinions(self, opinion):
         """

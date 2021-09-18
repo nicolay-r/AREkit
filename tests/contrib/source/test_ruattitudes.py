@@ -39,7 +39,7 @@ class TestRuAttitudes(unittest.TestCase):
     # region private methods
 
     def __check_entities(self, news):
-        for sentence in news.iter_sentences(return_text=False):
+        for sentence in news.iter_sentences():
             assert (isinstance(sentence, RuAttitudesSentence))
             for s_obj in sentence.iter_objects():
                 assert (isinstance(s_obj, TextObject))
@@ -127,7 +127,7 @@ class TestRuAttitudes(unittest.TestCase):
 
             logger.debug("News: {}".format(news.ID))
 
-            for sentence in news.iter_sentences(return_text=False):
+            for sentence in news.iter_sentences():
                 assert(isinstance(sentence, RuAttitudesSentence))
                 # text
                 logger.debug(sentence.Text)

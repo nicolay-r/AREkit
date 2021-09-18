@@ -75,7 +75,7 @@ class TestRuSentRel(unittest.TestCase):
                     synonyms.get_synonym_group_index(opinion.TargetValue)))
 
             # Example: Access to the read NEWS collection.
-            for sentence in news.iter_sentences(return_text=False):
+            for sentence in news.iter_sentences():
                 assert(isinstance(sentence, RuSentRelSentence))
                 # Access to text.
                 logger.info("\tSentence: '{}'".format(sentence.Text.strip()))

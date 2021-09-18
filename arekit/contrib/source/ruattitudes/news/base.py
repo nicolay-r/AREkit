@@ -71,7 +71,7 @@ class RuAttitudesNews(News):
     # region Private methods
 
     def __iter_all_text_opinions_in_sentences(self, opinion):
-        for sentence in self.iter_sentences(return_text=False):
+        for sentence in self.iter_sentences():
             assert(isinstance(sentence, RuAttitudesSentence))
 
             sentence_opin = sentence.find_sentence_opin_by_key(key=opinion.Tag)

@@ -72,7 +72,7 @@ class TextParser:
                                                   stemmer=parse_options.Stemmer)
 
         # Processing the ordinary sentence text.
-        sentence = news.iter_sentences(sent_ind)
+        sentence = news.iter_sentences()
         return TextParser.__parse(text=sentence.Text,
                                   # TODO. Declare Stemmer within a derived parse options.
                                   # TODO. Declare Stemmer within a derived parse options.
