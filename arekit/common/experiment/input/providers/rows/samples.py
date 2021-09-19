@@ -13,8 +13,8 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
-from arekit.contrib.bert.core.input.providers.row_ids.binary import BinaryIDProvider
+from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
+from arekit.contrib.bert.input.providers.row_ids_binary import BinaryIDProvider
 
 
 class BaseSampleRowProvider(BaseRowProvider):

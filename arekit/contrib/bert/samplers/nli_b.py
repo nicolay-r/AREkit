@@ -1,8 +1,8 @@
 from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
-from arekit.contrib.bert.core.input.providers.text.pair import PairTextProvider
-from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
+from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
 
 
 class NliBinarySampleProvider(BaseSampleRowProvider):

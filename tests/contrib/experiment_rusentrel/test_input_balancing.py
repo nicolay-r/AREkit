@@ -1,11 +1,10 @@
 import sys
 import unittest
 
-from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 
 sys.path.append('../')
 
-from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelProvider
+from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler

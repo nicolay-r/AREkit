@@ -4,9 +4,7 @@ from collections import OrderedDict
 import numpy as np
 
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
-from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
