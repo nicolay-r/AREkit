@@ -96,7 +96,9 @@ def extract(text):
         terms_per_context=50)
 
     exp_data = None                  # embeddings, frames_collection, vocab, label_scaler, etc.
-    NetworkInputHelper.save(
+    NetworkInputHelper.populate(
+        opinions_target=None,
+        samples_target=None,
         sample_storage=None,
         opinions_storage=None,
         opinion_provider=opin_provider,

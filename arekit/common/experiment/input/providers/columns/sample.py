@@ -8,11 +8,10 @@ class SampleColumnsProvider(BaseColumnsProvider):
     [id, text_a] -- for test
     """
 
-    def __init__(self, store_labels, text_column_names):
-        assert(isinstance(text_column_names, list))
+    def __init__(self, store_labels):
         super(SampleColumnsProvider, self).__init__()
         self.__store_labels = store_labels
-        self.__text_column_names = text_column_names
+        self.__text_column_names = None
 
     # region properties
 
@@ -49,3 +48,7 @@ class SampleColumnsProvider(BaseColumnsProvider):
         dtypes_list.append((const.T_IND, 'int32'))
 
         return dtypes_list
+
+    def set_text_column_names(self, text_column_names):
+        assert(isinstance(text_column_names, list))
+        self.__text_column_names = text_column_names

@@ -7,13 +7,9 @@ logging.basicConfig(level=logging.INFO)
 
 class BaseSampleStorage(BaseRowsStorage):
 
-    def __init__(self, columns_provider):
-        super(BaseSampleStorage, self).__init__(columns_provider)
+    def __init__(self):
+        super(BaseSampleStorage, self).__init__()
         self._output_labels_uint = None
-
-    @property
-    def StoreLabels(self):
-        return self._columns_provider.StoreLabels
 
     # region private methods
 
@@ -39,7 +35,7 @@ class BaseSampleStorage(BaseRowsStorage):
             raise Exception("Output labels already defined!")
         self._output_labels_uint = labels_uint
 
-    def save(self):
+    def save(self, target):
         """ This might be implemented in nested classes.
             The default, i.e. pandas-based storage is not considered
             to be saved into the particular target.

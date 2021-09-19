@@ -8,6 +8,7 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
+from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
@@ -25,22 +26,6 @@ logging.basicConfig(level=logging.INFO)
 class NetworkInputHelper(object):
 
     # region private methods
-
-    @staticmethod
-    def __perform_saving(opinion_provider, opinion_row_provider, sample_row_provider):
-        assert(isinstance(opinion_provider, OpinionProvider))
-        assert(isinstance(opinion_row_provider, BaseOpinionsRowProvider))
-        assert(isinstance(sample_row_provider, BaseSampleRowProvider))
-
-        # Opinions
-        with opinion_provider as orp:
-            orp.format(opinion_provider, desc="opinion")
-            orp.save()
-
-        # Samples
-        with sample_row_provider as srp:
-            srp.format(opinion_provider, desc="sample")
-            srp.save()
 
     @staticmethod
     def __add_term_embedding(dict_data, term, emb_vector):
@@ -70,19 +55,17 @@ class NetworkInputHelper(object):
     # endregion
 
     @staticmethod
-    def save(opinion_provider,
-             exp_data,
-             sample_storage,
-             opinions_storage,
-             data_type,
-             term_embedding_pairs,
-             entity_to_group_func):
-        """
-        Performs encoding for all the data_types supported by experiment.
-        """
+    def populate(opinions_target,
+                 samples_target,
+                 opinion_provider,
+                 exp_data,
+                 sample_storage,
+                 opinions_storage,
+                 data_type,
+                 term_embedding_pairs,
+                 entity_to_group_func):
         assert(isinstance(data_type, DataType))
 
-        # Providers.
         sample_row_provider = NetworkSampleRowProvider(
             storage=sample_storage,
             label_provider=exp_data.LabelProvider,
@@ -94,13 +77,26 @@ class NetworkInputHelper(object):
             frame_role_label_scaler=exp_data.FrameRolesLabelScaler,
             entity_to_group_func=entity_to_group_func,
             pos_terms_mapper=PosTermsMapper(exp_data.PosTagger))
-        opinion_row_provider = BaseOpinionsRowProvider(storage=opinions_storage)
+        opinion_row_provider = BaseOpinionsRowProvider()
 
-        # Encoding input
-        NetworkInputHelper.__perform_saving(
-            opinion_provider=opinion_provider,
-            opinion_row_provider=opinion_row_provider,
-            sample_row_provider=sample_row_provider)
+        opinions_repo = BaseInputOpinionsRepository(
+            columns_provider=None,
+            rows_provider=opinion_row_provider,
+            storage=opinions_storage)
+
+        samples_repo = BaseInputOpinionsRepository(
+            columns_provider=None,
+            rows_provider=sample_row_provider,
+            storage=sample_storage)
+
+        # Populate repositories
+        opinions_repo.populate(opinion_provider=opinion_provider,
+                               target=opinions_target,
+                               desc="opinion")
+
+        samples_repo.populate(opinion_provider=opinion_provider,
+                              target=samples_target,
+                              desc="sample")
 
     @staticmethod
     def compose_and_save_term_embeddings_and_vocabulary(experiment_io, term_embedding_pairs):

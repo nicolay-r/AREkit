@@ -7,10 +7,10 @@ logging.basicConfig(level=logging.INFO)
 
 class BaseOpinionsStorage(BaseRowsStorage):
 
-    def __init__(self, columns_provider):
-        super(BaseOpinionsStorage, self).__init__(columns_provider)
+    def __init__(self):
+        super(BaseOpinionsStorage, self).__init__()
 
-    def save(self):
+    def save(self, target):
         """ In Memory solution, there is no need to write it.
         """
-        pass
+        super(BaseOpinionsStorage, self).save(target)

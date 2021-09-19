@@ -134,7 +134,9 @@ class HandledData(object):
                 terms_per_context=terms_per_context)
 
             # Composing input.
-            NetworkInputHelper.save(
+            NetworkInputHelper.populate(
+                samples_target=experiment.ExperimentIO.create_samples_writer_target(),
+                opinions_target=experiment.ExperimentIO.create_opinions_writer_target(),
                 opinion_provider=opinion_provider,
                 sample_storage=experiment.ExperimentIO.create_samples_writer(
                     data_type=data_type,

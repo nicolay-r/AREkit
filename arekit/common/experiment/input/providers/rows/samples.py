@@ -8,7 +8,6 @@ from arekit.common.experiment.input.providers.label.multiple import MultipleLabe
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.providers.rows.base import BaseRowProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.experiment.input.storages.sample import BaseSampleStorage
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
@@ -22,19 +21,27 @@ class BaseSampleRowProvider(BaseRowProvider):
     """ Rows provider for samples storage.
     """
 
-    def __init__(self, storage, label_provider, text_provider):
-        assert(isinstance(storage, BaseSampleStorage))
+    def __init__(self, label_provider, text_provider):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(text_provider, BaseSingleTextProvider))
-        super(BaseSampleRowProvider, self).__init__(storage=storage)
-
-        # Initializing storage.
-        self._storage.set_output_labels_uint(label_provider.OutputLabelsUint)
-        self._storage.init_empty()
+        super(BaseSampleRowProvider, self).__init__()
 
         self._label_provider = label_provider
         self.__text_provider = text_provider
         self.__row_ids_provider = self.__create_row_ids_provider(label_provider)
+        self.__store_labels = None
+
+    # region properties
+
+    @property
+    def LabelProvider(self):
+        return self._label_provider
+
+    @property
+    def TextProvider(self):
+        return self.__text_provider
+
+    # endregion
 
     # region protected methods
 
@@ -44,6 +51,7 @@ class BaseSampleRowProvider(BaseRowProvider):
 
     def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
+        assert(isinstance(self.__store_labels, bool))
 
         def __assign_value(column, value):
             row[column] = value
@@ -57,7 +65,7 @@ class BaseSampleRowProvider(BaseRowProvider):
 
         expected_label = linked_wrap.get_linked_label()
 
-        if self._storage.StoreLabels:
+        if self.__store_labels:
             row[const.LABEL] = self._label_provider.calculate_output_uint_label(
                 expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
                 etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
@@ -195,3 +203,8 @@ class BaseSampleRowProvider(BaseRowProvider):
         return (s_ind, t_ind)
 
     # endregion
+
+    def set_store_labels(self, store_labels):
+        assert(isinstance(store_labels, bool))
+        assert(self.__store_labels is None)
+        self.__store_labels = store_labels

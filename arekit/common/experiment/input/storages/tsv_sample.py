@@ -11,18 +11,16 @@ logging.basicConfig(level=logging.INFO)
 
 class TsvSampleStorage(BaseSampleStorage):
 
-    def __init__(self, filepath, columns_provider, balance, write_header):
-        assert(isinstance(filepath, str))
+    def __init__(self, balance, write_header):
         assert(isinstance(balance, bool))
-        super(TsvSampleStorage, self).__init__(columns_provider)
-
+        super(TsvSampleStorage, self).__init__()
         self.__balance = balance
-        self.__filepath = filepath
         self.__write_header = write_header
 
-    def save(self):
+    def save(self, target):
+        assert(isinstance(target, str))
 
-        create_dir_if_not_exists(self.__filepath)
+        create_dir_if_not_exists(target)
 
         if self.__balance:
             logger.info("Start balancing...")
@@ -36,9 +34,9 @@ class TsvSampleStorage(BaseSampleStorage):
 
         logger.info("Saving... {shape}: {filepath}".format(
             shape=self._df.shape,  # self._df.shape,
-            filepath=self.__filepath))
+            filepath=target))
         self._df.sort_values(by=[const.ID], ascending=True)
-        self._df.to_csv(self.__filepath,
+        self._df.to_csv(target,
                         sep='\t',
                         encoding='utf-8',
                         columns=[c for c in self._df.columns if c != self._columns_provider.ROW_ID],

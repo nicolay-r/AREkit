@@ -5,17 +5,18 @@ from arekit.common.utils import create_dir_if_not_exists
 
 class TsvOpinionsStorage(BaseOpinionsStorage):
 
-    def __init__(self, filepath, column_provider):
-        super(TsvOpinionsStorage, self).__init__(column_provider)
-        self.__filepath = filepath
+    def __init__(self):
+        super(TsvOpinionsStorage, self).__init__()
 
-    def save(self):
-        logger.info("Saving... : {}".format(self.__filepath))
+    def save(self, target):
+        assert(isinstance(target, str))
 
-        create_dir_if_not_exists(self.__filepath)
+        logger.info("Saving... : {}".format(target))
+
+        create_dir_if_not_exists(target)
 
         self._df.sort_values(by=[const.ID], ascending=True)
-        self._df.to_csv(self.__filepath,
+        self._df.to_csv(target,
                         sep='\t',
                         encoding='utf-8',
                         columns=[c for c in self._df.columns if c != self._columns_provider.ROW_ID],

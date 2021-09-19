@@ -1,7 +1,7 @@
 import sys
 import unittest
 
-from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
+from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 
 sys.path.append('../')
 
@@ -9,6 +9,8 @@ from arekit.contrib.bert.core.input.providers.label.binary import BinaryLabelPro
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
+from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
+from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.experiment.input.storages.sample import BaseSampleStorage
 from arekit.common.experiment.input.storages.helper.balancing import SampleRowBalancerHelper
@@ -32,15 +34,19 @@ class TestInputBalancing(unittest.TestCase):
                                                                      synonyms=synonyms))
         text_provider = BaseSingleTextProvider(terms_mapper)
 
-        columns_provider = SampleColumnsProvider(store_labels=True,
-                                                 text_column_names=list(text_provider.iter_columns()))
+        storage = BaseSampleStorage()
+        BaseSampleRowProvider(label_provider=label_provider,
+                              text_provider=text_provider)
 
-        storage = BaseSampleStorage(columns_provider)
+        BaseInputSamplesRepository(
+            columns_provider=SampleColumnsProvider(store_labels=True),
+            rows_provider=BaseSampleRowProvider(
+                label_provider=label_provider,
+                text_provider=text_provider),
+            storage=storage
+        )
 
-        BaseSampleRowProvider(
-            storage=storage,
-            label_provider=label_provider,
-            text_provider=text_provider)
+        storage.init_empty()
 
         df = storage._df
 

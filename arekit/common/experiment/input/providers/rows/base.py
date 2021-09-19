@@ -10,9 +10,13 @@ class BaseRowProvider(object):
     """ Base provider for rows that suppose to be filled into BaseRowsStorage.
     """
 
-    def __init__(self, storage):
-        assert(isinstance(storage, BaseRowsStorage))
-        self._storage = storage
+    def __init__(self):
+        """ NOTE: storage is considered to be intialized later on,
+            once repository will be created.
+        """
+        self._storage = None
+
+    # region private methods
 
     def __iter_by_rows(self, opinion_provider, idle_mode):
         assert(isinstance(opinion_provider, OpinionProvider))
@@ -26,11 +30,18 @@ class BaseRowProvider(object):
             for row in rows_it:
                 yield row
 
+    # endregion
+
+    # region protected methods
+
     def _provide_rows(self, parsed_news, linked_wrapper, idle_mode):
         raise NotImplementedError()
 
+    # endregion
+
     def format(self, opinion_provider, desc=""):
         assert(isinstance(opinion_provider, OpinionProvider))
+        assert(self._storage is not None)
 
         logged_rows_it = progress_bar_iter(self.__iter_by_rows(opinion_provider, idle_mode=True),
                                            desc="Calculating rows count",
@@ -53,5 +64,7 @@ class BaseRowProvider(object):
 
         self._storage.log_info()
 
-    def save(self):
-        self._storage.save()
+    def set_storage(self, storage):
+        assert(isinstance(storage, BaseRowsStorage))
+        assert(self._storage is None)
+        self._storage = storage

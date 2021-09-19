@@ -1,9 +1,12 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.input.providers.columns.opinion import OpinionColumnsProvider
+from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
-from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
+from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
+from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 
@@ -31,49 +34,49 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
     def __handle_iteration(self, data_type):
         assert(isinstance(data_type, DataType))
+        opinions_target = self._experiment.ExperimentIO.create_opinions_writer_target(data_type)
+        samples_target = self._experiment.ExperimentIO.create_samples_writer_target(data_type)
+        opinions_storage = self._experiment.ExperimentIO.create_opinions_writer(data_type)
+        samples_storage = self._experiment.ExperimentIO.create_samples_writer(
+            data_type=data_type,
+            balance=self.__balance_train_samples)
 
         # Create samples formatter.
         sample_rows_provider = create_bert_sample_provider(
-            storage=self._experiment.ExperimentIO.create_samples_writer(
-                data_type=data_type,
-                balance=self.__balance_train_samples),
             labels_formatter=self.__labels_formatter,
             provider_type=self.__sample_formatter_type,
             label_scaler=self._experiment.DataIO.LabelsScaler,
             entity_formatter=self.__entity_formatter,
             entity_to_group_func=self._experiment.entity_to_group)
 
-        opinions_row_provider = BaseOpinionsRowProvider(
-            storage=self._experiment.ExperimentIO.create_opinions_writer(data_type))
+        # Create repositories
+        opinions_repo = BaseInputOpinionsRepository(
+            columns_provider=OpinionColumnsProvider(),
+            rows_provider=BaseOpinionsRowProvider(),
+            storage=opinions_storage)
+        samples_repo = BaseInputSamplesRepository(
+            columns_provider=SampleColumnsProvider(store_labels=True),
+            rows_provider=sample_rows_provider,
+            storage=samples_storage)
 
-        # Perform data serialization to *.tsv format.
-        self.__save(
-            sample_row_provider=sample_rows_provider,
-            opinion_row_provider=opinions_row_provider,
-            opinion_provider=OpinionProvider.from_experiment(
+        # Create opinion provider
+        opinion_provider = OpinionProvider.from_experiment(
+            doc_ops=self._experiment.DocumentOperations,
+            opin_ops=self._experiment.OpinionOperations,
+            data_type=data_type,
+            parsed_news_it_func=lambda: self.__iter_parsed_news(
                 doc_ops=self._experiment.DocumentOperations,
-                opin_ops=self._experiment.OpinionOperations,
-                data_type=data_type,
-                parsed_news_it_func=lambda: self.__iter_parsed_news(
-                    doc_ops=self._experiment.DocumentOperations,
-                    data_type=data_type),
-                terms_per_context=self._experiment.DataIO.TermsPerContext))
+                data_type=data_type),
+            terms_per_context=self._experiment.DataIO.TermsPerContext)
 
-    @staticmethod
-    def __save(opinion_provider, opinion_row_provider, sample_row_provider):
-        assert (isinstance(opinion_provider, OpinionProvider))
-        assert (isinstance(opinion_row_provider, BaseOpinionsRowProvider))
-        assert (isinstance(sample_row_provider, BaseSampleRowProvider))
+        # Populate repositories
+        opinions_repo.populate(opinion_provider=opinion_provider,
+                               target=opinions_target,
+                               desc="opinion")
 
-        # Opinions
-        with opinion_provider as orp:
-            orp.format(opinion_provider, desc="opinion")
-            orp.save()
-
-        # Samples
-        with sample_row_provider as srp:
-            srp.format(opinion_provider, desc="sample")
-            srp.save()
+        samples_repo.populate(opinion_provider=opinion_provider,
+                              target=samples_target,
+                              desc="sample")
 
     @staticmethod
     def __iter_parsed_news(doc_ops, data_type):

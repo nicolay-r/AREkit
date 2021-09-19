@@ -2,7 +2,6 @@ import logging
 from os.path import join, exists
 
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
 from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
@@ -10,7 +9,6 @@ from arekit.common.experiment.input.storages.tsv_opinion import TsvOpinionsStora
 from arekit.common.experiment.input.storages.tsv_sample import TsvSampleStorage
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.utils import join_dir_with_subfolder_name
-from arekit.contrib.networks.core.input.providers.columns import NetworkSampleColumnsProvider
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 
 logger = logging.getLogger(__name__)
@@ -37,31 +35,28 @@ class NetworkIOUtils(BaseIOUtils):
 
     def create_samples_reader(self, data_type):
         assert(isinstance(data_type, DataType))
-
         return TsvInputSampleReader.from_tsv(
             filepath=self.get_input_sample_filepath(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
 
     def create_opinions_reader(self, data_type):
         assert(isinstance(data_type, DataType))
-
         opinions_source = self.get_input_opinions_filepath(data_type=data_type)
         return TsvInputOpinionReader.from_tsv(opinions_source)
 
-    def create_opinions_writer(self, data_type):
-        return TsvOpinionsStorage(filepath=self.get_input_opinions_filepath(data_type),
-                                  column_provider=OpinionColumnsProvider())
+    def create_opinions_writer(self):
+        return TsvOpinionsStorage()
 
     def create_samples_writer(self, data_type, balance):
-        columns_provider = NetworkSampleColumnsProvider(
-            store_labels=data_type == DataType.Train,
-            text_column_names=None)
-
         return TsvSampleStorage(
-            filepath=self.get_input_sample_filepath(data_type),
-            columns_provider=columns_provider,
             balance=balance and data_type == DataType.Train,
             write_header=True)
+
+    def create_opinions_writer_target(self, data_type):
+        return self.get_input_opinions_filepath(data_type)
+
+    def create_samples_writer_target(self, data_type):
+        return self.get_input_sample_filepath(data_type)
 
     def get_loading_vocab_filepath(self):
         """ It is possible to load a predefined embedding from another experiment

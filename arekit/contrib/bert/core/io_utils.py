@@ -4,6 +4,8 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
 from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
+from arekit.common.experiment.input.storages.tsv_opinion import TsvOpinionsStorage
+from arekit.common.experiment.input.storages.tsv_sample import TsvSampleStorage
 from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.utils import join_dir_with_subfolder_name
 
@@ -29,6 +31,19 @@ class BertIOUtils(BaseIOUtils):
     def create_opinions_reader(self, data_type):
         opinions_tsv_filepath = self.get_input_opinions_filepath(data_type)
         return TsvInputOpinionReader.from_tsv(opinions_tsv_filepath, compression='infer')
+
+    def create_opinions_writer_target(self, data_type):
+        return self.get_input_opinions_filepath(data_type)
+
+    def create_samples_writer_target(self, data_type):
+        return self.get_input_sample_filepath(data_type)
+
+    def create_samples_writer(self, data_type, balance):
+        return TsvSampleStorage(balance=balance and data_type == DataType.Train,
+                                write_header=True)
+
+    def create_opinions_writer(self):
+        return TsvOpinionsStorage()
 
     def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
         """ Utilized for results evaluation.

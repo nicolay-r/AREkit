@@ -11,9 +11,8 @@ logger = logging.getLogger(__name__)
 
 class BaseRowsStorage(object):
 
-    def __init__(self, columns_provider):
-        assert(isinstance(columns_provider, BaseColumnsProvider))
-        self._columns_provider = columns_provider
+    def __init__(self):
+        self._columns_provider = None
         self._df = None
 
     def _create_empty(self):
@@ -41,10 +40,15 @@ class BaseRowsStorage(object):
 
     # region public methods
 
+    def set_columns_provider(self, columns_provider):
+        assert(isinstance(columns_provider, BaseColumnsProvider))
+        assert(self._columns_provider is None)
+        self._columns_provider = columns_provider
+
     def init_empty(self):
         self._df = self._create_empty()
 
-    def save(self):
+    def save(self, target):
         raise NotImplementedError()
 
     # endregion
