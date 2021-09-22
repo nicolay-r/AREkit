@@ -11,7 +11,7 @@ from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
 
 class NetworkSampleRowProvider(BaseSampleRowProvider):
 
-    def __init__(self, storage,
+    def __init__(self,
                  label_provider,
                  text_provider,
                  frames_collection,
@@ -23,8 +23,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         assert(isinstance(frame_role_label_scaler, BaseLabelScaler))
         assert(callable(entity_to_group_func))
 
-        super(NetworkSampleRowProvider, self).__init__(storage=storage,
-                                                       label_provider=label_provider,
+        super(NetworkSampleRowProvider, self).__init__(label_provider=label_provider,
                                                        text_provider=text_provider)
 
         self.__entity_to_group_func = entity_to_group_func

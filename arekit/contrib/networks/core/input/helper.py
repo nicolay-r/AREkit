@@ -4,9 +4,12 @@ from collections import OrderedDict
 import numpy as np
 
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.input.providers.columns.opinion import OpinionColumnsProvider
+from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
+from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
@@ -65,7 +68,6 @@ class NetworkInputHelper(object):
         assert(isinstance(data_type, DataType))
 
         sample_row_provider = NetworkSampleRowProvider(
-            storage=sample_storage,
             label_provider=exp_data.LabelProvider,
             text_provider=NetworkInputHelper.__create_text_provider(
                 term_embedding_pairs=term_embedding_pairs,
@@ -78,12 +80,12 @@ class NetworkInputHelper(object):
         opinion_row_provider = BaseOpinionsRowProvider()
 
         opinions_repo = BaseInputOpinionsRepository(
-            columns_provider=None,
+            columns_provider=OpinionColumnsProvider(),
             rows_provider=opinion_row_provider,
             storage=opinions_storage)
 
-        samples_repo = BaseInputOpinionsRepository(
-            columns_provider=None,
+        samples_repo = BaseInputSamplesRepository(
+            columns_provider=SampleColumnsProvider(store_labels=True),
             rows_provider=sample_row_provider,
             storage=sample_storage)
 
