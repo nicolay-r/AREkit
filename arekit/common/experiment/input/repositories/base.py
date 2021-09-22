@@ -40,5 +40,5 @@ class BaseInputRepository(object):
         self._storage.init_empty()
 
         with self._storage as storage:
-            self._rows_provider.format(opinion_provider, desc)
+            self._rows_provider.fill(opinion_provider, desc)
             return storage.save(target)

@@ -39,7 +39,7 @@ class BaseRowProvider(object):
 
     # endregion
 
-    def format(self, opinion_provider, desc=""):
+    def fill(self, opinion_provider, desc=""):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(self._storage is not None)
 
