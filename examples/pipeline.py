@@ -90,14 +90,10 @@ def extract(text):
         parsed_news=parsed_news,
         entities_collection=None)   # TODO. Create custom entity collections.
 
-    doc_ops = None
-    opin_ops = None
-
     # We pass it into NetworkInputEncoder
-    opinion_provider = OpinionProvider.from_experiment(    # Refactor API.
-        doc_ops=doc_ops,             # TODO: Remove doc_ops
-        opin_ops=opin_ops,           # TODO: Remove doc_ops
-        data_type=DataType.Test,
+    opinion_provider = OpinionProvider.create(
+        read_news_func=lambda news_id: parsed_news(news_id),
+        iter_news_opins_for_extraction=lambda _: opins_for_extraction,
         parsed_news_it_func=lambda: [parsed_news],
         terms_per_context=50)
 

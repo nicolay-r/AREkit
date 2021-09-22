@@ -124,10 +124,11 @@ class HandledData(object):
                                                                      doc_ops=experiment.DocumentOperations,
                                                                      opin_ops=experiment.OpinionOperations)
 
-            opinion_provider = OpinionProvider.from_experiment(
-                doc_ops=experiment.DocumentOperations,
-                opin_ops=experiment.OpinionOperations,
-                data_type=data_type,
+            opinion_provider = OpinionProvider.create(
+                read_news_func=lambda news_id: experiment.DocumentOperations.read_news(news_id),
+                iter_news_opins_for_extraction=lambda news_id:
+                    experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=news_id,
+                                                                              data_type=data_type),
                 parsed_news_it_func=lambda: HandledData.__iter_parsed_news_func(
                     doc_ops=experiment.DocumentOperations,
                     data_type=data_type),

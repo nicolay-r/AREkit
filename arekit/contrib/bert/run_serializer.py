@@ -60,10 +60,12 @@ class BertExperimentInputSerializer(ExperimentEngine):
             storage=samples_storage)
 
         # Create opinion provider
-        opinion_provider = OpinionProvider.from_experiment(
-            doc_ops=self._experiment.DocumentOperations,
-            opin_ops=self._experiment.OpinionOperations,
-            data_type=data_type,
+        opinion_provider = OpinionProvider.create(
+            read_news_func=lambda news_id: self._experiment.DocumentOperations.read_news(news_id),
+            iter_news_opins_for_extraction=lambda news_id:
+                self._experiment.OpinionOperations.iter_opinions_for_extraction(
+                    doc_id=news_id,
+                    data_type=data_type),
             parsed_news_it_func=lambda: self.__iter_parsed_news(
                 doc_ops=self._experiment.DocumentOperations,
                 data_type=data_type),
