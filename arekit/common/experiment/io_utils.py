@@ -38,7 +38,7 @@ class BaseIOUtils(object):
     def create_opinions_writer_target(self, data_type):
         raise NotImplementedError()
 
-    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
+    def create_result_opinion_collection_target(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 
     def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
@@ -64,11 +64,13 @@ class BaseIOUtils(object):
 
     # region public methods
 
-    def serialize_opinion_collection(self, collection, doc_id, data_type, labels_formatter):
-        target = self._create_annotated_collection_target(
-            doc_id=doc_id,
-            data_type=data_type,
-            check_existance=False)
+    def serialize_opinion_collection(self, collection, doc_id, data_type, labels_formatter, target=None):
+
+        if target is None:
+            target = self._create_annotated_collection_target(
+                doc_id=doc_id,
+                data_type=data_type,
+                check_existance=False)
 
         self.__opinion_collection_provider.serialize(
             target=target,

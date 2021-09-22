@@ -45,7 +45,7 @@ class BertIOUtils(BaseIOUtils):
     def create_opinions_writer(self):
         return TsvOpinionsStorage()
 
-    def create_result_opinion_collection_filepath(self, data_type, doc_id, epoch_index):
+    def create_result_opinion_collection_target(self, data_type, doc_id, epoch_index):
         """ Utilized for results evaluation.
         """
         assert(isinstance(epoch_index, int))

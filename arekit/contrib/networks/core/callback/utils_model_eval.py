@@ -6,7 +6,6 @@ from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
-from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.experiment.output.providers.tsv import TsvBaseOutputProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
@@ -123,16 +122,19 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
                                                    output_provider=output_provider))
 
     # Save collection.
-    # TODO. Utilize exp_io.
-    save_opinion_collections(
-        opinion_collection_iter=__log_wrap_collections_conversion_iter(collections_iter),
-        create_file_func=lambda doc_id: exp_io.create_result_opinion_collection_filepath(data_type=data_type,
-                                                                                         doc_id=doc_id,
-                                                                                         epoch_index=epoch_index),
-        save_to_file_func=lambda filepath, collection: opin_provider.serialize(collection=collection,
-                                                                               target=filepath,
-                                                                               labels_formatter=labels_formatter,
-                                                                               error_on_non_supported=False))
+    for doc_id, collection in __log_wrap_collections_conversion_iter(collections_iter):
+
+        target = exp_io.create_result_opinion_collection_target(
+            data_type=data_type,
+            epoch_index=epoch_index,
+            doc_id=doc_id)
+
+        exp_io.serialize_opinion_collection(
+            collection=collection,
+            doc_id=doc_id,
+            data_type=data_type,
+            labels_formatter=labels_formatter,
+            target=target)
 
 
 def __log_wrap_samples_iter(it):

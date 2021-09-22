@@ -89,7 +89,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         """
         assert(isinstance(self.__experiment_io, BaseIOUtils))
 
-        filepath = self.__experiment_io.create_result_opinion_collection_filepath(
+        filepath = self.__experiment_io.create_result_opinion_collection_target(
             data_type=data_type,
             doc_id=doc_id,
             epoch_index=epoch_index)

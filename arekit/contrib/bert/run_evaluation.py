@@ -5,7 +5,6 @@ from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
-from arekit.common.experiment.output.opinions.writer import save_opinion_collections
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
@@ -128,18 +127,19 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                     supported_labels=exp_data.SupportedCollectionLabels,
                     output_formatter=output)
 
-                save_opinion_collections(
-                    opinion_collection_iter=collections_iter,
-                    create_file_func=lambda doc_id: exp_io.create_result_opinion_collection_filepath(
+                for doc_id, collection in collections_iter:
+
+                    target = exp_io.create_result_opinion_collection_target(
                         data_type=self.__data_type,
+                        epoch_index=epoch_index,
+                        doc_id=doc_id)
+
+                    exp_io.serialize_opinion_collection(
+                        collection=collection,
                         doc_id=doc_id,
-                        epoch_index=epoch_index),
-                    save_to_file_func=lambda filepath, collection:
-                        self._experiment.ExperimentIO.OpinionCollectionProvider.serialize(
-                            collection=collection,
-                            target=filepath,
-                            labels_formatter=self.__labels_formatter,
-                            error_on_non_supported=False))
+                        data_type=self.__data_type,
+                        labels_formatter=self.__labels_formatter,
+                        target=target)
 
                 # evaluate
                 result = self._experiment.evaluate(data_type=self.__data_type,
