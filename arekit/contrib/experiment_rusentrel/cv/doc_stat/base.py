@@ -1,6 +1,3 @@
-# TODO. depends on io, issue #189
-# TODO. Rename as BaseDocumentStatProvider!
-# TODO. Move into the particular experiment issue #189
 class BaseDocumentStatGenerator(object):
     """
     Provides statistic on certain document.

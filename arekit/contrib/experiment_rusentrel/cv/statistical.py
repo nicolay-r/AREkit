@@ -1,10 +1,9 @@
 from os import path
 import numpy as np
-from arekit.common.experiment.cv.doc_stat.base import BaseDocumentStatGenerator
 from arekit.common.experiment.cv.splitters.base import CrossValidationSplitter
+from arekit.contrib.experiment_rusentrel.cv.doc_stat.base import BaseDocumentStatGenerator
 
 
-# TODO. Move into the particular experiment issue #189
 class StatBasedCrossValidataionSplitter(CrossValidationSplitter):
     """ Sentence-based splitter.
     """
@@ -74,5 +73,3 @@ class StatBasedCrossValidataionSplitter(CrossValidationSplitter):
             large = [doc_id for doc_id, _ in docs_info if doc_id not in small]
 
             yield large, small
-
-
