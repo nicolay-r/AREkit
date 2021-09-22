@@ -46,7 +46,7 @@ class BaseSampleRowProvider(BaseRowProvider):
     # region protected methods
 
     @staticmethod
-    def _iter_sentence_terms(parsed_news, sentence_ind):
+    def _provide_sentence_terms(parsed_news, sentence_ind):
         return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
 
     def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
@@ -72,7 +72,7 @@ class BaseSampleRowProvider(BaseRowProvider):
 
         self.__text_provider.add_text_in_row(
             set_text_func=lambda column, value: __assign_value(column, value),
-            sentence_terms=list(self._iter_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind)),
+            sentence_terms=list(self._provide_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind)),
             s_ind=s_ind,
             t_ind=t_ind,
             expected_label=expected_label)

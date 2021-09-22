@@ -45,7 +45,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
             s_ind=s_ind, t_ind=t_ind)
 
         # Extracting list of terms, utilized in further.
-        terms = list(self._iter_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind))
+        terms = list(self._provide_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind))
 
         # Compose frame indices.
         uint_frame_inds = list(self.__iter_indices(terms=terms, filter=lambda t: isinstance(t, TextFrameVariant)))
