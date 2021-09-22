@@ -1,4 +1,5 @@
 from arekit.common.entities.base import Entity
+from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.columns.opinion import OpinionColumnsProvider
@@ -6,6 +7,7 @@ from arekit.common.experiment.input.providers.columns.sample import SampleColumn
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
+from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.experiment.input.storages.tsv_opinion import TsvOpinionsStorage
@@ -17,15 +19,21 @@ from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.synonyms import SynonymsCollection
 
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
+from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
+from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
+from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
-from arekit.processing.lemmatization.base import Stemmer
+from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.parser import TextParser
+from examples.utils.rusvectores_embedding import RusvectoresEmbedding
 
 
 def __add_term_embedding(dict_data, term, emb_vector):
@@ -64,6 +72,7 @@ def extract(text):
     ########################
 
     sentences = text  # TODO. split text onto sentences.
+    stemmer = MystemWrapper()
 
     news = News(news_id=0,
                 sentences=sentences)
@@ -71,7 +80,7 @@ def extract(text):
     parse_options = NewsParseOptions(
         parse_entities=False,
         frame_variants_collection=FrameVariantsCollection(),
-        stemmer=Stemmer())
+        stemmer=stemmer)
 
     parsed_news = TextParser.parse_news(news=news,
                                         parse_options=parse_options)
@@ -79,6 +88,10 @@ def extract(text):
     ########################
     # Step 2. Annotate text.
     ########################
+
+    synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+        stemmer=stemmer,
+        version=RuSentRelVersions.V11)
 
     labels_scaler = ThreeLabelScaler()
 
@@ -99,12 +112,18 @@ def extract(text):
 
     sample_row_provider = NetworkSampleRowProvider(
         label_provider=MultipleLabelProvider(label_scaler=labels_scaler),
-        text_provider=None,
-        frames_collection=None,
-        frame_role_label_scaler=None,
+        text_provider=BaseSingleTextProvider(
+            text_terms_mapper=StringWithEmbeddingNetworkTermMapping(
+                entity_to_group_func=lambda entity: entity_to_group_func(entity, synonyms),
+                predefined_embedding=RusvectoresEmbedding.from_word2vec_format(
+                    filepath=None,
+                    binary=True),
+                string_entities_formatter=StringEntitiesSimpleFormatter(),
+                string_emb_entity_formatter=StringEntitiesSimpleFormatter())),
+        frames_collection=RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20),
+        frame_role_label_scaler=ThreeLabelScaler(),
         entity_to_group_func=entity_to_group_func,
         pos_terms_mapper=PosTermsMapper(None))
-    opinion_row_provider = BaseOpinionsRowProvider()
 
     samples_repo = BaseInputSamplesRepository(
         columns_provider=SampleColumnsProvider(store_labels=True),
@@ -113,7 +132,7 @@ def extract(text):
 
     opinions_repo = BaseInputOpinionsRepository(
         columns_provider=OpinionColumnsProvider(),
-        rows_provider=opinion_row_provider,
+        rows_provider=BaseOpinionsRowProvider(),
         storage=TsvOpinionsStorage())
 
     # Populate repositories
