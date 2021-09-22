@@ -105,7 +105,7 @@ def extract(text):
 
     # We pass it into NetworkInputEncoder
     opinion_provider = OpinionProvider.create(
-        read_news_func=lambda news_id: parsed_news(news_id),
+        read_news_func=lambda _: parsed_news,
         iter_news_opins_for_extraction=lambda _: opins_for_extraction,
         parsed_news_it_func=lambda: [parsed_news],
         terms_per_context=50)

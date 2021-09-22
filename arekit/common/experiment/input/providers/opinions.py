@@ -30,5 +30,4 @@ class OpinionProvider(object):
         return cls(linked_text_opins_it_func=it_func)
 
     def iter_linked_opinion_wrappers(self):
-        for data in self.__linked_text_opins_it_func():
-            yield data
+        return self.__linked_text_opins_it_func()
