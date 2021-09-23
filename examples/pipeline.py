@@ -1,4 +1,3 @@
-from arekit.common.entities.base import Entity
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
@@ -6,18 +5,20 @@ from arekit.common.experiment.input.providers.columns.opinion import OpinionColu
 from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
+from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
+from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.experiment.input.storages.tsv_opinion import TsvOpinionsStorage
 from arekit.common.experiment.input.storages.tsv_sample import TsvSampleStorage
+from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.news.base import News
-from arekit.common.news.parse_options import NewsParseOptions
-from arekit.common.synonyms import SynonymsCollection
 
+from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.data_handling.data import HandledData
@@ -33,36 +34,9 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.parser import TextParser
-from examples.utils.rusvectores_embedding import RusvectoresEmbedding
 
-
-def __add_term_embedding(dict_data, term, emb_vector):
-    if term in dict_data:
-        return
-    dict_data[term] = emb_vector
-
-
-def entity_to_group_func(entity, synonyms):
-    assert(isinstance(entity, Entity) or entity is None)
-    assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
-
-    if entity is None:
-        return None
-
-    # By default, we provide the related group index.
-    group_index = entity.GroupIndex
-    if group_index is not None:
-        return group_index
-
-    if synonyms is None:
-        return None
-
-    # Otherwise, we search for the related group index
-    # using synonyms collection.
-    value = entity.Value
-    if not synonyms.contains_synonym_value(value):
-        return None
-    return synonyms.get_synonym_group_index(value)
+from examples.input import EXAMPLES
+from examples.network.embedding import RusvectoresEmbedding
 
 
 def extract(text):
@@ -125,6 +99,10 @@ def extract(text):
         entity_to_group_func=entity_to_group_func,
         pos_terms_mapper=PosTermsMapper(None))
 
+    ###########################
+    # Step 3. Serialize data
+    ###########################
+
     samples_repo = BaseInputSamplesRepository(
         columns_provider=SampleColumnsProvider(store_labels=True),
         rows_provider=sample_row_provider,
@@ -135,7 +113,6 @@ def extract(text):
         rows_provider=BaseOpinionsRowProvider(),
         storage=TsvOpinionsStorage())
 
-    # Populate repositories
     samples_repo.populate(opinion_provider=opinion_provider,
                           target="samples.txt",
                           desc="sample")
@@ -145,15 +122,18 @@ def extract(text):
                            desc="opinion")
 
     ###########################
-    # Step 3. Data preparation.
+    # Step 4. Deserialize data
     ###########################
 
     handled_data = HandledData.create_empty()
 
     # TODO. Provide samples reader.
     handled_data.perform_reading_and_initialization(
-        dtypes=[DataType.Test],                       # TODO. Will be removed.
-        exp_io=None,                                  # TODO. Remove
+        dtypes=[DataType.Test],
+        create_samples_reader_func=TsvInputSampleReader.from_tsv(
+            filepath="samples.txt",
+            row_ids_provider=MultipleIDProvider()),
+        has_model_predefined_state=True,
         vocab=None,
         labels_count=3,
         bags_collection_type=SingleBagsCollection,
@@ -161,7 +141,7 @@ def extract(text):
     )
 
     ############################
-    # Step 4. Model preparation.
+    # Step 5. Model preparation.
     ############################
 
     model = BaseTensorflowModel(
@@ -175,7 +155,7 @@ def extract(text):
     model.predict()
 
     ########################################################
-    # Step 5. Gather annotated contexts onto document level.
+    # Step 6. Gather annotated contexts onto document level.
     ########################################################
 
     labeling_collection = model.get_samples_labeling_collection(data_type=DataType.Test)
@@ -190,4 +170,4 @@ def extract(text):
 
 if __name__ == '__main__':
 
-    extract("сша намерена ввести санкции против роccии")
+    extract(EXAMPLES["simple"])

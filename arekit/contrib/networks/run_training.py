@@ -74,6 +74,8 @@ class NetworksTrainingEngine(ExperimentEngine):
         # Performing samples reading process.
         handled_data.perform_reading_and_initialization(
             dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
+            create_samples_reader_func=lambda data_type: self._experiment.ExperimentIO.create_samples_reader(data_type),
+            has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state,
             exp_io=self._experiment.ExperimentIO,
             labels_count=self._experiment.DataIO.LabelsCount,
             vocab=vocab,

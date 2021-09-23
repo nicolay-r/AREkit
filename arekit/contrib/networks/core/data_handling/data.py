@@ -11,8 +11,8 @@ from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
-from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 
+from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
@@ -62,14 +62,17 @@ class HandledData(object):
         return cls(labeled_collections={},
                    bags_collection={})
 
-    def perform_reading_and_initialization(self, dtypes, exp_io, vocab,
-                                           labels_count, bags_collection_type, config):
+    def perform_reading_and_initialization(self, dtypes,
+                                           create_samples_reader_func,
+                                           has_model_predefined_state,
+                                           vocab, labels_count, bags_collection_type, config):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
         """
         assert(isinstance(dtypes, collections.Iterable))
-        assert(isinstance(exp_io, NetworkIOUtils))
+        assert(callable(create_samples_reader_func))
+        assert(isinstance(has_model_predefined_state, bool))
         assert(isinstance(labels_count, int) and labels_count > 0)
 
         stat_uint_labeled_sample_row_ids = None
@@ -78,12 +81,12 @@ class HandledData(object):
         for data_type in dtypes:
 
             # Create samples reader.
-            samples_reader = exp_io.create_samples_reader(data_type)
+            samples_reader = create_samples_reader_func(data_type)
 
             # Extracting such information from serialized files.
             bags_collection, uint_labeled_sample_row_ids = self.__read_for_data_type(
                 samples_reader=samples_reader,
-                is_external_vocab=exp_io.has_model_predefined_state(),
+                is_external_vocab=has_model_predefined_state,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
                 config=config,
