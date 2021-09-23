@@ -2,13 +2,12 @@ import logging
 import os
 import gc
 
-import numpy as np
-
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
 from arekit.common.experiment.engine.utils import rm_dir_contents
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
+from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 from arekit.contrib.networks.shapes import NetworkInputShapes
@@ -60,20 +59,8 @@ class NetworksTrainingEngine(ExperimentEngine):
             raise Exception("Data has not been initialized/serialized: `{}`".format(exp_folder_name))
 
         # Reading embedding.
-        # TODO: 200. Organize embedding storage.
-        embedding_filepath = self._experiment.ExperimentIO.get_term_embedding_source()
-        npz_embedding_data = np.load(embedding_filepath)
-        self.__config.set_term_embedding(npz_embedding_data['arr_0'])
-        logger.info("Embedding read [size={size}]: {filepath}".format(size=self.__config.TermEmbeddingMatrix.shape,
-                                                                      filepath=embedding_filepath))
-
-        # Reading vocabulary
-        # TODO: 200. Organize vocab storage.
-        vocab_source = self._experiment.ExperimentIO.get_vocab_source()
-        npz_vocab_data = np.load(vocab_source)
-        vocab = dict(npz_vocab_data['arr_0'])
-        logger.info("Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
-                                                                       filepath=vocab_source))
+        embedding_data = EmbeddingHelper.load_embedding(source=self._experiment.ExperimentIO.get_term_embedding_source())
+        self.__config.set_term_embedding(embedding_data)
 
         # Performing samples reading process.
         handled_data.initialize(
@@ -82,7 +69,7 @@ class NetworksTrainingEngine(ExperimentEngine):
             has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state,
             exp_io=self._experiment.ExperimentIO,
             labels_count=self._experiment.DataIO.LabelsCount,
-            vocab=vocab,
+            vocab=EmbeddingHelper.load_vocab(source=self._experiment.ExperimentIO.get_vocab_source()),
             bags_collection_type=self.__bags_collection_type,
             input_shapes=NetworkInputShapes(iter_pairs=[
                 (NetworkInputShapes.FRAMES_PER_CONTEXT, self.__config.FramesPerContext),
@@ -123,6 +110,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         del model
 
         gc.collect()
+
 
     def _before_running(self):
 

@@ -16,6 +16,7 @@ from arekit.common.experiment.input.repositories.opinions import BaseInputOpinio
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.contrib.networks.core.data.serializing import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
+from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
@@ -165,20 +166,14 @@ class NetworkInputHelper(object):
 
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
-        # TODO. 200. Organize embedding storage.
-        embedding_target = exp_io.get_term_embedding_target()
-        logger.info("Saving embedding [size={shape}]: {filepath}".format(
-            shape=embedding_matrix.shape,
-            filepath=embedding_target))
-        np.savez(embedding_target, embedding_matrix)
+        EmbeddingHelper.save_embedding(
+            data=embedding_matrix,
+            target=exp_io.get_term_embedding_target())
 
         # Save vocabulary
-        vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
-        # TODO. 200. Organize vocab storage.
-        vocab_target = exp_io.get_vocab_target()
-        logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
-                                                                         filepath=vocab_target))
-        np.savez(vocab_target, vocab)
+        EmbeddingHelper.save_vocab(
+            data=list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding)),
+            target=exp_io.get_vocab_target())
 
         # Remove bindings from the local namespace
         del embedding_matrix

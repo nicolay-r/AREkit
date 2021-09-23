@@ -26,6 +26,7 @@ from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
+from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -125,8 +126,8 @@ def extract(text):
                            target="opinions.txt",
                            desc="opinion")
 
-    # TODO. Save embedding.
-    # TODO. Save vocabulary.
+    EmbeddingHelper.save_vocab(data=None, target="vocab.txt")
+    EmbeddingHelper.save_embedding(data=None, target="embedding.txt")
 
     ###########################
     # Step 4. Deserialize data
@@ -137,13 +138,15 @@ def extract(text):
     network = PiecewiseCNN()
     config = CNNConfig()
 
+    config.TermEmbeddingMatrix(EmbeddingHelper.load_vocab("embedding.txt"))
+
     handled_data.initialize(
         dtypes=[DataType.Test],
         create_samples_reader_func=TsvInputSampleReader.from_tsv(
             filepath="samples.txt",
             row_ids_provider=MultipleIDProvider()),
         has_model_predefined_state=True,
-        vocab=None,
+        vocab=EmbeddingHelper.load_vocab("vocab.txt"),
         labels_count=3,
         input_shapes=NetworkInputShapes(iter_pairs=[
             (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext),
