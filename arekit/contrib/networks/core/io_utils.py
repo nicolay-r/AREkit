@@ -59,7 +59,7 @@ class NetworkIOUtils(BaseIOUtils):
     def create_samples_writer_target(self, data_type):
         return self.get_input_sample_target(data_type)
 
-    def get_loading_vocab_filepath(self):
+    def get_vocab_source(self):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
@@ -69,7 +69,7 @@ class NetworkIOUtils(BaseIOUtils):
         return model_io.get_model_vocab_filepath() if self.__model_is_pretrained_state_provided(model_io) \
             else self.__get_default_vocab_filepath()
 
-    def get_saving_vocab_filepath(self):
+    def get_vocab_target(self):
         return self.__get_default_vocab_filepath()
 
     def has_model_predefined_state(self):
@@ -85,7 +85,7 @@ class NetworkIOUtils(BaseIOUtils):
         return model_io.get_model_embedding_filepath() if self.__model_is_pretrained_state_provided(model_io) \
             else self.__get_default_embedding_filepath()
 
-    def get_saving_embedding_filepath(self):
+    def get_term_embedding_target(self):
         return self.__get_default_embedding_filepath()
 
     # TODO. Filepath-dependency should be removed!
@@ -116,8 +116,8 @@ class NetworkIOUtils(BaseIOUtils):
             filepaths = [
                 self.get_input_sample_target(data_type=data_type),
                 self.get_input_opinions_filepath(data_type=data_type),
-                self.get_saving_vocab_filepath(),
-                self.get_saving_embedding_filepath()
+                self.get_vocab_target(),
+                self.get_term_embedding_target()
             ]
 
             if not self.__check_targets_existance(targets=filepaths, logger=logger):

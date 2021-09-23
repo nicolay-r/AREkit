@@ -33,15 +33,16 @@ class NetworkInputHelper(object):
     # region private methods
 
     @staticmethod
-    def __populate(opinions_target,
-                   samples_target,
-                   opinion_provider,
-                   exp_data,
-                   sample_storage,
-                   opinions_storage,
-                   data_type,
-                   term_embedding_pairs,
-                   entity_to_group_func):
+    def __create_and_populate_repositories(
+            opinions_target,
+            samples_target,
+            opinion_provider,
+            exp_data,
+            sample_storage,
+            opinions_storage,
+            data_type,
+            term_embedding_pairs,
+            entity_to_group_func):
         assert(isinstance(data_type, DataType))
 
         sample_row_provider = NetworkSampleRowProvider(
@@ -131,7 +132,7 @@ class NetworkInputHelper(object):
                 terms_per_context=terms_per_context)
 
             # Composing input.
-            NetworkInputHelper.__populate(
+            NetworkInputHelper.__create_and_populate_repositories(
                 samples_target=experiment.ExperimentIO.create_samples_writer_target(),
                 opinions_target=experiment.ExperimentIO.create_opinions_writer_target(),
                 opinion_provider=opinion_provider,
@@ -154,8 +155,8 @@ class NetworkInputHelper(object):
         return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
 
     @staticmethod
-    def __compose_and_save_term_embeddings_and_vocabulary(experiment_io, term_embedding_pairs):
-        assert(isinstance(experiment_io, NetworkIOUtils))
+    def __compose_and_save_term_embeddings_and_vocabulary(exp_io, term_embedding_pairs):
+        assert(isinstance(exp_io, NetworkIOUtils))
         assert(isinstance(term_embedding_pairs, OrderedDict))
 
         # Save embedding information additionally.
@@ -164,18 +165,20 @@ class NetworkInputHelper(object):
 
         # Save embedding matrix
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
-        embedding_filepath = experiment_io.get_saving_embedding_filepath()
+        # TODO. 200. Organize embedding storage.
+        embedding_target = exp_io.get_term_embedding_target()
         logger.info("Saving embedding [size={shape}]: {filepath}".format(
             shape=embedding_matrix.shape,
-            filepath=embedding_filepath))
-        np.savez(embedding_filepath, embedding_matrix)
+            filepath=embedding_target))
+        np.savez(embedding_target, embedding_matrix)
 
         # Save vocabulary
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
-        vocab_filepath = experiment_io.get_saving_vocab_filepath()
+        # TODO. 200. Organize vocab storage.
+        vocab_target = exp_io.get_vocab_target()
         logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(vocab),
-                                                                         filepath=vocab_filepath))
-        np.savez(vocab_filepath, vocab)
+                                                                         filepath=vocab_target))
+        np.savez(vocab_target, vocab)
 
         # Remove bindings from the local namespace
         del embedding_matrix
@@ -183,7 +186,7 @@ class NetworkInputHelper(object):
     # endregion
 
     @staticmethod
-    def serialize_from_experiment(experiment, terms_per_context, balance):
+    def prepare(experiment, terms_per_context, balance):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
@@ -194,5 +197,5 @@ class NetworkInputHelper(object):
             balance=balance,
             handle_term_embedding_pairs=lambda term_embedding_pairs:
                 NetworkInputHelper.__compose_and_save_term_embeddings_and_vocabulary(
-                    experiment_io=experiment.ExperimentIO,
+                    exp_io=experiment.ExperimentIO,
                     term_embedding_pairs=term_embedding_pairs))

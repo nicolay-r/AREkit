@@ -27,9 +27,9 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
             return
 
         # Perform data serialization.
-        NetworkInputHelper.serialize_from_experiment(experiment=self._experiment,
-                                                     terms_per_context=self._experiment.DataIO.TermsPerContext,
-                                                     balance=self.__balance)
+        NetworkInputHelper.prepare(experiment=self._experiment,
+                                   terms_per_context=self._experiment.DataIO.TermsPerContext,
+                                   balance=self.__balance)
 
     def _before_running(self):
         self._logger.info("Perform annotation ...")

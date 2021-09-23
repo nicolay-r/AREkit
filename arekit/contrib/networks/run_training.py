@@ -59,20 +59,20 @@ class NetworksTrainingEngine(ExperimentEngine):
             raise Exception("Data has not been initialized/serialized: `{}`".format(exp_folder_name))
 
         # Reading embedding.
+        # TODO: 200. Organize embedding storage.
         embedding_filepath = self._experiment.ExperimentIO.get_loading_embedding_filepath()
         npz_embedding_data = np.load(embedding_filepath)
         self.__config.set_term_embedding(npz_embedding_data['arr_0'])
         logger.info("Embedding read [size={size}]: {filepath}".format(size=self.__config.TermEmbeddingMatrix.shape,
-                                                                       filepath=embedding_filepath))
+                                                                      filepath=embedding_filepath))
 
         # Reading vocabulary
-        # TODO. This is suppose to be an external loader.
-        # TODO. Provider, which returns dictionary.
-        vocab_filepath = self._experiment.ExperimentIO.get_loading_vocab_filepath()
-        npz_vocab_data = np.load(vocab_filepath)
+        # TODO: 200. Organize vocab storage.
+        vocab_source = self._experiment.ExperimentIO.get_vocab_source()
+        npz_vocab_data = np.load(vocab_source)
         vocab = dict(npz_vocab_data['arr_0'])
         logger.info("Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
-                                                                       filepath=vocab_filepath))
+                                                                       filepath=vocab_source))
 
         # Performing samples reading process.
         handled_data.initialize(
