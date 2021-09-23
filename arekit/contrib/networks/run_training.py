@@ -83,7 +83,12 @@ class NetworksTrainingEngine(ExperimentEngine):
             labels_count=self._experiment.DataIO.LabelsCount,
             vocab=vocab,
             bags_collection_type=self.__bags_collection_type,
+            # TODO: 199. Remove config.
             config=self.__config)
+
+        if handled_data.HasNormalizedWeights:
+            weights = handled_data.calc_normalized_weigts(labels_count=self._experiment.DataIO.LabelsCount)
+            self.__config.set_class_weights(weights)
 
         # Update parameters after iteration preparation has been completed.
         self.__config.reinit_config_dependent_parameters()

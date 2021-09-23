@@ -137,7 +137,8 @@ def extract(text):
         vocab=None,
         labels_count=3,
         bags_collection_type=SingleBagsCollection,
-        config=None,                                  # TODO. Конфигурация сети.
+        # TODO: 199. Remove config.
+        config=None,
     )
 
     ############################

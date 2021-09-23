@@ -121,6 +121,7 @@ class InputSample(InputSampleBase):
                    frame_indices=blank_frames,
                    input_sample_id="1")
 
+    # TODO. Refactoring #199.
     @classmethod
     def _generate_test(cls, config):
         assert(isinstance(config, DefaultNetworkConfig))
@@ -164,6 +165,7 @@ class InputSample(InputSampleBase):
                                subj_ind,
                                obj_ind,
                                words_vocab,  # for indexing input (all the vocabulary, obtained from offsets.py)
+                               # TODO: 199. Use shapes.
                                terms_per_context,  # for terms_per_context, frames_per_context.
                                frames_per_context,
                                synonyms_per_context,
