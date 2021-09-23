@@ -137,11 +137,8 @@ class NetworkInputHelper(object):
                 samples_target=experiment.ExperimentIO.create_samples_writer_target(),
                 opinions_target=experiment.ExperimentIO.create_opinions_writer_target(),
                 opinion_provider=opinion_provider,
-                sample_storage=experiment.ExperimentIO.create_samples_writer(
-                    data_type=data_type,
-                    balance=balance),
-                opinions_storage=experiment.ExperimentIO.create_opinions_writer(
-                    data_type=data_type),
+                sample_storage=experiment.ExperimentIO.create_samples_writer(data_type=data_type, balance=balance),
+                opinions_storage=experiment.ExperimentIO.create_opinions_writer(data_type=data_type),
                 exp_data=experiment.DataIO,
                 entity_to_group_func=experiment.entity_to_group,
                 data_type=data_type,
@@ -156,26 +153,18 @@ class NetworkInputHelper(object):
         return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
 
     @staticmethod
-    def __compose_and_save_term_embeddings_and_vocabulary(exp_io, term_embedding_pairs):
-        assert(isinstance(exp_io, NetworkIOUtils))
+    def __compose_and_save_term_embeddings_and_vocabulary(embedding_target, vocab_target, term_embedding_pairs):
         assert(isinstance(term_embedding_pairs, OrderedDict))
 
         # Save embedding information additionally.
-        term_embedding = Embedding.from_word_embedding_pairs_iter(
-            word_embedding_pairs=iter(term_embedding_pairs.items()))
+        term_embedding = Embedding.from_word_embedding_pairs_iter(iter(term_embedding_pairs.items()))
+        embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
+        vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
 
         # Save embedding matrix
-        embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
-        EmbeddingHelper.save_embedding(
-            data=embedding_matrix,
-            target=exp_io.get_term_embedding_target())
+        EmbeddingHelper.save_embedding(data=embedding_matrix, target=embedding_target)
+        EmbeddingHelper.save_vocab(data=vocab, target=vocab_target)
 
-        # Save vocabulary
-        EmbeddingHelper.save_vocab(
-            data=list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding)),
-            target=exp_io.get_vocab_target())
-
-        # Remove bindings from the local namespace
         del embedding_matrix
 
     # endregion
@@ -192,5 +181,6 @@ class NetworkInputHelper(object):
             balance=balance,
             handle_term_embedding_pairs=lambda term_embedding_pairs:
                 NetworkInputHelper.__compose_and_save_term_embeddings_and_vocabulary(
-                    exp_io=experiment.ExperimentIO,
+                    vocab_target=experiment.ExperimentIO.get_vocab_target(),
+                    embedding_target=experiment.ExperimentIO.get_embedding_target(),
                     term_embedding_pairs=term_embedding_pairs))
