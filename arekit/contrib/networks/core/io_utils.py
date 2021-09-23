@@ -76,7 +76,7 @@ class NetworkIOUtils(BaseIOUtils):
         model_io = self._experiment.DataIO.ModelIO
         return self.__model_is_pretrained_state_provided(model_io)
 
-    def get_loading_embedding_filepath(self):
+    def get_term_embedding_source(self):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """

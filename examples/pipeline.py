@@ -21,12 +21,15 @@ from arekit.common.news.base import News
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.networks.context.architectures.pcnn import PiecewiseCNN
+from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.model import BaseTensorflowModel
+from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
@@ -121,6 +124,9 @@ def extract(text):
                            target="opinions.txt",
                            desc="opinion")
 
+    # TODO. Save embedding.
+    # TODO. Save vocabulary.
+
     ###########################
     # Step 4. Deserialize data
     ###########################
@@ -146,11 +152,14 @@ def extract(text):
     ############################
 
     model = BaseTensorflowModel(
-        nn_io=None,
-        network=None,                                 # Нейросеть.
+        nn_io=NeuralNetworkModelIO(
+            target_dir=".model",
+            full_model_name="PCNN",
+            model_name_tag="_"),
+        network=PiecewiseCNN(),
+        config=CNNConfig(),
         handled_data=handled_data,
-        bags_collection_type=SingleBagsCollection,    # Используем на вход 1 пример.
-        config=None,                                  # TODO. Конфигурация сети.
+        bags_collection_type=SingleBagsCollection,      # Используем на вход 1 пример.
     )
 
     model.predict()

@@ -60,7 +60,7 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Reading embedding.
         # TODO: 200. Organize embedding storage.
-        embedding_filepath = self._experiment.ExperimentIO.get_loading_embedding_filepath()
+        embedding_filepath = self._experiment.ExperimentIO.get_term_embedding_source()
         npz_embedding_data = np.load(embedding_filepath)
         self.__config.set_term_embedding(npz_embedding_data['arr_0'])
         logger.info("Embedding read [size={size}]: {filepath}".format(size=self.__config.TermEmbeddingMatrix.shape,
