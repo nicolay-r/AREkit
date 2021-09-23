@@ -1,3 +1,4 @@
+import collections
 import logging
 from os.path import join, exists
 
@@ -36,7 +37,7 @@ class NetworkIOUtils(BaseIOUtils):
     def create_samples_reader(self, data_type):
         assert(isinstance(data_type, DataType))
         return TsvInputSampleReader.from_tsv(
-            filepath=self.get_input_sample_filepath(data_type=data_type),
+            filepath=self.get_input_sample_target(data_type=data_type),
             row_ids_provider=MultipleIDProvider())
 
     def create_opinions_reader(self, data_type):
@@ -56,7 +57,7 @@ class NetworkIOUtils(BaseIOUtils):
         return self.get_input_opinions_filepath(data_type)
 
     def create_samples_writer_target(self, data_type):
-        return self.get_input_sample_filepath(data_type)
+        return self.get_input_sample_target(data_type)
 
     def get_loading_vocab_filepath(self):
         """ It is possible to load a predefined embedding from another experiment
@@ -109,9 +110,38 @@ class NetworkIOUtils(BaseIOUtils):
 
         return filepath
 
+    def check_targets_existed(self, data_types_iter):
+        for data_type in data_types_iter:
+
+            filepaths = [
+                self.get_input_sample_target(data_type=data_type),
+                self.get_input_opinions_filepath(data_type=data_type),
+                self.get_saving_vocab_filepath(),
+                self.get_saving_embedding_filepath()
+            ]
+
+            if not self.__check_targets_existance(targets=filepaths, logger=logger):
+                return False
+        return True
+
     # endregion
 
     # region private methods
+
+    @staticmethod
+    def __check_targets_existance(targets, logger):
+        assert (isinstance(targets, collections.Iterable))
+
+        result = True
+        for filepath in targets:
+            assert(isinstance(filepath, str))
+
+            existed = exists(filepath)
+            logger.info("Check existance [{is_existed}]: {fp}".format(is_existed=existed, fp=filepath))
+            if not existed:
+                result = False
+
+        return result
 
     def __get_default_vocab_filepath(self):
         return join(self.get_target_dir(),
@@ -159,7 +189,7 @@ class NetworkIOUtils(BaseIOUtils):
                                   prefix="opinion")
 
     # TODO. In nested class (user applications)
-    def get_input_sample_filepath(self, data_type):
+    def get_input_sample_target(self, data_type):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self.get_target_dir(),
                                   template=template,

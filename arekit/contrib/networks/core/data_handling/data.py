@@ -1,20 +1,16 @@
 import collections
 import logging
 
-from arekit.common.utils import check_files_existance
-
-from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
-
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
+from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.sample import InputSample
 
 logger = logging.getLogger(__name__)
@@ -42,12 +38,6 @@ class HandledData(object):
     # endregion
 
     @staticmethod
-    def check_files_existed(experiment):
-        return HandledData.__check_files_existed(
-            data_types_iter=experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
-            exp_io=experiment.ExperimentIO)
-
-    @staticmethod
     def serialize_from_experiment(experiment, terms_per_context, balance):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
@@ -62,10 +52,8 @@ class HandledData(object):
         return cls(labeled_collections={},
                    bags_collection={})
 
-    def perform_reading_and_initialization(self, dtypes,
-                                           create_samples_reader_func,
-                                           has_model_predefined_state,
-                                           vocab, labels_count, bags_collection_type, config):
+    def initialize(self, dtypes, create_samples_reader_func, has_model_predefined_state,
+                   vocab, labels_count, bags_collection_type, config):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
@@ -162,32 +150,12 @@ class HandledData(object):
         assert(isinstance(doc_ops, DocumentOperations))
         return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
 
-    # TODO: rename 'files' -> 'resources'
-    @staticmethod
-    def __check_files_existed(data_types_iter, exp_io):
-        assert(isinstance(exp_io, NetworkIOUtils))
-        for data_type in data_types_iter:
-
-            filepaths = [
-                # TODO. Samples path checking should be removed!!!
-                # TODO. (We make keep them in memory and hence there is no need in the related check).
-                exp_io.get_input_sample_filepath(data_type=data_type),
-                # TODO. Samples path checking should be removed!!!
-                # TODO. (We make keep them in memory and hence there is no need in the related check).
-                exp_io.get_input_opinions_filepath(data_type=data_type),
-                exp_io.get_saving_vocab_filepath(),
-                exp_io.get_saving_embedding_filepath()
-            ]
-
-            if not check_files_existance(filepaths=filepaths, logger=logger):
-                return False
-        return True
-
     # endregion
 
     # region reading methods
 
-    def __read_for_data_type(self, samples_reader, is_external_vocab,
+    @staticmethod
+    def __read_for_data_type(samples_reader, is_external_vocab,
                              bags_collection_type, vocab, config, desc=""):
         assert(isinstance(samples_reader, BaseInputSampleReader))
 
@@ -228,14 +196,3 @@ class HandledData(object):
         return bags_collection, labeled_sample_row_ids
 
     # endregion
-
-    @staticmethod
-    def __create_collection(data_types, collection_by_dtype_func):
-        assert(isinstance(data_types, collections.Iterable))
-        assert(callable(collection_by_dtype_func))
-
-        collection = {}
-        for data_type in data_types:
-            collection[data_type] = collection_by_dtype_func(data_type)
-
-        return collection

@@ -128,7 +128,7 @@ def extract(text):
     handled_data = HandledData.create_empty()
 
     # TODO. Provide samples reader.
-    handled_data.perform_reading_and_initialization(
+    handled_data.initialize(
         dtypes=[DataType.Test],
         create_samples_reader_func=TsvInputSampleReader.from_tsv(
             filepath="samples.txt",

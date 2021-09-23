@@ -51,7 +51,10 @@ class NetworksTrainingEngine(ExperimentEngine):
         # Perform data reading.
         handled_data = HandledData.create_empty()
 
-        if not HandledData.check_files_existed(self._experiment):
+        targets_existed = self._experiment.ExperimentIO.check_targets_existed(
+            data_types_iter=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types())
+
+        if not targets_existed:
             exp_folder_name = self._experiment.ExperimentIO.get_experiment_folder_name()
             raise Exception("Data has not been initialized/serialized: `{}`".format(exp_folder_name))
 
@@ -72,7 +75,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                                                                        filepath=vocab_filepath))
 
         # Performing samples reading process.
-        handled_data.perform_reading_and_initialization(
+        handled_data.initialize(
             dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             create_samples_reader_func=lambda data_type: self._experiment.ExperimentIO.create_samples_reader(data_type),
             has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state,

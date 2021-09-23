@@ -70,16 +70,3 @@ def join_dir_with_subfolder_name(subfolder_name, dir):
     target_dir = join(dir, "{}/".format(subfolder_name))
     return target_dir
 
-
-def check_files_existance(filepaths, logger):
-    assert(isinstance(filepaths, collections.Iterable))
-
-    result = True
-    for filepath in filepaths:
-        existed = exists(filepath)
-        logger.info("Check existance [{is_existed}]: {fp}".format(is_existed=existed, fp=filepath))
-        if not existed:
-            result = False
-
-    return result
-
