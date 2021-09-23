@@ -20,8 +20,6 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
     def _handle_iteration(self, it_index):
         assert(isinstance(self._experiment.DataIO, SerializationData))
 
-        # Performing data serialization.
-
         targets_existed = self._experiment.ExperimentIO.check_targets_existed(
             data_types_iter=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types())
 

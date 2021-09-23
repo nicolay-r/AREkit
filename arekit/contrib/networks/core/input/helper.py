@@ -101,13 +101,15 @@ class NetworkInputHelper(object):
                 emb_vector=pair[1]))
 
     @staticmethod
-    def __perform_writing(experiment, terms_per_context, balance):
+    def __perform_writing(experiment, terms_per_context, balance,
+                          handle_term_embedding_pairs):
         """
         Perform experiment input serialization
         """
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
+        assert(callable(handle_term_embedding_pairs))
 
         term_embedding_pairs = collections.OrderedDict()
 
@@ -143,20 +145,16 @@ class NetworkInputHelper(object):
                 data_type=data_type,
                 term_embedding_pairs=term_embedding_pairs)
 
-        # Save embedding and related vocabulary.
-        NetworkInputHelper.compose_and_save_term_embeddings_and_vocabulary(
-            experiment_io=experiment.ExperimentIO,
-            term_embedding_pairs=term_embedding_pairs)
+        if handle_term_embedding_pairs is not None:
+            handle_term_embedding_pairs(term_embedding_pairs)
 
     @staticmethod
     def __iter_parsed_news_func(doc_ops, data_type):
         assert(isinstance(doc_ops, DocumentOperations))
         return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
 
-    # endregion
-
     @staticmethod
-    def compose_and_save_term_embeddings_and_vocabulary(experiment_io, term_embedding_pairs):
+    def __compose_and_save_term_embeddings_and_vocabulary(experiment_io, term_embedding_pairs):
         assert(isinstance(experiment_io, NetworkIOUtils))
         assert(isinstance(term_embedding_pairs, OrderedDict))
 
@@ -182,12 +180,19 @@ class NetworkInputHelper(object):
         # Remove bindings from the local namespace
         del embedding_matrix
 
+    # endregion
+
     @staticmethod
     def serialize_from_experiment(experiment, terms_per_context, balance):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
 
-        NetworkInputHelper.__perform_writing(experiment=experiment,
-                                             terms_per_context=terms_per_context,
-                                             balance=balance)
+        NetworkInputHelper.__perform_writing(
+            experiment=experiment,
+            terms_per_context=terms_per_context,
+            balance=balance,
+            handle_term_embedding_pairs=lambda term_embedding_pairs:
+                NetworkInputHelper.__compose_and_save_term_embeddings_and_vocabulary(
+                    experiment_io=experiment.ExperimentIO,
+                    term_embedding_pairs=term_embedding_pairs))
