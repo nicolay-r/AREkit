@@ -11,6 +11,7 @@ from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
+from arekit.contrib.networks.shapes import NetworkInputShapes
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -83,8 +84,12 @@ class NetworksTrainingEngine(ExperimentEngine):
             labels_count=self._experiment.DataIO.LabelsCount,
             vocab=vocab,
             bags_collection_type=self.__bags_collection_type,
-            # TODO: 199. Remove config.
-            config=self.__config)
+            input_shapes=NetworkInputShapes(iter_pairs=[
+                (NetworkInputShapes.FRAMES_PER_CONTEXT, self.__config.FramesPerContext),
+                (NetworkInputShapes.TERMS_PER_CONTEXT, self.__config.TermsPerContext),
+                (NetworkInputShapes.SYNONYMS_PER_CONTEXT, self.__config.SynonymsPerContext),
+            ]),
+            bag_size=self.__config.BagSize)
 
         if handled_data.HasNormalizedWeights:
             weights = handled_data.calc_normalized_weigts(labels_count=self._experiment.DataIO.LabelsCount)

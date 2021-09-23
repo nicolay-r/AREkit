@@ -31,6 +31,7 @@ from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbedding
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
+from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -133,7 +134,9 @@ def extract(text):
 
     handled_data = HandledData.create_empty()
 
-    # TODO. Provide samples reader.
+    network = PiecewiseCNN()
+    config = CNNConfig()
+
     handled_data.initialize(
         dtypes=[DataType.Test],
         create_samples_reader_func=TsvInputSampleReader.from_tsv(
@@ -142,10 +145,12 @@ def extract(text):
         has_model_predefined_state=True,
         vocab=None,
         labels_count=3,
-        bags_collection_type=SingleBagsCollection,
-        # TODO: 199. Remove config.
-        config=None,
-    )
+        input_shapes=NetworkInputShapes(iter_pairs=[
+            (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext),
+            (NetworkInputShapes.TERMS_PER_CONTEXT, config.TermsPerContext),
+            (NetworkInputShapes.SYNONYMS_PER_CONTEXT, config.SynonymsPerContext),
+        ]),
+        bag_size=config.BagSize)
 
     ############################
     # Step 5. Model preparation.
@@ -156,8 +161,8 @@ def extract(text):
             target_dir=".model",
             full_model_name="PCNN",
             model_name_tag="_"),
-        network=PiecewiseCNN(),
-        config=CNNConfig(),
+        network=network,
+        config=config,
         handled_data=handled_data,
         bags_collection_type=SingleBagsCollection,      # Используем на вход 1 пример.
     )

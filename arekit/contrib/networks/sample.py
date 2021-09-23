@@ -11,6 +11,7 @@ from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.networks.features.term_types import calculate_term_types
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
+from arekit.contrib.networks.shapes import NetworkInputShapes
 
 
 class InputSample(InputSampleBase):
@@ -97,14 +98,12 @@ class InputSample(InputSampleBase):
     # region class methods
 
     @classmethod
-    def create_empty(cls, terms_per_context, frames_per_context, synonyms_per_context):
-        assert(isinstance(terms_per_context, int))
-        assert(isinstance(frames_per_context, int))
-        assert(isinstance(synonyms_per_context, int))
+    def create_empty(cls, input_shapes):
+        assert(isinstance(input_shapes, NetworkInputShapes))
 
-        blank_synonyms = np.zeros(synonyms_per_context)
-        blank_terms = np.zeros(terms_per_context)
-        blank_frames = np.full(shape=frames_per_context,
+        blank_synonyms = np.zeros(input_shapes.get_shape(input_shapes.SYNONYMS_PER_CONTEXT))
+        blank_terms = np.zeros(input_shapes.get_shape(input_shapes.TERMS_PER_CONTEXT))
+        blank_frames = np.full(shape=input_shapes.get_shape(input_shapes.FRAMES_PER_CONTEXT),
                                fill_value=cls.FRAMES_PAD_VALUE)
         return cls(X=blank_terms,
                    subj_ind=0,
@@ -165,10 +164,7 @@ class InputSample(InputSampleBase):
                                subj_ind,
                                obj_ind,
                                words_vocab,  # for indexing input (all the vocabulary, obtained from offsets.py)
-                               # TODO: 199. Use shapes.
-                               terms_per_context,  # for terms_per_context, frames_per_context.
-                               frames_per_context,
-                               synonyms_per_context,
+                               input_shapes,
                                syn_subj_inds,
                                syn_obj_inds,
                                frame_inds,
@@ -185,9 +181,7 @@ class InputSample(InputSampleBase):
         assert(isinstance(words_vocab, dict))
         assert(isinstance(subj_ind, int) and 0 <= subj_ind < len(terms))
         assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
-        assert(isinstance(terms_per_context, int))
-        assert(isinstance(frames_per_context, int))
-        assert(isinstance(synonyms_per_context, int))
+        assert(isinstance(input_shapes, NetworkInputShapes))
         assert(isinstance(syn_subj_inds, list))
         assert(isinstance(syn_obj_inds, list))
         assert(isinstance(pos_tags, list))
@@ -207,6 +201,10 @@ class InputSample(InputSampleBase):
 
         # Composing vectors
         x_indices = np.array([cls.__get_index_by_term(term, words_vocab, is_external_vocab) for term in terms])
+
+        terms_per_context = input_shapes.get_shape(input_shapes.TERMS_PER_CONTEXT)
+        synonyms_per_context = input_shapes.get_shape(input_shapes.SYNONYMS_PER_CONTEXT)
+        frames_per_context = input_shapes.get_shape(input_shapes.FRAMES_PER_CONTEXT)
 
         # Check an ability to create sample by analyzing required window size.
         window_size = terms_per_context

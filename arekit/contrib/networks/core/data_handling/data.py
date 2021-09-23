@@ -44,9 +44,7 @@ class HandledData(object):
                    bags_collection={})
 
     def initialize(self, dtypes, create_samples_reader_func, has_model_predefined_state,
-                   vocab, labels_count, bags_collection_type,
-                   # TODO: 199. Remove config.
-                   config):
+                   vocab, labels_count, bags_collection_type, bag_size, input_shapes, config):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
@@ -68,8 +66,8 @@ class HandledData(object):
                 is_external_vocab=has_model_predefined_state,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
-                # TODO: 199. Remove config.
-                config=config,
+                bag_size=bag_size,
+                input_shapes=input_shapes,
                 desc="Filling bags collection [{}]".format(data_type))
 
             # Saving into dictionaries.
@@ -97,25 +95,15 @@ class HandledData(object):
     @staticmethod
     def __read_for_data_type(samples_reader, is_external_vocab,
                              bags_collection_type, vocab,
-                             # TODO: 199. Remove config.
-                             config, desc=""):
+                             bag_size, input_shapes, desc=""):
         assert(isinstance(samples_reader, BaseInputSampleReader))
-
-        # TODO: 199. Use shapes.
-        terms_per_context = config.TermsPerContext
-        frames_per_context = config.FramesPerContext
-        synonyms_per_context = config.SynonymsPerContext
 
         bags_collection = bags_collection_type.from_formatted_samples(
             formatted_samples_iter=samples_reader.iter_rows_linked_by_text_opinions(),
             desc=desc,
-            bag_size=config.BagSize,
+            bag_size=bag_size,
             shuffle=True,
-            create_empty_sample_func=lambda: InputSample.create_empty(
-                # TODO: 199. Use shapes.
-                terms_per_context=terms_per_context,
-                frames_per_context=frames_per_context,
-                synonyms_per_context=synonyms_per_context),
+            create_empty_sample_func=lambda: InputSample.create_empty(input_shapes),
             create_sample_func=lambda row: InputSample.create_from_parameters(
                 input_sample_id=row.SampleID,
                 terms=row.Terms,
@@ -128,10 +116,7 @@ class HandledData(object):
                 frame_sent_roles=row.TextFrameVariantRoles,
                 syn_obj_inds=row.SynonymObjectInds,
                 syn_subj_inds=row.SynonymSubjectInds,
-                # TODO: 199. Use shapes.
-                terms_per_context=terms_per_context,
-                frames_per_context=frames_per_context,
-                synonyms_per_context=synonyms_per_context,
+                input_shapes=input_shapes,
                 pos_tags=row.PartOfSpeechTags))
 
         rows_it = NetworkInputSampleReaderHelper.iter_uint_labeled_sample_rows(samples_reader)
