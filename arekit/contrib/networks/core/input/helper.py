@@ -2,8 +2,6 @@ import collections
 import logging
 from collections import OrderedDict
 
-import numpy as np
-
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.formats.documents import DocumentOperations
@@ -19,7 +17,6 @@ from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMap
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
