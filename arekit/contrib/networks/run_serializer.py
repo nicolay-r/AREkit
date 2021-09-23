@@ -1,6 +1,6 @@
 from arekit.common.experiment.data.serializing import SerializationData
 from arekit.common.experiment.engine.cv_based import ExperimentEngine
-from arekit.contrib.networks.core.data_handling.data import HandledData
+from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 
 
 class NetworksExperimentInputSerializer(ExperimentEngine):
@@ -29,9 +29,9 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
             return
 
         # Perform data serialization.
-        HandledData.serialize_from_experiment(experiment=self._experiment,
-                                              terms_per_context=self._experiment.DataIO.TermsPerContext,
-                                              balance=self.__balance)
+        NetworkInputHelper.serialize_from_experiment(experiment=self._experiment,
+                                                     terms_per_context=self._experiment.DataIO.TermsPerContext,
+                                                     balance=self.__balance)
 
     def _before_running(self):
         self._logger.info("Perform annotation ...")

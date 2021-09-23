@@ -2,14 +2,10 @@ import collections
 import logging
 
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.base import BaseExperiment
-from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 
-from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.sample import InputSample
 
@@ -41,16 +37,6 @@ class HandledData(object):
         return self.__train_stat_uint_labeled_sample_row_ids is not None
 
     # endregion
-
-    @staticmethod
-    def serialize_from_experiment(experiment, terms_per_context, balance):
-        assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(terms_per_context, int))
-        assert(isinstance(balance, bool))
-
-        HandledData.__perform_writing(experiment=experiment,
-                                      terms_per_context=terms_per_context,
-                                      balance=balance)
 
     @classmethod
     def create_empty(cls):
@@ -106,64 +92,7 @@ class HandledData(object):
 
         return normalized_label_stat
 
-    # region writing methods
-
-    @staticmethod
-    def __perform_writing(experiment, terms_per_context, balance):
-        """
-        Perform experiment input serialization
-        """
-        assert(isinstance(experiment, BaseExperiment))
-        assert(isinstance(terms_per_context, int))
-        assert(isinstance(balance, bool))
-
-        term_embedding_pairs = collections.OrderedDict()
-
-        for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
-
-            # Create annotated collection per each type.
-            experiment.DataIO.Annotator.serialize_missed_collections(data_type=data_type,
-                                                                     doc_ops=experiment.DocumentOperations,
-                                                                     opin_ops=experiment.OpinionOperations)
-
-            opinion_provider = OpinionProvider.create(
-                read_news_func=lambda news_id: experiment.DocumentOperations.read_news(news_id),
-                iter_news_opins_for_extraction=lambda news_id:
-                    experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=news_id,
-                                                                              data_type=data_type),
-                parsed_news_it_func=lambda: HandledData.__iter_parsed_news_func(
-                    doc_ops=experiment.DocumentOperations,
-                    data_type=data_type),
-                terms_per_context=terms_per_context)
-
-            # Composing input.
-            NetworkInputHelper.populate(
-                samples_target=experiment.ExperimentIO.create_samples_writer_target(),
-                opinions_target=experiment.ExperimentIO.create_opinions_writer_target(),
-                opinion_provider=opinion_provider,
-                sample_storage=experiment.ExperimentIO.create_samples_writer(
-                    data_type=data_type,
-                    balance=balance),
-                opinions_storage=experiment.ExperimentIO.create_opinions_writer(
-                    data_type=data_type),
-                exp_data=experiment.DataIO,
-                entity_to_group_func=experiment.entity_to_group,
-                data_type=data_type,
-                term_embedding_pairs=term_embedding_pairs)
-
-        # Save embedding and related vocabulary.
-        NetworkInputHelper.compose_and_save_term_embeddings_and_vocabulary(
-            experiment_io=experiment.ExperimentIO,
-            term_embedding_pairs=term_embedding_pairs)
-
-    @staticmethod
-    def __iter_parsed_news_func(doc_ops, data_type):
-        assert(isinstance(doc_ops, DocumentOperations))
-        return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
-
-    # endregion
-
-    # region reading methods
+    # region private methods
 
     @staticmethod
     def __read_for_data_type(samples_reader, is_external_vocab,
