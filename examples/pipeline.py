@@ -2,7 +2,6 @@ from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpl
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.columns.opinion import OpinionColumnsProvider
-from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
@@ -26,7 +25,9 @@ from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
+from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
+from arekit.contrib.networks.core.input.providers.columns import NetworkSampleColumnsProvider
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -108,38 +109,43 @@ def extract(text):
     # Step 3. Serialize data
     ###########################
 
-    samples_repo = BaseInputSamplesRepository(
-        columns_provider=SampleColumnsProvider(store_labels=True),
-        rows_provider=sample_row_provider,
-        storage=TsvSampleStorage(balance=False, write_header=True))
+    # TODO. Use this instead.
+    NetworkInputHelper.prepare(
+        experiment=None,                 # Remove experiment
+        terms_per_context=None,
+        balance=None)
 
-    opinions_repo = BaseInputOpinionsRepository(
-        columns_provider=OpinionColumnsProvider(),
-        rows_provider=BaseOpinionsRowProvider(),
-        storage=TsvOpinionsStorage())
+    # samples_repo = BaseInputSamplesRepository(
+    #     columns_provider=NetworkSampleColumnsProvider(store_labels=True),
+    #     rows_provider=sample_row_provider,
+    #     storage=TsvSampleStorage(balance=False, write_header=True))
 
-    samples_repo.populate(opinion_provider=opinion_provider,
-                          target="samples.txt",
-                          desc="sample")
+    # opinions_repo = BaseInputOpinionsRepository(
+    #     columns_provider=OpinionColumnsProvider(),
+    #     rows_provider=BaseOpinionsRowProvider(),
+    #     storage=TsvOpinionsStorage())
 
-    opinions_repo.populate(opinion_provider=opinion_provider,
-                           target="opinions.txt",
-                           desc="opinion")
+    # samples_repo.populate(opinion_provider=opinion_provider,
+    #                       target="samples.txt",
+    #                       desc="sample")
 
-    EmbeddingHelper.save_vocab(data=None, target="vocab.txt")
-    EmbeddingHelper.save_embedding(data=None, target="embedding.txt")
+    # opinions_repo.populate(opinion_provider=opinion_provider,
+    #                        target="opinions.txt",
+    #                        desc="opinion")
+
+    # EmbeddingHelper.save_vocab(data=None, target="vocab.txt")
+    # EmbeddingHelper.save_embedding(data=None, target="embedding.txt")
 
     ###########################
     # Step 4. Deserialize data
     ###########################
-
-    handled_data = HandledData.create_empty()
 
     network = PiecewiseCNN()
     config = CNNConfig()
 
     config.TermEmbeddingMatrix(EmbeddingHelper.load_vocab("embedding.txt"))
 
+    handled_data = HandledData.create_empty()
     handled_data.initialize(
         dtypes=[DataType.Test],
         create_samples_reader_func=TsvInputSampleReader.from_tsv(

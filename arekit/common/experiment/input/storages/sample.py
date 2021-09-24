@@ -35,6 +35,7 @@ class BaseSampleStorage(BaseRowsStorage):
             raise Exception("Output labels already defined!")
         self._output_labels_uint = labels_uint
 
+    # TODO: 202 to BaseSampleWriter.
     def save(self, target):
         """ This might be implemented in nested classes.
             The default, i.e. pandas-based storage is not considered

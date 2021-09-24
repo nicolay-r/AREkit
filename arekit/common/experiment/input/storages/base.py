@@ -48,6 +48,7 @@ class BaseRowsStorage(object):
     def init_empty(self):
         self._df = self._create_empty()
 
+    # TODO: 202 to BaseRowsWriter.
     def save(self, target):
         raise NotImplementedError()
 

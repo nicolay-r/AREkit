@@ -8,6 +8,7 @@ class TsvOpinionsStorage(BaseOpinionsStorage):
     def __init__(self):
         super(TsvOpinionsStorage, self).__init__()
 
+    # TODO: 202 to TsvOpinionsWriter.
     def save(self, target):
         assert(isinstance(target, str))
 

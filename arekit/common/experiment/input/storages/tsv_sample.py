@@ -17,6 +17,7 @@ class TsvSampleStorage(BaseSampleStorage):
         self.__balance = balance
         self.__write_header = write_header
 
+    # TODO: 202 to TsvSamplesWriter.
     def save(self, target):
         assert(isinstance(target, str))
 
