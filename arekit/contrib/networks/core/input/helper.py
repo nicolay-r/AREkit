@@ -103,7 +103,7 @@ class NetworkInputHelper(object):
                 opin_ops.iter_opinions_for_extraction(doc_id=news_id,
                                                       data_type=data_type),
             parsed_news_it_func=lambda: doc_ops.iter_parsed_news(
-                doc_ops.iter_news_indices(data_type)),
+                doc_ops.iter_doc_ids(data_type)),
             terms_per_context=terms_per_context)
 
         # Composing input.

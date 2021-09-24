@@ -18,6 +18,9 @@ class DocumentOperations(object):
         """
         return self.__folding
 
+    def read_news(self, doc_id):
+        raise NotImplementedError()
+
     def iter_doc_ids_to_annotate(self):
         """ provides set of documents that utilized by annotator algorithm in order to
             provide the related labeling of annotated attitudes in it.
@@ -30,10 +33,7 @@ class DocumentOperations(object):
         """
         raise NotImplementedError()
 
-    def read_news(self, doc_id):
-        raise NotImplementedError()
-
-    def iter_news_indices(self, data_type):
+    def iter_doc_ids(self, data_type):
         """ Provides a news indices, related to a particular `data_type`
         """
         data_types_splits = self.__folding.fold_doc_ids_set()

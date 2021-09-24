@@ -82,7 +82,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
     @staticmethod
     def __iter_parsed_news(doc_ops, data_type):
-        return doc_ops.iter_parsed_news(doc_ops.iter_news_indices(data_type))
+        return doc_ops.iter_parsed_news(doc_ops.iter_doc_ids(data_type))
 
     # endregion
 

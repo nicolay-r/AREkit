@@ -96,7 +96,7 @@ class BaseExperiment(object):
 
         # Extracting all docs to cmp and those that is related to data_type.
         cmp_doc_ids_iter = self.__doc_operations.iter_doc_ids_to_compare()
-        doc_ids_iter = self.__doc_operations.iter_news_indices(data_type=data_type)
+        doc_ids_iter = self.__doc_operations.iter_doc_ids(data_type=data_type)
         cmp_doc_ids_set = set(cmp_doc_ids_iter)
 
         # Compose cmp pairs iterator.

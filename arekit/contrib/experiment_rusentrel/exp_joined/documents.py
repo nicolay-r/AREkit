@@ -40,14 +40,14 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
         target_doc_ops = self.__select_doc_ops(doc_id)
         return target_doc_ops.read_news(doc_id)
 
-    def iter_news_indices(self, data_type):
-        for doc_id in self.__rusentrel_doc.iter_news_indices(data_type):
+    def iter_doc_ids(self, data_type):
+        for doc_id in self.__rusentrel_doc.iter_doc_ids(data_type):
             yield doc_id
 
         ruattitudes_doc = self.__get_ruattitudes_doc()
         assert(isinstance(ruattitudes_doc, RuAttitudesDocumentOperations))
 
-        for doc_id in ruattitudes_doc.iter_news_indices(data_type):
+        for doc_id in ruattitudes_doc.iter_doc_ids(data_type):
             yield doc_id
 
     # TODO. This should be removed, since parse-options considered as a part
