@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class NpzUtilsProvider(object):
+class NpzRepositoryUtils(object):
 
     @staticmethod
     def save(data, target):

@@ -89,18 +89,21 @@ class NetworkInputHelper(object):
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
 
+        doc_ops = experiment.DocumentOperations
+        opin_ops = experiment.OpinionOperations
+
         experiment.DataIO.Annotator.serialize_missed_collections(
             data_type=data_type,
-            doc_ops=experiment.DocumentOperations,
-            opin_ops=experiment.OpinionOperations)
+            doc_ops=doc_ops,
+            opin_ops=opin_ops)
 
         opinion_provider = OpinionProvider.create(
-            read_news_func=lambda news_id: experiment.DocumentOperations.read_news(news_id),
+            read_news_func=lambda news_id: doc_ops.read_news(news_id),
             iter_news_opins_for_extraction=lambda news_id:
-                experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=news_id,
-                                                                          data_type=data_type),
-            parsed_news_it_func=lambda: experiment.DocumentOperations.iter_parsed_news(
-                experiment.DocumentOperations.iter_news_indices(data_type)),
+                opin_ops.iter_opinions_for_extraction(doc_id=news_id,
+                                                      data_type=data_type),
+            parsed_news_it_func=lambda: doc_ops.iter_parsed_news(
+                doc_ops.iter_news_indices(data_type)),
             terms_per_context=terms_per_context)
 
         # Composing input.
@@ -134,7 +137,8 @@ class NetworkInputHelper(object):
         term_embedding_pairs = collections.OrderedDict()
 
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
-            NetworkInputHelper.__perform_writing(experiment=experiment,
+            NetworkInputHelper.__perform_writing(# TODO. Remove this experiment instance.
+                                                 experiment=experiment,
                                                  data_type=data_type,
                                                  terms_per_context=terms_per_context,
                                                  balance=balance,

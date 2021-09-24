@@ -65,6 +65,7 @@ class BaseAnnotator(object):
             opin_ops=opin_ops)
 
         for doc_id, collection in annot_it:
+            # TODO. Save here is weird.
             opin_ops.save_annotated_opinion_collection(collection=collection,
                                                        doc_id=doc_id,
                                                        data_type=data_type)
