@@ -15,10 +15,10 @@ logging.basicConfig(level=logging.INFO)
 
 class HandledData(object):
 
-    def __init__(self, labeled_collections, bags_collection):
-        assert(isinstance(labeled_collections, dict))
+    def __init__(self, labeled_samples, bags_collection):
+        assert(isinstance(labeled_samples, dict))
         assert(isinstance(bags_collection, dict))
-        self.__labeled_collections = labeled_collections
+        self.__labeled_samples = labeled_samples
         self.__bags_collection = bags_collection
         self.__train_stat_uint_labeled_sample_row_ids = None
 
@@ -29,8 +29,8 @@ class HandledData(object):
         return self.__bags_collection
 
     @property
-    def SamplesLabelingCollection(self):
-        return self.__labeled_collections
+    def LabeledSamplesCollection(self):
+        return self.__labeled_samples
 
     @property
     def HasNormalizedWeights(self):
@@ -40,11 +40,11 @@ class HandledData(object):
 
     @classmethod
     def create_empty(cls):
-        return cls(labeled_collections={},
+        return cls(labeled_samples={},
                    bags_collection={})
 
     def initialize(self, dtypes, create_samples_reader_func, has_model_predefined_state,
-                   vocab, labels_count, bags_collection_type, bag_size, input_shapes, config):
+                   vocab, labels_count, bags_collection_type, bag_size, input_shapes):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
@@ -72,8 +72,8 @@ class HandledData(object):
 
             # Saving into dictionaries.
             self.__bags_collection[data_type] = bags_collection
-            self.__labeled_collections[data_type] = LabeledCollection(
-                uint_labeled_sample_row_ids=uint_labeled_sample_row_ids)
+            self.__labeled_samples[data_type] = LabeledCollection(
+                uint_labeled_ids=uint_labeled_sample_row_ids)
 
             if data_type == DataType.Train:
                 self.__train_stat_uint_labeled_sample_row_ids = uint_labeled_sample_row_ids

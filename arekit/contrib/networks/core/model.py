@@ -16,7 +16,6 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.core.callback.base import Callback
 from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.data_handling.data import HandledData
-from arekit.contrib.networks.core.data_handling.labeling import BaseSamplesLabeling
 from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.feeding.bags.collection.multi import MultiInstanceBagsCollection
@@ -163,14 +162,13 @@ class BaseTensorflowModel(BaseModel):
     def predict(self, data_type=DataType.Test):
         """ Fills the related labeling collection.
         """
-        labeling_collection = self.get_samples_labeling_collection(data_type=data_type)
+        labeled_samples = self.get_labeled_samples_collection(data_type=data_type)
 
-        labeling = BaseSamplesLabeling(data_type=data_type,
-                                       samples_labeling_collection=labeling_collection)
+        # Clear and assert the correctness.
+        labeled_samples.reset_labels()
+        assert(labeled_samples.is_empty())
 
-        predict_log = labeling.predict(labeling_callback=lambda: self.__samples_labeling(data_type=data_type))
-
-        return predict_log
+        return self.__label_samples(data_type=data_type)
 
     def get_hidden_parameters(self):
         names = []
@@ -189,8 +187,8 @@ class BaseTensorflowModel(BaseModel):
     def get_bags_collection(self, data_type):
         return self.__init_helper.BagsCollections[data_type]
 
-    def get_samples_labeling_collection(self, data_type):
-        return self.__init_helper.SamplesLabelingCollection[data_type]
+    def get_labeled_samples_collection(self, data_type):
+        return self.__init_helper.LabeledSamplesCollection[data_type]
 
     # TODO. Simplify.
     def create_batch_by_bags_group(self, bags_group):
@@ -263,13 +261,13 @@ class BaseTensorflowModel(BaseModel):
         self.__saver = tf.train.Saver(max_to_keep=2)
         self.__sess = sess
 
-    def __samples_labeling(self, data_type):
+    def __label_samples(self, data_type):
         """
         Provides algorithm of opinions labeling according to model results.
         """
         assert(isinstance(data_type, DataType))
 
-        labeled_samples = self.get_samples_labeling_collection(data_type)
+        labeled_samples = self.get_labeled_samples_collection(data_type)
         assert(isinstance(labeled_samples, LabeledCollection))
 
         predict_log = NetworkInputDependentVariables()
@@ -315,7 +313,7 @@ class BaseTensorflowModel(BaseModel):
                 for sample in bag:
                     if sample.ID < 0:
                         continue
-                    labeled_samples.apply_uint_label(uint_label, sample.ID)
+                    labeled_samples.assign_uint_label(uint_label, sample.ID)
 
         return predict_log
 

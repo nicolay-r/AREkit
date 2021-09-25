@@ -51,8 +51,8 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
                                                                                 epoch_index=epoch_index)
     logger.info("Target output filepath: {}".format(result_filepath))
-    labeling_collection = model.get_samples_labeling_collection(data_type=data_type)
-    sample_id_with_uint_labels_iter = labeling_collection.iter_non_duplicated_labeled_sample_row_ids()
+    labeled_samples = model.get_labeled_samples_collection(data_type=data_type)
+    sample_id_with_uint_labels_iter = labeled_samples.iter_non_duplicated_labeled_sample_row_ids()
 
     # TODO. This is a limitation, as we focus only tsv.
     with TsvPredictProvider(filepath=result_filepath) as out:

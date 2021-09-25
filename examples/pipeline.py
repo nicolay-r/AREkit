@@ -182,13 +182,13 @@ def extract(text):
     # Step 6. Gather annotated contexts onto document level.
     ########################################################
 
-    labeling_collection = model.get_samples_labeling_collection(data_type=DataType.Test)
+    labeled_samples = model.get_labeled_samples_collection(data_type=DataType.Test)
 
     # TODO. For now it is limited to tsv.
     # TODO. For now it is limited to tsv.
     # TODO. For now it is limited to tsv.
     with TsvPredictProvider(filepath="out.txt") as out:
-        out.load(sample_id_with_uint_labels_iter=labeling_collection.iter_non_duplicated_labeled_sample_row_ids(),
+        out.load(sample_id_with_uint_labels_iter=labeled_samples.iter_non_duplicated_labeled_sample_row_ids(),
                  labels_scaler=labels_scaler)
 
 
