@@ -19,6 +19,23 @@ class BaseRowsStorage(object):
         data = np.empty(0, dtype=np.dtype(self._columns_provider.get_columns_list_with_types()))
         return pd.DataFrame(data)
 
+    def _balance(self, column_name):
+        """ Performs oversampled balancing.
+        """
+        assert(isinstance(self._df, pd.DataFrame))
+
+        max_size = self._df[column_name].value_counts().max()
+
+        dframes = [self._df]
+        for class_index, group in self._df.groupby(column_name):
+            dframes.append(group.sample(max_size - len(group), replace=True))
+
+        # Clear resources
+        self._df = pd.concat(dframes)
+        for df in dframes:
+            del df
+        gc.collect()
+
     def set_value(self, row_ind, column, value):
         self._df.at[row_ind, column] = value
 

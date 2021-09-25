@@ -15,10 +15,3 @@ class BaseInputSamplesRepository(BaseInputRepository):
         """
         text_column_names = list(self._rows_provider.TextProvider.iter_columns())
         self._columns_provider.set_text_column_names(text_column_names)
-
-    def _setup_storage(self):
-        """ Setup output labels uint
-        """
-        super(BaseInputSamplesRepository, self)._setup_storage()
-        self._storage.set_output_labels_uint(
-            labels_uint=self._rows_provider.LabelProvider.OutputLabelsUint)

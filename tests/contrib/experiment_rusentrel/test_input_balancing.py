@@ -4,6 +4,7 @@ import unittest
 
 sys.path.append('../')
 
+from arekit.common.experiment import const
 from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
@@ -12,7 +13,6 @@ from arekit.common.experiment.input.providers.columns.sample import SampleColumn
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.experiment.input.storages.sample import BaseSampleStorage
-from arekit.common.experiment.input.storages.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
@@ -54,16 +54,15 @@ class TestInputBalancing(unittest.TestCase):
         df = df.append({"row_id": 1, "id": 5, "label": 0, "text_a": "-", "s_ind": 0, "t_ind": 0}, ignore_index=True)
         df = df.append({"row_id": 1, "id": 6, "label": 0, "text_a": "-", "s_ind": 0, "t_ind": 0}, ignore_index=True)
 
-        balanced_df = SampleRowBalancerHelper.calculate_balanced_df(
-            df=df,
-            create_blank_df=lambda size: storage._create_blank_df(size),
-            output_labels_uint=label_provider.OutputLabelsUint)
+        storage._df = df
 
         print("Original:")
-        print(df.shape)
+        print(storage._df.shape)
+
+        storage._balance(column_name=const.LABEL)
 
         print("Balanced:")
-        print(balanced_df.shape)
+        print(storage._df)
 
 
 if __name__ == '__main__':

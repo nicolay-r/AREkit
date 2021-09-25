@@ -1,7 +1,6 @@
 import logging
 
 from arekit.common.experiment import const
-from arekit.common.experiment.input.storages.helper.balancing import SampleRowBalancerHelper
 from arekit.common.experiment.input.storages.sample import BaseSampleStorage
 from arekit.common.utils import create_dir_if_not_exists
 
@@ -17,7 +16,6 @@ class TsvSampleStorage(BaseSampleStorage):
         self.__balance = balance
         self.__write_header = write_header
 
-    # TODO: 202 to TsvSamplesWriter.
     def save(self, target):
         assert(isinstance(target, str))
 
@@ -25,13 +23,8 @@ class TsvSampleStorage(BaseSampleStorage):
 
         if self.__balance:
             logger.info("Start balancing...")
-            balanced_df = SampleRowBalancerHelper.calculate_balanced_df(
-                df=self._df,
-                create_blank_df=lambda size: self._create_blank_df(size),
-                output_labels_uint=self._output_labels_uint)
+            self._balance(const.LABEL)
             logger.info("Balancing completed!")
-            self._dispose_dataframe()
-            self._df = balanced_df
 
         logger.info("Saving... {shape}: {filepath}".format(
             shape=self._df.shape,  # self._df.shape,

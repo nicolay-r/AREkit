@@ -9,7 +9,6 @@ class BaseSampleStorage(BaseRowsStorage):
 
     def __init__(self):
         super(BaseSampleStorage, self).__init__()
-        self._output_labels_uint = None
 
     # region private methods
 
@@ -19,21 +18,7 @@ class BaseSampleStorage(BaseRowsStorage):
 
     # endregion
 
-    # region protected methods
-
-    def _create_blank_df(self, size):
-        df = self._create_empty()
-        self.__fast_init_df(df=df, rows_count=size)
-        return df
-
-    # endregion
-
     # region public methods
-
-    def set_output_labels_uint(self, labels_uint):
-        if self._output_labels_uint is not None:
-            raise Exception("Output labels already defined!")
-        self._output_labels_uint = labels_uint
 
     # TODO: 202 to BaseSampleWriter.
     def save(self, target):
