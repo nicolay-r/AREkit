@@ -2,8 +2,7 @@ import logging
 import os
 import gc
 
-from arekit.common.experiment.engine.cv_based import ExperimentEngine
-from arekit.common.experiment.engine.utils import rm_dir_contents
+from arekit.common.experiment.engine import ExperimentEngine
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.data_handling.data import HandledData
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
@@ -11,6 +10,7 @@ from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 from arekit.contrib.networks.shapes import NetworkInputShapes
+from arekit.contrib.networks.utils import rm_dir_contents
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

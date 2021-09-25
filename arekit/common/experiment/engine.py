@@ -1,4 +1,5 @@
-from arekit.common.experiment.engine.utils import setup_logger
+import logging
+
 from arekit.common.experiment.formats.base import BaseExperiment
 
 
@@ -11,7 +12,17 @@ class ExperimentEngine(object):
     def __init__(self, experiment):
         assert(isinstance(experiment, BaseExperiment))
         self._experiment = experiment
-        self._logger = setup_logger()
+        self._logger = self.__create_logger()
+
+    @staticmethod
+    def __create_logger():
+        stream_handler = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s %(levelname)8s %(name)s | %(message)s')
+        stream_handler.setFormatter(formatter)
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.INFO)
+        logger.addHandler(stream_handler)
+        return logger
 
     # region protected methods
 

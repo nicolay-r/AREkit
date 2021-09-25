@@ -1,5 +1,5 @@
 from arekit.common.experiment.data.serializing import SerializationData
-from arekit.common.experiment.engine.cv_based import ExperimentEngine
+from arekit.common.experiment.engine import ExperimentEngine
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 
 
