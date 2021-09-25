@@ -1,4 +1,4 @@
-from arekit.common.experiment.data.serializing import SerializationData
+from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 
 

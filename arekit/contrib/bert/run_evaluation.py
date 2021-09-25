@@ -1,7 +1,7 @@
 import logging
 from os.path import exists, join
 
-from arekit.common.experiment.data.training import TrainingData
+from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter

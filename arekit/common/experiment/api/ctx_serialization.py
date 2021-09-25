@@ -1,5 +1,5 @@
 from arekit.common.experiment.annot.base import BaseAnnotator
-from arekit.common.experiment.data.base import DataIO
+from arekit.common.experiment.api.ctx_base import DataIO
 from arekit.common.labels.scaler import BaseLabelScaler
 
 

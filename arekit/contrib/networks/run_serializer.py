@@ -1,4 +1,4 @@
-from arekit.common.experiment.data.serializing import SerializationData
+from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 

@@ -1,4 +1,4 @@
-from arekit.common.experiment.data.base import DataIO
+from arekit.common.experiment.api.ctx_base import DataIO
 
 
 class TrainingData(DataIO):

@@ -12,7 +12,7 @@ class MulticlassOutputFormatter(BaseOutputFormatter):
 
     def __init__(self, labels_scaler, output_provider):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(MulticlassOutputFormatter, self).__init__(ids_formatter=MultipleIDProvider(),
+        super(MulticlassOutputFormatter, self).__init__(ids_provider=MultipleIDProvider(),
                                                         output_provider=output_provider)
         self.__labels_scaler = labels_scaler
 

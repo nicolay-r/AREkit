@@ -1,8 +1,8 @@
 import logging
 
+from arekit.common.experiment.api.ctx_base import DataIO
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_opin import OpinionOperations
-from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiment_rusentrel.labels.formatters.neut_label import ExperimentNeutralLabelsFormatter

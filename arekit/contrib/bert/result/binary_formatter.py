@@ -15,7 +15,7 @@ class BertBinaryOutputFormatter(BaseOutputFormatter):
 
     def __init__(self, labels_scaler, output_provider):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertBinaryOutputFormatter, self).__init__(ids_formatter=BinaryIDProvider(),
+        super(BertBinaryOutputFormatter, self).__init__(ids_provider=BinaryIDProvider(),
                                                         output_provider=output_provider)
         self.__labels_scaler = labels_scaler
 
@@ -28,12 +28,12 @@ class BertBinaryOutputFormatter(BaseOutputFormatter):
         """
         ind_max = df[BertBinaryOutputFormatter.YES].idxmax()
         sample_id = df.loc[ind_max][const.ID]
-        uint_label = self._ids_formatter.parse_label_in_sample_id(sample_id)
+        uint_label = self._ids_provider.parse_label_in_sample_id(sample_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)
 
     def __iter_linked_opinion_indices(self, linked_df):
         sample_ids = linked_df[const.ID].tolist()
-        all_news = [self._ids_formatter.parse_index_in_sample_id(sample_id)
+        all_news = [self._ids_provider.parse_index_in_sample_id(sample_id)
                     for sample_id in sample_ids]
         for news_id in set(all_news):
             yield news_id
@@ -50,8 +50,8 @@ class BertBinaryOutputFormatter(BaseOutputFormatter):
         assert(isinstance(opinions_reader, BaseOpinionsStorage))
 
         for opinion_ind in self.__iter_linked_opinion_indices(linked_df=linked_df):
-            ind_pattern = self._ids_formatter.create_pattern(id_value=opinion_ind,
-                                                             p_type=BaseIDProvider.INDEX)
+            ind_pattern = self._ids_provider.create_pattern(id_value=opinion_ind,
+                                                            p_type=BaseIDProvider.INDEX)
             opinion_df = linked_df[linked_df[const.ID].str.contains(ind_pattern)]
 
             yield self._compose_opinion_by_opinion_id(
