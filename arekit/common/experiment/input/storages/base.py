@@ -65,10 +65,6 @@ class BaseRowsStorage(object):
     def init_empty(self):
         self._df = self._create_empty()
 
-    # TODO: 202 to BaseRowsWriter.
-    def save(self, target):
-        raise NotImplementedError()
-
     # endregion
 
     # region base methods
@@ -78,7 +74,7 @@ class BaseRowsStorage(object):
             yield row
 
     def __enter__(self):
-        return self
+        self.init_empty()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self._dispose_dataframe()

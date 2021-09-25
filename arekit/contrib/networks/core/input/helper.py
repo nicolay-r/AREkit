@@ -11,6 +11,7 @@ from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsR
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
+from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
@@ -49,7 +50,7 @@ class NetworkInputHelper(object):
                 emb_vector=pair[1]))
 
     @staticmethod
-    def __create_samples_repo(exp_data, term_embedding_pairs, entity_to_group_func, sample_storage):
+    def __create_samples_repo(exp_data, term_embedding_pairs, entity_to_group_func, sample_writer):
         sample_row_provider = NetworkSampleRowProvider(
             label_provider=exp_data.LabelProvider,
             text_provider=NetworkInputHelper.__create_text_provider(
@@ -64,15 +65,17 @@ class NetworkInputHelper(object):
         return BaseInputSamplesRepository(
             columns_provider=SampleColumnsProvider(store_labels=True),
             rows_provider=sample_row_provider,
-            storage=sample_storage)
+            storage=BaseRowsStorage(),
+            writer=sample_writer)
 
     @staticmethod
-    def __create_opinions_repo(opinions_storage, data_type):
+    def __create_opinions_repo(opinions_writer, data_type):
         assert(isinstance(data_type, DataType))
         return BaseInputOpinionsRepository(
             columns_provider=OpinionColumnsProvider(),
             rows_provider=BaseOpinionsRowProvider(),
-            storage=opinions_storage)
+            storage=BaseRowsStorage(),
+            writer=opinions_writer)
 
     @staticmethod
     def __add_term_embedding(dict_data, term, emb_vector):
@@ -108,11 +111,11 @@ class NetworkInputHelper(object):
 
         # Composing input.
         opinions_repo = NetworkInputHelper.__create_opinions_repo(
-            opinions_storage=experiment.ExperimentIO.create_opinions_writer(data_type=data_type),
+            opinions_writer=experiment.ExperimentIO.create_opinions_writer(data_type=data_type),
             data_type=data_type)
 
         samples_repo = NetworkInputHelper.__create_samples_repo(
-            sample_storage=experiment.ExperimentIO.create_samples_writer(data_type=data_type, balance=balance),
+            sample_writer=experiment.ExperimentIO.create_samples_writer(data_type=data_type, balance=balance),
             exp_data=experiment.DataIO,
             entity_to_group_func=experiment.entity_to_group,
             term_embedding_pairs=term_embedding_pairs)

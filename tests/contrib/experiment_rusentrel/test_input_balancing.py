@@ -5,18 +5,18 @@ import unittest
 sys.path.append('../')
 
 from arekit.common.experiment import const
-from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
-from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
+from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
-from arekit.common.experiment.input.storages.sample import BaseSampleStorage
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
+from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 
 
 class TestInputBalancing(unittest.TestCase):
@@ -33,17 +33,14 @@ class TestInputBalancing(unittest.TestCase):
                                                                      synonyms=synonyms))
         text_provider = BaseSingleTextProvider(terms_mapper)
 
-        storage = BaseSampleStorage()
-        BaseSampleRowProvider(label_provider=label_provider,
-                              text_provider=text_provider)
+        storage = BaseRowsStorage()
 
         BaseInputSamplesRepository(
             columns_provider=SampleColumnsProvider(store_labels=True),
             rows_provider=BaseSampleRowProvider(
                 label_provider=label_provider,
                 text_provider=text_provider),
-            storage=storage
-        )
+            storage=storage)
 
         storage.init_empty()
 

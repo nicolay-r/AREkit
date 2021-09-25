@@ -7,6 +7,7 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
+from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 
@@ -36,8 +37,8 @@ class BertExperimentInputSerializer(ExperimentEngine):
         assert(isinstance(data_type, DataType))
         opinions_target = self._experiment.ExperimentIO.create_opinions_writer_target(data_type)
         samples_target = self._experiment.ExperimentIO.create_samples_writer_target(data_type)
-        opinions_storage = self._experiment.ExperimentIO.create_opinions_writer(data_type)
-        samples_storage = self._experiment.ExperimentIO.create_samples_writer(
+        opinions_writer = self._experiment.ExperimentIO.create_opinions_writer(data_type)
+        samples_writer = self._experiment.ExperimentIO.create_samples_writer(
             data_type=data_type,
             balance=self.__balance_train_samples)
 
@@ -53,11 +54,13 @@ class BertExperimentInputSerializer(ExperimentEngine):
         opinions_repo = BaseInputOpinionsRepository(
             columns_provider=OpinionColumnsProvider(),
             rows_provider=BaseOpinionsRowProvider(),
-            storage=opinions_storage)
+            storage=BaseRowsStorage(),
+            writer=opinions_writer)
         samples_repo = BaseInputSamplesRepository(
             columns_provider=SampleColumnsProvider(store_labels=True),
             rows_provider=sample_rows_provider,
-            storage=samples_storage)
+            storage=BaseRowsStorage(),
+            writer=samples_writer)
 
         # Create opinion provider
         opinion_provider = OpinionProvider.create(
