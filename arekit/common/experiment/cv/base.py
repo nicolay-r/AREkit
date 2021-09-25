@@ -1,8 +1,8 @@
 from arekit.common.experiment.cv.splitters.base import CrossValidationSplitter
-from arekit.common.experiment.folding.base import BaseExperimentDataFolding
+from arekit.common.folding.base import BaseDataFolding
 
 
-class TwoClassCVFolding(BaseExperimentDataFolding):
+class TwoClassCVFolding(BaseDataFolding):
     """ Performs folding onto a pair of data_types,
         i.e. two-class cv-folding algorithm
     """

@@ -1,4 +1,5 @@
 from arekit.common.experiment.api.ctx_base import DataIO
+from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews

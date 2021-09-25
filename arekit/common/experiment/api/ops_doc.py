@@ -1,4 +1,4 @@
-from arekit.common.experiment.folding.base import BaseExperimentDataFolding
+from arekit.common.folding.base import BaseDataFolding
 from arekit.processing.text.parser import TextParser
 
 
@@ -8,7 +8,7 @@ class DocumentOperations(object):
     """
 
     def __init__(self, folding):
-        assert(isinstance(folding, BaseExperimentDataFolding))
+        assert(isinstance(folding, BaseDataFolding))
         self.__folding = folding
 
     @property

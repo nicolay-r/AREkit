@@ -1,7 +1,7 @@
-from arekit.common.experiment.folding.base import BaseExperimentDataFolding
+from arekit.common.folding.base import BaseDataFolding
 
 
-class FixedFolding(BaseExperimentDataFolding):
+class FixedFolding(BaseDataFolding):
 
     def __init__(self, doc_to_dtype_func, doc_ids_to_fold, supported_data_types):
         assert(callable(doc_to_dtype_func))

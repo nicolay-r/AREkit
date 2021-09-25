@@ -2,7 +2,7 @@ import logging
 
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
-from arekit.common.experiment.folding.types import FoldingType
+from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding

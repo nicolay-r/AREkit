@@ -1,7 +1,7 @@
-from arekit.common.experiment.folding.base import BaseExperimentDataFolding
+from arekit.common.folding.base import BaseDataFolding
 
 
-class NoFolding(BaseExperimentDataFolding):
+class NoFolding(BaseDataFolding):
     """ The case of absent folding in experiment.
     """
 

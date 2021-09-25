@@ -1,4 +1,4 @@
-class BaseExperimentDataFolding(object):
+class BaseDataFolding(object):
     """ Describes and provides API on how to handle doc_ids during experiment,
         i.e. how many states does nested folding algorithm supports,
         how to perform folding for a particular state (current),
