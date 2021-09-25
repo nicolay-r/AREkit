@@ -22,7 +22,7 @@ from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelS
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.context.architectures.pcnn import PiecewiseCNN
 from arekit.contrib.networks.context.configurations.cnn import CNNConfig
-from arekit.contrib.networks.core.data_handling.data import HandledData
+from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
@@ -145,8 +145,8 @@ def extract(text):
 
     config.TermEmbeddingMatrix(EmbeddingHelper.load_vocab("embedding.txt"))
 
-    handled_data = HandledData.create_empty()
-    handled_data.initialize(
+    inference_ctx = InferenceContext.create_empty()
+    inference_ctx.initialize(
         dtypes=[DataType.Test],
         create_samples_reader_func=TsvInputSampleReader.from_tsv(
             filepath="samples.txt",
@@ -172,7 +172,7 @@ def extract(text):
             model_name_tag="_"),
         network=network,
         config=config,
-        handled_data=handled_data,
+        inference_ctx=inference_ctx,
         bags_collection_type=SingleBagsCollection,      # Используем на вход 1 пример.
     )
 

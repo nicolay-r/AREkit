@@ -15,8 +15,8 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 
 from arekit.contrib.networks.core.callback.base import Callback
 from arekit.contrib.networks.core.cancellation import OperationCancellation
-from arekit.contrib.networks.core.data_handling.data import HandledData
-from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
+from arekit.contrib.networks.core.ctx_inference import InferenceContext
+from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.feeding.bags.collection.multi import MultiInstanceBagsCollection
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
@@ -42,10 +42,10 @@ class BaseTensorflowModel(BaseModel):
     SaveTensorflowModelStateOnFit = True
     FeedDictShow = False
 
-    def __init__(self, nn_io, network, handled_data, bags_collection_type, config, callback=None):
+    def __init__(self, nn_io, network, inference_ctx, bags_collection_type, config, callback=None):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
-        assert(isinstance(handled_data, HandledData))
+        assert(isinstance(inference_ctx, InferenceContext))
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(callback, Callback) or callback is None)
         assert(isinstance(config, DefaultNetworkConfig))
@@ -55,7 +55,7 @@ class BaseTensorflowModel(BaseModel):
         self.__sess = None
         self.__saver = None
         self.__optimiser = None
-        self.__handled_data = handled_data
+        self.__inference_ctx = inference_ctx
         self.__network = network
         self.__callback = callback
         self.__current_epoch_index = 0
@@ -108,10 +108,10 @@ class BaseTensorflowModel(BaseModel):
         return self.__network.create_feed_dict(network_input, data_type)
 
     def __get_bags_collection(self, data_type):
-        return self.__handled_data.BagsCollections[data_type]
+        return self.__inference_ctx.BagsCollections[data_type]
 
     def __get_labeled_samples_collection(self, data_type):
-        return self.__handled_data.LabeledSamplesCollection[data_type]
+        return self.__inference_ctx.LabeledSamplesCollections[data_type]
 
     def __notify_initialized(self):
         if self.__callback is not None:

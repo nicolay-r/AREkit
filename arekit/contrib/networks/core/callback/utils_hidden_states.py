@@ -4,8 +4,7 @@ from os.path import join
 import numpy as np
 
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
-
+from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

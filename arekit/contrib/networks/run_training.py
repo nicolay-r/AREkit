@@ -4,7 +4,7 @@ import gc
 
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.networks.core.data_handling.data import HandledData
+from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -48,9 +48,6 @@ class NetworksTrainingEngine(ExperimentEngine):
         """
         assert(isinstance(it_index, int))
 
-        # Perform data reading.
-        handled_data = HandledData.create_empty()
-
         targets_existed = self._experiment.ExperimentIO.check_targets_existed(
             data_types_iter=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types())
 
@@ -63,7 +60,8 @@ class NetworksTrainingEngine(ExperimentEngine):
         self.__config.set_term_embedding(embedding_data)
 
         # Performing samples reading process.
-        handled_data.initialize(
+        inference_ctx = InferenceContext.create_empty()
+        inference_ctx.initialize(
             dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             create_samples_reader_func=lambda data_type: self._experiment.ExperimentIO.create_samples_reader(data_type),
             has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state,
@@ -78,8 +76,8 @@ class NetworksTrainingEngine(ExperimentEngine):
             ]),
             bag_size=self.__config.BagSize)
 
-        if handled_data.HasNormalizedWeights:
-            weights = handled_data.calc_normalized_weigts(labels_count=self._experiment.DataIO.LabelsCount)
+        if inference_ctx.HasNormalizedWeights:
+            weights = inference_ctx.calc_normalized_weigts(labels_count=self._experiment.DataIO.LabelsCount)
             self.__config.set_class_weights(weights)
 
         # Update parameters after iteration preparation has been completed.
@@ -93,7 +91,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         network = self.__create_network_func()
         model = BaseTensorflowModel(network=network,
                                     config=self.__config,
-                                    handled_data=handled_data,
+                                    inference_ctx=inference_ctx,
                                     bags_collection_type=self.__bags_collection_type,
                                     callback=callback,
                                     nn_io=self._experiment.DataIO.ModelIO)

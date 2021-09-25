@@ -13,7 +13,7 @@ from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.provider import OpinionCollectionsProvider
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
-from arekit.contrib.networks.core.data_handling.predict_log import NetworkInputDependentVariables
+from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
 from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel

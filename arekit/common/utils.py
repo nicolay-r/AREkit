@@ -1,4 +1,3 @@
-import collections
 from os import makedirs
 from os.path import join, dirname, exists
 import numpy as np

@@ -13,24 +13,24 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class HandledData(object):
+class InferenceContext(object):
 
-    def __init__(self, labeled_samples, bags_collection):
-        assert(isinstance(labeled_samples, dict))
-        assert(isinstance(bags_collection, dict))
-        self.__labeled_samples = labeled_samples
-        self.__bags_collection = bags_collection
+    def __init__(self, labeled_samples_dict, bags_collections_dict):
+        assert(isinstance(labeled_samples_dict, dict))
+        assert(isinstance(bags_collections_dict, dict))
+        self.__labeled_samples_dict = labeled_samples_dict
+        self.__bags_collections_dict = bags_collections_dict
         self.__train_stat_uint_labeled_sample_row_ids = None
 
     # region Properties
 
     @property
     def BagsCollections(self):
-        return self.__bags_collection
+        return self.__bags_collections_dict
 
     @property
-    def LabeledSamplesCollection(self):
-        return self.__labeled_samples
+    def LabeledSamplesCollections(self):
+        return self.__labeled_samples_dict
 
     @property
     def HasNormalizedWeights(self):
@@ -40,8 +40,7 @@ class HandledData(object):
 
     @classmethod
     def create_empty(cls):
-        return cls(labeled_samples={},
-                   bags_collection={})
+        return cls(labeled_samples_dict={}, bags_collections_dict={})
 
     def initialize(self, dtypes, create_samples_reader_func, has_model_predefined_state,
                    vocab, labels_count, bags_collection_type, bag_size, input_shapes):
@@ -71,8 +70,8 @@ class HandledData(object):
                 desc="Filling bags collection [{}]".format(data_type))
 
             # Saving into dictionaries.
-            self.__bags_collection[data_type] = bags_collection
-            self.__labeled_samples[data_type] = LabeledCollection(
+            self.__bags_collections_dict[data_type] = bags_collection
+            self.__labeled_samples_dict[data_type] = LabeledCollection(
                 uint_labeled_ids=uint_labeled_sample_row_ids)
 
             if data_type == DataType.Train:
