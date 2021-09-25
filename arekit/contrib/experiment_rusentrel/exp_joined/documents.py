@@ -1,4 +1,4 @@
-from arekit.common.experiment.formats.documents import DocumentOperations
+from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 

@@ -1,6 +1,6 @@
+from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data.serializing import SerializationData
-from arekit.common.experiment.formats.documents import DocumentOperations
 from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
 
 

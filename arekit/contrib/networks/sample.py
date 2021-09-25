@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
-from arekit.common.model.sample import InputSampleBase
+from arekit.common.experiment.input.sample import InputSampleBase
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.sample_dist import DistanceFeatures

@@ -1,7 +1,7 @@
 import logging
 
-from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.common.experiment.formats.opinions import OpinionOperations
+from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.utils import progress_bar_iter
 

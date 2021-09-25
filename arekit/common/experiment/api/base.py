@@ -2,12 +2,12 @@ import logging
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
+from arekit.common.experiment.api.io_utils import BaseIOUtils
+from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data.base import DataIO
 from arekit.common.experiment.data.training import TrainingData
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.common.experiment.formats.opinions import OpinionOperations
-from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)

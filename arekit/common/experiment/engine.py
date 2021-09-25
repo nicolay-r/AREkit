@@ -1,6 +1,6 @@
 import logging
 
-from arekit.common.experiment.formats.base import BaseExperiment
+from arekit.common.experiment.api.base import BaseExperiment
 
 
 class ExperimentEngine(object):

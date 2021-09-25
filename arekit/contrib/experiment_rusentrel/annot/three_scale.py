@@ -2,9 +2,9 @@ import logging
 
 from arekit.common.experiment.annot.base import BaseAnnotator
 from arekit.common.experiment.annot.base_annot import BaseAnnotationAlgorithm
+from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.opinions.collection import OpinionCollection
 

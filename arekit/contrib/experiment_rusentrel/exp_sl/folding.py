@@ -1,11 +1,11 @@
 from collections import OrderedDict
 from os.path import join
 
+from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.cv.base import TwoClassCVFolding
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.folding.fixed import FixedFolding
 from arekit.common.experiment.folding.types import FoldingType
-from arekit.common.experiment.io_utils import BaseIOUtils
 from arekit.contrib.experiment_rusentrel.cv.doc_stat.sentence import SentenceBasedDocumentStatGenerator
 from arekit.contrib.experiment_rusentrel.cv.statistical import StatBasedCrossValidataionSplitter
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils

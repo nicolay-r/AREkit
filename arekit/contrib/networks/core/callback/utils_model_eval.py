@@ -1,9 +1,9 @@
 import logging
 
 from arekit.common.experiment import const
+from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.documents import DocumentOperations
-from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
 from arekit.common.experiment.output.providers.tsv import TsvBaseOutputProvider

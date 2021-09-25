@@ -1,5 +1,5 @@
+from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.formats.opinions import OpinionOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 
 

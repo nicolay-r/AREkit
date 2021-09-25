@@ -1,6 +1,6 @@
+from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.engine import ExperimentEngine
-from arekit.common.experiment.formats.base import BaseExperiment
 from arekit.common.experiment.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
