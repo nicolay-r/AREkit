@@ -55,7 +55,7 @@ class BaseTensorflowModel(BaseModel):
         self.__sess = None
         self.__saver = None
         self.__optimiser = None
-        self.__init_helper = handled_data
+        self.__handled_data = handled_data
         self.__network = network
         self.__callback = callback
         self.__current_epoch_index = 0
@@ -75,10 +75,151 @@ class BaseTensorflowModel(BaseModel):
 
     # endregion
 
-    # region public methods
+    # region private methods
 
-    def set_optimiser_value(self, value):
+    def __set_optimiser_value(self, value):
         self.__optimiser = value
+
+    def __set_optimiser(self):
+        optimiser = self.Config.Optimiser.minimize(self.__network.Cost)
+        self.__set_optimiser_value(optimiser)
+
+    def __dispose_session(self):
+        """
+        Tensorflow session dispose method
+        """
+        self.__sess.close()
+
+    # TODO. Simplify.
+    def __create_batch_by_bags_group(self, bags_group):
+        if issubclass(self.__bags_collection_type, SingleBagsCollection):
+            return MiniBatch(bags_group)
+        if issubclass(self.__bags_collection_type, MultiInstanceBagsCollection):
+            return MultiInstanceMiniBatch(bags_group)
+
+    def __create_feed_dict(self, minibatch, data_type):
+        assert(isinstance(minibatch, MiniBatch))
+        assert(isinstance(data_type, DataType))
+
+        network_input = minibatch.to_network_input(provide_labels=data_type != DataType.Test)
+        if self.FeedDictShow:
+            MiniBatch.debug_output(network_input)
+
+        return self.__network.create_feed_dict(network_input, data_type)
+
+    def __get_bags_collection(self, data_type):
+        return self.__handled_data.BagsCollections[data_type]
+
+    def __get_labeled_samples_collection(self, data_type):
+        return self.__handled_data.LabeledSamplesCollection[data_type]
+
+    def __notify_initialized(self):
+        if self.__callback is not None:
+            self.__callback.on_initialized(self)
+
+    def __initialize_session(self):
+        """
+        Tensorflow session initialization
+        """
+        init_op = tf.global_variables_initializer()
+        gpu_options = tf.GPUOptions(allow_growth=True)
+        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        sess.run(init_op)
+        self.__saver = tf.train.Saver(max_to_keep=2)
+        self.__sess = sess
+
+    def __fit_epoch(self, minibatches_iter, total):
+        assert(isinstance(minibatches_iter, collections.Iterable))
+
+        fit_total_cost = 0
+        fit_total_acc = 0
+        groups_count = 0
+
+        it = progress_bar_defined(iterable=minibatches_iter,
+                                  unit='mbs',
+                                  desc="Training e={}".format(self.__current_epoch_index),
+                                  total=total)
+
+        for bags_group in it:
+            minibatch = self.__create_batch_by_bags_group(bags_group)
+            feed_dict = self.__create_feed_dict(minibatch, data_type=DataType.Train)
+
+            hidden_list = list(self.__network.iter_hidden_parameters())
+            fetches_default = [self.__optimiser, self.__network.Cost, self.__network.Accuracy]
+            fetches_hidden = [tensor for _, tensor in hidden_list]
+
+            result = self.__sess.run(fetches_default + fetches_hidden,
+                                     feed_dict=feed_dict)
+            cost = result[1]
+
+            fit_total_cost += np.mean(cost)
+            fit_total_acc += result[2]
+            groups_count += 1
+
+        if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
+            save_fp = self.IO.get_model_target_path_tf_prefix()
+            logger.info("Update TensorFlow model state: {}".format(save_fp))
+            self.save_model(save_path=save_fp)
+
+        return fit_total_cost / groups_count, fit_total_acc / groups_count
+
+    def __label_samples(self, data_type):
+        """
+        Provides algorithm of opinions labeling according to model results.
+        """
+        assert(isinstance(data_type, DataType))
+
+        labeled_samples = self.__get_labeled_samples_collection(data_type)
+        assert(isinstance(labeled_samples, LabeledCollection))
+
+        predict_log = NetworkInputDependentVariables()
+        idh_names = []
+        idh_tensors = []
+        for name, tensor in self.__network.iter_input_dependent_hidden_parameters():
+            idh_names.append(name)
+            idh_tensors.append(tensor)
+
+        bags_collection = self.__get_bags_collection(data_type)
+        bags_per_group = self.Config.BagsPerMinibatch
+        bags_group_it = bags_collection.iter_by_groups(bags_per_group=bags_per_group,
+                                                       text_opinion_ids_set=None)
+
+        it = progress_bar_defined(
+            iterable=bags_group_it,
+            desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index, dtype=data_type),
+            total=bags_collection.get_groups_count(bags_per_group))
+
+        for bags_group in it:
+
+            minibatch = self.__create_batch_by_bags_group(bags_group)
+            feed_dict = self.__create_feed_dict(minibatch=minibatch,
+                                                data_type=data_type)
+
+            result = self.__sess.run([self.__network.Labels] + idh_tensors, feed_dict=feed_dict)
+            uint_labels = result[0]
+            idh_values = result[1:]
+
+            if len(idh_names) > 0 and len(idh_values) > 0:
+                predict_log.add_input_dependent_values(names_list=idh_names,
+                                                       tensor_values_list=idh_values,
+                                                       text_opinion_ids=[sample.ID for sample in
+                                                                         minibatch.iter_by_samples()],
+                                                       bags_per_minibatch=self.Config.BagsPerMinibatch,
+                                                       bag_size=self.Config.BagSize)
+
+            # apply labeling
+            for bag_index, bag in enumerate(minibatch.iter_by_bags()):
+
+                uint_label = int(uint_labels[bag_index])
+
+                for sample in bag:
+                    if sample.ID < 0:
+                        continue
+                    labeled_samples.assign_uint_label(uint_label, sample.ID)
+
+        return predict_log
+
+    # endregion
 
     def load_model(self, save_path):
         assert(isinstance(self.__saver, Saver))
@@ -92,17 +233,11 @@ class BaseTensorflowModel(BaseModel):
                           save_path=save_path,
                           write_meta_graph=False)
 
-    def __dispose_session(self):
-        """
-        Tensorflow session dispose method
-        """
-        self.__sess.close()
-
     def run_training(self, model_params, seed):
         assert(isinstance(model_params, NeuralNetworkModelParams))
 
         self.__network.compile(self.Config, reset_graph=True, graph_seed=seed)
-        self.set_optimiser()
+        self.__set_optimiser()
         self.__notify_initialized()
 
         self.__initialize_session()
@@ -115,17 +250,13 @@ class BaseTensorflowModel(BaseModel):
         self.fit(epochs_count=model_params.EpochsCount)
         self.__dispose_session()
 
-    # endregion
-
-    # region Abstract
-
     def fit(self, epochs_count):
         assert(isinstance(epochs_count, int))
         assert(self.__sess is not None)
         assert(isinstance(self.__callback, Callback))
 
         operation_cancel = OperationCancellation()
-        bags_collection = self.get_bags_collection(DataType.Train)
+        bags_collection = self.__get_bags_collection(DataType.Train)
 
         bags_per_group = self.Config.BagsPerMinibatch
         # However this is not a precise value.
@@ -162,7 +293,7 @@ class BaseTensorflowModel(BaseModel):
     def predict(self, data_type=DataType.Test):
         """ Fills the related labeling collection.
         """
-        labeled_samples = self.get_labeled_samples_collection(data_type=data_type)
+        labeled_samples = self.__get_labeled_samples_collection(data_type=data_type)
 
         # Clear and assert the correctness.
         labeled_samples.reset_labels()
@@ -180,141 +311,5 @@ class BaseTensorflowModel(BaseModel):
         result_list = self.__sess.run(tensors)
         return names, result_list
 
-    def set_optimiser(self):
-        optimiser = self.Config.Optimiser.minimize(self.__network.Cost)
-        self.set_optimiser_value(optimiser)
-
-    def get_bags_collection(self, data_type):
-        return self.__init_helper.BagsCollections[data_type]
-
     def get_labeled_samples_collection(self, data_type):
-        return self.__init_helper.LabeledSamplesCollection[data_type]
-
-    # TODO. Simplify.
-    def create_batch_by_bags_group(self, bags_group):
-        if issubclass(self.__bags_collection_type, SingleBagsCollection):
-            return MiniBatch(bags_group)
-        if issubclass(self.__bags_collection_type, MultiInstanceBagsCollection):
-            return MultiInstanceMiniBatch(bags_group)
-
-    def create_feed_dict(self, minibatch, data_type):
-        assert(isinstance(minibatch, MiniBatch))
-        assert(isinstance(data_type, DataType))
-
-        network_input = minibatch.to_network_input(provide_labels=data_type != DataType.Test)
-        if self.FeedDictShow:
-            MiniBatch.debug_output(network_input)
-
-        return self.__network.create_feed_dict(network_input, data_type)
-
-    # endregion
-
-    # region Private
-
-    def __fit_epoch(self, minibatches_iter, total):
-        assert(isinstance(minibatches_iter, collections.Iterable))
-
-        fit_total_cost = 0
-        fit_total_acc = 0
-        groups_count = 0
-
-        it = progress_bar_defined(iterable=minibatches_iter,
-                                  unit='mbs',
-                                  desc="Training e={}".format(self.__current_epoch_index),
-                                  total=total)
-
-        for bags_group in it:
-            minibatch = self.create_batch_by_bags_group(bags_group)
-            feed_dict = self.create_feed_dict(minibatch, data_type=DataType.Train)
-
-            hidden_list = list(self.__network.iter_hidden_parameters())
-            fetches_default = [self.__optimiser, self.__network.Cost, self.__network.Accuracy]
-            fetches_hidden = [tensor for _, tensor in hidden_list]
-
-            result = self.__sess.run(fetches_default + fetches_hidden,
-                                     feed_dict=feed_dict)
-            cost = result[1]
-
-            fit_total_cost += np.mean(cost)
-            fit_total_acc += result[2]
-            groups_count += 1
-
-        if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
-            save_fp = self.IO.get_model_target_path_tf_prefix()
-            logger.info("Update TensorFlow model state: {}".format(save_fp))
-            self.save_model(save_path=save_fp)
-
-        return fit_total_cost / groups_count, fit_total_acc / groups_count
-
-    def __notify_initialized(self):
-        if self.__callback is not None:
-            self.__callback.on_initialized(self)
-
-    def __initialize_session(self):
-        """
-        Tensorflow session initialization
-        """
-        init_op = tf.global_variables_initializer()
-        gpu_options = tf.GPUOptions(allow_growth=True)
-        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
-        sess.run(init_op)
-        self.__saver = tf.train.Saver(max_to_keep=2)
-        self.__sess = sess
-
-    def __label_samples(self, data_type):
-        """
-        Provides algorithm of opinions labeling according to model results.
-        """
-        assert(isinstance(data_type, DataType))
-
-        labeled_samples = self.get_labeled_samples_collection(data_type)
-        assert(isinstance(labeled_samples, LabeledCollection))
-
-        predict_log = NetworkInputDependentVariables()
-        idh_names = []
-        idh_tensors = []
-        for name, tensor in self.__network.iter_input_dependent_hidden_parameters():
-            idh_names.append(name)
-            idh_tensors.append(tensor)
-
-        bags_collection = self.get_bags_collection(data_type)
-        bags_per_group = self.Config.BagsPerMinibatch
-        bags_group_it = bags_collection.iter_by_groups(bags_per_group=bags_per_group,
-                                                       text_opinion_ids_set=None)
-
-        it = progress_bar_defined(
-            iterable=bags_group_it,
-            desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index, dtype=data_type),
-            total=bags_collection.get_groups_count(bags_per_group))
-
-        for bags_group in it:
-
-            minibatch = self.create_batch_by_bags_group(bags_group)
-            feed_dict = self.create_feed_dict(minibatch=minibatch,
-                                              data_type=data_type)
-
-            result = self.__sess.run([self.__network.Labels] + idh_tensors, feed_dict=feed_dict)
-            uint_labels = result[0]
-            idh_values = result[1:]
-
-            if len(idh_names) > 0 and len(idh_values) > 0:
-                predict_log.add_input_dependent_values(names_list=idh_names,
-                                                       tensor_values_list=idh_values,
-                                                       text_opinion_ids=[sample.ID for sample in
-                                                                         minibatch.iter_by_samples()],
-                                                       bags_per_minibatch=self.Config.BagsPerMinibatch,
-                                                       bag_size=self.Config.BagSize)
-
-            # apply labeling
-            for bag_index, bag in enumerate(minibatch.iter_by_bags()):
-
-                uint_label = int(uint_labels[bag_index])
-
-                for sample in bag:
-                    if sample.ID < 0:
-                        continue
-                    labeled_samples.assign_uint_label(uint_label, sample.ID)
-
-        return predict_log
-
-    # endregion
+        return self.__get_labeled_samples_collection(data_type)
