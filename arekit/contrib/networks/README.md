@@ -4,8 +4,10 @@
     <img src="logo.png"/>
 </p>
 
-This contributional part provides Neural Networks implementation for (sentiment) 
-relation extraction task.
+This contributional part provides a 
+[Tensorflow-based](https://www.tensorflow.org/)
+Neural Networks implementation
+for (sentiment) relation extraction task.
 Input embedding enlarged with the task specific features.
 
 ## Contents
