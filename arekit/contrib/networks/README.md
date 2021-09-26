@@ -1,5 +1,9 @@
 # Neural Network classifiers
 
+<p align="center">
+    <img src="logo.png"/>
+</p>
+
 This contributional part provides Neural Networks implementation for (sentiment) 
 relation extraction task.
 Input embedding enlarged with the task specific features.
@@ -7,7 +11,6 @@ Input embedding enlarged with the task specific features.
 ## Contents
 * [List of features](#list-of-features)
 * [Models List](#models-list)
-* [API](#api)
 
 ## List of features
 
@@ -73,14 +76,3 @@ Input embedding enlarged with the task specific features.
         [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
     - Single MLP
         [[code]](networks/multi/architectures/base/base_single_mlp.py);
-        
-### Could be added
-* Semantic Relation Classification via Hierarchical Recurrent Neural Network with Attention
-[[paper]](https://www.aclweb.org/anthology/C16-1119)
-
-## API
-
-* Network [[base-class]](networks/core/nn.py);
-* Model [[base-class]](networks/core/model.py);
-* IO [[base-class]](networks/core/nn_io.py);
-* Callback [[base-class]](networks/core/callback/base.py);
