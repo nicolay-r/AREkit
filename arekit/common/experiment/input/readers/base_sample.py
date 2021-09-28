@@ -1,6 +1,6 @@
 from arekit.common.experiment import const
-from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.input.readers.base import BaseInputReader
+from arekit.common.experiment.row_ids.base import BaseIDProvider
 
 
 class BaseInputSampleReader(BaseInputReader):

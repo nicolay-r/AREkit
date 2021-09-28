@@ -4,10 +4,10 @@ import unittest
 
 sys.path.append('../../')
 
+from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
 from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from tests.contrib.bert.labels import TestThreeLabelScaler
-from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputProvider
 
 

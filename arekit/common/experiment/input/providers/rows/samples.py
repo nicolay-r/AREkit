@@ -5,9 +5,9 @@ from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment import const
 from arekit.common.experiment.input.providers.label.base import LabelProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.providers.rows.base import BaseRowProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
+from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
 from arekit.common.labels.base import Label
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews

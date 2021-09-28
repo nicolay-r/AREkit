@@ -1,10 +1,10 @@
 import pandas as pd
 
-from arekit.common.experiment.input.storages.opinion import BaseOpinionsStorage
+from arekit.common.experiment.input.readers.base_opinion import BaseInputOpinionReader
+from arekit.common.experiment.row_ids.base import BaseIDProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.experiment import const
 from arekit.common.experiment.output.formatters.base import BaseOutputFormatter
-from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.contrib.bert.input.providers.row_ids_binary import BinaryIDProvider
 
 
@@ -47,7 +47,7 @@ class BertBinaryOutputFormatter(BaseOutputFormatter):
 
     def _iter_by_opinions(self, linked_df, opinions_reader):
         assert(isinstance(linked_df, pd.DataFrame))
-        assert(isinstance(opinions_reader, BaseOpinionsStorage))
+        assert(isinstance(opinions_reader, BaseInputOpinionReader))
 
         for opinion_ind in self.__iter_linked_opinion_indices(linked_df=linked_df):
             ind_pattern = self._ids_provider.create_pattern(id_value=opinion_ind,

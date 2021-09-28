@@ -1,7 +1,7 @@
 import pandas as pd
 
-from arekit.common.experiment.input.providers.row_ids.base import BaseIDProvider
 from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
+from arekit.common.experiment.row_ids.base import BaseIDProvider
 
 
 class TsvInputSampleReader(BaseInputSampleReader):

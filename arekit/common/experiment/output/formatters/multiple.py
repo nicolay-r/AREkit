@@ -4,7 +4,7 @@ import pandas as pd
 from arekit.common.experiment import const
 from arekit.common.experiment.output.formatters.base import BaseOutputFormatter
 from arekit.common.experiment.input.readers.base_opinion import BaseInputOpinionReader
-from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 
 

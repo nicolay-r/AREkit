@@ -4,11 +4,11 @@ from os.path import join, exists
 
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
 from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
-from arekit.common.experiment.input.storages.tsv_opinion import TsvOpinionsStorage
-from arekit.common.experiment.input.storages.tsv_sample import TsvSampleStorage
+from arekit.common.experiment.input.writers.tsv_opinion import TsvOpinionsWriter
+from arekit.common.experiment.input.writers.tsv_sample import TsvSampleWriter
+from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
 from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 
@@ -46,10 +46,10 @@ class NetworkIOUtils(BaseIOUtils):
         return TsvInputOpinionReader.from_tsv(opinions_source)
 
     def create_opinions_writer(self):
-        return TsvOpinionsStorage()
+        return TsvOpinionsWriter()
 
     def create_samples_writer(self, data_type, balance):
-        return TsvSampleStorage(
+        return TsvSampleWriter(
             balance=balance and data_type == DataType.Train,
             write_header=True)
 

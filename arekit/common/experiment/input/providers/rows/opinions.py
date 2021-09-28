@@ -3,8 +3,8 @@ from collections import OrderedDict
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.experiment import const
-from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.input.providers.rows.base import BaseRowProvider
+from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
 
