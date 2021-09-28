@@ -35,6 +35,7 @@ class BaseOutputFormatter(object):
     def __iter_linked_opinions_df(self, news_id):
         assert(isinstance(news_id, int))
 
+        # TODO. 206 from storage. (filter by column API)
         news_df = self._df[self._df[const.NEWS_ID] == news_id]
         opinion_ids = [self._ids_provider.parse_opinion_in_opinion_id(opinion_id)
                        for opinion_id in news_df[const.ID]]

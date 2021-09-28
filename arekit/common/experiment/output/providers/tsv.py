@@ -2,11 +2,13 @@ import pandas as pd
 from arekit.common.experiment.output.providers.base import BaseOutputProvider
 
 
+# TODO. 206. Rename as reader.
 class TsvBaseOutputProvider(BaseOutputProvider):
 
     def __init__(self, has_output_header):
         assert(isinstance(has_output_header, bool))
         self.__has_output_header = has_output_header
+        # TODO. 206. Remove (this is a part of the storage)
         self.__df = None
 
     # region private methods
@@ -20,6 +22,7 @@ class TsvBaseOutputProvider(BaseOutputProvider):
 
     # endregion
 
+    # TODO. 206. Remove (this is a part of the storage)
     @property
     def DataFrame(self):
         return self.__df
