@@ -30,9 +30,12 @@ class BaseInputRepository(object):
         pass
 
     def _setup_rows_provider(self):
+        # TODO. 204 Remove storage.
         self._rows_provider.set_storage(self._storage)
 
+    # TODO. 204 Remove method.
     def _setup_storage(self):
+        # TODO. 204 Remove columns provider.
         self._storage.set_columns_provider(self._columns_provider)
 
     def _setup_writer(self):
@@ -46,6 +49,7 @@ class BaseInputRepository(object):
         assert(isinstance(self._storage, BaseRowsStorage))
 
         with self._storage:
+            # TODO. 204. we fill storage and hence self._storage.fill(...)
             self._rows_provider.fill(opinion_provider, desc)
 
             if self._writer is None:

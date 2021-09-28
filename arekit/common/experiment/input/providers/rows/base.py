@@ -14,10 +14,12 @@ class BaseRowProvider(object):
         """ NOTE: storage is considered to be intialized later on,
             once repository will be created.
         """
+        # TODO. 204 Remove storage.
         self._storage = None
 
     # region private methods
 
+    # TODO. 204 (Make this method public, rename as "iter_rows"
     def __iter_by_rows(self, opinion_provider, idle_mode):
         assert(isinstance(opinion_provider, OpinionProvider))
 
@@ -39,6 +41,7 @@ class BaseRowProvider(object):
 
     # endregion
 
+    # TODO. 204. Move this logic into source.fill.
     def fill(self, opinion_provider, desc=""):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(self._storage is not None)
@@ -64,6 +67,7 @@ class BaseRowProvider(object):
 
         self._storage.log_info()
 
+    # TODO. 204 Remove storage.
     def set_storage(self, storage):
         assert(isinstance(storage, BaseRowsStorage))
         assert(self._storage is None)
