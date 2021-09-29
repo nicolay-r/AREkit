@@ -23,14 +23,14 @@ class RuAttitudesOpinionOperations(OpinionOperations):
 
     def iter_opinions_for_extraction(self, doc_id, data_type):
 
-        collections = []
+        opinion_lists = []
 
         if data_type == DataType.Train:
             # We provide only those opinions that
             # were labeled in RuAttitudes collection
-            collections.append(self.__get_opinion_list_in_doc(doc_id=doc_id))
+            opinion_lists.append(self.__get_opinion_list_in_doc(doc_id=doc_id))
 
-        for collection in collections:
+        for collection in opinion_lists:
             for opinion in collection:
                 yield opinion
 
