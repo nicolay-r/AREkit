@@ -14,7 +14,6 @@ from arekit.common.opinions.provider import OpinionCollectionsProvider
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
-from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 
@@ -44,7 +43,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     assert (isinstance(idhp, NetworkInputDependentVariables))
 
     samples_reader = experiment.ExperimentIO.create_samples_reader(data_type)
-    news_id_by_sample_id = NetworkInputSampleReaderHelper.calculate_news_id_by_sample_id_dict(samples_reader)
+    news_id_by_sample_id = samples_reader.calculate_news_id_by_sample_id_dict()
 
     # TODO. Filepath-dependency should be removed!
     # Create and save output.

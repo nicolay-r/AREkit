@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.readers.base_opinion import BaseInputOpinionReader
+from arekit.common.experiment.input.readers.opinions import BaseInputOpinionReader
 from arekit.common.experiment.output.formatters.base import BaseOutputFormatter
 from arekit.common.experiment.output.utils import fill_opinion_collection
 from arekit.common.labels.scaler import BaseLabelScaler

@@ -17,10 +17,23 @@ class BaseRowsStorage(object):
     def __init__(self):
         self._df = None
 
+    # region properties
+
     # TODO. Temporary hack, however this should be removed in future.
     @property
     def DataFrame(self):
         return self._df
+
+    # endregion
+
+    @classmethod
+    def from_tsv(cls, filepath, sep='\t', compression='gzip', encoding='utf-8'):
+        instance = cls()
+        instance._df = pd.read_csv(filepath,
+                                   sep=sep,
+                                   encoding=encoding,
+                                   compression=compression)
+        return instance
 
     # region private methods
 
@@ -70,6 +83,22 @@ class BaseRowsStorage(object):
 
     # region public methods
 
+    def find_first_by_value(self, column_name, value):
+        row = self._df[self._df[column_name] == value]
+        return row.iloc[0]
+
+    def iter_column_values(self, column_name, dtype=None):
+        values = self._df[column_name]
+        if dtype is None:
+            return values
+        return values.astype(dtype)
+
+    def get_row(self, row_index):
+        return self._df.iloc[row_index]
+
+    def get_cell(self, row_index, column_name):
+        return self._df.iloc[row_index][column_name]
+
     def init_empty(self, columns_provider):
         cols_with_types = columns_provider.get_columns_list_with_types()
         self._df = self.__create_empty(cols_with_types)
@@ -110,7 +139,7 @@ class BaseRowsStorage(object):
     # region base methods
 
     def __iter__(self):
-        for row in self._df.iterrows():
-            yield row
+        for row_index, row in self._df.iterrows():
+            yield row_index, row
 
     # endregion

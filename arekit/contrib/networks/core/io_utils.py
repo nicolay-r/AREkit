@@ -4,8 +4,9 @@ from os.path import join, exists
 
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.readers.tsv_opinion import TsvInputOpinionReader
-from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
+from arekit.common.experiment.input.readers.opinions import BaseInputOpinionReader
+from arekit.common.experiment.input.readers.samples import BaseInputSampleReader
+from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.writers.tsv_opinion import TsvOpinionsWriter
 from arekit.common.experiment.input.writers.tsv_sample import TsvSampleWriter
 from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
@@ -36,14 +37,17 @@ class NetworkIOUtils(BaseIOUtils):
 
     def create_samples_reader(self, data_type):
         assert(isinstance(data_type, DataType))
-        return TsvInputSampleReader.from_tsv(
-            filepath=self.get_input_sample_target(data_type=data_type),
-            row_ids_provider=MultipleIDProvider())
+        storage = BaseRowsStorage.from_tsv(
+            filepath=self.get_input_sample_target(data_type=data_type))
+
+        return BaseInputSampleReader(storage=storage,
+                                     row_ids_provider=MultipleIDProvider())
 
     def create_opinions_reader(self, data_type):
         assert(isinstance(data_type, DataType))
-        opinions_source = self.get_input_opinions_filepath(data_type=data_type)
-        return TsvInputOpinionReader.from_tsv(opinions_source)
+        storage = BaseRowsStorage.from_tsv(
+            filepath=self.get_input_opinions_filepath(data_type=data_type))
+        return BaseInputOpinionReader(storage)
 
     def create_opinions_writer(self):
         return TsvOpinionsWriter()

@@ -7,10 +7,10 @@ class BaseInputOpinionReader(BaseInputReader):
     def provide_opinion_info_by_opinion_id(self, opinion_id):
         assert(isinstance(opinion_id, str))
 
-        opinion_row = self._df[self._df[const.ID] == opinion_id]
-        df_row = opinion_row.iloc[0]
+        row = self._storage.find_first_by_value(column_name=const.ID,
+                                                value=opinion_id)
 
-        source = df_row[const.SOURCE]
-        target = df_row[const.TARGET]
+        source = row[const.SOURCE]
+        target = row[const.TARGET]
 
         return source, target

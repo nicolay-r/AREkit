@@ -1,15 +1,13 @@
-import pandas as pd
+from arekit.common.experiment.input.storages.base import BaseRowsStorage
 
 
 class BaseInputReader(object):
 
-    def __init__(self, df):
-        assert(isinstance(df, pd.DataFrame))
-        self._df = df
+    def __init__(self, storage):
+        assert(isinstance(storage, BaseRowsStorage))
+        self._storage = storage
 
-    def rows_count(self):
-        return len(self._df)
-
-    def iter_rows(self):
-        for row_index, row in self._df.iterrows():
-            yield row_index, row
+    def iter_handled_rows(self, handle_rows):
+        assert(callable(handle_rows))
+        for row_index, row in self._storage:
+            yield handle_rows(row)

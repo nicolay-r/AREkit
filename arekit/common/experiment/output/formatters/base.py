@@ -1,7 +1,7 @@
 import pandas as pd
 
 from arekit.common.experiment import const
-from arekit.common.experiment.input.readers.base_opinion import BaseInputOpinionReader
+from arekit.common.experiment.input.readers.opinions import BaseInputOpinionReader
 from arekit.common.experiment.output.providers.base import BaseOutputProvider
 from arekit.common.experiment.row_ids.base import BaseIDProvider
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper

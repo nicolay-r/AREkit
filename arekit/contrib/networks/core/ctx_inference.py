@@ -2,11 +2,11 @@ import collections
 import logging
 
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.readers.base_sample import BaseInputSampleReader
+from arekit.common.experiment.input.readers.samples import BaseInputSampleReader
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 
-from arekit.contrib.networks.core.input.readers.samples_helper import NetworkInputSampleReaderHelper
+from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 from arekit.contrib.networks.sample import InputSample
 
 logger = logging.getLogger(__name__)
@@ -118,10 +118,16 @@ class InferenceContext(object):
                 input_shapes=input_shapes,
                 pos_tags=row.PartOfSpeechTags))
 
-        rows_it = NetworkInputSampleReaderHelper.iter_uint_labeled_sample_rows(samples_reader)
+        rows_it = samples_reader.iter_handled_rows(
+            handle_rows=lambda row: InferenceContext.__parse_row(row))
 
         labeled_sample_row_ids = list(rows_it)
 
         return bags_collection, labeled_sample_row_ids
+
+    @staticmethod
+    def __parse_row(row):
+        parsed_row = ParsedSampleRow(row)
+        yield parsed_row.SampleID, parsed_row.UintLabel
 
     # endregion
