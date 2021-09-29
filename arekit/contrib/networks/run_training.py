@@ -63,7 +63,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
             dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
-            create_samples_reader_func=lambda data_type: self._experiment.ExperimentIO.create_samples_reader(data_type),
+            create_samples_view_func=lambda data_type: self._experiment.ExperimentIO.create_samples_view(data_type),
             has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state,
             exp_io=self._experiment.ExperimentIO,
             labels_count=self._experiment.DataIO.LabelsCount,

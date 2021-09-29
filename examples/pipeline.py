@@ -148,7 +148,7 @@ def extract(text):
     inference_ctx = InferenceContext.create_empty()
     inference_ctx.initialize(
         dtypes=[DataType.Test],
-        create_samples_reader_func=TsvInputSampleReader.from_tsv(
+        create_samples_view_func=TsvInputSampleReader.from_tsv(
             filepath="samples.txt",
             row_ids_provider=MultipleIDProvider()),
         has_model_predefined_state=True,

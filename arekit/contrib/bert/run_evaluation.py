@@ -113,13 +113,13 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 output = MulticlassOutputFormatter(
                     labels_scaler=self.__label_scaler,
                     output_provider=GoogleBertOutputProvider(
-                        samples_reader=exp_io.create_samples_reader(self.__data_type),
+                        samples_view=exp_io.create_samples_view(self.__data_type),
                         has_output_header=False))
                 output.load(source=result_filepath)
 
                 # iterate opinion collections.
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
-                    opinions_reader=exp_io.create_opinions_reader(self.__data_type),
+                    opinions_view=exp_io.create_opinions_view(self.__data_type),
                     labels_scaler=self.__label_scaler,
                     create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
                     keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,

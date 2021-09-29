@@ -1,8 +1,8 @@
 from os.path import join, dirname
 import unittest
 
-from arekit.common.experiment.input.readers.samples import BaseInputSampleReader
 from arekit.common.experiment.input.storages.base import BaseRowsStorage
+from arekit.common.experiment.input.views.samples import BaseSampleStorageView
 from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
 from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputProvider
@@ -18,13 +18,13 @@ class TestOutputFormatters(unittest.TestCase):
     def test_google_bert_output_formatter(self):
         row_ids_provider = MultipleIDProvider()
 
-        samples_reader = BaseInputSampleReader(
+        samples_view = BaseSampleStorageView(
             storage=BaseRowsStorage.from_tsv(filepath=self.__input_samples_filepath),
             row_ids_provider=row_ids_provider)
 
         output = MulticlassOutputFormatter(
             labels_scaler=TestThreeLabelScaler(),
-            output_provider=GoogleBertOutputProvider(samples_reader=samples_reader,
+            output_provider=GoogleBertOutputProvider(samples_view=samples_view,
                                                      has_output_header=False))
 
         output.load(source=self.__google_bert_output_filepath_sample)

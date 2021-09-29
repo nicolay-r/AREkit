@@ -20,10 +20,10 @@ class BaseIOUtils(object):
         """
         raise NotImplementedError()
 
-    def create_samples_reader(self, data_type):
+    def create_samples_view(self, data_type):
         raise NotImplementedError()
 
-    def create_opinions_reader(self, data_type):
+    def create_opinions_view(self, data_type):
         raise NotImplementedError()
 
     def create_samples_writer(self, data_type, balance):

@@ -1,7 +1,7 @@
 import pandas as pd
 
 from arekit.common.experiment import const
-from arekit.common.experiment.input.readers.opinions import BaseInputOpinionReader
+from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
 from arekit.common.experiment.output.providers.base import BaseOutputProvider
 from arekit.common.experiment.row_ids.base import BaseIDProvider
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
@@ -53,16 +53,16 @@ class BaseOutputFormatter(object):
     def _get_column_header(self):
         raise NotImplementedError()
 
-    def _iter_by_opinions(self, linked_df, opinions_reader):
+    def _iter_by_opinions(self, linked_df, opinions_view):
         raise NotImplementedError()
 
-    def _compose_opinion_by_opinion_id(self, sample_id, opinions_reader, calc_label_func):
+    def _compose_opinion_by_opinion_id(self, sample_id, opinions_view, calc_label_func):
         assert(isinstance(sample_id, str))
-        assert(isinstance(opinions_reader, BaseInputOpinionReader))
+        assert(isinstance(opinions_view, BaseOpinionStorageView))
         assert(callable(calc_label_func))
 
         opinion_id = self._ids_provider.convert_sample_id_to_opinion_id(sample_id=sample_id)
-        source, target = opinions_reader.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
+        source, target = opinions_view.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
 
         return Opinion(source_value=source,
                        target_value=target,
@@ -76,15 +76,15 @@ class BaseOutputFormatter(object):
         assert (const.NEWS_ID in self._df.columns)
         return set(self._df[const.NEWS_ID])
 
-    def iter_linked_opinions(self, news_id, opinions_reader):
+    def iter_linked_opinions(self, news_id, opinions_view):
         assert (isinstance(news_id, int))
-        assert (isinstance(opinions_reader, BaseInputOpinionReader))
+        assert (isinstance(opinions_view, BaseOpinionStorageView))
 
         for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
             assert (isinstance(linked_df, pd.DataFrame))
 
             opinions_iter = self._iter_by_opinions(linked_df=linked_df,
-                                                   opinions_reader=opinions_reader)
+                                                   opinions_view=opinions_view)
 
             yield LinkedOpinionWrapper(linked_data=opinions_iter)
 

@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.readers.opinions import BaseInputOpinionReader
+from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
 from arekit.common.experiment.output.formatters.base import BaseOutputFormatter
 from arekit.common.experiment.output.utils import fill_opinion_collection
 from arekit.common.labels.scaler import BaseLabelScaler
@@ -10,7 +10,7 @@ from arekit.common.opinions.base import Opinion
 class OutputToOpinionCollectionsConverter(object):
 
     @staticmethod
-    def iter_opinion_collections(opinions_reader,
+    def iter_opinion_collections(opinions_view,
                                  labels_scaler,
                                  keep_doc_id_func,
                                  create_opinion_collection_func,
@@ -19,7 +19,7 @@ class OutputToOpinionCollectionsConverter(object):
                                  output_formatter):
         assert(callable(keep_doc_id_func))
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        assert(isinstance(opinions_reader, BaseInputOpinionReader))
+        assert(isinstance(opinions_view, BaseOpinionStorageView))
         assert(callable(create_opinion_collection_func))
         assert(isinstance(label_calculation_mode, LabelCalculationMode))
         assert(isinstance(supported_labels, set) or supported_labels is None)
@@ -35,7 +35,7 @@ class OutputToOpinionCollectionsConverter(object):
             collection = create_opinion_collection_func()
 
             linked_iter = output_formatter.iter_linked_opinions(news_id=news_id,
-                                                                opinions_reader=opinions_reader)
+                                                                opinions_view=opinions_view)
 
             fill_opinion_collection(
                 collection=collection,

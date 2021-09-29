@@ -1,16 +1,16 @@
 from arekit.common.experiment import const
-from arekit.common.experiment.input.readers.base import BaseInputReader
+from arekit.common.experiment.input.views.base import BaseStorageView
 from arekit.common.experiment.row_ids.base import BaseIDProvider
 
 
-class BaseInputSampleReader(BaseInputReader):
+class BaseSampleStorageView(BaseStorageView):
     """
     Pandas-based input samples proovider
     """
 
     def __init__(self, storage, row_ids_provider):
         assert(isinstance(row_ids_provider, BaseIDProvider))
-        super(BaseInputSampleReader, self).__init__(storage)
+        super(BaseSampleStorageView, self).__init__(storage)
         self.__row_ids_provider = row_ids_provider
 
     def extract_ids(self):

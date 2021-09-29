@@ -2,9 +2,9 @@ from os.path import join, exists
 
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.readers.opinions import BaseInputOpinionReader
-from arekit.common.experiment.input.readers.samples import BaseInputSampleReader
 from arekit.common.experiment.input.storages.base import BaseRowsStorage
+from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
+from arekit.common.experiment.input.views.samples import BaseSampleStorageView
 from arekit.common.experiment.input.writers.tsv_opinion import TsvOpinionsWriter
 from arekit.common.experiment.input.writers.tsv_sample import TsvSampleWriter
 from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
@@ -24,17 +24,17 @@ class BertIOUtils(BaseIOUtils):
         return join(super(BertIOUtils, self).get_target_dir(),
                     self._experiment.DataIO.ModelIO.get_model_name())
 
-    def create_samples_reader(self, data_type):
-        return BaseInputSampleReader(
+    def create_samples_view(self, data_type):
+        return BaseSampleStorageView(
             storage=BaseRowsStorage.from_tsv(filepath=self.get_input_sample_filepath(data_type)),
             row_ids_provider=MultipleIDProvider())
 
-    def create_opinions_reader(self, data_type):
+    def create_opinions_view(self, data_type):
         storage = BaseRowsStorage.from_tsv(
             filepath=self.get_input_opinions_filepath(data_type),
             compression='infer')
 
-        return BaseInputOpinionReader(storage=storage)
+        return BaseOpinionStorageView(storage=storage)
 
     def create_opinions_writer_target(self, data_type):
         return self.get_input_opinions_filepath(data_type)

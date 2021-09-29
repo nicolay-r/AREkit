@@ -42,8 +42,8 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
     assert (isinstance(idhp, NetworkInputDependentVariables))
 
-    samples_reader = experiment.ExperimentIO.create_samples_reader(data_type)
-    news_id_by_sample_id = samples_reader.calculate_news_id_by_sample_id_dict()
+    samples_view = experiment.ExperimentIO.create_samples_view(data_type)
+    news_id_by_sample_id = samples_view.calculate_news_id_by_sample_id_dict()
 
     # TODO. Filepath-dependency should be removed!
     # Create and save output.
@@ -111,7 +111,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
 
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
-        opinions_reader=exp_io.create_opinions_reader(data_type),
+        opinions_view=exp_io.create_opinions_view(data_type),
         labels_scaler=labels_scaler,
         create_opinion_collection_func=opin_ops.create_opinion_collection,
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,

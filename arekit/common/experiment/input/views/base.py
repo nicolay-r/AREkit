@@ -1,7 +1,7 @@
 from arekit.common.experiment.input.storages.base import BaseRowsStorage
 
 
-class BaseInputReader(object):
+class BaseStorageView(object):
 
     def __init__(self, storage):
         assert(isinstance(storage, BaseRowsStorage))

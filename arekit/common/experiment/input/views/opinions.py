@@ -1,8 +1,8 @@
 from arekit.common.experiment import const
-from arekit.common.experiment.input.readers.base import BaseInputReader
+from arekit.common.experiment.input.views.base import BaseStorageView
 
 
-class BaseInputOpinionReader(BaseInputReader):
+class BaseOpinionStorageView(BaseStorageView):
 
     def provide_opinion_info_by_opinion_id(self, opinion_id):
         assert(isinstance(opinion_id, str))

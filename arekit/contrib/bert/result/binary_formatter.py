@@ -1,6 +1,6 @@
 import pandas as pd
 
-from arekit.common.experiment.input.readers.opinions import BaseInputOpinionReader
+from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
 from arekit.common.experiment.row_ids.base import BaseIDProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.experiment import const
@@ -45,9 +45,9 @@ class BertBinaryOutputFormatter(BaseOutputFormatter):
     def _get_column_header(self):
         return [BertBinaryOutputFormatter.NO, BertBinaryOutputFormatter.YES]
 
-    def _iter_by_opinions(self, linked_df, opinions_reader):
+    def _iter_by_opinions(self, linked_df, opinions_view):
         assert(isinstance(linked_df, pd.DataFrame))
-        assert(isinstance(opinions_reader, BaseInputOpinionReader))
+        assert(isinstance(opinions_view, BaseOpinionStorageView))
 
         for opinion_ind in self.__iter_linked_opinion_indices(linked_df=linked_df):
             ind_pattern = self._ids_provider.create_pattern(id_value=opinion_ind,
@@ -56,7 +56,7 @@ class BertBinaryOutputFormatter(BaseOutputFormatter):
 
             yield self._compose_opinion_by_opinion_id(
                 sample_id=opinion_df[const.ID].iloc[0],
-                opinions_reader=opinions_reader,
+                opinions_view=opinions_view,
                 calc_label_func=lambda: self.__calculate_label(df=opinion_df))
 
     # endregion
