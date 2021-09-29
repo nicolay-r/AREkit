@@ -1,3 +1,4 @@
+import collections
 import logging
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 
@@ -15,10 +16,11 @@ class BaseRowProvider(object):
 
     # endregion
 
-    def iter_by_rows(self, opinion_provider, idle_mode):
+    def iter_by_rows(self, opinion_provider, doc_ids_iter, idle_mode):
         assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(doc_ids_iter, collections.Iterable))
 
-        for parsed_news, linked_wrapper in opinion_provider.iter_linked_opinion_wrappers():
+        for parsed_news, linked_wrapper in opinion_provider.iter_linked_opinion_wrappers(doc_ids_iter):
 
             rows_it = self._provide_rows(parsed_news=parsed_news,
                                          linked_wrapper=linked_wrapper,

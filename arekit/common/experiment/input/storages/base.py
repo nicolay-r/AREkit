@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 
 from arekit.common.experiment.input.providers.columns.base import BaseColumnsProvider
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.common.experiment.input.providers.rows.base import BaseRowProvider
 from arekit.common.utils import progress_bar_defined, progress_bar_iter
 
 logger = logging.getLogger(__name__)
@@ -103,12 +101,11 @@ class BaseRowsStorage(object):
         cols_with_types = columns_provider.get_columns_list_with_types()
         self._df = self.__create_empty(cols_with_types)
 
-    def fill(self, rows_provider, opinion_provider, columns_provider, desc=""):
-        assert(isinstance(rows_provider, BaseRowProvider))
-        assert(isinstance(opinion_provider, OpinionProvider))
+    def fill(self, iter_rows_func, columns_provider, desc=""):
+        assert(callable(iter_rows_func))
         assert(isinstance(columns_provider, BaseColumnsProvider))
 
-        logged_rows_it = progress_bar_iter(rows_provider.iter_by_rows(opinion_provider, idle_mode=True),
+        logged_rows_it = progress_bar_iter(iterable=iter_rows_func(True),
                                            desc="Calculating rows count",
                                            unit="rows")
         rows_count = sum(1 for _ in logged_rows_it)
@@ -118,7 +115,7 @@ class BaseRowsStorage(object):
                                     rows_count=rows_count)
         logger.info("Completed!")
 
-        it = progress_bar_defined(iterable=rows_provider.iter_by_rows(opinion_provider, idle_mode=False),
+        it = progress_bar_defined(iterable=iter_rows_func(False),
                                   desc="{fmt}".format(fmt=desc),
                                   total=rows_count)
 

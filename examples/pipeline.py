@@ -1,17 +1,12 @@
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
-from arekit.common.experiment.input.providers.row_ids.multiple import MultipleIDProvider
-from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.experiment.input.readers.tsv_sample import TsvInputSampleReader
-from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
-from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
-from arekit.common.experiment.input.storages.tsv_opinion import TsvOpinionsStorage
-from arekit.common.experiment.input.storages.tsv_sample import TsvSampleStorage
+from arekit.common.experiment.input.storages.base import BaseRowsStorage
+from arekit.common.experiment.input.views.samples import BaseSampleStorageView
+from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
 from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
@@ -27,7 +22,6 @@ from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBa
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
-from arekit.contrib.networks.core.input.providers.columns import NetworkSampleColumnsProvider
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -83,13 +77,6 @@ def extract(text):
         parsed_news=parsed_news,
         entities_collection=None)   # TODO. Create custom entity collections.
 
-    # We pass it into NetworkInputEncoder
-    opinion_provider = OpinionProvider.create(
-        read_news_func=lambda _: parsed_news,
-        iter_news_opins_for_extraction=lambda _: opins_for_extraction,
-        parsed_news_it_func=lambda: [parsed_news],
-        terms_per_context=50)
-
     sample_row_provider = NetworkSampleRowProvider(
         label_provider=MultipleLabelProvider(label_scaler=labels_scaler),
         text_provider=BaseSingleTextProvider(
@@ -109,32 +96,10 @@ def extract(text):
     # Step 3. Serialize data
     ###########################
 
-    # TODO. Use this instead.
     NetworkInputHelper.prepare(
         experiment=None,                 # Remove experiment
         terms_per_context=None,
         balance=None)
-
-    # samples_repo = BaseInputSamplesRepository(
-    #     columns_provider=NetworkSampleColumnsProvider(store_labels=True),
-    #     rows_provider=sample_row_provider,
-    #     storage=TsvSampleStorage(balance=False, write_header=True))
-
-    # opinions_repo = BaseInputOpinionsRepository(
-    #     columns_provider=OpinionColumnsProvider(),
-    #     rows_provider=BaseOpinionsRowProvider(),
-    #     storage=TsvOpinionsStorage())
-
-    # samples_repo.populate(opinion_provider=opinion_provider,
-    #                       target="samples.txt",
-    #                       desc="sample")
-
-    # opinions_repo.populate(opinion_provider=opinion_provider,
-    #                        target="opinions.txt",
-    #                        desc="opinion")
-
-    # EmbeddingHelper.save_vocab(data=None, target="vocab.txt")
-    # EmbeddingHelper.save_embedding(data=None, target="embedding.txt")
 
     ###########################
     # Step 4. Deserialize data
@@ -148,8 +113,8 @@ def extract(text):
     inference_ctx = InferenceContext.create_empty()
     inference_ctx.initialize(
         dtypes=[DataType.Test],
-        create_samples_view_func=TsvInputSampleReader.from_tsv(
-            filepath="samples.txt",
+        create_samples_view_func=lambda data_type: BaseSampleStorageView(
+            storage=BaseRowsStorage.from_tsv("samples.txt"),
             row_ids_provider=MultipleIDProvider()),
         has_model_predefined_state=True,
         vocab=EmbeddingHelper.load_vocab("vocab.txt"),

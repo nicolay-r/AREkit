@@ -49,6 +49,9 @@ class DocumentOperations(object):
         for doc_id in doc_inds:
             yield self.__parse_news(doc_id=doc_id)
 
+    def parse_news(self, doc_id):
+        return self.__parse_news(doc_id)
+
     # TODO. This should be removed, since parse-options considered as a part
     # TODO. Of the text-parser instance!!!
     def _create_parse_options(self):

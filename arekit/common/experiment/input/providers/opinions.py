@@ -35,7 +35,7 @@ class OpinionProvider(object):
 
     @staticmethod
     def __iter_linked_text_opins(read_news_func, news_opins_for_extraction_func,
-                                 parsed_news_it, terms_per_context):
+                                 parse_news_func, terms_per_context, doc_ids_it):
         """
         Extracting text-level opinions based on doc-level opinions in documents,
         obtained by information in experiment.
@@ -43,12 +43,15 @@ class OpinionProvider(object):
         NOTE:
         1. Assumes to provide the same label (doc level opinion) onto related text-level opinions.
         """
-        assert (callable(read_news_func))
-        assert (isinstance(parsed_news_it, collections.Iterable))
+        assert(callable(read_news_func))
+        assert(callable(parse_news_func))
+        assert(isinstance(doc_ids_it, collections.Iterable))
 
         curr_id = 0
 
-        for parsed_news in parsed_news_it:
+        for doc_id in doc_ids_it:
+
+            parsed_news = parse_news_func(doc_id)
 
             linked_text_opinion_lists = OpinionProvider.__iter_linked_text_opinion_lists(
                 news=read_news_func(parsed_news.RelatedNewsID),
@@ -71,20 +74,21 @@ class OpinionProvider(object):
 
     @classmethod
     def create(cls, read_news_func, iter_news_opins_for_extraction,
-               parsed_news_it_func, terms_per_context):
+               parse_news_func, terms_per_context):
         assert(callable(read_news_func))
-        assert(isinstance(iter_news_opins_for_extraction, collections.Iterable))
+        assert(callable(iter_news_opins_for_extraction))
         assert(isinstance(terms_per_context, int))
-        assert(callable(parsed_news_it_func))
+        assert(callable(parse_news_func))
 
-        def it_func():
+        def it_func(doc_ids_it):
             return cls.__iter_linked_text_opins(
                 read_news_func=lambda news_id: read_news_func(news_id),
                 news_opins_for_extraction_func=lambda news_id: iter_news_opins_for_extraction(doc_id=news_id),
                 terms_per_context=terms_per_context,
-                parsed_news_it=parsed_news_it_func())
+                doc_ids_it=doc_ids_it,
+                parse_news_func=lambda news_id: parse_news_func(news_id))
 
         return cls(linked_text_opins_it_func=it_func)
 
-    def iter_linked_opinion_wrappers(self):
-        return self.__linked_text_opins_it_func()
+    def iter_linked_opinion_wrappers(self, doc_ids_it):
+        return self.__linked_text_opins_it_func(doc_ids_it)

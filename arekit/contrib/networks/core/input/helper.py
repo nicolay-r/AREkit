@@ -84,32 +84,15 @@ class NetworkInputHelper(object):
         dict_data[term] = emb_vector
 
     @staticmethod
-    def __perform_writing(experiment, data_type, terms_per_context, balance, term_embedding_pairs):
+    def __perform_writing(experiment, data_type, opinion_provider,
+                          terms_per_context, balance, term_embedding_pairs):
         """
         Perform experiment input serialization
         """
         assert(isinstance(experiment, BaseExperiment))
+        assert(isinstance(data_type, DataType))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
-
-        doc_ops = experiment.DocumentOperations
-        opin_ops = experiment.OpinionOperations
-
-        # TODO. 208. This should be done in advance.
-        experiment.DataIO.Annotator.serialize_missed_collections(
-            data_type=data_type,
-            doc_ops=doc_ops,
-            opin_ops=opin_ops)
-
-        opinion_provider = OpinionProvider.create(
-            read_news_func=lambda news_id: doc_ops.read_news(news_id),
-            iter_news_opins_for_extraction=lambda news_id:
-                # TODO. 208. Annotated opinions should be passed here.
-                opin_ops.iter_opinions_for_extraction(doc_id=news_id,
-                                                      data_type=data_type),
-            parsed_news_it_func=lambda: doc_ops.iter_parsed_news(
-                doc_ops.iter_doc_ids(data_type)),
-            terms_per_context=terms_per_context)
 
         # Composing input.
         opinions_repo = NetworkInputHelper.__create_opinions_repo(
@@ -125,10 +108,12 @@ class NetworkInputHelper(object):
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
                                target=experiment.ExperimentIO.create_opinions_writer_target(data_type=data_type),
+                               doc_ids_iter=experiment.DocumentOperations.iter_doc_ids(data_type),
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
                               target=experiment.ExperimentIO.create_samples_writer_target(data_type=data_type),
+                              doc_ids_iter=experiment.DocumentOperations.iter_doc_ids(data_type),
                               desc="sample")
 
     # endregion
@@ -142,12 +127,26 @@ class NetworkInputHelper(object):
         term_embedding_pairs = collections.OrderedDict()
 
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
-            NetworkInputHelper.__perform_writing(# TODO. Remove this experiment instance.
-                                                 experiment=experiment,
-                                                 data_type=data_type,
-                                                 terms_per_context=terms_per_context,
-                                                 balance=balance,
-                                                 term_embedding_pairs=term_embedding_pairs)
+
+            experiment.DataIO.Annotator.serialize_missed_collections(
+                data_type=data_type,
+                doc_ops=experiment.DocumentOperations,
+                opin_ops=experiment.OpinionOperations)
+
+            opinion_provider = OpinionProvider.create(
+                read_news_func=lambda news_id: experiment.DocumentOperations.read_news(news_id),
+                parse_news_func=lambda news_id: experiment.DocumentOperations.parse_news(news_id),
+                iter_news_opins_for_extraction=lambda news_id:
+                    experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=news_id, data_type=data_type),
+                terms_per_context=terms_per_context)
+
+            NetworkInputHelper.__perform_writing(
+                experiment=experiment,
+                data_type=data_type,
+                opinion_provider=opinion_provider,
+                terms_per_context=terms_per_context,
+                balance=balance,
+                term_embedding_pairs=term_embedding_pairs)
 
         # Assign targets
         vocab_target = experiment.ExperimentIO.get_vocab_target()

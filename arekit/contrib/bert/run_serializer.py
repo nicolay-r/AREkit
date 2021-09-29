@@ -65,27 +65,21 @@ class BertExperimentInputSerializer(ExperimentEngine):
         # Create opinion provider
         opinion_provider = OpinionProvider.create(
             read_news_func=lambda news_id: self._experiment.DocumentOperations.read_news(news_id),
+            parse_news_func=lambda news_id: self._experiment.DocumentOperations.parse_news(news_id),
             iter_news_opins_for_extraction=lambda news_id:
-                self._experiment.OpinionOperations.iter_opinions_for_extraction(
-                    doc_id=news_id,
-                    data_type=data_type),
-            parsed_news_it_func=lambda: self.__iter_parsed_news(
-                doc_ops=self._experiment.DocumentOperations,
-                data_type=data_type),
+                self._experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=news_id, data_type=data_type),
             terms_per_context=self._experiment.DataIO.TermsPerContext)
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
+                               doc_ids_iter=self._experiment.DocumentOperations.iter_doc_ids(data_type),
                                target=opinions_target,
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
+                              doc_ids_iter=self._experiment.DocumentOperations.iter_doc_ids(data_type),
                               target=samples_target,
                               desc="sample")
-
-    @staticmethod
-    def __iter_parsed_news(doc_ops, data_type):
-        return doc_ops.iter_parsed_news(doc_ops.iter_doc_ids(data_type))
 
     # endregion
 
