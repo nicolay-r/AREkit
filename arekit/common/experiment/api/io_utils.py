@@ -1,3 +1,4 @@
+from arekit.common.experiment.data_type import DataType
 from arekit.common.utils import join_dir_with_subfolder_name
 
 
@@ -20,13 +21,16 @@ class BaseIOUtils(object):
         """
         raise NotImplementedError()
 
+    def balance_samples(self, data_type, balance):
+        return balance and data_type == DataType.Train
+
     def create_samples_view(self, data_type):
         raise NotImplementedError()
 
     def create_opinions_view(self, data_type):
         raise NotImplementedError()
 
-    def create_samples_writer(self, data_type, balance):
+    def create_samples_writer(self):
         raise NotImplementedError()
 
     def create_opinions_writer(self):

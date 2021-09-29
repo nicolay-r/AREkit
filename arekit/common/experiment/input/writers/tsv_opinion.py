@@ -32,6 +32,7 @@ class TsvOpinionsWriter(BaseWriter):
                   encoding='utf-8',
                   columns=[c for c in df.columns if c != BaseColumnsProvider.ROW_ID],
                   index=False,
+                  float_format="%.0f",
                   compression='gzip')
 
         logger.info("Saving completed!")

@@ -52,10 +52,8 @@ class NetworkIOUtils(BaseIOUtils):
     def create_opinions_writer(self):
         return TsvOpinionsWriter()
 
-    def create_samples_writer(self, data_type, balance):
-        return TsvSampleWriter(
-            balance=balance and data_type == DataType.Train,
-            write_header=True)
+    def create_samples_writer(self):
+        return TsvSampleWriter(write_header=True)
 
     def create_opinions_writer_target(self, data_type):
         return self.get_input_opinions_filepath(data_type)

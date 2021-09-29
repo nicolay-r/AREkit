@@ -106,11 +106,14 @@ class NetworkInputHelper(object):
                               doc_ids_iter=experiment.DocumentOperations.iter_doc_ids(data_type),
                               desc="sample")
 
+        if experiment.ExperimentIO.balance_samples(data_type=data_type, balance=balance):
+            samples_repo.balance()
+
         # Write repositories
-        samples_repo.write(writer=experiment.ExperimentIO.create_samples_writer(data_type=data_type, balance=balance),
+        samples_repo.write(writer=experiment.ExperimentIO.create_samples_writer(),
                            target=experiment.ExperimentIO.create_samples_writer_target(data_type=data_type))
 
-        opinions_repo.write(writer=experiment.ExperimentIO.create_opinions_writer(data_type=data_type),
+        opinions_repo.write(writer=experiment.ExperimentIO.create_opinions_writer(),
                             target=experiment.ExperimentIO.create_opinions_writer_target(data_type=data_type))
 
     # endregion

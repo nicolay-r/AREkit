@@ -37,7 +37,7 @@ class TestInputBalancing(unittest.TestCase):
 
         columns_provider = SampleColumnsProvider(store_labels=True)
 
-        BaseInputSamplesRepository(
+        samples_repo = BaseInputSamplesRepository(
             columns_provider=columns_provider,
             rows_provider=BaseSampleRowProvider(
                 label_provider=label_provider,
@@ -58,7 +58,7 @@ class TestInputBalancing(unittest.TestCase):
         print("Original:")
         print(storage._df.shape)
 
-        storage._balance(column_name=const.LABEL)
+        samples_repo.balance()
 
         print("Balanced:")
         print(storage._df)

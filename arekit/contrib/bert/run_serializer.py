@@ -71,16 +71,17 @@ class BertExperimentInputSerializer(ExperimentEngine):
                               doc_ids_iter=self._experiment.DocumentOperations.iter_doc_ids(data_type),
                               desc="sample")
 
+        if self._experiment.ExperimentIO.balance_samples(data_type=data_type, balance=self.__balance_train_samples):
+            samples_repo.balance()
+
         # Save repositories
         samples_repo.write(
             target=self._experiment.ExperimentIO.create_samples_writer_target(data_type),
-            writer=self._experiment.ExperimentIO.create_samples_writer(
-                data_type=data_type,
-                balance=self.__balance_train_samples))
+            writer=self._experiment.ExperimentIO.create_samples_writer())
 
         opinions_repo.write(
             target=self._experiment.ExperimentIO.create_opinions_writer_target(data_type),
-            writer=self._experiment.ExperimentIO.create_opinions_writer(data_type))
+            writer=self._experiment.ExperimentIO.create_opinions_writer())
 
     # endregion
 
