@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment import const
 from arekit.common.experiment.input.providers.columns.base import BaseColumnsProvider
+from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.writers.base import BaseWriter
 from arekit.common.utils import create_dir_if_not_exists
 
@@ -17,13 +18,14 @@ class TsvSampleWriter(BaseWriter):
         self.__balance = balance
         self.__write_header = write_header
 
-    def save(self, target):
+    def save(self, storage, target):
+        assert(isinstance(storage, BaseRowsStorage))
         assert(isinstance(target, str))
 
         create_dir_if_not_exists(target)
 
-        # Refactor later.
-        df = self._storage._df
+        # Temporary hack, remove it in future.
+        df = storage.DataFrame
 
         if self.__balance:
             logger.info("Start balancing...")

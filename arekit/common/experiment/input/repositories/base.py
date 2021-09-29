@@ -21,7 +21,6 @@ class BaseInputRepository(object):
         # Do setup operations.
         self._setup_columns_provider()
         self._setup_rows_provider()
-        self._setup_writer()
 
     # region protected methods
 
@@ -30,10 +29,6 @@ class BaseInputRepository(object):
 
     def _setup_rows_provider(self):
         pass
-
-    def _setup_writer(self):
-        if isinstance(self._writer, BaseWriter):
-            self._writer.set_storage(self._storage)
 
     # endregion
 
@@ -51,9 +46,8 @@ class BaseInputRepository(object):
         if self._writer is None:
             return
 
-        assert(isinstance(self._writer, BaseWriter))
-
-        self._writer.save(target)
+        # Write the contents of the storage into target.
+        self._writer.save(self._storage, target)
 
         # After writing we free the contents of the storage.
         self._storage.free()

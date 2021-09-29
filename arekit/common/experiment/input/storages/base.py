@@ -17,6 +17,11 @@ class BaseRowsStorage(object):
     def __init__(self):
         self._df = None
 
+    # TODO. Temporary hack, however this should be removed in future.
+    @property
+    def DataFrame(self):
+        return self._df
+
     # region private methods
 
     @staticmethod
