@@ -21,7 +21,6 @@ class BaseInputRepository(object):
         # Do setup operations.
         self._setup_columns_provider()
         self._setup_rows_provider()
-        self._setup_storage()
         self._setup_writer()
 
     # region protected methods
@@ -30,13 +29,7 @@ class BaseInputRepository(object):
         pass
 
     def _setup_rows_provider(self):
-        # TODO. 204 Remove storage.
-        self._rows_provider.set_storage(self._storage)
-
-    # TODO. 204 Remove method.
-    def _setup_storage(self):
-        # TODO. 204 Remove columns provider.
-        self._storage.set_columns_provider(self._columns_provider)
+        pass
 
     def _setup_writer(self):
         if isinstance(self._writer, BaseWriter):
@@ -48,13 +41,19 @@ class BaseInputRepository(object):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(self._storage, BaseRowsStorage))
 
-        with self._storage:
-            # TODO. 204. we fill storage and hence self._storage.fill(...)
-            self._rows_provider.fill(opinion_provider, desc)
+        self._storage.init_empty(columns_provider=self._columns_provider)
 
-            if self._writer is None:
-                return
+        self._storage.fill(rows_provider=self._rows_provider,
+                           opinion_provider=opinion_provider,
+                           columns_provider=self._columns_provider,
+                           desc=desc)
 
-            assert(isinstance(self._writer, BaseWriter))
+        if self._writer is None:
+            return
 
-            return self._writer.save(target)
+        assert(isinstance(self._writer, BaseWriter))
+
+        self._writer.save(target)
+
+        # After writing we free the contents of the storage.
+        self._storage.free()

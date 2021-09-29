@@ -35,14 +35,16 @@ class TestInputBalancing(unittest.TestCase):
 
         storage = BaseRowsStorage()
 
+        columns_provider = SampleColumnsProvider(store_labels=True)
+
         BaseInputSamplesRepository(
-            columns_provider=SampleColumnsProvider(store_labels=True),
+            columns_provider=columns_provider,
             rows_provider=BaseSampleRowProvider(
                 label_provider=label_provider,
                 text_provider=text_provider),
             storage=storage)
 
-        storage.init_empty()
+        storage.init_empty(columns_provider)
 
         df = storage._df
 
