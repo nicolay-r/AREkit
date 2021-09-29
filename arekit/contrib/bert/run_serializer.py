@@ -35,12 +35,6 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
     def __handle_iteration(self, data_type):
         assert(isinstance(data_type, DataType))
-        opinions_target = self._experiment.ExperimentIO.create_opinions_writer_target(data_type)
-        samples_target = self._experiment.ExperimentIO.create_samples_writer_target(data_type)
-        opinions_writer = self._experiment.ExperimentIO.create_opinions_writer(data_type)
-        samples_writer = self._experiment.ExperimentIO.create_samples_writer(
-            data_type=data_type,
-            balance=self.__balance_train_samples)
 
         # Create samples formatter.
         sample_rows_provider = create_bert_sample_provider(
@@ -54,13 +48,11 @@ class BertExperimentInputSerializer(ExperimentEngine):
         opinions_repo = BaseInputOpinionsRepository(
             columns_provider=OpinionColumnsProvider(),
             rows_provider=BaseOpinionsRowProvider(),
-            storage=BaseRowsStorage(),
-            writer=opinions_writer)
+            storage=BaseRowsStorage())
         samples_repo = BaseInputSamplesRepository(
             columns_provider=SampleColumnsProvider(store_labels=True),
             rows_provider=sample_rows_provider,
-            storage=BaseRowsStorage(),
-            writer=samples_writer)
+            storage=BaseRowsStorage())
 
         # Create opinion provider
         opinion_provider = OpinionProvider.create(
@@ -73,13 +65,22 @@ class BertExperimentInputSerializer(ExperimentEngine):
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
                                doc_ids_iter=self._experiment.DocumentOperations.iter_doc_ids(data_type),
-                               target=opinions_target,
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
                               doc_ids_iter=self._experiment.DocumentOperations.iter_doc_ids(data_type),
-                              target=samples_target,
                               desc="sample")
+
+        # Save repositories
+        samples_repo.write(
+            target=self._experiment.ExperimentIO.create_samples_writer_target(data_type),
+            writer=self._experiment.ExperimentIO.create_samples_writer(
+                data_type=data_type,
+                balance=self.__balance_train_samples))
+
+        opinions_repo.write(
+            target=self._experiment.ExperimentIO.create_opinions_writer_target(data_type),
+            writer=self._experiment.ExperimentIO.create_opinions_writer(data_type))
 
     # endregion
 

@@ -50,7 +50,7 @@ class NetworkInputHelper(object):
                 emb_vector=pair[1]))
 
     @staticmethod
-    def __create_samples_repo(exp_data, term_embedding_pairs, entity_to_group_func, sample_writer):
+    def __create_samples_repo(exp_data, term_embedding_pairs, entity_to_group_func):
         sample_row_provider = NetworkSampleRowProvider(
             label_provider=exp_data.LabelProvider,
             text_provider=NetworkInputHelper.__create_text_provider(
@@ -65,17 +65,14 @@ class NetworkInputHelper(object):
         return BaseInputSamplesRepository(
             columns_provider=SampleColumnsProvider(store_labels=True),
             rows_provider=sample_row_provider,
-            storage=BaseRowsStorage(),
-            writer=sample_writer)
+            storage=BaseRowsStorage())
 
     @staticmethod
-    def __create_opinions_repo(opinions_writer, data_type):
-        assert(isinstance(data_type, DataType))
+    def __create_opinions_repo():
         return BaseInputOpinionsRepository(
             columns_provider=OpinionColumnsProvider(),
             rows_provider=BaseOpinionsRowProvider(),
-            storage=BaseRowsStorage(),
-            writer=opinions_writer)
+            storage=BaseRowsStorage())
 
     @staticmethod
     def __add_term_embedding(dict_data, term, emb_vector):
@@ -94,27 +91,27 @@ class NetworkInputHelper(object):
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
 
-        # Composing input.
-        opinions_repo = NetworkInputHelper.__create_opinions_repo(
-            opinions_writer=experiment.ExperimentIO.create_opinions_writer(data_type=data_type),
-            data_type=data_type)
-
+        opinions_repo = NetworkInputHelper.__create_opinions_repo()
         samples_repo = NetworkInputHelper.__create_samples_repo(
-            sample_writer=experiment.ExperimentIO.create_samples_writer(data_type=data_type, balance=balance),
             exp_data=experiment.DataIO,
             entity_to_group_func=experiment.entity_to_group,
             term_embedding_pairs=term_embedding_pairs)
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
-                               target=experiment.ExperimentIO.create_opinions_writer_target(data_type=data_type),
                                doc_ids_iter=experiment.DocumentOperations.iter_doc_ids(data_type),
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
-                              target=experiment.ExperimentIO.create_samples_writer_target(data_type=data_type),
                               doc_ids_iter=experiment.DocumentOperations.iter_doc_ids(data_type),
                               desc="sample")
+
+        # Write repositories
+        samples_repo.write(writer=experiment.ExperimentIO.create_samples_writer(data_type=data_type, balance=balance),
+                           target=experiment.ExperimentIO.create_samples_writer_target(data_type=data_type))
+
+        opinions_repo.write(writer=experiment.ExperimentIO.create_opinions_writer(data_type=data_type),
+                            target=experiment.ExperimentIO.create_opinions_writer_target(data_type=data_type))
 
     # endregion
 

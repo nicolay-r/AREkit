@@ -4,21 +4,18 @@ from arekit.common.experiment.input.providers.columns.base import BaseColumnsPro
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.base import BaseRowProvider
 from arekit.common.experiment.input.storages.base import BaseRowsStorage
-from arekit.common.experiment.input.writers.base import BaseWriter
 
 
 class BaseInputRepository(object):
 
-    def __init__(self, columns_provider, rows_provider, storage, writer=None):
+    def __init__(self, columns_provider, rows_provider, storage):
         assert(isinstance(columns_provider, BaseColumnsProvider))
         assert(isinstance(rows_provider, BaseRowProvider))
         assert(isinstance(storage, BaseRowsStorage))
-        assert(isinstance(writer, BaseWriter) or writer is None)
 
         self._columns_provider = columns_provider
         self._rows_provider = rows_provider
         self._storage = storage
-        self._writer = writer
 
         # Do setup operations.
         self._setup_columns_provider()
@@ -34,7 +31,7 @@ class BaseInputRepository(object):
 
     # endregion
 
-    def populate(self, opinion_provider, doc_ids_iter, target, desc=""):
+    def populate(self, opinion_provider, doc_ids_iter, desc=""):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(self._storage, BaseRowsStorage))
         assert(isinstance(doc_ids_iter, collections.Iterable))
@@ -51,11 +48,9 @@ class BaseInputRepository(object):
                            columns_provider=self._columns_provider,
                            desc=desc)
 
-        if self._writer is None:
-            return
-
-        # Write the contents of the storage into target.
-        self._writer.save(self._storage, target)
+    def write(self, writer, target, free_storage=True):
+        writer.save(self._storage, target)
 
         # After writing we free the contents of the storage.
-        self._storage.free()
+        if free_storage:
+            self._storage.free()
