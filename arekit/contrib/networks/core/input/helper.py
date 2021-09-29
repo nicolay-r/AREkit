@@ -95,6 +95,7 @@ class NetworkInputHelper(object):
         doc_ops = experiment.DocumentOperations
         opin_ops = experiment.OpinionOperations
 
+        # TODO. 208. This should be done in advance.
         experiment.DataIO.Annotator.serialize_missed_collections(
             data_type=data_type,
             doc_ops=doc_ops,
@@ -103,6 +104,7 @@ class NetworkInputHelper(object):
         opinion_provider = OpinionProvider.create(
             read_news_func=lambda news_id: doc_ops.read_news(news_id),
             iter_news_opins_for_extraction=lambda news_id:
+                # TODO. 208. Annotated opinions should be passed here.
                 opin_ops.iter_opinions_for_extraction(doc_id=news_id,
                                                       data_type=data_type),
             parsed_news_it_func=lambda: doc_ops.iter_parsed_news(
