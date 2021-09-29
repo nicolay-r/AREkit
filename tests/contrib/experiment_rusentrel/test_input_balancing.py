@@ -4,7 +4,6 @@ import unittest
 
 sys.path.append('../')
 
-from arekit.common.experiment import const
 from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository

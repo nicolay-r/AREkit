@@ -2,7 +2,6 @@ from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpl
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.views.samples import BaseSampleStorageView
