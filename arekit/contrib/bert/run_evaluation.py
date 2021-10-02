@@ -4,10 +4,13 @@ from os.path import exists, join
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
+from arekit.common.experiment.output.utils import fill_opinion_collection
 from arekit.common.experiment.output.views.multiple import MulticlassOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
+from arekit.common.model.labeling.single import SingleLabelsHelper
+from arekit.common.opinions.base import Opinion
 from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.bert.callback import Callback
 from arekit.contrib.bert.output.eval_helper import EvalHelper
@@ -114,19 +117,18 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
-                output = MulticlassOutputView(
+                output_view = MulticlassOutputView(
                     labels_scaler=self.__label_scaler,
                     storage=storage)
 
                 # iterate opinion collections.
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
+                    output_view=output_view,
                     opinions_view=exp_io.create_opinions_view(self.__data_type),
-                    labels_scaler=self.__label_scaler,
-                    create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
                     keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
-                    label_calculation_mode=LabelCalculationMode.AVERAGE,
-                    supported_labels=exp_data.SupportedCollectionLabels,
-                    output_formatter=output)
+                    to_collection_func=lambda linked_iter: self.__create_opinion_collection(
+                        supported_labels=exp_data.SupportedCollectionLabels,
+                        linked_iter=linked_iter))
 
                 for doc_id, collection in collections_iter:
 
@@ -160,3 +162,19 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         # Providing a root dir for logging.
         callback = self._experiment.DataIO.Callback
         callback.set_log_dir(self.__get_target_dir())
+
+    def __create_opinion_collection(self, linked_iter, supported_labels):
+        return fill_opinion_collection(
+            create_opinion_collection=self._experiment.OpinionOperations.create_opinion_collection,
+            linked_data_iter=linked_iter,
+            labels_helper=SingleLabelsHelper(self.__label_scaler),
+            to_opinion_func=LanguageModelExperimentEvaluator.__create_labeled_opinion,
+            label_calc_mode=LabelCalculationMode.AVERAGE,
+            supported_labels=supported_labels)
+
+    @staticmethod
+    def __create_labeled_opinion(item, label):
+        assert(isinstance(item, Opinion))
+        return Opinion(source_value=item.SourceValue,
+                       target_value=item.TargetValue,
+                       sentiment=label)

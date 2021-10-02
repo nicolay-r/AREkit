@@ -5,11 +5,14 @@ from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
+from arekit.common.experiment.output.utils import fill_opinion_collection
 from arekit.common.experiment.output.views.multiple import MulticlassOutputView
 from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
+from arekit.common.model.labeling.single import SingleLabelsHelper
+from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.provider import OpinionCollectionsProvider
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
@@ -104,16 +107,19 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
 
     cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
 
+    output_view = MulticlassOutputView(labels_scaler=labels_scaler,
+                                       storage=output_storage)
+
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
+        output_view=output_view,
         opinions_view=exp_io.create_opinions_view(data_type),
-        labels_scaler=labels_scaler,
-        create_opinion_collection_func=opin_ops.create_opinion_collection,
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
-        label_calculation_mode=label_calc_mode,
-        supported_labels=supported_collection_labels,
-        output_formatter=MulticlassOutputView(labels_scaler=labels_scaler,
-                                              storage=output_storage))
+        to_collection_func=lambda linked_iter: __create_opinion_collection(
+            linked_iter=linked_iter,
+            supported_labels=supported_collection_labels,
+            create_opinion_collection=opin_ops.create_opinion_collection,
+            label_scaler=labels_scaler))
 
     # Save collection.
     for doc_id, collection in __log_wrap_collections_conversion_iter(collections_iter):
@@ -129,6 +135,23 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
             data_type=data_type,
             labels_formatter=labels_formatter,
             target=target)
+
+
+def __create_opinion_collection(linked_iter, supported_labels, label_scaler, create_opinion_collection):
+    return fill_opinion_collection(
+        create_opinion_collection=create_opinion_collection,
+        linked_data_iter=linked_iter,
+        labels_helper=SingleLabelsHelper(label_scaler),
+        to_opinion_func=__create_labeled_opinion,
+        label_calc_mode=LabelCalculationMode.AVERAGE,
+        supported_labels=supported_labels)
+
+
+def __create_labeled_opinion(item, label):
+    assert(isinstance(item, Opinion))
+    return Opinion(source_value=item.SourceValue,
+                   target_value=item.TargetValue,
+                   sentiment=label)
 
 
 def __log_wrap_samples_iter(it):
