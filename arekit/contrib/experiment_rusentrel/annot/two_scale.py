@@ -28,7 +28,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
         assert(isinstance(data_type, DataType))
 
         doc_id = parsed_news.RelatedNewsID
-        neut_collection = opin_ops.create_opinion_collection()
+        neut_collection = opin_ops.create_and_fill_opinion_collection()
         assert(isinstance(neut_collection, OpinionCollection))
 
         # We copy all the opinions from etalon collection

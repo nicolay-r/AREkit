@@ -5,9 +5,10 @@ from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.opinions.base import Opinion
 
 
-def fill_opinion_collection(create_opinion_collection, linked_data_iter,
-                            labels_helper, to_opinion_func,
-                            label_calc_mode, supported_labels=None):
+def create_and_fill_opinion_collection(
+        create_opinion_collection, linked_data_iter,
+        labels_helper, to_opinion_func,
+        label_calc_mode, supported_labels=None):
     """ to_opinion_func: (item, label) -> opinion
     """
     assert(callable(create_opinion_collection))

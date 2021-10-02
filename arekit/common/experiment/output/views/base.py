@@ -41,6 +41,18 @@ class BaseOutputView(BaseStorageView):
             linked_opins_df = news_df[news_df[const.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
+    def __iter_linked_opinions(self, news_id, opinions_view):
+        assert (isinstance(news_id, int))
+        assert (isinstance(opinions_view, BaseOpinionStorageView))
+
+        for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
+            assert (isinstance(linked_df, pd.DataFrame))
+
+            opinions_iter = self._iter_by_opinions(linked_df=linked_df,
+                                                   opinions_view=opinions_view)
+
+            yield LinkedOpinionWrapper(linked_data=opinions_iter)
+
     # endregion
 
     # region protected methods
@@ -71,16 +83,19 @@ class BaseOutputView(BaseStorageView):
         unique_news_ids = set(self._storage.iter_column_values(column_name=const.NEWS_ID))
         return unique_news_ids
 
-    def iter_linked_opinions(self, news_id, opinions_view):
-        assert (isinstance(news_id, int))
-        assert (isinstance(opinions_view, BaseOpinionStorageView))
+    def iter_opinion_collections(self, opinions_view, keep_doc_id_func, to_collection_func):
+        assert(isinstance(opinions_view, BaseOpinionStorageView))
+        assert(callable(keep_doc_id_func))
+        assert(callable(to_collection_func))
 
-        for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
-            assert (isinstance(linked_df, pd.DataFrame))
+        for news_id in self.iter_news_ids():
 
-            opinions_iter = self._iter_by_opinions(linked_df=linked_df,
-                                                   opinions_view=opinions_view)
+            if not keep_doc_id_func(news_id):
+                continue
 
-            yield LinkedOpinionWrapper(linked_data=opinions_iter)
+            linked_data_iter = self.__iter_linked_opinions(news_id=news_id,
+                                                           opinions_view=opinions_view)
+
+            yield news_id, to_collection_func(linked_data_iter)
 
     # endregion

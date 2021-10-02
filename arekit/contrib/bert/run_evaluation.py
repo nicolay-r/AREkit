@@ -3,8 +3,7 @@ from os.path import exists, join
 
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.engine import ExperimentEngine
-from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
-from arekit.common.experiment.output.utils import fill_opinion_collection
+from arekit.common.linked.helper import create_and_fill_opinion_collection
 from arekit.common.experiment.output.views.multiple import MulticlassOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
@@ -122,8 +121,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                     storage=storage)
 
                 # iterate opinion collections.
-                collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
-                    output_view=output_view,
+                collections_iter = output_view.iter_opinion_collections(
                     opinions_view=exp_io.create_opinions_view(self.__data_type),
                     keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
                     to_collection_func=lambda linked_iter: self.__create_opinion_collection(
@@ -164,8 +162,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         callback.set_log_dir(self.__get_target_dir())
 
     def __create_opinion_collection(self, linked_iter, supported_labels):
-        return fill_opinion_collection(
-            create_opinion_collection=self._experiment.OpinionOperations.create_opinion_collection,
+        return create_and_fill_opinion_collection(
+            create_opinion_collection=self._experiment.OpinionOperations.create_and_fill_opinion_collection,
             linked_data_iter=linked_iter,
             labels_helper=SingleLabelsHelper(self.__label_scaler),
             to_opinion_func=LanguageModelExperimentEvaluator.__create_labeled_opinion,

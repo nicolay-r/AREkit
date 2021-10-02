@@ -4,8 +4,6 @@ from arekit.common.experiment import const
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
-from arekit.common.experiment.output.utils import fill_opinion_collection
 from arekit.common.experiment.output.views.multiple import MulticlassOutputView
 from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.common.labels.scaler import BaseLabelScaler
@@ -111,14 +109,13 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
                                        storage=output_storage)
 
     # Extract iterator.
-    collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
-        output_view=output_view,
+    collections_iter = output_view.iter_opinion_collections(
         opinions_view=exp_io.create_opinions_view(data_type),
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         to_collection_func=lambda linked_iter: __create_opinion_collection(
             linked_iter=linked_iter,
             supported_labels=supported_collection_labels,
-            create_opinion_collection=opin_ops.create_opinion_collection,
+            create_opinion_collection=opin_ops.create_and_fill_opinion_collection,
             label_scaler=labels_scaler))
 
     # Save collection.
@@ -138,7 +135,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
 
 
 def __create_opinion_collection(linked_iter, supported_labels, label_scaler, create_opinion_collection):
-    return fill_opinion_collection(
+    return create_opinion_collection(
         create_opinion_collection=create_opinion_collection,
         linked_data_iter=linked_iter,
         labels_helper=SingleLabelsHelper(label_scaler),
