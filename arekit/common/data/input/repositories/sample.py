@@ -1,8 +1,8 @@
 import logging
 
+from arekit.common.data import const
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.data.input.repositories.base import BaseInputRepository
-from arekit.common.experiment import const
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

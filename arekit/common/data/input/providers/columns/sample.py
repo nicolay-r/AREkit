@@ -1,5 +1,5 @@
+from arekit.common.data import const
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
-from arekit.common.experiment import const
 
 
 class SampleColumnsProvider(BaseColumnsProvider):

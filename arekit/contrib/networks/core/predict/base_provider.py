@@ -1,5 +1,6 @@
 import collections
-from arekit.common.experiment import const
+
+from arekit.common.data import const
 from arekit.common.labels.scaler import BaseLabelScaler
 
 

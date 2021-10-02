@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 from arekit.common.data.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
+from arekit.common.data.input.providers.opinions import OpinionProvider
 from arekit.common.data.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository

@@ -1,6 +1,6 @@
+from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
 from arekit.common.data.views.base import BaseStorageView
-from arekit.common.experiment import const
 
 
 class BaseSampleStorageView(BaseStorageView):

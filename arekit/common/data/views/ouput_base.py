@@ -1,10 +1,10 @@
 import pandas as pd
 
+from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.base import BaseStorageView
 from arekit.common.data.views.opinions import BaseOpinionStorageView
-from arekit.common.experiment import const
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 

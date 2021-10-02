@@ -1,6 +1,6 @@
 import pandas as pd
 
-from arekit.common.experiment import const
+from arekit.common.data import const
 from arekit.common.utils import filter_whitespaces, split_by_whitespaces
 from . import const as network_input_const
 

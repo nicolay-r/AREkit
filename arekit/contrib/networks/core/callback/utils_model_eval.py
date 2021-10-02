@@ -1,8 +1,8 @@
 import logging
 
+from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.output_multiple import MulticlassOutputView
-from arekit.common.experiment import const
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType

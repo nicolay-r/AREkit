@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 
+from arekit.common.data import const
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.ouput_base import BaseOutputView
-from arekit.common.experiment import const
 from arekit.common.labels.scaler import BaseLabelScaler
 
 

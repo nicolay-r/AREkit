@@ -1,5 +1,5 @@
+from arekit.common.data import const
 from arekit.common.data.views.base import BaseStorageView
-from arekit.common.experiment import const
 
 
 class BaseOpinionStorageView(BaseStorageView):

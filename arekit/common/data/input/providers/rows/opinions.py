@@ -1,10 +1,10 @@
 from collections import OrderedDict
 
+from arekit.common.data import const
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
-from arekit.common.experiment import const
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.parsed.base import ParsedNews
 
