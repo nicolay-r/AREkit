@@ -10,7 +10,7 @@ class OpinionOperations(object):
 
     # TODO. 208. To Annotation opinion repository.
     # (This is related to Annotation only and could be removed from here.)
-    def try_read_annotated_opinion_collection(self, doc_id, data_type):
+    def try_read_annotaed_opinion_collection(self, doc_id, data_type):
         """ data_type denotes a set of unlabeled opinions, where in case of 'train' these are
             opinions that were ADDITIONALLY found to sentiment, while for 'test' these are
             all the opinions that could be found in document.
