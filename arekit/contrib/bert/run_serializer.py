@@ -17,7 +17,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
     def __init__(self, experiment,
                  labels_formatter,
                  skip_if_folder_exists,
-                 sample_formatter_type,
+                 sample_provider_type,
                  entity_formatter,
                  balance_train_samples):
         assert(isinstance(experiment, BaseExperiment))
@@ -27,7 +27,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
         self.__skip_if_folder_exists = skip_if_folder_exists
         self.__entity_formatter = entity_formatter
-        self.__sample_formatter_type = sample_formatter_type
+        self.__sample_provider_type = sample_provider_type
         self.__balance_train_samples = balance_train_samples
         self.__labels_formatter = labels_formatter
 
@@ -39,7 +39,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         # Create samples formatter.
         sample_rows_provider = create_bert_sample_provider(
             labels_formatter=self.__labels_formatter,
-            provider_type=self.__sample_formatter_type,
+            provider_type=self.__sample_provider_type,
             label_scaler=self._experiment.DataIO.LabelsScaler,
             entity_formatter=self.__entity_formatter,
             entity_to_group_func=self._experiment.entity_to_group)
