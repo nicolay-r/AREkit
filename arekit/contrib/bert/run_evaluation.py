@@ -3,15 +3,15 @@ from os.path import exists, join
 
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.engine import ExperimentEngine
-from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
+from arekit.common.experiment.output.views.multiple import MulticlassOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.bert.callback import Callback
 from arekit.contrib.bert.output.eval_helper import EvalHelper
-from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputProvider
+from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -108,14 +108,15 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 self._log_info("\nStarting evaluation for: {}".format(result_filepath),
                                forced=True)
 
+                # Initialize storage.
+                storage = GoogleBertOutputStorage.from_tsv(filepath=result_filepath, header=None)
+                storage.apply_samples_view(samples_view=exp_io.create_samples_view(self.__data_type))
+
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
-                output = MulticlassOutputFormatter(
+                output = MulticlassOutputView(
                     labels_scaler=self.__label_scaler,
-                    output_provider=GoogleBertOutputProvider(
-                        samples_view=exp_io.create_samples_view(self.__data_type),
-                        has_output_header=False))
-                output.load(source=result_filepath)
+                    storage=storage)
 
                 # iterate opinion collections.
                 collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(

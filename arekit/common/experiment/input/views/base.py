@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
+from arekit.common.experiment.storages.base import BaseRowsStorage
 
 
 class BaseStorageView(object):

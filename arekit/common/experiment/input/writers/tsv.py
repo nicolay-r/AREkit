@@ -2,8 +2,8 @@ import logging
 
 from arekit.common.experiment import const
 from arekit.common.experiment.input.providers.columns.base import BaseColumnsProvider
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.writers.base import BaseWriter
+from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.common.utils import create_dir_if_not_exists
 
 logger = logging.getLogger(__name__)

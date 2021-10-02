@@ -3,7 +3,7 @@ import collections
 from arekit.common.experiment.input.providers.columns.base import BaseColumnsProvider
 from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.base import BaseRowProvider
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
+from arekit.common.experiment.storages.base import BaseRowsStorage
 
 
 class BaseInputRepository(object):

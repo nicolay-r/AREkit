@@ -1,22 +1,22 @@
 import pandas as pd
 
 from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
+from arekit.common.experiment.output.views.base import BaseOutputView
 from arekit.common.experiment.row_ids.base import BaseIDProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.experiment import const
-from arekit.common.experiment.output.formatters.base import BaseOutputFormatter
 from arekit.contrib.bert.input.providers.row_ids_binary import BinaryIDProvider
 
 
-class BertBinaryOutputFormatter(BaseOutputFormatter):
+class BertBinaryOutputView(BaseOutputView):
 
     YES = 'yes'
     NO = 'no'
 
-    def __init__(self, labels_scaler, output_provider):
+    def __init__(self, labels_scaler, storage):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertBinaryOutputFormatter, self).__init__(ids_provider=BinaryIDProvider(),
-                                                        output_provider=output_provider)
+        super(BertBinaryOutputView, self).__init__(ids_provider=BinaryIDProvider(),
+                                                   storage=storage)
         self.__labels_scaler = labels_scaler
 
     # region private methods
@@ -26,7 +26,7 @@ class BertBinaryOutputFormatter(BaseOutputFormatter):
         Calculate label by relying on a 'YES' column probability values
         paper: https://www.aclweb.org/anthology/N19-1035.pdf
         """
-        ind_max = df[BertBinaryOutputFormatter.YES].idxmax()
+        ind_max = df[BertBinaryOutputView.YES].idxmax()
         sample_id = df.loc[ind_max][const.ID]
         uint_label = self._ids_provider.parse_label_in_sample_id(sample_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)
@@ -43,7 +43,7 @@ class BertBinaryOutputFormatter(BaseOutputFormatter):
     # region protected methods
 
     def _get_column_header(self):
-        return [BertBinaryOutputFormatter.NO, BertBinaryOutputFormatter.YES]
+        return [BertBinaryOutputView.NO, BertBinaryOutputView.YES]
 
     def _iter_by_opinions(self, linked_df, opinions_view):
         assert(isinstance(linked_df, pd.DataFrame))

@@ -1,31 +1,24 @@
 from arekit.common.experiment import const
-from arekit.common.experiment.output.providers.tsv import TsvBaseOutputProvider
+from arekit.common.experiment.storages.base import BaseRowsStorage
 
 
-class GoogleBertOutputProvider(TsvBaseOutputProvider):
-    """ This output assumes to be provided with only labels
-        by default proposed here:
+class GoogleBertOutputStorage(BaseRowsStorage):
+    """ This output assumes to be provided with only labels by default proposed here:
         https://github.com/google-research/bert
-
-        In addition to such output we provide the following parameters via samples_view instance:
-            - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
-            - news_id -- is a related news_id towards which the related output corresponds to.
     """
 
-    def __init__(self, samples_view, has_output_header):
-        super(GoogleBertOutputProvider, self).__init__(has_output_header=has_output_header)
-        self.__samples_view = samples_view
+    def apply_samples_view(self, samples_view):
+        """
+        In addition to such output we provide the following parameters via samples_view instance:
+        - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
+        - news_id -- is a related news_id towards which the related output corresponds to.
+        """
+        row_ids = samples_view.extract_ids()
+        news_ids = samples_view.extract_news_ids()
 
-    # region protected methods
+        assert(len(row_ids) == len(news_ids) == len(self.DataFrame))
 
-    def _csv_to_dataframe(self, filepath):
-        df = super(GoogleBertOutputProvider, self)._csv_to_dataframe(filepath=filepath)
-
-        # Exporting such information from samples.
-        row_ids = self.__samples_view.extract_ids()
-        news_ids = self.__samples_view.extract_news_ids()
-
-        assert(len(row_ids) == len(news_ids) == len(df))
+        df = self.DataFrame
 
         # Providing the latter into output.
         df.insert(0, const.ID, row_ids)
@@ -36,6 +29,8 @@ class GoogleBertOutputProvider(TsvBaseOutputProvider):
 
         df.columns = [str(c) for c in df.columns]
 
-        return df
+    @classmethod
+    def from_tsv(cls, filepath, sep='\t', compression='infer', encoding='utf-8', header=None):
+        return super(GoogleBertOutputStorage, cls).from_tsv(filepath=filepath, sep=sep, compression=compression, encoding=encoding, header=header)
 
     # endregion

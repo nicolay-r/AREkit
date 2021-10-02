@@ -4,9 +4,9 @@ from arekit.common.experiment import const
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
 from arekit.common.experiment.output.opinions.converter import OutputToOpinionCollectionsConverter
-from arekit.common.experiment.output.providers.tsv import TsvBaseOutputProvider
+from arekit.common.experiment.output.views.multiple import MulticlassOutputView
+from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
@@ -69,8 +69,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
         supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,
         epoch_index=epoch_index,
-        # TODO. Prevent filepaths usage!
-        result_filepath=result_filepath,
+        output_storage=BaseRowsStorage.from_tsv(result_filepath),
         label_calc_mode=label_calc_mode,
         labels_formatter=labels_formatter)
 
@@ -91,8 +90,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
 # TODO. Pass TsvInputOpinionReader.
 def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_provider,
-                                            # TODO. Prevent filepaths usage!
-                                            result_filepath, data_type, epoch_index,
+                                            output_storage, data_type, epoch_index,
                                             supported_collection_labels, label_calc_mode, labels_formatter):
     assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(doc_ops, DocumentOperations))
@@ -106,9 +104,6 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
 
     cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
 
-    output_provider = TsvBaseOutputProvider(has_output_header=True)
-    output_provider.load(result_filepath)
-
     # Extract iterator.
     collections_iter = OutputToOpinionCollectionsConverter.iter_opinion_collections(
         opinions_view=exp_io.create_opinions_view(data_type),
@@ -117,8 +112,8 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
         label_calculation_mode=label_calc_mode,
         supported_labels=supported_collection_labels,
-        output_formatter=MulticlassOutputFormatter(labels_scaler=labels_scaler,
-                                                   output_provider=output_provider))
+        output_formatter=MulticlassOutputView(labels_scaler=labels_scaler,
+                                              storage=output_storage))
 
     # Save collection.
     for doc_id, collection in __log_wrap_collections_conversion_iter(collections_iter):

@@ -1,12 +1,10 @@
 from os.path import join, dirname
 import unittest
 
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.views.samples import BaseSampleStorageView
 from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
-from arekit.common.experiment.output.formatters.multiple import MulticlassOutputFormatter
-from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputProvider
-from tests.contrib.bert.labels import TestThreeLabelScaler
+from arekit.common.experiment.storages.base import BaseRowsStorage
+from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
 
 
 class TestOutputFormatters(unittest.TestCase):
@@ -22,14 +20,13 @@ class TestOutputFormatters(unittest.TestCase):
             storage=BaseRowsStorage.from_tsv(filepath=self.__input_samples_filepath),
             row_ids_provider=row_ids_provider)
 
-        output = MulticlassOutputFormatter(
-            labels_scaler=TestThreeLabelScaler(),
-            output_provider=GoogleBertOutputProvider(samples_view=samples_view,
-                                                     has_output_header=False))
+        # Initialize storage.
+        output_storage = GoogleBertOutputStorage.from_tsv(
+            filepath=self.__google_bert_output_filepath_sample,
+            header=None)
+        output_storage.apply_samples_view(samples_view)
 
-        output.load(source=self.__google_bert_output_filepath_sample)
-
-        df = output._df
+        df = output_storage.DataFrame
 
         print(df)
         print(df.columns)

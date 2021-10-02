@@ -25,12 +25,13 @@ class BaseRowsStorage(object):
     # endregion
 
     @classmethod
-    def from_tsv(cls, filepath, sep='\t', compression='gzip', encoding='utf-8'):
+    def from_tsv(cls, filepath, sep='\t', compression='gzip', encoding='utf-8', header="infer"):
         instance = cls()
         instance._df = pd.read_csv(filepath,
                                    sep=sep,
                                    encoding=encoding,
-                                   compression=compression)
+                                   compression=compression,
+                                   header=header)
         return instance
 
     # region private methods
@@ -54,6 +55,9 @@ class BaseRowsStorage(object):
 
     def __log_info(self):
         logger.info(self._df.info())
+
+    def __filter(self, column_name, value):
+        return self._df[self._df[column_name] == value]
 
     # endregion
 
@@ -81,8 +85,13 @@ class BaseRowsStorage(object):
 
     # region public methods
 
+    def find_by_value(self, column_name, value):
+        # TODO. Return new storage. (Encapsulation)
+        return self.__filter(column_name=column_name, value=value)
+
     def find_first_by_value(self, column_name, value):
-        row = self._df[self._df[column_name] == value]
+        # TODO. Return new storage. (Encapsulation)
+        row = self.__filter(column_name=column_name, value=value)
         return row.iloc[0]
 
     def iter_column_values(self, column_name, dtype=None):

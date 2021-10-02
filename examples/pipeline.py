@@ -3,9 +3,9 @@ from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnota
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.views.samples import BaseSampleStorageView
 from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel

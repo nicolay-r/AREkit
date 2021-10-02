@@ -1,14 +1,15 @@
 import pandas as pd
 
 from arekit.common.experiment import const
+from arekit.common.experiment.input.views.base import BaseStorageView
 from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
-from arekit.common.experiment.output.providers.base import BaseOutputProvider
 from arekit.common.experiment.row_ids.base import BaseIDProvider
+from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
 from arekit.common.opinions.base import Opinion
 
 
-class BaseOutputFormatter(object):
+class BaseOutputView(BaseStorageView):
     """ Results output represents a table, which stored in pandas dataframe.
         This dataframe assumes to provide the following columns:
             - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
@@ -16,27 +17,21 @@ class BaseOutputFormatter(object):
             - labels -- uint labels (amount of columns depends on the scaler)
     """
 
-    def __init__(self, ids_provider, output_provider):
+    def __init__(self, ids_provider, storage):
         assert(isinstance(ids_provider, BaseIDProvider))
-        assert(isinstance(output_provider, BaseOutputProvider))
+        assert(isinstance(storage, BaseRowsStorage))
+        super(BaseOutputView, self).__init__(storage=storage)
         self._ids_provider = ids_provider
-        self.__provider = output_provider
-
-    # region properties
-
-    @property
-    def _df(self):
-        return self.__provider.DataFrame
-
-    # endregion
 
     # region private methods
 
     def __iter_linked_opinions_df(self, news_id):
         assert(isinstance(news_id, int))
 
-        # TODO. 206 from storage. (filter by column API)
-        news_df = self._df[self._df[const.NEWS_ID] == news_id]
+        # TODO. Proceed refactoring
+        news_df = self._storage.find_by_value(column_name=const.NEWS_ID,
+                                              value=news_id)
+
         opinion_ids = [self._ids_provider.parse_opinion_in_opinion_id(opinion_id)
                        for opinion_id in news_df[const.ID]]
 
@@ -73,8 +68,8 @@ class BaseOutputFormatter(object):
     # region public methods
 
     def iter_news_ids(self):
-        assert (const.NEWS_ID in self._df.columns)
-        return set(self._df[const.NEWS_ID])
+        unique_news_ids = set(self._storage.iter_column_values(column_name=const.NEWS_ID))
+        return unique_news_ids
 
     def iter_linked_opinions(self, news_id, opinions_view):
         assert (isinstance(news_id, int))
@@ -88,10 +83,4 @@ class BaseOutputFormatter(object):
 
             yield LinkedOpinionWrapper(linked_data=opinions_iter)
 
-    def load(self, source):
-        self.__provider.load(source)
-
     # endregion
-
-    def __len__(self):
-        return len(self._df.index)

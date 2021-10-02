@@ -11,7 +11,7 @@ from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsR
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
+from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper

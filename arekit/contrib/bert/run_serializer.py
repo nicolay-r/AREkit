@@ -7,7 +7,7 @@ from arekit.common.experiment.input.providers.opinions import OpinionProvider
 from arekit.common.experiment.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.experiment.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
+from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 

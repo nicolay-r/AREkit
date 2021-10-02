@@ -3,17 +3,17 @@ import pandas as pd
 
 from arekit.common.experiment import const
 from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
-from arekit.common.experiment.output.formatters.base import BaseOutputFormatter
+from arekit.common.experiment.output.views.base import BaseOutputView
 from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 
 
-class MulticlassOutputFormatter(BaseOutputFormatter):
+class MulticlassOutputView(BaseOutputView):
 
-    def __init__(self, labels_scaler, output_provider):
+    def __init__(self, labels_scaler, storage):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(MulticlassOutputFormatter, self).__init__(ids_provider=MultipleIDProvider(),
-                                                        output_provider=output_provider)
+        super(MulticlassOutputView, self).__init__(ids_provider=MultipleIDProvider(),
+                                                   storage=storage)
         self.__labels_scaler = labels_scaler
 
     # region private methods

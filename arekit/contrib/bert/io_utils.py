@@ -2,11 +2,11 @@ from os.path import join, exists
 
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
 from arekit.common.experiment.input.views.samples import BaseSampleStorageView
 from arekit.common.experiment.input.writers.tsv import TsvWriter
 from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
+from arekit.common.experiment.storages.base import BaseRowsStorage
 from arekit.common.utils import join_dir_with_subfolder_name
 
 

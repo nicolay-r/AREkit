@@ -1,10 +1,10 @@
 import sys
 import unittest
 
+from arekit.common.experiment.storages.base import BaseRowsStorage
 
 sys.path.append('../')
 
-from arekit.common.experiment.input.storages.base import BaseRowsStorage
 from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
