@@ -37,9 +37,11 @@ class OpinionOperations(object):
 
     # region evaluation
 
+    # TODO. #211. Move into DataIO.
     def read_etalon_opinion_collection(self, doc_id):
         raise NotImplementedError()
 
+    # TODO. #211. Move into DataIO.
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         raise NotImplementedError()
 
