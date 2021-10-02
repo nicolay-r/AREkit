@@ -1,10 +1,10 @@
 import logging
 from os.path import exists, join
 
+from arekit.common.data.views.output_multiple import MulticlassOutputView
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.linked.helper import create_and_fill_opinion_collection
-from arekit.common.experiment.output.views.multiple import MulticlassOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode

@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
+from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
 from arekit.contrib.networks.core.input import const
 
 

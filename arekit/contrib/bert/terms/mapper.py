@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
+from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 
 
 class BertDefaultStringTextTermsMapper(OpinionContainingTextTermsMapper):

@@ -1,6 +1,6 @@
-from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
-from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
+from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
+from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
+from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
 

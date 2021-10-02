@@ -1,8 +1,8 @@
 import pandas as pd
 
-from arekit.common.experiment.input.views.opinions import BaseOpinionStorageView
-from arekit.common.experiment.output.views.base import BaseOutputView
-from arekit.common.experiment.row_ids.base import BaseIDProvider
+from arekit.common.data.row_ids.base import BaseIDProvider
+from arekit.common.data.views.opinions import BaseOpinionStorageView
+from arekit.common.data.views.ouput_base import BaseOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.experiment import const
 from arekit.contrib.bert.input.providers.row_ids_binary import BinaryIDProvider

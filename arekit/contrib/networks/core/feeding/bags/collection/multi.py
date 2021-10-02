@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.sample import InputSampleBase
+from arekit.common.data.input.sample import InputSampleBase
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow

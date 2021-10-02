@@ -1,15 +1,14 @@
 import sys
 import unittest
 
-from arekit.common.experiment.storages.base import BaseRowsStorage
-
 sys.path.append('../')
 
-from arekit.common.experiment.input.providers.columns.sample import SampleColumnsProvider
-from arekit.common.experiment.input.repositories.sample import BaseInputSamplesRepository
-from arekit.common.experiment.input.providers.rows.samples import BaseSampleRowProvider
-from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.experiment.input.terms_mapper import OpinionContainingTextTermsMapper
+from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
+from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
+from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
+from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
+from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
+from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider

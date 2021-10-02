@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.providers.label.base import LabelProvider
+from arekit.common.data.input.providers.label.base import LabelProvider
 
 
 class BinaryLabelProvider(LabelProvider):

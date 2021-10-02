@@ -1,9 +1,9 @@
 from os.path import join, dirname
 import unittest
 
-from arekit.common.experiment.input.views.samples import BaseSampleStorageView
-from arekit.common.experiment.row_ids.multiple import MultipleIDProvider
-from arekit.common.experiment.storages.base import BaseRowsStorage
+from arekit.common.data.row_ids.multiple import MultipleIDProvider
+from arekit.common.data.storages.base import BaseRowsStorage
+from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
 
 

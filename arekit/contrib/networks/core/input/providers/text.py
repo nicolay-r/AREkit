@@ -1,4 +1,4 @@
-from arekit.common.experiment.input.providers.text.single import BaseSingleTextProvider
+from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 
 

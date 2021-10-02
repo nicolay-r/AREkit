@@ -1,5 +1,5 @@
+from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.api.ctx_serialization import SerializationData
-from arekit.common.experiment.input.providers.label.multiple import MultipleLabelProvider
 
 
 class NetworkSerializationData(SerializationData):

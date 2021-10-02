@@ -1,5 +1,5 @@
+from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment import const
-from arekit.common.experiment.storages.base import BaseRowsStorage
 
 
 class GoogleBertOutputStorage(BaseRowsStorage):

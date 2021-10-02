@@ -1,8 +1,8 @@
 import collections
 import logging
 
+from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.input.views.samples import BaseSampleStorageView
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 
