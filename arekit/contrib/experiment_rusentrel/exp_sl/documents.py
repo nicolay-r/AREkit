@@ -23,9 +23,11 @@ class RuSentrelDocumentOperations(DocumentOperations):
 
     # region DocumentOperations
 
+    # TODO. 212. Unify with the one below, add tag.
     def iter_doc_ids_to_annotate(self):
         return self.DataFolding.iter_doc_ids()
 
+    # TODO. 212. Unify with the one above, add tag.
     def iter_doc_ids_to_compare(self):
         return self.DataFolding.iter_doc_ids()
 

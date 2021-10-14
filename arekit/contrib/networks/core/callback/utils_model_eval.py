@@ -103,6 +103,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
     assert(isinstance(label_calc_mode, LabelCalculationMode))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
+    # TODO. 212. Pass tag ("compare")
     cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
 
     output_view = MulticlassOutputView(labels_scaler=labels_scaler,

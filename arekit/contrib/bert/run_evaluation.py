@@ -86,6 +86,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
         # TODO. This should be removed as this is a part of the particular
         # experiment, not source!.
+        # TODO. 212. Pass tag ("compare")
         cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_doc_ids_to_compare())
 
         if callback.check_log_exists():

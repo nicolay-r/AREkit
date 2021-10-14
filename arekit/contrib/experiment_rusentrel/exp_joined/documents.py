@@ -59,9 +59,11 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
         # Therefore we provide rusentrel_doc by default.
         return self.__rusentrel_doc._create_parse_options()
 
+    # TODO. 212. Unify (use only one method for both below)
     def iter_doc_ids_to_annotate(self):
         return self.__rusentrel_doc.iter_doc_ids_to_annotate()
 
+    # TODO. 212. Unify (use only one method for this and one above)
     def iter_doc_ids_to_compare(self):
         return self.__rusentrel_doc.iter_doc_ids_to_compare()
 

@@ -7,9 +7,11 @@ class SingleDocOperations(DocumentOperations):
     """ Operations over a single document for inference.
     """
 
+    # TODO. 212. Rename, add tag.
     def iter_doc_ids_to_annotate(self):
         return 0
 
+    # TODO. 212. Remove (we don't need it in such case).
     def iter_doc_ids_to_compare(self):
         raise NotImplementedError()
 
