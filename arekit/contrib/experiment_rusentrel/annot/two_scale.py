@@ -28,7 +28,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
         assert(isinstance(data_type, DataType))
 
         doc_id = parsed_news.RelatedNewsID
-        neut_collection = opin_ops.create_and_fill_opinion_collection()
+        neut_collection = opin_ops.create_opinion_collection()
         assert(isinstance(neut_collection, OpinionCollection))
 
         # We copy all the opinions from etalon collection
@@ -46,6 +46,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
 
     # region public methods
 
+    # TODO. 208. Rename as iter_annotated_collections.
     def serialize_missed_collections(self, data_type, doc_ops, opin_ops):
 
         if data_type == DataType.Train:

@@ -68,6 +68,7 @@ class BaseIOUtils(object):
 
     # region public methods
 
+    # TODO. 208. Split onto create_tgt and create_writer.
     def serialize_opinion_collection(self, collection, doc_id, data_type, labels_formatter, target=None):
 
         if target is None:
@@ -81,6 +82,7 @@ class BaseIOUtils(object):
             collection=collection,
             labels_formatter=labels_formatter)
 
+    # TODO. 208. Rename into reader.
     def deserialize_opinion_collection(self, doc_id, data_type, labels_formatter, create_collection_func):
         assert(callable(create_collection_func))
 

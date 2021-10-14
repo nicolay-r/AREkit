@@ -17,7 +17,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
     def __init__(self, experiment,
                  labels_formatter,
                  skip_if_folder_exists,
-                 sample_formatter_type,
+                 sample_provider_type,
                  entity_formatter,
                  balance_train_samples):
         assert(isinstance(experiment, BaseExperiment))
@@ -27,7 +27,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
         self.__skip_if_folder_exists = skip_if_folder_exists
         self.__entity_formatter = entity_formatter
-        self.__sample_formatter_type = sample_formatter_type
+        self.__sample_provider_type = sample_provider_type
         self.__balance_train_samples = balance_train_samples
         self.__labels_formatter = labels_formatter
 
@@ -39,7 +39,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         # Create samples formatter.
         sample_rows_provider = create_bert_sample_provider(
             labels_formatter=self.__labels_formatter,
-            provider_type=self.__sample_formatter_type,
+            provider_type=self.__sample_provider_type,
             label_scaler=self._experiment.DataIO.LabelsScaler,
             entity_formatter=self.__entity_formatter,
             entity_to_group_func=self._experiment.entity_to_group)
@@ -96,6 +96,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
     def _before_running(self):
         self._logger.info("Perform annotation ...")
         for data_type in self._experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+            # TODO. #208. Split onto iter + [ write (using exp_io.create_annot_opin_writer + target)]
             self._experiment.DataIO.Annotator.serialize_missed_collections(
                 data_type=data_type,
                 opin_ops=self._experiment.OpinionOperations,

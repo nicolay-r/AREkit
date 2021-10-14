@@ -128,6 +128,8 @@ class NetworkInputHelper(object):
 
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
+            # TODO. 208. Split onto iter + [ write (using exp_io.create_annot_opin_writer + target)]
+            # TODO. 208. Or we can create a separated loop over news_ids.
             experiment.DataIO.Annotator.serialize_missed_collections(
                 data_type=data_type,
                 doc_ops=experiment.DocumentOperations,
