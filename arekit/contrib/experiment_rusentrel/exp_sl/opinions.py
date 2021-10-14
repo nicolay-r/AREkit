@@ -25,8 +25,6 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__get_synonyms_func = get_synonyms_func
         self.__version = version
         self.__experiment_io = experiment_io
-        # TODO. This should be removed later, as we may utilize experiment_io API.
-        self.__opinion_provider = experiment_io.OpinionCollectionProvider
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
 
@@ -102,9 +100,10 @@ class RuSentrelOpinionOperations(OpinionOperations):
     # region private provider methods
 
     def __custom_read(self, filepath, labels_fmt):
-        opinions = self.__opinion_provider.iter_opinions(source=filepath,
-                                                         labels_formatter=labels_fmt,
-                                                         error_on_non_supported=False)
+        opinions = self.__experiment_io.OpinionCollectionProvider.iter_opinions(
+            source=filepath,
+            labels_formatter=labels_fmt,
+            error_on_non_supported=False)
 
         return self.__create_collection(opinions)
 

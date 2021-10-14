@@ -58,7 +58,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_folding = create_rusentrel_experiment_data_folding(
             folding_type=folding_type,
             version=rusentrel_version,
-            docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
+            docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
             experiment_io=experiment_io)
 
         # init documents.

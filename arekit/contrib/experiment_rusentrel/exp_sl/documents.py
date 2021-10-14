@@ -29,7 +29,7 @@ class RuSentrelDocumentOperations(DocumentOperations):
     def iter_doc_ids_to_compare(self):
         return self.DataFolding.iter_doc_ids()
 
-    def read_news(self, doc_id):
+    def get_doc(self, doc_id):
         assert(isinstance(doc_id, int))
         synonyms = self.__get_synonyms_func()
         return RuSentRelNews.read_document(doc_id=doc_id,

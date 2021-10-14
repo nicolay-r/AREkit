@@ -36,9 +36,9 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
 
     # region DocumentOperations
 
-    def read_news(self, doc_id):
+    def get_doc(self, doc_id):
         target_doc_ops = self.__select_doc_ops(doc_id)
-        return target_doc_ops.read_news(doc_id)
+        return target_doc_ops.get_doc(doc_id)
 
     def iter_doc_ids(self, data_type):
         for doc_id in self.__rusentrel_doc.iter_doc_ids(data_type):

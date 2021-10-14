@@ -49,7 +49,7 @@ class RuSentRelExperiment(BaseExperiment):
         self.log_info("Create document operations ... ")
         folding = create_rusentrel_experiment_data_folding(folding_type=folding_type,
                                                            version=version,
-                                                           docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
+                                                           docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
                                                            experiment_io=experiment_io)
         doc_ops = RuSentrelDocumentOperations(exp_data=exp_data,
                                               folding=folding,

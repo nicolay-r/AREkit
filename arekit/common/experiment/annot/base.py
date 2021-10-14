@@ -36,7 +36,7 @@ class BaseAnnotator(object):
             return
 
         logged_parsed_news_iter = progress_bar_iter(
-            iterable=doc_ops.iter_parsed_news(docs_to_annot_list),
+            iterable=doc_ops.iter_parsed_docs(docs_to_annot_list),
             desc="Annotating parsed news [{}]".format(data_type))
 
         for parsed_news in logged_parsed_news_iter:

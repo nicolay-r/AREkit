@@ -56,8 +56,8 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
         # Create opinion provider
         opinion_provider = OpinionProvider.create(
-            read_news_func=lambda news_id: self._experiment.DocumentOperations.read_news(news_id),
-            parse_news_func=lambda news_id: self._experiment.DocumentOperations.parse_news(news_id),
+            read_news_func=lambda doc_id: self._experiment.DocumentOperations.get_doc(doc_id),
+            parse_news_func=lambda doc_id: self._experiment.DocumentOperations.parse_doc(doc_id),
             iter_news_opins_for_extraction=lambda news_id:
                 self._experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=news_id, data_type=data_type),
             terms_per_context=self._experiment.DataIO.TermsPerContext)

@@ -16,7 +16,7 @@ class RuAttitudesDocumentOperations(DocumentOperations):
 
     # region DocumentOperations
 
-    def read_news(self, doc_id):
+    def get_doc(self, doc_id):
         return self.__ru_attitudes[doc_id]
 
     # TODO. This should be removed, since parse-options considered as a part

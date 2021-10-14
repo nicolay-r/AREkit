@@ -16,7 +16,7 @@ class SingleDocOperations(DocumentOperations):
     def __init__(self, news):
         folding = NoFolding(doc_ids_to_fold=[0], supported_data_types=[DataType.Test])
         super(SingleDocOperations, self).__init__(folding)
-        self.__news = news
+        self.__doc = news
 
-    def read_news(self, doc_id):
-        return self.__news
+    def get_doc(self, doc_id):
+        return self.__doc
