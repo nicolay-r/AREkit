@@ -53,23 +53,16 @@ class BaseAnnotator(object):
 
     # region public methods
 
-    # TODO. 208. Rename as iter_annotated_collections.
-    def serialize_missed_collections(self, data_type, doc_ops, opin_ops):
+    def iter_annotated_collections(self, data_type, doc_ops, opin_ops):
         assert(isinstance(opin_ops, OpinionOperations))
 
         filter_func = lambda doc_id: opin_ops.try_read_annotated_opinion_collection(
             doc_id=doc_id, data_type=data_type) is None
 
-        annot_it = self.__iter_annotated_collections(
+        return self.__iter_annotated_collections(
             data_type,
             filter_func,
             doc_ops=doc_ops,
             opin_ops=opin_ops)
-
-        for doc_id, collection in annot_it:
-            # TODO. 208. Save here is weird.
-            opin_ops.save_annotated_opinion_collection(collection=collection,
-                                                       doc_id=doc_id,
-                                                       data_type=data_type)
 
     # endregion

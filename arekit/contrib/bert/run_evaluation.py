@@ -136,10 +136,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                         epoch_index=epoch_index,
                         doc_id=doc_id)
 
-                    exp_io.serialize_opinion_collection(
+                    exp_io.write_opinion_collection(
                         collection=collection,
-                        doc_id=doc_id,
-                        data_type=self.__data_type,
                         labels_formatter=self.__labels_formatter,
                         target=target)
 

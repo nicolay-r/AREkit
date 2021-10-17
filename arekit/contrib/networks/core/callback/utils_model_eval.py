@@ -127,12 +127,9 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
             epoch_index=epoch_index,
             doc_id=doc_id)
 
-        exp_io.serialize_opinion_collection(
-            collection=collection,
-            doc_id=doc_id,
-            data_type=data_type,
-            labels_formatter=labels_formatter,
-            target=target)
+        exp_io.write_opinion_collection(collection=collection,
+                                        labels_formatter=labels_formatter,
+                                        target=target)
 
 
 def __create_opinion_collection(linked_iter, supported_labels, label_scaler, create_opinion_collection):

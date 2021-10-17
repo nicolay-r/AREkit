@@ -68,22 +68,21 @@ class BaseIOUtils(object):
 
     # region public methods
 
-    # TODO. 208. Split onto create_tgt and create_writer.
-    def serialize_opinion_collection(self, collection, doc_id, data_type, labels_formatter, target=None):
+    def create_opinion_collection_target(self, doc_id, data_type, check_existance=False):
+        return self._create_annotated_collection_target(
+            doc_id=doc_id,
+            data_type=data_type,
+            check_existance=check_existance)
 
-        if target is None:
-            target = self._create_annotated_collection_target(
-                doc_id=doc_id,
-                data_type=data_type,
-                check_existance=False)
+    def write_opinion_collection(self, collection, labels_formatter, target):
+        assert(target is not None)
 
         self.__opinion_collection_provider.serialize(
             target=target,
             collection=collection,
             labels_formatter=labels_formatter)
 
-    # TODO. 208. Rename into reader.
-    def deserialize_opinion_collection(self, doc_id, data_type, labels_formatter, create_collection_func):
+    def read_opinion_collection(self, doc_id, data_type, labels_formatter, create_collection_func):
         assert(callable(create_collection_func))
 
         target = self._create_annotated_collection_target(

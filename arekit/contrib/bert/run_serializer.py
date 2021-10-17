@@ -95,11 +95,23 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
     def _before_running(self):
         self._logger.info("Perform annotation ...")
+
         for data_type in self._experiment.DocumentOperations.DataFolding.iter_supported_data_types():
-            # TODO. #208. Split onto iter + [ write (using exp_io.create_annot_opin_writer + target)]
-            self._experiment.DataIO.Annotator.serialize_missed_collections(
+
+            collections_it = self._experiment.DataIO.Annotator.iter_annotated_collections(
                 data_type=data_type,
                 opin_ops=self._experiment.OpinionOperations,
                 doc_ops=self._experiment.DocumentOperations)
+
+            for doc_id, collection in collections_it:
+
+                target = self._experiment.ExperimentIO.create_opinion_collection_target(
+                    doc_id=doc_id,
+                    data_type=data_type)
+
+                self._experiment.write_opinion_collection(
+                    collection=collection,
+                    target=target,
+                    labels_formatter=self.__labels_formatter)
 
     # endregion

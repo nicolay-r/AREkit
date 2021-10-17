@@ -46,13 +46,12 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
 
     # region public methods
 
-    # TODO. 208. Rename as iter_annotated_collections.
-    def serialize_missed_collections(self, data_type, doc_ops, opin_ops):
+    def iter_annotated_collections(self, data_type, doc_ops, opin_ops):
 
         if data_type == DataType.Train:
             return
 
-        super(TwoScaleTaskAnnotator, self).serialize_missed_collections(
+        super(TwoScaleTaskAnnotator, self).iter_annotated_collections(
             data_type, doc_ops=doc_ops, opin_ops=opin_ops)
 
     # endregion

@@ -28,6 +28,10 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
 
+    @property
+    def LabelsFormatter(self):
+        return self.__neutral_labels_fmt
+
     # region CVBasedOperations
 
     def iter_opinions_for_extraction(self, doc_id, data_type):
@@ -67,18 +71,11 @@ class RuSentrelOpinionOperations(OpinionOperations):
         return self.__create_collection(None)
 
     def try_read_annotated_opinion_collection(self, doc_id, data_type):
-        return self.__experiment_io.deserialize_opinion_collection(
+        return self.__experiment_io.read_opinion_collection(
             doc_id=doc_id,
             data_type=data_type,
             labels_formatter=self.__neutral_labels_fmt,
             create_collection_func=self.__create_collection)
-
-    def save_annotated_opinion_collection(self, collection, doc_id, data_type):
-        self.__experiment_io.serialize_opinion_collection(
-            collection=collection,
-            doc_id=doc_id,
-            data_type=data_type,
-            labels_formatter=self.__neutral_labels_fmt)
 
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         """ Since evaluation supported only for neural networks,
