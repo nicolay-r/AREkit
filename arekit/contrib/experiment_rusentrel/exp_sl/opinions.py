@@ -39,8 +39,11 @@ class RuSentrelOpinionOperations(OpinionOperations):
         collections = []
 
         # Reading automatically annotated collection of neutral opinions.
-        auto_neutral = self.try_read_annotated_opinion_collection(doc_id=doc_id,
-                                                                  data_type=data_type)
+        auto_neutral = self.__experiment_io.read_opinion_collection(
+            doc_id=doc_id,
+            data_type=data_type,
+            labels_formatter=self.__neutral_labels_fmt,
+            create_collection_func=self.__create_collection)
 
         if data_type == DataType.Train:
             # Providing neutral and sentiment.
@@ -69,13 +72,6 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     def create_opinion_collection(self):
         return self.__create_collection(None)
-
-    def try_read_annotated_opinion_collection(self, doc_id, data_type):
-        return self.__experiment_io.read_opinion_collection(
-            doc_id=doc_id,
-            data_type=data_type,
-            labels_formatter=self.__neutral_labels_fmt,
-            create_collection_func=self.__create_collection)
 
     def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
         """ Since evaluation supported only for neural networks,

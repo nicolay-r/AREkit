@@ -24,20 +24,12 @@ class BaseAnnotator(object):
 
     # region private methods
 
-    def __iter_annotated_collections(self, data_type, filter_func, doc_ops, opin_ops):
+    def __iter_annotated_collections(self, data_type, doc_ops, opin_ops):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
 
-        # TODO. 212. Pass tag ("annotate")
-        docs_to_annot_list = list(filter(filter_func,
-                                  doc_ops.iter_doc_ids_to_annotate()))
-
-        if len(docs_to_annot_list) == 0:
-            logger.info("[{}]: Nothing to annotate".format(data_type))
-            return
-
         logged_parsed_news_iter = progress_bar_iter(
-            iterable=doc_ops.iter_parsed_docs(docs_to_annot_list),
+            iterable=doc_ops.iter_parsed_docs(doc_ops.iter_doc_ids_to_annotate()),
             desc="Annotating parsed news [{}]".format(data_type))
 
         for parsed_news in logged_parsed_news_iter:
@@ -55,14 +47,8 @@ class BaseAnnotator(object):
 
     def iter_annotated_collections(self, data_type, doc_ops, opin_ops):
         assert(isinstance(opin_ops, OpinionOperations))
-
-        filter_func = lambda doc_id: opin_ops.try_read_annotated_opinion_collection(
-            doc_id=doc_id, data_type=data_type) is None
-
-        return self.__iter_annotated_collections(
-            data_type,
-            filter_func,
-            doc_ops=doc_ops,
-            opin_ops=opin_ops)
+        return self.__iter_annotated_collections(data_type=data_type,
+                                                 doc_ops=doc_ops,
+                                                 opin_ops=opin_ops)
 
     # endregion
