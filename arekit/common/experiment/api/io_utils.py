@@ -8,13 +8,9 @@ class BaseIOUtils(object):
         results -- evaluation of experiments.
     """
 
-    def __init__(self, experiment, opinion_collection_provider):
+    def __init__(self, experiment):
         self._experiment = experiment
-        self.__opinion_collection_provider = opinion_collection_provider
-
-    @property
-    def OpinionCollectionProvider(self):
-        return self.__opinion_collection_provider
+        self.__opinion_collection_provider = self._create_opinion_collection_provider()
 
     def get_experiment_sources_dir(self):
         """ Provides directory for samples.
@@ -46,6 +42,9 @@ class BaseIOUtils(object):
         raise NotImplementedError()
 
     def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
+        raise NotImplementedError()
+
+    def _create_opinion_collection_provider(self):
         raise NotImplementedError()
 
     def get_target_dir(self):
@@ -82,13 +81,8 @@ class BaseIOUtils(object):
             collection=collection,
             labels_formatter=labels_formatter)
 
-    def read_opinion_collection(self, doc_id, data_type, labels_formatter, create_collection_func):
-        assert(callable(create_collection_func))
-
-        target = self._create_annotated_collection_target(
-            doc_id=doc_id,
-            data_type=data_type,
-            check_existance=True)
+    def read_opinion_collection(self, target, labels_formatter, create_collection_func,
+                                error_on_non_supported=False):
 
         # Check existance of the target.
         if target is None:
@@ -97,7 +91,7 @@ class BaseIOUtils(object):
         opinions = self.__opinion_collection_provider.iter_opinions(
             source=target,
             labels_formatter=labels_formatter,
-            error_on_non_supported=False)
+            error_on_non_supported=error_on_non_supported)
 
         return create_collection_func(opinions)
 

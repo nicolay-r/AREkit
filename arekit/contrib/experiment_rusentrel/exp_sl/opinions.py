@@ -40,8 +40,10 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
         # Reading automatically annotated collection of neutral opinions.
         auto_neutral = self.__experiment_io.read_opinion_collection(
-            doc_id=doc_id,
-            data_type=data_type,
+            target=self.__experiment_io.create_result_opinion_collection_target(
+                doc_id=doc_id,
+                data_type=data_type,
+                check_existance=True),
             labels_formatter=self.__neutral_labels_fmt,
             create_collection_func=self.__create_collection)
 
@@ -80,25 +82,17 @@ class RuSentrelOpinionOperations(OpinionOperations):
         """
         assert(isinstance(self.__experiment_io, BaseIOUtils))
 
-        filepath = self.__experiment_io.create_result_opinion_collection_target(
-            doc_id=doc_id,
-            data_type=data_type,
-            epoch_index=epoch_index)
-
-        return self.__custom_read(filepath=filepath,
-                                  labels_fmt=self.__result_labels_fmt)
+        return self.__experiment_io.read_opinion_collection(
+            target=self.__experiment_io.create_result_opinion_collection_target(
+                doc_id=doc_id,
+                data_type=data_type,
+                epoch_index=epoch_index),
+            labels_formatter=self.__result_labels_fmt,
+            create_collection_func=lambda opinions: self.__create_collection(opinions))
 
     # endregion
 
     # region private provider methods
-
-    def __custom_read(self, filepath, labels_fmt):
-        opinions = self.__experiment_io.OpinionCollectionProvider.iter_opinions(
-            source=filepath,
-            labels_formatter=labels_fmt,
-            error_on_non_supported=False)
-
-        return self.__create_collection(opinions)
 
     def __create_collection(self, opinions):
         return OpinionCollection(opinions=[] if opinions is None else opinions,
