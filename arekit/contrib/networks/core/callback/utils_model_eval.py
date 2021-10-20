@@ -12,7 +12,6 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
-from arekit.common.opinions.provider import OpinionCollectionsProvider
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
@@ -67,7 +66,6 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
         opin_ops=experiment.OpinionOperations,
         doc_ops=experiment.DocumentOperations,
         labels_scaler=label_scaler,
-        opin_provider=experiment.ExperimentIO.OpinionCollectionProvider,
         supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,
         epoch_index=epoch_index,
@@ -91,14 +89,13 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
 
 # TODO. Pass TsvInputOpinionReader.
-def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_provider,
+def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler,
                                             output_storage, data_type, epoch_index,
                                             supported_collection_labels, label_calc_mode, labels_formatter):
     assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(exp_io, NetworkIOUtils))
-    assert(isinstance(opin_provider, OpinionCollectionsProvider))
     assert(isinstance(data_type, DataType))
     assert(isinstance(epoch_index, int))
     assert(isinstance(label_calc_mode, LabelCalculationMode))
