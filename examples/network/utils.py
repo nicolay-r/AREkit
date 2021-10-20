@@ -1,3 +1,4 @@
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
@@ -7,13 +8,10 @@ class SingleDocOperations(DocumentOperations):
     """ Operations over a single document for inference.
     """
 
-    # TODO. 212. Rename, add tag.
-    def iter_doc_ids_to_annotate(self):
+    def iter_tagget_doc_ids(self, tag):
+        assert(isinstance(tag, BaseDocumentTag))
+        assert(tag == BaseDocumentTag.Annotate)
         return 0
-
-    # TODO. 212. Remove (we don't need it in such case).
-    def iter_doc_ids_to_compare(self):
-        raise NotImplementedError()
 
     def __init__(self, news):
         folding = NoFolding(doc_ids_to_fold=[0], supported_data_types=[DataType.Test])

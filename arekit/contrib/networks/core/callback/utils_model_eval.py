@@ -3,6 +3,7 @@ import logging
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.output_multiple import MulticlassOutputView
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
@@ -103,8 +104,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
     assert(isinstance(label_calc_mode, LabelCalculationMode))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
-    # TODO. 212. Pass tag ("compare")
-    cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
+    cmp_doc_ids_set = set(doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
 
     output_view = MulticlassOutputView(labels_scaler=labels_scaler,
                                        storage=output_storage)

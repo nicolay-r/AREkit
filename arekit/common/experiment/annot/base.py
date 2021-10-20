@@ -1,5 +1,6 @@
 import logging
 
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.news.parsed.base import ParsedNews
@@ -29,7 +30,7 @@ class BaseAnnotator(object):
         assert(isinstance(opin_ops, OpinionOperations))
 
         logged_parsed_news_iter = progress_bar_iter(
-            iterable=doc_ops.iter_parsed_docs(doc_ops.iter_doc_ids_to_annotate()),
+            iterable=doc_ops.iter_parsed_docs(doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Annotate)),
             desc="Annotating parsed news [{}]".format(data_type))
 
         for parsed_news in logged_parsed_news_iter:

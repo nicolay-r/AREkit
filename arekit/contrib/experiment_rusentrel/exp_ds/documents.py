@@ -1,5 +1,6 @@
 from arekit.common.experiment.api.ctx_base import DataIO
 from arekit.common.experiment.api.ctx_serialization import SerializationData
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
 
@@ -27,8 +28,9 @@ class RuAttitudesDocumentOperations(DocumentOperations):
         return RuAttitudesParseOptions(stemmer=self.__exp_data.Stemmer,
                                        frame_variants_collection=self.__exp_data.FrameVariantCollection)
 
-    # TODO. 212. Rename, add tag parameter.
-    def iter_doc_ids_to_annotate(self):
+    def iter_tagget_doc_ids(self, tag):
+        assert(isinstance(tag, BaseDocumentTag))
+        assert(tag == BaseDocumentTag.Annotate or tag == BaseDocumentTag.Compare)
         return
         yield
 

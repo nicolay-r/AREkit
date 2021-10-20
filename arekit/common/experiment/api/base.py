@@ -4,6 +4,7 @@ from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.experiment.api.ctx_base import DataIO
 from arekit.common.experiment.api.ctx_training import TrainingData
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
@@ -95,8 +96,7 @@ class BaseExperiment(object):
         assert(isinstance(self.__experiment_data, TrainingData))
 
         # Extracting all docs to cmp and those that is related to data_type.
-        # TODO. 212. Pass tag ("compare")
-        cmp_doc_ids_iter = self.__doc_ops.iter_doc_ids_to_compare()
+        cmp_doc_ids_iter = self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare)
         doc_ids_iter = self.__doc_ops.iter_doc_ids(data_type=data_type)
         cmp_doc_ids_set = set(cmp_doc_ids_iter)
 

@@ -21,17 +21,8 @@ class DocumentOperations(object):
     def get_doc(self, doc_id):
         raise NotImplementedError()
 
-    # TODO. 212. Unify, add tag.
-    def iter_doc_ids_to_annotate(self):
-        """ provides set of documents that utilized by annotator algorithm in order to
-            provide the related labeling of annotated attitudes in it.
-            By default, we consider an empty set, so there is no need to utilize annotator.
-        """
-        raise NotImplementedError()
-
-    # TODO. 212. Unify, add tag.
-    def iter_doc_ids_to_compare(self):
-        """ provides set of documents that utilized in model evaluation process
+    def iter_tagget_doc_ids(self, tag):
+        """ Document identifiers which are grouped by a particular tag.
         """
         raise NotImplementedError()
 
