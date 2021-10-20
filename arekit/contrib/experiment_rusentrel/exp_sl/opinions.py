@@ -51,7 +51,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
                 collections.append(auto_neutral)
 
             # Providing sentiment opinions.
-            etalon = self.read_etalon_opinion_collection(doc_id=doc_id)
+            etalon = self.get_etalon_opinion_collection(doc_id=doc_id)
             collections.append(etalon)
 
         elif data_type == DataType.Test:
@@ -62,7 +62,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
             for opinion in collection:
                 yield opinion
 
-    def read_etalon_opinion_collection(self, doc_id):
+    def get_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
         opins_iter = RuSentRelOpinionCollection.iter_opinions_from_doc(
             doc_id=doc_id,
@@ -73,7 +73,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
     def create_opinion_collection(self):
         return self.__create_collection(None)
 
-    def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
+    def get_result_opinion_collection(self, doc_id, data_type, epoch_index):
         """ Since evaluation supported only for neural networks,
             we need to guarantee the presence of a function that returns filepath
             by using isinstance command.
@@ -81,8 +81,8 @@ class RuSentrelOpinionOperations(OpinionOperations):
         assert(isinstance(self.__experiment_io, BaseIOUtils))
 
         filepath = self.__experiment_io.create_result_opinion_collection_target(
-            data_type=data_type,
             doc_id=doc_id,
+            data_type=data_type,
             epoch_index=epoch_index)
 
         return self.__custom_read(filepath=filepath,

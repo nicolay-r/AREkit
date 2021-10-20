@@ -102,7 +102,7 @@ class NetworkIOUtils(BaseIOUtils):
                                   template=result_template,
                                   prefix="result")
 
-    def create_result_opinion_collection_target(self, data_type, doc_id, epoch_index):
+    def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
         assert(isinstance(epoch_index, int))
 
         model_eval_root = self.__get_eval_root_filepath(data_type=data_type, epoch_index=epoch_index)

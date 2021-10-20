@@ -34,5 +34,5 @@ class RuAttitudesOpinionOperations(OpinionOperations):
             for opinion in collection:
                 yield opinion
 
-    def read_etalon_opinion_collection(self, doc_id):
+    def get_etalon_opinion_collection(self, doc_id):
         return self.__get_opinion_list_in_doc(doc_id=doc_id)

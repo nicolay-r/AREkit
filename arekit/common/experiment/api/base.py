@@ -25,8 +25,8 @@ class BaseExperiment(object):
 
         self.__experiment_data = exp_data
         self.__experiment_io = experiment_io
-        self.__opin_operations = opin_ops
-        self.__doc_operations = doc_ops
+        self.__opin_ops = opin_ops
+        self.__doc_ops = doc_ops
 
         # Suffix allows to provide additional experiment setups
         # In a form of a string, which might be behind the original
@@ -55,11 +55,11 @@ class BaseExperiment(object):
 
     @property
     def OpinionOperations(self):
-        return self.__opin_operations
+        return self.__opin_ops
 
     @property
     def DocumentOperations(self):
-        return self.__doc_operations
+        return self.__doc_ops
 
     # endregion
 
@@ -96,16 +96,16 @@ class BaseExperiment(object):
 
         # Extracting all docs to cmp and those that is related to data_type.
         # TODO. 212. Pass tag ("compare")
-        cmp_doc_ids_iter = self.__doc_operations.iter_doc_ids_to_compare()
-        doc_ids_iter = self.__doc_operations.iter_doc_ids(data_type=data_type)
+        cmp_doc_ids_iter = self.__doc_ops.iter_doc_ids_to_compare()
+        doc_ids_iter = self.__doc_ops.iter_doc_ids(data_type=data_type)
         cmp_doc_ids_set = set(cmp_doc_ids_iter)
 
         # Compose cmp pairs iterator.
         cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
             doc_ids=[doc_id for doc_id in doc_ids_iter if doc_id in cmp_doc_ids_set],
-            read_etalon_collection_func=lambda doc_id: self.__opin_operations.read_etalon_opinion_collection(
+            read_etalon_collection_func=lambda doc_id: self.__opin_ops.get_etalon_opinion_collection(
                 doc_id=doc_id),
-            read_result_collection_func=lambda doc_id: self.__opin_operations.read_result_opinion_collection(
+            read_result_collection_func=lambda doc_id: self.__opin_ops.get_result_opinion_collection(
                 data_type=data_type,
                 doc_id=doc_id,
                 epoch_index=epoch_index))
