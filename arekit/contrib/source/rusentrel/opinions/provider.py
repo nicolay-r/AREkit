@@ -1,29 +1,9 @@
-from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.provider import OpinionCollectionsProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.contrib.source.rusentrel.opinions.converter import OpinionConverter
 
 
 class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
-
-    # region private methods
-
-    @staticmethod
-    def __try_str_to_opinion(line, labels_formatter):
-        args = line.strip().split(',')
-        assert (len(args) >= 3)
-
-        source_value = args[0].strip()
-        target_value = args[1].strip()
-        str_label = args[2].strip()
-
-        if not labels_formatter.supports_value(str_label):
-            return None
-
-        return Opinion(source_value=source_value,
-                       target_value=target_value,
-                       sentiment=labels_formatter.str_to_label(str_label))
-
-    # endregion
 
     @staticmethod
     def _iter_opinions_from_file(input_file, labels_formatter, error_on_non_supported):
@@ -37,7 +17,7 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
             if line == '\n':
                 continue
 
-            str_opinion = RuSentRelOpinionCollectionProvider.__try_str_to_opinion(
+            str_opinion = OpinionConverter.try_from_string(
                 line=line,
                 labels_formatter=labels_formatter)
 
