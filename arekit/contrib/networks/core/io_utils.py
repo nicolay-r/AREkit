@@ -11,6 +11,8 @@ from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
+from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
+from arekit.contrib.source.rusentrel.opinions.writer import RuSentRelOpinionCollectionWriter
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -180,6 +182,12 @@ class NetworkIOUtils(BaseIOUtils):
         return model_io.IsPretrainedStateProvided
 
     # endregion
+
+    def _create_opinion_collection_provider(self):
+        return RuSentRelOpinionCollectionProvider()
+
+    def _create_opinion_collection_writer(self):
+        return RuSentRelOpinionCollectionWriter()
 
     # TODO. In nested class (user applications)
     def get_input_opinions_filepath(self, data_type):

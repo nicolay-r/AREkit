@@ -11,6 +11,7 @@ class BaseIOUtils(object):
     def __init__(self, experiment):
         self._experiment = experiment
         self.__opinion_collection_provider = self._create_opinion_collection_provider()
+        self.__opinion_collection_writer = self._create_opinion_collection_writer()
 
     # region abstract methods
 
@@ -44,6 +45,9 @@ class BaseIOUtils(object):
         raise NotImplementedError()
 
     def _create_opinion_collection_provider(self):
+        raise NotImplementedError()
+
+    def _create_opinion_collection_writer(self):
         raise NotImplementedError()
 
     # endregion
