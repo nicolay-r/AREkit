@@ -107,7 +107,7 @@ def extract(text):
     network = PiecewiseCNN()
     config = CNNConfig()
 
-    config.TermEmbeddingMatrix(EmbeddingHelper.load_vocab("embedding.txt"))
+    config.set_term_embedding(EmbeddingHelper.load_vocab("embedding.txt"))
 
     inference_ctx = InferenceContext.create_empty()
     inference_ctx.initialize(
