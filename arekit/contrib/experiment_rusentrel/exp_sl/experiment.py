@@ -37,8 +37,7 @@ class RuSentRelExperiment(BaseExperiment):
         self.__synonyms = None
 
         self.log_info("Init experiment io ...")
-        experiment_io = experiment_io_type(self,
-                                           opinion_collection_provider=None)
+        experiment_io = experiment_io_type(self)
 
         self.log_info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
