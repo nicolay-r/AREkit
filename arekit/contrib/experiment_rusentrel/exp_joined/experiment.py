@@ -137,6 +137,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         if self.__rusentrel_synonyms is None:
             self.log_info("Read synonyms collection [RuSentRel]...")
             self.__rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+                # TODO. 172. Adopt the default stemmer (MystemWrapper). Release the DataIO.Stemmer usage!
                 stemmer=self.DataIO.Stemmer,
                 version=self.__rusentrel_version)
 
