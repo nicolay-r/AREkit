@@ -11,7 +11,7 @@ class GoogleBertOutputStorage(BaseRowsStorage):
         """
         In addition to such output we provide the following parameters via samples_view instance:
         - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
-        - news_id -- is a related news_id towards which the related output corresponds to.
+        - doc_id -- is, towards which the output corresponds to.
         """
         row_ids = samples_view.extract_ids()
         doc_ids = samples_view.extract_doc_ids()

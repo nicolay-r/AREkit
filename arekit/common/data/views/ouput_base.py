@@ -79,16 +79,16 @@ class BaseOutputView(BaseStorageView):
 
     # region public methods
 
-    def iter_news_ids(self):
-        unique_news_ids = set(self._storage.iter_column_values(column_name=const.DOC_ID))
-        return unique_news_ids
+    def iter_doc_ids(self):
+        unique_doc_ids = set(self._storage.iter_column_values(column_name=const.DOC_ID))
+        return unique_doc_ids
 
     def iter_opinion_collections(self, opinions_view, keep_doc_id_func, to_collection_func):
         assert(isinstance(opinions_view, BaseOpinionStorageView))
         assert(callable(keep_doc_id_func))
         assert(callable(to_collection_func))
 
-        for doc_id in self.iter_news_ids():
+        for doc_id in self.iter_doc_ids():
 
             if not keep_doc_id_func(doc_id):
                 continue
