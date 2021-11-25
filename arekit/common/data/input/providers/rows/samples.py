@@ -61,7 +61,7 @@ class BaseSampleRowProvider(BaseRowProvider):
             index_in_linked=index_in_linked,
             label_scaler=self._label_provider.LabelScaler)
 
-        row[const.NEWS_ID] = linked_wrap.First.NewsID
+        row[const.DOC_ID] = linked_wrap.First.DocID
 
         expected_label = linked_wrap.get_linked_label()
 

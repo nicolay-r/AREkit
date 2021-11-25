@@ -1,5 +1,5 @@
 ID = 'id'
-NEWS_ID = 'news_id'
+DOC_ID = 'doc_id'
 LABEL = 'label'
 
 # Corresponds to fields with attitude ends. (values, STRING)

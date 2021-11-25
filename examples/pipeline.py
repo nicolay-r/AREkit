@@ -47,7 +47,7 @@ def extract(text):
     sentences = text  # TODO. split text onto sentences.
     stemmer = MystemWrapper()
 
-    news = News(news_id=0,
+    news = News(doc_id=0,
                 sentences=sentences)
 
     parse_options = NewsParseOptions(

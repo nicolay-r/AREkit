@@ -21,15 +21,15 @@ class ParsedNews(object):
         IN MEMORY implementation (`add` method)
     """
 
-    def __init__(self, news_id, parsed_sentences):
+    def __init__(self, doc_id, parsed_sentences):
         """
         parsed_sentences: iterable of ParsedSentence type
             NOTE: Considered sentences with labeled Entities in it!
         """
-        assert(isinstance(news_id, int))
+        assert(isinstance(doc_id, int))
         assert(isinstance(parsed_sentences, collections.Iterable))
 
-        self.__news_id = news_id
+        self.__doc_id = doc_id
         self.__parsed_sentences = list(parsed_sentences)
         self.__entity_positions = None
 
@@ -39,7 +39,7 @@ class ParsedNews(object):
 
     @property
     def RelatedNewsID(self):
-        return self.__news_id
+        return self.__doc_id
 
     # endregion
 

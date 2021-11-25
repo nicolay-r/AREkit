@@ -36,7 +36,7 @@ class TextParser:
         parsed_sentences = [TextParser.__parse_sentence(news, sent_ind, parse_options)
                             for sent_ind in range(news.SentencesCount)]
 
-        parsed_news = ParsedNews(news_id=news.ID,
+        parsed_news = ParsedNews(doc_id=news.ID,
                                  parsed_sentences=parsed_sentences)
 
         if parse_options.ParseFrameVariants:

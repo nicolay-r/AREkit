@@ -46,7 +46,7 @@ class TestRuAttitudes(unittest.TestCase):
                 entity = s_obj.to_entity(lambda in_id: in_id)
                 assert (isinstance(entity, Entity))
                 self.assertTrue(entity.GroupIndex is not None,
-                                "Group index [{news_id}] is None!".format(news_id=news.ID))
+                                "Group index [{doc_id}] is None!".format(doc_id=news.ID))
 
     def __iter_indices(self, ra_version):
         ids = set()
@@ -98,11 +98,11 @@ class TestRuAttitudes(unittest.TestCase):
 
     def __test_iter_news_inds(self, ra_version):
         # iterating through collection
-        news_ids_it = RuAttitudesCollection.iter_news(version=ra_version,
-                                                      get_news_index_func=lambda ind: ind + 1,
-                                                      return_inds_only=True)
+        doc_ids_it = RuAttitudesCollection.iter_news(version=ra_version,
+                                                     get_news_index_func=lambda ind: ind + 1,
+                                                     return_inds_only=True)
 
-        it = progress_bar_iter(iterable=news_ids_it,
+        it = progress_bar_iter(iterable=doc_ids_it,
                                desc="Extracting document ids",
                                unit="docs")
 

@@ -44,7 +44,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     assert (isinstance(idhp, NetworkInputDependentVariables))
 
     samples_view = experiment.ExperimentIO.create_samples_view(data_type)
-    news_id_by_sample_id = samples_view.calculate_news_id_by_sample_id_dict()
+    doc_id_by_sample_id = samples_view.calculate_doc_id_by_sample_id_dict()
 
     # TODO. Filepath-dependency should be removed!
     # Create and save output.
@@ -57,7 +57,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     # TODO. This is a limitation, as we focus only tsv.
     with TsvPredictProvider(filepath=result_filepath) as out:
         out.load(sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
-                 column_extra_funcs=[(const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])],
+                 column_extra_funcs=[(const.DOC_ID, lambda sample_id: doc_id_by_sample_id[sample_id])],
                  labels_scaler=label_scaler)
 
     # Convert output to result.

@@ -7,7 +7,7 @@ class BaseDocumentStatGenerator(object):
     def __init__(self, doc_reader_func):
         """
         news_parser_func: func -> news
-            assumes to provide a news by a certain news_id
+            assumes to provide a news by a certain doc_id
         """
         assert(callable(doc_reader_func))
         self.__doc_reader_func = doc_reader_func

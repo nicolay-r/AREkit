@@ -10,14 +10,14 @@ logger = logging.getLogger(__name__)
 
 # region private methods
 
-def __from_opinion(rusentrel_news_id, source_entities, target_entities, opinion):
+def __from_opinion(rusentrel_doc_id, source_entities, target_entities, opinion):
 
     for source_entity in source_entities:
         for target_entity in target_entities:
             assert (isinstance(source_entity, RuSentRelEntity))
             assert (isinstance(target_entity, RuSentRelEntity))
 
-            text_opinion = TextOpinion(news_id=rusentrel_news_id,
+            text_opinion = TextOpinion(doc_id=rusentrel_doc_id,
                                        source_id=source_entity.IdInDocument,
                                        target_id=target_entity.IdInDocument,
                                        label=opinion.Sentiment,
@@ -29,12 +29,12 @@ def __from_opinion(rusentrel_news_id, source_entities, target_entities, opinion)
 # endregion
 
 
-def iter_text_opinions_by_doc_opinion(rusentrel_news_id, doc_entities, opinion, debug=False):
+def iter_text_opinions_by_doc_opinion(rusentrel_doc_id, doc_entities, opinion, debug=False):
     """ Provides text-level opinion extraction by document-level opinions
-        (Opinion class instances), for a particular document (news_id),
+        (Opinion class instances), for a particular document (doc_id),
         with the realated entity collection.
     """
-    assert(isinstance(rusentrel_news_id, int))
+    assert(isinstance(rusentrel_doc_id, int))
     assert(isinstance(opinion, Opinion))
     assert(isinstance(doc_entities, RuSentRelDocumentEntityCollection))
 
@@ -57,7 +57,7 @@ def iter_text_opinions_by_doc_opinion(rusentrel_news_id, doc_entities, opinion, 
         return
         yield
 
-    text_opins_iter = __from_opinion(rusentrel_news_id=rusentrel_news_id,
+    text_opins_iter = __from_opinion(rusentrel_doc_id=rusentrel_doc_id,
                                      source_entities=source_entities,
                                      target_entities=target_entities,
                                      opinion=opinion)
