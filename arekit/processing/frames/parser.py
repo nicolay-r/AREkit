@@ -4,7 +4,7 @@ from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.languages.ru.mods import RussianLanguageMods
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.languages.mods import BaseLanguageMods
-from arekit.common.frame_variants.search import FrameVariantsSearcher
+from arekit.processing.frames.annot import FrameVariantsAnnotationHelper
 from arekit.processing.text.enums import TermFormat
 from arekit.processing.text.parsed import ParsedText
 
@@ -41,9 +41,12 @@ class FrameVariantsParser(object):
         assert(isinstance(parsed_text, ParsedText))
         assert(issubclass(locale_mods, BaseLanguageMods))
 
-        frame_variants_iter = FrameVariantsSearcher.iter_frames_from_parsed_text(
+        lemmas = [locale_mods.replace_specific_word_chars(lemma) if isinstance(lemma, str) else lemma
+                  for lemma in parsed_text.iter_terms(term_format=TermFormat.Lemma)]
+
+        frame_variants_iter = FrameVariantsAnnotationHelper.iter_frames_from_lemmas(
             frame_variants=frame_variants_collection,
-            parsed_text=parsed_text,
+            lemmas=lemmas,
             locale_mods=locale_mods)
 
         if frame_variants_iter is None:

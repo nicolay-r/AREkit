@@ -2,11 +2,9 @@ from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.languages.ru.mods import RussianLanguageMods
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.languages.mods import BaseLanguageMods
-from arekit.processing.text.enums import TermFormat
-from arekit.processing.text.parsed import ParsedText
 
 
-class FrameVariantsSearcher(object):
+class FrameVariantsAnnotationHelper(object):
 
     # region private methods
 
@@ -24,13 +22,13 @@ class FrameVariantsSearcher(object):
     # endregion
 
     @staticmethod
-    def iter_frames_from_parsed_text(frame_variants, parsed_text, locale_mods=RussianLanguageMods):
+    def iter_frames_from_lemmas(frame_variants, lemmas, locale_mods=RussianLanguageMods):
+        """
+        Considered to perform frames annotation across lemmatized terms.
+        """
         assert(isinstance(frame_variants, FrameVariantsCollection))
-        assert(isinstance(parsed_text, ParsedText))
+        assert(isinstance(lemmas, list))
         assert(issubclass(locale_mods, BaseLanguageMods))
-
-        lemmas = [locale_mods.replace_specific_word_chars(lemma) if isinstance(lemma, str) else lemma
-                  for lemma in parsed_text.iter_terms(term_format=TermFormat.Lemma)]
 
         start_ind = 0
         last_ind = 0
@@ -43,7 +41,7 @@ class FrameVariantsSearcher(object):
                 if not(last_ind < len(lemmas)):
                     continue
 
-                is_all_words_within = FrameVariantsSearcher.__check_all_words_within(
+                is_all_words_within = FrameVariantsAnnotationHelper.__check_all_words_within(
                     terms=lemmas,
                     start_index=start_ind,
                     last_index=last_ind)
@@ -56,8 +54,8 @@ class FrameVariantsSearcher(object):
                 if not frame_variants.has_variant(ctx_value):
                     continue
 
-                prep_term = FrameVariantsSearcher.__get_preposition(terms=lemmas,
-                                                                    index=start_ind)
+                prep_term = FrameVariantsAnnotationHelper.__get_preposition(terms=lemmas,
+                                                                            index=start_ind)
 
                 yield TextFrameVariant(
                     variant=frame_variants.get_variant_by_value(ctx_value),

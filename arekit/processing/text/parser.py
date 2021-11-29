@@ -3,11 +3,11 @@ import logging
 
 from arekit.common.entities.base import Entity
 from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.common.frame_variants.parse import FrameVariantsParser
 from arekit.common.news.base import News
 from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.utils import split_by_whitespaces
+from arekit.processing.frames.parser import FrameVariantsParser
 from arekit.processing.text.parsed import ParsedText
 from arekit.processing.text.tokens import Tokens
 from arekit.processing.text.token import Token
