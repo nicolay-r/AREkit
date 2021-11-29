@@ -35,12 +35,14 @@ class FrameVariantsParser(object):
 
     # endregion
 
+    # TODO. #218. There is no need in parsed text here!
     @staticmethod
     def parse_frames_in_parsed_text(frame_variants_collection, parsed_text, locale_mods=RussianLanguageMods):
         assert(isinstance(frame_variants_collection, FrameVariantsCollection))
         assert(isinstance(parsed_text, ParsedText))
         assert(issubclass(locale_mods, BaseLanguageMods))
 
+        # TODO. 218. Move lemmatization outside (reason: this is not a part of the frames annotation logic)
         lemmas = [locale_mods.replace_specific_word_chars(lemma) if isinstance(lemma, str) else lemma
                   for lemma in parsed_text.iter_terms(term_format=TermFormat.Lemma)]
 
@@ -52,8 +54,10 @@ class FrameVariantsParser(object):
         if frame_variants_iter is None:
             return parsed_text
 
+        # TODO. 218 Return updated terms only
         updated_terms = FrameVariantsParser.__insert_frame_variants_into_raw_terms_list(
             raw_terms_list=list(parsed_text.iter_terms(TermFormat.Raw)),
             frame_variants_iter=frame_variants_iter)
 
+        # TODO. Remove parsed text from here.
         return parsed_text.copy_modified(terms=updated_terms)
