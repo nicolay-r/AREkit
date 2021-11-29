@@ -3,6 +3,7 @@ import logging
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.output_multiple import MulticlassOutputView
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
@@ -11,7 +12,6 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
-from arekit.common.opinions.provider import OpinionCollectionsProvider
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
@@ -44,7 +44,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     assert (isinstance(idhp, NetworkInputDependentVariables))
 
     samples_view = experiment.ExperimentIO.create_samples_view(data_type)
-    news_id_by_sample_id = samples_view.calculate_news_id_by_sample_id_dict()
+    doc_id_by_sample_id = samples_view.calculate_doc_id_by_sample_id_dict()
 
     # TODO. Filepath-dependency should be removed!
     # Create and save output.
@@ -57,7 +57,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     # TODO. This is a limitation, as we focus only tsv.
     with TsvPredictProvider(filepath=result_filepath) as out:
         out.load(sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
-                 column_extra_funcs=[(const.NEWS_ID, lambda sample_id: news_id_by_sample_id[sample_id])],
+                 column_extra_funcs=[(const.DOC_ID, lambda sample_id: doc_id_by_sample_id[sample_id])],
                  labels_scaler=label_scaler)
 
     # Convert output to result.
@@ -66,7 +66,6 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
         opin_ops=experiment.OpinionOperations,
         doc_ops=experiment.DocumentOperations,
         labels_scaler=label_scaler,
-        opin_provider=experiment.ExperimentIO.OpinionCollectionProvider,
         supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,
         epoch_index=epoch_index,
@@ -90,20 +89,19 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
 
 # TODO. Pass TsvInputOpinionReader.
-def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler, opin_provider,
+def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler,
                                             output_storage, data_type, epoch_index,
                                             supported_collection_labels, label_calc_mode, labels_formatter):
     assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(doc_ops, DocumentOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(exp_io, NetworkIOUtils))
-    assert(isinstance(opin_provider, OpinionCollectionsProvider))
     assert(isinstance(data_type, DataType))
     assert(isinstance(epoch_index, int))
     assert(isinstance(label_calc_mode, LabelCalculationMode))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
-    cmp_doc_ids_set = set(doc_ops.iter_doc_ids_to_compare())
+    cmp_doc_ids_set = set(doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
 
     output_view = MulticlassOutputView(labels_scaler=labels_scaler,
                                        storage=output_storage)
@@ -126,12 +124,9 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
             epoch_index=epoch_index,
             doc_id=doc_id)
 
-        exp_io.serialize_opinion_collection(
-            collection=collection,
-            doc_id=doc_id,
-            data_type=data_type,
-            labels_formatter=labels_formatter,
-            target=target)
+        exp_io.write_opinion_collection(collection=collection,
+                                        labels_formatter=labels_formatter,
+                                        target=target)
 
 
 def __create_opinion_collection(linked_iter, supported_labels, label_scaler, create_opinion_collection):

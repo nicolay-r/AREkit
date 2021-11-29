@@ -36,9 +36,9 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
 
     # region DocumentOperations
 
-    def read_news(self, doc_id):
+    def get_doc(self, doc_id):
         target_doc_ops = self.__select_doc_ops(doc_id)
-        return target_doc_ops.read_news(doc_id)
+        return target_doc_ops.get_doc(doc_id)
 
     def iter_doc_ids(self, data_type):
         for doc_id in self.__rusentrel_doc.iter_doc_ids(data_type):
@@ -59,10 +59,7 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
         # Therefore we provide rusentrel_doc by default.
         return self.__rusentrel_doc._create_parse_options()
 
-    def iter_doc_ids_to_annotate(self):
-        return self.__rusentrel_doc.iter_doc_ids_to_annotate()
-
-    def iter_doc_ids_to_compare(self):
-        return self.__rusentrel_doc.iter_doc_ids_to_compare()
+    def iter_tagget_doc_ids(self, tag):
+        return self.__rusentrel_doc.iter_tagget_doc_ids(tag)
 
     # endregion

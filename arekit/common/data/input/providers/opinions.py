@@ -54,8 +54,8 @@ class OpinionProvider(object):
             parsed_news = parse_news_func(doc_id)
 
             linked_text_opinion_lists = OpinionProvider.__iter_linked_text_opinion_lists(
-                news=read_news_func(parsed_news.RelatedNewsID),
-                iter_opins_for_extraction=news_opins_for_extraction_func(doc_id=parsed_news.RelatedNewsID),
+                news=read_news_func(parsed_news.RelatedDocID),
+                iter_opins_for_extraction=news_opins_for_extraction_func(doc_id=parsed_news.RelatedDocID),
                 filter_text_opinion_func=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
                     parsed_news=parsed_news,
                     text_opinion=text_opinion,
@@ -82,11 +82,11 @@ class OpinionProvider(object):
 
         def it_func(doc_ids_it):
             return cls.__iter_linked_text_opins(
-                read_news_func=lambda news_id: read_news_func(news_id),
-                news_opins_for_extraction_func=lambda news_id: iter_news_opins_for_extraction(doc_id=news_id),
+                read_news_func=lambda doc_id: read_news_func(doc_id),
+                news_opins_for_extraction_func=lambda doc_id: iter_news_opins_for_extraction(doc_id=doc_id),
                 terms_per_context=terms_per_context,
                 doc_ids_it=doc_ids_it,
-                parse_news_func=lambda news_id: parse_news_func(news_id))
+                parse_news_func=lambda doc_id: parse_news_func(doc_id))
 
         return cls(linked_text_opins_it_func=it_func)
 

@@ -39,7 +39,7 @@ class TextOpinionHelper(object):
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(distance_type, DistanceType))
         assert(isinstance(parsed_news, ParsedNews))
-        assert(parsed_news.RelatedNewsID == text_opinion.NewsID)
+        assert(parsed_news.RelatedNewsID == text_opinion.DocID)
 
         e1_id = TextOpinionHelper.__get_end_id(text_opinion=text_opinion,
                                                end_type=EntityEndType.Source)
@@ -75,7 +75,7 @@ class TextOpinionHelper(object):
     def __extract_entity_value(parsed_news, text_opinion, end_type):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(text_opinion, TextOpinion))
-        assert(parsed_news.RelatedNewsID == text_opinion.NewsID)
+        assert(parsed_news.RelatedNewsID == text_opinion.DocID)
         end_id = TextOpinionHelper.__get_end_id(text_opinion=text_opinion,
                                                 end_type=end_type)
         return parsed_news.get_entity_value(end_id)
@@ -84,7 +84,7 @@ class TextOpinionHelper(object):
     def __get_entity_position(parsed_news, text_opinion, end_type, position_type=None):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(text_opinion, TextOpinion))
-        assert(parsed_news.RelatedNewsID == text_opinion.NewsID)
+        assert(parsed_news.RelatedNewsID == text_opinion.DocID)
         end_id = TextOpinionHelper.__get_end_id(text_opinion=text_opinion,
                                                 end_type=end_type)
         return parsed_news.get_entity_position(end_id, position_type)

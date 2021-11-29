@@ -8,21 +8,17 @@ class BaseIOUtils(object):
         results -- evaluation of experiments.
     """
 
-    def __init__(self, experiment, opinion_collection_provider):
+    def __init__(self, experiment):
         self._experiment = experiment
-        self.__opinion_collection_provider = opinion_collection_provider
+        self.__opinion_collection_provider = self._create_opinion_collection_provider()
+        self.__opinion_collection_writer = self._create_opinion_collection_writer()
 
-    @property
-    def OpinionCollectionProvider(self):
-        return self.__opinion_collection_provider
+    # region abstract methods
 
     def get_experiment_sources_dir(self):
         """ Provides directory for samples.
         """
         raise NotImplementedError()
-
-    def balance_samples(self, data_type, balance):
-        return balance and data_type == DataType.Train
 
     def create_samples_view(self, data_type):
         raise NotImplementedError()
@@ -42,11 +38,32 @@ class BaseIOUtils(object):
     def create_opinions_writer_target(self, data_type):
         raise NotImplementedError()
 
-    def create_result_opinion_collection_target(self, data_type, doc_id, epoch_index):
+    def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
         raise NotImplementedError()
 
     def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
         raise NotImplementedError()
+
+    def _create_opinion_collection_provider(self):
+        raise NotImplementedError()
+
+    def _create_opinion_collection_writer(self):
+        raise NotImplementedError()
+
+    # endregion
+
+    # region private methods
+
+    def __get_experiment_folder_name(self):
+        return "{name}_{scale}l".format(name=self._experiment.Name,
+                                        scale=str(self._experiment.DataIO.LabelsCount))
+
+    # endregion
+
+    # region public methods
+
+    def balance_samples(self, data_type, balance):
+        return balance and data_type == DataType.Train
 
     def get_target_dir(self):
         """ Represents an experiment dir of specific label scale format,
@@ -58,38 +75,22 @@ class BaseIOUtils(object):
     def get_experiment_folder_name(self):
         return self.__get_experiment_folder_name()
 
-    # region protected methods
+    def create_opinion_collection_target(self, doc_id, data_type, check_existance=False):
+        return self._create_annotated_collection_target(
+            doc_id=doc_id,
+            data_type=data_type,
+            check_existance=check_existance)
 
-    def __get_experiment_folder_name(self):
-        return "{name}_{scale}l".format(name=self._experiment.Name,
-                                        scale=str(self._experiment.DataIO.LabelsCount))
-
-    # endregion
-
-    # region public methods
-
-    # TODO. 208. Split onto create_tgt and create_writer.
-    def serialize_opinion_collection(self, collection, doc_id, data_type, labels_formatter, target=None):
-
-        if target is None:
-            target = self._create_annotated_collection_target(
-                doc_id=doc_id,
-                data_type=data_type,
-                check_existance=False)
+    def write_opinion_collection(self, collection, labels_formatter, target):
+        assert(target is not None)
 
         self.__opinion_collection_provider.serialize(
             target=target,
             collection=collection,
             labels_formatter=labels_formatter)
 
-    # TODO. 208. Rename into reader.
-    def deserialize_opinion_collection(self, doc_id, data_type, labels_formatter, create_collection_func):
-        assert(callable(create_collection_func))
-
-        target = self._create_annotated_collection_target(
-            doc_id=doc_id,
-            data_type=data_type,
-            check_existance=True)
+    def read_opinion_collection(self, target, labels_formatter, create_collection_func,
+                                error_on_non_supported=False):
 
         # Check existance of the target.
         if target is None:
@@ -98,9 +99,8 @@ class BaseIOUtils(object):
         opinions = self.__opinion_collection_provider.iter_opinions(
             source=target,
             labels_formatter=labels_formatter,
-            error_on_non_supported=False)
+            error_on_non_supported=error_on_non_supported)
 
         return create_collection_func(opinions)
 
     # endregion
-

@@ -14,8 +14,8 @@ class LinkedTextOpinionsWrapper(LinkedDataWrapper):
         return first
 
     @property
-    def RelatedNewsID(self):
-        return self.First.NewsID
+    def RelatedDocID(self):
+        return self.First.DocID
 
     def get_linked_label(self):
         return self.First.Sentiment

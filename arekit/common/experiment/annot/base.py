@@ -1,5 +1,6 @@
 import logging
 
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.news.parsed.base import ParsedNews
@@ -24,19 +25,12 @@ class BaseAnnotator(object):
 
     # region private methods
 
-    def __iter_annotated_collections(self, data_type, filter_func, doc_ops, opin_ops):
+    def __iter_annotated_collections(self, data_type, doc_ops, opin_ops):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
 
-        docs_to_annot_list = list(filter(filter_func,
-                                  doc_ops.iter_doc_ids_to_annotate()))
-
-        if len(docs_to_annot_list) == 0:
-            logger.info("[{}]: Nothing to annotate".format(data_type))
-            return
-
         logged_parsed_news_iter = progress_bar_iter(
-            iterable=doc_ops.iter_parsed_news(docs_to_annot_list),
+            iterable=doc_ops.iter_parsed_docs(doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Annotate)),
             desc="Annotating parsed news [{}]".format(data_type))
 
         for parsed_news in logged_parsed_news_iter:
@@ -52,23 +46,10 @@ class BaseAnnotator(object):
 
     # region public methods
 
-    # TODO. 208. Rename as iter_annotated_collections.
-    def serialize_missed_collections(self, data_type, doc_ops, opin_ops):
+    def iter_annotated_collections(self, data_type, doc_ops, opin_ops):
         assert(isinstance(opin_ops, OpinionOperations))
-
-        filter_func = lambda doc_id: opin_ops.try_read_annotated_opinion_collection(
-            doc_id=doc_id, data_type=data_type) is None
-
-        annot_it = self.__iter_annotated_collections(
-            data_type,
-            filter_func,
-            doc_ops=doc_ops,
-            opin_ops=opin_ops)
-
-        for doc_id, collection in annot_it:
-            # TODO. 208. Save here is weird.
-            opin_ops.save_annotated_opinion_collection(collection=collection,
-                                                       doc_id=doc_id,
-                                                       data_type=data_type)
+        return self.__iter_annotated_collections(data_type=data_type,
+                                                 doc_ops=doc_ops,
+                                                 opin_ops=opin_ops)
 
     # endregion

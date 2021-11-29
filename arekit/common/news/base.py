@@ -1,17 +1,17 @@
 class News(object):
 
-    def __init__(self, news_id, sentences):
-        assert(isinstance(news_id, int))
+    def __init__(self, doc_id, sentences):
+        assert(isinstance(doc_id, int))
         assert(isinstance(sentences, list))
 
-        self.__news_id = news_id
+        self.__id = doc_id
         self._sentences = sentences
 
     # region properties
 
     @property
     def ID(self):
-        return self.__news_id
+        return self.__id
 
     @property
     def SentencesCount(self):

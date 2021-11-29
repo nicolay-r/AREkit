@@ -43,11 +43,11 @@ class SentenceOpinion(object):
 
     # endregion
 
-    def to_text_opinion(self, news_id, end_to_doc_id_func, text_opinion_id):
+    def to_text_opinion(self, doc_id, end_to_doc_id_func, text_opinion_id):
         """
         Converts opinion into document-level referenced opinion
         """
-        return TextOpinion(news_id=news_id,
+        return TextOpinion(doc_id=doc_id,
                            text_opinion_id=text_opinion_id,
                            source_id=end_to_doc_id_func(self.__source_id),
                            target_id=end_to_doc_id_func(self.__target_id),

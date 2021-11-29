@@ -58,7 +58,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_folding = create_rusentrel_experiment_data_folding(
             folding_type=folding_type,
             version=rusentrel_version,
-            docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
+            docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
             experiment_io=experiment_io)
 
         # init documents.
@@ -137,6 +137,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         if self.__rusentrel_synonyms is None:
             self.log_info("Read synonyms collection [RuSentRel]...")
             self.__rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+                # TODO. 172. Adopt the default stemmer (MystemWrapper). Release the DataIO.Stemmer usage!
                 stemmer=self.DataIO.Stemmer,
                 version=self.__rusentrel_version)
 

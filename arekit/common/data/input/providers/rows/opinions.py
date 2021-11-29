@@ -35,7 +35,7 @@ class BaseOpinionsRowProvider(BaseRowProvider):
             linked_opinions=linked_wrapper,
             index_in_linked=0)
 
-        row[const.NEWS_ID] = linked_wrapper.First.NewsID
+        row[const.DOC_ID] = linked_wrapper.First.DocID
 
         row[const.SOURCE] = src_value
         row[const.TARGET] = target_value

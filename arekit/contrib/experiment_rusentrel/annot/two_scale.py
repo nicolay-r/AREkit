@@ -35,7 +35,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
         # into neutral one with the replaced sentiment values.
         # as we treat such opinions as neutral one since only NeutralLabels
         # could be casted into correct string.
-        for opinion in opin_ops.read_etalon_opinion_collection(doc_id):
+        for opinion in opin_ops.get_etalon_opinion_collection(doc_id):
             neut_collection.add_opinion(Opinion(source_value=opinion.SourceValue,
                                                 target_value=opinion.TargetValue,
                                                 sentiment=ExperimentNeutralLabel()))
@@ -46,13 +46,12 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
 
     # region public methods
 
-    # TODO. 208. Rename as iter_annotated_collections.
-    def serialize_missed_collections(self, data_type, doc_ops, opin_ops):
+    def iter_annotated_collections(self, data_type, doc_ops, opin_ops):
 
         if data_type == DataType.Train:
             return
 
-        super(TwoScaleTaskAnnotator, self).serialize_missed_collections(
+        super(TwoScaleTaskAnnotator, self).iter_annotated_collections(
             data_type, doc_ops=doc_ops, opin_ops=opin_ops)
 
     # endregion

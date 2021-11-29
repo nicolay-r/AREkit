@@ -17,7 +17,7 @@ class RuSentRelNews(News):
         assert(isinstance(sentences, list))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
-        super(RuSentRelNews, self).__init__(news_id=doc_id, sentences=sentences)
+        super(RuSentRelNews, self).__init__(doc_id=doc_id, sentences=sentences)
 
         self.__entities = entities
 
@@ -131,7 +131,7 @@ class RuSentRelNews(News):
     def extract_linked_text_opinions(self, opinion):
         assert(isinstance(opinion, Opinion))
 
-        opinions_it = iter_text_opinions_by_doc_opinion(rusentrel_news_id=self.ID,
+        opinions_it = iter_text_opinions_by_doc_opinion(rusentrel_doc_id=self.ID,
                                                         doc_entities=self.__entities,
                                                         opinion=opinion)
 

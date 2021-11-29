@@ -8,18 +8,8 @@ class OpinionOperations(object):
 
     # region annotation
 
-    # TODO. 208. To Annotation opinion repository.
-    # (This is related to Annotation only and could be removed from here.)
-    def try_read_annotaed_opinion_collection(self, doc_id, data_type):
-        """ data_type denotes a set of unlabeled opinions, where in case of 'train' these are
-            opinions that were ADDITIONALLY found to sentiment, while for 'test' these are
-            all the opinions that could be found in document.
-        """
-        raise NotImplementedError()
-
-    # TODO. 208. To Annotation opinion repository.
-    # (This is related to Annotation only and could be removed from here.)
-    def save_annotated_opinion_collection(self, collection, doc_id, data_type):
+    @property
+    def LabelsFormatter(self):
         raise NotImplementedError()
 
     # endregion
@@ -37,12 +27,10 @@ class OpinionOperations(object):
 
     # region evaluation
 
-    # TODO. #211. Move into DataIO.
-    def read_etalon_opinion_collection(self, doc_id):
+    def get_etalon_opinion_collection(self, doc_id):
         raise NotImplementedError()
 
-    # TODO. #211. Move into DataIO.
-    def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
+    def get_result_opinion_collection(self, doc_id, data_type, epoch_index):
         raise NotImplementedError()
 
     # endregion

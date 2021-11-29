@@ -13,7 +13,7 @@ class BaseOutputView(BaseStorageView):
     """ Results output represents a table, which stored in pandas dataframe.
         This dataframe assumes to provide the following columns:
             - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
-            - news_id -- is a related news_id towards which the related output corresponds to.
+            - doc_id -- is an id, towards which the output corresponds to.
             - labels -- uint labels (amount of columns depends on the scaler)
     """
 
@@ -25,12 +25,12 @@ class BaseOutputView(BaseStorageView):
 
     # region private methods
 
-    def __iter_linked_opinions_df(self, news_id):
-        assert(isinstance(news_id, int))
+    def __iter_linked_opinions_df(self, doc_id):
+        assert(isinstance(doc_id, int))
 
         # TODO. Proceed refactoring
-        news_df = self._storage.find_by_value(column_name=const.NEWS_ID,
-                                              value=news_id)
+        news_df = self._storage.find_by_value(column_name=const.DOC_ID,
+                                              value=doc_id)
 
         opinion_ids = [self._ids_provider.parse_opinion_in_opinion_id(opinion_id)
                        for opinion_id in news_df[const.ID]]
@@ -41,11 +41,11 @@ class BaseOutputView(BaseStorageView):
             linked_opins_df = news_df[news_df[const.ID].str.contains(opin_id_pattern)]
             yield linked_opins_df
 
-    def __iter_linked_opinions(self, news_id, opinions_view):
-        assert (isinstance(news_id, int))
+    def __iter_linked_opinions(self, doc_id, opinions_view):
+        assert (isinstance(doc_id, int))
         assert (isinstance(opinions_view, BaseOpinionStorageView))
 
-        for linked_df in self.__iter_linked_opinions_df(news_id=news_id):
+        for linked_df in self.__iter_linked_opinions_df(doc_id=doc_id):
             assert (isinstance(linked_df, pd.DataFrame))
 
             opinions_iter = self._iter_by_opinions(linked_df=linked_df,
@@ -79,23 +79,23 @@ class BaseOutputView(BaseStorageView):
 
     # region public methods
 
-    def iter_news_ids(self):
-        unique_news_ids = set(self._storage.iter_column_values(column_name=const.NEWS_ID))
-        return unique_news_ids
+    def iter_doc_ids(self):
+        unique_doc_ids = set(self._storage.iter_column_values(column_name=const.DOC_ID))
+        return unique_doc_ids
 
     def iter_opinion_collections(self, opinions_view, keep_doc_id_func, to_collection_func):
         assert(isinstance(opinions_view, BaseOpinionStorageView))
         assert(callable(keep_doc_id_func))
         assert(callable(to_collection_func))
 
-        for news_id in self.iter_news_ids():
+        for doc_id in self.iter_doc_ids():
 
-            if not keep_doc_id_func(news_id):
+            if not keep_doc_id_func(doc_id):
                 continue
 
-            linked_data_iter = self.__iter_linked_opinions(news_id=news_id,
+            linked_data_iter = self.__iter_linked_opinions(doc_id=doc_id,
                                                            opinions_view=opinions_view)
 
-            yield news_id, to_collection_func(linked_data_iter)
+            yield doc_id, to_collection_func(linked_data_iter)
 
     # endregion

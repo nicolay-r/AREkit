@@ -3,6 +3,7 @@ from os.path import exists, join
 
 from arekit.common.data.views.output_multiple import MulticlassOutputView
 from arekit.common.experiment.api.ctx_training import TrainingData
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.linked.helper import create_and_fill_opinion_collection
 from arekit.common.labels.scaler import BaseLabelScaler
@@ -86,7 +87,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
         # TODO. This should be removed as this is a part of the particular
         # experiment, not source!.
-        cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_doc_ids_to_compare())
+        cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_tagget_doc_ids(BaseDocumentTag.Compare))
 
         if callback.check_log_exists():
             self._log_info("Skipping [Log file already exist]")
@@ -135,10 +136,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                         epoch_index=epoch_index,
                         doc_id=doc_id)
 
-                    exp_io.serialize_opinion_collection(
+                    exp_io.write_opinion_collection(
                         collection=collection,
-                        doc_id=doc_id,
-                        data_type=self.__data_type,
                         labels_formatter=self.__labels_formatter,
                         target=target)
 

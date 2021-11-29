@@ -8,7 +8,7 @@ from arekit.contrib.source.ruattitudes.text_object import TextObject
 
 class RuAttitudesFormatReader(object):
 
-    NEWS_SEP_KEY = '--------'
+    DOC_SEP_KEY = '--------'
     FILE_KEY = "File:"
     OBJ_KEY = "Object:"
     TITLE_KEY = "Title:"
@@ -150,7 +150,7 @@ class RuAttitudesFormatReader(object):
 
     @staticmethod
     def __check_is_news_sep(line, title):
-        return RuAttitudesFormatReader.NEWS_SEP_KEY in line and title is not None
+        return RuAttitudesFormatReader.DOC_SEP_KEY in line and title is not None
 
     @staticmethod
     def __check_is_title(line):

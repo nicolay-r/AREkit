@@ -25,10 +25,12 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__get_synonyms_func = get_synonyms_func
         self.__version = version
         self.__experiment_io = experiment_io
-        # TODO. This should be removed later, as we may utilize experiment_io API.
-        self.__opinion_provider = experiment_io.OpinionCollectionProvider
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
+
+    @property
+    def LabelsFormatter(self):
+        return self.__neutral_labels_fmt
 
     # region CVBasedOperations
 
@@ -37,8 +39,13 @@ class RuSentrelOpinionOperations(OpinionOperations):
         collections = []
 
         # Reading automatically annotated collection of neutral opinions.
-        auto_neutral = self.try_read_annotated_opinion_collection(doc_id=doc_id,
-                                                                  data_type=data_type)
+        auto_neutral = self.__experiment_io.read_opinion_collection(
+            target=self.__experiment_io.create_result_opinion_collection_target(
+                doc_id=doc_id,
+                data_type=data_type,
+                check_existance=True),
+            labels_formatter=self.__neutral_labels_fmt,
+            create_collection_func=self.__create_collection)
 
         if data_type == DataType.Train:
             # Providing neutral and sentiment.
@@ -46,7 +53,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
                 collections.append(auto_neutral)
 
             # Providing sentiment opinions.
-            etalon = self.read_etalon_opinion_collection(doc_id=doc_id)
+            etalon = self.get_etalon_opinion_collection(doc_id=doc_id)
             collections.append(etalon)
 
         elif data_type == DataType.Test:
@@ -57,7 +64,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
             for opinion in collection:
                 yield opinion
 
-    def read_etalon_opinion_collection(self, doc_id):
+    def get_etalon_opinion_collection(self, doc_id):
         assert(isinstance(doc_id, int))
         opins_iter = RuSentRelOpinionCollection.iter_opinions_from_doc(
             doc_id=doc_id,
@@ -68,45 +75,24 @@ class RuSentrelOpinionOperations(OpinionOperations):
     def create_opinion_collection(self):
         return self.__create_collection(None)
 
-    def try_read_annotated_opinion_collection(self, doc_id, data_type):
-        return self.__experiment_io.deserialize_opinion_collection(
-            doc_id=doc_id,
-            data_type=data_type,
-            labels_formatter=self.__neutral_labels_fmt,
-            create_collection_func=self.__create_collection)
-
-    def save_annotated_opinion_collection(self, collection, doc_id, data_type):
-        self.__experiment_io.serialize_opinion_collection(
-            collection=collection,
-            doc_id=doc_id,
-            data_type=data_type,
-            labels_formatter=self.__neutral_labels_fmt)
-
-    def read_result_opinion_collection(self, data_type, doc_id, epoch_index):
+    def get_result_opinion_collection(self, doc_id, data_type, epoch_index):
         """ Since evaluation supported only for neural networks,
             we need to guarantee the presence of a function that returns filepath
             by using isinstance command.
         """
         assert(isinstance(self.__experiment_io, BaseIOUtils))
 
-        filepath = self.__experiment_io.create_result_opinion_collection_target(
-            data_type=data_type,
-            doc_id=doc_id,
-            epoch_index=epoch_index)
-
-        return self.__custom_read(filepath=filepath,
-                                  labels_fmt=self.__result_labels_fmt)
+        return self.__experiment_io.read_opinion_collection(
+            target=self.__experiment_io.create_result_opinion_collection_target(
+                doc_id=doc_id,
+                data_type=data_type,
+                epoch_index=epoch_index),
+            labels_formatter=self.__result_labels_fmt,
+            create_collection_func=lambda opinions: self.__create_collection(opinions))
 
     # endregion
 
     # region private provider methods
-
-    def __custom_read(self, filepath, labels_fmt):
-        opinions = self.__opinion_provider.iter_opinions(source=filepath,
-                                                         labels_formatter=labels_fmt,
-                                                         error_on_non_supported=False)
-
-        return self.__create_collection(opinions)
 
     def __create_collection(self, opinions):
         return OpinionCollection(opinions=[] if opinions is None else opinions,

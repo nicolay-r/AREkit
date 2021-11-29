@@ -10,7 +10,7 @@ class RuAttitudesNews(News):
     def __init__(self, sentences, news_index):
         assert(len(sentences) > 0)
 
-        super(RuAttitudesNews, self).__init__(news_id=news_index, sentences=sentences)
+        super(RuAttitudesNews, self).__init__(doc_id=news_index, sentences=sentences)
 
         self.__set_owners()
         self.__objects_before_sentence = self.__cache_objects_declared_before()
@@ -79,7 +79,7 @@ class RuAttitudesNews(News):
                 continue
 
             yield sentence_opin.to_text_opinion(
-                news_id=sentence.Owner.ID,
+                doc_id=sentence.Owner.ID,
                 end_to_doc_id_func=lambda sent_level_id: sentence.get_doc_level_text_object_id(sent_level_id),
                 text_opinion_id=None)
 

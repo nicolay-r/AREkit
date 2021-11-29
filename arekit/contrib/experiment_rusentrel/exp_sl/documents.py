@@ -1,5 +1,6 @@
 from arekit.common.experiment.api.ctx_base import DataIO
 from arekit.common.experiment.api.ctx_serialization import SerializationData
+from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
@@ -23,13 +24,12 @@ class RuSentrelDocumentOperations(DocumentOperations):
 
     # region DocumentOperations
 
-    def iter_doc_ids_to_annotate(self):
+    def iter_tagget_doc_ids(self, tag):
+        assert(isinstance(tag, BaseDocumentTag))
+        assert(tag == BaseDocumentTag.Compare or tag == BaseDocumentTag.Annotate)
         return self.DataFolding.iter_doc_ids()
 
-    def iter_doc_ids_to_compare(self):
-        return self.DataFolding.iter_doc_ids()
-
-    def read_news(self, doc_id):
+    def get_doc(self, doc_id):
         assert(isinstance(doc_id, int))
         synonyms = self.__get_synonyms_func()
         return RuSentRelNews.read_document(doc_id=doc_id,

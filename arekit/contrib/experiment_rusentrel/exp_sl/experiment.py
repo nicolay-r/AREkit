@@ -37,8 +37,7 @@ class RuSentRelExperiment(BaseExperiment):
         self.__synonyms = None
 
         self.log_info("Init experiment io ...")
-        experiment_io = experiment_io_type(self,
-                                           opinion_collection_provider=None)
+        experiment_io = experiment_io_type(self)
 
         self.log_info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
@@ -49,7 +48,7 @@ class RuSentRelExperiment(BaseExperiment):
         self.log_info("Create document operations ... ")
         folding = create_rusentrel_experiment_data_folding(folding_type=folding_type,
                                                            version=version,
-                                                           docs_reader_func=lambda doc_id: doc_ops.read_news(doc_id),
+                                                           docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
                                                            experiment_io=experiment_io)
         doc_ops = RuSentrelDocumentOperations(exp_data=exp_data,
                                               folding=folding,
@@ -72,6 +71,7 @@ class RuSentRelExperiment(BaseExperiment):
         if self.__synonyms is None:
             self.log_info("Read synonyms collection ...")
             self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+                # TODO. 172. Adopt the default stemmer (MystemWrapper). Release the DataIO.Stemmer usage!
                 stemmer=self.DataIO.Stemmer,
                 version=self.__rsr_version)
 
