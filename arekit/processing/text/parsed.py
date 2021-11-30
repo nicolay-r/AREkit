@@ -1,3 +1,5 @@
+import collections
+
 from arekit.processing.lemmatization.base import Stemmer
 from arekit.processing.text.enums import TermFormat
 
@@ -28,14 +30,50 @@ class ParsedText:
         # TODO. leave here.
         self.__stemmer = stemmer
 
+        self.__update_lemmatization()
+
+    def __update_lemmatization(self):
         # TODO. leave here.
-        if stemmer is not None:
-            self.__lemmatize(stemmer)
+        if self.__stemmer is not None:
+            self.__lemmatize(self.__stemmer)
 
     # TODO. to base as an abstract-like method. (implementation here)
     def copy_modified(self, terms):
         return ParsedText(terms=terms,
                           stemmer=self.__stemmer)
+
+    def modify_by_bounded_objects(self, modified_objs, get_obj_bound_func):
+        assert(isinstance(modified_objs, collections.Iterable))
+        assert(callable(get_obj_bound_func))
+
+        def __remove(terms, start, end):
+            while end > start:
+                del terms[start]
+                end -= 1
+
+        if modified_objs is None:
+            return
+
+        objs_list = list(modified_objs)
+
+        # setup default position.
+        prev_position = len(objs_list) + 1
+        local_terms = self.__terms
+
+        for obj in reversed(objs_list):
+            obj_bound = get_obj_bound_func(obj)
+
+            if obj_bound.Position > prev_position:
+                raise Exception("objs list has incorrect order. It is expected that instances "
+                                "ordered by positions (ascending)")
+
+            __remove(terms=local_terms,
+                     start=obj_bound.Position,
+                     end=obj_bound.Position + obj_bound.Length)
+
+            local_terms.insert(obj_bound.Position, obj)
+
+        self.__update_lemmatization()
 
     # endregion
 

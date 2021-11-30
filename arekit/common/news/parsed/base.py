@@ -124,13 +124,16 @@ class ParsedNews(object):
 
     # region public 'modify' methods
 
-    def modify_parsed_sentences(self, sentence_upd_func):
-        assert(callable(sentence_upd_func))
+    def modify_parsed_sentences(self, sentence_objs_upd_func, get_obj_bound_func):
+        assert(callable(sentence_objs_upd_func))
+        assert(callable(get_obj_bound_func))
 
         for s_index, sentence in enumerate(self.__parsed_sentences):
-            updated = sentence_upd_func(sentence)
-            assert(isinstance(updated, ParsedText))
-            self.__parsed_sentences[s_index] = updated
+            assert(isinstance(sentence, ParsedText))
+
+            sentence.modify_by_bounded_objects(
+                modified_objs=sentence_objs_upd_func(sentence),
+                get_obj_bound_func=get_obj_bound_func)
 
         self.__init_entity_positions()
 

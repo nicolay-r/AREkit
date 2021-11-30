@@ -1,12 +1,7 @@
-import collections
-
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.languages.ru.mods import RussianLanguageMods
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.languages.mods import BaseLanguageMods
-from arekit.processing.frames.annot import FrameVariantsAnnotationHelper
-from arekit.processing.text.enums import TermFormat
-from arekit.processing.text.parsed import ParsedText
 
 
 class FrameVariantsParser(object):
@@ -14,50 +9,59 @@ class FrameVariantsParser(object):
     # region private methods
 
     @staticmethod
-    def __insert_frame_variants_into_raw_terms_list(raw_terms_list, frame_variants_iter):
-        assert(isinstance(raw_terms_list, list))
-        assert(isinstance(frame_variants_iter, collections.Iterable))
+    def __check_all_words_within(terms, start_index, last_index):
+        for i in range(start_index, last_index + 1):
+            if not isinstance(terms[i], str):
+                return False
+        return True
 
-        def __remove(terms, start, end):
-            while end > start:
-                del terms[start]
-                end -= 1
-
-        for variant in reversed(list(frame_variants_iter)):
-            assert (isinstance(variant, TextFrameVariant))
-            variant_bound = variant.get_bound()
-            __remove(terms=raw_terms_list,
-                     start=variant_bound.Position,
-                     end=variant_bound.Position + variant_bound.Length)
-            raw_terms_list.insert(variant_bound.Position, variant)
-
-        return raw_terms_list
+    @staticmethod
+    def __get_preposition(terms, index):
+        return terms[index-1] if index > 0 else None
 
     # endregion
 
-    # TODO. #218. There is no need in parsed text here!
     @staticmethod
-    def parse_frames_in_parsed_text(frame_variants_collection, parsed_text, locale_mods=RussianLanguageMods):
-        assert(isinstance(frame_variants_collection, FrameVariantsCollection))
-        assert(isinstance(parsed_text, ParsedText))
+    def iter_frames_from_lemmas(frame_variants, lemmas, locale_mods=RussianLanguageMods):
+        """
+        Considered to perform frames annotation across lemmatized terms.
+        """
+        assert(isinstance(frame_variants, FrameVariantsCollection))
+        assert(isinstance(lemmas, list))
         assert(issubclass(locale_mods, BaseLanguageMods))
 
-        # TODO. 218. Move lemmatization outside (reason: this is not a part of the frames annotation logic)
-        lemmas = [locale_mods.replace_specific_word_chars(lemma) if isinstance(lemma, str) else lemma
-                  for lemma in parsed_text.iter_terms(term_format=TermFormat.Lemma)]
+        start_ind = 0
+        last_ind = 0
+        max_variant_len = max([len(variant) for _, variant in frame_variants.iter_variants()])
+        while start_ind < len(lemmas):
+            for ctx_size in reversed(list(range(1, max_variant_len))):
 
-        frame_variants_iter = FrameVariantsAnnotationHelper.iter_frames_from_lemmas(
-            frame_variants=frame_variants_collection,
-            lemmas=lemmas,
-            locale_mods=locale_mods)
+                last_ind = start_ind + ctx_size - 1
 
-        if frame_variants_iter is None:
-            return parsed_text
+                if not(last_ind < len(lemmas)):
+                    continue
 
-        # TODO. 218 Return updated terms only
-        updated_terms = FrameVariantsParser.__insert_frame_variants_into_raw_terms_list(
-            raw_terms_list=list(parsed_text.iter_terms(TermFormat.Raw)),
-            frame_variants_iter=frame_variants_iter)
+                is_all_words_within = FrameVariantsParser.__check_all_words_within(
+                    terms=lemmas,
+                    start_index=start_ind,
+                    last_index=last_ind)
 
-        # TODO. Remove parsed text from here.
-        return parsed_text.copy_modified(terms=updated_terms)
+                if not is_all_words_within:
+                    continue
+
+                ctx_value = " ".join(lemmas[start_ind:last_ind + 1])
+
+                if not frame_variants.has_variant(ctx_value):
+                    continue
+
+                prep_term = FrameVariantsParser.__get_preposition(terms=lemmas,
+                                                                  index=start_ind)
+
+                yield TextFrameVariant(
+                    variant=frame_variants.get_variant_by_value(ctx_value),
+                    start_index=start_ind,
+                    is_inverted=locale_mods.is_negation_word(prep_term) if prep_term is not None else False)
+
+                break
+
+            start_ind = last_ind + 1
