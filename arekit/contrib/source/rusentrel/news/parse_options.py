@@ -1,5 +1,5 @@
-from arekit.common.news.parse_options import NewsParseOptions
-from arekit.processing.lemmatization.base import Stemmer
+from arekit.common.text.options import NewsParseOptions
+from arekit.common.text.stemmer import Stemmer
 
 
 # TODO. Why we need to declare this in sources.

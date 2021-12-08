@@ -1,5 +1,5 @@
 from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.processing.lemmatization.base import Stemmer
+from arekit.common.text.stemmer import Stemmer
 
 
 # TODO. This class is weird.
@@ -15,8 +15,6 @@ class NewsParseOptions(object):
         self.__stemmer = stemmer
 
     # TODO. This class is weird.
-    # TODO. As this parameter related to the particular text-parser implementation.
-    # TODO. As this parameter related to the particular text-parser implementation.
     # TODO. As this parameter related to the particular text-parser implementation.
     @property
     def Stemmer(self):

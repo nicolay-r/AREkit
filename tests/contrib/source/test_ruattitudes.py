@@ -20,7 +20,7 @@ from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 from arekit.processing.text.token import Token
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.parser import BaseTextParser, DefaultTextParser
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -64,9 +64,9 @@ class TestRuAttitudes(unittest.TestCase):
     def __test_parsing(self, ra_version):
         # Initializing stemmer
         stemmer = MystemWrapper()
-
-        options = RuAttitudesParseOptions(stemmer=stemmer,
-                                          frame_variants_collection=None)
+        parse_options = RuAttitudesParseOptions(stemmer=stemmer,
+                                                frame_variants_collection=None)
+        text_parser = DefaultTextParser()
 
         # iterating through collection
         news_read = 0
@@ -78,7 +78,7 @@ class TestRuAttitudes(unittest.TestCase):
         for news in tqdm(news_it):
 
             # parse news
-            parsed_news = TextParser.parse_news(news=news, parse_options=options)
+            parsed_news = text_parser.parse_news(news=news, parse_options=parse_options)
             terms = parsed_news.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 

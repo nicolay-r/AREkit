@@ -1,5 +1,5 @@
 from arekit.common.folding.base import BaseDataFolding
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.parser import DefaultTextParser
 
 
 class DocumentOperations(object):
@@ -10,6 +10,7 @@ class DocumentOperations(object):
     def __init__(self, folding):
         assert(isinstance(folding, BaseDataFolding))
         self.__folding = folding
+        self.__text_parser = DefaultTextParser()  # TODO. Temporary
 
     @property
     def DataFolding(self):
@@ -20,6 +21,13 @@ class DocumentOperations(object):
 
     def get_doc(self, doc_id):
         raise NotImplementedError()
+
+    def _get_text_parser(self):
+        """ Default text parser instance.
+            TODO. #219. It is expected to pass this instance as a parameter for the
+            TODO. related methods. (Now it is limited due to the Annotator implmentation).
+        """
+        return self.__text_parser
 
     def iter_tagget_doc_ids(self, tag):
         """ Document identifiers which are grouped by a particular tag.
@@ -43,16 +51,13 @@ class DocumentOperations(object):
             yield self.__parse_doc(doc_id=doc_id)
 
     def parse_doc(self, doc_id):
-        return self.__parse_doc(doc_id)
+        return self.__parse_doc(doc_id=doc_id)
 
-    # TODO. This should be removed, since parse-options considered as a part
-    # TODO. Of the text-parser instance!!!
+    # TODO. This should be removed, since parse-options considered as a part of the text-parser instance!!!
     def _create_parse_options(self):
         raise NotImplementedError()
 
     def __parse_doc(self, doc_id):
         news = self.get_doc(doc_id=doc_id)
-        # TODO. Use text parser as an instance.
-        # TODO. (Current limitation: We depend on a particular text parser, which is not correct in general).
-        return TextParser.parse_news(news=news,
-                                     parse_options=self._create_parse_options())
+        text_parser = self._get_text_parser()
+        return text_parser.parse_news(news=news, parse_options=self._create_parse_options())

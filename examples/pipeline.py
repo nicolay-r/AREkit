@@ -6,10 +6,10 @@ from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
-from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.news.base import News
+from arekit.common.text.options import NewsParseOptions
 
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
@@ -32,7 +32,7 @@ from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.parser import DefaultTextParser
 
 from examples.input import EXAMPLES
 from examples.network.embedding import RusvectoresEmbedding
@@ -55,8 +55,10 @@ def extract(text):
         frame_variants_collection=FrameVariantsCollection(),
         stemmer=stemmer)
 
-    parsed_news = TextParser.parse_news(news=news,
-                                        parse_options=parse_options)
+    text_parser = DefaultTextParser()
+
+    parsed_news = text_parser.parse_news(news=news,
+                                         parse_options=parse_options)
 
     ########################
     # Step 2. Annotate text.

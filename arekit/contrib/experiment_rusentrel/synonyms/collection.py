@@ -1,5 +1,5 @@
 from arekit.common.synonyms import SynonymsCollection
-from arekit.processing.lemmatization.base import Stemmer
+from arekit.common.text.stemmer import Stemmer
 
 
 class StemmerBasedSynonymCollection(SynonymsCollection):

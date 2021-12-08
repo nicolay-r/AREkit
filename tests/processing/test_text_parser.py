@@ -5,7 +5,7 @@ from tests.processing.text.debug_text import debug_show_news_terms
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.parser import BaseTextParser, DefaultTextParser
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -27,6 +27,9 @@ class TestTextParser(unittest.TestCase):
         # Initializing stemmer.
         stemmer = MystemWrapper()
 
+        # Initializing parser.
+        text_parser = DefaultTextParser()
+
         # frame and variants.
         frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
         frame_variants = FrameVariantsCollection()
@@ -36,8 +39,8 @@ class TestTextParser(unittest.TestCase):
                                           raise_error_on_existed_variant=False)
 
         # RuAttitudes options.
-        options = RuSentRelNewsParseOptions(stemmer=stemmer,
-                                            frame_variants_collection=frame_variants)
+        parse_options = RuSentRelNewsParseOptions(stemmer=stemmer,
+                                                  frame_variants_collection=frame_variants)
 
         # Reading synonyms collection.
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)
@@ -51,7 +54,7 @@ class TestTextParser(unittest.TestCase):
                                                version=version)
 
             # Perform text parsing.
-            parsed_news = TextParser.parse_news(news, options)
+            parsed_news = text_parser.parse_news(news=news, parse_options=parse_options)
             debug_show_news_terms(parsed_news=parsed_news)
 
 

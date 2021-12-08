@@ -1,6 +1,3 @@
-# TODO. Move to base class.
-# TODO. Move to base class.
-# TODO. Move to base class.
 class Stemmer:
     """
     Interface

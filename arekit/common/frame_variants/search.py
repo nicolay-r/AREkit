@@ -1,9 +1,9 @@
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.languages.ru.mods import RussianLanguageMods
+from arekit.common.text.parsed import BaseParsedText
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.languages.mods import BaseLanguageMods
 from arekit.processing.text.enums import TermFormat
-from arekit.processing.text.parsed import ParsedText
 
 
 class FrameVariantsSearcher(object):
@@ -26,7 +26,7 @@ class FrameVariantsSearcher(object):
     @staticmethod
     def iter_frames_from_parsed_text(frame_variants, parsed_text, locale_mods=RussianLanguageMods):
         assert(isinstance(frame_variants, FrameVariantsCollection))
-        assert(isinstance(parsed_text, ParsedText))
+        assert(isinstance(parsed_text, BaseParsedText))
         assert(issubclass(locale_mods, BaseLanguageMods))
 
         lemmas = [locale_mods.replace_specific_word_chars(lemma) if isinstance(lemma, str) else lemma

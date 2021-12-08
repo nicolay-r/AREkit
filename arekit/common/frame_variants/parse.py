@@ -6,7 +6,7 @@ from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.common.languages.mods import BaseLanguageMods
 from arekit.common.frame_variants.search import FrameVariantsSearcher
 from arekit.processing.text.enums import TermFormat
-from arekit.processing.text.parsed import ParsedText
+from arekit.processing.text.parsed import DefaultParsedText
 
 
 class FrameVariantsParser(object):
@@ -38,7 +38,7 @@ class FrameVariantsParser(object):
     @staticmethod
     def parse_frames_in_parsed_text(frame_variants_collection, parsed_text, locale_mods=RussianLanguageMods):
         assert(isinstance(frame_variants_collection, FrameVariantsCollection))
-        assert(isinstance(parsed_text, ParsedText))
+        assert(isinstance(parsed_text, DefaultParsedText))
         assert(issubclass(locale_mods, BaseLanguageMods))
 
         frame_variants_iter = FrameVariantsSearcher.iter_frames_from_parsed_text(

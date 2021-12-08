@@ -6,6 +6,8 @@ import unittest
 import numpy as np
 from pymystem3 import Mystem
 
+from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
+from arekit.processing.text.parser import DefaultTextParser
 
 sys.path.append('../../../')
 
@@ -50,6 +52,11 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
+        text_parser = DefaultTextParser()
+        parse_options = RuSentRelNewsParseOptions(
+            stemmer=self.stemmer,
+            frame_variants_collection=self.unique_frame_variants)
+
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():
 
@@ -57,9 +64,9 @@ class TestTfInputFeatures(unittest.TestCase):
 
             news, parsed_news, opinions = init_rusentrel_doc(
                 doc_id=doc_id,
-                stemmer=self.stemmer,
-                synonyms=self.synonyms,
-                unique_frame_variants=self.unique_frame_variants)
+                text_parser=text_parser,
+                parse_options=parse_options,
+                synonyms=self.synonyms)
 
             text_opinion_iter = iter_same_sentence_linked_text_opinions(
                 news=news,

@@ -12,7 +12,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.parser import BaseTextParser, DefaultTextParser
 
 
 class TestPartOfSpeech(unittest.TestCase):
@@ -23,6 +23,10 @@ class TestPartOfSpeech(unittest.TestCase):
                                                   label_convereter=ExperimentRuAttitudesLabelConverter(),
                                                   return_inds_only=False)
 
+        text_parser = DefaultTextParser()
+        parse_options = RuAttitudesParseOptions(stemmer=MystemWrapper(),
+                                                frame_variants_collection=None)
+
         for news in news_it:
 
             # Parse single sentence.
@@ -31,14 +35,13 @@ class TestPartOfSpeech(unittest.TestCase):
             self.__print_parsed_text(parsed_text)
 
             # Parse news via external parser.
-            stemmer = MystemWrapper()
-            options = RuAttitudesParseOptions(stemmer=stemmer, frame_variants_collection=None)
-            parsed_news = TextParser.parse_news(news=news, parse_options=options)
+            parsed_news = text_parser.parse_news(news=news, parse_options=parse_options)
             assert(isinstance(parsed_news, ParsedNews))
 
     def test_rusentrel_news_text_parsing(self):
         stemmer = MystemWrapper()
         version = RuSentRelVersions.V11
+        text_parser = DefaultTextParser()
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
                                                                        version=version)
         news = RuSentRelNews.read_document(doc_id=1,
@@ -50,9 +53,8 @@ class TestPartOfSpeech(unittest.TestCase):
         self.__print_parsed_text(parsed_text)
 
         # Parse news via external parser.
-        stemmer = MystemWrapper()
         options = RuSentRelNewsParseOptions(stemmer=stemmer, frame_variants_collection=None)
-        parsed_news = TextParser.parse_news(news=news, parse_options=options)
+        parsed_news = text_parser.parse_news(news=news, parse_options=options)
         assert (isinstance(parsed_news, ParsedNews))
 
     def __print_parsed_text(self, parsed_text):

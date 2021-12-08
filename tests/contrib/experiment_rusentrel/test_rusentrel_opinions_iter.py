@@ -4,6 +4,7 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
+from arekit.processing.text.parser import DefaultTextParser
 
 sys.path.append('../../../../')
 
@@ -74,11 +75,14 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
+        text_parser = DefaultTextParser()
+
         # Initialize specific document
         doc_id = 47
         logger.info("NewsID: {}".format(doc_id))
         news, parsed_news, opinions = init_rusentrel_doc(
             doc_id=doc_id,
+            text_parser=text_parser,
             stemmer=self.stemmer,
             synonyms=self.synonyms,
             unique_frame_variants=self.unique_frame_variants)

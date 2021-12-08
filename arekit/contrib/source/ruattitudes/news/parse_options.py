@@ -1,5 +1,4 @@
-from arekit.common.news.parse_options import NewsParseOptions
-
+from arekit.common.text.options import NewsParseOptions
 
 # TODO. Why we need to declare this in sources.
 # TODO. This information is not related to the particular source.

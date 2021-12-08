@@ -1,14 +1,8 @@
-import collections
 import logging
 
-from arekit.common.entities.base import Entity
-from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.common.frame_variants.parse import FrameVariantsParser
-from arekit.common.news.base import News
-from arekit.common.news.parse_options import NewsParseOptions
-from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.text.parser import BaseTextParser
 from arekit.common.utils import split_by_whitespaces
-from arekit.processing.text.parsed import ParsedText
+from arekit.processing.text.parsed import DefaultParsedText
 from arekit.processing.text.tokens import Tokens
 from arekit.processing.text.token import Token
 
@@ -17,105 +11,19 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-# TODO. To common as an abstract class.
-# TODO. Leave here implementation.
-# TODO. Use parser as an instance.
-# TODO. Use parser as an instance.
-# TODO. Use parser as an instance.
-class TextParser:
+class DefaultTextParser(BaseTextParser):
+    """
+    Default parser implementation.
+    """
 
     def __init__(self):
-        pass
+        super(DefaultTextParser, self).__init__(
+            create_parsed_text_func=lambda terms, options:
+                DefaultParsedText(terms=terms, stemmer=options.Stemmer))
 
-    @staticmethod
-    def parse_news(news, parse_options):
-        assert(isinstance(news, News))
-        # TODO. Declare Stemmer within a derived parse options.
-        assert(isinstance(parse_options, NewsParseOptions))
+    # region protected methods
 
-        parsed_sentences = [TextParser.__parse_sentence(news, sent_ind, parse_options)
-                            for sent_ind in range(news.SentencesCount)]
-
-        parsed_news = ParsedNews(doc_id=news.ID,
-                                 parsed_sentences=parsed_sentences)
-
-        if parse_options.ParseFrameVariants:
-            TextParser.__parse_frame_variants(parsed_news=parsed_news,
-                                              frame_variant_collection=parse_options.FrameVariantsCollection)
-
-        return parsed_news
-
-    # region private methods
-
-    @staticmethod
-    def __parse(text, stemmer=None):
-        assert(isinstance(text, str))
-        terms = TextParser.__parse_core(text)
-        return ParsedText(terms, stemmer=stemmer)
-
-    @staticmethod
-    def __parse_sentence(news, sent_ind, parse_options):
-        assert(isinstance(news, News))
-        # TODO. We may adopt a derived class from BaseParseOptions.
-        # TODO. We may adopt a derived class from BaseParseOptions.
-        # TODO. We may adopt a derived class from BaseParseOptions.
-        assert(isinstance(parse_options, NewsParseOptions))
-
-        if parse_options.ParseEntities:
-            # Providing a modified list with parsed unicode terms.
-            terms_list = news.sentence_to_terms_list(sent_ind)
-            return TextParser.__parse_string_list(terms_iter=terms_list,
-                                                  skip_term=lambda term: isinstance(term, Entity),
-                                                  # TODO. Declare Stemmer within a derived parse options.
-                                                  # TODO. Declare Stemmer within a derived parse options.
-                                                  # TODO. Declare Stemmer within a derived parse options.
-                                                  stemmer=parse_options.Stemmer)
-
-        # Processing the ordinary sentence text.
-        sentence = news.iter_sentences()
-        return TextParser.__parse(text=sentence.Text,
-                                  # TODO. Declare Stemmer within a derived parse options.
-                                  # TODO. Declare Stemmer within a derived parse options.
-                                  # TODO. Declare Stemmer within a derived parse options.
-                                  stemmer=parse_options.Stemmer)
-
-    # TODO. Move into core files within the related contrib (text-processing) folder.
-    @staticmethod
-    def __parse_frame_variants(parsed_news, frame_variant_collection):
-        """
-        Labeling frame variants in doc sentences.
-        """
-        assert(isinstance(parsed_news, ParsedNews))
-        assert(isinstance(frame_variant_collection, FrameVariantsCollection) or frame_variant_collection is None)
-
-        if frame_variant_collection is None:
-            return
-
-        parsed_news.modify_parsed_sentences(
-            lambda sentence: FrameVariantsParser.parse_frames_in_parsed_text(
-                frame_variants_collection=frame_variant_collection,
-                parsed_text=sentence))
-
-    @staticmethod
-    def __parse_string_list(terms_iter, skip_term, stemmer=None):
-        assert(isinstance(terms_iter, collections.Iterable))
-        assert(callable(skip_term))
-
-        processed_terms = []
-        for term in terms_iter:
-
-            if skip_term(term):
-                processed_terms.append(term)
-                continue
-
-            new_terms = TextParser.__parse_core(term)
-            processed_terms.extend(new_terms)
-
-        return ParsedText(terms=processed_terms, stemmer=stemmer)
-
-    # TODO. Move into core files within the related contrib (text-processing) folder.
-    @staticmethod
-    def __parse_core(text, keep_tokens=True):
+    def _parse_to_tokens_list(self, text, keep_tokens=True):
         """
         Separates sentence into list
 
@@ -127,12 +35,15 @@ class TextParser:
         assert(isinstance(text, str))
         assert(isinstance(keep_tokens, bool))
 
-        terms = TextParser.__process_words(words=split_by_whitespaces(text),
-                                           keep_tokens=keep_tokens)
+        terms = DefaultTextParser.__process_words(words=split_by_whitespaces(text),
+                                                  keep_tokens=keep_tokens)
 
         return terms
 
-    # TODO. Move into core files within the related contrib (text-processing) folder.
+    # endregion
+
+    # region private static methods
+
     @staticmethod
     def __process_words(words, keep_tokens):
         """
@@ -148,7 +59,7 @@ class TextParser:
             if word is None:
                 continue
 
-            words_and_tokens = TextParser.__split_tokens(word)
+            words_and_tokens = DefaultTextParser.__split_tokens(word)
 
             if not keep_tokens:
                 words_and_tokens = [word for word in words_and_tokens if not isinstance(word, Token)]
@@ -157,7 +68,6 @@ class TextParser:
 
         return parsed
 
-    # TODO. Move into core files within the related contrib (text-processing) folder.
     @staticmethod
     def __split_tokens(term):
         """
