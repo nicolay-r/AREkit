@@ -16,10 +16,10 @@ class DefaultTextParser(BaseTextParser):
     Default parser implementation.
     """
 
-    def __init__(self):
+    def __init__(self, parse_options):
         super(DefaultTextParser, self).__init__(
-            create_parsed_text_func=lambda terms, options:
-                DefaultParsedText(terms=terms, stemmer=options.Stemmer))
+            create_parsed_text_func=lambda terms, options: DefaultParsedText(terms=terms, stemmer=options.Stemmer),
+            parse_options=parse_options)
 
     # region protected methods
 

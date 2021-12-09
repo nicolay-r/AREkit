@@ -3,6 +3,8 @@ import sys
 import unittest
 from tqdm import tqdm
 
+from arekit.common.text.options import TextParseOptions
+
 sys.path.append('../../../../')
 
 from arekit.common.opinions.base import Opinion
@@ -15,7 +17,6 @@ from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 from arekit.processing.text.token import Token
@@ -64,9 +65,10 @@ class TestRuAttitudes(unittest.TestCase):
     def __test_parsing(self, ra_version):
         # Initializing stemmer
         stemmer = MystemWrapper()
-        parse_options = RuAttitudesParseOptions(stemmer=stemmer,
-                                                frame_variants_collection=None)
-        text_parser = DefaultTextParser()
+        parse_options = TextParseOptions(parse_entities=True,
+                                         stemmer=stemmer,
+                                         frame_variants_collection=None)
+        text_parser = DefaultTextParser(parse_options)
 
         # iterating through collection
         news_read = 0
@@ -78,7 +80,7 @@ class TestRuAttitudes(unittest.TestCase):
         for news in tqdm(news_it):
 
             # parse news
-            parsed_news = text_parser.parse_news(news=news, parse_options=parse_options)
+            parsed_news = text_parser.parse_news(news=news)
             terms = parsed_news.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 

@@ -9,7 +9,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.news.base import News
-from arekit.common.text.options import NewsParseOptions
+from arekit.common.text.options import TextParseOptions
 
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
@@ -50,15 +50,14 @@ def extract(text):
     news = News(doc_id=0,
                 sentences=sentences)
 
-    parse_options = NewsParseOptions(
+    parse_options = TextParseOptions(
         parse_entities=False,
         frame_variants_collection=FrameVariantsCollection(),
         stemmer=stemmer)
 
-    text_parser = DefaultTextParser()
+    text_parser = DefaultTextParser(parse_options)
 
-    parsed_news = text_parser.parse_news(news=news,
-                                         parse_options=parse_options)
+    parsed_news = text_parser.parse_news(news=news)
 
     ########################
     # Step 2. Annotate text.

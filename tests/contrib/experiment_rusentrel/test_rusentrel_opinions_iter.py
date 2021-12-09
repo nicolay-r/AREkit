@@ -4,8 +4,6 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
-from arekit.processing.text.parser import DefaultTextParser
-
 sys.path.append('../../../../')
 
 from tests.text.utils import terms_to_str
@@ -20,12 +18,14 @@ from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import 
     ExperimentRuSentiFramesLabelsFormatter, \
     ExperimentRuSentiFramesEffectLabelsFormatter
 
+from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
 from arekit.common.entities.types import EntityType
 
+from arekit.processing.text.parser import DefaultTextParser
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.token import Token
@@ -75,7 +75,11 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        text_parser = DefaultTextParser()
+        parse_options = TextParseOptions(parse_entities=True,
+                                         stemmer=self.stemmer,
+                                         frame_variants_collection=self.unique_frame_variants)
+
+        text_parser = DefaultTextParser(parse_options)
 
         # Initialize specific document
         doc_id = 47
@@ -83,9 +87,7 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
         news, parsed_news, opinions = init_rusentrel_doc(
             doc_id=doc_id,
             text_parser=text_parser,
-            stemmer=self.stemmer,
-            synonyms=self.synonyms,
-            unique_frame_variants=self.unique_frame_variants)
+            synonyms=self.synonyms)
 
         for text_opinion in iter_same_sentence_linked_text_opinions(news=news,
                                                                     opinions=opinions,

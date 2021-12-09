@@ -6,8 +6,6 @@ import unittest
 import numpy as np
 from pymystem3 import Mystem
 
-from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
-from arekit.processing.text.parser import DefaultTextParser
 
 sys.path.append('../../../')
 
@@ -15,6 +13,7 @@ from tests.contrib.networks.text.news import init_rusentrel_doc
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.text.utils import terms_to_str
 
+from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.base import Entity
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.news.parsed.term_position import TermPositionTypes
@@ -25,6 +24,7 @@ from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollecti
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 
+from arekit.processing.text.parser import DefaultTextParser
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
@@ -52,10 +52,10 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        text_parser = DefaultTextParser()
-        parse_options = RuSentRelNewsParseOptions(
-            stemmer=self.stemmer,
-            frame_variants_collection=self.unique_frame_variants)
+        parse_options = TextParseOptions(parse_entities=True,
+                                         stemmer=self.stemmer,
+                                         frame_variants_collection=self.unique_frame_variants)
+        text_parser = DefaultTextParser(parse_options)
 
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():
@@ -65,7 +65,6 @@ class TestTfInputFeatures(unittest.TestCase):
             news, parsed_news, opinions = init_rusentrel_doc(
                 doc_id=doc_id,
                 text_parser=text_parser,
-                parse_options=parse_options,
                 synonyms=self.synonyms)
 
             text_opinion_iter = iter_same_sentence_linked_text_opinions(

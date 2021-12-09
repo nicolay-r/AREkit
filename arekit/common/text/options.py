@@ -4,7 +4,7 @@ from arekit.common.text.stemmer import Stemmer
 
 # TODO. This class is weird.
 # TODO. All inherited types provide the same values for __init__.
-class NewsParseOptions(object):
+class TextParseOptions(object):
 
     def __init__(self, parse_entities, frame_variants_collection, stemmer):
         assert(isinstance(parse_entities, bool))
