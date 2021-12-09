@@ -22,12 +22,17 @@ class DefaultParsedText(BaseParsedText):
         self.__lemmas = None
         self.__stemmer = stemmer
 
-        if stemmer is not None:
-            self.__lemmatize(stemmer)
+        self.__update_lemmatization()
 
     def copy_modified(self, terms):
         return DefaultParsedText(terms=terms,
                                  stemmer=self.__stemmer)
+
+    def modify_by_bounded_objects(self, modified_objs, get_obj_bound_func):
+        super(DefaultParsedText, self).modify_by_bounded_objects(modified_objs=modified_objs,
+                                                                 get_obj_bound_func=get_obj_bound_func)
+
+        self.__update_lemmatization()
 
     # endregion
 
@@ -36,6 +41,10 @@ class DefaultParsedText(BaseParsedText):
             super(DefaultParsedText, self)._get_terms(term_format)
 
     # region private methods
+
+    def __update_lemmatization(self):
+        if self.__stemmer is not None:
+            self.__lemmatize(self.__stemmer)
 
     def __lemmatize(self, stemmer):
         """

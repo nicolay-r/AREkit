@@ -5,7 +5,7 @@ from tests.processing.text.debug_text import debug_show_news_terms
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import BaseTextParser, DefaultTextParser
+from arekit.processing.text.parser import DefaultTextParser
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection

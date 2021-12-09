@@ -20,7 +20,7 @@ from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 from arekit.processing.text.token import Token
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import BaseTextParser, DefaultTextParser
+from arekit.processing.text.parser import DefaultTextParser
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)

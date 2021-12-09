@@ -12,7 +12,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import BaseTextParser, DefaultTextParser
+from arekit.processing.text.parser import DefaultTextParser
 
 
 class TestPartOfSpeech(unittest.TestCase):
