@@ -3,7 +3,6 @@ import logging
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
-from arekit.common.text.options import TextParseOptions
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func, create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
@@ -17,7 +16,6 @@ from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinion
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.processing.text.parser import DefaultTextParser
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -62,11 +60,14 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
             experiment_io=experiment_io)
 
+        # init text parser.
+        text_parser = create_text_parser(self.__exp_data)
+
         # init documents.
         rusentrel_doc = RuSentrelDocumentOperations(version=rusentrel_version,
                                                     folding=rusentrel_folding,
                                                     get_synonyms_func=self._get_or_load_synonyms_collection,
-                                                    text_parser=create_text_parser(self.__exp_data))
+                                                    text_parser=text_parser)
         self.__rusentrel_doc_ids = rusentrel_doc.DataFolding.iter_doc_ids()
 
         # Init opinions
@@ -75,15 +76,11 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                   experiment_io=experiment_io,
                                                   get_synonyms_func=self._get_or_load_synonyms_collection)
 
-        parse_options = TextParseOptions(parse_entities=True,
-                                         stemmer=self.__exp_data.Stemmer,
-                                         frame_variants_collection=self.__exp_data.FrameVariantCollection)
-
         # Init experiment doc_ops and opin_ops
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
             rusentrel_doc=rusentrel_doc,
             get_ruattitudes_doc=self.__get_or_load_ruattitudes_doc_ops,
-            text_parser=DefaultTextParser(parse_options=parse_options))
+            text_parser=text_parser)
 
         opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
             rusentrel_op=rusentrel_op,
