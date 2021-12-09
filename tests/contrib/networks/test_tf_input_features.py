@@ -17,12 +17,12 @@ from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.base import Entity
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.news.parsed.term_position import TermPositionTypes
-from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
 from arekit.processing.text.parser import DefaultTextParser
 from arekit.processing.lemmatization.mystem import MystemWrapper

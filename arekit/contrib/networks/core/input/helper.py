@@ -9,7 +9,6 @@ from arekit.common.data.input.providers.rows.opinions import BaseOpinionsRowProv
 from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
@@ -40,7 +39,7 @@ class NetworkInputHelper(object):
             entity_to_group_func=entity_to_group_func,
             predefined_embedding=exp_data.WordEmbedding,
             string_entities_formatter=exp_data.StringEntityFormatter,
-            string_emb_entity_formatter=StringEntitiesSimpleFormatter())
+            string_emb_entity_formatter=exp_data.StringEntityEmbeddingFormatter)
 
         return NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,

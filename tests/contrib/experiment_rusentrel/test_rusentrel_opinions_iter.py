@@ -4,6 +4,7 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
+
 sys.path.append('../../../../')
 
 from tests.text.utils import terms_to_str
@@ -12,6 +13,7 @@ from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.contrib.source.text.news import init_rusentrel_doc
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.contrib.experiment_rusentrel.frame_variants import ExperimentFrameVariantsCollection
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import \
@@ -20,7 +22,6 @@ from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import 
 
 from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
 from arekit.common.entities.types import EntityType

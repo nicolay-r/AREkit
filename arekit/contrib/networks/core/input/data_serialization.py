@@ -26,3 +26,7 @@ class NetworkSerializationData(SerializationData):
     @property
     def PosTagger(self):
         raise NotImplementedError()
+
+    @property
+    def StringEntityEmbeddingFormatter(self):
+        raise NotImplementedError()
