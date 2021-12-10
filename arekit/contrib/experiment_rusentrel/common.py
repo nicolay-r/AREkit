@@ -1,5 +1,4 @@
 from arekit.common.entities.base import Entity
-from arekit.common.experiment.api.ctx_base import DataIO
 from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text.options import TextParseOptions
