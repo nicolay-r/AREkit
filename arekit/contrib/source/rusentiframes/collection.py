@@ -1,6 +1,5 @@
 import json
 
-from arekit.common.frames.collection import FramesCollection
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.source.rusentiframes.effect import FrameEffect
 from arekit.contrib.source.rusentiframes.io_utils import RuSentiFramesIOUtils
@@ -12,7 +11,7 @@ from arekit.contrib.source.rusentiframes.role import FrameRole
 from arekit.contrib.source.rusentiframes.state import FrameState
 
 
-class RuSentiFramesCollection(FramesCollection):
+class RuSentiFramesCollection(object):
 
     __frames_key = "frames"
     __polarity_key = "polarity"
@@ -54,11 +53,6 @@ class RuSentiFramesCollection(FramesCollection):
     # endregion
 
     # region public 'try get' methods
-
-    def try_get_frame_sentiment_polarity(self, frame_id):
-        return self.try_get_frame_polarity(frame_id=frame_id,
-                                           role_src='a0',
-                                           role_dest='a1')
 
     def try_get_frame_polarity(self, frame_id, role_src, role_dest):
         assert(isinstance(role_src, str))

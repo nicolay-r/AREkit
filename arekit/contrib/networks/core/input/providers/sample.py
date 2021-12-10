@@ -14,7 +14,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
     def __init__(self,
                  label_provider,
                  text_provider,
-                 frames_collection,
+                 frames_connotation_provider,
                  entity_to_group_func,
                  frame_role_label_scaler,
                  pos_terms_mapper):
@@ -27,7 +27,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                                                        text_provider=text_provider)
 
         self.__entity_to_group_func = entity_to_group_func
-        self.__frames_collection = frames_collection
+        self.__frames_connotation_provider = frames_connotation_provider
         self.__frame_role_label_scaler = frame_role_label_scaler
         self.__pos_terms_mapper = pos_terms_mapper
 
@@ -54,7 +54,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         uint_frame_roles = list(
             map(lambda variant: FrameRoleFeatures.extract_uint_frame_variant_sentiment_role(
                     text_frame_variant=variant,
-                    frames_collection=self.__frames_collection,
+                    frames_connotation_provider=self.__frames_collection,
                     three_label_scaler=self.__frame_role_label_scaler),
                 [terms[frame_ind] for frame_ind in uint_frame_inds]))
 

@@ -1,5 +1,5 @@
-from arekit.common.frames.collection import FramesCollection
-from arekit.common.frames.polarity import FramePolarity
+from arekit.common.connotations.descriptor import FrameConnotationDescriptor
+from arekit.common.connotations.provider import FrameConnotationProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.features.utils import create_filled_array
@@ -23,18 +23,18 @@ class FrameRoleFeatures(object):
         return vector
 
     @staticmethod
-    def extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_collection, three_label_scaler):
+    def extract_uint_frame_variant_sentiment_role(text_frame_variant, frames_connotation_provider, three_label_scaler):
         assert(isinstance(text_frame_variant, TextFrameVariant))
-        assert(isinstance(frames_collection, FramesCollection))
+        assert(isinstance(frames_connotation_provider, FrameConnotationProvider))
         assert(isinstance(three_label_scaler, BaseLabelScaler))
 
         frame_id = text_frame_variant.Variant.FrameID
-        polarity = frames_collection.try_get_frame_sentiment_polarity(frame_id)
+        polarity = frames_connotation_provider.try_get_frame_sentiment_polarity(frame_id)
 
         if polarity is None:
             return three_label_scaler.label_to_uint(label=three_label_scaler.get_no_label_instance())
 
-        assert(isinstance(polarity, FramePolarity))
+        assert(isinstance(polarity, FrameConnotationDescriptor))
 
         if text_frame_variant.IsInverted:
             inv_label = three_label_scaler.invert_label(polarity.Label)

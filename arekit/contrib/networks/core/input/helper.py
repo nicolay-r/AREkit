@@ -57,7 +57,7 @@ class NetworkInputHelper(object):
                 term_embedding_pairs=term_embedding_pairs,
                 exp_data=exp_data,
                 entity_to_group_func=entity_to_group_func),
-            frames_collection=exp_data.FramesCollection,
+            frames_connotation_provider=exp_data.FramesConnotationProvider,
             frame_role_label_scaler=exp_data.FrameRolesLabelScaler,
             entity_to_group_func=entity_to_group_func,
             pos_terms_mapper=PosTermsMapper(exp_data.PosTagger))

@@ -43,7 +43,7 @@ class SerializationData(DataIO):
         raise NotImplementedError()
 
     @property
-    def FramesCollection(self):
+    def FramesConnotationProvider(self):
         raise NotImplementedError()
 
     @property
