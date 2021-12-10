@@ -6,9 +6,11 @@ from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
+from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
+from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 
@@ -80,12 +82,15 @@ class CustomSerializationData(SerializationData):
 
     def __init__(self, label_scaler, annot, stemmer):
         super(CustomSerializationData, self).__init__(label_scaler=label_scaler, annot=annot, stemmer=stemmer)
+
         frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
         self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=frames_collection)
+        self.__frame_variant_collection = FrameVariantsCollection()
+        self.__entities_formatter = StringEntitiesSimpleFormatter()
 
     @property
     def StringEntityFormatter(self):
-        raise NotImplementedError()
+        return self.__entities_formatter
 
     @property
     def FramesConnotationProvider(self):
@@ -93,7 +98,7 @@ class CustomSerializationData(SerializationData):
 
     @property
     def FrameVariantCollection(self):
-        raise NotImplementedError()
+        return self.__frame_variant_collection
 
     @property
     def TermsPerContext(self):

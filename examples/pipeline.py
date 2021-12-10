@@ -32,7 +32,8 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.parser import DefaultTextParser
 
 from examples.input import EXAMPLES
-from examples.network.utils import SingleDocOperations, CustomExperiment, CustomOpinionOperations
+from examples.network.utils import SingleDocOperations, CustomExperiment, CustomOpinionOperations, \
+    CustomSerializationData
 
 
 def pipeline_serialize(text, label_provider):
@@ -68,12 +69,14 @@ def pipeline_serialize(text, label_provider):
         entities_collection=None)   # TODO. Create custom entity collections.
 
     doc_ops = SingleDocOperations(news=news, text_parser=text_parser)
+
     opin_ops = CustomOpinionOperations(labels_formatter=None,
                                        iter_opins=opins_for_extraction,
                                        synonyms=synonyms)
-    exp_data = SerializationData(label_scaler=label_provider.LabelScaler,
-                                 stemmer=stemmer,
-                                 annot=ThreeScaleTaskAnnotator(annot_algo=annot_algo))
+
+    exp_data = CustomSerializationData(label_scaler=label_provider.LabelScaler,
+                                       stemmer=stemmer,
+                                       annot=ThreeScaleTaskAnnotator(annot_algo=annot_algo))
 
     # Step 3. Serialize data
     experiment = CustomExperiment(synonyms=synonyms,
