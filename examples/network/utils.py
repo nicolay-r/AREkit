@@ -13,9 +13,9 @@ class SingleDocOperations(DocumentOperations):
         assert(tag == BaseDocumentTag.Annotate)
         return 0
 
-    def __init__(self, news):
+    def __init__(self, news, text_parser):
         folding = NoFolding(doc_ids_to_fold=[0], supported_data_types=[DataType.Test])
-        super(SingleDocOperations, self).__init__(folding)
+        super(SingleDocOperations, self).__init__(folding, text_parser)
         self.__doc = news
 
     def get_doc(self, doc_id):

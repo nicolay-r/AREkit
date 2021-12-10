@@ -37,6 +37,7 @@ from arekit.processing.text.parser import DefaultTextParser
 
 from examples.input import EXAMPLES
 from examples.network.embedding import RusvectoresEmbedding
+from examples.network.utils import SingleDocOperations
 
 
 def extract(text):
@@ -98,6 +99,8 @@ def extract(text):
     ###########################
     # Step 3. Serialize data
     ###########################
+    doc_ops = SingleDocOperations(news=news, text_parser=text_parser)
+    opin_ops = None
 
     NetworkInputHelper.prepare(
         experiment=None,                 # Remove experiment
