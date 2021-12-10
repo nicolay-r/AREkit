@@ -1,4 +1,4 @@
-from arekit.common.connotations.descriptor import FrameConnotationDescriptor
+from arekit.common.frames.connotations.descriptor import FrameConnotationDescriptor
 from arekit.common.labels.base import Label
 
 

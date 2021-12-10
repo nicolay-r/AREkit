@@ -1,6 +1,6 @@
 from arekit.common.entities.base import Entity
-from arekit.common.frame_variants.base import FrameVariant
-from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.common.frames.text_variant import TextFrameVariant
+from arekit.common.frames.variants.base import FrameVariant
 from arekit.processing.text.token import Token
 
 

@@ -5,7 +5,7 @@ from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
-from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.news.base import News
 from arekit.common.text.options import TextParseOptions

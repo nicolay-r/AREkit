@@ -1,4 +1,4 @@
-from arekit.common.connotations.provider import FrameConnotationProvider
+from arekit.common.frames.connotations.provider import FrameConnotationProvider
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 
 

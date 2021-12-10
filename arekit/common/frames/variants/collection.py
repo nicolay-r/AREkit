@@ -1,5 +1,5 @@
 import collections
-from arekit.common.frame_variants.base import FrameVariant
+from arekit.common.frames.variants.base import FrameVariant
 
 
 class FrameVariantsCollection(object):

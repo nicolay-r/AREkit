@@ -1,7 +1,7 @@
 import collections
 
 from arekit.common.entities.base import Entity
-from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.common.frames.variants.collection import FrameVariantsCollection
 
 from arekit.common.languages.mods import BaseLanguageMods
 from arekit.common.languages.ru.mods import RussianLanguageMods

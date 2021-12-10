@@ -1,7 +1,7 @@
 import collections
 
 from arekit.common.entities.base import Entity
-from arekit.common.text_frame_variant import TextFrameVariant
+from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.processing.text.token import Token
 
 

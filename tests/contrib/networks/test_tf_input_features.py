@@ -15,8 +15,8 @@ from tests.text.utils import terms_to_str
 
 from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.base import Entity
-from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.news.parsed.term_position import TermPositionTypes
+from arekit.common.frames.variants.collection import FrameVariantsCollection
 
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection

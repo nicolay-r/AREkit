@@ -2,10 +2,11 @@ import logging
 import sys
 import unittest
 
+
 sys.path.append('../../../../')
 
-from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.common.frame_variants.base import FrameVariant
+from arekit.common.frames.variants.base import FrameVariant
+from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 

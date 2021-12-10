@@ -1,4 +1,4 @@
-from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.text.stemmer import Stemmer
 
 

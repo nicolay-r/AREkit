@@ -1,7 +1,7 @@
-from arekit.common.connotations.descriptor import FrameConnotationDescriptor
-from arekit.common.connotations.provider import FrameConnotationProvider
+from arekit.common.frames.connotations.descriptor import FrameConnotationDescriptor
+from arekit.common.frames.connotations.provider import FrameConnotationProvider
+from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.labels.scaler import BaseLabelScaler
-from arekit.common.text_frame_variant import TextFrameVariant
 from arekit.contrib.networks.features.utils import create_filled_array
 
 
