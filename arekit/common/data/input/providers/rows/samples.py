@@ -1,6 +1,8 @@
 from collections import OrderedDict
 
 from arekit.common.data import const
+from arekit.common.data.input.providers.instances.multiple import MultipleLinkedTextOpinionsInstancesProvider
+from arekit.common.data.input.providers.instances.single import SingleLinkedTextOpinionsInstancesProvider
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
@@ -29,6 +31,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         self._label_provider = label_provider
         self.__text_provider = text_provider
         self.__row_ids_provider = self.__create_row_ids_provider(label_provider)
+        self.__instances_provider = self.__create_instances_provider(label_provider)
         self.__store_labels = None
 
     # region properties
@@ -108,6 +111,13 @@ class BaseSampleRowProvider(BaseRowProvider):
         if isinstance(label_provider, MultipleLabelProvider):
             return MultipleIDProvider()
 
+    @staticmethod
+    def __create_instances_provider(label_provider):
+        if isinstance(label_provider, BinaryLabelProvider):
+            return MultipleLinkedTextOpinionsInstancesProvider(label_provider.SupportedLabels)
+        if isinstance(label_provider, MultipleLabelProvider):
+            return SingleLinkedTextOpinionsInstancesProvider()
+
     def __provide_rows(self, row_dict, parsed_news, linked_wrap, index_in_linked, idle_mode):
         """
         Providing Rows depending on row_id_formatter type
@@ -116,27 +126,14 @@ class BaseSampleRowProvider(BaseRowProvider):
         assert(isinstance(row_dict, OrderedDict))
         assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
 
-        origin = linked_wrap.First
-        if isinstance(self.__row_ids_provider, BinaryIDProvider):
-            """
-            Enumerate all opinions as if it would be with the different label types.
-            """
-            for label in self._label_provider.SupportedLabels:
-                yield self.__create_row(row=row_dict,
-                                        parsed_news=parsed_news,
-                                        linked_wrap=self.__copy_modified_linked_wrap(linked_wrap, label),
-                                        index_in_linked=index_in_linked,
-                                        # TODO. provide uint_label
-                                        etalon_label=origin.Sentiment,
-                                        idle_mode=idle_mode)
-
-        if isinstance(self.__row_ids_provider, MultipleIDProvider):
+        etalon_label = self.__instances_provider.provide_label(linked_wrap)
+        for instance in self.__instances_provider.iter_instances(linked_wrap):
             yield self.__create_row(row=row_dict,
                                     parsed_news=parsed_news,
-                                    linked_wrap=linked_wrap,
+                                    linked_wrap=instance,
                                     index_in_linked=index_in_linked,
                                     # TODO. provide uint_label
-                                    etalon_label=origin.Sentiment,
+                                    etalon_label=etalon_label,
                                     idle_mode=idle_mode)
 
     def __create_row(self, row, parsed_news, linked_wrap, index_in_linked, etalon_label, idle_mode):
@@ -176,18 +173,6 @@ class BaseSampleRowProvider(BaseRowProvider):
                             s_ind=s_ind,
                             t_ind=t_ind)
         return row
-
-    @staticmethod
-    def __copy_modified_linked_wrap(linked_wrap, label):
-        assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
-        linked_opinions = [o for o in linked_wrap]
-
-        copy = TextOpinion.create_copy(other=linked_opinions[0])
-        copy.set_label(label=label)
-
-        linked_opinions[0] = copy
-
-        return LinkedTextOpinionsWrapper(linked_text_opinions=linked_opinions)
 
     @staticmethod
     def __get_opinion_end_indices(parsed_news, text_opinion):
