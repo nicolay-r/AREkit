@@ -1,7 +1,7 @@
-class FramePolarity(object):
+class FrameConnotationDescriptor(object):
     """
     Polarity description between source (Agent) towards dest (Theme)
-    The latter are related to roles of frame polarity.
+    The latter is related to the roles of frame polarity.
     """
 
     @property
