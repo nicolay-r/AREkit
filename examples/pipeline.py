@@ -11,6 +11,7 @@ from arekit.common.news.base import News
 from arekit.common.text.options import TextParseOptions
 
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
+from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
@@ -66,6 +67,8 @@ def extract(text):
     synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
         stemmer=stemmer,
         version=RuSentRelVersions.V11)
+    frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
+    frames_connotation_provider = RuSentiFramesConnotationProvider(collection=frames_collection)
 
     labels_scaler = ThreeLabelScaler()
 
@@ -87,7 +90,7 @@ def extract(text):
                     binary=True),
                 string_entities_formatter=StringEntitiesSimpleFormatter(),
                 string_emb_entity_formatter=StringEntitiesSimpleFormatter())),
-        frames_collection=RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20),
+        frames_connotation_provider=frames_connotation_provider,
         frame_role_label_scaler=ThreeLabelScaler(),
         entity_to_group_func=entity_to_group_func,
         pos_terms_mapper=PosTermsMapper(None))
