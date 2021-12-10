@@ -1,6 +1,7 @@
 import sys
 import unittest
 
+
 sys.path.append('../')
 
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
@@ -9,10 +10,10 @@ from arekit.common.data.input.providers.text.single import BaseSingleTextProvide
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
+from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 

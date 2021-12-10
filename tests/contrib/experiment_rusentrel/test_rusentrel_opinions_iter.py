@@ -13,18 +13,20 @@ from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.contrib.source.text.news import init_rusentrel_doc
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.contrib.experiment_rusentrel.frame_variants import ExperimentFrameVariantsCollection
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import \
     ExperimentRuSentiFramesLabelsFormatter, \
     ExperimentRuSentiFramesEffectLabelsFormatter
 
+from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
 from arekit.common.entities.types import EntityType
 
+from arekit.processing.text.parser import DefaultTextParser
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.token import Token
@@ -74,14 +76,19 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
+        parse_options = TextParseOptions(parse_entities=True,
+                                         stemmer=self.stemmer,
+                                         frame_variants_collection=self.unique_frame_variants)
+
+        text_parser = DefaultTextParser(parse_options)
+
         # Initialize specific document
         doc_id = 47
         logger.info("NewsID: {}".format(doc_id))
         news, parsed_news, opinions = init_rusentrel_doc(
             doc_id=doc_id,
-            stemmer=self.stemmer,
-            synonyms=self.synonyms,
-            unique_frame_variants=self.unique_frame_variants)
+            text_parser=text_parser,
+            synonyms=self.synonyms)
 
         for text_opinion in iter_same_sentence_linked_text_opinions(news=news,
                                                                     opinions=opinions,

@@ -5,14 +5,16 @@ from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocume
 
 class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
 
-    def __init__(self, rusentrel_doc, get_ruattitudes_doc):
+    def __init__(self, rusentrel_doc, get_ruattitudes_doc, text_parser):
         assert(isinstance(rusentrel_doc, RuSentrelDocumentOperations))
         assert(callable(get_ruattitudes_doc))
 
         # We consider RuSentRel folding algorithm by default.
         # The latter utilized in experiment as `main`, while
         # RuAttitude data-folding considered as `auxiliary`.
-        super(RuSentrelWithRuAttitudesDocumentOperations, self).__init__(folding=rusentrel_doc.DataFolding)
+        super(RuSentrelWithRuAttitudesDocumentOperations, self).__init__(
+            folding=rusentrel_doc.DataFolding,
+            text_parser=text_parser)
 
         self.__rusentrel_doc = rusentrel_doc
         self.__get_ruattitudes_doc = get_ruattitudes_doc
@@ -49,15 +51,6 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
 
         for doc_id in ruattitudes_doc.iter_doc_ids(data_type):
             yield doc_id
-
-    # TODO. This should be removed, since parse-options considered as a part
-    # TODO. Of the text-parser instance!!!
-    # TODO. Parse options should not be related to the particular collection.
-    def _create_parse_options(self):
-
-        # ParseOptions are independent from doc_operations.
-        # Therefore we provide rusentrel_doc by default.
-        return self.__rusentrel_doc._create_parse_options()
 
     def iter_tagget_doc_ids(self, tag):
         return self.__rusentrel_doc.iter_tagget_doc_ids(tag)

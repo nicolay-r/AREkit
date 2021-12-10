@@ -1,18 +1,18 @@
 import logging
 import unittest
 
+from arekit.common.text.options import TextParseOptions
 from tests.processing.text.debug_text import debug_show_news_terms
 
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.parser import DefaultTextParser
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
-from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
 
 
 class TestTextParser(unittest.TestCase):
@@ -35,9 +35,11 @@ class TestTextParser(unittest.TestCase):
                                           overwrite_existed_variant=True,
                                           raise_error_on_existed_variant=False)
 
-        # RuAttitudes options.
-        options = RuSentRelNewsParseOptions(stemmer=stemmer,
-                                            frame_variants_collection=frame_variants)
+        # Initializing parser.
+        parse_options = TextParseOptions(parse_entities=True,
+                                         stemmer=stemmer,
+                                         frame_variants_collection=frame_variants)
+        text_parser = DefaultTextParser(parse_options)
 
         # Reading synonyms collection.
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)
@@ -51,7 +53,7 @@ class TestTextParser(unittest.TestCase):
                                                version=version)
 
             # Perform text parsing.
-            parsed_news = TextParser.parse_news(news, options)
+            parsed_news = text_parser.parse_news(news=news)
             debug_show_news_terms(parsed_news=parsed_news)
 
 

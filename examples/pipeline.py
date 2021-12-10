@@ -3,15 +3,15 @@ from arekit.common.data.input.providers.text.single import BaseSingleTextProvide
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
-from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
-from arekit.common.news.parse_options import NewsParseOptions
 from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.news.base import News
+from arekit.common.text.options import TextParseOptions
 
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
+from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.context.architectures.pcnn import PiecewiseCNN
@@ -32,7 +32,7 @@ from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.parser import DefaultTextParser
 
 from examples.input import EXAMPLES
 from examples.network.embedding import RusvectoresEmbedding
@@ -50,13 +50,14 @@ def extract(text):
     news = News(doc_id=0,
                 sentences=sentences)
 
-    parse_options = NewsParseOptions(
+    parse_options = TextParseOptions(
         parse_entities=False,
         frame_variants_collection=FrameVariantsCollection(),
         stemmer=stemmer)
 
-    parsed_news = TextParser.parse_news(news=news,
-                                        parse_options=parse_options)
+    text_parser = DefaultTextParser(parse_options)
+
+    parsed_news = text_parser.parse_news(news=news)
 
     ########################
     # Step 2. Annotate text.

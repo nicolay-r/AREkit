@@ -3,7 +3,7 @@ import logging
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
+from arekit.contrib.experiment_rusentrel.common import entity_to_group_func, create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
@@ -50,9 +50,9 @@ class RuSentRelExperiment(BaseExperiment):
                                                            version=version,
                                                            docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
                                                            experiment_io=experiment_io)
-        doc_ops = RuSentrelDocumentOperations(exp_data=exp_data,
-                                              folding=folding,
+        doc_ops = RuSentrelDocumentOperations(folding=folding,
                                               version=version,
+                                              text_parser=create_text_parser(exp_data),
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
         exp_name = "rsr-{version}-{format}".format(version=version.value,

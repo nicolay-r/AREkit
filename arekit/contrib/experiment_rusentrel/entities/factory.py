@@ -1,9 +1,10 @@
-from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
-from arekit.common.entities.formatters.str_rus_nocased_fmt import RussianEntitiesFormatter
-from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
-from arekit.common.entities.formatters.str_simple_sharp_prefixed_fmt import SharpPrefixedEntitiesSimpleFormatter
-from arekit.common.entities.formatters.str_simple_uppercase_fmt import SimpleUppercasedEntityFormatter
-from arekit.common.entities.formatters.types import EntityFormatterTypes
+from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
+from arekit.contrib.experiment_rusentrel.entities.str_rus_nocased_fmt import RussianEntitiesFormatter
+from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
+from arekit.contrib.experiment_rusentrel.entities.str_simple_sharp_prefixed_fmt import \
+    SharpPrefixedEntitiesSimpleFormatter
+from arekit.contrib.experiment_rusentrel.entities.str_simple_uppercase_fmt import SimpleUppercasedEntityFormatter
+from arekit.contrib.experiment_rusentrel.entities.types import EntityFormatterTypes
 
 
 def create_entity_formatter(fmt_type, create_russian_pos_tagger_func=None):

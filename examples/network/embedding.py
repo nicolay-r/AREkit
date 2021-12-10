@@ -2,8 +2,8 @@ import logging
 import numpy as np
 from gensim.models import KeyedVectors
 
+from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.networks.embeddings.base import Embedding
-from arekit.processing.lemmatization.base import Stemmer
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

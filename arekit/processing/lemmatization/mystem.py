@@ -1,5 +1,5 @@
+from arekit.common.text.stemmer import Stemmer
 from arekit.common.utils import filter_whitespaces
-from arekit.processing.lemmatization.base import Stemmer
 from pymystem3 import Mystem
 
 
