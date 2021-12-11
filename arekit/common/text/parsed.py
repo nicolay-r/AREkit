@@ -12,9 +12,6 @@ class BaseParsedText(object):
     # region constructors
 
     def __init__(self, terms):
-        """
-        NOTE: token hiding is actually discarded.
-        """
         assert(isinstance(terms, list))
         self._terms = terms
 
@@ -35,14 +32,14 @@ class BaseParsedText(object):
         if modified_objs is None:
             return
 
-        objs_list = list(modified_objs)
+        modified_objs_list = list(modified_objs)
 
         # setup default position.
         local_terms = self._terms
         prev_position = len(self._terms) + 1
 
-        for obj in reversed(objs_list):
-            obj_bound = get_obj_bound_func(obj)
+        for modified_obj in reversed(modified_objs_list):
+            obj_bound = get_obj_bound_func(modified_obj)
 
             if obj_bound.Position > prev_position:
                 raise Exception("objs list has incorrect order. It is expected that instances "
@@ -52,7 +49,7 @@ class BaseParsedText(object):
                      start=obj_bound.Position,
                      end=obj_bound.Position + obj_bound.Length)
 
-            local_terms.insert(obj_bound.Position, obj)
+            local_terms.insert(obj_bound.Position, modified_obj)
 
             prev_position = obj_bound.Position
 
