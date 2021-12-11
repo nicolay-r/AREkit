@@ -24,7 +24,7 @@ class SingleDocOperations(DocumentOperations):
     def iter_tagget_doc_ids(self, tag):
         assert(isinstance(tag, BaseDocumentTag))
         assert(tag == BaseDocumentTag.Annotate)
-        return 0
+        return [0]
 
     def __init__(self, news, text_parser):
         folding = NoFolding(doc_ids_to_fold=[0], supported_data_types=[DataType.Test])
@@ -51,7 +51,7 @@ class CustomOpinionOperations(OpinionOperations):
         return self.__iter_opins
 
     def get_etalon_opinion_collection(self, doc_id):
-        raise Exception("Not Supported")
+        return self.create_opinion_collection()
 
     def get_result_opinion_collection(self, doc_id, data_type, epoch_index):
         raise Exception("Not Supported")
@@ -82,12 +82,14 @@ class CustomExperiment(BaseExperiment):
 
 class CustomSerializationData(SerializationData):
 
-    def __init__(self, label_scaler, annot, stemmer):
+    def __init__(self, label_scaler, annot, stemmer, frame_variants_collection):
+        assert(isinstance(frame_variants_collection, FrameVariantsCollection))
+
         super(CustomSerializationData, self).__init__(label_scaler=label_scaler, annot=annot, stemmer=stemmer)
 
         frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
         self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=frames_collection)
-        self.__frame_variant_collection = FrameVariantsCollection()
+        self.__frame_variants_collection = frame_variants_collection
         self.__entities_formatter = StringEntitiesSimpleFormatter()
 
     @property
@@ -100,7 +102,7 @@ class CustomSerializationData(SerializationData):
 
     @property
     def FrameVariantCollection(self):
-        return self.__frame_variant_collection
+        return self.__frame_variants_collection
 
     @property
     def TermsPerContext(self):

@@ -1,5 +1,6 @@
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
+from arekit.common.entities.base import Entity
 from arekit.common.entities.collection import EntityCollection
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.frames.variants.collection import FrameVariantsCollection
@@ -12,11 +13,35 @@ from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelS
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.networks.core.io_utils import NetworkIOUtils
+from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
+from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from examples.input import EXAMPLES
 from examples.network.utils import SingleDocOperations, CustomOpinionOperations, CustomSerializationData, \
     CustomExperiment, CustomTextParser
+
+
+def create_frame_variants_collection():
+
+    frames = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
+    frame_variant_collection = FrameVariantsCollection()
+    frame_variant_collection.fill_from_iterable(
+        variants_with_id=frames.iter_frame_id_and_variants(),
+        overwrite_existed_variant=True,
+        raise_error_on_existed_variant=False)
+
+    return frame_variant_collection
+
+
+def extract_entities_from_news(news):
+    entities = []
+    for sentence in news.iter_sentences():
+        for term in sentence.Text:
+            if (isinstance(term, Entity)):
+                entities.append(term)
+
+    return entities
 
 
 def pipeline_serialize(sentences_text_list, label_provider):
@@ -26,14 +51,21 @@ def pipeline_serialize(sentences_text_list, label_provider):
     # TODO. split text onto sentences.
     sentences = list(map(lambda text: BaseNewsSentence(text), sentences_text_list))
 
-    # Step 1. Parse text.
     stemmer = MystemWrapper()
+
+    annot_algo = DefaultSingleLabelAnnotationAlgorithm(
+        dist_in_terms_bound=None,
+        label_instance=NoLabel())
+
+    frame_variants_collection = create_frame_variants_collection()
+
+    # Step 1. Parse text.
 
     news = News(doc_id=0, sentences=sentences)
 
     parse_options = TextParseOptions(
         parse_entities=False,
-        frame_variants_collection=FrameVariantsCollection(),
+        frame_variants_collection=frame_variants_collection,
         stemmer=stemmer)
 
     text_parser = CustomTextParser(parse_options)
@@ -45,18 +77,13 @@ def pipeline_serialize(sentences_text_list, label_provider):
         stemmer=stemmer,
         version=RuSentRelVersions.V11)
 
-    annot_algo = DefaultSingleLabelAnnotationAlgorithm(
-        dist_in_terms_bound=None,
-        label_instance=NoLabel())
-
-    parsed_news.get_entity_position()
-
-    entities = EntityCollection(entities=None,
-                                synonyms=synonyms)
+    entities_collection = EntityCollection(
+        entities=extract_entities_from_news(news),
+        synonyms=synonyms)
 
     opins_for_extraction = annot_algo.iter_opinions(
         parsed_news=parsed_news,
-        entities_collection=entities)   # TODO. Create custom entity collections.
+        entities_collection=entities_collection)   # TODO. Create custom entity collections.
 
     doc_ops = SingleDocOperations(news=news, text_parser=text_parser)
 
@@ -66,7 +93,8 @@ def pipeline_serialize(sentences_text_list, label_provider):
 
     exp_data = CustomSerializationData(label_scaler=label_provider.LabelScaler,
                                        stemmer=stemmer,
-                                       annot=ThreeScaleTaskAnnotator(annot_algo=annot_algo))
+                                       annot=ThreeScaleTaskAnnotator(annot_algo=annot_algo),
+                                       frame_variants_collection=frame_variants_collection)
 
     # Step 3. Serialize data
     experiment = CustomExperiment(synonyms=synonyms,
@@ -77,7 +105,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
 
     NetworkInputHelper.prepare(experiment=experiment,
                                terms_per_context=50,
-                               balance=None)
+                               balance=False)
 
 
 if __name__ == '__main__':
