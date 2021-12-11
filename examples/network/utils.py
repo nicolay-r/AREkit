@@ -114,13 +114,13 @@ class CustomTextParser(DefaultTextParser):
         
         self.__id_in_doc = 0
 
-    def _process_word(self, word, keep_tokens):
+    def _process_words_to_terms_list(self, word, keep_tokens):
         assert(isinstance(word, str))
 
         # If this is a special word which is related to the [entity] mention.
         if word[0] == "[" and word[-1] == "]":
             entity = Entity(value=word[1:-1], e_type=None, id_in_doc=self.__id_in_doc)
             self.__id_in_doc += 1
-            return entity
+            return [entity]
 
-        return super(CustomTextParser, self)._process_word(word=word, keep_tokens=keep_tokens)
+        return super(CustomTextParser, self)._process_words_to_terms_list(word=word, keep_tokens=keep_tokens)

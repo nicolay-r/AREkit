@@ -58,13 +58,13 @@ class DefaultTextParser(BaseTextParser):
             if word is None:
                 continue
 
-            processed = self._process_word(word=word, keep_tokens=keep_tokens)
+            processed = self._process_words_to_terms_list(word=word, keep_tokens=keep_tokens)
 
             parsed.extend(processed)
 
         return parsed
 
-    def _process_word(self, word, keep_tokens):
+    def _process_words_to_terms_list(self, word, keep_tokens):
 
         words_and_tokens = DefaultTextParser.__split_tokens(word)
 
