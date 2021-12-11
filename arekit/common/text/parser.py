@@ -89,7 +89,8 @@ class BaseTextParser(object):
                                            skip_term=lambda term: isinstance(term, Entity))
 
         # Processing the ordinary sentence text.
-        sentence = news.iter_sentences()
+        sentence = news._sentences[sent_ind]
+
         return self.__parse(text=sentence.Text)
 
     def __parse_terms_list(self, terms_iter, skip_term):
