@@ -29,6 +29,7 @@ class FrameVariantsParser(object):
         assert(isinstance(frame_variants, FrameVariantsCollection))
         assert(isinstance(lemmas, list))
         assert(issubclass(locale_mods, BaseLanguageMods))
+        assert(len(frame_variants) > 0)
 
         start_ind = 0
         last_ind = 0

@@ -59,3 +59,6 @@ class FrameVariantsCollection(object):
             yield value, variant
 
     # endregion
+
+    def __len__(self):
+        return len(self.__variants)
