@@ -13,7 +13,7 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
         super(RuSentRelDocumentEntityCollection, self).__init__(entities=entities,
                                                                 synonyms=synonyms)
 
-        self.sort_entities(key=lambda entity: entity.CharIndexBegin)
+        self._sort_entities(key=lambda entity: entity.CharIndexBegin)
 
     @classmethod
     def read_collection(cls, doc_id, synonyms, version=RuSentRelVersions.V11):

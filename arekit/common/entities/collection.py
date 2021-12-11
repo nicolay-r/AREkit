@@ -26,9 +26,19 @@ class EntityCollection(object):
         self.__by_id = self.create_index(entities=entities,
                                          key_func=lambda e: e.IdInDocument)
 
-    def sort_entities(self, key):
+    @staticmethod
+    def __value_or_none(d, key):
+        return d[key] if key in d else None
+
+    # region protected methods
+
+    def _sort_entities(self, key):
         assert(callable(key))
         self.__entities.sort(key=key)
+
+    # endregion
+
+    # region public methods
 
     @staticmethod
     def create_index(entities, key_func):
@@ -40,10 +50,6 @@ class EntityCollection(object):
             else:
                 index[key] = [e]
         return index
-
-    @staticmethod
-    def __value_or_none(d, key):
-        return d[key] if key in d else None
 
     def get_entity_by_index(self, index):
         assert(isinstance(index, int))
@@ -65,9 +71,15 @@ class EntityCollection(object):
         assert(len(value) == 1)
         return value[0]
 
+    # endregion
+
+    # region base methods
+
     def __len__(self):
         return len(self.__entities)
 
     def __iter__(self):
         for entity in self.__entities:
             yield entity
+
+    # endregion
