@@ -5,6 +5,7 @@ from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnota
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.news.base import News
+from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.options import TextParseOptions
 from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
@@ -18,11 +19,14 @@ from examples.network.utils import SingleDocOperations, CustomOpinionOperations,
     CustomExperiment, CustomTextParser
 
 
-def pipeline_serialize(text, label_provider):
+def pipeline_serialize(sentences_text_list, label_provider):
+    assert(isinstance(sentences_text_list, list))
     assert(isinstance(label_provider, LabelProvider))
 
+    # TODO. split text onto sentences.
+    sentences = list(map(lambda text: BaseNewsSentence(text), sentences_text_list))
+
     # Step 1. Parse text.
-    sentences = text  # TODO. split text onto sentences.
     stemmer = MystemWrapper()
 
     news = News(doc_id=0, sentences=sentences)
@@ -78,9 +82,9 @@ def pipeline_serialize(text, label_provider):
 
 if __name__ == '__main__':
 
-    text= EXAMPLES["simple"]
+    text = EXAMPLES["simple"]
 
     labels_scaler = ThreeLabelScaler()
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
-    pipeline_serialize(text=text, label_provider=label_provider)
+    pipeline_serialize(sentences_text_list=text, label_provider=label_provider)

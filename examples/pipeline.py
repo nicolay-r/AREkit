@@ -76,5 +76,5 @@ if __name__ == '__main__':
     labels_scaler = ThreeLabelScaler()
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
-    pipeline_serialize(text=text, label_provider=label_provider)
+    pipeline_serialize(sentences_text_list=text, label_provider=label_provider)
     pipeline_infer(labels_scaler)
