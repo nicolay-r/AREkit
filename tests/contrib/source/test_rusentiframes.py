@@ -38,8 +38,8 @@ class TestRuSentiFrames(unittest.TestCase):
             # polarity
             for polarity in frames.get_frame_polarities(frame_id):
                 logger.info("Polarity: {}".format(",".join([polarity.Source,
-                                                              polarity.Destination,
-                                                              polarity.Label.to_class_str()])))
+                                                            polarity.Destination,
+                                                            polarity.Label.to_class_str()])))
 
             has_a0_a1_pol = frames.try_get_frame_polarity(frame_id, role_src="a0", role_dest="a1")
             logger.info("Has a0->a1 polarity: {}".format(has_a0_a1_pol is not None))

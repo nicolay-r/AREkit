@@ -1,102 +1,29 @@
-from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
-from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
-from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.experiment.data_type import DataType
-from arekit.common.frames.variants.collection import FrameVariantsCollection
-from arekit.common.labels.base import NoLabel
 from arekit.common.labels.scaler import BaseLabelScaler
-from arekit.common.news.base import News
-from arekit.common.text.options import TextParseOptions
 
-from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
-from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.context.architectures.pcnn import PiecewiseCNN
 from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
-from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
 from arekit.contrib.networks.shapes import NetworkInputShapes
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import DefaultTextParser
 
 from examples.input import EXAMPLES
-from examples.network.utils import SingleDocOperations, CustomExperiment, CustomOpinionOperations, \
-    CustomSerializationData
-
-
-def pipeline_serialize(text, label_provider):
-    assert(isinstance(label_provider, LabelProvider))
-
-    # Step 1. Parse text.
-    sentences = text  # TODO. split text onto sentences.
-    stemmer = MystemWrapper()
-
-    news = News(doc_id=0,
-                sentences=sentences)
-
-    parse_options = TextParseOptions(
-        parse_entities=False,
-        frame_variants_collection=FrameVariantsCollection(),
-        stemmer=stemmer)
-
-    text_parser = DefaultTextParser(parse_options)
-
-    parsed_news = text_parser.parse_news(news=news)
-
-    # Step 2. Annotate text.
-    synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
-        stemmer=stemmer,
-        version=RuSentRelVersions.V11)
-
-    annot_algo = DefaultSingleLabelAnnotationAlgorithm(
-        dist_in_terms_bound=None,
-        label_instance=NoLabel())
-
-    opins_for_extraction = annot_algo.iter_opinions(
-        parsed_news=parsed_news,
-        entities_collection=None)   # TODO. Create custom entity collections.
-
-    doc_ops = SingleDocOperations(news=news, text_parser=text_parser)
-
-    opin_ops = CustomOpinionOperations(labels_formatter=None,
-                                       iter_opins=opins_for_extraction,
-                                       synonyms=synonyms)
-
-    exp_data = CustomSerializationData(label_scaler=label_provider.LabelScaler,
-                                       stemmer=stemmer,
-                                       annot=ThreeScaleTaskAnnotator(annot_algo=annot_algo))
-
-    # Step 3. Serialize data
-    experiment = CustomExperiment(synonyms=synonyms,
-                                  exp_data=exp_data,
-                                  exp_io_type=NetworkIOUtils,
-                                  doc_ops=doc_ops,
-                                  opin_ops=opin_ops)
-
-    NetworkInputHelper.prepare(experiment=experiment,
-                               terms_per_context=50,
-                               balance=None)
+from examples.repository import pipeline_serialize
 
 
 def pipeline_infer(labels_scaler):
     assert(isinstance(labels_scaler, BaseLabelScaler))
 
-    ###########################
     # Step 4. Deserialize data
-    ###########################
-
     network = PiecewiseCNN()
     config = CNNConfig()
 
@@ -118,10 +45,7 @@ def pipeline_infer(labels_scaler):
         ]),
         bag_size=config.BagSize)
 
-    ############################
     # Step 5. Model preparation.
-    ############################
-
     model = BaseTensorflowModel(
         nn_io=NeuralNetworkModelIO(
             target_dir=".model",
@@ -135,10 +59,7 @@ def pipeline_infer(labels_scaler):
 
     model.predict()
 
-    ########################################################
     # Step 6. Gather annotated contexts onto document level.
-    ########################################################
-
     labeled_samples = model.get_labeled_samples_collection(data_type=DataType.Test)
 
     # TODO. For now it is limited to tsv.
@@ -149,14 +70,11 @@ def pipeline_infer(labels_scaler):
                  labels_scaler=labels_scaler)
 
 
-def extract(text):
+if __name__ == '__main__':
 
+    text = EXAMPLES["simple"]
     labels_scaler = ThreeLabelScaler()
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
     pipeline_serialize(text=text, label_provider=label_provider)
     pipeline_infer(labels_scaler)
-
-
-if __name__ == '__main__':
-    extract(EXAMPLES["simple"])

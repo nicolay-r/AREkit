@@ -35,8 +35,8 @@ class DefaultTextParser(BaseTextParser):
         assert(isinstance(text, str))
         assert(isinstance(keep_tokens, bool))
 
-        terms = DefaultTextParser.__process_words(words=split_by_whitespaces(text),
-                                                  keep_tokens=keep_tokens)
+        terms = self._process_words(words=split_by_whitespaces(text),
+                                    keep_tokens=keep_tokens)
 
         return terms
 
@@ -44,8 +44,7 @@ class DefaultTextParser(BaseTextParser):
 
     # region private static methods
 
-    @staticmethod
-    def __process_words(words, keep_tokens):
+    def _process_words(self, words, keep_tokens):
         """
         parsed_news: list
             list of parsed_news
@@ -59,14 +58,20 @@ class DefaultTextParser(BaseTextParser):
             if word is None:
                 continue
 
-            words_and_tokens = DefaultTextParser.__split_tokens(word)
+            processed = self._process_word(word=word, keep_tokens=keep_tokens)
 
-            if not keep_tokens:
-                words_and_tokens = [word for word in words_and_tokens if not isinstance(word, Token)]
-
-            parsed.extend(words_and_tokens)
+            parsed.extend(processed)
 
         return parsed
+
+    def _process_word(self, word, keep_tokens):
+
+        words_and_tokens = DefaultTextParser.__split_tokens(word)
+
+        if not keep_tokens:
+            words_and_tokens = [word for word in words_and_tokens if not isinstance(word, Token)]
+
+        return words_and_tokens
 
     @staticmethod
     def __split_tokens(term):

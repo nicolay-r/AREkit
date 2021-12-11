@@ -1,3 +1,4 @@
+from arekit.common.entities.base import Entity
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.experiment.api.enums import BaseDocumentTag
@@ -13,6 +14,7 @@ from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFra
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.processing.text.parser import DefaultTextParser
 
 
 class SingleDocOperations(DocumentOperations):
@@ -103,3 +105,22 @@ class CustomSerializationData(SerializationData):
     @property
     def TermsPerContext(self):
         return 50
+
+
+class CustomTextParser(DefaultTextParser):
+
+    def __init__(self, parse_options):
+        super(CustomTextParser, self).__init__(parse_options)
+        
+        self.__id_in_doc = 0
+
+    def _process_word(self, word, keep_tokens):
+        assert(isinstance(word, str))
+
+        # If this is a special word which is related to the [entity] mention.
+        if word[0] == "[" and word[-1] == "]":
+            entity = Entity(value=word[1:-1], e_type=None, id_in_doc=self.__id_in_doc)
+            self.__id_in_doc += 1
+            return entity
+
+        return super(CustomTextParser, self)._process_word(word=word, keep_tokens=keep_tokens)
