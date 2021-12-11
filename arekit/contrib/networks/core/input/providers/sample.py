@@ -6,7 +6,7 @@ from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.contrib.networks.core.input import const
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
-from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
+from arekit.contrib.networks.features.term_connotation import FrameConnotationFeatures
 
 
 class NetworkSampleRowProvider(BaseSampleRowProvider):
@@ -50,11 +50,11 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         # Compose frame indices.
         uint_frame_inds = list(self.__iter_indices(terms=terms, filter=lambda t: isinstance(t, TextFrameVariant)))
 
-        # Compose frame sentiment.
-        uint_frame_roles = list(
-            map(lambda variant: FrameRoleFeatures.extract_uint_frame_variant_sentiment_role(
+        # Compose frame connotations.
+        uint_frame_connotations = list(
+            map(lambda variant: FrameConnotationFeatures.extract_uint_frame_variant_connotation(
                     text_frame_variant=variant,
-                    frames_connotation_provider=self.__frames_collection,
+                    frames_connotation_provider=self.__frames_connotation_provider,
                     three_label_scaler=self.__frame_role_label_scaler),
                 [terms[frame_ind] for frame_ind in uint_frame_inds]))
 
@@ -72,7 +72,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
 
         # Saving.
         row[const.FrameVariantIndices] = self.__to_arg(uint_frame_inds)
-        row[const.FrameRoles] = self.__to_arg(uint_frame_roles)
+        row[const.FrameConnotations] = self.__to_arg(uint_frame_connotations)
         row[const.SynonymSubject] = self.__to_arg(uint_syn_s_inds)
         row[const.SynonymObject] = self.__to_arg(uint_syn_t_inds)
         row[const.Entities] = self.__to_arg(entity_inds)

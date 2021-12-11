@@ -1,4 +1,4 @@
 class FrameConnotationProvider(object):
 
-    def try_get_frame_sentiment_polarity(self, frame_id):
+    def try_provide(self, frame_id):
         raise NotImplementedError()

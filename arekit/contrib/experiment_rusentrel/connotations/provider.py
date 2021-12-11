@@ -8,7 +8,7 @@ class RuSentiFramesConnotationProvider(FrameConnotationProvider):
         assert(isinstance(collection, RuSentiFramesCollection))
         self.__collection = collection
 
-    def try_get_frame_sentiment_polarity(self, frame_id):
+    def try_provide(self, frame_id):
         return self.__collection.try_get_frame_polarity(frame_id=frame_id,
                                                         role_src='a0',
                                                         role_dest='a1')

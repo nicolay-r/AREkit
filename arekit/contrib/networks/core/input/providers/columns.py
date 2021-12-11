@@ -9,7 +9,7 @@ class NetworkSampleColumnsProvider(SampleColumnsProvider):
 
         # insert indices
         dtypes_list.append((const.FrameVariantIndices, str))
-        dtypes_list.append((const.FrameRoles, str))
+        dtypes_list.append((const.FrameConnotations, str))
         dtypes_list.append((const.SynonymSubject, str))
         dtypes_list.append((const.SynonymObject, str))
         dtypes_list.append((const.Entities, str))

@@ -21,7 +21,7 @@ parse_value = {
     const.T_IND: lambda value: value,
     network_input_const.FrameVariantIndices: lambda value:
         __process_indices_list(value) if isinstance(value, str) else empty_list,
-    network_input_const.FrameRoles: lambda value:
+    network_input_const.FrameConnotations: lambda value:
         __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.SynonymObject: lambda value: __process_indices_list(value),
     network_input_const.SynonymSubject: lambda value: __process_indices_list(value),
@@ -83,8 +83,8 @@ class ParsedSampleRow(object):
         return self.__params[network_input_const.FrameVariantIndices]
 
     @property
-    def TextFrameVariantRoles(self):
-        return self.__params[network_input_const.FrameRoles]
+    def TextFrameConnotations(self):
+        return self.__params[network_input_const.FrameConnotations]
 
     @property
     def EntityInds(self):
