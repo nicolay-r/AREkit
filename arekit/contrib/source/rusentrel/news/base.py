@@ -13,10 +13,12 @@ from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 
 class RuSentRelNews(News):
 
-    def __init__(self, doc_id, sentences):
+    def __init__(self, doc_id, sentences, entities):
         assert(isinstance(sentences, list))
 
         super(RuSentRelNews, self).__init__(doc_id=doc_id, sentences=sentences)
+
+        self.__entities = entities
 
     # region class methods
 
@@ -78,7 +80,7 @@ class RuSentRelNews(News):
 
         assert(e_ind == len(entities))
 
-        return cls(doc_id=doc_id, sentences=sentences)
+        return cls(doc_id=doc_id, sentences=sentences, entities=entities)
 
     # endregion
 
@@ -119,13 +121,10 @@ class RuSentRelNews(News):
         assert(isinstance(opinion, Opinion))
 
         opinions_it = iter_text_opinions_by_doc_opinion(rusentrel_doc_id=self.ID,
-                                                        doc_entities=self._entities,
+                                                        doc_entities=self.__entities,
                                                         opinion=opinion)
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
-
-    def get_entities_collection(self):
-        return self._entities
 
     @staticmethod
     def _sentence_to_terms_list_core(sentence):
