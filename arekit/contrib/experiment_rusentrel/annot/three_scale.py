@@ -33,7 +33,7 @@ class ThreeScaleTaskAnnotator(BaseAnnotator):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
 
-        opinions = opin_ops.get_etalon_opinion_collection(doc_id=parsed_news.RelatedNewsID)
+        opinions = opin_ops.get_etalon_opinion_collection(doc_id=parsed_news.RelatedDocID)
 
         annotated_opins_it = self.__annot_algo.iter_opinions(
             parsed_news=parsed_news,

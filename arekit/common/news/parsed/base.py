@@ -38,7 +38,7 @@ class ParsedNews(object):
     # region properties
 
     @property
-    def RelatedNewsID(self):
+    def RelatedDocID(self):
         return self.__doc_id
 
     # endregion
