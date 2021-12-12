@@ -7,7 +7,7 @@ from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.sample_dist import DistanceFeatures
-from arekit.contrib.networks.features.term_frame_roles import FrameRoleFeatures
+from arekit.contrib.networks.features.term_connotation import FrameConnotationFeatures
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.networks.features.term_types import calculate_term_types
 from arekit.contrib.networks.features.utils import pad_right_or_crop_inplace
@@ -249,10 +249,10 @@ class InputSample(InputSampleBase):
             filler=cls.TERM_TYPE_PAD_VALUE)
 
         frame_sent_roles_feature = IndicesFeature.from_vector_to_be_fitted(
-            value_vector=FrameRoleFeatures.to_input(frame_inds=frame_inds,
-                                                    frame_sent_roles=frame_sent_roles,
-                                                    size=len(terms),
-                                                    filler=cls.FRAME_SENT_ROLES_PAD_VALUE),
+            value_vector=FrameConnotationFeatures.to_input(frame_inds=frame_inds,
+                                                           frame_sent_roles=frame_sent_roles,
+                                                           size=len(terms),
+                                                           filler=cls.FRAME_SENT_ROLES_PAD_VALUE),
             e1_ind=subj_ind,
             e2_ind=obj_ind,
             expected_size=window_size,
