@@ -50,7 +50,3 @@ class News(object):
             is an iterable opinions that should be used to find a related text_opinion entries.
         """
         raise NotImplementedError()
-
-    def get_entities_collection(self):
-        raise NotImplementedError("Document does not support entities collection generation.")
-

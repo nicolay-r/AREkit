@@ -1,5 +1,4 @@
 from arekit.common.entities.base import Entity
-from arekit.common.entities.collection import EntityCollection
 from arekit.common.experiment.annot.base_annot import BaseAnnotationAlgorithm
 from arekit.common.labels.base import Label
 from arekit.common.news.parsed.base import ParsedNews
@@ -41,13 +40,13 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
         assert(isinstance(entity_value, str))
         return entity_value in self.__ignored_entity_values
 
-    def __iter_opinions_between_entities(self, relevant_pairs, entities_collection):
-        assert(isinstance(entities_collection, EntityCollection))
+    def __iter_opinions_between_entities(self, relevant_pairs, entities_list):
+        assert(isinstance(entities_list, list))
 
-        for e1 in entities_collection:
+        for e1 in entities_list:
             assert(isinstance(e1, Entity))
 
-            for e2 in entities_collection:
+            for e2 in entities_list:
                 assert(isinstance(e2, Entity))
 
                 key = self.__create_key_by_entity_pair(e1=e1, e2=e2)
@@ -97,16 +96,18 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
 
     # endregion
 
-    def iter_opinions(self, parsed_news, entities_collection, existed_opinions=None):
+    def iter_opinions(self, parsed_news, existed_opinions=None):
         assert(isinstance(parsed_news, ParsedNews))
-        assert(isinstance(entities_collection, EntityCollection))
 
+        parsed_news.iter_terms()
         relevant_pairs = {}
 
-        for e1 in entities_collection:
+        cached_entities_list = list(parsed_news.iter_entities())
+
+        for e1 in cached_entities_list:
             assert(isinstance(e1, Entity))
 
-            for e2 in entities_collection:
+            for e2 in cached_entities_list:
                 assert(isinstance(e2, Entity))
 
                 key = self.__try_create_pair_key(parsed_news=parsed_news,
@@ -119,4 +120,4 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
                 relevant_pairs[key] = 0
 
         return self.__iter_opinions_between_entities(relevant_pairs=relevant_pairs,
-                                                     entities_collection=entities_collection)
+                                                     entities_list=cached_entities_list)

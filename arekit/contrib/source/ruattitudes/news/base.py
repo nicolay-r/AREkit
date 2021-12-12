@@ -58,9 +58,6 @@ class RuAttitudesNews(News):
         assert(isinstance(opinion, Opinion))
         return LinkedTextOpinionsWrapper(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
 
-    def get_entities_collection(self):
-        raise Exception("Not Available for this type of collection")
-
     @staticmethod
     def _sentence_to_terms_list_core(sentence):
         with RuAttitudesTextEntitiesParser() as parser:

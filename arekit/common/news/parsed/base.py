@@ -145,6 +145,9 @@ class ParsedNews(object):
         for term in self.__iter_all_raw_terms(term_only=True, term_check=term_check):
             yield term
 
+    def iter_entities(self):
+        return self.__iter_all_raw_terms(term_only=True, term_check=lambda term: self.__is_entity(term))
+
     def iter_sentence_terms(self, sentence_index, return_id, term_check=None):
         assert(isinstance(sentence_index, int))
         assert(isinstance(return_id, bool))
