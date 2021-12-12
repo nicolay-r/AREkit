@@ -1,10 +1,10 @@
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.entities.base import Entity
-from arekit.common.entities.collection import EntityCollection
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.base import News
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.options import TextParseOptions
@@ -12,14 +12,13 @@ from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTask
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from examples.input import EXAMPLES
 from examples.network.utils import SingleDocOperations, CustomOpinionOperations, CustomSerializationData, \
-    CustomExperiment, CustomTextParser
+    CustomExperiment, CustomTextParser, CustomNetworkIOUtils
 
 
 def create_frame_variants_collection():
@@ -38,7 +37,7 @@ def extract_entities_from_news(news):
     entities = []
     for sentence in news.iter_sentences():
         for term in sentence.Text:
-            if (isinstance(term, Entity)):
+            if isinstance(term, Entity):
                 entities.append(term)
 
     return entities
@@ -77,17 +76,13 @@ def pipeline_serialize(sentences_text_list, label_provider):
         stemmer=stemmer,
         version=RuSentRelVersions.V11)
 
-    entities_collection = EntityCollection(
-        entities=extract_entities_from_news(news),
-        synonyms=synonyms)
-
-    opins_for_extraction = annot_algo.iter_opinions(
-        parsed_news=parsed_news,
-        entities_collection=entities_collection)   # TODO. Create custom entity collections.
+    opins_for_extraction = annot_algo.iter_opinions(parsed_news=parsed_news)
 
     doc_ops = SingleDocOperations(news=news, text_parser=text_parser)
 
-    opin_ops = CustomOpinionOperations(labels_formatter=None,
+    labels_formatter = StringLabelsFormatter(stol={"neu": NoLabel()})
+
+    opin_ops = CustomOpinionOperations(labels_formatter=labels_formatter,
                                        iter_opins=opins_for_extraction,
                                        synonyms=synonyms)
 
@@ -99,7 +94,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
     # Step 3. Serialize data
     experiment = CustomExperiment(synonyms=synonyms,
                                   exp_data=exp_data,
-                                  exp_io_type=NetworkIOUtils,
+                                  exp_io_type=CustomNetworkIOUtils,
                                   doc_ops=doc_ops,
                                   opin_ops=opin_ops)
 
