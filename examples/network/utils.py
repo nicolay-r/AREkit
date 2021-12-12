@@ -1,6 +1,7 @@
 import os
 
 from arekit.common.entities.base import Entity
+from arekit.common.entities.collection import EntityCollection
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.io_utils import BaseIOUtils
@@ -9,7 +10,11 @@ from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.frames.variants.collection import FrameVariantsCollection
+from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.news.base import News
+from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
@@ -109,7 +114,7 @@ class CustomSerializationData(NetworkSerializationData):
 
     @property
     def FrameRolesLabelScaler(self):
-        return None
+        return self.__frame_roles_label_scaler
 
     @property
     def WordEmbedding(self):
@@ -144,8 +149,12 @@ class CustomTextParser(DefaultTextParser):
 
     def __init__(self, parse_options):
         super(CustomTextParser, self).__init__(parse_options)
-        
+        self.__id_in_doc = None
+
+    def parse_news(self, news):
         self.__id_in_doc = 0
+
+        return super(CustomTextParser, self).parse_news(news)
 
     def _process_words_to_terms_list(self, word, keep_tokens):
         assert(isinstance(word, str))
@@ -163,3 +172,46 @@ class CustomNetworkIOUtils(NetworkIOUtils):
 
     def get_experiment_sources_dir(self):
         return "."
+
+
+class CustomNews(News):
+
+    def __init__(self, doc_id, sentences):
+        super(CustomNews, self).__init__(doc_id=doc_id, sentences=sentences)
+
+        self.__entities = None
+
+    def set_entities(self, entities):
+        assert(isinstance(entities, EntityCollection))
+        self.__entities = entities
+
+    @staticmethod
+    def _sentence_to_terms_list_core(sentence):
+        raise NotImplementedError()
+
+    def extract_linked_text_opinions(self, opinion):
+        assert(isinstance(opinion, Opinion))
+
+        opinions_it = self.__from_opinion(doc_id=self.ID,
+                                          source_entities=self.__entities,
+                                          target_entities=self.__entities,
+                                          opinion=opinion)
+
+        return LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
+
+    @staticmethod
+    def __from_opinion(doc_id, source_entities, target_entities, opinion):
+
+        for source_entity in source_entities:
+            for target_entity in target_entities:
+                assert (isinstance(source_entity, Entity))
+                assert (isinstance(target_entity, Entity))
+
+                text_opinion = TextOpinion(doc_id=doc_id,
+                                           source_id=source_entity.IdInDocument,
+                                           target_id=target_entity.IdInDocument,
+                                           label=opinion.Sentiment,
+                                           owner=None,
+                                           text_opinion_id=None)
+
+                yield text_opinion
