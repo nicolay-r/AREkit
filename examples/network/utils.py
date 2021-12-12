@@ -1,6 +1,7 @@
+import os
+
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.api.base import BaseExperiment
-from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
@@ -12,9 +13,17 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
+from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
+from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
+from arekit.contrib.networks.core.io_utils import NetworkIOUtils
+from arekit.contrib.source import utils
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.text.parser import DefaultTextParser
+from examples.download import EMBEDDING_FILENAME
+from examples.network.embedding import RusvectoresEmbedding
 
 
 class SingleDocOperations(DocumentOperations):
@@ -80,17 +89,39 @@ class CustomExperiment(BaseExperiment):
         return entity_to_group_func(entity, synonyms=self.__synonyms)
 
 
-class CustomSerializationData(SerializationData):
+class CustomSerializationData(NetworkSerializationData):
 
     def __init__(self, label_scaler, annot, stemmer, frame_variants_collection):
+        assert(isinstance(stemmer, MystemWrapper))
         assert(isinstance(frame_variants_collection, FrameVariantsCollection))
 
-        super(CustomSerializationData, self).__init__(label_scaler=label_scaler, annot=annot, stemmer=stemmer)
+        super(CustomSerializationData, self).__init__(labels_scaler=label_scaler, annot=annot, stemmer=stemmer)
 
         frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
+        self.__frame_roles_label_scaler = ThreeLabelScaler()
         self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=frames_collection)
         self.__frame_variants_collection = frame_variants_collection
         self.__entities_formatter = StringEntitiesSimpleFormatter()
+        self.__embedding = RusvectoresEmbedding.from_word2vec_format(
+            filepath=os.path.join(utils.get_default_download_dir(), EMBEDDING_FILENAME),
+            binary=True)
+        self.__pos_tagger = POSMystemWrapper(stemmer.MystemInstance)
+
+    @property
+    def FrameRolesLabelScaler(self):
+        return None
+
+    @property
+    def WordEmbedding(self):
+        return self.__embedding
+
+    @property
+    def PosTagger(self):
+        return self.__pos_tagger
+
+    @property
+    def StringEntityEmbeddingFormatter(self):
+        return self.__entities_formatter
 
     @property
     def StringEntityFormatter(self):
@@ -126,3 +157,9 @@ class CustomTextParser(DefaultTextParser):
             return [entity]
 
         return super(CustomTextParser, self)._process_words_to_terms_list(word=word, keep_tokens=keep_tokens)
+
+
+class CustomNetworkIOUtils(NetworkIOUtils):
+
+    def get_experiment_sources_dir(self):
+        return "."
