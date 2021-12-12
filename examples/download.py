@@ -13,3 +13,8 @@ def download_examples_data():
     for local_name, url_link in data.items():
         utils.download(dest_file_path=join(root_dir, local_name),
                        source_url=url_link)
+
+
+if __name__ == '__main__':
+
+    download_examples_data()
