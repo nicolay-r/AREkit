@@ -156,7 +156,7 @@ class NetworkInputHelper(object):
 
         # Assign targets
         vocab_target = experiment.ExperimentIO.get_vocab_target()
-        embedding_target = experiment.ExperimentIO.get_embedding_target()
+        embedding_target = experiment.ExperimentIO.get_term_embedding_target()
 
         # Save embedding information additionally.
         term_embedding = Embedding.from_word_embedding_pairs_iter(iter(term_embedding_pairs.items()))
