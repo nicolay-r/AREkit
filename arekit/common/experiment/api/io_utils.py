@@ -84,7 +84,7 @@ class BaseIOUtils(object):
     def write_opinion_collection(self, collection, labels_formatter, target):
         assert(target is not None)
 
-        self.__opinion_collection_provider.serialize(
+        self.__opinion_collection_writer.serialize(
             target=target,
             collection=collection,
             labels_formatter=labels_formatter)
