@@ -8,7 +8,16 @@ class StringLabelsFormatter(object):
     """
 
     def __init__(self, stol):
+        """ stol: string to label dictionary
+                dictionary: string -> label
+        """
         assert(isinstance(stol, dict))
+
+        for key, value in stol.items():
+            # Perfom parameters check.
+            assert(isinstance(key, str))
+            assert(isinstance(value, Label))
+
         self._stol = stol
         self.__supported_labels = set(self._stol.values())
 
