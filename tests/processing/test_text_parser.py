@@ -36,7 +36,7 @@ class TestTextParser(unittest.TestCase):
                                           raise_error_on_existed_variant=False)
 
         # Initializing parser.
-        parse_options = TextParseOptions(parse_entities=True,
+        parse_options = TextParseOptions(skip_entities=True,
                                          stemmer=stemmer,
                                          frame_variants_collection=frame_variants)
         text_parser = DefaultTextParser(parse_options)

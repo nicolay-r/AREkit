@@ -82,7 +82,7 @@ class BaseTextParser(object):
     def __parse_sentence(self, news, sent_ind):
         assert(isinstance(news, News))
 
-        if self._parse_options.ParseEntities:
+        if self._parse_options.SkipEntities:
             # Providing a modified list with parsed unicode terms.
             terms_list = news.sentence_to_terms_list(sent_ind)
             return self.__parse_terms_list(terms_iter=terms_list,

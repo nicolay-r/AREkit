@@ -52,7 +52,7 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        parse_options = TextParseOptions(parse_entities=True,
+        parse_options = TextParseOptions(skip_entities=True,
                                          stemmer=self.stemmer,
                                          frame_variants_collection=self.unique_frame_variants)
         text_parser = DefaultTextParser(parse_options)

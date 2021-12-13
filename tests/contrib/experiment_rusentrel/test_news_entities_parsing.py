@@ -22,7 +22,7 @@ class TestPartOfSpeech(unittest.TestCase):
                                                   label_convereter=ExperimentRuAttitudesLabelConverter(),
                                                   return_inds_only=False)
 
-        parse_options = TextParseOptions(parse_entities=True,
+        parse_options = TextParseOptions(skip_entities=True,
                                          stemmer=MystemWrapper(),
                                          frame_variants_collection=None)
 
@@ -42,7 +42,7 @@ class TestPartOfSpeech(unittest.TestCase):
     def test_rusentrel_news_text_parsing(self):
         stemmer = MystemWrapper()
         version = RuSentRelVersions.V11
-        parse_options = TextParseOptions(parse_entities=True,
+        parse_options = TextParseOptions(skip_entities=True,
                                          stemmer=stemmer,
                                          frame_variants_collection=None)
         text_parser = DefaultTextParser(parse_options)

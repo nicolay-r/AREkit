@@ -6,11 +6,11 @@ from arekit.common.text.stemmer import Stemmer
 # TODO. All inherited types provide the same values for __init__.
 class TextParseOptions(object):
 
-    def __init__(self, parse_entities, frame_variants_collection, stemmer):
-        assert(isinstance(parse_entities, bool))
+    def __init__(self, skip_entities, frame_variants_collection, stemmer):
+        assert(isinstance(skip_entities, bool))
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
         assert(isinstance(frame_variants_collection, FrameVariantsCollection) or frame_variants_collection is None)
-        self.__parse_entities = parse_entities
+        self.__skip_entities = skip_entities
         self.__frame_variants_collection = frame_variants_collection
         self.__stemmer = stemmer
 
@@ -21,8 +21,8 @@ class TextParseOptions(object):
         return self.__stemmer
 
     @property
-    def ParseEntities(self):
-        return self.__parse_entities
+    def SkipEntities(self):
+        return self.__skip_entities
 
     @property
     def ParseFrameVariants(self):

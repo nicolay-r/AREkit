@@ -34,7 +34,7 @@ def create_text_parser(exp_data):
         # We do not utlize text_parser in such case.
         return None
 
-    parse_options = TextParseOptions(parse_entities=True,
+    parse_options = TextParseOptions(skip_entities=True,
                                      stemmer=exp_data.Stemmer,
                                      frame_variants_collection=exp_data.FrameVariantCollection)
 

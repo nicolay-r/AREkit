@@ -63,7 +63,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
     news = CustomNews(doc_id=0, sentences=sentences)
 
     parse_options = TextParseOptions(
-        parse_entities=False,
+        skip_entities=False,
         frame_variants_collection=frame_variants_collection,
         stemmer=stemmer)
 
