@@ -84,7 +84,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
 
     doc_ops = SingleDocOperations(news=news, text_parser=text_parser)
 
-    labels_formatter = StringLabelsFormatter(stol={"neu": NoLabel()})
+    labels_formatter = StringLabelsFormatter(stol={"neu": NoLabel})
 
     opin_ops = CustomOpinionOperations(labels_formatter=labels_formatter,
                                        iter_opins=opins_for_extraction,

@@ -7,20 +7,20 @@ from arekit.contrib.source.rusentiframes.labels_fmt import \
 class ExperimentRuSentiFramesLabelsFormatter(RuSentiFramesLabelsFormatter):
 
     @classmethod
-    def _positive_label_instance(cls):
-        return ExperimentPositiveLabel()
+    def _positive_label_type(cls):
+        return ExperimentPositiveLabel
 
     @classmethod
-    def _negative_label_instance(cls):
-        return ExperimentNegativeLabel()
+    def _negative_label_type(cls):
+        return ExperimentNegativeLabel
 
 
 class ExperimentRuSentiFramesEffectLabelsFormatter(RuSentiFramesEffectLabelsFormatter):
 
     @classmethod
-    def _positive_label_instance(cls):
-        return ExperimentPositiveLabel()
+    def _positive_label_type(cls):
+        return ExperimentPositiveLabel
 
     @classmethod
-    def _negative_label_instance(cls):
-        return ExperimentNegativeLabel()
+    def _negative_label_type(cls):
+        return ExperimentNegativeLabel
