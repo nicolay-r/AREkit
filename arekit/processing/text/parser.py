@@ -23,7 +23,7 @@ class DefaultTextParser(BaseTextParser):
 
     # region protected methods
 
-    def _parse_to_tokens_list(self, text, keep_tokens=True):
+    def _parse_to_tokens_list(self, text):
         """
         Separates sentence into list
 
@@ -33,10 +33,8 @@ class DefaultTextParser(BaseTextParser):
             list of unicode parsed_news, where each term: word or token
         """
         assert(isinstance(text, str))
-        assert(isinstance(keep_tokens, bool))
 
-        terms = self._process_words(words=split_by_whitespaces(text),
-                                    keep_tokens=keep_tokens)
+        terms = self._process_words(words=split_by_whitespaces(text))
 
         return terms
 
@@ -44,7 +42,7 @@ class DefaultTextParser(BaseTextParser):
 
     # region private static methods
 
-    def _process_words(self, words, keep_tokens):
+    def _process_words(self, words):
         """
         parsed_news: list
             list of parsed_news
@@ -58,17 +56,17 @@ class DefaultTextParser(BaseTextParser):
             if word is None:
                 continue
 
-            processed = self._process_words_to_terms_list(word=word, keep_tokens=keep_tokens)
+            processed = self._process_words_to_terms_list(word=word)
 
             parsed.extend(processed)
 
         return parsed
 
-    def _process_words_to_terms_list(self, word, keep_tokens):
+    def _process_words_to_terms_list(self, word):
 
         words_and_tokens = DefaultTextParser.__split_tokens(word)
 
-        if not keep_tokens:
+        if not self._parse_options.KeepTokens:
             words_and_tokens = [word for word in words_and_tokens if not isinstance(word, Token)]
 
         return words_and_tokens

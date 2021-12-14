@@ -156,7 +156,7 @@ class CustomTextParser(DefaultTextParser):
 
         return super(CustomTextParser, self).parse_news(news)
 
-    def _process_words_to_terms_list(self, word, keep_tokens):
+    def _process_words_to_terms_list(self, word):
         assert(isinstance(word, str))
 
         # If this is a special word which is related to the [entity] mention.
@@ -165,7 +165,7 @@ class CustomTextParser(DefaultTextParser):
             self.__id_in_doc += 1
             return [entity]
 
-        return super(CustomTextParser, self)._process_words_to_terms_list(word=word, keep_tokens=keep_tokens)
+        return super(CustomTextParser, self)._process_words_to_terms_list(word=word)
 
 
 class CustomNetworkIOUtils(NetworkIOUtils):
@@ -196,6 +196,10 @@ class CustomNews(News):
                                           source_entities=self.__entities,
                                           target_entities=self.__entities,
                                           opinion=opinion)
+
+        print("HERE----------------")
+        print(self.SentencesCount)
+        print(self._sentences[0].Text)
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
 

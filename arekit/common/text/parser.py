@@ -46,7 +46,7 @@ class BaseTextParser(object):
 
     # region protected abstract
 
-    def _parse_to_tokens_list(self, text, keep_tokens=True):
+    def _parse_to_tokens_list(self, text):
         raise NotImplementedError()
 
     # endregion
@@ -71,6 +71,7 @@ class BaseTextParser(object):
         if frame_variant_collection is None:
             return
 
+        # TODO. This should be removed (conceptually)
         parsed_news.modify_parsed_sentences(
             sentence_objs_upd_func=lambda sentence:
             FrameVariantsParser.iter_frames_from_lemmas(
