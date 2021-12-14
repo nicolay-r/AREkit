@@ -149,14 +149,14 @@ class CustomTextParser(DefaultTextParser):
 
     def __init__(self, parse_options):
         super(CustomTextParser, self).__init__(parse_options)
-        self.__id_in_doc = None
-
-    def parse_news(self, news):
         self.__id_in_doc = 0
 
-        return super(CustomTextParser, self).parse_news(news)
+    def _process_words(self, words):
+        # reset counter.
+        self.__id_in_doc = 0
+        return super(CustomTextParser, self)._process_words(words)
 
-    def _process_words_to_terms_list(self, word):
+    def _process_word_to_terms_list(self, word):
         assert(isinstance(word, str))
 
         # If this is a special word which is related to the [entity] mention.
@@ -165,7 +165,7 @@ class CustomTextParser(DefaultTextParser):
             self.__id_in_doc += 1
             return [entity]
 
-        return super(CustomTextParser, self)._process_words_to_terms_list(word=word)
+        return super(CustomTextParser, self)._process_word_to_terms_list(word=word)
 
 
 class CustomNetworkIOUtils(NetworkIOUtils):
@@ -187,7 +187,7 @@ class CustomNews(News):
 
     @staticmethod
     def _sentence_to_terms_list_core(sentence):
-        raise NotImplementedError()
+        return sentence.Text.split(' ')
 
     def extract_linked_text_opinions(self, opinion):
         assert(isinstance(opinion, Opinion))
@@ -196,10 +196,6 @@ class CustomNews(News):
                                           source_entities=self.__entities,
                                           target_entities=self.__entities,
                                           opinion=opinion)
-
-        print("HERE----------------")
-        print(self.SentencesCount)
-        print(self._sentences[0].Text)
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
 
