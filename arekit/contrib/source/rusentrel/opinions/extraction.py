@@ -39,9 +39,9 @@ def iter_text_opinions_by_doc_opinion(rusentrel_doc_id, doc_entities, opinion, d
     assert(isinstance(doc_entities, RuSentRelDocumentEntityCollection))
 
     source_entities = doc_entities.try_get_entities(
-        opinion.SourceValue, group_key=RuSentRelDocumentEntityCollection.KeyType.BY_SYNONYMS)
+        opinion.SourceValue, group_key=doc_entities.KeyType.BY_SYNONYMS)
     target_entities = doc_entities.try_get_entities(
-        opinion.TargetValue, group_key=RuSentRelDocumentEntityCollection.KeyType.BY_SYNONYMS)
+        opinion.TargetValue, group_key=doc_entities.KeyType.BY_SYNONYMS)
 
     if source_entities is None:
         if debug:
