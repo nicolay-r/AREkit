@@ -2,6 +2,7 @@ import unittest
 
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parser import NewsParser
 from arekit.common.text.options import TextParseOptions
 from arekit.contrib.experiment_rusentrel.labels.scalers.ruattitudes import ExperimentRuAttitudesLabelConverter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
@@ -22,8 +23,7 @@ class TestPartOfSpeech(unittest.TestCase):
                                                   label_convereter=ExperimentRuAttitudesLabelConverter(),
                                                   return_inds_only=False)
 
-        parse_options = TextParseOptions(skip_entities=True,
-                                         stemmer=MystemWrapper(),
+        parse_options = TextParseOptions(stemmer=MystemWrapper(),
                                          frame_variants_collection=None)
 
         text_parser = DefaultTextParser(parse_options)
@@ -36,14 +36,13 @@ class TestPartOfSpeech(unittest.TestCase):
             self.__print_parsed_text(parsed_text)
 
             # Parse news via external parser.
-            parsed_news = text_parser.parse_news(news=news)
+            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
             assert(isinstance(parsed_news, ParsedNews))
 
     def test_rusentrel_news_text_parsing(self):
         stemmer = MystemWrapper()
         version = RuSentRelVersions.V11
-        parse_options = TextParseOptions(skip_entities=True,
-                                         stemmer=stemmer,
+        parse_options = TextParseOptions(stemmer=stemmer,
                                          frame_variants_collection=None)
         text_parser = DefaultTextParser(parse_options)
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
@@ -57,7 +56,7 @@ class TestPartOfSpeech(unittest.TestCase):
         self.__print_parsed_text(parsed_text)
 
         # Parse news via external parser.
-        parsed_news = text_parser.parse_news(news=news)
+        parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
         assert (isinstance(parsed_news, ParsedNews))
 
     def __print_parsed_text(self, parsed_text):

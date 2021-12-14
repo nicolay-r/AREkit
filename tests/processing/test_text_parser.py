@@ -2,6 +2,7 @@ import logging
 import unittest
 
 from arekit.common.frames.variants.collection import FrameVariantsCollection
+from arekit.common.news.parser import NewsParser
 from arekit.common.text.options import TextParseOptions
 from tests.processing.text.debug_text import debug_show_news_terms
 
@@ -36,8 +37,7 @@ class TestTextParser(unittest.TestCase):
                                           raise_error_on_existed_variant=False)
 
         # Initializing parser.
-        parse_options = TextParseOptions(skip_entities=True,
-                                         stemmer=stemmer,
+        parse_options = TextParseOptions(stemmer=stemmer,
                                          frame_variants_collection=frame_variants)
         text_parser = DefaultTextParser(parse_options)
 
@@ -53,7 +53,7 @@ class TestTextParser(unittest.TestCase):
                                                version=version)
 
             # Perform text parsing.
-            parsed_news = text_parser.parse_news(news=news)
+            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
             debug_show_news_terms(parsed_news=parsed_news)
 
 

@@ -10,6 +10,7 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
 from arekit.common.text.options import TextParseOptions
 from arekit.common.utils import progress_bar_iter
+from arekit.common.news.parser import NewsParser
 
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
@@ -65,8 +66,7 @@ class TestRuAttitudes(unittest.TestCase):
     def __test_parsing(self, ra_version):
         # Initializing stemmer
         stemmer = MystemWrapper()
-        parse_options = TextParseOptions(skip_entities=True,
-                                         stemmer=stemmer,
+        parse_options = TextParseOptions(stemmer=stemmer,
                                          frame_variants_collection=None)
         text_parser = DefaultTextParser(parse_options)
 
@@ -80,7 +80,7 @@ class TestRuAttitudes(unittest.TestCase):
         for news in tqdm(news_it):
 
             # parse news
-            parsed_news = text_parser.parse_news(news=news)
+            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
             terms = parsed_news.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 

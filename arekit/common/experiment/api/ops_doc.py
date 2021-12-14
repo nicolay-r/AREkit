@@ -1,4 +1,5 @@
 from arekit.common.folding.base import BaseDataFolding
+from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
 
 
@@ -63,6 +64,6 @@ class DocumentOperations(object):
 
     def __parse_doc(self, doc_id):
         news = self.get_doc(doc_id=doc_id)
-        return self.__text_parser.parse_news(news=news)
+        return NewsParser.parse(news=news, text_parser=self.__text_parser)
 
     # endregion

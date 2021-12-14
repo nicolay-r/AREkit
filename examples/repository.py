@@ -6,6 +6,7 @@ from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnota
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.options import TextParseOptions
 from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
@@ -59,17 +60,14 @@ def pipeline_serialize(sentences_text_list, label_provider):
     frame_variants_collection = create_frame_variants_collection()
 
     # Step 1. Parse text.
-
     news = CustomNews(doc_id=0, sentences=sentences)
 
-    parse_options = TextParseOptions(
-        skip_entities=False,
-        frame_variants_collection=frame_variants_collection,
-        stemmer=stemmer)
+    parse_options = TextParseOptions(frame_variants_collection=frame_variants_collection,
+                                     stemmer=stemmer)
 
     text_parser = CustomTextParser(parse_options)
 
-    parsed_news = text_parser.parse_news(news=news)
+    parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
 
     # Step 2. Annotate text.
     synonyms = RuSentRelSynonymsCollectionProvider.load_collection(

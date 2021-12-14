@@ -58,7 +58,7 @@ class ParsedNews(object):
 
         for s_ind, t_ind_in_sent, term in self.__iter_all_raw_terms():
 
-            if ParsedNews.__is_entity(term):
+            if self.__is_entity(term):
                 positions[term.IdInDocument] = TermPosition(term_ind_in_doc=t_ind_in_doc,
                                                             term_ind_in_sent=t_ind_in_sent,
                                                             s_ind=s_ind)
@@ -124,6 +124,7 @@ class ParsedNews(object):
 
     # region public 'modify' methods
 
+    # TODO. This should be removed (conceptually)
     def modify_parsed_sentences(self, sentence_objs_upd_func, get_obj_bound_func):
         assert(callable(sentence_objs_upd_func))
         assert(callable(get_obj_bound_func))
