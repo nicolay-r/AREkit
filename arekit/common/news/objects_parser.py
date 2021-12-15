@@ -1,15 +1,19 @@
 from arekit.common.bound import Bound
-from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.text.pipeline_ctx import PipelineContext
+from arekit.common.text.pipeline_item import TextParserPipelineItem
 
 
-class BaseObjectsParser(object):
+class SentenceObjectsParserPipelineItem(TextParserPipelineItem):
 
     def __init__(self, iter_objs_func):
         assert(callable(iter_objs_func))
         self.__iter_objs_func = iter_objs_func
 
-    def parse(self, sentence):
-        assert(isinstance(sentence, BaseNewsSentence))
+    def apply(self, pipeline_ctx):
+        assert(isinstance(pipeline_ctx, PipelineContext))
+        assert("sentence" in pipeline_ctx)
+
+        sentence = pipeline_ctx.provide("sentence")
 
         start = 0
         entries = []
@@ -35,7 +39,8 @@ class BaseObjectsParser(object):
         last_part = sentence.Text[start:len(sentence.Text)]
         entries.extend(last_part)
 
-        return entries
+        # update information in pipeline
+        pipeline_ctx.update("src", entries)
 
     def __enter__(self):
         return self

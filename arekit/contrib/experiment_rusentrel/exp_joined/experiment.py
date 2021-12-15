@@ -15,6 +15,7 @@ from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 logger = logging.getLogger(__name__)
@@ -61,7 +62,9 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             experiment_io=experiment_io)
 
         # init text parser.
-        text_parser = create_text_parser(self.__exp_data)
+        # TODO. Limitation, depending on document, entities parser may vary.
+        text_parser = create_text_parser(exp_data=self.__exp_data,
+                                         entities_parser=RuSentRelTextEntitiesParser())
 
         # init documents.
         rusentrel_doc = RuSentrelDocumentOperations(version=rusentrel_version,

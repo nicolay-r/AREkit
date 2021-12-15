@@ -5,7 +5,6 @@ from arekit.common.synonyms import SynonymsCollection
 
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.contrib.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.extraction import iter_text_opinions_by_doc_opinion
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
@@ -125,10 +124,5 @@ class RuSentRelNews(News):
                                                         opinion=opinion)
 
         return LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
-
-    @staticmethod
-    def _sentence_to_terms_list_core(sentence):
-        with RuSentRelTextEntitiesParser() as parser:
-            return parser.parse(sentence)
 
     # endregion

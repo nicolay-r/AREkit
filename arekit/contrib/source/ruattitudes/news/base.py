@@ -1,7 +1,6 @@
 from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
-from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 
@@ -57,11 +56,6 @@ class RuAttitudesNews(News):
         """
         assert(isinstance(opinion, Opinion))
         return LinkedTextOpinionsWrapper(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
-
-    @staticmethod
-    def _sentence_to_terms_list_core(sentence):
-        with RuAttitudesTextEntitiesParser() as parser:
-            return parser.parse(sentence)
 
     # endregion
 

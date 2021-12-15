@@ -17,14 +17,16 @@ from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.frames.variants.collection import FrameVariantsCollection
+from arekit.common.text.parser import BaseTextParser
 
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
-from arekit.processing.text.parser import DefaultTextParser
+from arekit.processing.text.tokenizer import DefaultTextTokenizer
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
@@ -54,7 +56,10 @@ class TestTfInputFeatures(unittest.TestCase):
 
         parse_options = TextParseOptions(stemmer=self.stemmer,
                                          frame_variants_collection=self.unique_frame_variants)
-        text_parser = DefaultTextParser(parse_options)
+
+        text_parser = BaseTextParser(parse_options=parse_options,
+                                     pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True)])
 
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():

@@ -9,6 +9,7 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.options import TextParseOptions
+from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
@@ -19,7 +20,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from examples.input import EXAMPLES
 from examples.network.utils import SingleDocOperations, CustomOpinionOperations, CustomSerializationData, \
-    CustomExperiment, CustomTextParser, CustomNetworkIOUtils, CustomNews
+    CustomExperiment, ExtraEntitiesTextTokenizer, CustomNetworkIOUtils, CustomNews
 
 
 def create_frame_variants_collection():
@@ -65,7 +66,8 @@ def pipeline_serialize(sentences_text_list, label_provider):
     parse_options = TextParseOptions(frame_variants_collection=frame_variants_collection,
                                      stemmer=stemmer)
 
-    text_parser = CustomTextParser(parse_options)
+    text_parser = BaseTextParser(parse_options=parse_options,
+                                 pipeline=[ExtraEntitiesTextTokenizer(keep_tokens=True)])
 
     parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
 

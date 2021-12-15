@@ -1,44 +1,40 @@
-import collections
-
-from arekit.common.entities.base import Entity
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 
 from arekit.common.languages.mods import BaseLanguageMods
 from arekit.common.languages.ru.mods import RussianLanguageMods
 from arekit.common.text.options import TextParseOptions
 from arekit.common.text.parsed import BaseParsedText
+from arekit.common.text.pipeline_ctx import PipelineContext
+from arekit.common.text.pipeline_item import TextParserPipelineItem
 from arekit.processing.frames.parser import FrameVariantsParser
 from arekit.processing.text.enums import TermFormat
 
 
 class BaseTextParser(object):
 
-    def __init__(self, parse_options, create_parsed_text_func=None):
-        """
-        create_parsed_text_func: is a function with the following signature:
-            (terms, options) -> ParsedText
-        """
-        assert(callable(create_parsed_text_func) or create_parsed_text_func is None)
+    def __init__(self, parse_options, pipeline):
         assert(isinstance(parse_options, TextParseOptions))
-
-        if create_parsed_text_func is None:
-            # default implementation
-            create_parsed_text_func = lambda terms, _: BaseParsedText(terms=terms)
-
-        self.__create_parsed_text_func = create_parsed_text_func
+        assert(isinstance(pipeline, list))
         self._parse_options = parse_options
+        self.__pipeline = pipeline
 
-    def parse(self, terms_list):
+    def parse(self, pipeline_ctx):
         """
         terms_list: list of terms
         returns:
             ParsedText
         """
-        assert(isinstance(terms_list, list))
+        assert(isinstance(pipeline_ctx, PipelineContext))
 
-        # Tokenization stage. (PPL 1).
-        parsed_text = self.__tokenize_terms(terms_list)
+        for item in self.__pipeline:
+            assert(isinstance(item, TextParserPipelineItem))
+            item.apply(pipeline_ctx)
 
+        # compose parsed text.
+        parsed_text = BaseParsedText(terms=pipeline_ctx.provide("src"))
+
+        # TODO. In further, this is considered to be departed from base text parser
+        # TODO. and treated as an (optional) element of the text processing pipeline.
         # Frames parsing stage. (PPL 2).
         if self._parse_options.ParseFrameVariants:
             self.__parse_frame_variants(parsed_text=parsed_text,
@@ -46,15 +42,10 @@ class BaseTextParser(object):
 
         return parsed_text
 
-    # region protected abstract
-
-    def _parse_to_tokens_list(self, text):
-        raise NotImplementedError()
-
-    # endregion
-
     # region private methods
 
+    # TODO. In further, this is considered to be departed from base text parser
+    # TODO. and treated as an (optional) element of the text processing pipeline.
     @staticmethod
     def __to_lemmas(locale_mods, parsed_text):
         assert(issubclass(locale_mods, BaseLanguageMods))
@@ -82,36 +73,5 @@ class BaseTextParser(object):
         parsed_text.modify_by_bounded_objects(
             modified_objs=objs_it,
             get_obj_bound_func=lambda variant: variant.get_bound())
-
-    # TODO. In further, this is considered to be departed from base text parser
-    # TODO. and treated as an (optional) element of the text processing pipeline.
-    def __tokenize_terms(self, terms_list):
-        assert(isinstance(terms_list, list))
-
-        handled_terms = self.__handle_terms(
-            terms_iter=terms_list,
-            skip_term=lambda term: isinstance(term, Entity),
-            term_handler=lambda term: self._parse_to_tokens_list(term))
-
-        # Do parsing.
-        return self.__create_parsed_text_func(handled_terms,
-                                              self._parse_options)
-
-    @staticmethod
-    def __handle_terms(terms_iter, skip_term, term_handler):
-        assert(isinstance(terms_iter, collections.Iterable))
-        assert(callable(skip_term))
-
-        processed_terms = []
-        for term in terms_iter:
-
-            if skip_term(term):
-                processed_terms.append(term)
-                continue
-
-            new_terms = term_handler(term)
-            processed_terms.extend(new_terms)
-
-        return processed_terms
 
     # endregion

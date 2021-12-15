@@ -6,13 +6,11 @@ from arekit.common.text.stemmer import Stemmer
 # TODO. All inherited types provide the same values for __init__.
 class TextParseOptions(object):
 
-    def __init__(self, frame_variants_collection, stemmer, keep_tokens=True):
+    def __init__(self, frame_variants_collection, stemmer):
         assert(isinstance(stemmer, Stemmer) or stemmer is None)
         assert(isinstance(frame_variants_collection, FrameVariantsCollection) or frame_variants_collection is None)
-        assert(isinstance(keep_tokens, bool))
         self.__frame_variants_collection = frame_variants_collection
         self.__stemmer = stemmer
-        self.__keep_tokens = keep_tokens
 
     # TODO. This class is weird.
     # TODO. As this parameter related to the particular text-parser implementation.
@@ -28,6 +26,3 @@ class TextParseOptions(object):
     def FrameVariantsCollection(self):
         return self.__frame_variants_collection
 
-    @property
-    def KeepTokens(self):
-        return self.__keep_tokens

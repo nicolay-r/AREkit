@@ -1,8 +1,8 @@
 import logging
 
-from arekit.common.text.parser import BaseTextParser
+from arekit.common.text.pipeline_ctx import PipelineContext
+from arekit.common.text.pipeline_item import TextParserPipelineItem
 from arekit.common.utils import split_by_whitespaces
-from arekit.processing.text.parsed import DefaultParsedText
 from arekit.processing.text.tokens import Tokens
 from arekit.processing.text.token import Token
 
@@ -11,65 +11,56 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class DefaultTextParser(BaseTextParser):
-    """
-    Default parser implementation.
+class DefaultTextTokenizer(TextParserPipelineItem):
+    """ Default parser implementation.
     """
 
-    def __init__(self, parse_options):
-        super(DefaultTextParser, self).__init__(
-            create_parsed_text_func=lambda terms, options: DefaultParsedText(terms=terms, stemmer=options.Stemmer),
-            parse_options=parse_options)
+    def __init__(self, keep_tokens=True):
+        super(DefaultTextTokenizer, self).__init__()
+        self.__keep_tokens = keep_tokens
 
     # region protected methods
 
-    def _parse_to_tokens_list(self, text):
-        """
-        Separates sentence into list
+    def apply(self, pipeline_ctx):
+        assert (isinstance(pipeline_ctx, PipelineContext))
+        parts_list = pipeline_ctx.provide("src")
 
-        save_tokens: bool
-            keep token information in result list of parsed_news.
-        return: list
-            list of unicode parsed_news, where each term: word or token
-        """
-        assert(isinstance(text, str))
+        result = self._process_parts(parts_list)
 
-        terms = self._process_words(words=split_by_whitespaces(text))
+        if not self.__keep_tokens:
+            result = [word for word in result if not isinstance(word, Token)]
 
-        return terms
+        pipeline_ctx.update("src", result)
 
     # endregion
 
     # region private static methods
 
-    def _process_words(self, words):
-        """
-        parsed_news: list
-            list of parsed_news
-        keep_tokes: bool
-            keep or remove tokens from list of parsed_news
-        """
-        assert(isinstance(words, list))
-        parsed = []
-        for word in words:
+    def _process_parts(self, parts):
+        assert(isinstance(parts, list))
 
-            if word is None:
+        parsed = []
+        for part in parts:
+
+            if part is None:
                 continue
 
-            processed = self._process_word_to_terms_list(word=word)
+            # Keep non str words as it is and try to parse str-based words.
+            processed = [part] if not isinstance(part, str) else \
+                self.__iter_processed_part(part=part)
 
             parsed.extend(processed)
 
         return parsed
 
-    def _process_word_to_terms_list(self, word):
+    def __iter_processed_part(self, part):
+        for word in split_by_whitespaces(part):
+            for term in self._process_word(word):
+                yield term
 
-        words_and_tokens = DefaultTextParser.__split_tokens(word)
-
-        if not self._parse_options.KeepTokens:
-            words_and_tokens = [word for word in words_and_tokens if not isinstance(word, Token)]
-
-        return words_and_tokens
+    def _process_word(self, word):
+        assert(isinstance(word, str))
+        return self.__split_tokens(word)
 
     @staticmethod
     def __split_tokens(term):

@@ -26,7 +26,7 @@ from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollecti
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
-from arekit.processing.text.parser import DefaultTextParser
+from arekit.processing.text.tokenizer import DefaultTextTokenizer
 from examples.download import EMBEDDING_FILENAME
 from examples.network.embedding import RusvectoresEmbedding
 
@@ -145,18 +145,18 @@ class CustomSerializationData(NetworkSerializationData):
         return 50
 
 
-class CustomTextParser(DefaultTextParser):
+class ExtraEntitiesTextTokenizer(DefaultTextTokenizer):
 
-    def __init__(self, parse_options):
-        super(CustomTextParser, self).__init__(parse_options)
+    def __init__(self, keep_tokens):
+        super(ExtraEntitiesTextTokenizer, self).__init__(keep_tokens=keep_tokens)
         self.__id_in_doc = 0
 
-    def _process_words(self, words):
+    def _process_parts(self, parts):
         # reset counter.
         self.__id_in_doc = 0
-        return super(CustomTextParser, self)._process_words(words)
+        return super(ExtraEntitiesTextTokenizer, self)._process_parts(parts)
 
-    def _process_word_to_terms_list(self, word):
+    def _process_word(self, word):
         assert(isinstance(word, str))
 
         # If this is a special word which is related to the [entity] mention.
@@ -165,7 +165,7 @@ class CustomTextParser(DefaultTextParser):
             self.__id_in_doc += 1
             return [entity]
 
-        return super(CustomTextParser, self)._process_word_to_terms_list(word=word)
+        return super(ExtraEntitiesTextTokenizer, self)._process_word(word=word)
 
 
 class CustomNetworkIOUtils(NetworkIOUtils):
@@ -184,10 +184,6 @@ class CustomNews(News):
     def set_entities(self, entities):
         assert(isinstance(entities, EntityCollection))
         self.__entities = entities
-
-    @staticmethod
-    def _sentence_to_terms_list_core(sentence):
-        return sentence.Text.split(' ')
 
     def extract_linked_text_opinions(self, opinion):
         assert(isinstance(opinion, Opinion))

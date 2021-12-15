@@ -4,10 +4,12 @@ import unittest
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.news.parser import NewsParser
 from arekit.common.text.options import TextParseOptions
+from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.processing.text.tokenizer import DefaultTextTokenizer
 from tests.processing.text.debug_text import debug_show_news_terms
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import DefaultTextParser
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -39,7 +41,10 @@ class TestTextParser(unittest.TestCase):
         # Initializing parser.
         parse_options = TextParseOptions(stemmer=stemmer,
                                          frame_variants_collection=frame_variants)
-        text_parser = DefaultTextParser(parse_options)
+
+        text_parser = BaseTextParser(parse_options=parse_options,
+                                     pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True)])
 
         # Reading synonyms collection.
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)

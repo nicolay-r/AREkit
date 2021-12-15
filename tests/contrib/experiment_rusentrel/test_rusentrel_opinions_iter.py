@@ -4,6 +4,9 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
+from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.processing.text.tokenizer import DefaultTextTokenizer
 
 sys.path.append('../../../../')
 
@@ -26,7 +29,6 @@ from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
 from arekit.common.entities.types import EntityType
 
-from arekit.processing.text.parser import DefaultTextParser
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.token import Token
@@ -79,7 +81,10 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
         parse_options = TextParseOptions(stemmer=self.stemmer,
                                          frame_variants_collection=self.unique_frame_variants)
 
-        text_parser = DefaultTextParser(parse_options)
+        # Initialize text parser pipeline.
+        text_parser = BaseTextParser(parse_options=parse_options,
+                                     pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True)])
 
         # Initialize specific document
         doc_id = 47

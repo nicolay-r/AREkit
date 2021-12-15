@@ -24,25 +24,12 @@ class News(object):
 
     # endregion
 
-    # region protected methods
-
-    @staticmethod
-    def _sentence_to_terms_list_core(sentence):
-        """
-        pipeline processing application towards the particular sentence.
-        """
-        raise NotImplementedError()
-
-    # endregion
-
-    def sentence_to_terms_list(self, sent_ind):
-        assert(isinstance(sent_ind, int))
-        sentence = self._sentences[sent_ind]
-        return self._sentence_to_terms_list_core(sentence)
-
     def iter_sentences(self):
         for sentence in self._sentences:
             yield sentence
+
+    def get_sentence(self, s_ind):
+        return self._sentences[s_ind]
 
     def extract_linked_text_opinions(self, opinion):
         """

@@ -2,7 +2,9 @@ from arekit.common.entities.base import Entity
 from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text.options import TextParseOptions
-from arekit.processing.text.parser import DefaultTextParser
+from arekit.common.text.parser import BaseTextParser
+from arekit.common.text.pipeline_item import TextParserPipelineItem
+from arekit.processing.text.tokenizer import DefaultTextTokenizer
 
 
 def entity_to_group_func(entity, synonyms):
@@ -28,7 +30,8 @@ def entity_to_group_func(entity, synonyms):
     return synonyms.get_synonym_group_index(value)
 
 
-def create_text_parser(exp_data):
+def create_text_parser(exp_data, entities_parser):
+    assert(isinstance(entities_parser, TextParserPipelineItem))
 
     if not isinstance(exp_data, SerializationData):
         # We do not utlize text_parser in such case.
@@ -37,4 +40,6 @@ def create_text_parser(exp_data):
     parse_options = TextParseOptions(stemmer=exp_data.Stemmer,
                                      frame_variants_collection=exp_data.FrameVariantCollection)
 
-    return DefaultTextParser(parse_options=parse_options)
+    return BaseTextParser(parse_options=parse_options,
+                          pipeline=[entities_parser,
+                                    DefaultTextTokenizer(keep_tokens=True)])

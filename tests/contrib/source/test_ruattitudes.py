@@ -11,7 +11,9 @@ from arekit.common.entities.base import Entity
 from arekit.common.text.options import TextParseOptions
 from arekit.common.utils import progress_bar_iter
 from arekit.common.news.parser import NewsParser
+from arekit.common.text.parser import BaseTextParser
 
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
@@ -22,7 +24,7 @@ from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 from arekit.processing.text.token import Token
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import DefaultTextParser
+from arekit.processing.text.tokenizer import DefaultTextTokenizer
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -68,7 +70,11 @@ class TestRuAttitudes(unittest.TestCase):
         stemmer = MystemWrapper()
         parse_options = TextParseOptions(stemmer=stemmer,
                                          frame_variants_collection=None)
-        text_parser = DefaultTextParser(parse_options)
+
+        # Initialize text parser pipeline.
+        text_parser = BaseTextParser(parse_options=parse_options,
+                                     pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True)])
 
         # iterating through collection
         news_read = 0
