@@ -1,4 +1,4 @@
-from arekit.common.languages.pos import PartOfSpeechType
+from arekit.processing.languages.pos import PartOfSpeechType
 
 
 class PartOfSpeechTypesService(object):

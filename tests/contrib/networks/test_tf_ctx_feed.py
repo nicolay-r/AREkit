@@ -20,6 +20,8 @@ from arekit.contrib.networks.core.feeding.bags.bag import Bag
 from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.nn import NeuralNetwork
 
+from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
+
 
 class TestContextNetworkFeeding(unittest.TestCase):
 
@@ -56,7 +58,12 @@ class TestContextNetworkFeeding(unittest.TestCase):
         assert(isinstance(labels_scaler, BaseLabelScaler))
         assert(callable(create_minibatch_func))
 
-        init_config(network_config)
+        pos_items_count = PartOfSpeechTypesService.get_mystem_pos_count()
+
+        # Init config.
+        init_config(config=network_config,
+                    pos_items_count=pos_items_count)
+
         # Init network.
         network.compile(config=network_config, reset_graph=True, graph_seed=42)
         minibatch = create_minibatch_func(config=network_config, labels_scaler=labels_scaler)

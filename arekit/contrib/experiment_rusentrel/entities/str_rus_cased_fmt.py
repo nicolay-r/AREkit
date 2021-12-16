@@ -1,8 +1,8 @@
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import EntityType
-from arekit.common.languages.ru.cases import RussianCases
-from arekit.common.languages.ru.number import RussianNumberType
+from arekit.processing.languages.ru.cases import RussianCases
+from arekit.processing.languages.ru.number import RussianNumberType
 from arekit.processing.pos.russian import RussianPOSTagger
 
 

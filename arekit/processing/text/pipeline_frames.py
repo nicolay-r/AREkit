@@ -1,9 +1,9 @@
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
-from arekit.common.languages.mods import BaseLanguageMods
-from arekit.common.languages.ru.mods import RussianLanguageMods
 from arekit.common.text.pipeline_ctx import PipelineContext
 from arekit.common.text.pipeline_item import TextParserPipelineItem
+from arekit.processing.languages.mods import BaseLanguageMods
+from arekit.processing.languages.ru.mods import RussianLanguageMods
 
 
 class FrameVariantsParser(TextParserPipelineItem):

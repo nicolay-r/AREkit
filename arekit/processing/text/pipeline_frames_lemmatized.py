@@ -1,6 +1,6 @@
-from arekit.common.languages.ru.mods import RussianLanguageMods
 from arekit.common.text.pipeline_ctx import PipelineContext
 from arekit.common.text.stemmer import Stemmer
+from arekit.processing.languages.ru.mods import RussianLanguageMods
 from arekit.processing.text.pipeline_frames import FrameVariantsParser
 
 

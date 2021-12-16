@@ -1,5 +1,5 @@
 from arekit.common.context.terms_mapper import TextTermsMapper
-from arekit.common.languages.pos import PartOfSpeechType
+from arekit.processing.languages.pos import PartOfSpeechType
 from arekit.processing.pos.base import POSTagger
 
 

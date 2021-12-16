@@ -11,6 +11,7 @@ from tests.contrib.networks.tf_networks.supported import get_supported
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
+from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 
 class TestMultiInstanceCompile(unittest.TestCase):
@@ -27,7 +28,11 @@ class TestMultiInstanceCompile(unittest.TestCase):
         config.modify_classes_count(3)
 
         network = MaxPoolingOverSentences(context_network=context_network)
-        init_config(config)
+
+        pos_items_count = PartOfSpeechTypesService.get_mystem_pos_count()
+        init_config(config=config,
+                    pos_items_count=pos_items_count)
+
         network.compile(config, reset_graph=True, graph_seed=42)
 
     def test(self):
