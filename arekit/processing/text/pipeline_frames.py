@@ -77,7 +77,6 @@ class FrameVariantsParser(TextParserPipelineItem):
 
                 yield TextFrameVariant(
                     variant=self.__frame_variants.get_variant_by_value(ctx_value),
-                    start_index=start_ind,
                     is_inverted=self._locale_mods.is_negation_word(prep_term) if prep_term is not None else False)
 
                 found = True
