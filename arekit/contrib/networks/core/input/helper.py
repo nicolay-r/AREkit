@@ -140,6 +140,7 @@ class NetworkInputHelper(object):
                     labels_formatter=experiment.OpinionOperations.LabelsFormatter)
 
             opinion_provider = OpinionProvider.create(
+                # TODO. #224 no need news func.
                 read_news_func=lambda doc_id: experiment.DocumentOperations.get_doc(doc_id),
                 parse_news_func=lambda doc_id: experiment.DocumentOperations.parse_doc(doc_id),
                 iter_news_opins_for_extraction=lambda doc_id:

@@ -1,8 +1,8 @@
 import logging
 
+from arekit.common.entities.collection import EntityCollection
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.contrib.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ def iter_text_opinions_by_doc_opinion(rusentrel_doc_id, doc_entities, opinion, d
     """
     assert(isinstance(rusentrel_doc_id, int))
     assert(isinstance(opinion, Opinion))
-    assert(isinstance(doc_entities, RuSentRelDocumentEntityCollection))
+    assert(isinstance(doc_entities, EntityCollection))
 
     source_entities = doc_entities.try_get_entities(
         opinion.SourceValue, group_key=doc_entities.KeyType.BY_SYNONYMS)
