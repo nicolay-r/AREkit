@@ -4,6 +4,7 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
+
 sys.path.append('../../../../')
 
 from tests.text.utils import terms_to_str
@@ -28,8 +29,8 @@ from arekit.common.text.parser import BaseTextParser
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.token import Token
-from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
+from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 
 
 class TestRuSentRelOpinionsIter(unittest.TestCase):

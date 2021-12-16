@@ -3,8 +3,6 @@ import sys
 import unittest
 from tqdm import tqdm
 
-from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
-
 sys.path.append('../../../../')
 
 from arekit.common.opinions.base import Opinion

@@ -17,7 +17,7 @@ from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollecti
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from examples.input import EXAMPLES
 from examples.network.utils import SingleDocOperations, CustomOpinionOperations, CustomSerializationData, \

@@ -6,8 +6,6 @@ import unittest
 import numpy as np
 from pymystem3 import Mystem
 
-from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
-
 sys.path.append('../../../')
 
 from tests.contrib.networks.text.news import init_rusentrel_doc
@@ -29,6 +27,7 @@ from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import Russi
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
+from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 
 
 class TestTfInputFeatures(unittest.TestCase):
@@ -58,7 +57,8 @@ class TestTfInputFeatures(unittest.TestCase):
             RuSentRelTextEntitiesParser(),
             DefaultTextTokenizer(keep_tokens=True),
             LemmasBasedFrameVariantsParser(frame_variants=self.unique_frame_variants,
-                                           stemmer=self.stemmer)
+                                           stemmer=self.stemmer,
+                                           save_lemmas=True)
         ])
 
         random.seed(10)
