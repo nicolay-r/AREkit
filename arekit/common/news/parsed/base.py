@@ -2,8 +2,8 @@ import collections
 
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
+from arekit.common.text.enums import TermFormat
 from arekit.common.text.parsed import BaseParsedText
-from arekit.processing.text.enums import TermFormat
 
 
 class ParsedNews(object):
@@ -145,8 +145,8 @@ class ParsedNews(object):
             else:
                 yield term
 
+    # endregion
+
     def __iter__(self):
         for sentence in self.__parsed_sentences:
             yield sentence
-
-    # endregion

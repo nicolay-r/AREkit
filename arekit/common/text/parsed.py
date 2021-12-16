@@ -1,4 +1,4 @@
-from arekit.processing.text.enums import TermFormat
+from arekit.common.text.enums import TermFormat
 
 
 class BaseParsedText(object):

@@ -3,6 +3,7 @@ import unittest
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parser import NewsParser
+from arekit.common.text.enums import TermFormat
 from arekit.common.text.parsed import BaseParsedText
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.experiment_rusentrel.labels.scalers.ruattitudes import ExperimentRuAttitudesLabelConverter
@@ -14,7 +15,6 @@ from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitie
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.enums import TermFormat
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.text.token import Token
 
