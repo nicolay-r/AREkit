@@ -1,25 +1,25 @@
 import collections
 
-from arekit.common.linked.data import LinkedDataWrapper
+from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.opinions.base import Opinion
 
 
 def create_and_fill_opinion_collection(
-        create_opinion_collection, linked_data_iter,
+        create_opinion_collection, data_linkage_iter,
         labels_helper, to_opinion_func,
         label_calc_mode, supported_labels=None):
     """ to_opinion_func: (item, label) -> opinion
     """
     assert(callable(create_opinion_collection))
-    assert(isinstance(linked_data_iter, collections.Iterable))
+    assert(isinstance(data_linkage_iter, collections.Iterable))
     assert(isinstance(labels_helper, LabelsHelper))
     assert(callable(to_opinion_func))
     assert(isinstance(supported_labels, set) or supported_labels is None)
 
     collection = create_opinion_collection()
 
-    for linked in linked_data_iter:
+    for linked in data_linkage_iter:
         assert(isinstance(linked, LinkedDataWrapper))
 
         agg_label = labels_helper.aggregate_labels(

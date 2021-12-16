@@ -1,4 +1,4 @@
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.synonyms import SynonymsCollection
@@ -116,13 +116,13 @@ class RuSentRelNews(News):
 
     # region base News
 
-    def extract_linked_text_opinions(self, opinion):
+    def extract_text_opinions_linkages(self, opinion):
         assert(isinstance(opinion, Opinion))
 
-        opinions_it = iter_text_opinions_by_doc_opinion(rusentrel_doc_id=self.ID,
-                                                        doc_entities=self.__entities,
-                                                        opinion=opinion)
+        text_opinions_it = iter_text_opinions_by_doc_opinion(rusentrel_doc_id=self.ID,
+                                                             doc_entities=self.__entities,
+                                                             opinion=opinion)
 
-        return LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
+        return TextOpinionsLinkage(text_opinions_it=text_opinions_it)
 
     # endregion

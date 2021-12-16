@@ -5,7 +5,7 @@ from arekit.common.data.row_ids.base import BaseIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.base import BaseStorageView
 from arekit.common.data.views.opinions import BaseOpinionStorageView
-from arekit.common.linked.opinions.wrapper import LinkedOpinionWrapper
+from arekit.common.linkage.opinions import OpinionsLinkage
 from arekit.common.opinions.base import Opinion
 
 
@@ -51,7 +51,7 @@ class BaseOutputView(BaseStorageView):
             opinions_iter = self._iter_by_opinions(linked_df=linked_df,
                                                    opinions_view=opinions_view)
 
-            yield LinkedOpinionWrapper(linked_data=opinions_iter)
+            yield OpinionsLinkage(linked_data=opinions_iter)
 
     # endregion
 

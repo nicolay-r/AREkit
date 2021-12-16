@@ -7,11 +7,11 @@ import unittest
 sys.path.append('../../../../')
 
 from arekit.common.labels.base import Label
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.bound import Bound
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
@@ -109,8 +109,8 @@ class TestRuSentRel(unittest.TestCase):
             print("'{src}'->'{tgt}'".format(src=first_opinion.SourceValue,
                                             tgt=first_opinion.TargetValue))
 
-            linked_text_opinions = news.extract_linked_text_opinions(first_opinion)
-            assert(isinstance(linked_text_opinions, LinkedTextOpinionsWrapper))
+            linked_text_opinions = news.extract_text_opinions_linkages(first_opinion)
+            assert(isinstance(linked_text_opinions, TextOpinionsLinkage))
             print("Linked opinions count: {}".format(len(linked_text_opinions)))
             for text_opinion in linked_text_opinions:
                 assert(isinstance(text_opinion, TextOpinion))

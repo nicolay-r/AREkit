@@ -12,7 +12,7 @@ class BaseRowProvider(object):
 
     # region protected methods
 
-    def _provide_rows(self, parsed_news, linked_wrapper, idle_mode):
+    def _provide_rows(self, parsed_news, text_opinion_linkage, idle_mode):
         raise NotImplementedError()
 
     # endregion
@@ -21,10 +21,10 @@ class BaseRowProvider(object):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(doc_ids_iter, collections.Iterable))
 
-        for parsed_news, linked_wrapper in opinion_provider.iter_linked_opinion_wrappers(doc_ids_iter):
+        for parsed_news, linkage in opinion_provider.iter_linked_opinions(doc_ids_iter):
 
             rows_it = self._provide_rows(parsed_news=parsed_news,
-                                         linked_wrapper=linked_wrapper,
+                                         text_opinion_linkage=linkage,
                                          idle_mode=idle_mode)
 
             for row in rows_it:

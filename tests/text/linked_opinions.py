@@ -1,4 +1,4 @@
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.base import News
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
@@ -21,17 +21,17 @@ def iter_same_sentence_linked_text_opinions(news, parsed_news, opinions):
     assert(isinstance(opinions, OpinionCollection))
 
     for opinion in opinions:
-        text_opinion_wrap = news.extract_linked_text_opinions(opinion)
+        text_opinions_linkage = news.extract_text_opinions_linkages(opinion)
 
-        assert(isinstance(text_opinion_wrap, LinkedTextOpinionsWrapper))
+        assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
 
-        if len(text_opinion_wrap) == 0:
+        if len(text_opinions_linkage) == 0:
             continue
 
-        text_opinion = text_opinion_wrap.First
+        text_opinion = text_opinions_linkage.First
         assert(isinstance(text_opinion, TextOpinion))
         text_opinion.set_owner(opinions)
-        assert(isinstance(text_opinion_wrap, LinkedTextOpinionsWrapper))
+        assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
 
         is_same = is_same_sentence(text_opinion=text_opinion, parsed_news=parsed_news)
 

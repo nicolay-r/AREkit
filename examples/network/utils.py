@@ -10,7 +10,7 @@ from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.frames.variants.collection import FrameVariantsCollection
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
@@ -203,7 +203,7 @@ class CustomNews(News):
         assert(isinstance(entities, EntityCollection))
         self.__entities = entities
 
-    def extract_linked_text_opinions(self, opinion):
+    def extract_text_opinions_linkages(self, opinion):
         assert(isinstance(opinion, Opinion))
 
         opinions_it = self.__from_opinion(doc_id=self.ID,
@@ -211,7 +211,7 @@ class CustomNews(News):
                                           target_entities=self.__entities,
                                           opinion=opinion)
 
-        return LinkedTextOpinionsWrapper(linked_text_opinions=opinions_it)
+        return TextOpinionsLinkage(opinions_it)
 
     @staticmethod
     def __from_opinion(doc_id, source_entities, target_entities, opinion):

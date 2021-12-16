@@ -31,13 +31,13 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         self.__frame_role_label_scaler = frame_role_label_scaler
         self.__pos_terms_mapper = pos_terms_mapper
 
-    def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
+    def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
         assert(isinstance(parsed_news, ParsedNews))
 
         super(NetworkSampleRowProvider, self)._fill_row_core(
             row=row,
-            linked_wrap=linked_wrap,
+            text_opinion_linkage=text_opinion_linkage,
             index_in_linked=index_in_linked,
             etalon_label=etalon_label,
             parsed_news=parsed_news,

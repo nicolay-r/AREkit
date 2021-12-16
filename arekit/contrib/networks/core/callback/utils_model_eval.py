@@ -113,7 +113,7 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
         to_collection_func=lambda linked_iter: __create_opinion_collection(
             linked_iter=linked_iter,
             supported_labels=supported_collection_labels,
-            create_opinion_collection=opin_ops.create_and_fill_opinion_collection,
+            create_opinion_collection=opin_ops.create_opinion_collection,
             label_scaler=labels_scaler))
 
     # Save collection.

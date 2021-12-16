@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from arekit.common.data import const
 from arekit.common.data.input.providers.instances.multiple import MultipleLinkedTextOpinionsInstancesProvider
-from arekit.common.data.input.providers.instances.single import SingleLinkedTextOpinionsInstancesProvider
+from arekit.common.data.input.providers.instances.single import SingleInstanceTextOpinionsLinkageProvider
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
@@ -11,7 +11,8 @@ from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.dataset.text_opinions.enums import EntityEndType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.labels.base import Label
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
@@ -52,7 +53,7 @@ class BaseSampleRowProvider(BaseRowProvider):
     def _provide_sentence_terms(parsed_news, sentence_ind):
         return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
 
-    def _fill_row_core(self, row, linked_wrap, index_in_linked, etalon_label,
+    def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
         assert(isinstance(self.__store_labels, bool))
 
@@ -60,13 +61,13 @@ class BaseSampleRowProvider(BaseRowProvider):
             row[column] = value
 
         row[const.ID] = self.__row_ids_provider.create_sample_id(
-            linked_opinions=linked_wrap,
+            linked_opinions=text_opinion_linkage,
             index_in_linked=index_in_linked,
             label_scaler=self._label_provider.LabelScaler)
 
-        row[const.DOC_ID] = linked_wrap.First.DocID
+        row[const.DOC_ID] = text_opinion_linkage.First.DocID
 
-        expected_label = linked_wrap.get_linked_label()
+        expected_label = text_opinion_linkage.get_linked_label()
 
         if self.__store_labels:
             row[const.LABEL] = self._label_provider.calculate_output_uint_label(
@@ -83,17 +84,17 @@ class BaseSampleRowProvider(BaseRowProvider):
         row[const.S_IND] = s_ind
         row[const.T_IND] = t_ind
 
-    def _provide_rows(self, parsed_news, linked_wrapper, idle_mode):
+    def _provide_rows(self, parsed_news, text_opinion_linkage, idle_mode):
         assert(isinstance(idle_mode, bool))
 
         row_dict = OrderedDict()
 
-        for index_in_linked in range(len(linked_wrapper)):
+        for index_in_linked in range(len(text_opinion_linkage)):
 
             rows_it = self.__provide_rows(
                 parsed_news=parsed_news,
                 row_dict=row_dict,
-                linked_wrap=linked_wrapper,
+                text_opinion_linkage=text_opinion_linkage,
                 index_in_linked=index_in_linked,
                 idle_mode=idle_mode)
 
@@ -116,27 +117,27 @@ class BaseSampleRowProvider(BaseRowProvider):
         if isinstance(label_provider, BinaryLabelProvider):
             return MultipleLinkedTextOpinionsInstancesProvider(label_provider.SupportedLabels)
         if isinstance(label_provider, MultipleLabelProvider):
-            return SingleLinkedTextOpinionsInstancesProvider()
+            return SingleInstanceTextOpinionsLinkageProvider()
 
-    def __provide_rows(self, row_dict, parsed_news, linked_wrap, index_in_linked, idle_mode):
+    def __provide_rows(self, row_dict, parsed_news, text_opinion_linkage, index_in_linked, idle_mode):
         """
         Providing Rows depending on row_id_formatter type
         """
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(row_dict, OrderedDict))
-        assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
+        assert(isinstance(text_opinion_linkage, TextOpinionsLinkage))
 
-        etalon_label = self.__instances_provider.provide_label(linked_wrap)
-        for instance in self.__instances_provider.iter_instances(linked_wrap):
+        etalon_label = self.__instances_provider.provide_label(text_opinion_linkage)
+        for instance in self.__instances_provider.iter_instances(text_opinion_linkage):
             yield self.__create_row(row=row_dict,
                                     parsed_news=parsed_news,
-                                    linked_wrap=instance,
+                                    text_opinions_linkage=instance,
                                     index_in_linked=index_in_linked,
                                     # TODO. provide uint_label
                                     etalon_label=etalon_label,
                                     idle_mode=idle_mode)
 
-    def __create_row(self, row, parsed_news, linked_wrap, index_in_linked, etalon_label, idle_mode):
+    def __create_row(self, row, parsed_news, text_opinions_linkage, index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -146,7 +147,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         """
         assert(isinstance(row, OrderedDict))
         assert(isinstance(parsed_news, ParsedNews))
-        assert(isinstance(linked_wrap, LinkedTextOpinionsWrapper))
+        assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
         assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
         assert(isinstance(idle_mode, bool))
@@ -154,7 +155,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         if idle_mode:
             return None
 
-        text_opinion = linked_wrap[index_in_linked]
+        text_opinion = text_opinions_linkage[index_in_linked]
 
         s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
 
@@ -167,7 +168,7 @@ class BaseSampleRowProvider(BaseRowProvider):
                                 text_opinion=text_opinion,
                                 end_type=EntityEndType.Source,
                                 position_type=TermPositionTypes.SentenceIndex),
-                            linked_wrap=linked_wrap,
+                            text_opinion_linkage=text_opinions_linkage,
                             index_in_linked=index_in_linked,
                             etalon_label=etalon_label,
                             s_ind=s_ind,

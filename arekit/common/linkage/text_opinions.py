@@ -1,15 +1,15 @@
-from arekit.common.linked.data import LinkedDataWrapper
+from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.text_opinions.base import TextOpinion
 
 
-class LinkedTextOpinionsWrapper(LinkedDataWrapper):
+class TextOpinionsLinkage(LinkedDataWrapper):
 
-    def __init__(self, linked_text_opinions):
-        super(LinkedTextOpinionsWrapper, self).__init__(linked_data=linked_text_opinions)
+    def __init__(self, text_opinions_it):
+        super(TextOpinionsLinkage, self).__init__(linked_data=text_opinions_it)
 
     @property
     def First(self):
-        first = super(LinkedTextOpinionsWrapper, self).First
+        first = super(TextOpinionsLinkage, self).First
         assert(isinstance(first, TextOpinion))
         return first
 

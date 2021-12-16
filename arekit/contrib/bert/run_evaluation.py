@@ -5,7 +5,6 @@ from arekit.common.data.views.output_multiple import MulticlassOutputView
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.engine import ExperimentEngine
-from arekit.common.linked.helper import create_and_fill_opinion_collection
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
@@ -15,6 +14,7 @@ from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.bert.callback import Callback
 from arekit.contrib.bert.output.eval_helper import EvalHelper
 from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
+from arekit.contrib.bert.utils import create_and_fill_opinion_collection
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -162,8 +162,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
     def __create_opinion_collection(self, linked_iter, supported_labels):
         return create_and_fill_opinion_collection(
-            create_opinion_collection=self._experiment.OpinionOperations.create_and_fill_opinion_collection,
-            linked_data_iter=linked_iter,
+            create_opinion_collection=self._experiment.OpinionOperations.create_opinion_collection,
+            data_linkage_iter=linked_iter,
             labels_helper=SingleLabelsHelper(self.__label_scaler),
             to_opinion_func=LanguageModelExperimentEvaluator.__create_labeled_opinion,
             label_calc_mode=LabelCalculationMode.AVERAGE,

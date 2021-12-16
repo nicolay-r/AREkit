@@ -1,7 +1,7 @@
 import collections
 
 from arekit.common.data.input.sample import InputSampleBase
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.base import News
 
 
@@ -10,9 +10,9 @@ class OpinionProvider(object):
     TextOpinion iterator
     """
 
-    def __init__(self, linked_text_opins_it_func):
-        assert(callable(linked_text_opins_it_func))
-        self.__linked_text_opins_it_func = linked_text_opins_it_func
+    def __init__(self, text_opinions_linkages_it_func):
+        assert(callable(text_opinions_linkages_it_func))
+        self.__text_opinions_linkages_it_func = text_opinions_linkages_it_func
 
     # region private methods
 
@@ -24,8 +24,8 @@ class OpinionProvider(object):
         assert (callable(filter_text_opinion_func))
 
         for opinion in iter_opins_for_extraction:
-            linked_text_opinions = news.extract_linked_text_opinions(opinion)
-            assert (linked_text_opinions, LinkedTextOpinionsWrapper)
+            linked_text_opinions = news.extract_text_opinions_linkages(opinion)
+            assert (linked_text_opinions, TextOpinionsLinkage)
 
             filtered_text_opinions = list(filter(filter_text_opinion_func, linked_text_opinions))
 
@@ -71,7 +71,7 @@ class OpinionProvider(object):
                     text_opinion.set_text_opinion_id(curr_id)
                     curr_id += 1
 
-                yield parsed_news, LinkedTextOpinionsWrapper(linked_text_opinion_list)
+                yield parsed_news, TextOpinionsLinkage(linked_text_opinion_list)
 
     # endregion
 
@@ -96,5 +96,5 @@ class OpinionProvider(object):
 
         return cls(linked_text_opins_it_func=it_func)
 
-    def iter_linked_opinion_wrappers(self, doc_ids_it):
-        return self.__linked_text_opins_it_func(doc_ids_it)
+    def iter_linked_opinions(self, doc_ids_it):
+        return self.__text_opinions_linkages_it_func(doc_ids_it)
