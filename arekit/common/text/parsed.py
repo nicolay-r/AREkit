@@ -13,9 +13,6 @@ class BaseParsedText(object):
         assert(isinstance(terms, list))
         self._terms = terms
 
-    def copy_modified(self, terms):
-        raise NotImplementedError()
-
     # endregion
 
     def get_term(self, index, term_format):
