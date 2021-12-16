@@ -14,7 +14,10 @@ from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.text.pipeline_ctx import PipelineContext
+from arekit.common.text.pipeline_item import TextParserPipelineItem
 from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.utils import split_by_whitespaces
 from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
@@ -26,7 +29,6 @@ from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollecti
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
-from arekit.processing.text.tokenizer import DefaultTextTokenizer
 from examples.download import EMBEDDING_FILENAME
 from examples.network.embedding import RusvectoresEmbedding
 
@@ -145,18 +147,34 @@ class CustomSerializationData(NetworkSerializationData):
         return 50
 
 
-class ExtraEntitiesTextTokenizer(DefaultTextTokenizer):
+class TermsSplitterParser(TextParserPipelineItem):
 
-    def __init__(self, keep_tokens):
-        super(ExtraEntitiesTextTokenizer, self).__init__(keep_tokens=keep_tokens)
+    def apply(self, pipeline_ctx):
+        assert(isinstance(pipeline_ctx, PipelineContext))
+        return pipeline_ctx.update(param="src",
+                                   value=split_by_whitespaces(pipeline_ctx.provide("src")))
+
+
+class TextEntitiesParser(TextParserPipelineItem):
+
+    def __init__(self):
+        super(TextEntitiesParser, self).__init__()
         self.__id_in_doc = 0
 
-    def _process_parts(self, parts):
+    def apply(self, pipeline_ctx):
+        assert(isinstance(pipeline_ctx, PipelineContext))
+
         # reset counter.
         self.__id_in_doc = 0
-        return super(ExtraEntitiesTextTokenizer, self)._process_parts(parts)
 
-    def _process_word(self, word):
+        # extract terms.
+        words = pipeline_ctx.provide("src")
+        assert(isinstance(words, list))
+
+        # update the result.
+        pipeline_ctx.update("src", value=[self.__process_word(w) for w in words])
+
+    def __process_word(self, word):
         assert(isinstance(word, str))
 
         # If this is a special word which is related to the [entity] mention.
@@ -165,7 +183,7 @@ class ExtraEntitiesTextTokenizer(DefaultTextTokenizer):
             self.__id_in_doc += 1
             return [entity]
 
-        return super(ExtraEntitiesTextTokenizer, self)._process_word(word=word)
+        return word
 
 
 class CustomNetworkIOUtils(NetworkIOUtils):

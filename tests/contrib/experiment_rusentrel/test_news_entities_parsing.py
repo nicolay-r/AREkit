@@ -3,7 +3,6 @@ import unittest
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parser import NewsParser
-from arekit.common.text.options import TextParseOptions
 from arekit.common.text.parsed import BaseParsedText
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.experiment_rusentrel.labels.scalers.ruattitudes import ExperimentRuAttitudesLabelConverter
@@ -16,9 +15,8 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.enums import TermFormat
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.text.token import Token
-
-from arekit.processing.text.tokenizer import DefaultTextTokenizer
 
 
 class TestPartOfSpeech(unittest.TestCase):
@@ -29,11 +27,7 @@ class TestPartOfSpeech(unittest.TestCase):
                                                   label_convereter=ExperimentRuAttitudesLabelConverter(),
                                                   return_inds_only=False)
 
-        parse_options = TextParseOptions(stemmer=MystemWrapper(),
-                                         frame_variants_collection=None)
-
-        text_parser = BaseTextParser(parse_options=parse_options,
-                                     pipeline=[RuAttitudesTextEntitiesParser()])
+        text_parser = BaseTextParser(pipeline=[RuAttitudesTextEntitiesParser()])
 
         for news in news_it:
 
@@ -46,16 +40,12 @@ class TestPartOfSpeech(unittest.TestCase):
                 self.__print_parsed_text(parsed_text)
 
     def test_rusentrel_news_text_parsing(self):
-        stemmer = MystemWrapper()
         version = RuSentRelVersions.V11
-        parse_options = TextParseOptions(stemmer=stemmer,
-                                         frame_variants_collection=None)
 
-        text_parser = BaseTextParser(parse_options=parse_options,
-                                     pipeline=[RuSentRelTextEntitiesParser(),
-                                               DefaultTextTokenizer(keep_tokens=True)
-                                               ])
+        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True)])
 
+        stemmer = MystemWrapper()
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
                                                                        version=version)
         news = RuSentRelNews.read_document(doc_id=1,

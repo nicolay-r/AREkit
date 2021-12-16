@@ -24,8 +24,7 @@ class DefaultTextTokenizer(TextParserPipelineItem):
     def apply(self, pipeline_ctx):
         assert (isinstance(pipeline_ctx, PipelineContext))
         parts_list = pipeline_ctx.provide("src")
-
-        result = self._process_parts(parts_list)
+        result = self.__process_parts(parts_list)
 
         if not self.__keep_tokens:
             result = [word for word in result if not isinstance(word, Token)]
@@ -36,7 +35,7 @@ class DefaultTextTokenizer(TextParserPipelineItem):
 
     # region private static methods
 
-    def _process_parts(self, parts):
+    def __process_parts(self, parts):
         assert(isinstance(parts, list))
 
         parsed = []
@@ -55,10 +54,10 @@ class DefaultTextTokenizer(TextParserPipelineItem):
 
     def __iter_processed_part(self, part):
         for word in split_by_whitespaces(part):
-            for term in self._process_word(word):
+            for term in self.__process_word(word):
                 yield term
 
-    def _process_word(self, word):
+    def __process_word(self, word):
         assert(isinstance(word, str))
         return self.__split_tokens(word)
 

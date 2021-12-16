@@ -3,10 +3,11 @@ import unittest
 
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.news.parser import NewsParser
-from arekit.common.text.options import TextParseOptions
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
-from arekit.processing.text.tokenizer import DefaultTextTokenizer
+
+from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from tests.processing.text.debug_text import debug_show_news_terms
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -33,18 +34,14 @@ class TestTextParser(unittest.TestCase):
         # frame and variants.
         frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
         frame_variants = FrameVariantsCollection()
-        print((type(frame_variants)))
         frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants(),
                                           overwrite_existed_variant=True,
                                           raise_error_on_existed_variant=False)
 
-        # Initializing parser.
-        parse_options = TextParseOptions(stemmer=stemmer,
-                                         frame_variants_collection=frame_variants)
-
-        text_parser = BaseTextParser(parse_options=parse_options,
-                                     pipeline=[RuSentRelTextEntitiesParser(),
-                                               DefaultTextTokenizer(keep_tokens=True)])
+        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True),
+                                               LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
+                                                                              stemmer=stemmer)])
 
         # Reading synonyms collection.
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)

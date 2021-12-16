@@ -6,6 +6,7 @@ import unittest
 import numpy as np
 from pymystem3 import Mystem
 
+from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
 
 sys.path.append('../../../')
 
@@ -13,7 +14,6 @@ from tests.contrib.networks.text.news import init_rusentrel_doc
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.text.utils import terms_to_str
 
-from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.frames.variants.collection import FrameVariantsCollection
@@ -26,9 +26,9 @@ from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
-from arekit.processing.text.tokenizer import DefaultTextTokenizer
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 
 class TestTfInputFeatures(unittest.TestCase):
@@ -54,12 +54,12 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        parse_options = TextParseOptions(stemmer=self.stemmer,
-                                         frame_variants_collection=self.unique_frame_variants)
-
-        text_parser = BaseTextParser(parse_options=parse_options,
-                                     pipeline=[RuSentRelTextEntitiesParser(),
-                                               DefaultTextTokenizer(keep_tokens=True)])
+        text_parser = BaseTextParser(pipeline=[
+            RuSentRelTextEntitiesParser(),
+            DefaultTextTokenizer(keep_tokens=True),
+            LemmasBasedFrameVariantsParser(frame_variants=self.unique_frame_variants,
+                                           stemmer=self.stemmer)
+        ])
 
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():

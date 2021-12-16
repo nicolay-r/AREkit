@@ -1,5 +1,3 @@
-import collections
-
 from arekit.processing.text.enums import TermFormat
 
 
@@ -19,39 +17,6 @@ class BaseParsedText(object):
         raise NotImplementedError()
 
     # endregion
-
-    def modify_by_bounded_objects(self, modified_objs, get_obj_bound_func):
-        assert(isinstance(modified_objs, collections.Iterable))
-        assert(callable(get_obj_bound_func))
-
-        def __remove(terms, start, end):
-            while end > start:
-                del terms[start]
-                end -= 1
-
-        if modified_objs is None:
-            return
-
-        modified_objs_list = list(modified_objs)
-
-        # setup default position.
-        local_terms = self._terms
-        prev_position = len(self._terms) + 1
-
-        for modified_obj in reversed(modified_objs_list):
-            obj_bound = get_obj_bound_func(modified_obj)
-
-            if obj_bound.Position > prev_position:
-                raise Exception("objs list has incorrect order. It is expected that instances "
-                                "ordered by positions (ascending)")
-
-            __remove(terms=local_terms,
-                     start=obj_bound.Position,
-                     end=obj_bound.Position + obj_bound.Length)
-
-            local_terms.insert(obj_bound.Position, modified_obj)
-
-            prev_position = obj_bound.Position
 
     def get_term(self, index, term_format):
         assert(isinstance(term_format, TermFormat))

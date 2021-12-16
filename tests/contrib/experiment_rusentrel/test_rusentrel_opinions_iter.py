@@ -4,16 +4,13 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
-from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
-from arekit.processing.text.tokenizer import DefaultTextTokenizer
-
 sys.path.append('../../../../')
 
 from tests.text.utils import terms_to_str
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 
 from tests.contrib.source.text.news import init_rusentrel_doc
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
@@ -23,15 +20,16 @@ from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import 
     ExperimentRuSentiFramesLabelsFormatter, \
     ExperimentRuSentiFramesEffectLabelsFormatter
 
-from arekit.common.text.options import TextParseOptions
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
 from arekit.common.entities.types import EntityType
-
+from arekit.common.text.parser import BaseTextParser
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.token import Token
+from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 
 class TestRuSentRelOpinionsIter(unittest.TestCase):
@@ -78,13 +76,13 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        parse_options = TextParseOptions(stemmer=self.stemmer,
-                                         frame_variants_collection=self.unique_frame_variants)
-
         # Initialize text parser pipeline.
-        text_parser = BaseTextParser(parse_options=parse_options,
-                                     pipeline=[RuSentRelTextEntitiesParser(),
-                                               DefaultTextTokenizer(keep_tokens=True)])
+        text_parser = BaseTextParser(pipeline=[
+            RuSentRelTextEntitiesParser(),
+            DefaultTextTokenizer(keep_tokens=True),
+            LemmasBasedFrameVariantsParser(frame_variants=self.unique_frame_variants,
+                                           stemmer=self.stemmer)
+        ])
 
         # Initialize specific document
         doc_id = 47

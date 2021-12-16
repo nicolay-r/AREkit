@@ -8,7 +8,6 @@ from arekit.common.labels.base import NoLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
-from arekit.common.text.options import TextParseOptions
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
@@ -18,9 +17,11 @@ from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollecti
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from examples.input import EXAMPLES
 from examples.network.utils import SingleDocOperations, CustomOpinionOperations, CustomSerializationData, \
-    CustomExperiment, ExtraEntitiesTextTokenizer, CustomNetworkIOUtils, CustomNews
+    CustomExperiment, TextEntitiesParser, CustomNetworkIOUtils, CustomNews, TermsSplitterParser
 
 
 def create_frame_variants_collection():
@@ -63,11 +64,15 @@ def pipeline_serialize(sentences_text_list, label_provider):
     # Step 1. Parse text.
     news = CustomNews(doc_id=0, sentences=sentences)
 
-    parse_options = TextParseOptions(frame_variants_collection=frame_variants_collection,
-                                     stemmer=stemmer)
-
-    text_parser = BaseTextParser(parse_options=parse_options,
-                                 pipeline=[ExtraEntitiesTextTokenizer(keep_tokens=True)])
+    text_parser = BaseTextParser(
+        pipeline=[
+            TermsSplitterParser(),
+            TextEntitiesParser(),
+            DefaultTextTokenizer(keep_tokens=True),
+            LemmasBasedFrameVariantsParser(save_lemmas=False,
+                                           stemmer=stemmer,
+                                           frame_variants=frame_variants_collection)
+        ])
 
     parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
 

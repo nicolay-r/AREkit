@@ -3,12 +3,12 @@ import sys
 import unittest
 from tqdm import tqdm
 
+from arekit.processing.text.pipeline_frames import LemmasBasedFrameVariantsParser
 
 sys.path.append('../../../../')
 
 from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
-from arekit.common.text.options import TextParseOptions
 from arekit.common.utils import progress_bar_iter
 from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
@@ -24,7 +24,7 @@ from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 from arekit.processing.text.token import Token
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.tokenizer import DefaultTextTokenizer
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -68,12 +68,9 @@ class TestRuAttitudes(unittest.TestCase):
     def __test_parsing(self, ra_version):
         # Initializing stemmer
         stemmer = MystemWrapper()
-        parse_options = TextParseOptions(stemmer=stemmer,
-                                         frame_variants_collection=None)
 
         # Initialize text parser pipeline.
-        text_parser = BaseTextParser(parse_options=parse_options,
-                                     pipeline=[RuSentRelTextEntitiesParser(),
+        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
                                                DefaultTextTokenizer(keep_tokens=True)])
 
         # iterating through collection

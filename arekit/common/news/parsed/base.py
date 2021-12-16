@@ -122,24 +122,6 @@ class ParsedNews(object):
 
     # endregion
 
-    # region public 'modify' methods
-
-    # TODO. This should be removed (conceptually)
-    def modify_parsed_sentences(self, sentence_objs_upd_func, get_obj_bound_func):
-        assert(callable(sentence_objs_upd_func))
-        assert(callable(get_obj_bound_func))
-
-        for s_index, sentence in enumerate(self.__parsed_sentences):
-            assert(isinstance(sentence, BaseParsedText))
-
-            sentence.modify_by_bounded_objects(
-                modified_objs=sentence_objs_upd_func(sentence),
-                get_obj_bound_func=get_obj_bound_func)
-
-        self.__init_entity_positions()
-
-    # endregion
-
     # region public 'iter' methods
 
     def iter_terms(self, term_check=None):
