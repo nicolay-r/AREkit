@@ -1,6 +1,3 @@
-from arekit.common.synonyms import SynonymsCollection
-
-
 class EntityCollection(object):
     """ Collection of annotated entities
     """
@@ -9,19 +6,19 @@ class EntityCollection(object):
         BY_SYNONYMS = 0
         BY_VALUE = 1
 
-    def __init__(self, entities, synonyms):
+    def __init__(self, entities, value_to_group_id_func):
         assert(isinstance(entities, list))
-        assert(isinstance(synonyms, SynonymsCollection))
+        assert(callable(value_to_group_id_func))
 
         self.__entities = entities
-        self.__synonyms = synonyms
+        self.__value_to_group_id_func = value_to_group_id_func
 
         self.__by_value = self.create_index(entities=entities,
                                             key_func=lambda e: e.Value)
 
         self.__by_synonyms = self.create_index(
             entities=entities,
-            key_func=lambda e: synonyms.get_synonym_group_index(e.Value))
+            key_func=lambda e: value_to_group_id_func(e.Value))
 
         self.__by_id = self.create_index(entities=entities,
                                          key_func=lambda e: e.IdInDocument)
@@ -59,7 +56,7 @@ class EntityCollection(object):
         assert(isinstance(value, str))
 
         if group_key == self.KeyType.BY_SYNONYMS:
-            key = self.__synonyms.get_synonym_group_index(value)
+            key = self.__value_to_group_id_func(value)
             return self.__value_or_none(self.__by_synonyms, key)
         if group_key == self.KeyType.BY_VALUE:
             return self.__value_or_none(self.__by_value, value)
