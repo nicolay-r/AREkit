@@ -12,6 +12,7 @@ from arekit.common.data import const
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
+from arekit.contrib.networks.shapes import NetworkInputShapes
 
 
 class TestSamplesIteration(unittest.TestCase):
@@ -88,6 +89,10 @@ class TestSamplesIteration(unittest.TestCase):
 
             subj_ind = row.SubjectIndex
             obj_ind = row.ObjectIndex
+            input_shapes = NetworkInputShapes(
+                [(NetworkInputShapes.SYNONYMS_PER_CONTEXT, config.TermsPerContext),
+                 (NetworkInputShapes.TERMS_PER_CONTEXT, config.TermsPerContext),
+                 (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext)])
 
             sample = InputSample.create_from_parameters(
                 input_sample_id=row.SampleID,
@@ -97,11 +102,9 @@ class TestSamplesIteration(unittest.TestCase):
                 obj_ind=int(row.ObjectIndex),
                 words_vocab=words_vocab,
                 is_external_vocab=True,
-                terms_per_context=config.TermsPerContext,
-                frames_per_context=config.FramesPerContext,
-                synonyms_per_context=config.SynonymsPerContext,
+                input_shapes=input_shapes,
                 frame_inds=row.TextFrameVariantIndices,
-                frame_sent_roles=row.TextFrameVariantRoles,
+                frame_sent_roles=row.TextFrameConnotations,
                 pos_tags=row.PartOfSpeechTags,
                 syn_subj_inds=row.SynonymSubjectInds,
                 syn_obj_inds=row.SynonymObjectInds)
@@ -120,7 +123,7 @@ class TestSamplesIteration(unittest.TestCase):
                 print("subj_ind: {}".format(subj_ind))
                 print("obj_ind: {}".format(obj_ind))
                 print("frame_inds: {}".format(row.TextFrameVariantIndices))
-                print("frame_roles_uint: {}".format(row.TextFrameVariantRoles))
+                print("frame_connots_uint: {}".format(row.TextFrameConnotations))
                 print("syn_obj: {}".format(row.SynonymObjectInds))
                 print("syn_subj: {}".format(row.SynonymSubjectInds))
                 print("terms:".format(row.Terms))

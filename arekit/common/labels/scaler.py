@@ -34,8 +34,8 @@ class BaseLabelScaler(object):
     # region private methods
 
     @staticmethod
-    def __find_no_label_instance(iter_labels):
-        for label in iter_labels:
+    def __find_no_label_instance(labels_it):
+        for label in labels_it:
             if isinstance(label, NoLabel):
                 return label
         return None

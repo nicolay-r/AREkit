@@ -1,11 +1,12 @@
 import logging
 
 from arekit.common.experiment.api.base import BaseExperiment
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
+from arekit.contrib.experiment_rusentrel.common import entity_to_group_func, create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_ds.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.utils import read_ruattitudes_in_memory
+from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 
 logger = logging.getLogger(__name__)
@@ -41,9 +42,11 @@ class RuAttitudesExperiment(BaseExperiment):
             doc_ids_to_fold=list(ru_attitudes.keys()))
 
         self.log_info("Create document operations ... ")
-        doc_ops = RuAttitudesDocumentOperations(exp_data=exp_data,
-                                                folding=folding,
-                                                ru_attitudes=ru_attitudes)
+        doc_ops = RuAttitudesDocumentOperations(folding=folding,
+                                                ru_attitudes=ru_attitudes,
+                                                text_parser=create_text_parser(
+                                                    exp_data=exp_data,
+                                                    entities_parser=RuAttitudesTextEntitiesParser()))
 
         self.log_info("Create opinion operations ... ")
         opin_ops = RuAttitudesOpinionOperations(ru_attitudes=ru_attitudes)

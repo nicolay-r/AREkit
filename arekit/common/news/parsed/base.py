@@ -2,8 +2,8 @@ import collections
 
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
-from arekit.processing.text.enums import TermFormat
-from arekit.processing.text.parsed import ParsedText
+from arekit.common.text.enums import TermFormat
+from arekit.common.text.parsed import BaseParsedText
 
 
 class ParsedNews(object):
@@ -21,15 +21,15 @@ class ParsedNews(object):
         IN MEMORY implementation (`add` method)
     """
 
-    def __init__(self, news_id, parsed_sentences):
+    def __init__(self, doc_id, parsed_sentences):
         """
         parsed_sentences: iterable of ParsedSentence type
             NOTE: Considered sentences with labeled Entities in it!
         """
-        assert(isinstance(news_id, int))
+        assert(isinstance(doc_id, int))
         assert(isinstance(parsed_sentences, collections.Iterable))
 
-        self.__news_id = news_id
+        self.__doc_id = doc_id
         self.__parsed_sentences = list(parsed_sentences)
         self.__entity_positions = None
 
@@ -38,8 +38,8 @@ class ParsedNews(object):
     # region properties
 
     @property
-    def RelatedNewsID(self):
-        return self.__news_id
+    def RelatedDocID(self):
+        return self.__doc_id
 
     # endregion
 
@@ -52,13 +52,16 @@ class ParsedNews(object):
     def __init_entity_positions(self):
         self.__entity_positions = self.__calculate_entity_positions()
 
+    def __iter_entities(self):
+        return self.__iter_all_raw_terms(term_only=True, term_check=lambda term: self.__is_entity(term))
+
     def __calculate_entity_positions(self):
         positions = {}
         t_ind_in_doc = 0
 
         for s_ind, t_ind_in_sent, term in self.__iter_all_raw_terms():
 
-            if ParsedNews.__is_entity(term):
+            if self.__is_entity(term):
                 positions[term.IdInDocument] = TermPosition(term_ind_in_doc=t_ind_in_doc,
                                                             term_ind_in_sent=t_ind_in_sent,
                                                             s_ind=s_ind)
@@ -81,7 +84,7 @@ class ParsedNews(object):
 
     @staticmethod
     def __iter_sentence_raw_terms(sentence, term_check):
-        assert(isinstance(sentence, ParsedText))
+        assert(isinstance(sentence, BaseParsedText))
         assert(callable(term_check) or term_check is None)
 
         for ind_in_sent, term in enumerate(sentence.iter_terms(TermFormat.Raw)):
@@ -114,25 +117,11 @@ class ParsedNews(object):
         position = self.__entity_positions[id_in_document]
         assert(isinstance(position, TermPosition))
         sentence = self.__parsed_sentences[position.get_index(position_type=TermPositionTypes.SentenceIndex)]
-        assert(isinstance(sentence, ParsedText))
+        assert(isinstance(sentence, BaseParsedText))
         entity = sentence.get_term(position.get_index(position_type=TermPositionTypes.IndexInSentence),
                                    term_format=TermFormat.Raw)
         assert(isinstance(entity, Entity))
         return entity.Value
-
-    # endregion
-
-    # region public 'modify' methods
-
-    def modify_parsed_sentences(self, sentence_upd_func):
-        assert(callable(sentence_upd_func))
-
-        for s_index, sentence in enumerate(self.__parsed_sentences):
-            updated = sentence_upd_func(sentence)
-            assert(isinstance(updated, ParsedText))
-            self.__parsed_sentences[s_index] = updated
-
-        self.__init_entity_positions()
 
     # endregion
 
@@ -141,6 +130,9 @@ class ParsedNews(object):
     def iter_terms(self, term_check=None):
         for term in self.__iter_all_raw_terms(term_only=True, term_check=term_check):
             yield term
+
+    def iter_entities(self):
+        return self.__iter_entities()
 
     def iter_sentence_terms(self, sentence_index, return_id, term_check=None):
         assert(isinstance(sentence_index, int))
@@ -155,9 +147,8 @@ class ParsedNews(object):
                 yield ind_in_sent, term
             else:
                 yield term
+    # endregion
 
     def __iter__(self):
         for sentence in self.__parsed_sentences:
             yield sentence
-
-    # endregion

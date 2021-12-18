@@ -1,8 +1,8 @@
-from arekit.common.news.objects_parser import BaseObjectsParser
+from arekit.common.news.objects_parser import SentenceObjectsParserPipelineItem
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 
 
-class RuSentRelTextEntitiesParser(BaseObjectsParser):
+class RuSentRelTextEntitiesParser(SentenceObjectsParserPipelineItem):
 
     def __init__(self):
         super(RuSentRelTextEntitiesParser, self).__init__(

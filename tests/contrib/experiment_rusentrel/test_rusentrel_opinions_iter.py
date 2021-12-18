@@ -11,8 +11,10 @@ from tests.text.utils import terms_to_str
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 
 from tests.contrib.source.text.news import init_rusentrel_doc
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.contrib.experiment_rusentrel.frame_variants import ExperimentFrameVariantsCollection
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import \
@@ -20,14 +22,15 @@ from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import 
     ExperimentRuSentiFramesEffectLabelsFormatter
 
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
 from arekit.common.entities.types import EntityType
-
+from arekit.common.text.parser import BaseTextParser
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.token import Token
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
+from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 
 
 class TestRuSentRelOpinionsIter(unittest.TestCase):
@@ -74,18 +77,28 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
+        # Initialize text parser pipeline.
+        text_parser = BaseTextParser(pipeline=[
+            RuSentRelTextEntitiesParser(),
+            DefaultTextTokenizer(keep_tokens=True),
+            LemmasBasedFrameVariantsParser(frame_variants=self.unique_frame_variants,
+                                           stemmer=self.stemmer)
+        ])
+
         # Initialize specific document
         doc_id = 47
         logger.info("NewsID: {}".format(doc_id))
         news, parsed_news, opinions = init_rusentrel_doc(
             doc_id=doc_id,
-            stemmer=self.stemmer,
-            synonyms=self.synonyms,
-            unique_frame_variants=self.unique_frame_variants)
+            text_parser=text_parser,
+            synonyms=self.synonyms)
 
-        for text_opinion in iter_same_sentence_linked_text_opinions(news=news,
-                                                                    opinions=opinions,
-                                                                    parsed_news=parsed_news):
+        text_opinions = iter_same_sentence_linked_text_opinions(
+            opinions=opinions,
+            parsed_news=parsed_news,
+            value_to_group_id_func=self.synonyms.get_synonym_group_index)
+
+        for text_opinion in text_opinions:
 
             s_index = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
                                                       position_type=TermPositionTypes.SentenceIndex)

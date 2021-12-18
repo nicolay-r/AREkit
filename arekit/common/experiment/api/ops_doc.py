@@ -1,5 +1,6 @@
 from arekit.common.folding.base import BaseDataFolding
-from arekit.processing.text.parser import TextParser
+from arekit.common.news.parser import NewsParser
+from arekit.common.text.parser import BaseTextParser
 
 
 class DocumentOperations(object):
@@ -7,9 +8,13 @@ class DocumentOperations(object):
     Provides operations with documents
     """
 
-    def __init__(self, folding):
+    def __init__(self, folding, text_parser=None):
         assert(isinstance(folding, BaseDataFolding))
+        assert(isinstance(text_parser, BaseTextParser) or text_parser is None)
         self.__folding = folding
+        self.__text_parser = text_parser
+
+    # region properties
 
     @property
     def DataFolding(self):
@@ -18,6 +23,10 @@ class DocumentOperations(object):
         """
         return self.__folding
 
+    # endregion
+
+    # region abstract methods
+
     def get_doc(self, doc_id):
         raise NotImplementedError()
 
@@ -25,6 +34,10 @@ class DocumentOperations(object):
         """ Document identifiers which are grouped by a particular tag.
         """
         raise NotImplementedError()
+
+    # endregion
+
+    # region public methods
 
     def iter_doc_ids(self, data_type):
         """ Provides a news indices, related to a particular `data_type`
@@ -43,16 +56,14 @@ class DocumentOperations(object):
             yield self.__parse_doc(doc_id=doc_id)
 
     def parse_doc(self, doc_id):
-        return self.__parse_doc(doc_id)
+        return self.__parse_doc(doc_id=doc_id)
 
-    # TODO. This should be removed, since parse-options considered as a part
-    # TODO. Of the text-parser instance!!!
-    def _create_parse_options(self):
-        raise NotImplementedError()
+    # endregion
+
+    # region private methods
 
     def __parse_doc(self, doc_id):
         news = self.get_doc(doc_id=doc_id)
-        # TODO. Use text parser as an instance.
-        # TODO. (Current limitation: We depend on a particular text parser, which is not correct in general).
-        return TextParser.parse_news(news=news,
-                                     parse_options=self._create_parse_options())
+        return NewsParser.parse(news=news, text_parser=self.__text_parser)
+
+    # endregion

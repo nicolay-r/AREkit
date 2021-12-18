@@ -1,6 +1,6 @@
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
-from arekit.common.news.base import News
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.text_opinions.base import TextOpinion
@@ -15,23 +15,27 @@ def is_same_sentence(text_opinion, parsed_news):
     return s_ind == t_ind
 
 
-def iter_same_sentence_linked_text_opinions(news, parsed_news, opinions):
-    assert(isinstance(news, News))
+def iter_same_sentence_linked_text_opinions(parsed_news, opinions, value_to_group_id_func):
     assert(isinstance(parsed_news, ParsedNews))
     assert(isinstance(opinions, OpinionCollection))
 
+    pairs_provider = TextOpinionPairsProvider(parsed_news=parsed_news,
+                                              value_to_group_id_func=value_to_group_id_func)
+
     for opinion in opinions:
-        text_opinion_wrap = news.extract_linked_text_opinions(opinion)
 
-        assert(isinstance(text_opinion_wrap, LinkedTextOpinionsWrapper))
+        text_opinions_linkage = TextOpinionsLinkage(
+            text_opinions_it=pairs_provider.iter_from_opinion(opinion))
 
-        if len(text_opinion_wrap) == 0:
+        assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
+
+        if len(text_opinions_linkage) == 0:
             continue
 
-        text_opinion = text_opinion_wrap.First
+        text_opinion = text_opinions_linkage.First
         assert(isinstance(text_opinion, TextOpinion))
         text_opinion.set_owner(opinions)
-        assert(isinstance(text_opinion_wrap, LinkedTextOpinionsWrapper))
+        assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
 
         is_same = is_same_sentence(text_opinion=text_opinion, parsed_news=parsed_news)
 

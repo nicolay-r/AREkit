@@ -3,7 +3,7 @@ import logging
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
+from arekit.contrib.experiment_rusentrel.common import entity_to_group_func, create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
@@ -37,8 +37,7 @@ class RuSentRelExperiment(BaseExperiment):
         self.__synonyms = None
 
         self.log_info("Init experiment io ...")
-        experiment_io = experiment_io_type(self,
-                                           opinion_collection_provider=None)
+        experiment_io = experiment_io_type(self)
 
         self.log_info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
@@ -51,9 +50,9 @@ class RuSentRelExperiment(BaseExperiment):
                                                            version=version,
                                                            docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
                                                            experiment_io=experiment_io)
-        doc_ops = RuSentrelDocumentOperations(exp_data=exp_data,
-                                              folding=folding,
+        doc_ops = RuSentrelDocumentOperations(folding=folding,
                                               version=version,
+                                              text_parser=create_text_parser(exp_data),
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
         exp_name = "rsr-{version}-{format}".format(version=version.value,
@@ -72,6 +71,7 @@ class RuSentRelExperiment(BaseExperiment):
         if self.__synonyms is None:
             self.log_info("Read synonyms collection ...")
             self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+                # TODO. 172. Adopt the default stemmer (MystemWrapper). Release the DataIO.Stemmer usage!
                 stemmer=self.DataIO.Stemmer,
                 version=self.__rsr_version)
 

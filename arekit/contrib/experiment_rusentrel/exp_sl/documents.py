@@ -1,10 +1,7 @@
-from arekit.common.experiment.api.ctx_base import DataIO
-from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
-from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
 
 
 class RuSentrelDocumentOperations(DocumentOperations):
@@ -12,13 +9,11 @@ class RuSentrelDocumentOperations(DocumentOperations):
     Limitations: Supported only train/test collections format
     """
 
-    def __init__(self, exp_data, folding, version, get_synonyms_func):
-        assert(isinstance(exp_data, DataIO))
+    def __init__(self, folding, text_parser, version, get_synonyms_func):
         assert(isinstance(version, RuSentRelVersions))
         assert(callable(get_synonyms_func))
-        super(RuSentrelDocumentOperations, self).__init__(folding=folding)
-        # TODO. exp_data should be removed.
-        self.__exp_data = exp_data
+        super(RuSentrelDocumentOperations, self).__init__(folding=folding, text_parser=text_parser)
+
         self.__version = version
         self.__get_synonyms_func = get_synonyms_func
 
@@ -35,13 +30,5 @@ class RuSentrelDocumentOperations(DocumentOperations):
         return RuSentRelNews.read_document(doc_id=doc_id,
                                            synonyms=synonyms,
                                            version=self.__version)
-
-    # TODO. This should be removed, since parse-options considered as a part
-    # TODO. Of the text-parser instance!!!
-    # TODO. Parse options should not be related to the particular collection.
-    def _create_parse_options(self):
-        assert(isinstance(self.__exp_data, SerializationData))
-        return RuSentRelNewsParseOptions(stemmer=self.__exp_data.Stemmer,
-                                         frame_variants_collection=self.__exp_data.FrameVariantCollection)
 
     # endregion

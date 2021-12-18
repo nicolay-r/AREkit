@@ -1,5 +1,10 @@
 from arekit.common.entities.base import Entity
+from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.synonyms import SynonymsCollection
+from arekit.common.text.parser import BaseTextParser
+from arekit.common.text.pipeline_item import TextParserPipelineItem
+from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 
 def entity_to_group_func(entity, synonyms):
@@ -23,3 +28,18 @@ def entity_to_group_func(entity, synonyms):
     if not synonyms.contains_synonym_value(value):
         return None
     return synonyms.get_synonym_group_index(value)
+
+
+def create_text_parser(exp_data, entities_parser):
+    assert(isinstance(entities_parser, TextParserPipelineItem))
+
+    if not isinstance(exp_data, SerializationData):
+        # We do not utlize text_parser in such case.
+        return None
+
+    pipeline = [entities_parser,
+                DefaultTextTokenizer(keep_tokens=True),
+                LemmasBasedFrameVariantsParser(frame_variants=exp_data.FrameVariantCollection,
+                                               stemmer=exp_data.Stemmer)]
+
+    return BaseTextParser(pipeline)

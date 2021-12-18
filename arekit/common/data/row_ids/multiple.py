@@ -8,5 +8,5 @@ class MultipleIDProvider(BaseIDProvider):
 
     @staticmethod
     def create_sample_id(linked_opinions, index_in_linked, label_scaler):
-        return BaseIDProvider.create_opinion_id(linked_opinions=linked_opinions,
+        return BaseIDProvider.create_opinion_id(text_opinions_linkage=linked_opinions,
                                                 index_in_linked=index_in_linked)

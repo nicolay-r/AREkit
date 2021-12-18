@@ -9,7 +9,6 @@ from arekit.common.data.input.providers.rows.opinions import BaseOpinionsRowProv
 from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
@@ -40,7 +39,7 @@ class NetworkInputHelper(object):
             entity_to_group_func=entity_to_group_func,
             predefined_embedding=exp_data.WordEmbedding,
             string_entities_formatter=exp_data.StringEntityFormatter,
-            string_emb_entity_formatter=StringEntitiesSimpleFormatter())
+            string_emb_entity_formatter=exp_data.StringEntityEmbeddingFormatter)
 
         return NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,
@@ -57,7 +56,7 @@ class NetworkInputHelper(object):
                 term_embedding_pairs=term_embedding_pairs,
                 exp_data=exp_data,
                 entity_to_group_func=entity_to_group_func),
-            frames_collection=exp_data.FramesCollection,
+            frames_connotation_provider=exp_data.FramesConnotationProvider,
             frame_role_label_scaler=exp_data.FrameRolesLabelScaler,
             entity_to_group_func=entity_to_group_func,
             pos_terms_mapper=PosTermsMapper(exp_data.PosTagger))
@@ -141,10 +140,11 @@ class NetworkInputHelper(object):
                     labels_formatter=experiment.OpinionOperations.LabelsFormatter)
 
             opinion_provider = OpinionProvider.create(
+                # TODO. #224 no need news func.
                 read_news_func=lambda doc_id: experiment.DocumentOperations.get_doc(doc_id),
                 parse_news_func=lambda doc_id: experiment.DocumentOperations.parse_doc(doc_id),
-                iter_news_opins_for_extraction=lambda news_id:
-                    experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=news_id, data_type=data_type),
+                iter_news_opins_for_extraction=lambda doc_id:
+                    experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
                 terms_per_context=terms_per_context)
 
             NetworkInputHelper.__perform_writing(
@@ -157,7 +157,7 @@ class NetworkInputHelper(object):
 
         # Assign targets
         vocab_target = experiment.ExperimentIO.get_vocab_target()
-        embedding_target = experiment.ExperimentIO.get_embedding_target()
+        embedding_target = experiment.ExperimentIO.get_term_embedding_target()
 
         # Save embedding information additionally.
         term_embedding = Embedding.from_word_embedding_pairs_iter(iter(term_embedding_pairs.items()))

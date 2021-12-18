@@ -1,6 +1,6 @@
 from arekit.common.data.row_ids.base import BaseIDProvider
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 
 
 class BinaryIDProvider(BaseIDProvider):
@@ -12,11 +12,11 @@ class BinaryIDProvider(BaseIDProvider):
 
     @staticmethod
     def create_sample_id(linked_opinions, index_in_linked, label_scaler):
-        assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
+        assert(isinstance(linked_opinions, TextOpinionsLinkage))
         assert(isinstance(index_in_linked, int))
         assert(isinstance(label_scaler, BaseLabelScaler))
 
-        o_id = BaseIDProvider.create_opinion_id(linked_opinions=linked_opinions,
+        o_id = BaseIDProvider.create_opinion_id(text_opinions_linkage=linked_opinions,
                                                 index_in_linked=index_in_linked)
 
         template = ''.join(["{}", BinaryIDProvider.LABEL])

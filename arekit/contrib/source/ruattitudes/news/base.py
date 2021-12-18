@@ -1,7 +1,6 @@
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
-from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 
@@ -10,7 +9,7 @@ class RuAttitudesNews(News):
     def __init__(self, sentences, news_index):
         assert(len(sentences) > 0)
 
-        super(RuAttitudesNews, self).__init__(news_id=news_index, sentences=sentences)
+        super(RuAttitudesNews, self).__init__(doc_id=news_index, sentences=sentences)
 
         self.__set_owners()
         self.__objects_before_sentence = self.__cache_objects_declared_before()
@@ -51,20 +50,12 @@ class RuAttitudesNews(News):
 
     # region base News
 
-    def extract_linked_text_opinions(self, opinion):
+    def extract_text_opinions_linkages(self, opinion):
         """
         Note: Complexity is O(N)
         """
         assert(isinstance(opinion, Opinion))
-        return LinkedTextOpinionsWrapper(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
-
-    def get_entities_collection(self):
-        raise Exception("Not Available for this type of collection")
-
-    @staticmethod
-    def _sentence_to_terms_list_core(sentence):
-        with RuAttitudesTextEntitiesParser() as parser:
-            return parser.parse(sentence)
+        return TextOpinionsLinkage(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
 
     # endregion
 
@@ -79,7 +70,7 @@ class RuAttitudesNews(News):
                 continue
 
             yield sentence_opin.to_text_opinion(
-                news_id=sentence.Owner.ID,
+                doc_id=sentence.Owner.ID,
                 end_to_doc_id_func=lambda sent_level_id: sentence.get_doc_level_text_object_id(sent_level_id),
                 text_opinion_id=None)
 

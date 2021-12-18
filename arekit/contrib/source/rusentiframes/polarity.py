@@ -1,8 +1,8 @@
-from arekit.common.frames.polarity import FramePolarity
+from arekit.common.frames.connotations.descriptor import FrameConnotationDescriptor
 from arekit.common.labels.base import Label
 
 
-class RuSentiFramesFramePolarity(FramePolarity):
+class RuSentiFramesFramePolarity(FrameConnotationDescriptor):
     """
     Polarity description between source (Agent) towards dest (Theme)
     The latter are related to roles of frame polarity.

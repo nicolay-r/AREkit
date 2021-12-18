@@ -7,17 +7,20 @@ import unittest
 sys.path.append('../../../../')
 
 from arekit.common.labels.base import Label
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.bound import Bound
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
+from arekit.common.news.parser import NewsParser
+from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
+from arekit.common.text.parser import BaseTextParser
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-
-from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
@@ -97,6 +100,9 @@ class TestRuSentRel(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
+        # Init text parser.
+        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser()])
+
         synonyms = TestRuSentRel.__read_rusentrel_synonyms_collection()
         for news, opinions in self.__iter_by_docs(synonyms):
 
@@ -109,10 +115,21 @@ class TestRuSentRel(unittest.TestCase):
             print("'{src}'->'{tgt}'".format(src=first_opinion.SourceValue,
                                             tgt=first_opinion.TargetValue))
 
-            linked_text_opinions = news.extract_linked_text_opinions(first_opinion)
-            assert(isinstance(linked_text_opinions, LinkedTextOpinionsWrapper))
-            print("Linked opinions count: {}".format(len(linked_text_opinions)))
-            for text_opinion in linked_text_opinions:
+            # Parse text.
+            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
+
+            # Initialize text opinion provider.
+            text_opinion_provider = TextOpinionPairsProvider(
+                parsed_news=parsed_news,
+                value_to_group_id_func=synonyms.get_synonym_group_index)
+
+            text_opins_it = text_opinion_provider.iter_from_opinion(opinion=first_opinion)
+
+            # Obtain text opinions linkage.
+            text_opinons_linkage = TextOpinionsLinkage(text_opins_it)
+
+            print("Linked opinions count: {}".format(len(text_opinons_linkage)))
+            for text_opinion in text_opinons_linkage:
                 assert(isinstance(text_opinion, TextOpinion))
                 label = text_opinion.Sentiment
                 assert(isinstance(label, Label))

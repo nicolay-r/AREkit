@@ -1,109 +1,29 @@
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
-from arekit.common.entities.formatters.str_simple_fmt import StringEntitiesSimpleFormatter
-from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.experiment.data_type import DataType
-from arekit.common.news.parse_options import NewsParseOptions
-from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.common.labels.base import NoLabel
-from arekit.common.news.base import News
+from arekit.common.labels.scaler import BaseLabelScaler
 
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
-from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.context.architectures.pcnn import PiecewiseCNN
 from arekit.contrib.networks.context.configurations.cnn import CNNConfig
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
-from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
-from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
-from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
-from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
 from arekit.contrib.networks.shapes import NetworkInputShapes
-from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
 
 from examples.input import EXAMPLES
-from examples.network.embedding import RusvectoresEmbedding
+from examples.repository import pipeline_serialize
 
 
-def extract(text):
+def pipeline_infer(labels_scaler):
+    assert(isinstance(labels_scaler, BaseLabelScaler))
 
-    ########################
-    # Step 1. Parse text.
-    ########################
-
-    sentences = text  # TODO. split text onto sentences.
-    stemmer = MystemWrapper()
-
-    news = News(news_id=0,
-                sentences=sentences)
-
-    parse_options = NewsParseOptions(
-        parse_entities=False,
-        frame_variants_collection=FrameVariantsCollection(),
-        stemmer=stemmer)
-
-    parsed_news = TextParser.parse_news(news=news,
-                                        parse_options=parse_options)
-
-    ########################
-    # Step 2. Annotate text.
-    ########################
-
-    synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
-        stemmer=stemmer,
-        version=RuSentRelVersions.V11)
-
-    labels_scaler = ThreeLabelScaler()
-
-    annot_algo = DefaultSingleLabelAnnotationAlgorithm(
-        dist_in_terms_bound=None,
-        label_instance=NoLabel())
-
-    opins_for_extraction = annot_algo.iter_opinions(
-        parsed_news=parsed_news,
-        entities_collection=None)   # TODO. Create custom entity collections.
-
-    sample_row_provider = NetworkSampleRowProvider(
-        label_provider=MultipleLabelProvider(label_scaler=labels_scaler),
-        text_provider=BaseSingleTextProvider(
-            text_terms_mapper=StringWithEmbeddingNetworkTermMapping(
-                entity_to_group_func=lambda entity: entity_to_group_func(entity, synonyms),
-                predefined_embedding=RusvectoresEmbedding.from_word2vec_format(
-                    filepath=None,
-                    binary=True),
-                string_entities_formatter=StringEntitiesSimpleFormatter(),
-                string_emb_entity_formatter=StringEntitiesSimpleFormatter())),
-        frames_collection=RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20),
-        frame_role_label_scaler=ThreeLabelScaler(),
-        entity_to_group_func=entity_to_group_func,
-        pos_terms_mapper=PosTermsMapper(None))
-
-    ###########################
-    # Step 3. Serialize data
-    ###########################
-
-    NetworkInputHelper.prepare(
-        experiment=None,                 # Remove experiment
-        terms_per_context=None,
-        balance=None)
-
-    ###########################
     # Step 4. Deserialize data
-    ###########################
-
     network = PiecewiseCNN()
     config = CNNConfig()
 
@@ -125,10 +45,7 @@ def extract(text):
         ]),
         bag_size=config.BagSize)
 
-    ############################
     # Step 5. Model preparation.
-    ############################
-
     model = BaseTensorflowModel(
         nn_io=NeuralNetworkModelIO(
             target_dir=".model",
@@ -142,10 +59,7 @@ def extract(text):
 
     model.predict()
 
-    ########################################################
     # Step 6. Gather annotated contexts onto document level.
-    ########################################################
-
     labeled_samples = model.get_labeled_samples_collection(data_type=DataType.Test)
 
     # TODO. For now it is limited to tsv.
@@ -158,4 +72,9 @@ def extract(text):
 
 if __name__ == '__main__':
 
-    extract(EXAMPLES["simple"])
+    text = EXAMPLES["simple"]
+    labels_scaler = ThreeLabelScaler()
+    label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
+
+    pipeline_serialize(sentences_text_list=text, label_provider=label_provider)
+    pipeline_infer(labels_scaler)

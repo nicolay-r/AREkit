@@ -2,10 +2,11 @@ import logging
 import sys
 import unittest
 
+
 sys.path.append('../../../../')
 
-from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.common.frame_variants.base import FrameVariant
+from arekit.common.frames.variants.base import FrameVariant
+from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 
@@ -37,8 +38,8 @@ class TestRuSentiFrames(unittest.TestCase):
             # polarity
             for polarity in frames.get_frame_polarities(frame_id):
                 logger.info("Polarity: {}".format(",".join([polarity.Source,
-                                                              polarity.Destination,
-                                                              polarity.Label.to_class_str()])))
+                                                            polarity.Destination,
+                                                            polarity.Label.to_class_str()])))
 
             has_a0_a1_pol = frames.try_get_frame_polarity(frame_id, role_src="a0", role_dest="a1")
             logger.info("Has a0->a1 polarity: {}".format(has_a0_a1_pol is not None))

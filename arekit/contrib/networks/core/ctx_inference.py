@@ -112,7 +112,7 @@ class InferenceContext(object):
                 obj_ind=row.ObjectIndex,
                 words_vocab=vocab,
                 frame_inds=row.TextFrameVariantIndices,
-                frame_sent_roles=row.TextFrameVariantRoles,
+                frame_sent_roles=row.TextFrameConnotations,
                 syn_obj_inds=row.SynonymObjectInds,
                 syn_subj_inds=row.SynonymSubjectInds,
                 input_shapes=input_shapes,

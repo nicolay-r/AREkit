@@ -1,9 +1,10 @@
-from arekit.common.languages.pos import PartOfSpeechType
-from arekit.common.languages.ru.cases import RussianCases, RussianCasesService
-from arekit.common.languages.ru.number import RussianNumberType, RussianNumberTypeService
-from arekit.common.languages.ru.pos_service import PartOfSpeechTypesService
-from arekit.processing.pos.russian import RussianPOSTagger
 from pymystem3 import Mystem
+
+from arekit.processing.languages.pos import PartOfSpeechType
+from arekit.processing.languages.ru.cases import RussianCases, RussianCasesService
+from arekit.processing.languages.ru.number import RussianNumberType, RussianNumberTypeService
+from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
+from arekit.processing.pos.russian import RussianPOSTagger
 
 
 class POSMystemWrapper(RussianPOSTagger):

@@ -8,19 +8,21 @@ sys.path.append('../../../../')
 from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
 from arekit.common.utils import progress_bar_iter
+from arekit.common.news.parser import NewsParser
+from arekit.common.text.parser import BaseTextParser
 
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 from arekit.processing.text.token import Token
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -46,7 +48,7 @@ class TestRuAttitudes(unittest.TestCase):
                 entity = s_obj.to_entity(lambda in_id: in_id)
                 assert (isinstance(entity, Entity))
                 self.assertTrue(entity.GroupIndex is not None,
-                                "Group index [{news_id}] is None!".format(news_id=news.ID))
+                                "Group index [{doc_id}] is None!".format(doc_id=news.ID))
 
     def __iter_indices(self, ra_version):
         ids = set()
@@ -65,8 +67,9 @@ class TestRuAttitudes(unittest.TestCase):
         # Initializing stemmer
         stemmer = MystemWrapper()
 
-        options = RuAttitudesParseOptions(stemmer=stemmer,
-                                          frame_variants_collection=None)
+        # Initialize text parser pipeline.
+        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True)])
 
         # iterating through collection
         news_read = 0
@@ -78,7 +81,7 @@ class TestRuAttitudes(unittest.TestCase):
         for news in tqdm(news_it):
 
             # parse news
-            parsed_news = TextParser.parse_news(news=news, parse_options=options)
+            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
             terms = parsed_news.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 
@@ -98,11 +101,11 @@ class TestRuAttitudes(unittest.TestCase):
 
     def __test_iter_news_inds(self, ra_version):
         # iterating through collection
-        news_ids_it = RuAttitudesCollection.iter_news(version=ra_version,
-                                                      get_news_index_func=lambda ind: ind + 1,
-                                                      return_inds_only=True)
+        doc_ids_it = RuAttitudesCollection.iter_news(version=ra_version,
+                                                     get_news_index_func=lambda ind: ind + 1,
+                                                     return_inds_only=True)
 
-        it = progress_bar_iter(iterable=news_ids_it,
+        it = progress_bar_iter(iterable=doc_ids_it,
                                desc="Extracting document ids",
                                unit="docs")
 

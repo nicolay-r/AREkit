@@ -33,10 +33,10 @@ class BertBinaryOutputView(BaseOutputView):
 
     def __iter_linked_opinion_indices(self, linked_df):
         sample_ids = linked_df[const.ID].tolist()
-        all_news = [self._ids_provider.parse_index_in_sample_id(sample_id)
+        all_docs = [self._ids_provider.parse_index_in_sample_id(sample_id)
                     for sample_id in sample_ids]
-        for news_id in set(all_news):
-            yield news_id
+        for doc_id in set(all_docs):
+            yield doc_id
 
     # endregion
 

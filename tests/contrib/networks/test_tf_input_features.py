@@ -6,7 +6,6 @@ import unittest
 import numpy as np
 from pymystem3 import Mystem
 
-
 sys.path.append('../../../')
 
 from tests.contrib.networks.text.news import init_rusentrel_doc
@@ -14,17 +13,21 @@ from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.text.utils import terms_to_str
 
 from arekit.common.entities.base import Entity
-from arekit.common.frame_variants.collection import FrameVariantsCollection
 from arekit.common.news.parsed.term_position import TermPositionTypes
-from arekit.common.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
+from arekit.common.frames.variants.collection import FrameVariantsCollection
+from arekit.common.text.parser import BaseTextParser
 
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
+from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 
 
 class TestTfInputFeatures(unittest.TestCase):
@@ -50,6 +53,14 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
+        text_parser = BaseTextParser(pipeline=[
+            RuSentRelTextEntitiesParser(),
+            DefaultTextTokenizer(keep_tokens=True),
+            LemmasBasedFrameVariantsParser(frame_variants=self.unique_frame_variants,
+                                           stemmer=self.stemmer,
+                                           save_lemmas=True)
+        ])
+
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():
 
@@ -57,9 +68,8 @@ class TestTfInputFeatures(unittest.TestCase):
 
             news, parsed_news, opinions = init_rusentrel_doc(
                 doc_id=doc_id,
-                stemmer=self.stemmer,
-                synonyms=self.synonyms,
-                unique_frame_variants=self.unique_frame_variants)
+                text_parser=text_parser,
+                synonyms=self.synonyms)
 
             text_opinion_iter = iter_same_sentence_linked_text_opinions(
                 news=news,

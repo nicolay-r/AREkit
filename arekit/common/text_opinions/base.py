@@ -11,13 +11,13 @@ class TextOpinion(object):
 
     # region constructors
 
-    def __init__(self, news_id, text_opinion_id, source_id, target_id, owner, label):
-        assert(isinstance(news_id, int))
+    def __init__(self, doc_id, text_opinion_id, source_id, target_id, owner, label):
+        assert(isinstance(doc_id, int))
         assert(isinstance(text_opinion_id, int) or text_opinion_id is None)
 
         self.__source_id = source_id
         self.__target_id = target_id
-        self.__news_id = news_id
+        self.__doc_id = doc_id
         self.__owner = owner
         self.__text_opinion_id = text_opinion_id
         self.__modifiable_label = label
@@ -25,7 +25,7 @@ class TextOpinion(object):
     @classmethod
     def create_copy(cls, other):
         assert(isinstance(other, TextOpinion))
-        return TextOpinion(news_id=other.__news_id,
+        return TextOpinion(doc_id=other.__doc_id,
                            text_opinion_id=other.__text_opinion_id,
                            source_id=other.SourceId,
                            target_id=other.TargetId,
@@ -41,8 +41,8 @@ class TextOpinion(object):
         return self.__modifiable_label
 
     @property
-    def NewsID(self):
-        return self.__news_id
+    def DocID(self):
+        return self.__doc_id
 
     @property
     def TextOpinionID(self):

@@ -1,4 +1,4 @@
-from arekit.common.linked.text_opinions.wrapper import LinkedTextOpinionsWrapper
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 
 
 class BaseIDProvider(object):
@@ -17,14 +17,14 @@ class BaseIDProvider(object):
     # region 'create' methods
 
     @staticmethod
-    def create_opinion_id(linked_opinions, index_in_linked):
-        assert(isinstance(linked_opinions, LinkedTextOpinionsWrapper))
+    def create_opinion_id(text_opinions_linkage, index_in_linked):
+        assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
         assert(isinstance(index_in_linked, int))
 
         template = ''.join([BaseIDProvider.OPINION,
                             BaseIDProvider.INDEX])
 
-        text_opinion_id = linked_opinions.First.TextOpinionID
+        text_opinion_id = text_opinions_linkage.First.TextOpinionID
         assert(isinstance(text_opinion_id, int))
 
         return template.format(text_opinion_id,

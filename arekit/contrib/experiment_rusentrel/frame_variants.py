@@ -1,5 +1,5 @@
-from arekit.common.frame_variants.collection import FrameVariantsCollection
-from arekit.processing.lemmatization.base import Stemmer
+from arekit.common.frames.variants.collection import FrameVariantsCollection
+from arekit.common.text.stemmer import Stemmer
 
 
 class ExperimentFrameVariantsCollection(FrameVariantsCollection):

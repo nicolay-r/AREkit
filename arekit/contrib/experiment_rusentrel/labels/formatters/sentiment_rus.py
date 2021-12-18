@@ -11,8 +11,8 @@ class RussianThreeScaleRussianLabelsFormatter(StringLabelsFormatter):
 
     def __init__(self):
 
-        stol = {'негативно': ExperimentNegativeLabel(),
-                'позитивно': ExperimentPositiveLabel(),
-                'нейтрально': ExperimentNeutralLabel()}
+        stol = {'негативно': ExperimentNegativeLabel,
+                'позитивно': ExperimentPositiveLabel,
+                'нейтрально': ExperimentNeutralLabel}
 
         super(RussianThreeScaleRussianLabelsFormatter, self).__init__(stol=stol)

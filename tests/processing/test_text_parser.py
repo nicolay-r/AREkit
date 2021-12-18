@@ -1,18 +1,22 @@
 import logging
 import unittest
 
-from tests.processing.text.debug_text import debug_show_news_terms
+from arekit.common.frames.variants.collection import FrameVariantsCollection
+from arekit.common.news.parser import NewsParser
+from arekit.common.text.parser import BaseTextParser
 
-from arekit.common.frame_variants.collection import FrameVariantsCollection
+from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
-from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
+
+from tests.processing.text.debug_text import debug_show_news_terms
 
 
 class TestTextParser(unittest.TestCase):
@@ -30,14 +34,15 @@ class TestTextParser(unittest.TestCase):
         # frame and variants.
         frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
         frame_variants = FrameVariantsCollection()
-        print((type(frame_variants)))
         frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants(),
                                           overwrite_existed_variant=True,
                                           raise_error_on_existed_variant=False)
 
-        # RuAttitudes options.
-        options = RuSentRelNewsParseOptions(stemmer=stemmer,
-                                            frame_variants_collection=frame_variants)
+        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True),
+                                               LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
+                                                                              stemmer=stemmer,
+                                                                              save_lemmas=False)])
 
         # Reading synonyms collection.
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)
@@ -51,7 +56,7 @@ class TestTextParser(unittest.TestCase):
                                                version=version)
 
             # Perform text parsing.
-            parsed_news = TextParser.parse_news(news, options)
+            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
             debug_show_news_terms(parsed_news=parsed_news)
 
 

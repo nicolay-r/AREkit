@@ -2,17 +2,21 @@ import unittest
 
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parser import NewsParser
+from arekit.common.text.enums import TermFormat
+from arekit.common.text.parsed import BaseParsedText
+from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.experiment_rusentrel.labels.scalers.ruattitudes import ExperimentRuAttitudesLabelConverter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
+from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.contrib.source.ruattitudes.news.parse_options import RuAttitudesParseOptions
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
-from arekit.contrib.source.rusentrel.news.parse_options import RuSentRelNewsParseOptions
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.parser import TextParser
+from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
+from arekit.processing.text.token import Token
 
 
 class TestPartOfSpeech(unittest.TestCase):
@@ -23,46 +27,55 @@ class TestPartOfSpeech(unittest.TestCase):
                                                   label_convereter=ExperimentRuAttitudesLabelConverter(),
                                                   return_inds_only=False)
 
+        text_parser = BaseTextParser(pipeline=[RuAttitudesTextEntitiesParser()])
+
         for news in news_it:
 
-            # Parse single sentence.
-            assert(isinstance(news, RuAttitudesNews))
-            parsed_text = news.sentence_to_terms_list(0)
-            self.__print_parsed_text(parsed_text)
-
             # Parse news via external parser.
-            stemmer = MystemWrapper()
-            options = RuAttitudesParseOptions(stemmer=stemmer, frame_variants_collection=None)
-            parsed_news = TextParser.parse_news(news=news, parse_options=options)
+            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
             assert(isinstance(parsed_news, ParsedNews))
 
+            # Display result
+            for parsed_text in parsed_news:
+                self.__print_parsed_text(parsed_text)
+
     def test_rusentrel_news_text_parsing(self):
-        stemmer = MystemWrapper()
         version = RuSentRelVersions.V11
+
+        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True)])
+
+        stemmer = MystemWrapper()
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
                                                                        version=version)
         news = RuSentRelNews.read_document(doc_id=1,
                                            synonyms=synonyms,
                                            version=version)
 
-        assert(isinstance(news, RuSentRelNews))
-        parsed_text = news.sentence_to_terms_list(8)
-        self.__print_parsed_text(parsed_text)
-
         # Parse news via external parser.
-        stemmer = MystemWrapper()
-        options = RuSentRelNewsParseOptions(stemmer=stemmer, frame_variants_collection=None)
-        parsed_news = TextParser.parse_news(news=news, parse_options=options)
-        assert (isinstance(parsed_news, ParsedNews))
+        parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
 
-    def __print_parsed_text(self, parsed_text):
-        assert(isinstance(parsed_text, list))
-        print("Length: {}".format(len(parsed_text)))
-        for t in parsed_text:
+        # Display result
+        for parsed_text in parsed_news:
+            self.__print_parsed_text(parsed_text)
+
+        assert(isinstance(parsed_news, ParsedNews))
+
+    @staticmethod
+    def __print_parsed_text(parsed_text):
+        assert(isinstance(parsed_text, BaseParsedText))
+
+        terms_list = list(parsed_text.iter_terms(TermFormat.Raw))
+
+        print("Length: {}".format(len(terms_list)))
+        for t in terms_list:
             if isinstance(t, Entity):
                 print("<{}>".format(t.Value), end=' ')
+            elif isinstance(t, Token):
+                print("[{}]".format(t.get_token_value()), end=' ')
             else:
-                print("'{}'".format(t), end=' ')
+                print("{{{}}}".format(t), end=' ')
+        print()
 
 
 if __name__ == '__main__':

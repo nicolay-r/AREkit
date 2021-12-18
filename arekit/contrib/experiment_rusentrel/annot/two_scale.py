@@ -27,7 +27,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(data_type, DataType))
 
-        doc_id = parsed_news.RelatedNewsID
+        doc_id = parsed_news.RelatedDocID
         neut_collection = opin_ops.create_opinion_collection()
         assert(isinstance(neut_collection, OpinionCollection))
 

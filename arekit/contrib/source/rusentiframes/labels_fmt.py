@@ -6,18 +6,18 @@ class RuSentiFramesLabelsFormatter(StringLabelsFormatter):
 
     def __init__(self):
 
-        stol = {'neg': self._negative_label_instance(),
-                'pos': self._positive_label_instance()}
+        stol = {'neg': self._negative_label_type(),
+                'pos': self._positive_label_type()}
 
         super(RuSentiFramesLabelsFormatter, self).__init__(stol=stol)
 
     @classmethod
-    def _positive_label_instance(cls):
-        return PositiveLabel()
+    def _positive_label_type(cls):
+        return PositiveLabel
 
     @classmethod
-    def _negative_label_instance(cls):
-        return NegativeLabel()
+    def _negative_label_type(cls):
+        return NegativeLabel
 
 
 class RuSentiFramesEffectLabelsFormatter(StringLabelsFormatter):
@@ -27,15 +27,15 @@ class RuSentiFramesEffectLabelsFormatter(StringLabelsFormatter):
 
     def __init__(self):
 
-        stol = {'-': self._negative_label_instance(),
-                '+': self._positive_label_instance()}
+        stol = {'-': self._negative_label_type(),
+                '+': self._positive_label_type()}
 
         super(RuSentiFramesEffectLabelsFormatter, self).__init__(stol=stol)
 
     @classmethod
-    def _positive_label_instance(cls):
-        return PositiveLabel()
+    def _positive_label_type(cls):
+        return PositiveLabel
 
     @classmethod
-    def _negative_label_instance(cls):
-        return NegativeLabel()
+    def _negative_label_type(cls):
+        return NegativeLabel
