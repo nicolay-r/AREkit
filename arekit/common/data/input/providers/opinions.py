@@ -94,7 +94,7 @@ class OpinionProvider(object):
                 doc_ids_it=doc_ids_it,
                 parse_news_func=lambda doc_id: parse_news_func(doc_id))
 
-        return cls(linked_text_opins_it_func=it_func)
+        return cls(text_opinions_linkages_it_func=it_func)
 
     def iter_linked_opinions(self, doc_ids_it):
         return self.__text_opinions_linkages_it_func(doc_ids_it)
