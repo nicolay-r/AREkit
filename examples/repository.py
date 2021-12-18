@@ -83,7 +83,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
 
     collection = EntityCollection(
         entities=list(parsed_news.iter_entities()),
-        synonyms=synonyms)
+        value_to_group_id_func=synonyms.get_synonym_group_index)
 
     news.set_entities(entities=collection)
 
