@@ -36,16 +36,6 @@ def create_frame_variants_collection():
     return frame_variant_collection
 
 
-def extract_entities_from_news(news):
-    entities = []
-    for sentence in news.iter_sentences():
-        for term in sentence.Text:
-            if isinstance(term, Entity):
-                entities.append(term)
-
-    return entities
-
-
 def pipeline_serialize(sentences_text_list, label_provider):
     assert(isinstance(sentences_text_list, list))
     assert(isinstance(label_provider, LabelProvider))
