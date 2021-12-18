@@ -14,6 +14,7 @@ from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocume
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -134,7 +135,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__ruattitudes_doc = RuAttitudesDocumentOperations(
             folding=ruattiudes_folding,
             ru_attitudes=ru_attitudes,
-            text_parser=create_text_parser(self.__exp_data))
+            text_parser=create_text_parser(exp_data=self.__exp_data,
+                                           entities_parser=RuAttitudesTextEntitiesParser()))
         self.__ru_attitudes = ru_attitudes
 
     # endregion

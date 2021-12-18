@@ -8,6 +8,7 @@ from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocume
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 logger = logging.getLogger(__name__)
@@ -50,9 +51,13 @@ class RuSentRelExperiment(BaseExperiment):
                                                            version=version,
                                                            docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
                                                            experiment_io=experiment_io)
+
+        text_parser = create_text_parser(exp_data=exp_data,
+                                         entities_parser=RuSentRelTextEntitiesParser())
+
         doc_ops = RuSentrelDocumentOperations(folding=folding,
                                               version=version,
-                                              text_parser=create_text_parser(exp_data),
+                                              text_parser=text_parser,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
         exp_name = "rsr-{version}-{format}".format(version=version.value,
