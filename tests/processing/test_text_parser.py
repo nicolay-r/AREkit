@@ -4,19 +4,19 @@ import unittest
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
-
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
-from tests.processing.text.debug_text import debug_show_news_terms
-
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
+
+from tests.processing.text.debug_text import debug_show_news_terms
 
 
 class TestTextParser(unittest.TestCase):

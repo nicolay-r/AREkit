@@ -2,6 +2,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.experiment.annot.base_annot import BaseAnnotationAlgorithm
 from arekit.common.labels.base import Label
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.providers.opinion_pairs import OpinionPairsProvider
 from arekit.common.opinions.base import Opinion
 from arekit.common.dataset.text_opinions.enums import DistanceType
 from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
@@ -39,25 +40,6 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
     def __is_ignored_entity_value(self, entity_value):
         assert(isinstance(entity_value, str))
         return entity_value in self.__ignored_entity_values
-
-    def __iter_opinions_between_entities(self, relevant_pairs, entities_list):
-        assert(isinstance(entities_list, list))
-
-        for e1 in entities_list:
-            assert(isinstance(e1, Entity))
-
-            for e2 in entities_list:
-                assert(isinstance(e2, Entity))
-
-                key = self.__create_key_by_entity_pair(e1=e1, e2=e2)
-                if key not in relevant_pairs:
-                    continue
-
-                opinion = Opinion(source_value=e1.Value,
-                                  target_value=e2.Value,
-                                  sentiment=self.__label_instance)
-
-                yield opinion
 
     def __try_create_pair_key(self, parsed_news, e1, e2, existed_opinions):
         assert(isinstance(e1, Entity))
@@ -99,25 +81,17 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
     def iter_opinions(self, parsed_news, existed_opinions=None):
         assert(isinstance(parsed_news, ParsedNews))
 
-        parsed_news.iter_terms()
-        relevant_pairs = {}
+        def __filter_pair_func(e1, e2):
+            key = self.__try_create_pair_key(
+                parsed_news=parsed_news,
+                e1=e1, e2=e2,
+                existed_opinions=existed_opinions)
 
-        cached_entities_list = list(parsed_news.iter_entities())
+            return key is not None
 
-        for e1 in cached_entities_list:
-            assert(isinstance(e1, Entity))
+        # Init opinion provider.
+        opinions_provider = OpinionPairsProvider(parsed_news=parsed_news)
 
-            for e2 in cached_entities_list:
-                assert(isinstance(e2, Entity))
-
-                key = self.__try_create_pair_key(parsed_news=parsed_news,
-                                                 e1=e1, e2=e2,
-                                                 existed_opinions=existed_opinions)
-
-                if key is None:
-                    continue
-
-                relevant_pairs[key] = 0
-
-        return self.__iter_opinions_between_entities(relevant_pairs=relevant_pairs,
-                                                     entities_list=cached_entities_list)
+        return opinions_provider.iter_from_all(
+            label=self.__label_instance,
+            filter_func=__filter_pair_func)

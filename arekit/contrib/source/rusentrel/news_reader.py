@@ -1,34 +1,24 @@
-from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.base import News
-from arekit.common.opinions.base import Opinion
 from arekit.common.synonyms import SynonymsCollection
 
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
 from arekit.contrib.source.rusentrel.entities.collection import RuSentRelDocumentEntityCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
-from arekit.contrib.source.rusentrel.opinions.extraction import iter_text_opinions_by_doc_opinion
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 
 
-class RuSentRelNews(News):
-
-    def __init__(self, doc_id, sentences, entities):
-        assert(isinstance(sentences, list))
-
-        super(RuSentRelNews, self).__init__(doc_id=doc_id, sentences=sentences)
-
-        self.__entities = entities
+class RuSentRelNews:
 
     # region class methods
 
-    @classmethod
-    def read_document(cls, doc_id, synonyms, version=RuSentRelVersions.V11, target_doc_id=None):
+    @staticmethod
+    def read_document(doc_id, synonyms, version=RuSentRelVersions.V11, target_doc_id=None):
         assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(target_doc_id, int) or target_doc_id is None)
 
         def file_to_doc(input_file):
-            return cls.__from_file(
+            return RuSentRelNews.__from_file(
                 doc_id=target_doc_id if target_doc_id is not None else doc_id,
                 input_file=input_file,
                 entities=entities)
@@ -43,8 +33,8 @@ class RuSentRelNews(News):
             process_func=file_to_doc,
             version=version)
 
-    @classmethod
-    def __from_file(cls, doc_id, input_file, entities):
+    @staticmethod
+    def __from_file( doc_id, input_file, entities):
         assert(isinstance(doc_id, int))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
@@ -79,7 +69,7 @@ class RuSentRelNews(News):
 
         assert(e_ind == len(entities))
 
-        return cls(doc_id=doc_id, sentences=sentences, entities=entities)
+        return News(doc_id=doc_id, sentences=sentences)
 
     # endregion
 
@@ -111,18 +101,5 @@ class RuSentRelNews(News):
             line_start = line_end + 1
 
         return sentences
-
-    # endregion
-
-    # region base News
-
-    def extract_text_opinions_linkages(self, opinion):
-        assert(isinstance(opinion, Opinion))
-
-        text_opinions_it = iter_text_opinions_by_doc_opinion(rusentrel_doc_id=self.ID,
-                                                             doc_entities=self.__entities,
-                                                             opinion=opinion)
-
-        return TextOpinionsLinkage(text_opinions_it=text_opinions_it)
 
     # endregion

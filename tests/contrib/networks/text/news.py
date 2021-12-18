@@ -2,7 +2,7 @@ from arekit.common.news.parser import NewsParser
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
 

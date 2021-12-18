@@ -52,6 +52,9 @@ class ParsedNews(object):
     def __init_entity_positions(self):
         self.__entity_positions = self.__calculate_entity_positions()
 
+    def __iter_entities(self):
+        return self.__iter_all_raw_terms(term_only=True, term_check=lambda term: self.__is_entity(term))
+
     def __calculate_entity_positions(self):
         positions = {}
         t_ind_in_doc = 0
@@ -129,7 +132,7 @@ class ParsedNews(object):
             yield term
 
     def iter_entities(self):
-        return self.__iter_all_raw_terms(term_only=True, term_check=lambda term: self.__is_entity(term))
+        return self.__iter_entities()
 
     def iter_sentence_terms(self, sentence_index, return_id, term_check=None):
         assert(isinstance(sentence_index, int))
@@ -144,7 +147,6 @@ class ParsedNews(object):
                 yield ind_in_sent, term
             else:
                 yield term
-
     # endregion
 
     def __iter__(self):

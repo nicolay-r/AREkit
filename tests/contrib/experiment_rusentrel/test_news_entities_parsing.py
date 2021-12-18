@@ -13,7 +13,7 @@ from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntit
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.text.token import Token

@@ -2,7 +2,7 @@ import collections
 
 from arekit.common.data.input.sample import InputSampleBase
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
-from arekit.common.news.base import News
+from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
 
 
 class OpinionProvider(object):
@@ -16,17 +16,18 @@ class OpinionProvider(object):
 
     # region private methods
 
-    # TODO. #224 no need news func.
     @staticmethod
-    def __iter_linked_text_opinion_lists(news, iter_opins_for_extraction, filter_text_opinion_func):
-        assert (isinstance(news, News))
+    def __iter_linked_text_opinion_lists(
+            text_opinion_pairs_provider,
+            iter_opins_for_extraction,
+            filter_text_opinion_func):
+
+        assert (isinstance(text_opinion_pairs_provider, TextOpinionPairsProvider))
         assert (isinstance(iter_opins_for_extraction, collections.Iterable))
         assert (callable(filter_text_opinion_func))
 
         for opinion in iter_opins_for_extraction:
-            linked_text_opinions = news.extract_text_opinions_linkages(opinion)
-            assert (linked_text_opinions, TextOpinionsLinkage)
-
+            linked_text_opinions = TextOpinionsLinkage(text_opinion_pairs_provider.iter_from_opinion(opinion))
             filtered_text_opinions = list(filter(filter_text_opinion_func, linked_text_opinions))
 
             if len(filtered_text_opinions) == 0:
@@ -35,8 +36,8 @@ class OpinionProvider(object):
             yield filtered_text_opinions
 
     @staticmethod
-    def __iter_linked_text_opins(read_news_func, news_opins_for_extraction_func,
-                                 parse_news_func, terms_per_context, doc_ids_it):
+    def __iter_linked_text_opins(news_opins_for_extraction_func, parse_news_func,
+                                 value_to_group_id_func, terms_per_context, doc_ids_it):
         """
         Extracting text-level opinions based on doc-level opinions in documents,
         obtained by information in experiment.
@@ -44,20 +45,22 @@ class OpinionProvider(object):
         NOTE:
         1. Assumes to provide the same label (doc level opinion) onto related text-level opinions.
         """
-        # TODO. #224 no need news func.
-        assert(callable(read_news_func))
         assert(callable(parse_news_func))
+        assert(callable(value_to_group_id_func))
         assert(isinstance(doc_ids_it, collections.Iterable))
 
         curr_id = 0
+
+        value_to_group_id_func = None
 
         for doc_id in doc_ids_it:
 
             parsed_news = parse_news_func(doc_id)
 
             linked_text_opinion_lists = OpinionProvider.__iter_linked_text_opinion_lists(
-                # TODO. #224 no need news.
-                news=read_news_func(parsed_news.RelatedDocID),
+                text_opinion_pairs_provider=TextOpinionPairsProvider(
+                    parsed_news=parsed_news,
+                    value_to_group_id_func=value_to_group_id_func),
                 iter_opins_for_extraction=news_opins_for_extraction_func(doc_id=parsed_news.RelatedDocID),
                 filter_text_opinion_func=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
                     parsed_news=parsed_news,
@@ -75,20 +78,17 @@ class OpinionProvider(object):
 
     # endregion
 
-    # TODO. #224 no need news func.
     @classmethod
-    def create(cls, read_news_func, iter_news_opins_for_extraction,
+    def create(cls, iter_news_opins_for_extraction, value_to_group_id_func,
                parse_news_func, terms_per_context):
-        # TODO. #224 no need news func.
-        assert(callable(read_news_func))
         assert(callable(iter_news_opins_for_extraction))
+        assert(callable(value_to_group_id_func))
         assert(isinstance(terms_per_context, int))
         assert(callable(parse_news_func))
 
         def it_func(doc_ids_it):
             return cls.__iter_linked_text_opins(
-                # TODO. #224 no need news func.
-                read_news_func=lambda doc_id: read_news_func(doc_id),
+                value_to_group_id_func=value_to_group_id_func,
                 news_opins_for_extraction_func=lambda doc_id: iter_news_opins_for_extraction(doc_id=doc_id),
                 terms_per_context=terms_per_context,
                 doc_ids_it=doc_ids_it,

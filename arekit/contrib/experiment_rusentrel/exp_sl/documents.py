@@ -1,7 +1,7 @@
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.news.base import RuSentRelNews
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
 
 
 class RuSentrelDocumentOperations(DocumentOperations):

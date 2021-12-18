@@ -93,9 +93,12 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
             text_parser=text_parser,
             synonyms=self.synonyms)
 
-        for text_opinion in iter_same_sentence_linked_text_opinions(news=news,
-                                                                    opinions=opinions,
-                                                                    parsed_news=parsed_news):
+        text_opinions = iter_same_sentence_linked_text_opinions(
+            opinions=opinions,
+            parsed_news=parsed_news,
+            value_to_group_id_func=self.synonyms.get_synonym_group_index)
+
+        for text_opinion in text_opinions:
 
             s_index = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
                                                       position_type=TermPositionTypes.SentenceIndex)

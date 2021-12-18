@@ -1,11 +1,11 @@
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.entities.base import Entity
-from arekit.common.entities.collection import EntityCollection
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.common.news.base import News
 from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
@@ -21,7 +21,7 @@ from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVa
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from examples.input import EXAMPLES
 from examples.network.utils import SingleDocOperations, CustomOpinionOperations, CustomSerializationData, \
-    CustomExperiment, TextEntitiesParser, CustomNetworkIOUtils, CustomNews, TermsSplitterParser
+    CustomExperiment, TextEntitiesParser, CustomNetworkIOUtils, TermsSplitterParser
 
 
 def create_frame_variants_collection():
@@ -62,7 +62,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
     frame_variants_collection = create_frame_variants_collection()
 
     # Step 1. Parse text.
-    news = CustomNews(doc_id=0, sentences=sentences)
+    news = News(doc_id=0, sentences=sentences)
 
     text_parser = BaseTextParser(
         pipeline=[
@@ -80,12 +80,6 @@ def pipeline_serialize(sentences_text_list, label_provider):
     synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
         stemmer=stemmer,
         version=RuSentRelVersions.V11)
-
-    collection = EntityCollection(
-        entities=list(parsed_news.iter_entities()),
-        value_to_group_id_func=synonyms.get_synonym_group_index)
-
-    news.set_entities(entities=collection)
 
     opins_for_extraction = annot_algo.iter_opinions(parsed_news=parsed_news)
 

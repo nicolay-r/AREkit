@@ -30,10 +30,3 @@ class News(object):
 
     def get_sentence(self, s_ind):
         return self._sentences[s_ind]
-
-    def extract_text_opinions_linkages(self, opinion):
-        """
-        opinions: iterable Opinion
-            is an iterable opinions that should be used to find a related text_opinion entries.
-        """
-        raise NotImplementedError()
