@@ -7,7 +7,9 @@ from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPa
 
 class OpinionProvider(object):
     """
-    TextOpinion iterator
+    TextOpinion iterator.
+        - Filter text_opinions by provided func.
+        - Assigns the IDs.
     """
 
     def __init__(self, text_opinions_linkages_it_func):
@@ -51,7 +53,7 @@ class OpinionProvider(object):
 
         curr_id = 0
 
-        value_to_group_id_func = None
+        value_to_group_id_func = value_to_group_id_func
 
         for doc_id in doc_ids_it:
 
