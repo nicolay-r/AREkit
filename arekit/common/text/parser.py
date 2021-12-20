@@ -1,19 +1,9 @@
+from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text.parsed import BaseParsedText
-from arekit.common.text.pipeline_ctx import PipelineContext
-from arekit.common.text.pipeline_item import TextParserPipelineItem
 
 
-class BaseTextParser(object):
+class BaseTextParser(BasePipeline):
 
-    def __init__(self, pipeline):
-        assert(isinstance(pipeline, list))
-        self.__pipeline = pipeline
-
-    def parse(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
-
-        for item in filter(lambda itm: itm is not None, self.__pipeline):
-            assert(isinstance(item, TextParserPipelineItem))
-            item.apply(pipeline_ctx)
-
+    def run(self, pipeline_ctx):
+        super(BaseTextParser, self).run(pipeline_ctx)
         return BaseParsedText(terms=pipeline_ctx.provide("src"))

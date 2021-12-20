@@ -1,6 +1,6 @@
 from arekit.common.entities.base import Entity
-from arekit.common.text.pipeline_ctx import PipelineContext
-from arekit.common.text.pipeline_item import TextParserPipelineItem
+from arekit.common.pipeline.context import PipelineContext
+from arekit.common.pipeline.item import TextParserPipelineItem
 
 
 class EntitiesGroupingPipelineItem(TextParserPipelineItem):

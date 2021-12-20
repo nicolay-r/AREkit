@@ -1,9 +1,9 @@
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
+from arekit.common.pipeline.item import TextParserPipelineItem
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text.parser import BaseTextParser
-from arekit.common.text.pipeline_item import TextParserPipelineItem
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 

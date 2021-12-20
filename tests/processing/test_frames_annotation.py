@@ -1,5 +1,5 @@
 from arekit.common.frames.text_variant import TextFrameVariant
-from arekit.common.text.pipeline_ctx import PipelineContext
+from arekit.common.pipeline.context import PipelineContext
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from examples.repository import create_frame_variants_collection

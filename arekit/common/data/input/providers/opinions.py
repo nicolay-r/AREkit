@@ -60,6 +60,7 @@ class OpinionProvider(object):
             parsed_news = parse_news_func(doc_id)
 
             linked_text_opinion_lists = OpinionProvider.__iter_linked_text_opinion_lists(
+                # TODO. To be refactored.
                 text_opinion_pairs_provider=TextOpinionPairsProvider(
                     parsed_news=parsed_news,
                     value_to_group_id_func=value_to_group_id_func),

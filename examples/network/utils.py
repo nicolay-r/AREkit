@@ -9,8 +9,8 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.text.pipeline_ctx import PipelineContext
-from arekit.common.text.pipeline_item import TextParserPipelineItem
+from arekit.common.pipeline.context import PipelineContext
+from arekit.common.pipeline.item import TextParserPipelineItem
 from arekit.common.utils import split_by_whitespaces
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
