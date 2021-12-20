@@ -74,12 +74,6 @@ class BaseExperiment(object):
             return
         logger.info(message)
 
-    def entity_to_group(self, entity):
-        """ This function provides provides integer group for a particular entity
-            This grouping method assumes to be implmented in a nested experiment.
-        """
-        raise NotImplementedError()
-
     def evaluate(self, data_type, epoch_index):
         """
         Perform experiment evaluation (related model) of a certain

@@ -30,13 +30,11 @@ class NetworkInputHelper(object):
     # region private methods
 
     @staticmethod
-    def __create_text_provider(term_embedding_pairs, exp_data, entity_to_group_func):
+    def __create_text_provider(term_embedding_pairs, exp_data):
         assert(isinstance(exp_data, NetworkSerializationData))
         assert(isinstance(term_embedding_pairs, OrderedDict))
-        assert(callable(entity_to_group_func))
 
         terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
-            entity_to_group_func=entity_to_group_func,
             predefined_embedding=exp_data.WordEmbedding,
             string_entities_formatter=exp_data.StringEntityFormatter,
             string_emb_entity_formatter=exp_data.StringEntityEmbeddingFormatter)
@@ -49,16 +47,14 @@ class NetworkInputHelper(object):
                 emb_vector=pair[1]))
 
     @staticmethod
-    def __create_samples_repo(exp_data, term_embedding_pairs, entity_to_group_func):
+    def __create_samples_repo(exp_data, term_embedding_pairs):
         sample_row_provider = NetworkSampleRowProvider(
             label_provider=exp_data.LabelProvider,
             text_provider=NetworkInputHelper.__create_text_provider(
                 term_embedding_pairs=term_embedding_pairs,
-                exp_data=exp_data,
-                entity_to_group_func=entity_to_group_func),
+                exp_data=exp_data),
             frames_connotation_provider=exp_data.FramesConnotationProvider,
             frame_role_label_scaler=exp_data.FrameRolesLabelScaler,
-            entity_to_group_func=entity_to_group_func,
             pos_terms_mapper=PosTermsMapper(exp_data.PosTagger))
 
         return BaseInputSamplesRepository(
@@ -93,7 +89,6 @@ class NetworkInputHelper(object):
         opinions_repo = NetworkInputHelper.__create_opinions_repo()
         samples_repo = NetworkInputHelper.__create_samples_repo(
             exp_data=experiment.DataIO,
-            entity_to_group_func=experiment.entity_to_group,
             term_embedding_pairs=term_embedding_pairs)
 
         # Populate repositories
@@ -140,8 +135,7 @@ class NetworkInputHelper(object):
                     labels_formatter=experiment.OpinionOperations.LabelsFormatter)
 
             opinion_provider = OpinionProvider.create(
-                # TODO. #224 no need news func.
-                read_news_func=lambda doc_id: experiment.DocumentOperations.get_doc(doc_id),
+                value_to_group_id_func=None,        # TODO. Remove this parameter.
                 parse_news_func=lambda doc_id: experiment.DocumentOperations.parse_doc(doc_id),
                 iter_news_opins_for_extraction=lambda doc_id:
                     experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),

@@ -3,7 +3,6 @@ import os
 from arekit.common.entities.base import Entity
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.enums import BaseDocumentTag
-from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
@@ -13,7 +12,6 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.text.pipeline_ctx import PipelineContext
 from arekit.common.text.pipeline_item import TextParserPipelineItem
 from arekit.common.utils import split_by_whitespaces
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
@@ -76,19 +74,13 @@ class CustomOpinionOperations(OpinionOperations):
 
 class CustomExperiment(BaseExperiment):
 
-    def __init__(self, synonyms, exp_data, exp_io_type, opin_ops, doc_ops):
-        assert(issubclass(exp_io_type, BaseIOUtils))
+    def __init__(self, exp_data, exp_io_type, opin_ops, doc_ops):
         super(CustomExperiment, self).__init__(exp_data=exp_data,
                                                experiment_io=exp_io_type(self),
                                                opin_ops=opin_ops,
                                                doc_ops=doc_ops,
                                                name="test",
                                                extra_name_suffix="test")
-
-        self.__synonyms = synonyms
-
-    def entity_to_group(self, entity):
-        return entity_to_group_func(entity, synonyms=self.__synonyms)
 
 
 class CustomSerializationData(NetworkSerializationData):

@@ -15,18 +15,15 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                  label_provider,
                  text_provider,
                  frames_connotation_provider,
-                 entity_to_group_func,
                  frame_role_label_scaler,
                  pos_terms_mapper):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(pos_terms_mapper, PosTermsMapper))
         assert(isinstance(frame_role_label_scaler, BaseLabelScaler))
-        assert(callable(entity_to_group_func))
 
         super(NetworkSampleRowProvider, self).__init__(label_provider=label_provider,
                                                        text_provider=text_provider)
 
-        self.__entity_to_group_func = entity_to_group_func
         self.__frames_connotation_provider = frames_connotation_provider
         self.__frame_role_label_scaler = frame_role_label_scaler
         self.__pos_terms_mapper = pos_terms_mapper
@@ -89,7 +86,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         assert(isinstance(entity, Entity))
 
         # Searching for other synonyms among all the terms.
-        group_ind = self.__entity_to_group_func(entity)
+        group_ind = entity.GroupIndex
         it = self.__iter_indices(terms=terms, filter=lambda t: self.__syn_check(term=t, group_ind=group_ind))
         inds_set = set(it)
 
@@ -109,7 +106,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
             return False
         if group_ind is None:
             return False
-        return self.__entity_to_group_func(term) == group_ind
+        return term.GroupIndex == group_ind
 
     @staticmethod
     def __to_arg(inds_iter):

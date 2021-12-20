@@ -16,11 +16,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
     MAX_PART_CUSTOM_EMBEDDING_SIZE = 3
     TOKEN_RANDOM_SEED_OFFSET = 12345
 
-    def __init__(self,
-                 entity_to_group_func,
-                 predefined_embedding,
-                 string_entities_formatter,
-                 string_emb_entity_formatter):
+    def __init__(self, predefined_embedding, string_entities_formatter, string_emb_entity_formatter):
         """
         predefined_embedding:
         string_emb_entity_formatter:
@@ -30,8 +26,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
         assert(isinstance(string_emb_entity_formatter, StringEntitiesFormatter))
 
         super(StringWithEmbeddingNetworkTermMapping, self).__init__(
-            entity_formatter=string_entities_formatter,
-            entity_to_group_func=entity_to_group_func)
+            entity_formatter=string_entities_formatter)
 
         self.__predefined_embedding = predefined_embedding
         self.__string_emb_entity_formatter = string_emb_entity_formatter

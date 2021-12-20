@@ -3,7 +3,7 @@ import logging
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func, create_text_parser
+from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
@@ -83,6 +83,3 @@ class RuSentRelExperiment(BaseExperiment):
         return self.__synonyms
 
     # endregion
-
-    def entity_to_group(self, entity):
-        return entity_to_group_func(entity, synonyms=self.__synonyms)

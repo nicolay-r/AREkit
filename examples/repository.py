@@ -1,11 +1,11 @@
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.entities.base import Entity
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.base import News
+from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
@@ -51,6 +51,11 @@ def pipeline_serialize(sentences_text_list, label_provider):
 
     frame_variants_collection = create_frame_variants_collection()
 
+    # Step 2. Annotate text.
+    synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+        stemmer=stemmer,
+        version=RuSentRelVersions.V11)
+
     # Step 1. Parse text.
     news = News(doc_id=0, sentences=sentences)
 
@@ -58,6 +63,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
         pipeline=[
             TermsSplitterParser(),
             TextEntitiesParser(),
+            EntitiesGroupingPipelineItem(synonyms.get_synonym_group_index),
             DefaultTextTokenizer(keep_tokens=True),
             LemmasBasedFrameVariantsParser(save_lemmas=False,
                                            stemmer=stemmer,
@@ -65,11 +71,6 @@ def pipeline_serialize(sentences_text_list, label_provider):
         ])
 
     parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
-
-    # Step 2. Annotate text.
-    synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
-        stemmer=stemmer,
-        version=RuSentRelVersions.V11)
 
     opins_for_extraction = annot_algo.iter_opinions(parsed_news=parsed_news)
 
@@ -87,8 +88,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
                                        frame_variants_collection=frame_variants_collection)
 
     # Step 3. Serialize data
-    experiment = CustomExperiment(synonyms=synonyms,
-                                  exp_data=exp_data,
+    experiment = CustomExperiment(exp_data=exp_data,
                                   exp_io_type=CustomNetworkIOUtils,
                                   doc_ops=doc_ops,
                                   opin_ops=opin_ops)

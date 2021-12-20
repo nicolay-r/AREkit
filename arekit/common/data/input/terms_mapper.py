@@ -12,11 +12,9 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
     The latter might be utilized with synonyms collection
     """
 
-    def __init__(self, entity_formatter, entity_to_group_func):
+    def __init__(self, entity_formatter):
         assert(isinstance(entity_formatter, StringEntitiesFormatter))
-        assert(callable(entity_to_group_func))
         self.__entities_formatter = entity_formatter
-        self.__entity_to_group_func = entity_to_group_func
         self.__s_ind = None
         self.__t_ind = None
         self.__s_group = None
@@ -27,8 +25,10 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
         return self.__entities_formatter
 
     def __syn_group(self, entity):
+        """ Note: here we guarantee that entity has GroupIndex.
+        """
         assert(isinstance(entity, Entity))
-        return self.__entity_to_group_func(entity) if entity is not None else None
+        return entity.GroupIndex if entity is not None else None
 
     def set_s_ind(self, s_ind):
         assert(isinstance(s_ind, int))

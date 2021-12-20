@@ -24,3 +24,8 @@ class Entity(object):
     @property
     def Type(self):
         return self.__type
+
+    def set_group_index(self, value):
+        assert(isinstance(value, int) and value >= -1)
+        assert(self.__group_index is None)
+        self.__group_index = value

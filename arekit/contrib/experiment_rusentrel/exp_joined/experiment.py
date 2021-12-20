@@ -3,7 +3,7 @@ import logging
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func, create_text_parser
+from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_ds.opinions import RuAttitudesOpinionOperations
@@ -64,13 +64,15 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
 
         # init text parser.
         # TODO. Limitation, depending on document, entities parser may vary.
-        text_parser = create_text_parser(exp_data=self.__exp_data,
-                                         entities_parser=RuSentRelTextEntitiesParser())
+        text_parser = create_text_parser(
+            exp_data=self.__exp_data,
+            entities_parser=RuSentRelTextEntitiesParser(),
+            value_to_group_id_func=self._get_synonyms().get_synonym_group_index)
 
         # init documents.
         rusentrel_doc = RuSentrelDocumentOperations(version=rusentrel_version,
                                                     folding=rusentrel_folding,
-                                                    get_synonyms_func=self._get_or_load_synonyms_collection,
+                                                    get_synonyms_func=self._get_synonyms,
                                                     text_parser=text_parser)
         self.__rusentrel_doc_ids = rusentrel_doc.DataFolding.iter_doc_ids()
 
@@ -78,7 +80,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_data,
                                                   version=rusentrel_version,
                                                   experiment_io=experiment_io,
-                                                  get_synonyms_func=self._get_or_load_synonyms_collection)
+                                                  get_synonyms_func=self._get_synonyms)
 
         # Init experiment doc_ops and opin_ops
         doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
@@ -131,17 +133,21 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         ruattiudes_folding = create_ruattitudes_experiment_data_folding(
             doc_ids_to_fold=list(ru_attitudes.keys()))
 
+        text_parser = create_text_parser(
+            exp_data=self.__exp_data,
+            entities_parser=RuAttitudesTextEntitiesParser(),
+            value_to_group_id_func=self._get_synonyms().get_synonym_group_index)
+
         # Completing initialization.
         self.__ruattitudes_doc = RuAttitudesDocumentOperations(
             folding=ruattiudes_folding,
             ru_attitudes=ru_attitudes,
-            text_parser=create_text_parser(exp_data=self.__exp_data,
-                                           entities_parser=RuAttitudesTextEntitiesParser()))
+            text_parser=text_parser)
         self.__ru_attitudes = ru_attitudes
 
     # endregion
 
-    def _get_or_load_synonyms_collection(self):
+    def _get_synonyms(self):
         if self.__rusentrel_synonyms is None:
             self.log_info("Read synonyms collection [RuSentRel]...")
             self.__rusentrel_synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
@@ -150,6 +156,3 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                 version=self.__rusentrel_version)
 
         return self.__rusentrel_synonyms
-
-    def entity_to_group(self, entity):
-        return entity_to_group_func(entity, synonyms=self.__rusentrel_synonyms)

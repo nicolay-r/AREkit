@@ -12,7 +12,7 @@ class BaseTextParser(object):
     def parse(self, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
 
-        for item in self.__pipeline:
+        for item in filter(lambda itm: itm is not None, self.__pipeline):
             assert(isinstance(item, TextParserPipelineItem))
             item.apply(pipeline_ctx)
 

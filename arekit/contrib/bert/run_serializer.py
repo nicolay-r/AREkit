@@ -41,8 +41,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
             labels_formatter=self.__labels_formatter,
             provider_type=self.__sample_provider_type,
             label_scaler=self._experiment.DataIO.LabelsScaler,
-            entity_formatter=self.__entity_formatter,
-            entity_to_group_func=self._experiment.entity_to_group)
+            entity_formatter=self.__entity_formatter)
 
         # Create repositories
         opinions_repo = BaseInputOpinionsRepository(

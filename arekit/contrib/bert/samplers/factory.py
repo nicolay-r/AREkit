@@ -10,19 +10,16 @@ from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 
 
 def create_bert_sample_provider(provider_type, label_scaler,
-                                labels_formatter, entity_formatter, entity_to_group_func):
+                                labels_formatter, entity_formatter):
     """
     This is a factory method, which allows to instantiate any of the
     supported bert_sample_encoders
     """
     assert(isinstance(provider_type, BertSampleProviderTypes))
-    assert(callable(entity_to_group_func))
     assert(isinstance(entity_formatter, StringEntitiesFormatter))
     assert(isinstance(labels_formatter, StringLabelsFormatter))
 
-    text_terms_mapper = BertDefaultStringTextTermsMapper(
-        entity_formatter=entity_formatter,
-        entity_to_group_func=entity_to_group_func)
+    text_terms_mapper = BertDefaultStringTextTermsMapper(entity_formatter)
 
     if provider_type == BertSampleProviderTypes.CLASSIF_M:
         return create_simple_sample_provider(label_scaler=label_scaler,
