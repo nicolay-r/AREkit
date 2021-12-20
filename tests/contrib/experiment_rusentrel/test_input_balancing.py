@@ -10,11 +10,8 @@ from arekit.common.data.input.providers.text.single import BaseSingleTextProvide
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
-from arekit.contrib.experiment_rusentrel.common import entity_to_group_func
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
-from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 
 
@@ -22,14 +19,9 @@ class TestInputBalancing(unittest.TestCase):
 
     def test_balancing(self):
 
-        stemmer = MystemWrapper()
         label_provider = BinaryLabelProvider(label_scaler=ThreeLabelScaler())
-        synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
-                                                                       is_read_only=True)
         terms_mapper = OpinionContainingTextTermsMapper(
-            entity_formatter=StringEntitiesSimpleFormatter(),
-            entity_to_group_func=lambda entity: entity_to_group_func(entity=entity,
-                                                                     synonyms=synonyms))
+            entity_formatter=StringEntitiesSimpleFormatter())
         text_provider = BaseSingleTextProvider(terms_mapper)
 
         storage = BaseRowsStorage()
