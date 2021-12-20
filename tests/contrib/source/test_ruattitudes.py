@@ -21,7 +21,6 @@ from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 from arekit.processing.text.token import Token
-from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 logger = logging.getLogger(__name__)
@@ -64,9 +63,6 @@ class TestRuAttitudes(unittest.TestCase):
             ids.add(news.ID)
 
     def __test_parsing(self, ra_version):
-        # Initializing stemmer
-        stemmer = MystemWrapper()
-
         # Initialize text parser pipeline.
         text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
                                                DefaultTextTokenizer(keep_tokens=True)])
