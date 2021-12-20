@@ -1,12 +1,12 @@
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import TextParserPipelineItem
+from arekit.common.pipeline.item import BasePipelineItem
 from arekit.processing.languages.mods import BaseLanguageMods
 from arekit.processing.languages.ru.mods import RussianLanguageMods
 
 
-class FrameVariantsParser(TextParserPipelineItem):
+class FrameVariantsParser(BasePipelineItem):
 
     def __init__(self, frame_variants, locale_mods=RussianLanguageMods):
         assert(isinstance(frame_variants, FrameVariantsCollection))

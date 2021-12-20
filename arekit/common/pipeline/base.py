@@ -1,5 +1,5 @@
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import TextParserPipelineItem
+from arekit.common.pipeline.item import BasePipelineItem
 
 
 class BasePipeline(object):
@@ -12,5 +12,5 @@ class BasePipeline(object):
         assert(isinstance(pipeline_ctx, PipelineContext))
 
         for item in filter(lambda itm: itm is not None, self.__pipeline):
-            assert(isinstance(item, TextParserPipelineItem))
+            assert(isinstance(item, BasePipelineItem))
             item.apply(pipeline_ctx)

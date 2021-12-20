@@ -10,7 +10,7 @@ from arekit.common.folding.nofold import NoFolding
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import TextParserPipelineItem
+from arekit.common.pipeline.item import BasePipelineItem
 from arekit.common.utils import split_by_whitespaces
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
@@ -134,7 +134,7 @@ class CustomSerializationData(NetworkSerializationData):
         return 50
 
 
-class TermsSplitterParser(TextParserPipelineItem):
+class TermsSplitterParser(BasePipelineItem):
 
     def apply(self, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
@@ -142,7 +142,7 @@ class TermsSplitterParser(TextParserPipelineItem):
                                    value=split_by_whitespaces(pipeline_ctx.provide("src")))
 
 
-class TextEntitiesParser(TextParserPipelineItem):
+class TextEntitiesParser(BasePipelineItem):
 
     def __init__(self):
         super(TextEntitiesParser, self).__init__()

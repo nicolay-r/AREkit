@@ -1,9 +1,9 @@
 from arekit.common.bound import Bound
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import TextParserPipelineItem
+from arekit.common.pipeline.item import BasePipelineItem
 
 
-class SentenceObjectsParserPipelineItem(TextParserPipelineItem):
+class SentenceObjectsParserPipelineItem(BasePipelineItem):
 
     def __init__(self, iter_objs_func):
         assert(callable(iter_objs_func))

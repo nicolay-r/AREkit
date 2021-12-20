@@ -1,7 +1,7 @@
 from arekit.common.pipeline.context import PipelineContext
 
 
-class TextParserPipelineItem(object):
+class BasePipelineItem(object):
     """ Single pipeline item that might be instatiated and embedded into pipeline.
     """
 

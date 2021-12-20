@@ -1,7 +1,7 @@
 import logging
 
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import TextParserPipelineItem
+from arekit.common.pipeline.item import BasePipelineItem
 from arekit.common.utils import split_by_whitespaces
 from arekit.processing.text.tokens import Tokens
 from arekit.processing.text.token import Token
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class DefaultTextTokenizer(TextParserPipelineItem):
+class DefaultTextTokenizer(BasePipelineItem):
     """ Default parser implementation.
     """
 

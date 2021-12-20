@@ -1,9 +1,9 @@
 from arekit.common.entities.base import Entity
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import TextParserPipelineItem
+from arekit.common.pipeline.item import BasePipelineItem
 
 
-class EntitiesGroupingPipelineItem(TextParserPipelineItem):
+class EntitiesGroupingPipelineItem(BasePipelineItem):
 
     def __init__(self, value_to_group_id_func):
         assert(callable(value_to_group_id_func))
