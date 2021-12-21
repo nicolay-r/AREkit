@@ -25,33 +25,41 @@ class BaseOutputView(BaseStorageView):
 
     # region private methods
 
-    def __iter_linked_opinions_df(self, doc_id):
-        assert(isinstance(doc_id, int))
+    @staticmethod
+    def __iter_opinion_linkages_df(doc_df, row_ids):
+        for row_id in row_ids:
+            df_linkage = doc_df[doc_df[const.ID].str.contains(row_id)]
+            yield df_linkage
 
-        # TODO. Proceed refactoring
-        news_df = self._storage.find_by_value(column_name=const.DOC_ID,
-                                              value=doc_id)
-
-        opinion_ids = [self._ids_provider.parse_opinion_in_opinion_id(opinion_id)
-                       for opinion_id in news_df[const.ID]]
-
+    def __iter_id_patterns(self, opinion_ids):
         for opinion_id in set(opinion_ids):
-            opin_id_pattern = self._ids_provider.create_pattern(id_value=opinion_id,
-                                                                p_type=BaseIDProvider.OPINION)
-            linked_opins_df = news_df[news_df[const.ID].str.contains(opin_id_pattern)]
-            yield linked_opins_df
+            yield self._ids_provider.create_pattern(id_value=opinion_id,
+                                                    p_type=BaseIDProvider.OPINION)
 
-    def __iter_linked_opinions(self, doc_id, opinions_view):
-        assert (isinstance(doc_id, int))
+    def __iter_doc_opinion_ids(self, doc_df):
+        assert (isinstance(doc_df, pd.DataFrame))
+        return [self._ids_provider.parse_opinion_in_opinion_id(row_id)
+                for row_id in doc_df[const.ID]]
+
+    def __iter_opinion_linkages(self, doc_df, opinions_view):
+        assert (isinstance(doc_df, pd.DataFrame))
         assert (isinstance(opinions_view, BaseOpinionStorageView))
 
-        for linked_df in self.__iter_linked_opinions_df(doc_id=doc_id):
-            assert (isinstance(linked_df, pd.DataFrame))
+        doc_opin_ids = self.__iter_doc_opinion_ids(doc_df)
+        doc_opin_id_patterns = self.__iter_id_patterns(doc_opin_ids)
+        linkages_df = self.__iter_opinion_linkages_df(doc_df=doc_df,
+                                                      row_ids=doc_opin_id_patterns)
 
-            opinions_iter = self._iter_by_opinions(linked_df=linked_df,
+        for df_linkage in linkages_df:
+            assert (isinstance(df_linkage, pd.DataFrame))
+
+            opinions_iter = self._iter_by_opinions(linked_df=df_linkage,
                                                    opinions_view=opinions_view)
 
             yield OpinionsLinkage(linked_data=opinions_iter)
+
+    def __iter_doc_ids(self):
+        return set(self._storage.iter_column_values(column_name=const.DOC_ID))
 
     # endregion
 
@@ -79,23 +87,28 @@ class BaseOutputView(BaseStorageView):
 
     # region public methods
 
-    def iter_doc_ids(self):
-        unique_doc_ids = set(self._storage.iter_column_values(column_name=const.DOC_ID))
-        return unique_doc_ids
-
     def iter_opinion_collections(self, opinions_view, keep_doc_id_func, to_collection_func):
         assert(isinstance(opinions_view, BaseOpinionStorageView))
         assert(callable(keep_doc_id_func))
         assert(callable(to_collection_func))
 
-        for doc_id in self.iter_doc_ids():
+        # TODO. #237 __iter_doc_ids() should be utilized outside as a part of the pipeline.
+        for doc_id in self.__iter_doc_ids():
 
+            # TODO. #237 keep_doc_id_func(doc_id) should be utilized outside as a part of the pipeline.
             if not keep_doc_id_func(doc_id):
                 continue
 
-            linked_data_iter = self.__iter_linked_opinions(doc_id=doc_id,
-                                                           opinions_view=opinions_view)
+            # TODO. #237 find_by_value(doc_id) should be utilized outside + the latter should return Storage!
+            doc_df = self._storage.find_by_value(column_name=const.DOC_ID,
+                                                 value=doc_id)
 
-            yield doc_id, to_collection_func(linked_data_iter)
+            linkages_iter = self.__iter_opinion_linkages(doc_df=doc_df,
+                                                         opinions_view=opinions_view)
+
+            # TODO. #237 This to_collection_func(linkages_iter) should be outside and a part of the pipeline.
+            collection = to_collection_func(linkages_iter)
+
+            yield doc_id, collection
 
     # endregion
