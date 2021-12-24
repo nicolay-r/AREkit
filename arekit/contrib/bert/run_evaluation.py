@@ -1,6 +1,9 @@
 import logging
 from os.path import exists, join
 
+from arekit.common.data.pipeline.item_handle import HandleIterPipelineItem
+from arekit.common.data.pipeline.item_iter import FilterPipelineItem
+from arekit.common.data.pipeline.item_map import MapPipelineItem
 from arekit.common.data.views.output_multiple import MulticlassOutputView
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.api.enums import BaseDocumentTag
@@ -10,6 +13,8 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
+from arekit.common.pipeline.base import BasePipeline
+from arekit.common.pipeline.context import PipelineContext
 from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.bert.callback import Callback
 from arekit.contrib.bert.output.eval_helper import EvalHelper
@@ -53,6 +58,20 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         # required data stays unchanged in terms of paths.
         original_target_dir = self._experiment.ExperimentIO.get_target_dir()
         return self.__eval_helper.get_results_dir(original_target_dir)
+
+    def __save_opinion_collection(self, doc_id, collection, epoch_index):
+
+        exp_io = self._experiment.ExperimentIO
+
+        target = exp_io.create_result_opinion_collection_target(
+            data_type=self.__data_type,
+            epoch_index=epoch_index,
+            doc_id=doc_id)
+
+        exp_io.write_opinion_collection(
+            collection=collection,
+            labels_formatter=self.__labels_formatter,
+            target=target)
 
     def _handle_iteration(self, iter_index):
         exp_io = self._experiment.ExperimentIO
@@ -121,25 +140,30 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                     labels_scaler=self.__label_scaler,
                     storage=storage)
 
-                # iterate opinion collections.
-                collections_iter = output_view.iter_opinion_collections(
-                    opinions_view=exp_io.create_opinions_view(self.__data_type),
-                    keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
-                    to_collection_func=lambda linked_iter: self.__create_opinion_collection(
-                        supported_labels=exp_data.SupportedCollectionLabels,
-                        linked_iter=linked_iter))
+                # Opinion collections iterator pipeline.
+                pipeline_save_collections = BasePipeline([
+                    FilterPipelineItem(filter_func=lambda doc_id: doc_id in cmp_doc_ids_set),
+                    MapPipelineItem(lambda doc_id:
+                                    (doc_id, output_view.iter_opinion_linkages(
+                                        doc_id=doc_id,
+                                        opinions_view=exp_io.create_opinions_view(self.__data_type)))
+                                    ),
+                    MapPipelineItem(lambda doc_id, linkages_iter:
+                                    (doc_id,
+                                     self.__create_opinion_collection(
+                                         supported_labels=exp_data.SupportedCollectionLabels,
+                                         linked_iter=linkages_iter)
+                                     )),
+                    HandleIterPipelineItem(lambda doc_id, collection:
+                                           self.__save_opinion_collection(
+                                               doc_id=doc_id,
+                                               collection=collection,
+                                               epoch_index=epoch_index))
+                ])
 
-                for doc_id, collection in collections_iter:
-
-                    target = exp_io.create_result_opinion_collection_target(
-                        data_type=self.__data_type,
-                        epoch_index=epoch_index,
-                        doc_id=doc_id)
-
-                    exp_io.write_opinion_collection(
-                        collection=collection,
-                        labels_formatter=self.__labels_formatter,
-                        target=target)
+                # Executing pipeline.
+                pipeline_ctx = PipelineContext({"src": output_view.iter_doc_ids()})
+                pipeline_save_collections.run(pipeline_ctx)
 
                 # evaluate
                 result = self._experiment.evaluate(data_type=self.__data_type,

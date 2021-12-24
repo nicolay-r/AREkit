@@ -1,6 +1,8 @@
 import logging
 
 from arekit.common.data import const
+from arekit.common.data.pipeline.item_iter import FilterPipelineItem
+from arekit.common.data.pipeline.item_map import MapPipelineItem
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.output_multiple import MulticlassOutputView
 from arekit.common.experiment.api.enums import BaseDocumentTag
@@ -12,6 +14,8 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
+from arekit.common.pipeline.base import BasePipeline
+from arekit.common.pipeline.context import PipelineContext
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
@@ -77,7 +81,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     result = experiment.evaluate(data_type=data_type,
                                  epoch_index=epoch_index)
 
-    # optionally save input-dependend hidden parameters.
+    # optionally save input-dependent hidden parameters.
     if save_hidden_params:
         save_minibatch_all_input_dependent_hidden_values(
             predict_log=idhp,
@@ -106,18 +110,30 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
     output_view = MulticlassOutputView(labels_scaler=labels_scaler,
                                        storage=output_storage)
 
-    # Extract iterator.
-    collections_iter = output_view.iter_opinion_collections(
-        opinions_view=exp_io.create_opinions_view(data_type),
-        keep_doc_id_func=lambda doc_id: doc_id in cmp_doc_ids_set,
-        to_collection_func=lambda linked_iter: __create_opinion_collection(
-            linked_iter=linked_iter,
-            supported_labels=supported_collection_labels,
-            create_opinion_collection=opin_ops.create_opinion_collection,
-            label_scaler=labels_scaler))
+    # Opinion collections iterator pipeline.
+    collections_iter_pipeline = BasePipeline([
+        FilterPipelineItem(filter_func=lambda doc_id: doc_id in cmp_doc_ids_set),
+        MapPipelineItem(lambda doc_id:
+                        (doc_id,
+                         output_view.iter_opinion_linkages(
+                             doc_id=doc_id,
+                             opinions_view=exp_io.create_opinions_view(data_type)))
+                        ),
+        MapPipelineItem(lambda doc_id, linkages_iter:
+                        (doc_id,
+                         __create_opinion_collection(
+                             linked_iter=linkages_iter,
+                             supported_labels=supported_collection_labels,
+                             create_opinion_collection=opin_ops.create_opinion_collection,
+                             label_scaler=labels_scaler))),
+    ])
+
+    # Executing pipeline.
+    pipeline_ctx = PipelineContext({"src": output_view.iter_doc_ids()})
+    collections_iter_pipeline.run(pipeline_ctx)
 
     # Save collection.
-    for doc_id, collection in __log_wrap_collections_conversion_iter(collections_iter):
+    for doc_id, collection in pipeline_ctx.provide("src"):
 
         target = exp_io.create_result_opinion_collection_target(
             data_type=data_type,
