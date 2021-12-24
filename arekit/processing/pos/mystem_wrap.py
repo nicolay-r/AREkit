@@ -109,7 +109,7 @@ class POSMystemWrapper(RussianPOSTagger):
 
         analyzed = self.__mystem.analyze(text)
         for a in analyzed:
-            pos = self.__extract_from_analysis(a, self.__get_russian_case) if len(analyzed) > 0 else RussianCases.Unknown
+            pos = self.__extract_from_analysis(a, self.__get_russian_case) if len(analyzed) > 0 else RussianCases.UNKN
             cases.append(pos)
 
         return cases
