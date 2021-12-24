@@ -93,6 +93,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
 
 # TODO. Pass TsvInputOpinionReader.
+# TODO. #240 Move and refactor the code below and place at common/data/output/pipelines/to_collections.py
 def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler,
                                             output_storage, data_type, epoch_index,
                                             supported_collection_labels, label_calc_mode, labels_formatter):
@@ -125,7 +126,9 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
                              linked_iter=linkages_iter,
                              supported_labels=supported_collection_labels,
                              create_opinion_collection=opin_ops.create_opinion_collection,
-                             label_scaler=labels_scaler))),
+                             label_scaler=labels_scaler,
+                             label_calc_mode=label_calc_mode))
+                        ),
     ])
 
     # Executing pipeline.
@@ -145,13 +148,14 @@ def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_sc
                                         target=target)
 
 
-def __create_opinion_collection(linked_iter, supported_labels, label_scaler, create_opinion_collection):
+def __create_opinion_collection(linked_iter, supported_labels, label_scaler, create_opinion_collection,
+                                label_calc_mode):
     return create_opinion_collection(
         create_opinion_collection=create_opinion_collection,
         linked_data_iter=linked_iter,
         labels_helper=SingleLabelsHelper(label_scaler),
         to_opinion_func=__create_labeled_opinion,
-        label_calc_mode=LabelCalculationMode.AVERAGE,
+        label_calc_mode=label_calc_mode,
         supported_labels=supported_labels)
 
 

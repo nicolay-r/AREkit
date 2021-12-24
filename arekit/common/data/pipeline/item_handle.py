@@ -4,6 +4,7 @@ from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item import BasePipelineItem
 
 
+# TODO. #240. Item handle, iter, map move into base pipeline folder
 class HandleIterPipelineItem(BasePipelineItem):
 
     def __init__(self, handle_func=None):
