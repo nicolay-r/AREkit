@@ -18,20 +18,20 @@ class MulticlassOutputView(BaseOutputView):
 
     # region private methods
 
+    def __get_column_header(self):
+        return [str(self.__labels_scaler.label_to_uint(label))
+                for label in self.__labels_scaler.ordered_suppoted_labels()]
+
     def __calculate_label(self, row):
         """
         Using a single row (probabilities by each class)
         """
-        labels_prob = [row[label] for label in self._get_column_header()]
+        labels_prob = [row[label] for label in self.__get_column_header()]
         return self.__labels_scaler.uint_to_label(value=np.argmax(labels_prob))
 
     # endregion
 
     # region protected methods
-
-    def _get_column_header(self):
-        return [str(self.__labels_scaler.label_to_uint(label))
-                for label in self.__labels_scaler.ordered_suppoted_labels()]
 
     def _iter_by_opinions(self, linked_df, opinions_view):
         assert(isinstance(linked_df, pd.DataFrame))

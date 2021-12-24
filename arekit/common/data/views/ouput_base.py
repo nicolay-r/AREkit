@@ -10,12 +10,6 @@ from arekit.common.opinions.base import Opinion
 
 
 class BaseOutputView(BaseStorageView):
-    """ Results output represents a table, which stored in pandas dataframe.
-        This dataframe assumes to provide the following columns:
-            - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
-            - doc_id -- is an id, towards which the output corresponds to.
-            - labels -- uint labels (amount of columns depends on the scaler)
-    """
 
     def __init__(self, ids_provider, storage):
         assert(isinstance(ids_provider, BaseIDProvider))
@@ -41,15 +35,14 @@ class BaseOutputView(BaseStorageView):
         return [self._ids_provider.parse_opinion_in_opinion_id(row_id)
                 for row_id in doc_df[const.ID]]
 
-    def __iter_doc_ids(self):
-        return set(self._storage.iter_column_values(column_name=const.DOC_ID))
+    def __iter_opinions_by_linkages(self, linkages_df, opinions_view):
+        for df_linkage in linkages_df:
+            assert (isinstance(df_linkage, pd.DataFrame))
+            yield self._iter_by_opinions(linked_df=df_linkage, opinions_view=opinions_view)
 
     # endregion
 
     # region protected methods
-
-    def _get_column_header(self):
-        raise NotImplementedError()
 
     def _iter_by_opinions(self, linked_df, opinions_view):
         raise NotImplementedError()
@@ -71,7 +64,7 @@ class BaseOutputView(BaseStorageView):
     # region public methods
 
     def iter_doc_ids(self):
-        return self.__iter_doc_ids()
+        return set(self._storage.iter_column_values(column_name=const.DOC_ID))
 
     def iter_opinion_linkages(self, doc_id, opinions_view):
         assert(isinstance(opinions_view, BaseOpinionStorageView))
@@ -79,15 +72,9 @@ class BaseOutputView(BaseStorageView):
 
         doc_opin_ids = self.__iter_doc_opinion_ids(doc_df)
         doc_opin_id_patterns = self.__iter_id_patterns(doc_opin_ids)
-        linkages_df = self.__iter_opinion_linkages_df(doc_df=doc_df,
-                                                      row_ids=doc_opin_id_patterns)
+        linkages_df = self.__iter_opinion_linkages_df(doc_df=doc_df, row_ids=doc_opin_id_patterns)
+        opinions_iter = self.__iter_opinions_by_linkages(linkages_df, opinions_view=opinions_view)
 
-        for df_linkage in linkages_df:
-            assert (isinstance(df_linkage, pd.DataFrame))
-
-            opinions_iter = self._iter_by_opinions(linked_df=df_linkage,
-                                                   opinions_view=opinions_view)
-
-            yield OpinionsLinkage(linked_data=opinions_iter)
+        return map(lambda opinions: OpinionsLinkage(opinions), opinions_iter)
 
     # endregion

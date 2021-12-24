@@ -42,9 +42,6 @@ class BertBinaryOutputView(BaseOutputView):
 
     # region protected methods
 
-    def _get_column_header(self):
-        return [BertBinaryOutputView.NO, BertBinaryOutputView.YES]
-
     def _iter_by_opinions(self, linked_df, opinions_view):
         assert(isinstance(linked_df, pd.DataFrame))
         assert(isinstance(opinions_view, BaseOpinionStorageView))
