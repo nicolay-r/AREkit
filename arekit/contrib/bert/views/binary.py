@@ -2,6 +2,7 @@ import pandas as pd
 
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
+from arekit.common.data.views import utils
 from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.ouput_base import BaseOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
@@ -46,14 +47,19 @@ class BertBinaryOutputView(BaseOutputView):
         assert(isinstance(linked_df, pd.DataFrame))
         assert(isinstance(opinions_view, BaseOpinionStorageView))
 
-        for opinion_ind in self.__iter_linked_opinion_indices(linked_df=linked_df):
-            ind_pattern = self._ids_provider.create_pattern(id_value=opinion_ind,
-                                                            p_type=BaseIDProvider.INDEX)
-            opinion_df = linked_df[linked_df[const.ID].str.contains(ind_pattern)]
+        opinion_ids = self.__iter_linked_opinion_indices(linked_df=linked_df)
 
-            yield self._compose_opinion_by_opinion_id(
-                sample_id=opinion_df[const.ID].iloc[0],
+        id_patterns_iter = map(
+            lambda opinion_id: self._ids_provider.create_pattern(id_value=opinion_id, p_type=BaseIDProvider.INDEX),
+            opinion_ids)
+
+        linkages_dfs = self._iter_opinion_linkages_df(doc_df=linked_df, row_ids=id_patterns_iter)
+
+        for opinion_linkage_df in linkages_dfs:
+            yield utils.compose_opinion_by_opinion_id(
+                ids_provider=self._ids_provider,
+                sample_id=opinion_linkage_df[const.ID].iloc[0],
                 opinions_view=opinions_view,
-                calc_label_func=lambda: self.__calculate_label(df=opinion_df))
+                calc_label_func=lambda: self.__calculate_label(df=opinion_linkage_df))
 
     # endregion

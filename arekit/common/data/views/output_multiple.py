@@ -3,6 +3,7 @@ import pandas as pd
 
 from arekit.common.data import const
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
+from arekit.common.data.views import utils
 from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.ouput_base import BaseOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
@@ -37,8 +38,9 @@ class MulticlassOutputView(BaseOutputView):
         assert(isinstance(linked_df, pd.DataFrame))
         assert(isinstance(opinions_view, BaseOpinionStorageView))
 
-        for index, series in linked_df.iterrows():
-            yield self._compose_opinion_by_opinion_id(
+        for _, series in linked_df.iterrows():
+            yield utils.compose_opinion_by_opinion_id(
+                ids_provider=self._ids_provider,
                 sample_id=series[const.ID],
                 opinions_view=opinions_view,
                 calc_label_func=lambda: self.__calculate_label(series))
