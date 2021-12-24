@@ -50,10 +50,15 @@ class BertBinaryOutputView(BaseOutputView):
         opinion_ids = self.__iter_linked_opinion_indices(linked_df=linked_df)
 
         id_patterns_iter = map(
-            lambda opinion_id: self._ids_provider.create_pattern(id_value=opinion_id, p_type=BaseIDProvider.INDEX),
+            lambda opinion_id: self._ids_provider.create_pattern(id_value=opinion_id,
+                                                                 p_type=BaseIDProvider.INDEX),
             opinion_ids)
 
-        linkages_dfs = self._iter_opinion_linkages_df(doc_df=linked_df, row_ids=id_patterns_iter)
+        linkages_dfs = map(
+            lambda id_pattern: utils.filter_by_id(doc_df=linked_df,
+                                                  column=const.ID,
+                                                  value=id_pattern),
+            id_patterns_iter)
 
         for opinion_linkage_df in linkages_dfs:
             yield utils.compose_opinion_by_opinion_id(

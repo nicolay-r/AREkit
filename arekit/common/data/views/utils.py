@@ -15,3 +15,9 @@ def compose_opinion_by_opinion_id(ids_provider, sample_id, opinions_view, calc_l
     return Opinion(source_value=source,
                    target_value=target,
                    sentiment=calc_label_func())
+
+
+# TODO. Adopt storage.
+def filter_by_id(doc_df, column, value):
+    assert(isinstance(column, str))
+    return doc_df[doc_df[column].str.contains(value)]
