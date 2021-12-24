@@ -13,7 +13,7 @@ def create_term_embedding(term, embedding, check, word_separator=' '):
     assert(isinstance(embedding, Embedding))
 
     if term in embedding:
-        word, embedding = __get_from_embedding(term=term, embedding=embedding, check=check)
+        word, embedding = __get_from_embedding(term=term, embedding=embedding)
     else:
         word, embedding = __compose_from_parts(term=term,
                                                embedding=embedding,
@@ -52,7 +52,7 @@ def __compose_from_parts(term, embedding, check, word_separator, max_part_size=3
     return term, vector / count if count > 0 else vector
 
 
-def __get_from_embedding(term, embedding, check):
+def __get_from_embedding(term, embedding):
     if ' ' in term:
         print("EXISTED IN EMBEDDING: [{}]".format(term))
     return embedding.try_get_related_word(term), embedding[term]
