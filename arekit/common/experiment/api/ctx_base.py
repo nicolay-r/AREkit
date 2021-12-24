@@ -23,13 +23,6 @@ class DataIO(object):
     def LabelsCount(self):
         raise NotImplementedError()
 
-    # TODO. Stemmer might not be required in experiment at all.
-    # TODO. Stemmer might not be required in experiment at all.
-    # TODO. Stemmer might not be required in experiment at all.
-    @property
-    def Stemmer(self):
-        return self.__stemmer
-
     @property
     def SupportedCollectionLabels(self):
         """ All labels considered as supported and might appear in OpinionCollection by default.

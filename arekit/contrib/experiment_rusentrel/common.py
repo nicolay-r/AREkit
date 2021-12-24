@@ -2,6 +2,7 @@ from arekit.common.experiment.api.ctx_serialization import SerializationData
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.pipeline.item import BasePipelineItem
 from arekit.common.text.parser import BaseTextParser
+from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
@@ -22,6 +23,11 @@ def create_text_parser(exp_data, entities_parser, value_to_group_id_func):
                 ppl_entities_grouping,
                 DefaultTextTokenizer(keep_tokens=True),
                 LemmasBasedFrameVariantsParser(frame_variants=exp_data.FrameVariantCollection,
-                                               stemmer=exp_data.Stemmer)]
+                                               stemmer=create_stemmer())]
 
     return BaseTextParser(pipeline)
+
+
+def create_stemmer():
+    # This is the only stemmer supported by the experiment.
+    return MystemWrapper()

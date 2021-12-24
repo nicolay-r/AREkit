@@ -3,6 +3,7 @@ import logging
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
+from arekit.contrib.experiment_rusentrel import common
 from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
@@ -52,8 +53,10 @@ class RuSentRelExperiment(BaseExperiment):
                                                            docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
                                                            experiment_io=experiment_io)
 
-        text_parser = create_text_parser(exp_data=exp_data,
-                                         entities_parser=RuSentRelTextEntitiesParser())
+        text_parser = create_text_parser(
+            exp_data=exp_data,
+            entities_parser=RuSentRelTextEntitiesParser(),
+            value_to_group_id_func=self._get_or_load_synonyms_collection().get_synonym_group_index)
 
         doc_ops = RuSentrelDocumentOperations(folding=folding,
                                               version=version,
@@ -76,8 +79,7 @@ class RuSentRelExperiment(BaseExperiment):
         if self.__synonyms is None:
             self.log_info("Read synonyms collection ...")
             self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
-                # TODO. 172. Adopt the default stemmer (MystemWrapper). Release the DataIO.Stemmer usage!
-                stemmer=self.DataIO.Stemmer,
+                stemmer=common.create_stemmer(),
                 version=self.__rsr_version)
 
         return self.__synonyms
