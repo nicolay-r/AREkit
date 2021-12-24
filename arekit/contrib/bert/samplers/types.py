@@ -56,12 +56,12 @@ class SampleFormattersService(object):
 
     @staticmethod
     def is_binary(formatter_type):
-        binary = list(BertSampleProviderTypes.__iter_binary())
+        binary = list(SampleFormattersService.__iter_binary())
         return formatter_type in binary
 
     @staticmethod
     def is_multiple(formatter_type):
-        multiple = list(BertSampleProviderTypes.__iter_multiple())
+        multiple = list(SampleFormattersService.__iter_multiple())
         return formatter_type in multiple
 
     @staticmethod
