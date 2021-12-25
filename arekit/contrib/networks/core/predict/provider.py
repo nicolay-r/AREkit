@@ -27,32 +27,21 @@ class BasePredictProvider(object):
             contents.extend(labels)
             yield contents
 
-    def load(self, sample_id_with_uint_labels_iter, labels_scaler, column_extra_funcs=None):
+    def provide(self, sample_id_with_uint_labels_iter, labels_scaler, column_extra_funcs=None):
         assert(isinstance(sample_id_with_uint_labels_iter, collections.Iterable))
         assert(isinstance(labels_scaler, BaseLabelScaler))
         assert(isinstance(column_extra_funcs, list) or column_extra_funcs is None)
 
+        # Provide contents.
         contents_it = self.__iter_contents(
             sample_id_with_uint_labels_iter=sample_id_with_uint_labels_iter,
             labels_scaler=labels_scaler,
             column_extra_funcs=column_extra_funcs)
 
+        # Provide title.
         title = [const.ID]
         title.extend([column_name for column_name, _ in column_extra_funcs])
         title.extend([str(labels_scaler.label_to_uint(label))
                       for label in labels_scaler.ordered_suppoted_labels()])
 
-        self._load_header(title)
-
-        for contents in contents_it:
-            self._load_content_line(contents)
-
-    # region abstract methods
-
-    def _load_header(self, params):
-        raise NotImplementedError()
-
-    def _load_content_line(self, params):
-        raise NotImplementedError()
-
-    # endregion
+        return title, contents_it

@@ -13,7 +13,9 @@ from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBa
 from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
-from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
+from arekit.contrib.networks.core.predict.provider import BasePredictProvider
+
+from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.shapes import NetworkInputShapes
 
 from examples.input import EXAMPLES
@@ -62,12 +64,17 @@ def pipeline_infer(labels_scaler):
     # Step 6. Gather annotated contexts onto document level.
     labeled_samples = model.get_labeled_samples_collection(data_type=DataType.Test)
 
+    predict_provider = BasePredictProvider()
+
     # TODO. For now it is limited to tsv.
-    # TODO. For now it is limited to tsv.
-    # TODO. For now it is limited to tsv.
-    with TsvPredictProvider(filepath="out.txt") as out:
-        out.load(sample_id_with_uint_labels_iter=labeled_samples.iter_non_duplicated_labeled_sample_row_ids(),
-                 labels_scaler=labels_scaler)
+    with TsvPredictWriter(filepath="out.txt") as out:
+
+        title, contents_it = predict_provider.provide(
+            sample_id_with_uint_labels_iter=labeled_samples.iter_non_duplicated_labeled_sample_row_ids(),
+            labels_scaler=labels_scaler)
+
+        out.write(title=title,
+                  contents_it=contents_it)
 
 
 if __name__ == '__main__':

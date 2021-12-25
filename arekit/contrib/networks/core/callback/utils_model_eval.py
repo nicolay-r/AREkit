@@ -9,11 +9,12 @@ from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item_handle import HandleIterPipelineItem
 from arekit.common.utils import progress_bar_iter
+
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
 from arekit.contrib.networks.core.model import BaseTensorflowModel
-
-from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
+from arekit.contrib.networks.core.predict.provider import BasePredictProvider
+from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 
 logger = logging.getLogger(__name__)
@@ -40,20 +41,23 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
     samples_view = experiment.ExperimentIO.create_samples_view(data_type)
 
-    # TODO. Filepath-dependency should be removed!
     # Create and save output.
-    result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
-                                                                                epoch_index=epoch_index)
-    logger.info("Target output filepath: {}".format(result_filepath))
     labeled_samples = model.get_labeled_samples_collection(data_type=data_type)
     sample_id_with_uint_labels_iter = labeled_samples.iter_non_duplicated_labeled_sample_row_ids()
 
+    # TODO. Filepath-dependency should be removed!
     # TODO. This is a limitation, as we focus only tsv.
+    result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
+                                                                                epoch_index=epoch_index)
+    logger.info("Target output filepath: {}".format(result_filepath))
     doc_id_by_sample_id = __calculate_doc_id_by_sample_id_dict(samples_view.iter_rows(None))
-    with TsvPredictProvider(filepath=result_filepath) as out:
-        out.load(sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
-                 column_extra_funcs=[(const.DOC_ID, lambda sample_id: doc_id_by_sample_id[sample_id])],
-                 labels_scaler=label_scaler)
+    predict = BasePredictProvider()
+    with TsvPredictWriter(filepath=result_filepath) as out:
+        title, contents_it = predict.provide(
+            sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
+            column_extra_funcs=[(const.DOC_ID, lambda sample_id: doc_id_by_sample_id[sample_id])],
+            labels_scaler=label_scaler)
+        out.write(title=title, contents_it=contents_it)
 
     # TODO. Pass here the original storage. (NO API for now out there).
     storage = None

@@ -1,10 +1,9 @@
 import gzip
 
 from arekit.common.utils import create_dir_if_not_exists
-from arekit.contrib.networks.core.predict.base_provider import BasePredictProvider
 
 
-class TsvPredictProvider(BasePredictProvider):
+class TsvPredictWriter(object):
 
     def __init__(self, filepath):
         assert(isinstance(filepath, str))
@@ -13,17 +12,12 @@ class TsvPredictProvider(BasePredictProvider):
         self.__f = None
 
     def __write(self, params):
-        self.__f.write("{}\n".format(self.__col_separator.join(params)))
+        self.__f.provide("{}\n".format(self.__col_separator.join(params)))
 
-    # region protected
-
-    def _load_header(self, params):
-        self.__write(params)
-
-    def _load_content_line(self, params):
-        self.__write(params)
-
-    # endregion
+    def write(self, title, contents_it):
+        self.__write(title)
+        for contents in contents_it:
+            self.__write(contents)
 
     # region base
 
