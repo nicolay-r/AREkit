@@ -8,7 +8,7 @@ class SingleLabelsHelper(LabelsHelper):
 
     def aggregate_labels(self, labels_list, label_calc_mode):
         assert(isinstance(labels_list, list))
-        assert(label_calc_mode, LabelCalculationMode)
+        assert(isinstance(label_calc_mode, LabelCalculationMode))
 
         label = None
 

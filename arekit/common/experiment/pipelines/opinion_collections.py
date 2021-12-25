@@ -1,4 +1,5 @@
-from arekit.common.experiment.api.ops_opin import OpinionOperations
+import collections
+
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.model.labeling.modes import LabelCalculationMode
@@ -21,9 +22,10 @@ def __create_labeled_opinion(item, label):
 
 
 def __linkages_to_opinions(linkages_iter, labels_helper, label_calc_mode):
+    assert(isinstance(linkages_iter, collections.Iterable))
 
     for linkage in linkages_iter:
-        assert (isinstance(linkage, LinkedDataWrapper))
+        assert(isinstance(linkage, LinkedDataWrapper))
 
         agg_label = labels_helper.aggregate_labels(
             labels_list=list(linkage.iter_labels()),
@@ -33,6 +35,7 @@ def __linkages_to_opinions(linkages_iter, labels_helper, label_calc_mode):
 
 
 def __create_and_fill_opinion_collection(opinions_iter, collection, supported_labels):
+    assert(isinstance(opinions_iter, collections.Iterable))
     assert(isinstance(collection, OpinionCollection))
     assert(isinstance(supported_labels, set) or supported_labels is None)
 
@@ -48,21 +51,22 @@ def __create_and_fill_opinion_collection(opinions_iter, collection, supported_la
 
         collection.add_opinion(opinion)
 
-        yield collection
+    return collection
 
 # endregion
 
 
-def output_to_opinion_collections_pipeline(opin_ops, doc_ids_set, labels_scaler,
+def output_to_opinion_collections_pipeline(doc_ids_set, labels_scaler,
                                            iter_opinion_linkages_func,
+                                           create_opinion_collection_func,
                                            label_calc_mode, supported_labels):
     """ Opinion collection generation pipeline.
     """
-    assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(label_calc_mode, LabelCalculationMode))
     assert(isinstance(supported_labels, set) or supported_labels is None)
     assert(callable(iter_opinion_linkages_func))
+    assert(callable(create_opinion_collection_func))
 
     return BasePipeline([
         # Filter doc-ids.
@@ -72,16 +76,16 @@ def output_to_opinion_collections_pipeline(opin_ops, doc_ids_set, labels_scaler,
         MapPipelineItem(lambda doc_id: (doc_id, iter_opinion_linkages_func(doc_id))),
 
         # Convert linkages to opinions.
-        MapPipelineItem(lambda doc_id, linkages_iter:
-                        (doc_id, __linkages_to_opinions(linkages_iter=linkages_iter,
-                                                        labels_helper=SingleLabelsHelper(labels_scaler),
-                                                        label_calc_mode=label_calc_mode))),
+        MapPipelineItem(lambda data:
+                        (data[0], __linkages_to_opinions(linkages_iter=data[1],
+                                                         labels_helper=SingleLabelsHelper(labels_scaler),
+                                                         label_calc_mode=label_calc_mode))),
 
         # Filling opinion collection.
-        MapPipelineItem(lambda doc_id, opinions_iter:
-                        (doc_id,
+        MapPipelineItem(lambda data:
+                        (data[0],
                          __create_and_fill_opinion_collection(
-                             opinions_iter=opinions_iter,
-                             collection=opin_ops.create_opinion_collection(),
+                             opinions_iter=data[1],
+                             collection=create_opinion_collection_func(),
                              supported_labels=supported_labels))),
     ])

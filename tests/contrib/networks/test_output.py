@@ -2,38 +2,64 @@ import unittest
 from os.path import join, dirname
 
 from arekit.common.data import const
+from arekit.common.data.storages.base import BaseRowsStorage
+from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
+from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
+from arekit.common.model.labeling.modes import LabelCalculationMode
+from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.context import PipelineContext
+from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
 class TestOutputFormatters(unittest.TestCase):
 
     __current_dir = dirname(__file__)
-    __input_samples_filepath = join(__current_dir, "data/sample_train.tsv.gz")
+    __input_samples_filepath = join(__current_dir, "test_data/sample-train.tsv.gz")
+    __input_opinions_filepath = join(__current_dir, "test_data/opinion-train.tsv.gz")
+    __output_filepath = join(__current_dir, "test_data/output.tsv.gz")
 
     def test_output_formatter(self):
 
-        storage = None
+        stemmer = MystemWrapper()
+        synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)
 
-        # TODO. Complete.
+        label_scaler = ThreeLabelScaler()
+
+        # sample_storage = BaseRowsStorage.from_tsv(filepath=self.__input_samples_filepath)
+        output_storage = BaseRowsStorage.from_tsv(filepath=self.__output_filepath)
+        linkages_view = MultilableOpinionLinkagesView(labels_scaler=label_scaler, storage=output_storage)
+
+        opinion_storage = BaseRowsStorage.from_tsv(filepath=self.__input_opinions_filepath)
+        opinion_view = BaseOpinionStorageView(opinion_storage)
+
         ppl = output_to_opinion_collections_pipeline(
-            opin_ops=None,
-            doc_ids_set=None,
-            labels_scaler=None,
-            iter_opinion_linkages_func=None,
-            label_calc_mode=None,
+            create_opinion_collection_func=lambda: OpinionCollection(opinions=[],
+                                                                     synonyms=synonyms,
+                                                                     error_on_duplicates=True,
+                                                                     error_on_synonym_end_missed=True),
+            doc_ids_set={1},
+            labels_scaler=label_scaler,
+            iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
+                doc_id=doc_id,
+                opinions_view=opinion_view),
+            label_calc_mode=LabelCalculationMode.AVERAGE,
             supported_labels=None)
 
-        pipeline_ctx = PipelineContext({
-            "src": set(storage.iter_column_values(column_name=const.DOC_ID))
-        })
+        doc_ids = set(opinion_storage.iter_column_values(column_name=const.DOC_ID, dtype=int))
+
+        print(doc_ids)
+
+        pipeline_ctx = PipelineContext({"src": doc_ids})
 
         # Running pipeline.
         ppl.run(pipeline_ctx)
 
         # Iterate over the result.
-        for _ in pipeline_ctx.provide("src"):
-            pass
+        for doc_id, collection in pipeline_ctx.provide("src"):
+            print("d:{}, ct:{}, count:{}".format(doc_id, type(collection), len(collection)))
 
 
 if __name__ == '__main__':

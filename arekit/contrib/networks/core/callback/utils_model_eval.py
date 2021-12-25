@@ -72,7 +72,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
             doc_id=doc_id,
             opinions_view=experiment.ExperimentIO.create_opinions_view(data_type)),
         doc_ids_set=set(experiment.DocumentOperations.iter_tagget_doc_ids(BaseDocumentTag.Compare)),
-        opin_ops=experiment.OpinionOperations,
+        create_opinion_collection_func=experiment.OpinionOperations.create_opinion_collection,
         labels_scaler=label_scaler,
         label_calc_mode=label_calc_mode,
         supported_labels=None)
