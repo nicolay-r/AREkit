@@ -128,7 +128,9 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
                 # Initialize storage.
                 storage = GoogleBertOutputStorage.from_tsv(filepath=result_filepath, header=None)
-                storage.apply_samples_view(samples_view=exp_io.create_samples_view(self.__data_type))
+                storage.apply_samples_view(
+                    row_ids=storage.iter_column_values(column_name=const.ID, dtype=str),
+                    doc_ids=storage.iter_column_values(column_name=const.DOC_ID, dtype=str))
 
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class

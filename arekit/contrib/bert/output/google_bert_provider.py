@@ -7,15 +7,12 @@ class GoogleBertOutputStorage(BaseRowsStorage):
         https://github.com/google-research/bert
     """
 
-    def apply_samples_view(self, samples_view):
+    def apply_samples_view(self, row_ids, doc_ids):
         """
         In addition to such output we provide the following parameters via samples_view instance:
         - id -- is a row identifier, which is compatible with row_inds in serialized opinions.
         - doc_id -- is, towards which the output corresponds to.
         """
-        row_ids = samples_view.extract_ids()
-        doc_ids = samples_view.extract_doc_ids()
-
         assert(len(row_ids) == len(doc_ids) == len(self.DataFrame))
 
         df = self.DataFrame

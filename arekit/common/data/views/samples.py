@@ -25,14 +25,6 @@ class BaseSampleStorageView(object):
             else:
                 yield handle_rows(row)
 
-    # TODO. #240 This is just a wrapper over storage.
-    def extract_ids(self):
-        return list(self._storage.iter_column_values(column_name=const.ID, dtype=str))
-
-    # TODO. #240 This is just a wrapper over storage.
-    def extract_doc_ids(self):
-        return list(self._storage.iter_column_values(column_name=const.DOC_ID, dtype=int))
-
     def iter_rows_linked_by_text_opinions(self):
         undefined = -1
 
