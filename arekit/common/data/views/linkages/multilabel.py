@@ -30,7 +30,7 @@ class MultilableOpinionLinkagesView(BaseOpinionLinkagesView):
         Using a single row (probabilities by each class)
         """
         labels_prob = [row[label] for label in self.__get_column_header()]
-        return self.__labels_scaler.uint_to_label(value=np.argmax(labels_prob))
+        return self.__labels_scaler.uint_to_label(value=int(np.argmax(labels_prob)))
 
     # endregion
 
