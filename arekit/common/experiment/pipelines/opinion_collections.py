@@ -55,26 +55,23 @@ def __create_and_fill_opinion_collection(opinions_iter, collection, supported_la
 # endregion
 
 
-def output_to_opinion_collections(exp_io, opin_ops, doc_ids_set, labels_scaler, output_view,
-                                  data_type, label_calc_mode, supported_labels):
+def output_to_opinion_collections(opin_ops, doc_ids_set, labels_scaler,
+                                  iter_opinion_linkages_func,
+                                  label_calc_mode, supported_labels):
     """ Opinion collection generation pipeline.
     """
     assert(isinstance(opin_ops, OpinionOperations))
     assert(isinstance(labels_scaler, BaseLabelScaler))
-    assert(isinstance(exp_io, NetworkIOUtils))
-    assert(isinstance(data_type, DataType))
     assert(isinstance(label_calc_mode, LabelCalculationMode))
     assert(isinstance(supported_labels, set) or supported_labels is None)
+    assert(callable(iter_opinion_linkages_func))
 
     # Opinion collections iterator pipeline
-    ppl = BasePipeline([
+    return BasePipeline([
         FilterPipelineItem(filter_func=lambda doc_id: doc_id in doc_ids_set),
 
         # Iterate opinion linkages.
-        MapPipelineItem(lambda doc_id:
-                        (doc_id, output_view.iter_opinion_linkages(
-                            doc_id=doc_id,
-                            opinions_view=exp_io.create_opinions_view(data_type)))),
+        MapPipelineItem(lambda doc_id: (doc_id, iter_opinion_linkages_func(doc_id))),
 
         # Convert linkages to opinions.
         MapPipelineItem(lambda doc_id, linkages_iter:
@@ -90,5 +87,3 @@ def output_to_opinion_collections(exp_io, opin_ops, doc_ids_set, labels_scaler, 
                              collection=opin_ops.create_opinion_collection(),
                              supported_labels=supported_labels))),
     ])
-
-    return ppl

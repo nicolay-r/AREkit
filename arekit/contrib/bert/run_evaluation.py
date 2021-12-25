@@ -136,14 +136,14 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                     storage=storage)
 
                 ppl = output_to_opinion_collections(
-                    exp_io=exp_io,
+                    iter_opinion_linkages_func=lambda doc_id: output_view.iter_opinion_linkages(
+                        doc_id=doc_id,
+                        opinions_view=exp_io.create_opinions_view(self.__data_type)),
                     doc_ids_set=cmp_doc_ids_set,
                     opin_ops=self._experiment.OpinionOperations,
                     labels_scaler=self.__label_scaler,
-                    data_type=self.__data_type,
                     supported_labels=exp_data.SupportedCollectionLabels,
-                    label_calc_mode=LabelCalculationMode.AVERAGE,
-                    output_view=output_view)
+                    label_calc_mode=LabelCalculationMode.AVERAGE)
 
                 # Writing opinion collection.
                 save_item = HandleIterPipelineItem(
