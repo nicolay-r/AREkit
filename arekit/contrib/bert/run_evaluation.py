@@ -150,19 +150,19 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
                 # Writing opinion collection.
                 save_item = HandleIterPipelineItem(
-                    lambda doc_id, collection:
+                    lambda data:
                     exp_io.write_opinion_collection(
-                        collection=collection,
+                        collection=data[1],
                         labels_formatter=self.__labels_formatter,
                         target=exp_io.create_result_opinion_collection_target(
                             data_type=self.__data_type,
                             epoch_index=epoch_index,
-                            doc_id=doc_id)))
+                            doc_id=data[0])))
 
                 # Executing pipeline.
                 ppl.append(save_item)
                 pipeline_ctx = PipelineContext({
-                    "src": set(storage.iter_column_values(column_name=const.DOC_ID))
+                    "src": set(output_storage.iter_column_values(column_name=const.DOC_ID))
                 })
                 ppl.run(pipeline_ctx)
 

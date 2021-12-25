@@ -1,6 +1,7 @@
 import logging
 
 from arekit.common.data import const
+from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.data_type import DataType
@@ -59,8 +60,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
             labels_scaler=label_scaler)
         out.write(title=title, contents_it=contents_it)
 
-    # TODO. Pass here the original storage. (NO API for now out there).
-    storage = None
+    storage = BaseRowsStorage.from_tsv(filepath=result_filepath)
 
     linkages_view = MultilableOpinionLinkagesView(
         labels_scaler=label_scaler,
@@ -79,14 +79,14 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
     # Writing opinion collection.
     save_item = HandleIterPipelineItem(
-        lambda doc_id, collection:
+        lambda data:
         experiment.ExperimentIO.write_opinion_collection(
-            collection=collection,
+            collection=data[1],
             labels_formatter=labels_formatter,
             target=experiment.ExperimentIO.create_result_opinion_collection_target(
                 data_type=data_type,
                 epoch_index=epoch_index,
-                doc_id=doc_id)))
+                doc_id=data[0])))
 
     # Executing pipeline.
     ppl.append(save_item)
