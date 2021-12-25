@@ -1,6 +1,7 @@
 import logging
 from os.path import exists, join
 
+from arekit.common.data import const
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.api.enums import BaseDocumentTag
@@ -158,7 +159,9 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
                 # Executing pipeline.
                 ppl.append(save_item)
-                pipeline_ctx = PipelineContext({"src": output_view.iter_doc_ids()})
+                pipeline_ctx = PipelineContext({
+                    "src": set(storage.iter_column_values(column_name=const.DOC_ID))
+                })
                 ppl.run(pipeline_ctx)
 
                 # iterate over the result.

@@ -1,3 +1,4 @@
+from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
 from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.opinions.base import Opinion
@@ -10,10 +11,10 @@ def compose_opinion_by_opinion_id(ids_provider, sample_id, opinions_view, calc_l
     assert(callable(calc_label_func))
 
     opinion_id = ids_provider.convert_sample_id_to_opinion_id(sample_id=sample_id)
-    source, target = opinions_view.provide_opinion_info_by_opinion_id(opinion_id=opinion_id)
+    row = opinions_view.row_by_id(opinion_id=opinion_id)
 
-    return Opinion(source_value=source,
-                   target_value=target,
+    return Opinion(source_value=row[const.SOURCE],
+                   target_value=row[const.TARGET],
                    sentiment=calc_label_func())
 
 

@@ -41,10 +41,6 @@ class BaseOpinionLinkagesView(object):
 
     # region public methods
 
-    # TODO. #240 This is just a wrapper over storage.
-    def iter_doc_ids(self):
-        return set(self._storage.iter_column_values(column_name=const.DOC_ID))
-
     def iter_opinion_linkages(self, doc_id, opinions_view):
         assert(isinstance(opinions_view, BaseOpinionStorageView))
         doc_df = self._storage.find_by_value(column_name=const.DOC_ID, value=doc_id)

@@ -55,9 +55,12 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
                  column_extra_funcs=[(const.DOC_ID, lambda sample_id: doc_id_by_sample_id[sample_id])],
                  labels_scaler=label_scaler)
 
+    # TODO. Pass here the original storage. (NO API for now out there).
+    storage = None
+
     output_view = MultilableOpinionLinkagesView(
         labels_scaler=label_scaler,
-        storage=None) # TODO. Pass here the original storage. (NO API for now out there).
+        storage=storage)
 
     # Convert output to result.
     ppl = output_to_opinion_collections(
@@ -83,7 +86,9 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
 
     # Executing pipeline.
     ppl.append(save_item)
-    pipeline_ctx = PipelineContext({"src": output_view.iter_doc_ids()})
+    pipeline_ctx = PipelineContext({
+        "src": set(storage.iter_column_values(column_name=const.DOC_ID))
+    })
     ppl.run(pipeline_ctx)
 
     # iterate over the result.
