@@ -4,7 +4,7 @@ from arekit.common.data import const
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections
+from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item_handle import HandleIterPipelineItem
@@ -54,7 +54,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     predict = BasePredictProvider()
     with TsvPredictWriter(filepath=result_filepath) as out:
         title, contents_it = predict.provide(
-            sample_id_with_uint_labels_iter=__log_wrap_samples_iter(sample_id_with_uint_labels_iter),
+            sample_id_with_uint_labels_iter=sample_id_with_uint_labels_iter,
             column_extra_funcs=[(const.DOC_ID, lambda sample_id: doc_id_by_sample_id[sample_id])],
             labels_scaler=label_scaler)
         out.write(title=title, contents_it=contents_it)
@@ -62,13 +62,13 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     # TODO. Pass here the original storage. (NO API for now out there).
     storage = None
 
-    output_view = MultilableOpinionLinkagesView(
+    linkages_view = MultilableOpinionLinkagesView(
         labels_scaler=label_scaler,
         storage=storage)
 
     # Convert output to result.
-    ppl = output_to_opinion_collections(
-        iter_opinion_linkages_func=lambda doc_id: output_view.iter_opinion_linkages(
+    ppl = output_to_opinion_collections_pipeline(
+        iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
             doc_id=doc_id,
             opinions_view=experiment.ExperimentIO.create_opinions_view(data_type)),
         doc_ids_set=set(experiment.DocumentOperations.iter_tagget_doc_ids(BaseDocumentTag.Compare)),
@@ -130,12 +130,6 @@ def __calculate_doc_id_by_sample_id_dict(rows_iter):
         d[sample_id] = row[const.DOC_ID]
 
     return d
-
-
-def __log_wrap_samples_iter(it):
-    return progress_bar_iter(iterable=it,
-                             desc='Writing output',
-                             unit='rows')
 
 
 def __log_wrap_collections_conversion_iter(it):

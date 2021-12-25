@@ -6,7 +6,7 @@ from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkag
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.engine import ExperimentEngine
-from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections
+from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
@@ -134,12 +134,12 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
-                output_view = MultilableOpinionLinkagesView(
+                linkages_view = MultilableOpinionLinkagesView(
                     labels_scaler=self.__label_scaler,
                     storage=storage)
 
-                ppl = output_to_opinion_collections(
-                    iter_opinion_linkages_func=lambda doc_id: output_view.iter_opinion_linkages(
+                ppl = output_to_opinion_collections_pipeline(
+                    iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
                         doc_id=doc_id,
                         opinions_view=exp_io.create_opinions_view(self.__data_type)),
                     doc_ids_set=cmp_doc_ids_set,

@@ -1,6 +1,6 @@
 import gzip
 
-from arekit.common.utils import create_dir_if_not_exists
+from arekit.common.utils import create_dir_if_not_exists, progress_bar_iter
 
 
 class TsvPredictWriter(object):
@@ -16,7 +16,12 @@ class TsvPredictWriter(object):
 
     def write(self, title, contents_it):
         self.__write(title)
-        for contents in contents_it:
+
+        wrapped_it = progress_bar_iter(iterable=contents_it,
+                                       desc='Writing output',
+                                       unit='rows')
+
+        for contents in wrapped_it:
             self.__write(contents)
 
     # region base
