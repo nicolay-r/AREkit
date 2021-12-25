@@ -16,11 +16,9 @@ class HandleIterPipelineItem(BasePipelineItem):
         items_iter = pipeline_ctx.provide("src")
         assert(isinstance(items_iter, collections.Iterable))
 
-        # Perform iter conversion into list.
-        items_list = []
-
         for item in items_iter:
-            self.__handle_func(item)
-            items_list.append(item)
 
-        pipeline_ctx.update("src", items_list)
+            # Perform item handling
+            self.__handle_func(item)
+
+            yield item
