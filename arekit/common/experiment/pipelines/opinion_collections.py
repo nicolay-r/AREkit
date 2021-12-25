@@ -1,5 +1,4 @@
 from arekit.common.experiment.api.ops_opin import OpinionOperations
-from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.model.labeling.modes import LabelCalculationMode
@@ -9,7 +8,6 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.item_iter import FilterPipelineItem
 from arekit.common.pipeline.item_map import MapPipelineItem
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 
 
 # region private functions

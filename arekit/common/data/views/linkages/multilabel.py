@@ -3,18 +3,20 @@ import pandas as pd
 
 from arekit.common.data import const
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
-from arekit.common.data.views import utils
+import arekit.common.data.views.linkages.utils as utils
+from arekit.common.data.views.linkages.base import BaseOpinionLinkagesView
 from arekit.common.data.views.opinions import BaseOpinionStorageView
-from arekit.common.data.views.ouput_base import BaseOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
 
 
-class MulticlassOutputView(BaseOutputView):
+class MultilableOpinionLinkagesView(BaseOpinionLinkagesView):
+    """ View onto sorce, where each row, related to opinion, has multiple labels.
+    """
 
     def __init__(self, labels_scaler, storage):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(MulticlassOutputView, self).__init__(ids_provider=MultipleIDProvider(),
-                                                   storage=storage)
+        super(MultilableOpinionLinkagesView, self).__init__(ids_provider=MultipleIDProvider(),
+                                                            storage=storage)
         self.__labels_scaler = labels_scaler
 
     # region private methods

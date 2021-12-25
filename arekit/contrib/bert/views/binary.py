@@ -2,22 +2,22 @@ import pandas as pd
 
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
-from arekit.common.data.views import utils
+from arekit.common.data.views.linkages import utils
+from arekit.common.data.views.linkages.base import BaseOpinionLinkagesView
 from arekit.common.data.views.opinions import BaseOpinionStorageView
-from arekit.common.data.views.ouput_base import BaseOutputView
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.contrib.bert.input.providers.row_ids_binary import BinaryIDProvider
 
 
-class BertBinaryOutputView(BaseOutputView):
+class BertBinaryOpinionLinkagesView(BaseOpinionLinkagesView):
 
     YES = 'yes'
     NO = 'no'
 
     def __init__(self, labels_scaler, storage):
         assert(isinstance(labels_scaler, BaseLabelScaler))
-        super(BertBinaryOutputView, self).__init__(ids_provider=BinaryIDProvider(),
-                                                   storage=storage)
+        super(BertBinaryOpinionLinkagesView, self).__init__(ids_provider=BinaryIDProvider(),
+                                                            storage=storage)
         self.__labels_scaler = labels_scaler
 
     # region private methods
@@ -27,7 +27,7 @@ class BertBinaryOutputView(BaseOutputView):
         Calculate label by relying on a 'YES' column probability values
         paper: https://www.aclweb.org/anthology/N19-1035.pdf
         """
-        ind_max = df[BertBinaryOutputView.YES].idxmax()
+        ind_max = df[BertBinaryOpinionLinkagesView.YES].idxmax()
         sample_id = df.loc[ind_max][const.ID]
         uint_label = self._ids_provider.parse_label_in_sample_id(sample_id)
         return self.__labels_scaler.uint_to_label(value=uint_label)

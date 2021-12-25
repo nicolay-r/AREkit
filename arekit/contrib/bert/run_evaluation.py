@@ -1,7 +1,7 @@
 import logging
 from os.path import exists, join
 
-from arekit.common.data.views.output_multiple import MulticlassOutputView
+from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.engine import ExperimentEngine
@@ -131,7 +131,7 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
 
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
-                output_view = MulticlassOutputView(
+                output_view = MultilableOpinionLinkagesView(
                     labels_scaler=self.__label_scaler,
                     storage=storage)
 

@@ -118,7 +118,7 @@ class InferenceContext(object):
                 input_shapes=input_shapes,
                 pos_tags=row.PartOfSpeechTags))
 
-        rows_it = samples_view.iter_handled_rows(
+        rows_it = samples_view.iter_rows(
             handle_rows=lambda row: InferenceContext.__parse_row(row))
 
         labeled_sample_row_ids = list(rows_it)

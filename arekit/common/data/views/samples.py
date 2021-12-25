@@ -1,21 +1,35 @@
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
-from arekit.common.data.views.base import BaseStorageView
+from arekit.common.data.storages.base import BaseRowsStorage
 
 
-class BaseSampleStorageView(BaseStorageView):
+class BaseSampleStorageView(object):
     """
     Pandas-based input samples proovider
     """
 
     def __init__(self, storage, row_ids_provider):
         assert(isinstance(row_ids_provider, BaseIDProvider))
-        super(BaseSampleStorageView, self).__init__(storage)
+        assert(isinstance(storage, BaseRowsStorage))
         self.__row_ids_provider = row_ids_provider
+        self._storage = storage
 
+    # TODO. #240 This is just a wrapper over storage.
+    def iter_rows(self, handle_rows):
+        assert(callable(handle_rows) or handle_rows is None)
+
+        for row_index, row in self._storage:
+
+            if handle_rows is None:
+                yield row_index, row
+            else:
+                yield handle_rows(row)
+
+    # TODO. #240 This is just a wrapper over storage.
     def extract_ids(self):
         return list(self._storage.iter_column_values(column_name=const.ID, dtype=str))
 
+    # TODO. #240 This is just a wrapper over storage.
     def extract_doc_ids(self):
         return list(self._storage.iter_column_values(column_name=const.DOC_ID, dtype=int))
 
@@ -45,20 +59,3 @@ class BaseSampleStorageView(BaseStorageView):
 
         if len(linked) > 0:
             yield linked
-
-    def calculate_doc_id_by_sample_id_dict(self):
-        """
-        Iter sample_ids with the related labels (if the latter presented in dataframe)
-        """
-        doc_id_by_sample_id = {}
-
-        for row_index, row in self._storage:
-
-            sample_id = row[const.ID]
-
-            if sample_id in doc_id_by_sample_id:
-                continue
-
-            doc_id_by_sample_id[sample_id] = row[const.DOC_ID]
-
-        return doc_id_by_sample_id

@@ -1,21 +1,23 @@
 import pandas as pd
 
+import arekit.common.data.views.linkages.utils as utils
+
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.data.views import utils
-from arekit.common.data.views.base import BaseStorageView
 from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.linkage.opinions import OpinionsLinkage
 
 
-class BaseOutputView(BaseStorageView):
+class BaseOpinionLinkagesView(object):
+    """ Base view onto source in terms of opinion linkages.
+    """
 
     def __init__(self, ids_provider, storage):
         assert(isinstance(ids_provider, BaseIDProvider))
         assert(isinstance(storage, BaseRowsStorage))
-        super(BaseOutputView, self).__init__(storage=storage)
         self._ids_provider = ids_provider
+        self._storage = storage
 
     # region private methods
 
@@ -39,6 +41,7 @@ class BaseOutputView(BaseStorageView):
 
     # region public methods
 
+    # TODO. #240 This is just a wrapper over storage.
     def iter_doc_ids(self):
         return set(self._storage.iter_column_values(column_name=const.DOC_ID))
 

@@ -1,8 +1,12 @@
 from arekit.common.data import const
-from arekit.common.data.views.base import BaseStorageView
+from arekit.common.data.storages.base import BaseRowsStorage
 
 
-class BaseOpinionStorageView(BaseStorageView):
+class BaseOpinionStorageView(object):
+
+    def __init__(self, storage):
+        assert(isinstance(storage, BaseRowsStorage))
+        self._storage = storage
 
     def provide_opinion_info_by_opinion_id(self, opinion_id):
         assert(isinstance(opinion_id, str))
