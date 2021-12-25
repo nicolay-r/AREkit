@@ -1,25 +1,20 @@
 import logging
 from os.path import exists, join
 
-from arekit.common.data.pipeline.item_handle import HandleIterPipelineItem
-from arekit.common.data.pipeline.item_iter import FilterPipelineItem
-from arekit.common.data.pipeline.item_map import MapPipelineItem
 from arekit.common.data.views.output_multiple import MulticlassOutputView
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.engine import ExperimentEngine
+from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
-from arekit.common.model.labeling.single import SingleLabelsHelper
-from arekit.common.opinions.base import Opinion
-from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
+from arekit.common.pipeline.item_handle import HandleIterPipelineItem
 from arekit.common.utils import join_dir_with_subfolder_name
 from arekit.contrib.bert.callback import Callback
 from arekit.contrib.bert.output.eval_helper import EvalHelper
 from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
-from arekit.contrib.bert.utils import create_and_fill_opinion_collection
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -140,30 +135,35 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                     labels_scaler=self.__label_scaler,
                     storage=storage)
 
-                # Opinion collections iterator pipeline.
-                pipeline_save_collections = BasePipeline([
-                    FilterPipelineItem(filter_func=lambda doc_id: doc_id in cmp_doc_ids_set),
-                    MapPipelineItem(lambda doc_id:
-                                    (doc_id, output_view.iter_opinion_linkages(
-                                        doc_id=doc_id,
-                                        opinions_view=exp_io.create_opinions_view(self.__data_type)))
-                                    ),
-                    MapPipelineItem(lambda doc_id, linkages_iter:
-                                    (doc_id,
-                                     self.__create_opinion_collection(
-                                         supported_labels=exp_data.SupportedCollectionLabels,
-                                         linked_iter=linkages_iter)
-                                     )),
-                    HandleIterPipelineItem(lambda doc_id, collection:
-                                           self.__save_opinion_collection(
-                                               doc_id=doc_id,
-                                               collection=collection,
-                                               epoch_index=epoch_index))
-                ])
+                ppl = output_to_opinion_collections(
+                    exp_io=exp_io,
+                    doc_ids_set=cmp_doc_ids_set,
+                    opin_ops=self._experiment.OpinionOperations,
+                    labels_scaler=self.__label_scaler,
+                    data_type=self.__data_type,
+                    supported_labels=exp_data.SupportedCollectionLabels,
+                    label_calc_mode=LabelCalculationMode.AVERAGE,
+                    output_view=output_view)
+
+                # Writing opinion collection.
+                save_item = HandleIterPipelineItem(
+                    lambda doc_id, collection:
+                    exp_io.write_opinion_collection(
+                        collection=collection,
+                        labels_formatter=self.__labels_formatter,
+                        target=exp_io.create_result_opinion_collection_target(
+                            data_type=self.__data_type,
+                            epoch_index=epoch_index,
+                            doc_id=doc_id)))
 
                 # Executing pipeline.
+                ppl.append(save_item)
                 pipeline_ctx = PipelineContext({"src": output_view.iter_doc_ids()})
-                pipeline_save_collections.run(pipeline_ctx)
+                ppl.run(pipeline_ctx)
+
+                # iterate over the result.
+                for _ in pipeline_ctx.provide("src"):
+                    pass
 
                 # evaluate
                 result = self._experiment.evaluate(data_type=self.__data_type,
@@ -183,19 +183,3 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         # Providing a root dir for logging.
         callback = self._experiment.DataIO.Callback
         callback.set_log_dir(self.__get_target_dir())
-
-    def __create_opinion_collection(self, linked_iter, supported_labels):
-        return create_and_fill_opinion_collection(
-            create_opinion_collection=self._experiment.OpinionOperations.create_opinion_collection,
-            data_linkage_iter=linked_iter,
-            labels_helper=SingleLabelsHelper(self.__label_scaler),
-            to_opinion_func=LanguageModelExperimentEvaluator.__create_labeled_opinion,
-            label_calc_mode=LabelCalculationMode.AVERAGE,
-            supported_labels=supported_labels)
-
-    @staticmethod
-    def __create_labeled_opinion(item, label):
-        assert(isinstance(item, Opinion))
-        return Opinion(source_value=item.SourceValue,
-                       target_value=item.TargetValue,
-                       sentiment=label)

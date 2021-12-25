@@ -15,4 +15,4 @@ class MapPipelineItem(BasePipelineItem):
         assert(isinstance(pipeline_ctx, PipelineContext))
         iter_data = pipeline_ctx.provide("src")
         assert(isinstance(iter_data, collections.Iterable))
-        pipeline_ctx.update(param="src", value=filter(self.__map_func, iter_data))
+        pipeline_ctx.update(param="src", value=map(self.__map_func, iter_data))

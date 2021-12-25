@@ -14,3 +14,7 @@ class BasePipeline(object):
         for item in filter(lambda itm: itm is not None, self.__pipeline):
             assert(isinstance(item, BasePipelineItem))
             item.apply(pipeline_ctx)
+
+    def append(self, item):
+        assert(isinstance(item, BasePipelineItem))
+        self.__pipeline.append(item)

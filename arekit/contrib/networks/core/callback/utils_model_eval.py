@@ -1,25 +1,16 @@
 import logging
 
 from arekit.common.data import const
-from arekit.common.data.pipeline.item_iter import FilterPipelineItem
-from arekit.common.data.pipeline.item_map import MapPipelineItem
-from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.output_multiple import MulticlassOutputView
 from arekit.common.experiment.api.enums import BaseDocumentTag
-from arekit.common.experiment.api.ops_doc import DocumentOperations
-from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections
 from arekit.common.labels.scaler import BaseLabelScaler
-from arekit.common.labels.str_fmt import StringLabelsFormatter
-from arekit.common.model.labeling.modes import LabelCalculationMode
-from arekit.common.model.labeling.single import SingleLabelsHelper
-from arekit.common.opinions.base import Opinion
-from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
+from arekit.common.pipeline.item_handle import HandleIterPipelineItem
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 
 from arekit.contrib.networks.core.predict.tsv_provider import TsvPredictProvider
@@ -64,18 +55,40 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
                  column_extra_funcs=[(const.DOC_ID, lambda sample_id: doc_id_by_sample_id[sample_id])],
                  labels_scaler=label_scaler)
 
+    output_view = MulticlassOutputView(labels_scaler=label_scaler,
+                                       # TODO. Pass here the original storage. (NO API for now out there).
+                                       storage=None)
+
     # Convert output to result.
-    __convert_output_to_opinion_collections(
+    ppl = output_to_opinion_collections(
+        doc_ids_set=set(experiment.DocumentOperations.iter_tagget_doc_ids(BaseDocumentTag.Compare)),
         exp_io=experiment.ExperimentIO,
         opin_ops=experiment.OpinionOperations,
-        doc_ops=experiment.DocumentOperations,
         labels_scaler=label_scaler,
-        supported_collection_labels=experiment.DataIO.SupportedCollectionLabels,
         data_type=data_type,
-        epoch_index=epoch_index,
-        output_storage=BaseRowsStorage.from_tsv(result_filepath),
         label_calc_mode=label_calc_mode,
-        labels_formatter=labels_formatter)
+        output_view=output_view,
+        supported_labels=None)
+
+    # Writing opinion collection.
+    save_item = HandleIterPipelineItem(
+        lambda doc_id, collection:
+        experiment.ExperimentIO.write_opinion_collection(
+            collection=collection,
+            labels_formatter=labels_formatter,
+            target=experiment.ExperimentIO.create_result_opinion_collection_target(
+                data_type=data_type,
+                epoch_index=epoch_index,
+                doc_id=doc_id)))
+
+    # Executing pipeline.
+    ppl.append(save_item)
+    pipeline_ctx = PipelineContext({"src": output_view.iter_doc_ids()})
+    ppl.run(pipeline_ctx)
+
+    # iterate over the result.
+    for _ in pipeline_ctx.provide("src"):
+        pass
 
     # Evaluate.
     result = experiment.evaluate(data_type=data_type,
@@ -90,80 +103,6 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
             epoch_index=epoch_index)
 
     return result
-
-
-# TODO. Pass TsvInputOpinionReader.
-# TODO. #240 Move and refactor the code below and place at common/data/output/pipelines/to_collections.py
-def __convert_output_to_opinion_collections(exp_io, opin_ops, doc_ops, labels_scaler,
-                                            output_storage, data_type, epoch_index,
-                                            supported_collection_labels, label_calc_mode, labels_formatter):
-    assert(isinstance(opin_ops, OpinionOperations))
-    assert(isinstance(doc_ops, DocumentOperations))
-    assert(isinstance(labels_scaler, BaseLabelScaler))
-    assert(isinstance(exp_io, NetworkIOUtils))
-    assert(isinstance(data_type, DataType))
-    assert(isinstance(epoch_index, int))
-    assert(isinstance(label_calc_mode, LabelCalculationMode))
-    assert(isinstance(labels_formatter, StringLabelsFormatter))
-
-    cmp_doc_ids_set = set(doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
-
-    output_view = MulticlassOutputView(labels_scaler=labels_scaler,
-                                       storage=output_storage)
-
-    # Opinion collections iterator pipeline.
-    collections_iter_pipeline = BasePipeline([
-        FilterPipelineItem(filter_func=lambda doc_id: doc_id in cmp_doc_ids_set),
-        MapPipelineItem(lambda doc_id:
-                        (doc_id,
-                         output_view.iter_opinion_linkages(
-                             doc_id=doc_id,
-                             opinions_view=exp_io.create_opinions_view(data_type)))
-                        ),
-        MapPipelineItem(lambda doc_id, linkages_iter:
-                        (doc_id,
-                         __create_opinion_collection(
-                             linked_iter=linkages_iter,
-                             supported_labels=supported_collection_labels,
-                             create_opinion_collection=opin_ops.create_opinion_collection,
-                             label_scaler=labels_scaler,
-                             label_calc_mode=label_calc_mode))
-                        ),
-    ])
-
-    # Executing pipeline.
-    pipeline_ctx = PipelineContext({"src": output_view.iter_doc_ids()})
-    collections_iter_pipeline.run(pipeline_ctx)
-
-    # Save collection.
-    for doc_id, collection in pipeline_ctx.provide("src"):
-
-        target = exp_io.create_result_opinion_collection_target(
-            data_type=data_type,
-            epoch_index=epoch_index,
-            doc_id=doc_id)
-
-        exp_io.write_opinion_collection(collection=collection,
-                                        labels_formatter=labels_formatter,
-                                        target=target)
-
-
-def __create_opinion_collection(linked_iter, supported_labels, label_scaler, create_opinion_collection,
-                                label_calc_mode):
-    return create_opinion_collection(
-        create_opinion_collection=create_opinion_collection,
-        linked_data_iter=linked_iter,
-        labels_helper=SingleLabelsHelper(label_scaler),
-        to_opinion_func=__create_labeled_opinion,
-        label_calc_mode=label_calc_mode,
-        supported_labels=supported_labels)
-
-
-def __create_labeled_opinion(item, label):
-    assert(isinstance(item, Opinion))
-    return Opinion(source_value=item.SourceValue,
-                   target_value=item.TargetValue,
-                   sentiment=label)
 
 
 def __log_wrap_samples_iter(it):
