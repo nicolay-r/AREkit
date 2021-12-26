@@ -204,7 +204,7 @@ class TextEntitiesParser(BasePipelineItem):
         if word[0] == "[" and word[-1] == "]":
             entity = Entity(value=word[1:-1], e_type=None, id_in_doc=self.__id_in_doc)
             self.__id_in_doc += 1
-            return [entity]
+            return entity
 
         return word
 
