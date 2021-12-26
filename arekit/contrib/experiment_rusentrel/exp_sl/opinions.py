@@ -72,8 +72,8 @@ class RuSentrelOpinionOperations(OpinionOperations):
             version=self.__version)
         return self.__create_collection(opins_iter)
 
-    def create_opinion_collection(self):
-        return self.__create_collection(None)
+    def create_opinion_collection(self, opinions):
+        return self.__create_collection(opinions)
 
     def get_result_opinion_collection(self, doc_id, data_type, epoch_index):
         """ Since evaluation supported only for neural networks,

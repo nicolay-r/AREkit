@@ -68,13 +68,13 @@ class CustomOpinionOperations(OpinionOperations):
             create_collection_func=self.create_opinion_collection)
 
     def get_etalon_opinion_collection(self, doc_id):
-        return self.create_opinion_collection()
+        return self.create_opinion_collection(None)
 
     def get_result_opinion_collection(self, doc_id, data_type, epoch_index):
         raise Exception("Not Supported")
 
-    def create_opinion_collection(self):
-        return OpinionCollection(opinions=None,
+    def create_opinion_collection(self, opinions=None):
+        return OpinionCollection(opinions=[] if opinions is None else opinions,
                                  synonyms=self.__synonyms,
                                  error_on_duplicates=True,
                                  error_on_synonym_end_missed=True)
@@ -92,14 +92,10 @@ class CustomIOUtils(NetworkIOUtils):
         return "data"
 
     def create_opinion_collection_target(self, doc_id, data_type, check_existance=False):
-        self.__create_target(doc_id=doc_id,
-                             data_type=data_type,
-                             epoch_index=0)
+        return self.__create_target(doc_id=doc_id, data_type=data_type, epoch_index=0)
 
     def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
-        self.__create_target(doc_id=doc_id,
-                             data_type=data_type,
-                             epoch_index=epoch_index)
+        return self.__create_target(doc_id=doc_id, data_type=data_type, epoch_index=epoch_index)
 
 
 class CustomExperiment(BaseExperiment):

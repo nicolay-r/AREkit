@@ -45,7 +45,7 @@ class RuSentrelWithRuAttitudesOpinionOperations(OpinionOperations):
                                                     data_type=data_type,
                                                     epoch_index=epoch_index)
 
-    def create_opinion_collection(self):
-        return self.__rusentrel_op.create_opinion_collection()
+    def create_opinion_collection(self, opinions):
+        return self.__rusentrel_op.create_opinion_collection(opinions)
 
     # endregion
