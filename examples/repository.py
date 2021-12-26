@@ -6,7 +6,6 @@ from arekit.common.labels.base import NoLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
-from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
@@ -20,8 +19,8 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from examples.input import EXAMPLES
-from examples.network.utils import SingleDocOperations, CustomOpinionOperations, CustomSerializationData, \
-    CustomExperiment, TextEntitiesParser, CustomNetworkIOUtils, TermsSplitterParser
+from examples.network.utils import SingleDocOperations, CustomSerializationData, \
+    CustomExperiment, TextEntitiesParser, TermsSplitterParser
 
 
 def create_frame_variants_collection():
