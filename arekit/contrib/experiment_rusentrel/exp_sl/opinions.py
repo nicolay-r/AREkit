@@ -94,7 +94,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
     # region private provider methods
 
-    def __create_collection(self, opinions):
+    def __create_collection(self, opinions=None):
         return OpinionCollection(opinions=[] if opinions is None else opinions,
                                  synonyms=self.__get_synonyms_func(),
                                  error_on_duplicates=True,

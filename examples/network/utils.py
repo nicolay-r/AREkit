@@ -46,18 +46,26 @@ class SingleDocOperations(DocumentOperations):
 
 class CustomOpinionOperations(OpinionOperations):
 
-    def __init__(self, labels_formatter, iter_opins, synonyms):
+    def __init__(self, labels_formatter, exp_io, synonyms, neutral_labels_fmt):
         super(CustomOpinionOperations, self).__init__()
         self.__labels_formatter = labels_formatter
-        self.__iter_opins = iter_opins
+        self.__exp_io = exp_io
         self.__synonyms = synonyms
+        self.__neutral_labels_fmt = neutral_labels_fmt
 
     @property
     def LabelsFormatter(self):
         return self.__labels_formatter
 
     def iter_opinions_for_extraction(self, doc_id, data_type):
-        return self.__iter_opins
+        # Reading automatically annotated collection of neutral opinions.
+        return self.__exp_io.read_opinion_collection(
+            target=self.__exp_io.create_result_opinion_collection_target(
+                doc_id=doc_id,
+                data_type=data_type,
+                epoch_index=0),
+            labels_formatter=self.__neutral_labels_fmt,
+            create_collection_func=self.create_opinion_collection)
 
     def get_etalon_opinion_collection(self, doc_id):
         return self.create_opinion_collection()
@@ -72,15 +80,47 @@ class CustomOpinionOperations(OpinionOperations):
                                  error_on_synonym_end_missed=True)
 
 
+class CustomIOUtils(NetworkIOUtils):
+
+    def __create_target(self, doc_id, data_type, epoch_index):
+        return "data/result_d{doc_id}_{data_type}_e{epoch_index}.txt".format(
+            doc_id=doc_id,
+            data_type=data_type.name,
+            epoch_index=epoch_index)
+
+    def get_experiment_sources_dir(self):
+        return "data"
+
+    def create_opinion_collection_target(self, doc_id, data_type, check_existance=False):
+        self.__create_target(doc_id=doc_id,
+                             data_type=data_type,
+                             epoch_index=0)
+
+    def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
+        self.__create_target(doc_id=doc_id,
+                             data_type=data_type,
+                             epoch_index=epoch_index)
+
+
 class CustomExperiment(BaseExperiment):
 
-    def __init__(self, exp_data, exp_io_type, opin_ops, doc_ops):
-        super(CustomExperiment, self).__init__(exp_data=exp_data,
-                                               experiment_io=exp_io_type(self),
-                                               opin_ops=opin_ops,
-                                               doc_ops=doc_ops,
-                                               name="test",
-                                               extra_name_suffix="test")
+    def __init__(self, exp_data, synonyms, doc_ops, labels_formatter, neutral_labels_fmt):
+
+        exp_io = CustomIOUtils(self)
+
+        opin_ops = CustomOpinionOperations(
+            labels_formatter=labels_formatter,
+            exp_io=exp_io,
+            synonyms=synonyms,
+            neutral_labels_fmt=neutral_labels_fmt)
+
+        super(CustomExperiment, self).__init__(
+            exp_data=exp_data,
+            experiment_io=exp_io,
+            opin_ops=opin_ops,
+            doc_ops=doc_ops,
+            name="test",
+            extra_name_suffix="test")
 
 
 class CustomSerializationData(NetworkSerializationData):

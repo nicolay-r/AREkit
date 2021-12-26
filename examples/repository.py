@@ -70,32 +70,25 @@ def pipeline_serialize(sentences_text_list, label_provider):
                                            frame_variants=frame_variants_collection)
         ])
 
-    parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
-
-    opins_for_extraction = annot_algo.iter_opinions(parsed_news=parsed_news)
-
-    doc_ops = SingleDocOperations(news=news, text_parser=text_parser)
-
-    labels_formatter = StringLabelsFormatter(stol={"neu": NoLabel})
-
-    opin_ops = CustomOpinionOperations(labels_formatter=labels_formatter,
-                                       iter_opins=opins_for_extraction,
-                                       synonyms=synonyms)
-
     exp_data = CustomSerializationData(label_scaler=label_provider.LabelScaler,
                                        stemmer=stemmer,
                                        annot=ThreeScaleTaskAnnotator(annot_algo=annot_algo),
                                        frame_variants_collection=frame_variants_collection)
 
+    labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
+
     # Step 3. Serialize data
-    experiment = CustomExperiment(exp_data=exp_data,
-                                  exp_io_type=CustomNetworkIOUtils,
-                                  doc_ops=doc_ops,
-                                  opin_ops=opin_ops)
+    experiment = CustomExperiment(
+        exp_data=exp_data,
+        doc_ops=SingleDocOperations(news=news, text_parser=text_parser),
+        labels_formatter=labels_fmt,
+        synonyms=synonyms,
+        neutral_labels_fmt=labels_fmt)
 
     NetworkInputHelper.prepare(experiment=experiment,
                                terms_per_context=50,
-                               balance=False)
+                               balance=False,
+                               value_to_group_id_func=synonyms.get_synonym_group_index)
 
 
 if __name__ == '__main__':
