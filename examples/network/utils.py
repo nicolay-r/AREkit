@@ -135,6 +135,7 @@ class CustomSerializationData(NetworkSerializationData):
         self.__embedding = RusvectoresEmbedding.from_word2vec_format(
             filepath=os.path.join(utils.get_default_download_dir(), EMBEDDING_FILENAME),
             binary=True)
+        self.__embedding.set_stemmer(stemmer)
         self.__pos_tagger = POSMystemWrapper(stemmer.MystemInstance)
 
     @property

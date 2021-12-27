@@ -1,17 +1,20 @@
+from collections import OrderedDict
+
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
+from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
-from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
+from arekit.contrib.source.common.labels import PositiveLabel, NegativeLabel
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -94,7 +97,9 @@ if __name__ == '__main__':
 
     text = EXAMPLES["simple"]
 
-    labels_scaler = ThreeLabelScaler()
+    labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0), (PositiveLabel(), 1), (NegativeLabel(), 2)]),
+                                    int_dict=OrderedDict([(NoLabel(), 0), (PositiveLabel(), 1), (NegativeLabel(), -1)]))
+    # ThreeLabelScaler()
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
     pipeline_serialize(sentences_text_list=text, label_provider=label_provider)

@@ -39,7 +39,7 @@ class ThreeScaleTaskAnnotator(BaseAnnotator):
             parsed_news=parsed_news,
             existed_opinions=opinions if data_type == DataType.Train else None)
 
-        collection = opin_ops.create_opinion_collection()
+        collection = opin_ops.create_opinion_collection(None)
         assert(isinstance(collection, OpinionCollection))
 
         # Filling. Keep all the opinions without duplications.
