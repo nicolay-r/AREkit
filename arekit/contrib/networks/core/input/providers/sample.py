@@ -98,7 +98,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
     @staticmethod
     def __iter_indices(terms, filter):
         for t_ind, term in enumerate(terms):
-            if list(filter(term)):
+            if filter(term):
                 yield t_ind
 
     def __syn_check(self, term, group_ind):
