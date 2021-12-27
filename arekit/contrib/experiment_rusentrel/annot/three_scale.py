@@ -21,10 +21,6 @@ class ThreeScaleTaskAnnotator(BaseAnnotator):
         assert(isinstance(annot_algo, BaseAnnotationAlgorithm))
         self.__annot_algo = annot_algo
 
-    @property
-    def LabelsCount(self):
-        return 3
-
     # region private methods
 
     def _annot_collection_core(self, parsed_news, data_type, doc_ops, opin_ops):

@@ -19,10 +19,6 @@ class BaseAnnotator(object):
     def __init__(self):
         logger.info("Init annotator: [{}]".format(self.__class__))
 
-    @property
-    def LabelsCount(self):
-        raise NotImplementedError()
-
     # region private methods
 
     def __iter_annotated_collections(self, data_type, doc_ops, opin_ops):

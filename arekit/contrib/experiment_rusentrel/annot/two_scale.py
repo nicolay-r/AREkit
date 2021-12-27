@@ -17,10 +17,6 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
     def __init__(self):
         super(TwoScaleTaskAnnotator, self).__init__()
 
-    @property
-    def LabelsCount(self):
-        return 2
-
     # region static methods
 
     def _annot_collection_core(self, parsed_news, data_type, doc_ops, opin_ops):
