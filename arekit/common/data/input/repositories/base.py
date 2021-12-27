@@ -1,5 +1,3 @@
-import collections
-
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
 from arekit.common.data.input.providers.opinions import OpinionProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
@@ -31,15 +29,15 @@ class BaseInputRepository(object):
 
     # endregion
 
-    def populate(self, opinion_provider, doc_ids_iter, desc=""):
+    def populate(self, opinion_provider, doc_ids, desc=""):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(self._storage, BaseRowsStorage))
-        assert(isinstance(doc_ids_iter, collections.Iterable))
+        assert(isinstance(doc_ids, list))
 
         def iter_rows(idle_mode):
             return self._rows_provider.iter_by_rows(
                 opinion_provider=opinion_provider,
-                doc_ids_iter=doc_ids_iter,
+                doc_ids_iter=doc_ids,
                 idle_mode=idle_mode)
 
         self._storage.init_empty(columns_provider=self._columns_provider)

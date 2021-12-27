@@ -63,11 +63,11 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
-                               doc_ids_iter=self._experiment.DocumentOperations.iter_doc_ids(data_type),
+                               doc_ids=list(self._experiment.DocumentOperations.iter_doc_ids(data_type)),
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
-                              doc_ids_iter=self._experiment.DocumentOperations.iter_doc_ids(data_type),
+                              doc_ids=list(self._experiment.DocumentOperations.iter_doc_ids(data_type)),
                               desc="sample")
 
         if self._experiment.ExperimentIO.balance_samples(data_type=data_type, balance=self.__balance_train_samples):

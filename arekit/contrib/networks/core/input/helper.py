@@ -93,11 +93,11 @@ class NetworkInputHelper(object):
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
-                               doc_ids_iter=experiment.DocumentOperations.iter_doc_ids(data_type),
+                               doc_ids=list(experiment.DocumentOperations.iter_doc_ids(data_type)),
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
-                              doc_ids_iter=experiment.DocumentOperations.iter_doc_ids(data_type),
+                              doc_ids=list(experiment.DocumentOperations.iter_doc_ids(data_type)),
                               desc="sample")
 
         if experiment.ExperimentIO.balance_samples(data_type=data_type, balance=balance):
