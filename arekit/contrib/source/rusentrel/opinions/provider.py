@@ -12,8 +12,6 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
 
         for line in input_file.readlines():
 
-            line = line.decode('utf-8')
-
             if line == '\n':
                 continue
 
