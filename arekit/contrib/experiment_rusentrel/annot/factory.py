@@ -1,4 +1,4 @@
-from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
+from arekit.common.experiment.annot.default_annotator import DefaultAnnotator
 from arekit.contrib.experiment_rusentrel.annot.two_scale import TwoScaleTaskAnnotator
 
 
@@ -11,7 +11,5 @@ class ExperimentAnnotatorFactory:
 
         if labels_count == 2:
             return TwoScaleTaskAnnotator()
-        elif labels_count == 3:
-            return ThreeScaleTaskAnnotator(create_algo())
         else:
-            raise NotImplementedError()
+            return DefaultAnnotator(create_algo())

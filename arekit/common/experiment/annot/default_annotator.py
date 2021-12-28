@@ -12,12 +12,12 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class ThreeScaleTaskAnnotator(BaseAnnotator):
+class DefaultAnnotator(BaseAnnotator):
     """ For three scale classification task.
     """
 
     def __init__(self, annot_algo):
-        super(ThreeScaleTaskAnnotator, self).__init__()
+        super(DefaultAnnotator, self).__init__()
         assert(isinstance(annot_algo, BaseAnnotationAlgorithm))
         self.__annot_algo = annot_algo
 

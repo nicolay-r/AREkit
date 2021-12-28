@@ -2,6 +2,7 @@ from collections import OrderedDict
 
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
+from arekit.common.experiment.annot.default_annotator import DefaultAnnotator
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
@@ -12,7 +13,6 @@ from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 
-from arekit.contrib.experiment_rusentrel.annot.three_scale import ThreeScaleTaskAnnotator
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -76,7 +76,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
 
     exp_data = CustomSerializationData(label_scaler=label_provider.LabelScaler,
                                        stemmer=stemmer,
-                                       annot=ThreeScaleTaskAnnotator(annot_algo=annot_algo),
+                                       annot=DefaultAnnotator(annot_algo=annot_algo),
                                        frame_variants_collection=frame_variants_collection)
 
     labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
