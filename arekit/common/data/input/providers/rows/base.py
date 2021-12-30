@@ -2,6 +2,7 @@ import collections
 import logging
 
 from arekit.common.data.input.providers.opinions import OpinionProvider
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 
 logger = logging.getLogger(__name__)
@@ -22,10 +23,15 @@ class BaseRowProvider(object):
         assert(isinstance(opinion_provider, OpinionProvider))
         assert(isinstance(doc_ids_iter, collections.Iterable))
 
-        for parsed_news, linkage in opinion_provider.iter_linked_opinions(doc_ids_iter):
+        for linkage in opinion_provider.iter_linked_opinions(doc_ids_iter):
+            assert(isinstance(linkage, TextOpinionsLinkage))
+
+            parsed_news = linkage.Tag
+            # NOTE: Double parsing.
+            entity_service = EntityServiceProvider(parsed_news)
 
             rows_it = self._provide_rows(parsed_news=parsed_news,
-                                         entity_service=EntityServiceProvider(parsed_news),
+                                         entity_service=entity_service,
                                          text_opinion_linkage=linkage,
                                          idle_mode=idle_mode)
 

@@ -8,7 +8,7 @@ class FlattenIterPipelineItem(BasePipelineItem):
     """ Considered to flat iterations of items that represent iterations.
     """
 
-    def __flat(self, iter_data):
+    def __flat_iter(self, iter_data):
         for iter_item in iter_data:
             for item in iter_item:
                 yield item
@@ -17,4 +17,4 @@ class FlattenIterPipelineItem(BasePipelineItem):
         assert (isinstance(pipeline_ctx, PipelineContext))
         iter_data = pipeline_ctx.provide("src")
         assert (isinstance(iter_data, collections.Iterable))
-        pipeline_ctx.update(param="src", value=self.__flat(iter_data))
+        pipeline_ctx.update(param="src", value=self.__flat_iter(iter_data))
