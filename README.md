@@ -1,4 +1,4 @@
-# AREkit 0.21.1
+# AREkit 0.22.0
 
 ![](https://img.shields.io/badge/Python-3.6-brightgreen.svg)
 
