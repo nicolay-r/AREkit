@@ -12,6 +12,8 @@ from tests.contrib.networks.text.news import init_rusentrel_doc
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.text.utils import terms_to_str
 
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
+from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.frames.variants.collection import FrameVariantsCollection
@@ -71,23 +73,25 @@ class TestTfInputFeatures(unittest.TestCase):
                 text_parser=text_parser,
                 synonyms=self.synonyms)
 
-            text_opinion_iter = iter_same_sentence_linked_text_opinions(
-                news=news,
-                parsed_news=parsed_news,
-                opinions=opinions)
+            pairs_provider = TextOpinionPairsProvider(parsed_news=parsed_news,
+                                                      value_to_group_id_func=self.synonyms.get_synonym_group_index)
+            entity_service = EntityServiceProvider(parsed_news=parsed_news)
+
+            text_opinion_iter = iter_same_sentence_linked_text_opinions(pairs_provider=pairs_provider,
+                                                                        entity_service=entity_service,
+                                                                        opinions=opinions)
 
             for text_opinion in text_opinion_iter:
 
-                s_index = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
-                                                          position_type=TermPositionTypes.SentenceIndex)
+                s_index = entity_service.get_entity_position(id_in_document=text_opinion.SourceId,
+                                                             position_type=TermPositionTypes.SentenceIndex)
+
+                s_ind = entity_service.get_entity_position(id_in_document=text_opinion.SourceId,
+                                                           position_type=TermPositionTypes.IndexInSentence)
+                t_ind = entity_service.get_entity_position(id_in_document=text_opinion.TargetId,
+                                                           position_type=TermPositionTypes.IndexInSentence)
 
                 terms = list(parsed_news.iter_sentence_terms(s_index, return_id=False))
-
-                s_ind = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
-                                                        position_type=TermPositionTypes.IndexInSentence)
-                t_ind = parsed_news.get_entity_position(id_in_document=text_opinion.TargetId,
-                                                        position_type=TermPositionTypes.IndexInSentence)
-
                 x_feature = IndicesFeature.from_vector_to_be_fitted(
                     value_vector=np.array(terms),
                     e1_ind=s_ind,

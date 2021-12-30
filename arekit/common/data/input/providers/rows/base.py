@@ -2,6 +2,7 @@ import collections
 import logging
 
 from arekit.common.data.input.providers.opinions import OpinionProvider
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +13,7 @@ class BaseRowProvider(object):
 
     # region protected methods
 
-    def _provide_rows(self, parsed_news, text_opinion_linkage, idle_mode):
+    def _provide_rows(self, parsed_news, entity_service, text_opinion_linkage, idle_mode):
         raise NotImplementedError()
 
     # endregion
@@ -24,6 +25,7 @@ class BaseRowProvider(object):
         for parsed_news, linkage in opinion_provider.iter_linked_opinions(doc_ids_iter):
 
             rows_it = self._provide_rows(parsed_news=parsed_news,
+                                         entity_service=EntityServiceProvider(parsed_news),
                                          text_opinion_linkage=linkage,
                                          idle_mode=idle_mode)
 

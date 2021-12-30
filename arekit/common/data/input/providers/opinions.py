@@ -2,6 +2,7 @@ import collections
 
 from arekit.common.data.input.sample import InputSampleBase
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
 
 
@@ -58,6 +59,7 @@ class OpinionProvider(object):
         for doc_id in doc_ids_it:
 
             parsed_news = parse_news_func(doc_id)
+            entity_service = EntityServiceProvider(parsed_news)
 
             linked_text_opinion_lists = OpinionProvider.__iter_linked_text_opinion_lists(
                 # TODO. To be refactored.
@@ -66,7 +68,7 @@ class OpinionProvider(object):
                     value_to_group_id_func=value_to_group_id_func),
                 iter_opins_for_extraction=news_opins_for_extraction_func(doc_id=parsed_news.RelatedDocID),
                 filter_text_opinion_func=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
-                    parsed_news=parsed_news,
+                    entity_service=entity_service,
                     text_opinion=text_opinion,
                     window_size=terms_per_context))
 

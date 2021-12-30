@@ -1,8 +1,6 @@
 from collections import OrderedDict
 
-from arekit.common.dataset.text_opinions.enums import DistanceType
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
-from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType
 from arekit.common.text_opinions.base import TextOpinion
 
 
@@ -28,11 +26,11 @@ class InputSampleBase(object):
     # endregion
 
     @staticmethod
-    def check_ability_to_create_sample(parsed_news, window_size, text_opinion):
+    def check_ability_to_create_sample(entity_service, window_size, text_opinion):
         """
         Main text_opinion filtering rules
         """
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(entity_service, EntityServiceProvider))
         assert(isinstance(text_opinion, TextOpinion))
         assert(isinstance(window_size, int) and window_size > 0)
 
@@ -43,16 +41,14 @@ class InputSampleBase(object):
         if text_opinion.SourceId != text_opinion.TargetId:
             is_not_same_ends = True
 
-        dist_between_entities = TextOpinionHelper.calc_dist_between_text_opinion_ends(
-            parsed_news=parsed_news,
+        dist_between_entities = entity_service.calc_dist_between_text_opinion_ends(
             text_opinion=text_opinion,
             distance_type=DistanceType.InTerms)
 
         if InputSampleBase._check_ends_could_be_fitted_in_window(dist_between_entities, window_size):
             is_in_window = True
 
-        dist_in_sents = TextOpinionHelper.calc_dist_between_text_opinion_ends(
-            parsed_news=parsed_news,
+        dist_in_sents = entity_service.calc_dist_between_text_opinion_ends(
             text_opinion=text_opinion,
             distance_type=DistanceType.InSentences)
 

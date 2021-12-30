@@ -2,10 +2,9 @@ from arekit.common.entities.base import Entity
 from arekit.common.experiment.annot.base_annot import BaseAnnotationAlgorithm
 from arekit.common.labels.base import Label
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType
 from arekit.common.news.parsed.providers.opinion_pairs import OpinionPairsProvider
 from arekit.common.opinions.base import Opinion
-from arekit.common.dataset.text_opinions.enums import DistanceType
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 
 
 class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
@@ -41,7 +40,8 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
         assert(isinstance(entity_value, str))
         return entity_value in self.__ignored_entity_values
 
-    def __try_create_pair_key(self, parsed_news, e1, e2, existed_opinions):
+    def __try_create_pair_key(self, entity_service, e1, e2, existed_opinions):
+        assert(isinstance(entity_service, EntityServiceProvider))
         assert(isinstance(e1, Entity))
         assert(isinstance(e2, Entity))
 
@@ -53,16 +53,12 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
         if self.__is_ignored_entity_value(entity_value=e2.Value):
             return
 
-        s_dist = TextOpinionHelper.calc_dist_between_entities(parsed_news=parsed_news,
-                                                              e1=e1, e2=e2,
-                                                              distance_type=DistanceType.InSentences)
+        s_dist = entity_service.calc_dist_between_entities(e1=e1, e2=e2, distance_type=DistanceType.InSentences)
 
         if s_dist > self.__dist_in_sents:
             return
 
-        t_dist = TextOpinionHelper.calc_dist_between_entities(parsed_news=parsed_news,
-                                                              e1=e1, e2=e2,
-                                                              distance_type=DistanceType.InTerms)
+        t_dist = entity_service.calc_dist_between_entities(e1=e1, e2=e2, distance_type=DistanceType.InTerms)
 
         if self.__dist_in_terms_bound is not None and t_dist > self.__dist_in_terms_bound:
             return
@@ -82,15 +78,15 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
         assert(isinstance(parsed_news, ParsedNews))
 
         def __filter_pair_func(e1, e2):
-            key = self.__try_create_pair_key(
-                parsed_news=parsed_news,
-                e1=e1, e2=e2,
-                existed_opinions=existed_opinions)
+            key = self.__try_create_pair_key(entity_service=entity_service_provider,
+                                             e1=e1, e2=e2,
+                                             existed_opinions=existed_opinions)
 
             return key is not None
 
-        # Init opinion provider.
+        # Initialize providers.
         opinions_provider = OpinionPairsProvider(parsed_news=parsed_news)
+        entity_service_provider = EntityServiceProvider(parsed_news=parsed_news)
 
         return opinions_provider.iter_from_all(
             label=self.__label_instance,

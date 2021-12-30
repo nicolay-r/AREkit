@@ -21,6 +21,8 @@ from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import 
     ExperimentRuSentiFramesLabelsFormatter, \
     ExperimentRuSentiFramesEffectLabelsFormatter
 
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
+from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
@@ -93,23 +95,27 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
             text_parser=text_parser,
             synonyms=self.synonyms)
 
-        text_opinions = iter_same_sentence_linked_text_opinions(
-            opinions=opinions,
-            parsed_news=parsed_news,
-            value_to_group_id_func=self.synonyms.get_synonym_group_index)
+        # Initialize providers.
+        pairs_provider = TextOpinionPairsProvider(parsed_news=parsed_news,
+                                                  value_to_group_id_func=self.synonyms.get_synonym_group_index)
+        entity_service = EntityServiceProvider(parsed_news=parsed_news)
+
+        text_opinions = iter_same_sentence_linked_text_opinions(opinions=opinions,
+                                                                pairs_provider=pairs_provider,
+                                                                entity_service=entity_service)
 
         for text_opinion in text_opinions:
 
-            s_index = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
-                                                      position_type=TermPositionTypes.SentenceIndex)
+            s_index = entity_service.get_entity_position(id_in_document=text_opinion.SourceId,
+                                                         position_type=TermPositionTypes.SentenceIndex)
 
             terms = list(parsed_news.iter_sentence_terms(s_index, return_id=False))
             str_terms_joined = " ".join(terms_to_str(terms)).strip()
 
-            s_ind = parsed_news.get_entity_position(id_in_document=text_opinion.SourceId,
-                                                    position_type=TermPositionTypes.IndexInSentence)
-            t_ind = parsed_news.get_entity_position(id_in_document=text_opinion.TargetId,
-                                                    position_type=TermPositionTypes.IndexInSentence)
+            s_ind = entity_service.get_entity_position(id_in_document=text_opinion.SourceId,
+                                                       position_type=TermPositionTypes.IndexInSentence)
+            t_ind = entity_service.get_entity_position(id_in_document=text_opinion.TargetId,
+                                                       position_type=TermPositionTypes.IndexInSentence)
 
             logger.info("text_opinion: {}->{}".format(text_opinion.SourceId, text_opinion.TargetId))
             logger.info("[{}] {}->{}".format(s_index, s_ind, t_ind))

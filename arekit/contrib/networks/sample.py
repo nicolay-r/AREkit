@@ -3,7 +3,7 @@ import random
 import numpy as np
 
 from arekit.common.data.input.sample import InputSampleBase
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.features.pointers import PointersFeature
 from arekit.contrib.networks.features.sample_dist import DistanceFeatures
@@ -208,7 +208,7 @@ class InputSample(InputSampleBase):
 
         # Check an ability to create sample by analyzing required window size.
         window_size = terms_per_context
-        dist_between_entities = TextOpinionHelper.calc_dist_between_text_opinion_end_indices(
+        dist_between_entities = EntityServiceProvider.calc_dist_between_text_opinion_end_indices(
             pos1_ind=subj_ind,
             pos2_ind=obj_ind)
 

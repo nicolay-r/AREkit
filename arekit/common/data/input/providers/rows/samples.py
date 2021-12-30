@@ -8,12 +8,11 @@ from arekit.common.data.input.providers.label.multiple import MultipleLabelProvi
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
-from arekit.common.dataset.text_opinions.enums import EntityEndType
-from arekit.common.dataset.text_opinions.helper import TextOpinionHelper
 from arekit.common.labels.base import Label
 
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.providers.entity_service import EntityEndType, EntityServiceProvider
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
@@ -84,7 +83,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         row[const.S_IND] = s_ind
         row[const.T_IND] = t_ind
 
-    def _provide_rows(self, parsed_news, text_opinion_linkage, idle_mode):
+    def _provide_rows(self, parsed_news, entity_service, text_opinion_linkage, idle_mode):
         assert(isinstance(idle_mode, bool))
 
         row_dict = OrderedDict()
@@ -93,6 +92,7 @@ class BaseSampleRowProvider(BaseRowProvider):
 
             rows_it = self.__provide_rows(
                 parsed_news=parsed_news,
+                entity_service=entity_service,
                 row_dict=row_dict,
                 text_opinion_linkage=text_opinion_linkage,
                 index_in_linked=index_in_linked,
@@ -119,7 +119,8 @@ class BaseSampleRowProvider(BaseRowProvider):
         if isinstance(label_provider, MultipleLabelProvider):
             return SingleInstanceTextOpinionsLinkageProvider()
 
-    def __provide_rows(self, row_dict, parsed_news, text_opinion_linkage, index_in_linked, idle_mode):
+    def __provide_rows(self, row_dict, parsed_news, entity_service,
+                       text_opinion_linkage, index_in_linked, idle_mode):
         """
         Providing Rows depending on row_id_formatter type
         """
@@ -131,13 +132,14 @@ class BaseSampleRowProvider(BaseRowProvider):
         for instance in self.__instances_provider.iter_instances(text_opinion_linkage):
             yield self.__create_row(row=row_dict,
                                     parsed_news=parsed_news,
+                                    entity_service=entity_service,
                                     text_opinions_linkage=instance,
                                     index_in_linked=index_in_linked,
                                     # TODO. provide uint_label
                                     etalon_label=etalon_label,
                                     idle_mode=idle_mode)
 
-    def __create_row(self, row, parsed_news, text_opinions_linkage, index_in_linked, etalon_label, idle_mode):
+    def __create_row(self, row, parsed_news, entity_service, text_opinions_linkage, index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -146,7 +148,6 @@ class BaseSampleRowProvider(BaseRowProvider):
             row with key values
         """
         assert(isinstance(row, OrderedDict))
-        assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
         assert(isinstance(index_in_linked, int))
         assert(isinstance(etalon_label, Label))
@@ -157,14 +158,13 @@ class BaseSampleRowProvider(BaseRowProvider):
 
         text_opinion = text_opinions_linkage[index_in_linked]
 
-        s_ind, t_ind = self.__get_opinion_end_indices(parsed_news, text_opinion)
+        s_ind, t_ind = self.__get_opinion_end_indices(entity_service, text_opinion)
 
         row.clear()
 
         self._fill_row_core(row=row,
                             parsed_news=parsed_news,
-                            sentence_ind=TextOpinionHelper.extract_entity_position(
-                                parsed_news=parsed_news,
+                            sentence_ind=entity_service.extract_entity_position(
                                 text_opinion=text_opinion,
                                 end_type=EntityEndType.Source,
                                 position_type=TermPositionTypes.SentenceIndex),
@@ -176,17 +176,17 @@ class BaseSampleRowProvider(BaseRowProvider):
         return row
 
     @staticmethod
-    def __get_opinion_end_indices(parsed_news, text_opinion):
-        assert(isinstance(parsed_news, ParsedNews))
+    def __get_opinion_end_indices(service, text_opinion):
+        assert(isinstance(service, EntityServiceProvider))
         assert(isinstance(text_opinion, TextOpinion))
 
-        s_ind = parsed_news.get_entity_position(text_opinion.SourceId).get_index(
+        s_ind = service.get_entity_position(text_opinion.SourceId).get_index(
             position_type=TermPositionTypes.IndexInSentence)
 
-        t_ind = parsed_news.get_entity_position(text_opinion.TargetId).get_index(
+        t_ind = service.get_entity_position(text_opinion.TargetId).get_index(
             position_type=TermPositionTypes.IndexInSentence)
 
-        return (s_ind, t_ind)
+        return s_ind, t_ind
 
     # endregion
 
