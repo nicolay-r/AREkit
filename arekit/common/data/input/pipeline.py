@@ -39,10 +39,14 @@ def to_text_opinon_linkages(provider, opinions, tag_value_func, filter_func):
         yield linkage
 
 
-def process_input_text_opinions(parse_news_func, iter_doc_opins,
+def text_opinions_iter_pipeline(parse_news_func, iter_doc_opins,
                                 value_to_group_id_func, terms_per_context):
     """ Opinion collection generation pipeline.
     """
+    assert(callable(parse_news_func))
+    assert(callable(iter_doc_opins))
+    assert(callable(value_to_group_id_func))
+    assert(isinstance(terms_per_context, int))
 
     def __assign_ids(linkage, curr_id_list):
         assert(isinstance(linkage, TextOpinionsLinkage))
@@ -60,9 +64,10 @@ def process_input_text_opinions(parse_news_func, iter_doc_opins,
         MapPipelineItem(map_func=lambda doc_id: (doc_id, list(iter_doc_opins(doc_id)))),
 
         # (id, opinions) -> (parsed_news, opinions).
-        MapPipelineItem(map_func=lambda data: (parse_news_func(data[0]), data[1]) ),
+        MapPipelineItem(map_func=lambda data: (parse_news_func(data[0]), data[1])),
 
         # (parsed_news, opinions) -> (opins_provider, entities_provider, opinions).
+        # TODO. #245 adopt DocumentService.
         MapPipelineItem(map_func=lambda data: (
             data[0],
             TextOpinionPairsProvider(parsed_news=data[0], value_to_group_id_func=value_to_group_id_func),
@@ -70,11 +75,12 @@ def process_input_text_opinions(parse_news_func, iter_doc_opins,
             data[1])),
 
         # (opins_provider, entities_provider, opinions) -> linkages[].
+        # TODO. #245 adopt DocumentService.
         MapPipelineItem(map_func=lambda data: to_text_opinon_linkages(
             provider=data[1],
             opinions=data[3],
             # Assign parsed news.
-            tag_value_func=lambda linkage: data[0],
+            tag_value_func=lambda _: data[0],
             filter_func=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
                 entity_service=data[2],
                 text_opinion=text_opinion,

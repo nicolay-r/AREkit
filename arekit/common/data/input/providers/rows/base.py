@@ -1,7 +1,7 @@
 import collections
 import logging
 
-from arekit.common.data.input.providers.opinions import OpinionProvider
+from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 
@@ -20,14 +20,14 @@ class BaseRowProvider(object):
     # endregion
 
     def iter_by_rows(self, opinion_provider, doc_ids_iter, idle_mode):
-        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(opinion_provider, InputTextOpinionProvider))
         assert(isinstance(doc_ids_iter, collections.Iterable))
 
         for linkage in opinion_provider.iter_linked_opinions(doc_ids_iter):
             assert(isinstance(linkage, TextOpinionsLinkage))
 
             parsed_news = linkage.Tag
-            # NOTE: Double parsing.
+            # NOTE: Double parsing. using DocumentServiceCollection (#245)
             entity_service = EntityServiceProvider(parsed_news)
 
             rows_it = self._provide_rows(parsed_news=parsed_news,

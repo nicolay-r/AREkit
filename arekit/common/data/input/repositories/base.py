@@ -1,5 +1,5 @@
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
-from arekit.common.data.input.providers.opinions import OpinionProvider
+from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 
@@ -30,7 +30,7 @@ class BaseInputRepository(object):
     # endregion
 
     def populate(self, opinion_provider, doc_ids, desc=""):
-        assert(isinstance(opinion_provider, OpinionProvider))
+        assert(isinstance(opinion_provider, InputTextOpinionProvider))
         assert(isinstance(self._storage, BaseRowsStorage))
         assert(isinstance(doc_ids, list))
 

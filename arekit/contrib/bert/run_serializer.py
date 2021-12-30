@@ -1,6 +1,6 @@
 from arekit.common.data.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
-from arekit.common.data.input.providers.opinions import OpinionProvider
+from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
 from arekit.common.data.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
@@ -54,7 +54,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
             storage=BaseRowsStorage())
 
         # Create opinion provider
-        opinion_provider = OpinionProvider.create(
+        opinion_provider = InputTextOpinionProvider.create(
             value_to_group_id_func=None,
             parse_news_func=lambda doc_id: self._experiment.DocumentOperations.parse_doc(doc_id),
             iter_doc_opins=lambda doc_id:
