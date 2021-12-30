@@ -12,6 +12,10 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
 
         for line in input_file.readlines():
 
+            # Force perform decoding if needed.
+            if isinstance(line, bytes):
+                line = line.decode()
+
             if line == '\n':
                 continue
 

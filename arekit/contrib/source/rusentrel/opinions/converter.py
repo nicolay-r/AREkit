@@ -8,6 +8,8 @@ class OpinionConverter(object):
 
     @staticmethod
     def try_from_string(line, labels_formatter):
+        assert(isinstance(line, str))
+
         args = line.strip().split(',')
         assert (len(args) >= 3)
 
