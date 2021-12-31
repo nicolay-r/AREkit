@@ -46,8 +46,9 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     labeled_samples = model.get_labeled_samples_collection(data_type=data_type)
     sample_id_with_uint_labels_iter = labeled_samples.iter_non_duplicated_labeled_sample_row_ids()
 
+    ######################################################################################################
     # TODO. Filepath-dependency should be removed!
-    # TODO. This is a limitation, as we focus only tsv.
+    # TODO #168. refactor. Provide storage.
     result_filepath = experiment.ExperimentIO.get_output_model_results_filepath(data_type=data_type,
                                                                                 epoch_index=epoch_index)
     logger.info("Target output filepath: {}".format(result_filepath))
@@ -61,6 +62,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
         out.write(title=title, contents_it=contents_it)
 
     storage = BaseRowsStorage.from_tsv(filepath=result_filepath)
+    ######################################################################################################
 
     linkages_view = MultilableOpinionLinkagesView(
         labels_scaler=label_scaler,

@@ -47,7 +47,7 @@ class NetworkIOUtils(BaseIOUtils):
     def create_opinions_view(self, data_type):
         assert(isinstance(data_type, DataType))
         storage = BaseRowsStorage.from_tsv(
-            filepath=self.get_input_opinions_filepath(data_type=data_type))
+            filepath=self.get_input_opinions_target(data_type=data_type))
         return BaseOpinionStorageView(storage)
 
     def create_opinions_writer(self):
@@ -57,7 +57,7 @@ class NetworkIOUtils(BaseIOUtils):
         return TsvWriter(write_header=True)
 
     def create_opinions_writer_target(self, data_type):
-        return self.get_input_opinions_filepath(data_type)
+        return self.get_input_opinions_target(data_type)
 
     def create_samples_writer_target(self, data_type):
         return self.get_input_sample_target(data_type)
@@ -91,9 +91,7 @@ class NetworkIOUtils(BaseIOUtils):
     def get_term_embedding_target(self):
         return self.__get_default_embedding_filepath()
 
-    # TODO. Filepath-dependency should be removed!
-    # TODO. Filepath-dependency should be removed!
-    # TODO. Filepath-dependency should be removed!
+    # TODO. #168 move into separated (nested) class.
     def get_output_model_results_filepath(self, data_type, epoch_index):
 
         f_name_template = self._filename_template(data_type=data_type)
@@ -118,7 +116,7 @@ class NetworkIOUtils(BaseIOUtils):
 
             filepaths = [
                 self.get_input_sample_target(data_type=data_type),
-                self.get_input_opinions_filepath(data_type=data_type),
+                self.get_input_opinions_target(data_type=data_type),
                 self.get_vocab_target(),
                 self.get_term_embedding_target()
             ]
@@ -190,7 +188,7 @@ class NetworkIOUtils(BaseIOUtils):
         return RuSentRelOpinionCollectionWriter()
 
     # TODO. In nested class (user applications)
-    def get_input_opinions_filepath(self, data_type):
+    def get_input_opinions_target(self, data_type):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self.get_target_dir(),
                                   template=template,

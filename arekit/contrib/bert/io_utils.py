@@ -25,21 +25,21 @@ class BertIOUtils(BaseIOUtils):
 
     def create_samples_view(self, data_type):
         return BaseSampleStorageView(
-            storage=BaseRowsStorage.from_tsv(filepath=self.get_input_sample_filepath(data_type)),
+            storage=BaseRowsStorage.from_tsv(filepath=self.__get_input_sample_filepath(data_type)),
             row_ids_provider=MultipleIDProvider())
 
     def create_opinions_view(self, data_type):
         storage = BaseRowsStorage.from_tsv(
-            filepath=self.get_input_opinions_filepath(data_type),
+            filepath=self.__get_input_opinions_filepath(data_type),
             compression='infer')
 
         return BaseOpinionStorageView(storage=storage)
 
     def create_opinions_writer_target(self, data_type):
-        return self.get_input_opinions_filepath(data_type)
+        return self.__get_input_opinions_filepath(data_type)
 
     def create_samples_writer_target(self, data_type):
-        return self.get_input_sample_filepath(data_type)
+        return self.__get_input_sample_filepath(data_type)
 
     def create_samples_writer(self):
         return TsvWriter(write_header=True)
@@ -76,7 +76,7 @@ class BertIOUtils(BaseIOUtils):
     # endregion
 
     # TODO. In nested class (user applications)
-    def get_input_opinions_filepath(self, data_type):
+    def __get_input_opinions_filepath(self, data_type):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self.get_target_dir(),
                                   template=template,
@@ -84,7 +84,7 @@ class BertIOUtils(BaseIOUtils):
                                   prefix="opinion")
 
     # TODO. In nested class (user applications)
-    def get_input_sample_filepath(self, data_type):
+    def __get_input_sample_filepath(self, data_type):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self.get_target_dir(),
                                   template=template,

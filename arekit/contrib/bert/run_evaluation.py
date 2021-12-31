@@ -79,14 +79,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
             self._log_info("Model dir does not exist. Skipping")
             return
 
-        # NOTE: since get_target_dir overrides the base implementation,
-        # here we need to manually implement exp_dir (as in BaseIOUtils).
-        # TODO. exp_dir creation should be outside of the run_evaluation script.
-        # TODO. exp_dir creation should be outside of the run_evaluation script.
-        # TODO. exp_dir creation should be outside of the run_evaluation script.
-        # TODO. For global generalization purposes.
-        # TODO. For global generalization purposes.
-        # TODO. For global generalization purposes.
+        #############################################################################33
+        # TODO. #168, this should be a part of the IOUtils. (Nested)
         exp_dir = join_dir_with_subfolder_name(
             subfolder_name=self._experiment.ExperimentIO.get_experiment_folder_name(),
             dir=self._experiment.ExperimentIO.get_experiment_sources_dir())
@@ -94,13 +88,14 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
             self._log_info("Experiment dir: {}".format(exp_dir))
             self._log_info("Experiment dir does not exist. Skipping")
             return
+        #############################################################################33
 
         # Setup callback.
         callback = exp_data.Callback
         assert(isinstance(callback, Callback))
         callback.set_iter_index(iter_index)
 
-        # TODO. This should be removed as this is a part of the particular
+        # TODO. #168 This should be removed as this is a part of the particular
         # experiment, not source!.
         cmp_doc_ids_set = set(self._experiment.DocumentOperations.iter_tagget_doc_ids(BaseDocumentTag.Compare))
 
@@ -111,6 +106,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         with callback:
             for epoch_index in reversed(list(range(self.__max_epochs_count))):
 
+                ################################################################
+                # TODO. #168. This is not related to the experiment
                 target_dir = self.__get_target_dir()
                 result_filename = self.__eval_helper.get_results_filename(
                     iter_index=iter_index,
@@ -131,6 +128,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
                 output_storage.apply_samples_view(
                     row_ids=output_storage.iter_column_values(column_name=const.ID, dtype=str),
                     doc_ids=output_storage.iter_column_values(column_name=const.DOC_ID, dtype=str))
+
+                ################################################################
 
                 # We utilize google bert format, where every row
                 # consist of label probabilities per every class
