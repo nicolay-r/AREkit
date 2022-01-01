@@ -8,6 +8,7 @@ from arekit.processing.languages.ru.mods import RussianLanguageMods
 
 class FrameVariantsParser(BasePipelineItem):
 
+    # TODO. #217 -- adopt negation as a pipeline item (remove local_mods from here)
     def __init__(self, frame_variants, locale_mods=RussianLanguageMods):
         assert(isinstance(frame_variants, FrameVariantsCollection))
         assert(len(frame_variants) > 0)
@@ -17,6 +18,7 @@ class FrameVariantsParser(BasePipelineItem):
 
         self.__frame_variants = frame_variants
         self.__max_variant_len = max([len(variant) for _, variant in frame_variants.iter_variants()])
+        # TODO. #217 -- adopt negation as a pipeline item (remove local_mods from here)
         self._locale_mods = locale_mods
 
     # region private methods
@@ -75,6 +77,8 @@ class FrameVariantsParser(BasePipelineItem):
 
                 prep_term = self.__get_preposition(terms=terms, index=start_ind)
 
+                # TODO. #217 -- adopt negation as a pipeline item
+                # TODO. #217 -- modify frame variant label instead of property.
                 yield TextFrameVariant(
                     variant=self.__frame_variants.get_variant_by_value(ctx_value),
                     is_inverted=self._locale_mods.is_negation_word(prep_term) if prep_term is not None else False)

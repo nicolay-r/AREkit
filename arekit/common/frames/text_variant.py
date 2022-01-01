@@ -18,6 +18,7 @@ class TextFrameVariant(object):
     def Variant(self):
         return self.__variant
 
+    # TODO #217 -- is inverted
     @property
     def IsInverted(self):
         return self.__is_inverted

@@ -36,6 +36,8 @@ class FrameConnotationFeatures(object):
 
         assert(isinstance(connot_descriptor, FrameConnotationDescriptor))
 
+        # TODO #217 -- remove IsInverted. (we perfrom labels inversion during text processing, via extra
+        # pipeline element)
         target_label = three_label_scaler.invert_label(connot_descriptor.Label) \
             if text_frame_variant.IsInverted else connot_descriptor.Label
 
