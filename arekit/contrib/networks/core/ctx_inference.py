@@ -119,15 +119,15 @@ class InferenceContext(object):
                 pos_tags=row.PartOfSpeechTags))
 
         rows_it = samples_view.iter_rows(
-            handle_rows=lambda row: InferenceContext.__parse_row(row))
+            handle_rows=lambda row: InferenceContext.__extract_labeled_rows(row))
 
         labeled_sample_row_ids = list(rows_it)
 
         return bags_collection, labeled_sample_row_ids
 
     @staticmethod
-    def __parse_row(row):
+    def __extract_labeled_rows(row):
         parsed_row = ParsedSampleRow(row)
-        yield parsed_row.SampleID, parsed_row.UintLabel
+        return parsed_row.SampleID, parsed_row.UintLabel
 
     # endregion
