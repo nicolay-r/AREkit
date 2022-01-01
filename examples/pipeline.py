@@ -1,3 +1,5 @@
+from os.path import join
+
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
@@ -29,16 +31,20 @@ def pipeline_infer(labels_scaler):
     network = PiecewiseCNN()
     config = CNNConfig()
 
-    config.set_term_embedding(EmbeddingHelper.load_vocab("embedding.txt"))
+    root = "data/test-test_1l/"
+
+    vocab = EmbeddingHelper.load_vocab(join(root, "vocab-0.txt.npz"))
+    config.set_term_embedding(vocab)
 
     inference_ctx = InferenceContext.create_empty()
     inference_ctx.initialize(
         dtypes=[DataType.Test],
+        bags_collection_type=SingleBagsCollection,
         create_samples_view_func=lambda data_type: BaseSampleStorageView(
-            storage=BaseRowsStorage.from_tsv("samples.txt"),
+            storage=BaseRowsStorage.from_tsv(join(root, "sample-test-0.tsv.gz")),
             row_ids_provider=MultipleIDProvider()),
         has_model_predefined_state=True,
-        vocab=EmbeddingHelper.load_vocab("vocab.txt"),
+        vocab=vocab,
         labels_count=3,
         input_shapes=NetworkInputShapes(iter_pairs=[
             (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext),
@@ -83,5 +89,5 @@ if __name__ == '__main__':
     labels_scaler = ThreeLabelScaler()
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
-    pipeline_serialize(sentences_text_list=text, label_provider=label_provider)
+    pipeline_serialize(sentences_text_list=text)
     pipeline_infer(labels_scaler)

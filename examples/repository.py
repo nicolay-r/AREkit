@@ -41,9 +41,13 @@ def create_frame_variants_collection():
     return frame_variant_collection
 
 
-def pipeline_serialize(sentences_text_list, label_provider):
+def pipeline_serialize(sentences_text_list):
     assert(isinstance(sentences_text_list, list))
-    assert(isinstance(label_provider, LabelProvider))
+
+    labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
+                                    int_dict=OrderedDict([(NoLabel(), 0)]))
+    # ThreeLabelScaler()
+    label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
     # TODO. split text onto sentences.
     sentences = list(map(lambda text: BaseNewsSentence(text), sentences_text_list))
@@ -100,9 +104,4 @@ if __name__ == '__main__':
 
     text = EXAMPLES["simple"]
 
-    labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
-                                    int_dict=OrderedDict([(NoLabel(), 0)]))
-    # ThreeLabelScaler()
-    label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
-
-    pipeline_serialize(sentences_text_list=text, label_provider=label_provider)
+    pipeline_serialize(sentences_text_list=text)
