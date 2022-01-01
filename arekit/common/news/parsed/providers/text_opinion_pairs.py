@@ -5,6 +5,7 @@ from arekit.common.entities.collection import EntityCollection
 from arekit.common.news.parsed.providers.base_pairs import BasePairProvider
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.base import TextOpinion
+from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +38,7 @@ class TextOpinionPairsProvider(BasePairProvider):
     def iter_from_opinion(self, opinion, debug=False):
         """ Provides text-level opinion extraction by document-level opinions
             (Opinion class instances), for a particular document (doc_id),
-            with the realated entity collection.
+            with the related entity collection.
         """
         assert(isinstance(opinion, Opinion))
 
@@ -59,9 +60,11 @@ class TextOpinionPairsProvider(BasePairProvider):
             return
             yield
 
+        label_provider = PairSingleLabelProvider(label_instance=opinion.Sentiment)
+
         pairs_it = self._iter_from_entities(source_entities=source_entities,
                                             target_entities=target_entities,
-                                            label=opinion.Sentiment)
+                                            label_provider=label_provider)
 
         for pair in pairs_it:
             yield pair

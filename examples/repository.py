@@ -6,6 +6,7 @@ from arekit.common.experiment.annot.default_annotator import DefaultAnnotator
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
+from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.common.labels.scaler import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.base import News
@@ -51,7 +52,7 @@ def pipeline_serialize(sentences_text_list, label_provider):
 
     annot_algo = DefaultSingleLabelAnnotationAlgorithm(
         dist_in_terms_bound=None,
-        label_instance=NoLabel())
+        label_provider=PairSingleLabelProvider(label_instance=NoLabel()))
 
     frame_variants_collection = create_frame_variants_collection()
 
