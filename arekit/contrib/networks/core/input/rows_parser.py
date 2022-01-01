@@ -17,8 +17,8 @@ def __process_int_values_list(value):
 
 parse_value = {
     const.ID: lambda value: value,
-    const.S_IND: lambda value: value,
-    const.T_IND: lambda value: value,
+    const.S_IND: lambda value: int(value),
+    const.T_IND: lambda value: int(value),
     network_input_const.FrameVariantIndices: lambda value:
         __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.FrameConnotations: lambda value:
@@ -46,7 +46,7 @@ class ParsedSampleRow(object):
         for key, value in row.items():
 
             if key == const.LABEL:
-                self.__uint_label = value
+                self.__uint_label = int(value)
                 continue
 
             if key not in parse_value:
