@@ -40,7 +40,8 @@ class BasePredictProvider(object):
 
         # Provide title.
         title = [const.ID]
-        title.extend([column_name for column_name, _ in column_extra_funcs])
+        if column_extra_funcs is not None:
+            title.extend([column_name for column_name, _ in column_extra_funcs])
         title.extend([str(labels_scaler.label_to_uint(label))
                       for label in labels_scaler.ordered_suppoted_labels()])
 
