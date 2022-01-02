@@ -213,8 +213,6 @@ class BaseTensorflowModel(BaseModel):
                 uint_label = int(uint_labels[bag_index])
 
                 for sample in bag:
-                    if sample.ID < 0:
-                        continue
                     labeled_samples.assign_uint_label(uint_label, sample.ID)
 
         return predict_log
