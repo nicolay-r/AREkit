@@ -1,5 +1,6 @@
 import datetime
 
+import numpy as np
 import tensorflow as tf
 
 
@@ -121,6 +122,7 @@ class DefaultNetworkConfig(object):
         self.__default_regularizer = value
 
     def modify_classes_count(self, value):
+        assert(isinstance(value, int))
         self.__classes_count = value
         self.__class_weights = None
 
@@ -151,6 +153,7 @@ class DefaultNetworkConfig(object):
         self.__bag_size = value
 
     def set_term_embedding(self, embedding_matrix):
+        assert(isinstance(embedding_matrix, np.ndarray))
         self.__term_embedding_matrix = embedding_matrix
 
     def set_class_weights(self, class_weights):
