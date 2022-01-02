@@ -12,7 +12,8 @@ class TsvPredictWriter(object):
         self.__f = None
 
     def __write(self, params):
-        self.__f.provide("{}\n".format(self.__col_separator.join(params)))
+        line = "{}\n".format(self.__col_separator.join(params))
+        self.__f.write(line.encode())
 
     def write(self, title, contents_it):
         self.__write(title)
@@ -29,6 +30,7 @@ class TsvPredictWriter(object):
     def __enter__(self):
         create_dir_if_not_exists(self.__filepath)
         self.__f = gzip.open(self.__filepath, 'wb')
+        return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.__f.close()
