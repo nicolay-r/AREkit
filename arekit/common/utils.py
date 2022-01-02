@@ -23,6 +23,11 @@ def get_random_normal_distribution(vector_size, seed, loc, scale):
 
 def create_dir_if_not_exists(filepath):
     dir = dirname(filepath)
+
+    # Check whether string is empty.
+    if not dir:
+        return
+
     if not exists(dir):
         makedirs(dir)
 
