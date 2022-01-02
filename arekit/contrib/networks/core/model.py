@@ -299,6 +299,10 @@ class BaseTensorflowModel(BaseModel):
         labeled_samples.reset_labels()
         assert(labeled_samples.is_empty())
 
+        # Guarantee and initialize session if the latter was not.
+        if self.__sess is None:
+            self.__initialize_session()
+
         return self.__label_samples(data_type=data_type)
 
     def get_hidden_parameters(self):
