@@ -288,9 +288,16 @@ class BaseTensorflowModel(BaseModel):
         if self.__callback is not None:
             self.__callback.on_fit_finished()
 
-    def predict(self, data_type=DataType.Test):
+    def predict(self, data_type=DataType.Test, do_compile=False, graph_seed=0):
         """ Fills the related labeling collection.
         """
+
+        # Optionally perform network compilation
+        if do_compile:
+            self.__network.compile(config=self.Config,
+                                   reset_graph=True,
+                                   graph_seed=graph_seed)
+
         labeled_samples = self.__get_labeled_samples_collection(data_type=data_type)
 
         # Clear and assert the correctness.

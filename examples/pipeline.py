@@ -38,7 +38,7 @@ def pipeline_infer(labels_scaler):
     embedding = EmbeddingHelper.load_embedding(join(root, "term_embedding-0.npz"))
     config.set_term_embedding(embedding)
     config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
-    config.modify_classes_count(3)
+    config.modify_classes_count(labels_scaler.LabelsCount)
     config.modify_bags_per_minibatch(3)
     config.set_class_weights([1, 1, 1])
 
@@ -59,8 +59,6 @@ def pipeline_infer(labels_scaler):
         ]),
         bag_size=config.BagSize)
 
-    network.compile(config=config, reset_graph=True, graph_seed=42)
-
     # Step 5. Model preparation.
     model = BaseTensorflowModel(
         nn_io=NeuralNetworkModelIO(
@@ -73,7 +71,7 @@ def pipeline_infer(labels_scaler):
         bags_collection_type=SingleBagsCollection,      # Используем на вход 1 пример.
     )
 
-    model.predict()
+    model.predict(do_compile=True)
 
     # Step 6. Gather annotated contexts onto document level.
     labeled_samples = model.get_labeled_samples_collection(data_type=DataType.Test)
@@ -81,7 +79,7 @@ def pipeline_infer(labels_scaler):
     predict_provider = BasePredictProvider()
 
     # TODO. For now it is limited to tsv.
-    with TsvPredictWriter(filepath="out.txt") as out:
+    with TsvPredictWriter(filepath=join(root, "out.txt.gz")) as out:
 
         title, contents_it = predict_provider.provide(
             sample_id_with_uint_labels_iter=labeled_samples.iter_non_duplicated_labeled_sample_row_ids(),
@@ -97,5 +95,5 @@ if __name__ == '__main__':
     labels_scaler = ThreeLabelScaler()
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
-    # pipeline_serialize(sentences_text_list=text)
+    pipeline_serialize(sentences_text_list=text)
     pipeline_infer(labels_scaler)
