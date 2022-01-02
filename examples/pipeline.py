@@ -19,6 +19,7 @@ from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.shapes import NetworkInputShapes
+from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
 from examples.repository import pipeline_serialize
@@ -33,8 +34,13 @@ def pipeline_infer(labels_scaler):
 
     root = "data/test-test_1l/"
 
-    vocab = EmbeddingHelper.load_vocab(join(root, "vocab-0.txt.npz"))
-    config.set_term_embedding(vocab)
+    # setup config parameters.
+    embedding = EmbeddingHelper.load_embedding(join(root, "term_embedding-0.npz"))
+    config.set_term_embedding(embedding)
+    config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
+    config.modify_classes_count(3)
+    config.modify_bags_per_minibatch(3)
+    config.set_class_weights([1, 1, 1])
 
     inference_ctx = InferenceContext.create_empty()
     inference_ctx.initialize(
@@ -44,7 +50,7 @@ def pipeline_infer(labels_scaler):
             storage=BaseRowsStorage.from_tsv(join(root, "sample-test-0.tsv.gz")),
             row_ids_provider=MultipleIDProvider()),
         has_model_predefined_state=True,
-        vocab=vocab,
+        vocab=EmbeddingHelper.load_vocab(join(root, "vocab-0.txt.npz")),
         labels_count=3,
         input_shapes=NetworkInputShapes(iter_pairs=[
             (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext),
@@ -52,6 +58,8 @@ def pipeline_infer(labels_scaler):
             (NetworkInputShapes.SYNONYMS_PER_CONTEXT, config.SynonymsPerContext),
         ]),
         bag_size=config.BagSize)
+
+    network.compile(config=config, reset_graph=True, graph_seed=42)
 
     # Step 5. Model preparation.
     model = BaseTensorflowModel(
@@ -89,5 +97,5 @@ if __name__ == '__main__':
     labels_scaler = ThreeLabelScaler()
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
-    pipeline_serialize(sentences_text_list=text)
+    # pipeline_serialize(sentences_text_list=text)
     pipeline_infer(labels_scaler)
