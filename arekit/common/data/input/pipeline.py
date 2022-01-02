@@ -10,7 +10,7 @@ from arekit.common.pipeline.item_map import MapPipelineItem
 from arekit.common.text_opinions.base import TextOpinion
 
 
-def to_text_opinon_linkages(provider, opinions, tag_value_func, filter_func):
+def __to_text_opinion_linkages(provider, opinions, tag_value_func, filter_func):
     assert(isinstance(provider, TextOpinionPairsProvider))
     assert(callable(tag_value_func))
     assert(callable(filter_func))
@@ -76,7 +76,7 @@ def text_opinions_iter_pipeline(parse_news_func, iter_doc_opins,
 
         # (opins_provider, entities_provider, opinions) -> linkages[].
         # TODO. #245 adopt DocumentService.
-        MapPipelineItem(map_func=lambda data: to_text_opinon_linkages(
+        MapPipelineItem(map_func=lambda data: __to_text_opinion_linkages(
             provider=data[1],
             opinions=data[3],
             # Assign parsed news.
