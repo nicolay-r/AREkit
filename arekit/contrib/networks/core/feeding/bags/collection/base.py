@@ -1,4 +1,5 @@
 import collections
+import math
 
 import numpy as np
 
@@ -70,7 +71,8 @@ class BagsCollection(object):
         return False
 
     def get_groups_count(self, bags_per_group):
-        return len(self._bags) / bags_per_group
+        groups_count = math.trunc(len(self._bags) / bags_per_group)
+        return max(1, groups_count)
 
     def shuffle(self):
         np.random.shuffle(self._bags)
