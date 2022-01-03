@@ -14,6 +14,8 @@ class TextOpinionPairsProvider(BasePairProvider):
     """ Document Related text opinion provider.
     """
 
+    NAME = "text-opinion-pairs-provider"
+
     def __init__(self, parsed_news, value_to_group_id_func):
         super(TextOpinionPairsProvider, self).__init__(parsed_news)
 
@@ -23,6 +25,10 @@ class TextOpinionPairsProvider(BasePairProvider):
         self.__entities_collection = EntityCollection(
             entities=list(parsed_news.iter_entities()),
             value_to_group_id_func=self.__value_to_group_id_func)
+
+    @property
+    def Name(self):
+        return self.NAME
 
     def _create_pair(self, source_entity, target_entity, label):
         assert(isinstance(source_entity, Entity))

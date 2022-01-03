@@ -2,6 +2,7 @@ from arekit.common.data.input.sample import InputSampleBase
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
+from arekit.common.news.parsed.service import ParsedNewsService
 from arekit.common.opinions.base import Opinion
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.item_flatten import FlattenIterPipelineItem
@@ -67,22 +68,21 @@ def text_opinions_iter_pipeline(parse_news_func, iter_doc_opins,
         MapPipelineItem(map_func=lambda data: (parse_news_func(data[0]), data[1])),
 
         # (parsed_news, opinions) -> (opins_provider, entities_provider, opinions).
-        # TODO. #245 adopt DocumentService.
         MapPipelineItem(map_func=lambda data: (
-            data[0],
-            TextOpinionPairsProvider(parsed_news=data[0], value_to_group_id_func=value_to_group_id_func),
-            EntityServiceProvider(parsed_news=data[0]),
+            ParsedNewsService(
+                parsed_news=data[0],
+                providers=[TextOpinionPairsProvider(parsed_news=data[0], value_to_group_id_func=value_to_group_id_func),
+                           EntityServiceProvider(parsed_news=data[0])]),
             data[1])),
 
         # (opins_provider, entities_provider, opinions) -> linkages[].
-        # TODO. #245 adopt DocumentService.
         MapPipelineItem(map_func=lambda data: __to_text_opinion_linkages(
-            provider=data[1],
-            opinions=data[3],
+            provider=data[0].get_provider(TextOpinionPairsProvider.NAME),
+            opinions=data[1],
             # Assign parsed news.
-            tag_value_func=lambda _: data[0],
+            tag_value_func=lambda _: data[0],   # ParsedNewsService
             filter_func=lambda text_opinion: InputSampleBase.check_ability_to_create_sample(
-                entity_service=data[2],
+                entity_service=data[0].get_provider(EntityServiceProvider.NAME),
                 text_opinion=text_opinion,
                 window_size=terms_per_context))),
 

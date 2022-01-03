@@ -1,13 +1,18 @@
 from arekit.common.entities.base import Entity
 from arekit.common.labels.provider.base import BasePairLabelProvider
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
 
 
-class BasePairProvider(object):
+class BasePairProvider(BaseParsedNewsServiceProvider):
 
     def __init__(self, parsed_news):
         assert(isinstance(parsed_news, ParsedNews))
         self.__entities = parsed_news.iter_entities()
+
+    @property
+    def Name(self):
+        raise NotImplementedError()
 
     def _create_pair(self, source_entity, target_entity, label):
         raise NotImplementedError()

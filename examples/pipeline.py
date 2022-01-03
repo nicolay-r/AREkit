@@ -16,8 +16,8 @@ from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
-
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
+
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
@@ -32,10 +32,15 @@ def pipeline_infer(labels_scaler):
     network = PiecewiseCNN()
     config = CNNConfig()
 
+    # setup data filepaths.
     root = "data/test-test_1l/"
+    samples_filepath = join(root, "sample-test-0.tsv.gz")
+    embedding_filepath = join(root, "term_embedding-0.npz")
+    vocab_filepath = join(root, "vocab-0.txt.npz")
+    result_filepath = join(root, "out.txt.gz")
 
     # setup config parameters.
-    embedding = EmbeddingHelper.load_embedding(join(root, "term_embedding-0.npz"))
+    embedding = EmbeddingHelper.load_embedding(embedding_filepath)
     config.set_term_embedding(embedding)
     config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
     config.modify_classes_count(labels_scaler.LabelsCount)
@@ -47,11 +52,11 @@ def pipeline_infer(labels_scaler):
         dtypes=[DataType.Test],
         bags_collection_type=SingleBagsCollection,
         create_samples_view_func=lambda data_type: BaseSampleStorageView(
-            storage=BaseRowsStorage.from_tsv(join(root, "sample-test-0.tsv.gz")),
+            storage=BaseRowsStorage.from_tsv(samples_filepath),
             row_ids_provider=MultipleIDProvider()),
         has_model_predefined_state=True,
-        vocab=EmbeddingHelper.load_vocab(join(root, "vocab-0.txt.npz")),
-        labels_count=3,
+        vocab=EmbeddingHelper.load_vocab(vocab_filepath),
+        labels_count=config.ClassesCount,
         input_shapes=NetworkInputShapes(iter_pairs=[
             (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext),
             (NetworkInputShapes.TERMS_PER_CONTEXT, config.TermsPerContext),
@@ -79,7 +84,7 @@ def pipeline_infer(labels_scaler):
     predict_provider = BasePredictProvider()
 
     # TODO. For now it is limited to tsv.
-    with TsvPredictWriter(filepath=join(root, "out.txt.gz")) as out:
+    with TsvPredictWriter(filepath=result_filepath) as out:
 
         title, contents_it = predict_provider.provide(
             sample_id_with_uint_labels_iter=labeled_samples.iter_non_duplicated_labeled_sample_row_ids(),

@@ -2,6 +2,7 @@ from enum import Enum
 
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
 from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.text.enums import TermFormat
 from arekit.common.text.parsed import BaseParsedText
@@ -30,15 +31,16 @@ class DistanceType(Enum):
             return TermPositionTypes.SentenceIndex
 
 
-class EntityServiceProvider(object):
-    """
-    This class provides a helper functions for TextOpinions, which become a part of TextOpinionCollection.
-    The latter is important because of the dependency from Owner.
-    We utilize 'extract' prefix in methods to emphasize that these are methods of helper.
+class EntityServiceProvider(BaseParsedNewsServiceProvider):
+    """ This class provides a helper functions for TextOpinions, which become a part of TextOpinionCollection.
+        The latter is important because of the dependency from Owner.
+        We utilize 'extract' prefix in methods to emphasize that these are methods of helper.
 
-    Wrapper over:
-        parsed news, positions, text_opinions
+        Wrapper over:
+            parsed news, positions, text_opinions
     """
+
+    NAME = "entity-service-provider"
 
     def __init__(self, parsed_news):
         assert(isinstance(parsed_news, ParsedNews))
@@ -50,6 +52,10 @@ class EntityServiceProvider(object):
         # Initialize entity positions.
         self.__entity_positions = None
         self.__init_entity_positions()
+
+    @property
+    def Name(self):
+        return self.NAME
 
     # region public 'extract' methods
 
