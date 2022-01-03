@@ -15,7 +15,7 @@ class BasePairProvider(BaseParsedNewsServiceProvider):
 
     def init_parsed_news(self, parsed_news):
         assert(isinstance(parsed_news, ParsedNews))
-        self._entities = parsed_news.iter_entities()
+        self._entities = list(parsed_news.iter_entities())
 
     def _create_pair(self, source_entity, target_entity, label):
         raise NotImplementedError()
