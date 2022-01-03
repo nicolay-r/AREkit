@@ -19,7 +19,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
 
     # region static methods
 
-    def _annot_collection_core(self, parsed_news, data_type, doc_ops, opin_ops):
+    def _annot_collection_core(self, parsed_news, data_type, opin_ops):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(data_type, DataType))
 

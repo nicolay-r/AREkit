@@ -1,5 +1,5 @@
 from arekit.common.entities.base import Entity
-from arekit.common.experiment.annot.algo.base_annot import BaseAnnotationAlgorithm
+from arekit.common.experiment.annot.algo.base import BaseAnnotationAlgorithm
 from arekit.common.labels.provider.base import BasePairLabelProvider
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType

@@ -1,8 +1,8 @@
 from collections import OrderedDict
 
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.experiment.annot.default_annotator import DefaultAnnotator
-from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
+from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
+from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
@@ -53,7 +53,7 @@ def pipeline_serialize(sentences_text_list):
 
     stemmer = MystemWrapper()
 
-    annot_algo = DefaultSingleLabelAnnotationAlgorithm(
+    annot_algo = PairBasedAnnotationAlgorithm(
         dist_in_terms_bound=None,
         label_provider=PairSingleLabelProvider(label_instance=NoLabel()))
 

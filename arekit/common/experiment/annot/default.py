@@ -23,10 +23,9 @@ class DefaultAnnotator(BaseAnnotator):
 
     # region private methods
 
-    def _annot_collection_core(self, parsed_news, data_type, doc_ops, opin_ops):
+    def _annot_collection_core(self, parsed_news, data_type, opin_ops):
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(data_type, DataType))
-        assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
 
         opinions = opin_ops.get_etalon_opinion_collection(doc_id=parsed_news.RelatedDocID)

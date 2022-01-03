@@ -32,12 +32,11 @@ class BaseAnnotator(object):
         for parsed_news in logged_parsed_news_iter:
             assert(isinstance(parsed_news, ParsedNews))
             yield parsed_news.RelatedDocID, \
-                  self._annot_collection_core(parsed_news=parsed_news, data_type=data_type,
-                                              doc_ops=doc_ops, opin_ops=opin_ops)
+                  self._annot_collection_core(parsed_news=parsed_news, data_type=data_type, opin_ops=opin_ops)
 
     # endregion
 
-    def _annot_collection_core(self, parsed_news, data_type, doc_ops, opin_ops):
+    def _annot_collection_core(self, parsed_news, data_type, opin_ops):
         raise NotImplementedError
 
     # region public methods

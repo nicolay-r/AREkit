@@ -1,9 +1,9 @@
-from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm
+from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
 
 
-class RuSentRelDefaultNeutralAnnotationAlgorithm(DefaultSingleLabelAnnotationAlgorithm):
+class RuSentRelDefaultNeutralAnnotationAlgorithm(PairBasedAnnotationAlgorithm):
 
     IGNORED_ENTITY_VALUES = ["author", "unknown"]
 
