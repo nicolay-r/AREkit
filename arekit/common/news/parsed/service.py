@@ -15,7 +15,13 @@ class ParsedNewsService(object):
         for provider in providers:
             assert(isinstance(provider, BaseParsedNewsServiceProvider))
             assert(provider.Name not in self.__providers)
+
+            # Link provider with the related name.
             self.__providers[provider.Name] = provider
+
+            # Post initialize with the related parsed news.
+            provider.init_parsed_news(self.__parsed_news)
+
 
     @property
     def ParsedNews(self):

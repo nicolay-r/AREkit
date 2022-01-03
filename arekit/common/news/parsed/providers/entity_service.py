@@ -42,20 +42,22 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
 
     NAME = "entity-service-provider"
 
-    def __init__(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedNews))
-
+    def __init__(self):
         # Initialize API.
-        self.__iter_raw_terms_func = lambda: parsed_news.iter_terms(filter_func=None, term_only=False)
-        self.__get_sent = parsed_news.get_sentence
-
+        self.__iter_raw_terms_func = None
+        self.__get_sent = None
         # Initialize entity positions.
         self.__entity_positions = None
-        self.__init_entity_positions()
 
     @property
     def Name(self):
         return self.NAME
+
+    def init_parsed_news(self, parsed_news):
+        assert(isinstance(parsed_news, ParsedNews))
+        self.__iter_raw_terms_func = lambda: parsed_news.iter_terms(filter_func=None, term_only=False)
+        self.__get_sent = parsed_news.get_sentence
+        self.__init_entity_positions()
 
     # region public 'extract' methods
 
@@ -98,8 +100,7 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
             position_type=DistanceType.to_position_type(distance_type))
 
     def get_entity_position(self, id_in_document, position_type=None):
-        """
-        returns: TermPosition or int
+        """ returns: TermPosition or int
         """
         assert(isinstance(position_type, TermPositionTypes) or position_type is None)
 

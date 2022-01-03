@@ -1,6 +1,5 @@
 from collections import OrderedDict
 
-from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.annot.default_annotator import DefaultAnnotator
 from arekit.common.experiment.annot.single_label import DefaultSingleLabelAnnotationAlgorithm

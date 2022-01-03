@@ -1,5 +1,5 @@
 from arekit.common.entities.base import Entity
-from arekit.common.experiment.annot.base_annot import BaseAnnotationAlgorithm
+from arekit.common.experiment.annot.algo.base_annot import BaseAnnotationAlgorithm
 from arekit.common.labels.provider.base import BasePairLabelProvider
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType
@@ -7,10 +7,9 @@ from arekit.common.news.parsed.providers.opinion_pairs import OpinionPairsProvid
 from arekit.common.opinions.base import Opinion
 
 
-class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
-    """
-    Neutral annotation algorithm which assumes to compose pairs
-    within a sentence which are not a part of sentiment.
+class PairBasedAnnotationAlgorithm(BaseAnnotationAlgorithm):
+    """ Is a pair-based annotation algorithm which
+        assumes to compose source-target entity pairs
     """
 
     def __init__(self, dist_in_terms_bound, label_provider, dist_in_sents=0, ignored_entity_values=None):
@@ -85,8 +84,11 @@ class DefaultSingleLabelAnnotationAlgorithm(BaseAnnotationAlgorithm):
             return key is not None
 
         # Initialize providers.
-        opinions_provider = OpinionPairsProvider(parsed_news=parsed_news)
-        entity_service_provider = EntityServiceProvider(parsed_news=parsed_news)
+        # TODO. Provide here service #245 issue.
+        opinions_provider = OpinionPairsProvider()
+        entity_service_provider = EntityServiceProvider()
+        opinions_provider.init_parsed_news(parsed_news)
+        entity_service_provider.init_parsed_news(parsed_news)
 
         return opinions_provider.iter_from_all(label_provider=self.__label_provider,
                                                filter_func=__filter_pair_func)

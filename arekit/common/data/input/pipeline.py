@@ -71,8 +71,8 @@ def text_opinions_iter_pipeline(parse_news_func, iter_doc_opins,
         MapPipelineItem(map_func=lambda data: (
             ParsedNewsService(
                 parsed_news=data[0],
-                providers=[TextOpinionPairsProvider(parsed_news=data[0], value_to_group_id_func=value_to_group_id_func),
-                           EntityServiceProvider(parsed_news=data[0])]),
+                providers=[TextOpinionPairsProvider(value_to_group_id_func=value_to_group_id_func),
+                           EntityServiceProvider()]),
             data[1])),
 
         # (opins_provider, entities_provider, opinions) -> linkages[].

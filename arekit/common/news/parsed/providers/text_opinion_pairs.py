@@ -16,15 +16,11 @@ class TextOpinionPairsProvider(BasePairProvider):
 
     NAME = "text-opinion-pairs-provider"
 
-    def __init__(self, parsed_news, value_to_group_id_func):
-        super(TextOpinionPairsProvider, self).__init__(parsed_news)
-
-        self.__doc_id = parsed_news.RelatedDocID
+    def __init__(self, value_to_group_id_func):
+        super(TextOpinionPairsProvider, self).__init__()
         self.__value_to_group_id_func = value_to_group_id_func
-
-        self.__entities_collection = EntityCollection(
-            entities=list(parsed_news.iter_entities()),
-            value_to_group_id_func=self.__value_to_group_id_func)
+        self.__doc_id = None
+        self.__entities_collection = None
 
     @property
     def Name(self):
@@ -40,6 +36,13 @@ class TextOpinionPairsProvider(BasePairProvider):
                            label=label,
                            owner=None,
                            text_opinion_id=None)
+
+    def init_parsed_news(self, parsed_news):
+        super(TextOpinionPairsProvider, self).init_parsed_news(parsed_news)
+        self.__doc_id = parsed_news.RelatedDocID
+        self.__entities_collection = EntityCollection(
+            entities=list(self._entities),
+            value_to_group_id_func=self.__value_to_group_id_func)
 
     def iter_from_opinion(self, opinion, debug=False):
         """ Provides text-level opinion extraction by document-level opinions

@@ -6,13 +6,16 @@ from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvid
 
 class BasePairProvider(BaseParsedNewsServiceProvider):
 
-    def __init__(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedNews))
-        self.__entities = parsed_news.iter_entities()
+    def __init__(self):
+        self._entities = None
 
     @property
     def Name(self):
         raise NotImplementedError()
+
+    def init_parsed_news(self, parsed_news):
+        assert(isinstance(parsed_news, ParsedNews))
+        self._entities = parsed_news.iter_entities()
 
     def _create_pair(self, source_entity, target_entity, label):
         raise NotImplementedError()
@@ -31,6 +34,9 @@ class BasePairProvider(BaseParsedNewsServiceProvider):
                 if filter_func is not None and not filter_func:
                     continue
 
+                if source_entity == target_entity:
+                    continue
+
                 label = label_provider.provide(source=source_entity,
                                                target=target_entity)
 
@@ -43,7 +49,7 @@ class BasePairProvider(BaseParsedNewsServiceProvider):
     def iter_from_all(self, label_provider, filter_func):
         assert(isinstance(label_provider, BasePairLabelProvider))
 
-        return self._iter_from_entities(source_entities=self.__entities,
-                                        target_entities=self.__entities,
+        return self._iter_from_entities(source_entities=self._entities,
+                                        target_entities=self._entities,
                                         label_provider=label_provider,
                                         filter_func=filter_func)

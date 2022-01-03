@@ -1,7 +1,7 @@
 import logging
 
+from arekit.common.experiment.annot.algo.base import BaseAnnotationAlgorithm
 from arekit.common.experiment.annot.base import BaseAnnotator
-from arekit.common.experiment.annot.base_annot import BaseAnnotationAlgorithm
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 class DefaultAnnotator(BaseAnnotator):
-    """ For three scale classification task.
+    """ Algorithm-based annotator
     """
 
     def __init__(self, annot_algo):

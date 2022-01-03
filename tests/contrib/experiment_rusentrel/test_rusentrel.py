@@ -119,9 +119,8 @@ class TestRuSentRel(unittest.TestCase):
             parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
 
             # Initialize text opinion provider.
-            text_opinion_provider = TextOpinionPairsProvider(
-                parsed_news=parsed_news,
-                value_to_group_id_func=synonyms.get_synonym_group_index)
+            text_opinion_provider = TextOpinionPairsProvider(synonyms.get_synonym_group_index)
+            text_opinion_provider.init_parsed_news(parsed_news)
 
             text_opins_it = text_opinion_provider.iter_from_opinion(opinion=first_opinion)
 
