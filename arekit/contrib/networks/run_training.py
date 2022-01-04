@@ -52,8 +52,7 @@ class NetworksTrainingEngine(ExperimentEngine):
             data_types_iter=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types())
 
         if not targets_existed:
-            exp_folder_name = self._experiment.ExperimentIO.get_experiment_folder_name()
-            raise Exception("Data has not been initialized/serialized: `{}`".format(exp_folder_name))
+            raise Exception("Data has not been initialized/serialized!")
 
         # Reading embedding.
         embedding_data = EmbeddingHelper.load_embedding(source=self._experiment.ExperimentIO.get_term_embedding_source())

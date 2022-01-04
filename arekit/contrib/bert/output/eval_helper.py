@@ -5,5 +5,5 @@ class EvalHelper(object):
     def get_results_dir(self, target_dir):
         raise NotImplementedError()
 
-    def get_results_filename(self, iter_index, epoch_index):
+    def get_results_target(self, iter_index, epoch_index):
         raise NotImplementedError()

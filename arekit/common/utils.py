@@ -1,5 +1,5 @@
 from os import makedirs
-from os.path import join, dirname, exists
+from os.path import dirname, exists
 import numpy as np
 from tqdm import tqdm
 
@@ -63,14 +63,3 @@ def progress_bar_iter(iterable, desc="", unit='it'):
                 leave=True,
                 ncols=120,
                 unit=unit)
-
-
-def join_dir_with_subfolder_name(subfolder_name, dir):
-    """ Returns subfolder in in directory
-    """
-    assert(isinstance(subfolder_name, str))
-    assert(isinstance(dir, str))
-
-    target_dir = join(dir, "{}/".format(subfolder_name))
-    return target_dir
-

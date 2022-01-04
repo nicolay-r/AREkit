@@ -16,7 +16,7 @@ from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFra
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
-from arekit.contrib.networks.core.io_utils import NetworkIOUtils
+from arekit.contrib.experiment_rusentrel.model_io.tf_networks import NetworkIOUtils
 from arekit.contrib.source import utils
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
@@ -88,7 +88,7 @@ class CustomIOUtils(NetworkIOUtils):
             data_type=data_type.name,
             epoch_index=epoch_index)
 
-    def get_experiment_sources_dir(self):
+    def _get_experiment_sources_dir(self):
         return "data"
 
     def create_opinion_collection_target(self, doc_id, data_type, check_existance=False):
@@ -212,5 +212,5 @@ class TextEntitiesParser(BasePipelineItem):
 
 class CustomNetworkIOUtils(NetworkIOUtils):
 
-    def get_experiment_sources_dir(self):
+    def _get_experiment_sources_dir(self):
         return "."

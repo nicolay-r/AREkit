@@ -1,5 +1,4 @@
 from arekit.common.experiment.data_type import DataType
-from arekit.common.utils import join_dir_with_subfolder_name
 
 
 class BaseIOUtils(object):
@@ -13,7 +12,13 @@ class BaseIOUtils(object):
         self.__opinion_collection_provider = self._create_opinion_collection_provider()
         self.__opinion_collection_writer = self._create_opinion_collection_writer()
 
+    def try_prepare(self):
+        raise NotImplementedError()
+
     # region abstract methods
+
+    def create_docs_stat_target(self):
+        raise NotImplementedError()
 
     def create_samples_view(self, data_type):
         raise NotImplementedError()
@@ -52,31 +57,6 @@ class BaseIOUtils(object):
     def balance_samples(self, data_type, balance):
         return balance and data_type == DataType.Train
 
-    ###########################################################################################
-    # TODO. #168 into nested. May duplicate for networks and bert.
-    def __get_experiment_folder_name(self):
-        return "{name}_{scale}l".format(name=self._experiment.Name,
-                                        scale=str(self._experiment.DataIO.LabelsCount))
-
-    # TODO. #168 into nested. May duplicate for networks and bert.
-    def get_target_dir(self):
-        """ Represents an experiment dir of specific label scale format,
-            defined by labels scaler.
-        """
-        return join_dir_with_subfolder_name(subfolder_name=self.__get_experiment_folder_name(),
-                                            dir=self.get_experiment_sources_dir())
-
-    # TODO. #168 into nested. May duplicate for networks and bert.
-    def get_experiment_folder_name(self):
-        return self.__get_experiment_folder_name()
-
-    def get_experiment_sources_dir(self):
-        """ Provides directory for samples.
-        """
-        raise NotImplementedError()
-
-    ###########################################################################################
-
     def create_opinion_collection_target(self, doc_id, data_type, check_existance=False):
         return self._create_annotated_collection_target(
             doc_id=doc_id,
@@ -94,7 +74,7 @@ class BaseIOUtils(object):
     def read_opinion_collection(self, target, labels_formatter, create_collection_func,
                                 error_on_non_supported=False):
 
-        # Check existance of the target.
+        # Check existence of the target.
         if target is None:
             return None
 

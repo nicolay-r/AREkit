@@ -9,10 +9,11 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.common.utils import join_dir_with_subfolder_name
+from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.rusentrel.opinions.writer import RuSentRelOpinionCollectionWriter
+
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -25,16 +26,37 @@ class NetworkIOUtils(BaseIOUtils):
         - embedding vocabulary.
     """
 
-    # TODO. Move it outside.
-    # TODO. Move it outside.
-    # TODO. Move it outside.
     TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding-{cv_index}'
-    # TODO. Move it outside too.
-    # TODO. Move it outside too.
-    # TODO. Move it outside too.
     VOCABULARY_FILENAME_TEMPLATE = "vocab-{cv_index}.txt"
 
     # region public methods
+
+    def _get_target_dir(self):
+        """ Represents an experiment dir of specific label scale format,
+            defined by labels scaler.
+        """
+        return join_dir_with_subfolder_name(subfolder_name=self.__get_experiment_folder_name(),
+                                            dir=self._get_experiment_sources_dir())
+
+    def create_docs_stat_target(self):
+        return join(self._get_target_dir(), "docs_stat.txt")
+
+    def get_experiment_folder_name(self):
+        return self.__get_experiment_folder_name()
+
+    def get_output_model_results_filepath(self, data_type, epoch_index):
+        f_name_template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self.__get_model_dir(),
+                                  template="".join([f_name_template, '-e{e_index}'.format(e_index=epoch_index)]),
+                                  prefix="result")
+
+    def get_input_opinions_target(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="opinion")
+
+    def get_input_sample_target(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="sample")
 
     def create_samples_view(self, data_type):
         assert(isinstance(data_type, DataType))
@@ -68,7 +90,6 @@ class NetworkIOUtils(BaseIOUtils):
         """
         model_io = self._experiment.DataIO.ModelIO
         assert(isinstance(model_io, NeuralNetworkModelIO))
-
         return model_io.get_model_vocab_filepath() if self.__model_is_pretrained_state_provided(model_io) \
             else self.__get_default_vocab_filepath()
 
@@ -91,25 +112,10 @@ class NetworkIOUtils(BaseIOUtils):
     def get_term_embedding_target(self):
         return self.__get_default_embedding_filepath()
 
-    # TODO. #168 move into separated (nested) class.
-    def get_output_model_results_filepath(self, data_type, epoch_index):
-
-        f_name_template = self._filename_template(data_type=data_type)
-
-        result_template = "".join([f_name_template, '-e{e_index}'.format(e_index=epoch_index)])
-
-        return self._get_filepath(out_dir=self.__get_model_dir(),
-                                  template=result_template,
-                                  prefix="result")
-
     def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
         assert(isinstance(epoch_index, int))
-
         model_eval_root = self.__get_eval_root_filepath(data_type=data_type, epoch_index=epoch_index)
-
-        filepath = join(model_eval_root, "{}.opin.txt".format(doc_id))
-
-        return filepath
+        return join(model_eval_root, "{}.opin.txt".format(doc_id))
 
     def check_targets_existed(self, data_types_iter):
         for data_type in data_types_iter:
@@ -121,7 +127,7 @@ class NetworkIOUtils(BaseIOUtils):
                 self.get_term_embedding_target()
             ]
 
-            if not self.__check_targets_existance(targets=filepaths, logger=logger):
+            if not self.__check_targets_existence(targets=filepaths, logger=logger):
                 return False
         return True
 
@@ -129,8 +135,16 @@ class NetworkIOUtils(BaseIOUtils):
 
     # region private methods
 
+    def __get_experiment_folder_name(self):
+        return "{name}_{scale}l".format(name=self._experiment.Name,
+                                        scale=str(self._experiment.DataIO.LabelsCount))
+
     @staticmethod
-    def __check_targets_existance(targets, logger):
+    def __generate_tsv_archive_filename(template, prefix):
+        return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
+
+    @staticmethod
+    def __check_targets_existence(targets, logger):
         assert (isinstance(targets, collections.Iterable))
 
         result = True
@@ -145,12 +159,12 @@ class NetworkIOUtils(BaseIOUtils):
         return result
 
     def __get_default_vocab_filepath(self):
-        return join(self.get_target_dir(),
+        return join(self._get_target_dir(),
                     self.VOCABULARY_FILENAME_TEMPLATE.format(
                         cv_index=self._experiment_iter_index()) + '.npz')
 
     def __get_default_embedding_filepath(self):
-        return join(self.get_target_dir(),
+        return join(self._get_target_dir(),
                     self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
                         cv_index=self._experiment_iter_index()) + '.npz')
 
@@ -179,7 +193,16 @@ class NetworkIOUtils(BaseIOUtils):
         assert(isinstance(model_io, NeuralNetworkModelIO))
         return model_io.IsPretrainedStateProvided
 
+    def __get_annotator_dir(self):
+        return join_dir_with_subfolder_name(dir=self._get_target_dir(),
+                                            subfolder_name=self._get_annotator_name())
+
     # endregion
+
+    # region protected methods
+
+    def _get_experiment_sources_dir(self):
+        raise NotImplementedError()
 
     def _create_opinion_collection_provider(self):
         return RuSentRelOpinionCollectionProvider()
@@ -187,57 +210,26 @@ class NetworkIOUtils(BaseIOUtils):
     def _create_opinion_collection_writer(self):
         return RuSentRelOpinionCollectionWriter()
 
-    # TODO. In nested class (user applications)
-    def get_input_opinions_target(self, data_type):
-        template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self.get_target_dir(),
-                                  template=template,
-                                  # TODO. formatter_type_log_name -- in nested formatter.
-                                  prefix="opinion")
-
-    # TODO. In nested class (user applications)
-    def get_input_sample_target(self, data_type):
-        template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self.get_target_dir(),
-                                  template=template,
-                                  # TODO. formatter_type_log_name -- in nested formatter.
-                                  prefix="sample")
-
-    # TODO. In nested class (user applications)
     @staticmethod
     def _get_filepath(out_dir, template, prefix):
         assert(isinstance(template, str))
         assert(isinstance(prefix, str))
         return join(out_dir, NetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
 
-    # TODO. In nested class (user applications)
     def _experiment_iter_index(self):
         return self._experiment.DocumentOperations.DataFolding.IterationIndex
 
-    # TODO. In nested class (user applications)
     def _filename_template(self, data_type):
         assert(isinstance(data_type, DataType))
         return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
                                                  iter_index=self._experiment_iter_index())
 
-    # TODO. In nested class (user applications)
-    @staticmethod
-    def __generate_tsv_archive_filename(template, prefix):
-        return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
-
-    # TODO. In nested class (user applications)
     def _get_annotator_name(self):
         """ We use custom implementation as it allows to
             be independent of NeutralAnnotator instance.
         """
         return "annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
 
-    # TODO. In nested class (user applications)
-    def __get_annotator_dir(self):
-        return join_dir_with_subfolder_name(dir=self.get_target_dir(),
-                                            subfolder_name=self._get_annotator_name())
-
-    # TODO. In nested class (user applications)
     def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
         assert(isinstance(doc_id, int))
         assert(isinstance(data_type, DataType))
@@ -259,4 +251,4 @@ class NetworkIOUtils(BaseIOUtils):
 
         return target
 
-
+    # endregion

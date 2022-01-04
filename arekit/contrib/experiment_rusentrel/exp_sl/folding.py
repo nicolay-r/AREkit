@@ -52,8 +52,7 @@ def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_
         # We utilize sentence-based cv-splitter.
         splitter = StatBasedCrossValidataionSplitter(
             docs_stat=SentenceBasedDocumentStatGenerator(docs_reader_func),
-            # TODO #168. Provide here target (instead of target_dir + path).
-            docs_stat_filepath_func=lambda: join(experiment_io.get_target_dir(), "docs_stat.txt"))
+            docs_stat_filepath_func=lambda: join(experiment_io.create_docs_stat_target()))
 
         return TwoClassCVFolding(doc_ids_to_fold=all_doc_ids,
                                  supported_data_types=supported_data_types,
