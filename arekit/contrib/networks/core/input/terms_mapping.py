@@ -1,4 +1,5 @@
-from arekit.common import utils
+import numpy as np
+
 from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
@@ -53,7 +54,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         seed_token_offset = self.TOKEN_RANDOM_SEED_OFFSET
 
-        vector = utils.get_random_normal_distribution(
+        vector = self.__get_random_normal_distribution(
             vector_size=self.__predefined_embedding.VectorSize,
             seed=t_ind + seed_token_offset,
             loc=0.05,
@@ -87,6 +88,13 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
         return str_entity_mask, vector
 
     # region private methods
+
+    @staticmethod
+    def __get_random_normal_distribution(vector_size, seed, loc, scale):
+        assert (isinstance(vector_size, int))
+        assert (isinstance(seed, int))
+        np.random.seed(seed)
+        return np.random.normal(loc=loc, scale=scale, size=vector_size)
 
     @staticmethod
     def __get_entity_type(e_ind, subj_ind_set, obj_ind_set):
