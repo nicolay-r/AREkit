@@ -1,4 +1,4 @@
-from arekit.common.experiment.annot.default_annotator import DefaultAnnotator
+from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.contrib.experiment_rusentrel.annot.two_scale import TwoScaleTaskAnnotator
 
 
