@@ -125,7 +125,7 @@ class CustomSerializationData(NetworkSerializationData):
         assert(isinstance(stemmer, MystemWrapper))
         assert(isinstance(frame_variants_collection, FrameVariantsCollection))
 
-        super(CustomSerializationData, self).__init__(labels_scaler=label_scaler, annot=annot, stemmer=stemmer)
+        super(CustomSerializationData, self).__init__(labels_scaler=label_scaler, annot=annot)
 
         frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
         self.__frame_roles_label_scaler = ThreeLabelScaler()

@@ -7,8 +7,7 @@ class DataIO(object):
         (data-serialization, training, etc.).
     """
 
-    def __init__(self, stemmer):
-        self.__stemmer = stemmer
+    def __init__(self):
         self.__model_io = None
 
     @property

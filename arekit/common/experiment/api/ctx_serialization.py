@@ -7,10 +7,10 @@ class SerializationData(DataIO):
     """ Data, that is necessary for models training stage.
     """
 
-    def __init__(self, label_scaler, annot, stemmer):
+    def __init__(self, label_scaler, annot):
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(annot, BaseAnnotator))
-        super(SerializationData, self).__init__(stemmer=stemmer)
+        super(SerializationData, self).__init__()
 
         self.__label_scaler = label_scaler
 

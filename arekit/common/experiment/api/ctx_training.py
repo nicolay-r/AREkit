@@ -5,9 +5,8 @@ class TrainingData(DataIO):
     """ Data, that is necessary for models training stage.
     """
 
-    def __init__(self, stemmer, labels_count):
-        super(TrainingData, self).__init__(stemmer)
-
+    def __init__(self, labels_count):
+        super(TrainingData, self).__init__()
         self.__labels_count = labels_count
 
     @property
