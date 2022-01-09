@@ -1,6 +1,6 @@
 import collections
 
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.model.labeling.single import SingleLabelsHelper

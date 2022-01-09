@@ -1,10 +1,10 @@
 from collections import OrderedDict
 
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
 
 
-class TwoLabelScaler(BaseLabelScaler):
+class TwoLabelScaler(SentimentLabelScaler):
 
     def __init__(self):
 

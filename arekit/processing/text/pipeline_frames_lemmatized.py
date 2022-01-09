@@ -9,20 +9,19 @@ class LemmasBasedFrameVariantsParser(FrameVariantsParser):
     def __init__(self, frame_variants, stemmer, locale_mods=RussianLanguageMods, save_lemmas=False):
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(save_lemmas, bool))
-
-        super(LemmasBasedFrameVariantsParser, self).__init__(locale_mods=locale_mods,
-                                                             frame_variants=frame_variants)
+        super(LemmasBasedFrameVariantsParser, self).__init__(frame_variants=frame_variants)
 
         self.__frame_variants = frame_variants
         self.__stemmer = stemmer
         self.__save_lemmas = save_lemmas
         self.__max_variant_len = max([len(variant) for _, variant in frame_variants.iter_variants()])
+        self.__locale_mods = locale_mods
 
     def __lemmatize_term(self, term):
         # we first split onto words for lemmatization and then join all of them.
         lemma = "".join(self.__stemmer.lemmatize_to_list(term))
         # then we replace certain chars according to the locale restrictions.
-        return self._locale_mods.replace_specific_word_chars(lemma)
+        return self.__locale_mods.replace_specific_word_chars(lemma)
 
     def __lemmatize_terms(self, terms):
         """

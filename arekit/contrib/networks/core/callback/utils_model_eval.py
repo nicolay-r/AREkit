@@ -6,7 +6,7 @@ from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkag
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item_handle import HandleIterPipelineItem
 from arekit.common.utils import progress_bar_iter

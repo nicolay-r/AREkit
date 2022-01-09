@@ -6,7 +6,7 @@ from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.pipeline.context import PipelineContext

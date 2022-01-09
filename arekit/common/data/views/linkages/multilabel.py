@@ -6,7 +6,7 @@ from arekit.common.data.row_ids.multiple import MultipleIDProvider
 import arekit.common.data.views.linkages.utils as utils
 from arekit.common.data.views.linkages.base import BaseOpinionLinkagesView
 from arekit.common.data.views.opinions import BaseOpinionStorageView
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.base import BaseLabelScaler
 
 
 class MultilableOpinionLinkagesView(BaseOpinionLinkagesView):

@@ -35,7 +35,7 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
 
     def iter_opinions(self, source, labels_formatter, error_on_non_supported=True):
         """
-        Important: For externaly saved collections (using save_to_file method) and related usage
+        Important: For externally saved collections (using save_to_file method) and related usage
         """
         assert(isinstance(source, str))
         assert(isinstance(labels_formatter, StringLabelsFormatter))

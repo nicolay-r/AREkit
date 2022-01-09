@@ -2,7 +2,7 @@ from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.entities.base import Entity
 from arekit.common.frames.text_variant import TextFrameVariant
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.contrib.networks.core.input import const
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
@@ -19,7 +19,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                  pos_terms_mapper):
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(pos_terms_mapper, PosTermsMapper))
-        assert(isinstance(frame_role_label_scaler, BaseLabelScaler))
+        assert(isinstance(frame_role_label_scaler, SentimentLabelScaler))
 
         super(NetworkSampleRowProvider, self).__init__(label_provider=label_provider,
                                                        text_provider=text_provider)

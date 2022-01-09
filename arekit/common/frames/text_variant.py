@@ -6,11 +6,10 @@ class TextFrameVariant(object):
     FrameVariant in a text, i.e. related object provides position in text.
     """
 
-    def __init__(self, variant, is_inverted):
+    def __init__(self, variant):
         assert(isinstance(variant, FrameVariant))
-        assert(isinstance(is_inverted, bool))
         self.__variant = variant
-        self.__is_inverted = is_inverted
+        self.__is_negated = False
 
     # region properties
 
@@ -18,10 +17,9 @@ class TextFrameVariant(object):
     def Variant(self):
         return self.__variant
 
-    # TODO #217 -- is inverted
     @property
-    def IsInverted(self):
-        return self.__is_inverted
+    def IsNegated(self):
+        return self.__is_negated
 
     # endregion
 
@@ -30,6 +28,10 @@ class TextFrameVariant(object):
     def iter_terms(self):
         for term in self.__variant.iter_terms():
             yield term
+
+    def set_is_negated(self, value):
+        assert(isinstance(value, bool))
+        self.__is_negated = value
 
     # endregion
 

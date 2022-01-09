@@ -6,6 +6,7 @@ from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
 
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
@@ -42,7 +43,8 @@ class TestTextParser(unittest.TestCase):
                                                DefaultTextTokenizer(keep_tokens=True),
                                                LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
                                                                               stemmer=stemmer,
-                                                                              save_lemmas=False)])
+                                                                              save_lemmas=False),
+                                               FrameVariantsSentimentNegation()])
 
         # Reading synonyms collection.
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)

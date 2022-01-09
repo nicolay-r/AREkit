@@ -2,24 +2,18 @@ from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item import BasePipelineItem
-from arekit.processing.languages.mods import BaseLanguageMods
-from arekit.processing.languages.ru.mods import RussianLanguageMods
 
 
 class FrameVariantsParser(BasePipelineItem):
 
-    # TODO. #217 -- adopt negation as a pipeline item (remove local_mods from here)
-    def __init__(self, frame_variants, locale_mods=RussianLanguageMods):
+    def __init__(self, frame_variants):
         assert(isinstance(frame_variants, FrameVariantsCollection))
         assert(len(frame_variants) > 0)
-        assert(issubclass(locale_mods, BaseLanguageMods))
 
         super(FrameVariantsParser, self).__init__()
 
         self.__frame_variants = frame_variants
         self.__max_variant_len = max([len(variant) for _, variant in frame_variants.iter_variants()])
-        # TODO. #217 -- adopt negation as a pipeline item (remove local_mods from here)
-        self._locale_mods = locale_mods
 
     # region private methods
 
@@ -29,10 +23,6 @@ class FrameVariantsParser(BasePipelineItem):
             if not isinstance(terms[term_ind], str):
                 return False
         return True
-
-    @staticmethod
-    def __get_preposition(terms, index):
-        return terms[index-1] if index > 0 else None
 
     def __try_compose_frame_variant(self, lemmas, start_ind, last_ind):
 
@@ -75,13 +65,9 @@ class FrameVariantsParser(BasePipelineItem):
                 if ctx_value is None:
                     continue
 
-                prep_term = self.__get_preposition(terms=terms, index=start_ind)
+                variant = self.__frame_variants.get_variant_by_value(ctx_value)
 
-                # TODO. #217 -- adopt negation as a pipeline item
-                # TODO. #217 -- modify frame variant label instead of property.
-                yield TextFrameVariant(
-                    variant=self.__frame_variants.get_variant_by_value(ctx_value),
-                    is_inverted=self._locale_mods.is_negation_word(prep_term) if prep_term is not None else False)
+                yield TextFrameVariant(variant)
 
                 found = True
 

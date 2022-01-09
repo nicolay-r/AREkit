@@ -1,5 +1,5 @@
 from arekit.common.data.row_ids.base import BaseIDProvider
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 
 

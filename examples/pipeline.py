@@ -5,7 +5,7 @@ from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.base import BaseLabelScaler
 
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.context.architectures.pcnn import PiecewiseCNN

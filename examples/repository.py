@@ -6,7 +6,7 @@ from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
@@ -21,6 +21,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 from examples.input import EXAMPLES
@@ -75,7 +76,8 @@ def pipeline_serialize(sentences_text_list):
             DefaultTextTokenizer(keep_tokens=True),
             LemmasBasedFrameVariantsParser(save_lemmas=False,
                                            stemmer=stemmer,
-                                           frame_variants=frame_variants_collection)
+                                           frame_variants=frame_variants_collection),
+            FrameVariantsSentimentNegation()
         ])
 
     exp_data = CustomSerializationData(label_scaler=label_provider.LabelScaler,

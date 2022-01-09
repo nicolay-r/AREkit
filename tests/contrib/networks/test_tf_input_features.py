@@ -30,6 +30,7 @@ from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
 
 
 class TestTfInputFeatures(unittest.TestCase):
@@ -55,13 +56,13 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        text_parser = BaseTextParser(pipeline=[
-            RuSentRelTextEntitiesParser(),
-            DefaultTextTokenizer(keep_tokens=True),
-            LemmasBasedFrameVariantsParser(frame_variants=self.unique_frame_variants,
-                                           stemmer=self.stemmer,
-                                           save_lemmas=True)
-        ])
+        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+                                               DefaultTextTokenizer(keep_tokens=True),
+                                               LemmasBasedFrameVariantsParser(
+                                                   frame_variants=self.unique_frame_variants,
+                                                   stemmer=self.stemmer,
+                                                   save_lemmas=True),
+                                               FrameVariantsSentimentNegation()])
 
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():
@@ -73,9 +74,13 @@ class TestTfInputFeatures(unittest.TestCase):
                 text_parser=text_parser,
                 synonyms=self.synonyms)
 
-            pairs_provider = TextOpinionPairsProvider(parsed_news=parsed_news,
-                                                      value_to_group_id_func=self.synonyms.get_synonym_group_index)
-            entity_service = EntityServiceProvider(parsed_news=parsed_news)
+            # Initialize service providers.
+            pairs_provider = TextOpinionPairsProvider(value_to_group_id_func=self.synonyms.get_synonym_group_index)
+            entity_service = EntityServiceProvider()
+
+            # Setup parsed news.
+            pairs_provider.init_parsed_news(parsed_news)
+            entity_service.init_parsed_news(parsed_news)
 
             text_opinion_iter = iter_same_sentence_linked_text_opinions(pairs_provider=pairs_provider,
                                                                         entity_service=entity_service,

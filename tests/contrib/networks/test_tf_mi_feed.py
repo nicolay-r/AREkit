@@ -9,6 +9,9 @@ from tests.contrib.networks.labels import TestThreeLabelScaler
 from tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
 from tests.contrib.networks.tf_networks.supported import get_supported
 
+from arekit.common.labels.scaler.base import BaseLabelScaler
+
+from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.multi.configurations.att_self import AttSelfOverSentencesConfig
 from arekit.contrib.networks.multi.architectures.att_self import AttSelfOverSentences
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
@@ -18,8 +21,6 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 
-from arekit.common.labels.scaler import BaseLabelScaler
-
 
 class TestMultiInstanceFeed(unittest.TestCase):
 
@@ -27,11 +28,17 @@ class TestMultiInstanceFeed(unittest.TestCase):
     def __create_minibatch(config, labels_scaler):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(labels_scaler, BaseLabelScaler))
+
         bags = []
         no_label = labels_scaler.get_no_label_instance()
-        empty_sample = InputSample.create_empty(terms_per_context=config.TermsPerContext,
-                                                frames_per_context=config.FramesPerContext,
-                                                synonyms_per_context=config.SynonymsPerContext)
+
+        shapes = NetworkInputShapes(iter_pairs=[
+            (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext),
+            (NetworkInputShapes.TERMS_PER_CONTEXT, config.TermsPerContext),
+            (NetworkInputShapes.SYNONYMS_PER_CONTEXT, config.SynonymsPerContext)])
+
+        empty_sample = InputSample.create_empty(shapes)
+
         for i in range(config.BagsPerMinibatch):
             bag = Bag(labels_scaler.label_to_uint(no_label))
             for j in range(config.BagSize):

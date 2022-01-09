@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 from arekit.common.labels.base import Label, NoLabel
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
 
 
 class TestNeutralLabel(NoLabel):
@@ -16,7 +16,7 @@ class TestNegativeLabel(Label):
     pass
 
 
-class TestThreeLabelScaler(BaseLabelScaler):
+class TestThreeLabelScaler(SentimentLabelScaler):
 
     def __init__(self):
 

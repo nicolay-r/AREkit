@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from arekit.common.labels.base import Label, NoLabel
+from arekit.common.labels.base import NoLabel, Label
 
 
 class BaseLabelScaler(object):
@@ -82,6 +82,3 @@ class BaseLabelScaler(object):
 
     def support_int_value(self, value):
         return self.__has_value(value, self.__int_dict)
-
-    def invert_label(self, label):
-        raise NotImplementedError()

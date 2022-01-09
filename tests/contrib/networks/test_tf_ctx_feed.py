@@ -12,7 +12,7 @@ from tests.contrib.networks.tf_networks.supported import get_supported
 from tests.contrib.networks.tf_networks.utils import init_config
 
 from arekit.common.experiment.data_type import DataType
-from arekit.common.labels.scaler import BaseLabelScaler
+from arekit.common.labels.scaler.base import BaseLabelScaler
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.sample import InputSample
