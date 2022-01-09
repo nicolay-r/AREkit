@@ -108,7 +108,6 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         gc.collect()
 
-
     def _before_running(self):
 
         # Clear model root before training optionally

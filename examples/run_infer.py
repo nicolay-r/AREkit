@@ -22,7 +22,7 @@ from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
-from examples.repository import pipeline_serialize
+from examples.run_serialize import pipeline_serialize
 
 
 def pipeline_infer(labels_scaler):
