@@ -22,18 +22,15 @@ from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
-from examples.network.args.embedding import RusVectoresEmbeddingFilepathArg
-from examples.network.args.labels_count import LabelsCountArg
-from examples.network.args.terms_per_context import TermsPerContextArg
-from examples.network.args.train.bags_per_minibatch import BagsPerMinibatchArg
-from examples.network.args.train.model_input_type import ModelInputTypeArg
-from examples.network.args.train.model_name import ModelNameArg
-from examples.network.common import Common
+from examples.network.args.common import RusVectoresEmbeddingFilepathArg, LabelsCountArg, TermsPerContextArg, \
+    ModelNameArg
+from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg
+from examples.network.train.common import Common
 from examples.network.factory_networks import compose_network_and_network_config_funcs
-from examples.run_serialize import pipeline_serialize
+from examples.run_serialize import run_serializer
 
 
-def pipeline_infer(labels_scaler, bags_per_minibatch, model_name, model_input_type):
+def run_infer(labels_scaler, bags_per_minibatch, model_name, model_input_type):
     assert(isinstance(model_name, ModelNames))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(model_input_type, ModelInputType))
@@ -138,11 +135,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Execute pipeline elements.
-    pipeline_serialize(sentences_text_list=EXAMPLES["simple"],
-                       embedding_path=rusvectores_embedding_path,
-                       terms_per_context=terms_per_context)
+    run_serializer(sentences_text_list=EXAMPLES["simple"],
+                   embedding_path=rusvectores_embedding_path,
+                   terms_per_context=terms_per_context)
 
-    pipeline_infer(labels_scaler=labels_scaler,
-                   bags_per_minibatch=bags_per_minibatch,
-                   model_name=model_name,
-                   model_input_type=model_input_type)
+    run_infer(labels_scaler=labels_scaler,
+              bags_per_minibatch=bags_per_minibatch,
+              model_name=model_name,
+              model_input_type=model_input_type)

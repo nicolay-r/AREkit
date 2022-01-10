@@ -11,29 +11,17 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
-from examples.network.args import default
 
-from examples.network.args.default import BAG_SIZE, DATA_DIR
-from examples.network.args.dist_in_terms_between_ends import DistanceInTermsBetweenAttitudeEndsArg
-from examples.network.args.embedding import RusVectoresEmbeddingFilepathArg
-from examples.network.args.experiment import ExperimentTypeArg
-from examples.network.args.labels_count import LabelsCountArg
-from examples.network.args.stemmer import StemmerArg
-from examples.network.args.terms_per_context import TermsPerContextArg
-from examples.network.args.train.acc_limit import TrainAccuracyLimitArg
-from examples.network.args.train.bags_per_minibatch import BagsPerMinibatchArg
-from examples.network.args.train.dropout_keep_prob import DropoutKeepProbArg
-from examples.network.args.train.epochs_count import EpochsCountArg
-from examples.network.args.train.f1_limit import TrainF1LimitArg
-from examples.network.args.train.learning_rate import LearningRateArg
-from examples.network.args.train.model_input_type import ModelInputTypeArg
-from examples.network.args.train.model_name import ModelNameArg
-from examples.network.args.train.model_name_tag import ModelNameTagArg
-from examples.network.common import Common
+from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, RusVectoresEmbeddingFilepathArg, \
+    ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg
+from examples.network.args.const import DATA_DIR, BAG_SIZE
+from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
+    ModelInputTypeArg, ModelNameTagArg
+from examples.network.train.common import Common
 from examples.network.factory_bags_collection import create_bags_collection_type
 from examples.network.factory_config_setups import optionally_modify_config_for_experiment, modify_config_for_model
 from examples.network.factory_networks import compose_network_and_network_config_funcs
-from examples.network.io_utils import CustomIOUtils
+from examples.network.infer.io_utils import CustomIOUtils
 
 if __name__ == '__main__':
 
@@ -50,8 +38,6 @@ if __name__ == '__main__':
     TermsPerContextArg.add_argument(parser)
     LearningRateArg.add_argument(parser)
     DistanceInTermsBetweenAttitudeEndsArg.add_argument(parser)
-    TrainAccuracyLimitArg.add_argument(parser)
-    TrainF1LimitArg.add_argument(parser)
     ModelInputTypeArg.add_argument(parser)
     ModelNameArg.add_argument(parser)
     ModelNameTagArg.add_argument(parser)
@@ -96,8 +82,6 @@ if __name__ == '__main__':
     learning_rate = LearningRateArg.read_argument(args)
     balanced_input = args.balanced_input
     dist_in_terms_between_attitude_ends = DistanceInTermsBetweenAttitudeEndsArg.read_argument(args)
-    train_acc_limit = TrainAccuracyLimitArg.read_argument(args)
-    train_f1_limit = TrainF1LimitArg.read_argument(args)
     model_name_tag = ModelNameTagArg.read_argument(args)
     epochs_count = EpochsCountArg.read_argument(args)
 
@@ -136,7 +120,7 @@ if __name__ == '__main__':
                                                     input_type=model_input_type)
 
     model_io = NeuralNetworkModelIO(full_model_name=full_model_name,
-                                    target_dir=default.DATA_DIR,
+                                    target_dir=DATA_DIR,
                                     source_dir=model_load_dir,
                                     embedding_filepath=embedding_filepath,
                                     vocab_filepath=vocab_filepath,

@@ -26,8 +26,7 @@ from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentime
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 from examples.input import EXAMPLES
-from examples.network.args.embedding import RusVectoresEmbeddingFilepathArg
-from examples.network.args.terms_per_context import TermsPerContextArg
+from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg
 from examples.network.embedding import RusvectoresEmbedding
 from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
@@ -48,14 +47,14 @@ def create_frame_variants_collection():
     return frame_variant_collection
 
 
-def pipeline_serialize(sentences_text_list, terms_per_context, embedding_path):
+def run_serializer(sentences_text_list, terms_per_context, embedding_path):
     assert(isinstance(sentences_text_list, list))
     assert(isinstance(terms_per_context, int))
     assert(isinstance(embedding_path, str))
 
     labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
                                     int_dict=OrderedDict([(NoLabel(), 0)]))
-    # ThreeLabelScaler()
+
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
     # TODO. split text onto sentences.
@@ -131,6 +130,6 @@ if __name__ == '__main__':
     terms_per_context = TermsPerContextArg.read_argument(args)
     embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
 
-    pipeline_serialize(sentences_text_list=EXAMPLES["simple"],
-                       terms_per_context=terms_per_context,
-                       embedding_path=embedding_filepath)
+    run_serializer(sentences_text_list=EXAMPLES["simple"],
+                   terms_per_context=terms_per_context,
+                   embedding_path=embedding_filepath)
