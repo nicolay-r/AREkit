@@ -6,8 +6,8 @@ class RuSentRelExperimentLabelsFormatter(RuSentRelLabelsFormatter):
 
     @classmethod
     def _negative_label_type(cls):
-        return ExperimentNegativeLabel()
+        return ExperimentNegativeLabel
 
     @classmethod
     def _positive_label_type(cls):
-        return ExperimentPositiveLabel()
+        return ExperimentPositiveLabel
