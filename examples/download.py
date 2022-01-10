@@ -1,8 +1,6 @@
 from os.path import join
 from arekit.contrib.source import utils
 
-EMBEDDING_FILENAME = "news_mystem_skipgram_1000_20_2015.bin.gz"
-
 
 def download_examples_data():
     root_dir = utils.get_default_download_dir()

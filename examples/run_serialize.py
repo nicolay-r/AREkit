@@ -1,3 +1,4 @@
+import argparse
 from collections import OrderedDict
 
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
@@ -25,8 +26,14 @@ from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentime
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 from examples.input import EXAMPLES
-from examples.network.utils import SingleDocOperations, CustomSerializationData, \
-    CustomExperiment, TextEntitiesParser, TermsSplitterParser
+from examples.network.args.embedding import RusVectoresEmbeddingFilepathArg
+from examples.network.args.terms_per_context import TermsPerContextArg
+from examples.network.embedding import RusvectoresEmbedding
+from examples.network.infer.doc_ops import SingleDocOperations
+from examples.network.infer.exp import CustomExperiment
+from examples.network.parser.terms import TermsSplitterParser
+from examples.network.parser.entities import TextEntitiesParser
+from examples.network.serialization_data import CustomSerializationData
 
 
 def create_frame_variants_collection():
@@ -41,8 +48,10 @@ def create_frame_variants_collection():
     return frame_variant_collection
 
 
-def pipeline_serialize(sentences_text_list):
+def pipeline_serialize(sentences_text_list, terms_per_context, embedding_path):
     assert(isinstance(sentences_text_list, list))
+    assert(isinstance(terms_per_context, int))
+    assert(isinstance(embedding_path, str))
 
     labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
                                     int_dict=OrderedDict([(NoLabel(), 0)]))
@@ -80,10 +89,16 @@ def pipeline_serialize(sentences_text_list):
             FrameVariantsSentimentNegation()
         ])
 
-    exp_data = CustomSerializationData(label_scaler=label_provider.LabelScaler,
-                                       stemmer=stemmer,
-                                       annot=DefaultAnnotator(annot_algo=annot_algo),
-                                       frame_variants_collection=frame_variants_collection)
+    embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
+    embedding.set_stemmer(stemmer)
+
+    exp_data = CustomSerializationData(
+        label_scaler=label_provider.LabelScaler,
+        stemmer=stemmer,
+        embedding=embedding,
+        annot=DefaultAnnotator(annot_algo=annot_algo),
+        frame_variants_collection=frame_variants_collection,
+        terms_per_context=terms_per_context)
 
     labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
 
@@ -96,13 +111,26 @@ def pipeline_serialize(sentences_text_list):
         neutral_labels_fmt=labels_fmt)
 
     NetworkInputHelper.prepare(experiment=experiment,
-                               terms_per_context=50,
+                               terms_per_context=terms_per_context,
                                balance=False,
                                value_to_group_id_func=synonyms.get_synonym_group_index)
 
 
 if __name__ == '__main__':
 
-    text = EXAMPLES["simple"]
+    parser = argparse.ArgumentParser(description="Serialization script for obtaining sources, "
+                                                 "required for inference and training.")
 
-    pipeline_serialize(sentences_text_list=text)
+    # Provide arguments.
+    RusVectoresEmbeddingFilepathArg.add_argument(parser)
+    TermsPerContextArg.add_argument(parser)
+
+    # Parsing arguments.
+    args = parser.parse_args()
+
+    terms_per_context = TermsPerContextArg.read_argument(args)
+    embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
+
+    pipeline_serialize(sentences_text_list=EXAMPLES["simple"],
+                       terms_per_context=terms_per_context,
+                       embedding_path=embedding_filepath)

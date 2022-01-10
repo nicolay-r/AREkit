@@ -1,28 +1,13 @@
-import argparse
-import logging
-
-from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.labels.scalers.two import TwoLabelScaler
 from arekit.contrib.networks.enum_input_types import ModelInputType
 from arekit.contrib.networks.enum_name_types import ModelNames
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from examples.network.embedding import RusvectoresEmbedding
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
 
 
 class Common:
 
-    log_dir = u"log/"
-    log_test_eval_exp_filename = u"cb_eval_avg_test.log"
-    model_config_name = u"model_config.txt"
-    __log_train_filename_template = u"cb_train_{iter}_{dtype}.log"
-    __log_eval_iter_filename_template = u"cb_eval_{iter}_{dtype}.log"
-
-    # tags that utilized in finetuned model names.
     __tags = {
         None: None,
         RuAttitudesVersions.V12: u'ra12',
@@ -31,48 +16,6 @@ class Common:
         RuAttitudesVersions.V20Large: u'ra20l',
         RuAttitudesVersions.V20LargeNeut: u'ra20ln'
     }
-
-    @staticmethod
-    def get_tag_by_ruattitudes_version(version):
-        return Common.__tags[version]
-
-    @staticmethod
-    def iter_tag_values():
-        return Common.__tags.itervalues()
-
-    @staticmethod
-    def iter_tag_keys():
-        return Common.__tags.iterkeys()
-
-    @staticmethod
-    def default_results_considered_model_names_list():
-        """ There are even more models which are supported!
-            For now, this is a dissertation limitation.
-        """
-        return [
-            # Conventional neural context encoders.
-            ModelNames.CNN,
-            ModelNames.PCNN,
-            ModelNames.LSTM,
-            ModelNames.BiLSTM,
-            # Models with attentive encoders.
-            ModelNames.AttEndsCNN,
-            ModelNames.AttEndsPCNN,
-            ModelNames.IANEnds,
-            ModelNames.AttSelfPZhouBiLSTM
-        ]
-
-    @staticmethod
-    def create_log_eval_filename(iter_index, data_type):
-        assert(isinstance(iter_index, int))
-        assert(isinstance(data_type, DataType))
-        return Common.__log_eval_iter_filename_template.format(iter=iter_index, dtype=data_type)
-
-    @staticmethod
-    def create_log_train_filename(iter_index, data_type):
-        assert(isinstance(iter_index, int))
-        assert(isinstance(data_type, DataType))
-        return Common.__log_train_filename_template.format(iter=iter_index, dtype=data_type)
 
     @staticmethod
     def __create_folding_type_prefix(folding_type):
@@ -95,23 +38,6 @@ class Common:
             return u'mi-sa'
         else:
             raise NotImplementedError(u"Input type `{}` was not declared".format(input_type))
-
-    @staticmethod
-    def log_args(args):
-        assert(isinstance(args, argparse.Namespace))
-        logger.info("============")
-        for arg in sorted(vars(args)):
-            logger.info(u"{}: {}".format(arg, getattr(args, arg)))
-        logger.info("============")
-
-    @staticmethod
-    def load_rusvectores_word_embedding(filepath):
-        logger.info("Loading word embedding: {}".format(filepath))
-        return RusvectoresEmbedding.from_word2vec_format(filepath=filepath, binary=True)
-
-    @staticmethod
-    def create_opinion_collection_formatter():
-        return RuSentRelOpinionCollectionFormatter()
 
     @staticmethod
     def create_full_model_name(folding_type, model_name, input_type):

@@ -1,4 +1,5 @@
 from arekit.common.experiment.api.ctx_base import DataIO
+from arekit.common.experiment.callback import Callback
 
 
 class TrainingData(DataIO):
@@ -8,6 +9,7 @@ class TrainingData(DataIO):
     def __init__(self, labels_count):
         super(TrainingData, self).__init__()
         self.__labels_count = labels_count
+        self.__callback = Callback()
 
     @property
     def LabelsCount(self):
@@ -19,4 +21,4 @@ class TrainingData(DataIO):
 
     @property
     def Callback(self):
-        raise NotImplementedError()
+        return self.__callback

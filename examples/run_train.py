@@ -11,9 +11,11 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
+from examples.network.args import default
 
-from examples.network.args.default import BAG_SIZE
+from examples.network.args.default import BAG_SIZE, DATA_DIR
 from examples.network.args.dist_in_terms_between_ends import DistanceInTermsBetweenAttitudeEndsArg
+from examples.network.args.embedding import RusVectoresEmbeddingFilepathArg
 from examples.network.args.experiment import ExperimentTypeArg
 from examples.network.args.labels_count import LabelsCountArg
 from examples.network.args.stemmer import StemmerArg
@@ -31,7 +33,7 @@ from examples.network.common import Common
 from examples.network.factory_bags_collection import create_bags_collection_type
 from examples.network.factory_config_setups import optionally_modify_config_for_experiment, modify_config_for_model
 from examples.network.factory_networks import compose_network_and_network_config_funcs
-from examples.network.utils import CustomIOUtils
+from examples.network.io_utils import CustomIOUtils
 
 if __name__ == '__main__':
 
@@ -54,19 +56,14 @@ if __name__ == '__main__':
     ModelNameArg.add_argument(parser)
     ModelNameTagArg.add_argument(parser)
     EpochsCountArg.add_argument(parser)
+    RusVectoresEmbeddingFilepathArg.add_argument(parser)
 
     parser.add_argument('--model-state-dir',
                         dest='model_load_dir',
                         type=str,
-                        default=None,
+                        default=DATA_DIR,
                         nargs='?',
                         help='Use pretrained state as initial')
-
-    parser.add_argument('--emb-filepath',
-                        dest='embedding_filepath',
-                        type=str,
-                        nargs='?',
-                        help='Custom embedding filepath')
 
     parser.add_argument('--vocab-filepath',
                         dest='vocab_filepath',
@@ -77,6 +74,7 @@ if __name__ == '__main__':
     parser.add_argument('--balanced-input',
                         dest='balanced_input',
                         type=lambda x: (str(x).lower() == 'true'),
+                        default='True',
                         nargs=1,
                         help='Balanced input of the Train set"')
 
@@ -90,14 +88,13 @@ if __name__ == '__main__':
     model_input_type = ModelInputTypeArg.read_argument(args)
     model_load_dir = args.model_load_dir
     model_name = ModelNameArg.read_argument(args)
-    embedding_filepath = args.embedding_filepath
+    embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
     vocab_filepath = args.vocab_filepath
     dropout_keep_prob = DropoutKeepProbArg.read_argument(args)
     bags_per_minibatch = BagsPerMinibatchArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
     learning_rate = LearningRateArg.read_argument(args)
-    test_every_k_epoch = args.test_every_k_epoch
-    balanced_input = args.balanced_input[0]
+    balanced_input = args.balanced_input
     dist_in_terms_between_attitude_ends = DistanceInTermsBetweenAttitudeEndsArg.read_argument(args)
     train_acc_limit = TrainAccuracyLimitArg.read_argument(args)
     train_f1_limit = TrainF1LimitArg.read_argument(args)
@@ -139,7 +136,7 @@ if __name__ == '__main__':
                                                     input_type=model_input_type)
 
     model_io = NeuralNetworkModelIO(full_model_name=full_model_name,
-                                    target_dir=experiment.ExperimentIO.get_target_dir(),
+                                    target_dir=default.DATA_DIR,
                                     source_dir=model_load_dir,
                                     embedding_filepath=embedding_filepath,
                                     vocab_filepath=vocab_filepath,
@@ -156,7 +153,7 @@ if __name__ == '__main__':
     assert(isinstance(config, DefaultNetworkConfig))
 
     # Default settings, applied from cmd arguments.
-    config.modify_classes_count(value=experiment.DataIO.LabelsScaler.classes_count())
+    config.modify_classes_count(value=labels_count)
     config.modify_learning_rate(learning_rate)
     config.modify_use_class_weights(True)
     config.modify_dropout_keep_prob(dropout_keep_prob)

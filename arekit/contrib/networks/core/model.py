@@ -13,7 +13,7 @@ from arekit.common.utils import progress_bar_defined
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
-from arekit.contrib.networks.core.callback.base import Callback
+from arekit.common.experiment.callback import Callback
 from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables

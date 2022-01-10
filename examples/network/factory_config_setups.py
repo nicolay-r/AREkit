@@ -4,17 +4,10 @@ from arekit.contrib.networks.enum_input_types import ModelInputType
 from arekit.contrib.networks.enum_name_types import ModelNames
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
 from examples.network.configs.common import apply_classic_mi_settings
-from examples.network.configs.ctx.att_self_bilstm import ctx_self_att_bilstm_custom_config
-from examples.network.configs.ctx.att_self_p_zhou import ctx_att_bilstm_p_zhou_custom_config
-from examples.network.configs.ctx.att_self_z_yang import ctx_att_bilstm_z_yang_custom_config
-from examples.network.configs.ctx.bilstm import ctx_bilstm_custom_config
-from examples.network.configs.ctx.cnn import ctx_cnn_custom_config
-from examples.network.configs.ctx.lstm import ctx_lstm_custom_config
-from examples.network.configs.ctx.pcnn import ctx_pcnn_custom_config
-from examples.network.configs.ctx.rcnn import ctx_rcnn_custom_config
-from examples.network.configs.ctx.rcnn_att_p_zhou import ctx_rcnn_p_zhou_custom_config
-from examples.network.configs.ctx.rcnn_att_z_yang import ctx_rcnn_z_yang_custom_config
-from examples.network.configs.multi.common import apply_ds_mi_settings
+from examples.network.configs.mi import apply_ds_mi_settings
+from examples.network.configs.single import ctx_self_att_bilstm_custom_config, ctx_att_bilstm_p_zhou_custom_config, \
+    ctx_att_bilstm_z_yang_custom_config, ctx_bilstm_custom_config, ctx_cnn_custom_config, ctx_lstm_custom_config, \
+    ctx_pcnn_custom_config, ctx_rcnn_custom_config, ctx_rcnn_p_zhou_custom_config, ctx_rcnn_z_yang_custom_config
 
 
 def modify_config_for_model(model_name, model_input_type, config):

@@ -11,6 +11,8 @@ class RuSentRelLabelsFormatter(StringLabelsFormatter):
         stol = {NEG_LABEL_STR: self._negative_label_type(),
                 POS_LABEL_STR: self._positive_label_type()}
 
+        print(stol)
+
         super(RuSentRelLabelsFormatter, self).__init__(stol=stol)
 
     @classmethod
@@ -18,5 +20,5 @@ class RuSentRelLabelsFormatter(StringLabelsFormatter):
         return RUSENTREL_POS_LABEL_TYPE
 
     @classmethod
-    def  _negative_label_type(cls):
+    def _negative_label_type(cls):
         return RUSENTREL_NEG_LABEL_TYPE

@@ -5,7 +5,7 @@ class Callback(object):
         raise NotImplementedError()
 
     def set_experiment(self, experiment):
-        raise NotImplementedError()
+        pass
 
     def on_initialized(self, network):
         # Do nothing by default.

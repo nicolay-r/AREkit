@@ -1,4 +1,4 @@
-from arekit.contrib.networks.enum_name_types import ModelNamesService
+from arekit.contrib.networks.enum_name_types import ModelNamesService, ModelNames
 from examples.network.args.base import BaseArg
 
 
@@ -9,7 +9,7 @@ class ModelNameArg(BaseArg):
 
     @staticmethod
     def read_argument(args):
-        return ModelNamesService.get_type_by_name(args.model_name[0])
+        return ModelNamesService.get_type_by_name(args.model_name)
 
     @staticmethod
     def add_argument(parser):
@@ -17,5 +17,6 @@ class ModelNameArg(BaseArg):
                             dest='model_name',
                             type=str,
                             choices=list(ModelNamesService.iter_supported_names()),
+                            default=ModelNames.PCNN.value,
                             nargs=1,
                             help='Name of a model to be utilized in experiment')
