@@ -48,7 +48,7 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
                     doc_id=doc_id,
                     data_type=data_type)
 
-                self._experiment.write_opinion_collection(
+                self._experiment.ExperimentIO.write_opinion_collection(
                     collection=collection,
                     target=target,
                     labels_formatter=self._experiment.OpinionOperations.LabelsFormatter)
