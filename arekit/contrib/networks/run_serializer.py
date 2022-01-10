@@ -5,7 +5,8 @@ from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 
 class NetworksExperimentInputSerializer(ExperimentEngine):
 
-    def __init__(self, experiment, force_serialize, balance, skip_folder_if_exists):
+    def __init__(self, experiment, force_serialize, value_to_group_id_func, balance, skip_folder_if_exists):
+        assert(callable(value_to_group_id_func))
         assert(isinstance(force_serialize, bool))
         assert(isinstance(balance, bool))
 
@@ -13,6 +14,7 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
 
         self.__force_serialize = force_serialize
         self.__skip_folder_if_exists = skip_folder_if_exists
+        self.__value_to_group_id_func = value_to_group_id_func
         self.__balance = balance
 
     # region protected methods
@@ -29,7 +31,8 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
         # Perform data serialization.
         NetworkInputHelper.prepare(experiment=self._experiment,
                                    terms_per_context=self._experiment.DataIO.TermsPerContext,
-                                   balance=self.__balance)
+                                   balance=self.__balance,
+                                   value_to_group_id_func=self.__value_to_group_id_func)
 
     def _before_running(self):
 

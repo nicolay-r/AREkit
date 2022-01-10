@@ -3,11 +3,11 @@ import argparse
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.common.folding.types import FoldingType
-from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.run_serializer import NetworksExperimentInputSerializer
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -55,6 +55,8 @@ if __name__ == '__main__':
     dist_in_terms_between_attitude_ends = DistanceInTermsBetweenAttitudeEndsArg.read_argument(args)
     pos_tagger = POSMystemWrapper(MystemWrapper().MystemInstance)
 
+    synonyms_collection = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)
+
     annot_algo = PairBasedAnnotationAlgorithm(
         dist_in_terms_bound=None,
         label_provider=PairSingleLabelProvider(label_instance=ExperimentNeutralLabel()))
@@ -91,6 +93,7 @@ if __name__ == '__main__':
         experiment=experiment,
         balance=use_balancing,
         force_serialize=True,
-        skip_folder_if_exists=True)
+        skip_folder_if_exists=True,
+        value_to_group_id_func=synonyms_collection.get_synonym_group_index)
 
     serialization_engine.run()

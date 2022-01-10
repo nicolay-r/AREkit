@@ -113,7 +113,7 @@ class NetworkInputHelper(object):
     # endregion
 
     @staticmethod
-    def prepare(experiment, terms_per_context, balance, value_to_group_id_func=None):
+    def prepare(experiment, terms_per_context, balance, value_to_group_id_func):
         assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
@@ -135,7 +135,7 @@ class NetworkInputHelper(object):
                     labels_formatter=experiment.OpinionOperations.LabelsFormatter)
 
             opinion_provider = InputTextOpinionProvider.create(
-                value_to_group_id_func=value_to_group_id_func,        # TODO. Remove this parameter.
+                value_to_group_id_func=value_to_group_id_func,
                 parse_news_func=lambda doc_id: experiment.DocumentOperations.parse_doc(doc_id),
                 iter_doc_opins=lambda doc_id:
                     experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
