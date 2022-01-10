@@ -46,6 +46,10 @@ class RuSentRelExperimentSerializationData(NetworkSerializationData):
         return self.__str_entity_formatter
 
     @property
+    def StringEntityEmbeddingFormatter(self):
+        return self.__str_entity_formatter
+
+    @property
     def FrameVariantCollection(self):
         return self.__frame_variant_collection
 
