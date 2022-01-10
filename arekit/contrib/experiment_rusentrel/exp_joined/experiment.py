@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
+from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel import common
 from arekit.contrib.experiment_rusentrel.common import create_text_parser
@@ -99,12 +100,12 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             ra_version=self.__ruattitudes_version.value,
             folding_type=doc_ops.DataFolding.Name)
 
-        super(RuSentRelWithRuAttitudesExperiment, self).__init__(exp_data=exp_data,
-                                                                 doc_ops=doc_ops,
-                                                                 opin_ops=opin_ops,
-                                                                 experiment_io=experiment_io,
-                                                                 name=exp_name,
-                                                                 extra_name_suffix=extra_name_suffix)
+        super(RuSentRelWithRuAttitudesExperiment, self).__init__(
+            exp_data=exp_data,
+            doc_ops=doc_ops,
+            opin_ops=opin_ops,
+            experiment_io=experiment_io,
+            name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
 
     # region private methods
 

@@ -5,7 +5,8 @@ from examples.network.infer.io_utils import CustomIOUtils
 
 class CustomExperiment(BaseExperiment):
 
-    def __init__(self, exp_data, synonyms, doc_ops, labels_formatter, neutral_labels_fmt):
+    def __init__(self, exp_data, synonyms, doc_ops, labels_formatter,
+                 neutral_labels_fmt, name_provider):
 
         exp_io = CustomIOUtils(self)
 
@@ -15,10 +16,6 @@ class CustomExperiment(BaseExperiment):
             synonyms=synonyms,
             neutral_labels_fmt=neutral_labels_fmt)
 
-        super(CustomExperiment, self).__init__(
-            exp_data=exp_data,
-            experiment_io=exp_io,
-            opin_ops=opin_ops,
-            doc_ops=doc_ops,
-            name="test",
-            extra_name_suffix="test")
+        super(CustomExperiment, self).__init__(exp_data=exp_data, experiment_io=exp_io,
+                                               opin_ops=opin_ops, doc_ops=doc_ops,
+                                               name_provider=name_provider)

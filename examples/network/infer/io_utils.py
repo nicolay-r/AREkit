@@ -1,7 +1,7 @@
 import os
 
 from arekit.contrib.experiment_rusentrel.model_io.tf_networks import NetworkIOUtils
-from examples.network.args.default import DATA_DIR
+from examples.network.args.const import DATA_DIR
 
 
 class CustomIOUtils(NetworkIOUtils):

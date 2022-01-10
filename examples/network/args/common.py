@@ -4,7 +4,23 @@ from arekit.contrib.networks.enum_name_types import ModelNamesService, ModelName
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersionsService, RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from examples.network.args.base import BaseArg
-from examples.network.args.default import EMBEDDING_FILEPATH, TERMS_PER_CONTEXT
+from examples.network.args import const
+
+
+class VocabFilepathArg(BaseArg):
+
+    @staticmethod
+    def read_argument(args):
+        return args.vocab_filepath
+
+    @staticmethod
+    def add_argument(parser):
+        parser.add_argument('--vocab-filepath',
+                            dest='vocab_filepath',
+                            type=str,
+                            default=const.VOCAB_DEFAULT,
+                            nargs='?',
+                            help='Custom vocabulary filepath')
 
 
 class UseBalancingArg(BaseArg):
@@ -44,9 +60,6 @@ class DistanceInTermsBetweenAttitudeEndsArg(BaseArg):
 
 class RusVectoresEmbeddingFilepathArg(BaseArg):
 
-    def __init__(self):
-        pass
-
     @staticmethod
     def read_argument(args):
         return args.embedding_filepath
@@ -56,7 +69,7 @@ class RusVectoresEmbeddingFilepathArg(BaseArg):
         parser.add_argument('--emb-filepath',
                             dest='embedding_filepath',
                             type=str,
-                            default=EMBEDDING_FILEPATH,
+                            default=const.EMBEDDING_FILEPATH,
                             nargs=1,
                             help='RusVectores embedding filepath')
 
@@ -80,9 +93,6 @@ class EntityFormatterTypesArg(BaseArg):
 
 class ExperimentTypeArg(BaseArg):
 
-    def __init__(self):
-        pass
-
     @staticmethod
     def read_argument(args):
         exp_name = args.exp_type
@@ -100,9 +110,6 @@ class ExperimentTypeArg(BaseArg):
 
 
 class RuSentiFramesVersionArg(BaseArg):
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def read_argument(args):
@@ -124,9 +131,6 @@ class RuSentiFramesVersionArg(BaseArg):
 
 
 class LabelsCountArg(BaseArg):
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def read_argument(args):
@@ -172,10 +176,7 @@ class StemmerArg(BaseArg):
 
 class TermsPerContextArg(BaseArg):
 
-    default = TERMS_PER_CONTEXT
-
-    def __init__(self):
-        pass
+    default = const.TERMS_PER_CONTEXT
 
     @staticmethod
     def read_argument(args):
@@ -195,9 +196,6 @@ class TermsPerContextArg(BaseArg):
 
 
 class ModelNameArg(BaseArg):
-
-    def __init__(self):
-        pass
 
     @staticmethod
     def read_argument(args):

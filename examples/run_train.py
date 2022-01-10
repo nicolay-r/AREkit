@@ -13,21 +13,27 @@ from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 from examples.input import EXAMPLES
 
 from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, RusVectoresEmbeddingFilepathArg, \
-    ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg
+    ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg
 from examples.network.args.const import DATA_DIR, BAG_SIZE
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
+from examples.network.factory.networks import compose_network_and_network_config_funcs
 from examples.network.train.common import Common
-from examples.network.factory_bags_collection import create_bags_collection_type
-from examples.network.factory_config_setups import optionally_modify_config_for_experiment, modify_config_for_model
-from examples.network.factory_networks import compose_network_and_network_config_funcs
+from examples.network.factory.bags_collection import create_bags_collection_type
+from examples.network.factory.config_setups import modify_config_for_model, optionally_modify_config_for_experiment
 from examples.network.infer.io_utils import CustomIOUtils
 
 if __name__ == '__main__':
 
     text = EXAMPLES["simple"]
 
-    parser = argparse.ArgumentParser(description="Training script for obtaining Tensorflow based states")
+    parser = argparse.ArgumentParser(description="Training script for obtaining Tensorflow based states, "
+                                                 "based on the RuSentRel and RuAttitudes datasets (optionally)")
+
+    # Utilize predefined versions and folding format.
+    rusentrel_version = RuSentRelVersions.V11
+    ra_version = RuAttitudesVersions.V20LargeNeut
+    folding_type = FoldingType.Fixed
 
     # Composing cmd arguments.
     LabelsCountArg.add_argument(parser)
@@ -43,6 +49,7 @@ if __name__ == '__main__':
     ModelNameTagArg.add_argument(parser)
     EpochsCountArg.add_argument(parser)
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
+    VocabFilepathArg.add_argument(parser)
 
     parser.add_argument('--model-state-dir',
                         dest='model_load_dir',
@@ -50,12 +57,6 @@ if __name__ == '__main__':
                         default=DATA_DIR,
                         nargs='?',
                         help='Use pretrained state as initial')
-
-    parser.add_argument('--vocab-filepath',
-                        dest='vocab_filepath',
-                        type=str,
-                        nargs='?',
-                        help='Custom vocabulary filepath')
 
     parser.add_argument('--balanced-input',
                         dest='balanced_input',
@@ -75,7 +76,7 @@ if __name__ == '__main__':
     model_load_dir = args.model_load_dir
     model_name = ModelNameArg.read_argument(args)
     embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
-    vocab_filepath = args.vocab_filepath
+    vocab_filepath = VocabFilepathArg.read_argument(args)
     dropout_keep_prob = DropoutKeepProbArg.read_argument(args)
     bags_per_minibatch = BagsPerMinibatchArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
@@ -84,11 +85,6 @@ if __name__ == '__main__':
     dist_in_terms_between_attitude_ends = DistanceInTermsBetweenAttitudeEndsArg.read_argument(args)
     model_name_tag = ModelNameTagArg.read_argument(args)
     epochs_count = EpochsCountArg.read_argument(args)
-
-    # Utilize predefined versions and folding format.
-    rusentrel_version = RuSentRelVersions.V11
-    ra_version = RuAttitudesVersions.V20LargeNeut
-    folding_type = FoldingType.Fixed
 
     # init handler
     bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)

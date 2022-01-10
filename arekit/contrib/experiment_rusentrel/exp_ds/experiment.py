@@ -1,6 +1,7 @@
 import logging
 
 from arekit.common.experiment.api.base import BaseExperiment
+from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
@@ -59,8 +60,9 @@ class RuAttitudesExperiment(BaseExperiment):
                                                     experiment_io=experiment_io,
                                                     opin_ops=opin_ops,
                                                     doc_ops=doc_ops,
-                                                    name=exp_name,
-                                                    extra_name_suffix=extra_name_suffix)
+                                                    name_provider=ExperimentNameProvider(
+                                                        name=exp_name,
+                                                        suffix=extra_name_suffix))
 
     def log_info(self, message, forced=False):
         assert (isinstance(message, str))

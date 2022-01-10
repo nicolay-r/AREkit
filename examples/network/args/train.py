@@ -1,13 +1,11 @@
 from arekit.contrib.networks.enum_input_types import ModelInputType, ModelInputTypeService
 from examples.network.args.base import BaseArg
-from examples.network.args.default import \
-    TRAIN_ACC_LIMIT, BAGS_PER_MINIBATCH, DROPOUT_KEEP_PROB, \
-    EPOCHS_COUNT, TRAIN_F1_LIMIT, LEARNING_RATE
+from examples.network.args import const
 
 
 class TrainAccuracyLimitArg(BaseArg):
 
-    default = TRAIN_ACC_LIMIT
+    default = const.TRAIN_ACC_LIMIT
 
     def __init__(self):
         pass
@@ -28,7 +26,7 @@ class TrainAccuracyLimitArg(BaseArg):
 
 class BagsPerMinibatchArg(BaseArg):
 
-    default = BAGS_PER_MINIBATCH
+    default = const.BAGS_PER_MINIBATCH
 
     def __init__(self):
         pass
@@ -49,7 +47,7 @@ class BagsPerMinibatchArg(BaseArg):
 
 class DropoutKeepProbArg(BaseArg):
 
-    default = DROPOUT_KEEP_PROB
+    default = const.DROPOUT_KEEP_PROB
 
     def __init__(self):
         pass
@@ -70,7 +68,7 @@ class DropoutKeepProbArg(BaseArg):
 
 class EpochsCountArg(BaseArg):
 
-    default = EPOCHS_COUNT
+    default = const.EPOCHS_COUNT
 
     def __init__(self):
         pass
@@ -91,7 +89,7 @@ class EpochsCountArg(BaseArg):
 
 class TrainF1LimitArg(BaseArg):
 
-    default = TRAIN_F1_LIMIT
+    default = const.TRAIN_F1_LIMIT
 
     def __init__(self):
         pass
@@ -112,7 +110,7 @@ class TrainF1LimitArg(BaseArg):
 
 class LearningRateArg(BaseArg):
 
-    default = LEARNING_RATE
+    default = const.LEARNING_RATE
 
     def __init__(self):
         pass

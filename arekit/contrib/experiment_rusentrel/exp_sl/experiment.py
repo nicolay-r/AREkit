@@ -2,6 +2,7 @@ import logging
 
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
+from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel import common
 from arekit.contrib.experiment_rusentrel.common import create_text_parser
@@ -70,8 +71,9 @@ class RuSentRelExperiment(BaseExperiment):
                                                   experiment_io=experiment_io,
                                                   doc_ops=doc_ops,
                                                   opin_ops=opin_ops,
-                                                  name=exp_name,
-                                                  extra_name_suffix=extra_name_suffix)
+                                                  name_provider=ExperimentNameProvider(
+                                                      name=exp_name,
+                                                      suffix=extra_name_suffix))
 
     # region protected methods
 

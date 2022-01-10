@@ -27,6 +27,7 @@ from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 from examples.input import EXAMPLES
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg
+from examples.network.common import create_infer_experiment_name_provider
 from examples.network.embedding import RusvectoresEmbedding
 from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
@@ -107,7 +108,8 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path):
         doc_ops=SingleDocOperations(news=news, text_parser=text_parser),
         labels_formatter=labels_fmt,
         synonyms=synonyms,
-        neutral_labels_fmt=labels_fmt)
+        neutral_labels_fmt=labels_fmt,
+        name_provider=create_infer_experiment_name_provider())
 
     NetworkInputHelper.prepare(experiment=experiment,
                                terms_per_context=terms_per_context,

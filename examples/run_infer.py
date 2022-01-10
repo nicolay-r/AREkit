@@ -1,4 +1,5 @@
 import argparse
+import os
 from os.path import join
 
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
@@ -17,20 +18,24 @@ from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.enum_input_types import ModelInputType
 from arekit.contrib.networks.enum_name_types import ModelNames
-
 from arekit.contrib.networks.shapes import NetworkInputShapes
+
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
-from examples.network.args.common import RusVectoresEmbeddingFilepathArg, LabelsCountArg, TermsPerContextArg, \
-    ModelNameArg
-from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg
-from examples.network.train.common import Common
-from examples.network.factory_networks import compose_network_and_network_config_funcs
+from examples.network.args import const
+from examples.network.args.const import DATA_DIR
+from examples.network.common import create_infer_experiment_name_provider
 from examples.run_serialize import run_serializer
+from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, ModelNameTagArg
+from examples.network.factory.networks import compose_network_and_network_config_funcs
+from examples.network.train.common import Common
+from examples.network.args.common import RusVectoresEmbeddingFilepathArg, \
+    LabelsCountArg, TermsPerContextArg, \
+    ModelNameArg
 
 
-def run_infer(labels_scaler, bags_per_minibatch, model_name, model_input_type):
+def run_infer(labels_scaler, bags_per_minibatch, model_name, model_input_type, model_name_tag):
     assert(isinstance(model_name, ModelNames))
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(model_input_type, ModelInputType))
@@ -41,14 +46,17 @@ def run_infer(labels_scaler, bags_per_minibatch, model_name, model_input_type):
 
     network = network_func()
     config = config_func()
+    exp_name_provider = create_infer_experiment_name_provider()
+    exp_name = "{name}_{labels}l".format(name=exp_name_provider.provide(), labels=1)
 
     # Setup data filepaths.
-    root = "data/test-test_1l/"
+    root = os.path.join(DATA_DIR, exp_name)
+
     samples_filepath = join(root, "sample-test-0.tsv.gz")
     embedding_filepath = join(root, "term_embedding-0.npz")
-    vocab_filepath = join(root, "vocab-0.txt.npz")
     result_filepath = join(root, "out.txt.gz")
     model_target_dir = ".model"
+    vocab_filepath = join(root, const.VOCAB_DEFAULT)
 
     # Setup config parameters.
     embedding_matrix = EmbeddingHelper.load_embedding(embedding_filepath)
@@ -79,7 +87,7 @@ def run_infer(labels_scaler, bags_per_minibatch, model_name, model_input_type):
     model = BaseTensorflowModel(
         nn_io=NeuralNetworkModelIO(target_dir=model_target_dir,
                                    full_model_name=model_name.value,
-                                   model_name_tag="_"),
+                                   model_name_tag=model_name_tag),
         network=network,
         config=config,
         inference_ctx=inference_ctx,
@@ -113,6 +121,7 @@ if __name__ == '__main__':
     BagsPerMinibatchArg.add_argument(parser)
     LabelsCountArg.add_argument(parser)
     ModelNameArg.add_argument(parser)
+    ModelNameTagArg.add_argument(parser)
     ModelInputTypeArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
 
@@ -124,6 +133,7 @@ if __name__ == '__main__':
     bags_per_minibatch = BagsPerMinibatchArg.read_argument(args)
     labels_count = LabelsCountArg.read_argument(args)
     model_name = ModelNameArg.read_argument(args)
+    model_name_tag = ModelNameTagArg.read_argument(args)
     model_input_type = ModelInputTypeArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
 
@@ -142,4 +152,5 @@ if __name__ == '__main__':
     run_infer(labels_scaler=labels_scaler,
               bags_per_minibatch=bags_per_minibatch,
               model_name=model_name,
-              model_input_type=model_input_type)
+              model_input_type=model_input_type,
+              model_name_tag=model_name_tag)

@@ -8,7 +8,7 @@ from arekit.contrib.networks.context.configurations.rcnn import RCNNConfig
 from arekit.contrib.networks.context.configurations.rnn import RNNConfig
 from arekit.contrib.networks.context.configurations.self_att_bilstm import SelfAttentionBiLSTMConfig
 from arekit.contrib.networks.tf_helpers.cell_types import CellTypes
-from examples.network.args.default import TERMS_PER_CONTEXT
+from examples.network.args.const import TERMS_PER_CONTEXT
 
 
 def ctx_self_att_bilstm_custom_config(config):

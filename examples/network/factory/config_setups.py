@@ -7,7 +7,7 @@ from examples.network.configs.common import apply_classic_mi_settings
 from examples.network.configs.mi import apply_ds_mi_settings
 from examples.network.configs.single import ctx_self_att_bilstm_custom_config, ctx_att_bilstm_p_zhou_custom_config, \
     ctx_att_bilstm_z_yang_custom_config, ctx_bilstm_custom_config, ctx_cnn_custom_config, ctx_lstm_custom_config, \
-    ctx_pcnn_custom_config, ctx_rcnn_custom_config, ctx_rcnn_p_zhou_custom_config, ctx_rcnn_z_yang_custom_config
+    ctx_pcnn_custom_config, ctx_rcnn_custom_config, ctx_rcnn_z_yang_custom_config, ctx_rcnn_p_zhou_custom_config
 
 
 def modify_config_for_model(model_name, model_input_type, config):
