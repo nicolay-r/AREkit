@@ -4,6 +4,7 @@ from arekit.contrib.experiment_rusentrel.labels.scalers.two import TwoLabelScale
 from arekit.contrib.networks.enum_input_types import ModelInputType
 from arekit.contrib.networks.enum_name_types import ModelNames
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
+from examples.network.embedding import RusvectoresEmbedding
 
 
 class Common:
@@ -76,3 +77,10 @@ class Common:
             return ThreeLabelScaler()
 
         raise NotImplementedError("Not supported")
+
+    @staticmethod
+    def load_rusvectores_embedding(filepath, stemmer):
+        embedding = RusvectoresEmbedding.from_word2vec_format(filepath=filepath, binary=True)
+        embedding.set_stemmer(stemmer)
+        return embedding
+

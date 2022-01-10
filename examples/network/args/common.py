@@ -30,13 +30,14 @@ class UseBalancingArg(BaseArg):
 
     @staticmethod
     def read_argument(args):
-        return args.balance_samples[0]
+        return args.balance_samples
 
     @staticmethod
     def add_argument(parser):
         parser.add_argument('--balance-samples',
                             dest='balance_samples',
                             type=lambda x: (str(x).lower() == 'true'),
+                            default="True",
                             nargs=1,
                             help='Use balancing for Train type during sample serialization process"')
 
@@ -72,23 +73,6 @@ class RusVectoresEmbeddingFilepathArg(BaseArg):
                             default=const.EMBEDDING_FILEPATH,
                             nargs=1,
                             help='RusVectores embedding filepath')
-
-
-class EntityFormatterTypesArg(BaseArg):
-
-    @staticmethod
-    def read_argument(args):
-        name = args.entity_fmt[0]
-        return EntityFormattersService.get_type_by_name(name)
-
-    @staticmethod
-    def add_argument(parser):
-        parser.add_argument('--entity-fmt',
-                            dest='entity_fmt',
-                            type=str,
-                            choices=list(EntityFormattersService.iter_supported_names()),
-                            nargs=1,
-                            help='Entity formatter type')
 
 
 class ExperimentTypeArg(BaseArg):

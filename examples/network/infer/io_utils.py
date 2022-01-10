@@ -4,7 +4,7 @@ from arekit.contrib.experiment_rusentrel.model_io.tf_networks import NetworkIOUt
 from examples.network.args.const import DATA_DIR
 
 
-class CustomIOUtils(NetworkIOUtils):
+class InferIOUtils(NetworkIOUtils):
 
     def __create_target(self, doc_id, data_type, epoch_index):
         filename = "result_d{doc_id}_{data_type}_e{epoch_index}.txt".format(

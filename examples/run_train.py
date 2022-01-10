@@ -11,17 +11,16 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
-
 from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, RusVectoresEmbeddingFilepathArg, \
     ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg
 from examples.network.args.const import DATA_DIR, BAG_SIZE
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
-from examples.network.factory.networks import compose_network_and_network_config_funcs
 from examples.network.train.common import Common
+from examples.network.factory.networks import compose_network_and_network_config_funcs
 from examples.network.factory.bags_collection import create_bags_collection_type
 from examples.network.factory.config_setups import modify_config_for_model, optionally_modify_config_for_experiment
-from examples.network.infer.io_utils import CustomIOUtils
+from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO
 
 if __name__ == '__main__':
 
@@ -107,7 +106,7 @@ if __name__ == '__main__':
                                    folding_type=folding_type,
                                    rusentrel_version=rusentrel_version,
                                    ruattitudes_version=ra_version,
-                                   experiment_io_type=CustomIOUtils,
+                                   experiment_io_type=CustomRuSentRelNetworkExperimentIO,
                                    extra_name_suffix=extra_name_suffix,
                                    load_ruattitude_docs=False)
 
