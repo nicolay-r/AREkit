@@ -2,6 +2,7 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import ExperimentRuSentiFramesLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
 from arekit.contrib.networks.embeddings.base import Embedding
@@ -29,14 +30,21 @@ class RuSentRelExperimentSerializationData(NetworkSerializationData):
         self.__str_entity_formatter = str_entity_formatter
         self.__word_embedding = embedding
 
-        self.__frames_collection = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
-        self.__frame_roles_label_scaler = ThreeLabelScaler()
-        self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=self.__frames_collection)
+        # TODO. To common.
+        self.__frames_collection = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V20,
+            labels_fmt=ExperimentRuSentiFramesLabelsFormatter())
+
+        # TODO. To common.
         self.__frame_variant_collection = FrameVariantsCollection()
         self.__frame_variant_collection.fill_from_iterable(
             variants_with_id=self.__frames_collection.iter_frame_id_and_variants(),
             overwrite_existed_variant=True,
             raise_error_on_existed_variant=False)
+
+        self.__frame_roles_label_scaler = ThreeLabelScaler()
+        self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=self.__frames_collection)
+
 
     @property
     def PosTagger(self):

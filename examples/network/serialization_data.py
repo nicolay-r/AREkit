@@ -1,5 +1,6 @@
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import ExperimentRuSentiFramesLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -13,7 +14,11 @@ class CustomSerializationData(NetworkSerializationData):
                  frame_variants_collection, terms_per_context):
         super(CustomSerializationData, self).__init__(labels_scaler=label_scaler, annot=annot)
 
-        frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
+        # TODO. To common.
+        frames_collection = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V20,
+            labels_fmt=ExperimentRuSentiFramesLabelsFormatter())
+
         self.__frame_roles_label_scaler = ThreeLabelScaler()
         self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=frames_collection)
         self.__frame_variants_collection = frame_variants_collection

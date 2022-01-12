@@ -13,6 +13,7 @@ from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import ExperimentRuSentiFramesLabelsFormatter
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
@@ -38,7 +39,12 @@ from examples.network.serialization_data import CustomSerializationData
 
 def create_frame_variants_collection():
 
-    frames = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
+    # TODO. To common.
+    frames = RuSentiFramesCollection.read_collection(
+        version=RuSentiFramesVersions.V20,
+        labels_fmt=ExperimentRuSentiFramesLabelsFormatter())
+
+    # TODO. To common.
     frame_variant_collection = FrameVariantsCollection()
     frame_variant_collection.fill_from_iterable(
         variants_with_id=frames.iter_frame_id_and_variants(),
