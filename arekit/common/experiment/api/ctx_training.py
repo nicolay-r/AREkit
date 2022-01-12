@@ -6,10 +6,11 @@ class TrainingData(DataIO):
     """ Data, that is necessary for models training stage.
     """
 
-    def __init__(self, labels_count):
+    def __init__(self, labels_count, callback):
+        assert(isinstance(callback, Callback))
         super(TrainingData, self).__init__()
         self.__labels_count = labels_count
-        self.__callback = Callback()
+        self.__callback = callback
 
     @property
     def LabelsCount(self):

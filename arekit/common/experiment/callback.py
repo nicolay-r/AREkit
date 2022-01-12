@@ -1,10 +1,14 @@
 class Callback(object):
 
+    def __init__(self, epochs_count):
+        self.__epochs_count = epochs_count
+
     @property
     def Epochs(self):
-        raise NotImplementedError()
+        return self.__epochs_count
 
     def set_experiment(self, experiment):
+        # Do nothing by default.
         pass
 
     def on_initialized(self, network):
@@ -28,5 +32,11 @@ class Callback(object):
         pass
 
     def on_experiment_finished(self):
-        # Do nothing by default
+        # Do nothing by default.
+        pass
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
         pass

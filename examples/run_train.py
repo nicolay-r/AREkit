@@ -1,6 +1,7 @@
 import argparse
 
 from arekit.common.experiment.api.ctx_training import TrainingData
+from arekit.common.experiment.callback import Callback
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     parser.add_argument('--model-state-dir',
                         dest='model_load_dir',
                         type=str,
-                        default=DATA_DIR,
+                        default=None,
                         nargs='?',
                         help='Use pretrained state as initial')
 
@@ -94,7 +95,8 @@ if __name__ == '__main__':
     labels_scaler = Common.create_labels_scaler(labels_count)
 
     # Creating experiment
-    experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount)
+    experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount,
+                                   callback=Callback(epochs_count))
 
     extra_name_suffix = Common.create_exp_name_suffix(
         use_balancing=balanced_input,
@@ -117,7 +119,6 @@ if __name__ == '__main__':
     model_io = NeuralNetworkModelIO(full_model_name=full_model_name,
                                     target_dir=DATA_DIR,
                                     source_dir=model_load_dir,
-                                    embedding_filepath=embedding_filepath,
                                     vocab_filepath=vocab_filepath,
                                     model_name_tag=model_name_tag)
 
