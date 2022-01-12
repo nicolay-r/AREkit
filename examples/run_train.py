@@ -16,10 +16,10 @@ from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, 
 from examples.network.args.const import DATA_DIR, BAG_SIZE
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
-from examples.network.train.common import Common
 from examples.network.factory.networks import compose_network_and_network_config_funcs
 from examples.network.factory.bags_collection import create_bags_collection_type
 from examples.network.factory.config_setups import modify_config_for_model, optionally_modify_config_for_experiment
+from examples.rusentrel.common import Common
 from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO
 
 if __name__ == '__main__':

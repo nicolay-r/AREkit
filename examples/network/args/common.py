@@ -18,7 +18,7 @@ class VocabFilepathArg(BaseArg):
         parser.add_argument('--vocab-filepath',
                             dest='vocab_filepath',
                             type=str,
-                            default=const.VOCAB_DEFAULT,
+                            default=const.VOCAB_DEFAULT_FILENAME,
                             nargs='?',
                             help='Custom vocabulary filepath')
 

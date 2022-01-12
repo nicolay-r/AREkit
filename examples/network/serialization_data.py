@@ -1,55 +1,63 @@
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
+from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
-from arekit.contrib.experiment_rusentrel.entities.str_simple_fmt import StringEntitiesSimpleFormatter
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
-from examples.network.common import create_frames_collection
+from arekit.contrib.networks.embeddings.base import Embedding
+from arekit.processing.pos.base import POSTagger
+from examples.network.common import create_frames_collection, create_and_fill_variant_collection
 
 
-class CustomSerializationData(NetworkSerializationData):
+class RuSentRelExperimentSerializationData(NetworkSerializationData):
 
-    def __init__(self, label_scaler, embedding, annot, stemmer,
-                 frame_variants_collection, terms_per_context):
-        super(CustomSerializationData, self).__init__(labels_scaler=label_scaler, annot=annot)
+    def __init__(self, labels_scaler, stemmer, pos_tagger, embedding,
+                 terms_per_context, str_entity_formatter, annotator):
+        assert(isinstance(embedding, Embedding))
+        assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(pos_tagger, POSTagger))
+        assert(isinstance(str_entity_formatter, StringEntitiesFormatter))
+        assert(isinstance(terms_per_context, int))
 
-        frames_collection = create_frames_collection()
+        super(RuSentRelExperimentSerializationData, self).__init__(labels_scaler=labels_scaler,
+                                                                   annot=annotator)
 
-        self.__frame_roles_label_scaler = ThreeLabelScaler()
-        self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=frames_collection)
-        self.__frame_variants_collection = frame_variants_collection
-        self.__entities_formatter = StringEntitiesSimpleFormatter()
-        self.__embedding = embedding
-        self.__pos_tagger = POSMystemWrapper(stemmer.MystemInstance)
+        self.__pos_tagger = pos_tagger
         self.__terms_per_context = terms_per_context
-
-    @property
-    def FrameRolesLabelScaler(self):
-        return self.__frame_roles_label_scaler
-
-    @property
-    def WordEmbedding(self):
-        return self.__embedding
+        self.__str_entity_formatter = str_entity_formatter
+        self.__word_embedding = embedding
+        self.__frames_collection = create_frames_collection()
+        self.__frame_variant_collection = create_and_fill_variant_collection(self.__frames_collection)
+        self.__frame_roles_label_scaler = ThreeLabelScaler()
+        self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=self.__frames_collection)
 
     @property
     def PosTagger(self):
         return self.__pos_tagger
 
     @property
-    def StringEntityEmbeddingFormatter(self):
-        return self.__entities_formatter
+    def StringEntityFormatter(self):
+        return self.__str_entity_formatter
 
     @property
-    def StringEntityFormatter(self):
-        return self.__entities_formatter
+    def StringEntityEmbeddingFormatter(self):
+        return self.__str_entity_formatter
+
+    @property
+    def FrameVariantCollection(self):
+        return self.__frame_variant_collection
+
+    @property
+    def WordEmbedding(self):
+        return self.__word_embedding
+
+    @property
+    def TermsPerContext(self):
+        return self.__terms_per_context
 
     @property
     def FramesConnotationProvider(self):
         return self.__frames_connotation_provider
 
     @property
-    def FrameVariantCollection(self):
-        return self.__frame_variants_collection
-
-    @property
-    def TermsPerContext(self):
-        return self.__terms_per_context
+    def FrameRolesLabelScaler(self):
+        return self.__frame_roles_label_scaler

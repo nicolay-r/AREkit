@@ -12,32 +12,38 @@ from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
+from arekit.contrib.experiment_rusentrel.entities.types import EntityFormatterTypes
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 from examples.input import EXAMPLES
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg
-from examples.network.common import create_infer_experiment_name_provider, create_and_fill_variant_collection, \
+from examples.network.args.serialize import EntityFormatterTypesArg
+from examples.network.common import create_infer_experiment_name_provider,\
+    create_and_fill_variant_collection, \
     create_frames_collection
 from examples.network.embedding import RusvectoresEmbedding
 from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
 from examples.network.parser.terms import TermsSplitterParser
 from examples.network.parser.entities import TextEntitiesParser
-from examples.network.serialization_data import CustomSerializationData
+from examples.network.serialization_data import RuSentRelExperimentSerializationData
 
 
-def run_serializer(sentences_text_list, terms_per_context, embedding_path):
+def run_serializer(sentences_text_list, terms_per_context, embedding_path, entity_fmt_type):
     assert(isinstance(sentences_text_list, list))
     assert(isinstance(terms_per_context, int))
     assert(isinstance(embedding_path, str))
+    assert(isinstance(entity_fmt_type, EntityFormatterTypes))
 
     labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
                                     int_dict=OrderedDict([(NoLabel(), 0)]))
@@ -46,7 +52,6 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path):
 
     # TODO. split text onto sentences.
     sentences = list(map(lambda text: BaseNewsSentence(text), sentences_text_list))
-
     stemmer = MystemWrapper()
 
     annot_algo = PairBasedAnnotationAlgorithm(
@@ -79,13 +84,14 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path):
     embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
     embedding.set_stemmer(stemmer)
 
-    exp_data = CustomSerializationData(
-        label_scaler=label_provider.LabelScaler,
+    exp_data = RuSentRelExperimentSerializationData(
+        labels_scaler=label_provider.LabelScaler,
         stemmer=stemmer,
         embedding=embedding,
-        annot=DefaultAnnotator(annot_algo=annot_algo),
-        frame_variants_collection=frame_variants_collection,
-        terms_per_context=terms_per_context)
+        annotator=DefaultAnnotator(annot_algo=annot_algo),
+        terms_per_context=terms_per_context,
+        str_entity_formatter=create_entity_formatter(entity_fmt_type),
+        pos_tagger=POSMystemWrapper(MystemWrapper().MystemInstance))
 
     labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
 
@@ -112,13 +118,16 @@ if __name__ == '__main__':
     # Provide arguments.
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
+    EntityFormatterTypesArg.add_argument(parser)
 
     # Parsing arguments.
     args = parser.parse_args()
 
     terms_per_context = TermsPerContextArg.read_argument(args)
     embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
+    entity_fmt = EntityFormatterTypesArg.read_argument(args)
 
     run_serializer(sentences_text_list=EXAMPLES["simple"],
                    terms_per_context=terms_per_context,
-                   embedding_path=embedding_filepath)
+                   embedding_path=embedding_filepath,
+                   entity_fmt_type=entity_fmt)

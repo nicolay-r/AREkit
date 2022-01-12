@@ -3,27 +3,6 @@ from examples.network.args.base import BaseArg
 from examples.network.args import const
 
 
-class TrainAccuracyLimitArg(BaseArg):
-
-    default = const.TRAIN_ACC_LIMIT
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def read_argument(args):
-        return args.train_acc_limit
-
-    @staticmethod
-    def add_argument(parser):
-        parser.add_argument('--train-acc-limit',
-                            dest='train_acc_limit',
-                            type=float,
-                            default=TrainAccuracyLimitArg.default,
-                            nargs='?',
-                            help="Train Accuracy Limit (Default: {})".format(TrainAccuracyLimitArg.default))
-
-
 class BagsPerMinibatchArg(BaseArg):
 
     default = const.BAGS_PER_MINIBATCH
@@ -85,27 +64,6 @@ class EpochsCountArg(BaseArg):
                             default=EpochsCountArg.default,
                             nargs='?',
                             help='Epochs count (Default: {})'.format(EpochsCountArg.default))
-
-
-class TrainF1LimitArg(BaseArg):
-
-    default = const.TRAIN_F1_LIMIT
-
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def read_argument(args):
-        return args.train_f1_limit
-
-    @staticmethod
-    def add_argument(parser):
-        parser.add_argument('--train-f1-limit',
-                            dest='train_f1_limit',
-                            type=float,
-                            default=TrainF1LimitArg.default,
-                            nargs='?',
-                            help="Train Accuracy Limit (Default: {})".format(TrainF1LimitArg.default))
 
 
 class LearningRateArg(BaseArg):
