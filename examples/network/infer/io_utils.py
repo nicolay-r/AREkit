@@ -12,7 +12,7 @@ class InferIOUtils(NetworkIOUtils):
             data_type=data_type.name,
             epoch_index=epoch_index)
 
-        return os.path.join(DATA_DIR, filename)
+        return os.path.join(self._get_target_dir(), filename)
 
     def _get_experiment_sources_dir(self):
         return DATA_DIR

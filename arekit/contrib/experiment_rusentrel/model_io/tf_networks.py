@@ -75,6 +75,10 @@ class NetworkIOUtils(BaseIOUtils):
             using the related filepath provided by model_io.
         """
         model_io = self._experiment.DataIO.ModelIO
+
+        if model_io is None:
+            return self.__get_default_vocab_filepath()
+
         assert(isinstance(model_io, NeuralNetworkModelIO))
         return model_io.get_model_vocab_filepath() if self.__model_is_pretrained_state_provided(model_io) \
             else self.__get_default_vocab_filepath()
@@ -138,6 +142,10 @@ class NetworkIOUtils(BaseIOUtils):
             using the related filepath provided by model_io.
         """
         model_io = self._experiment.DataIO.ModelIO
+
+        if model_io is None:
+            return self.__get_default_embedding_filepath()
+
         assert(isinstance(model_io, NeuralNetworkModelIO))
         return model_io.get_model_embedding_filepath() if self.__model_is_pretrained_state_provided(model_io) \
             else self.__get_default_embedding_filepath()

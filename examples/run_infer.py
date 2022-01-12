@@ -10,7 +10,6 @@ from arekit.common.experiment.data_type import DataType
 
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
-from arekit.contrib.experiment_rusentrel.model_io.embedding import EmbeddingHelper
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
@@ -20,15 +19,13 @@ from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
-from examples.network.args import const
-from examples.network.args.const import DATA_DIR
 from examples.network.args.serialize import EntityFormatterTypesArg
-from examples.network.common import create_infer_experiment_name_provider
 from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, ModelNameTagArg
 from examples.network.factory.networks import compose_network_and_network_config_funcs
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, \
     LabelsCountArg, TermsPerContextArg, \
     ModelNameArg
+from examples.network.infer.io_utils import InferIOUtils
 from examples.run_serialize_text import run_serializer
 from examples.rusentrel.common import Common
 
@@ -68,10 +65,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Execute pipeline elements.
-    run_serializer(sentences_text_list=EXAMPLES["simple"],
-                   embedding_path=rusvectores_embedding_path,
-                   terms_per_context=terms_per_context,
-                   entity_fmt_type=entity_fmt_type)
+    serialized_exp_io = run_serializer(sentences_text_list=EXAMPLES["simple"],
+                                       embedding_path=rusvectores_embedding_path,
+                                       terms_per_context=terms_per_context,
+                                       entity_fmt_type=entity_fmt_type)
+
+    assert(isinstance(serialized_exp_io, InferIOUtils))
 
     # Deserialize data.
     network_func, config_func = compose_network_and_network_config_funcs(
@@ -79,21 +78,20 @@ if __name__ == '__main__':
 
     network = network_func()
     config = config_func()
-    exp_name_provider = create_infer_experiment_name_provider()
-    exp_name = "{name}_{labels}l".format(name=exp_name_provider.provide(), labels=1)
 
     # Setup data filepaths.
-    root = os.path.join(DATA_DIR, exp_name)
+    root = os.path.join(serialized_exp_io._get_experiment_sources_dir(),
+                        serialized_exp_io.get_experiment_folder_name())
 
-    samples_filepath = join(root, "sample-test-0.tsv.gz")
-    embedding_filepath = join(root, "term_embedding-0.npz")
+    samples_filepath = serialized_exp_io.create_samples_writer_target(DataType.Test)
     result_filepath = join(root, "out.txt.gz")
     model_target_dir = ".model"
-    vocab_filepath = join(root, const.VOCAB_DEFAULT_FILENAME)
+    nn_io = NeuralNetworkModelIO(target_dir=model_target_dir,
+                                 full_model_name=model_name.value,
+                                 model_name_tag=model_name_tag)
 
     # Setup config parameters.
-    embedding_matrix = EmbeddingHelper.load_embedding(embedding_filepath)
-    config.set_term_embedding(embedding_matrix)
+    config.set_term_embedding(serialized_exp_io.load_embedding())
     config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
     config.modify_classes_count(labels_scaler.LabelsCount)
     config.modify_bags_per_minibatch(bags_per_minibatch)
@@ -107,7 +105,7 @@ if __name__ == '__main__':
             storage=BaseRowsStorage.from_tsv(samples_filepath),
             row_ids_provider=MultipleIDProvider()),
         has_model_predefined_state=True,
-        vocab=EmbeddingHelper.load_vocab(vocab_filepath),
+        vocab=serialized_exp_io.load_vocab(),
         labels_count=config.ClassesCount,
         input_shapes=NetworkInputShapes(iter_pairs=[
             (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext),
@@ -118,9 +116,7 @@ if __name__ == '__main__':
 
     # Model preparation.
     model = BaseTensorflowModel(
-        nn_io=NeuralNetworkModelIO(target_dir=model_target_dir,
-                                   full_model_name=model_name.value,
-                                   model_name_tag=model_name_tag),
+        nn_io=nn_io,
         network=network,
         config=config,
         inference_ctx=inference_ctx,

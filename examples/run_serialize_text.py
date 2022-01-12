@@ -109,6 +109,8 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
                                balance=False,
                                value_to_group_id_func=synonyms.get_synonym_group_index)
 
+    return experiment.ExperimentIO
+
 
 if __name__ == '__main__':
 
