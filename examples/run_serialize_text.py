@@ -4,7 +4,6 @@ from collections import OrderedDict
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
-from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.common.labels.scaler.base import BaseLabelScaler
@@ -13,12 +12,9 @@ from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import ExperimentRuSentiFramesLabelsFormatter
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
-from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
-from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -28,30 +24,14 @@ from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 from examples.input import EXAMPLES
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg
-from examples.network.common import create_infer_experiment_name_provider
+from examples.network.common import create_infer_experiment_name_provider, create_and_fill_variant_collection, \
+    create_frames_collection
 from examples.network.embedding import RusvectoresEmbedding
 from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
 from examples.network.parser.terms import TermsSplitterParser
 from examples.network.parser.entities import TextEntitiesParser
 from examples.network.serialization_data import CustomSerializationData
-
-
-def create_frame_variants_collection():
-
-    # TODO. To common.
-    frames = RuSentiFramesCollection.read_collection(
-        version=RuSentiFramesVersions.V20,
-        labels_fmt=ExperimentRuSentiFramesLabelsFormatter())
-
-    # TODO. To common.
-    frame_variant_collection = FrameVariantsCollection()
-    frame_variant_collection.fill_from_iterable(
-        variants_with_id=frames.iter_frame_id_and_variants(),
-        overwrite_existed_variant=True,
-        raise_error_on_existed_variant=False)
-
-    return frame_variant_collection
 
 
 def run_serializer(sentences_text_list, terms_per_context, embedding_path):
@@ -73,7 +53,8 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path):
         dist_in_terms_bound=None,
         label_provider=PairSingleLabelProvider(label_instance=NoLabel()))
 
-    frame_variants_collection = create_frame_variants_collection()
+    frames_collection = create_frames_collection()
+    frame_variants_collection = create_and_fill_variant_collection(frames_collection)
 
     # Step 1. Annotate text.
     synonyms = RuSentRelSynonymsCollectionProvider.load_collection(

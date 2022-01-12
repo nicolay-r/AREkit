@@ -1,14 +1,12 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
-from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import ExperimentRuSentiFramesLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
 from arekit.contrib.networks.embeddings.base import Embedding
-from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.processing.pos.base import POSTagger
+from examples.network.common import create_frames_collection, create_and_fill_variant_collection
 
 
 class RuSentRelExperimentSerializationData(NetworkSerializationData):
@@ -29,22 +27,10 @@ class RuSentRelExperimentSerializationData(NetworkSerializationData):
         self.__terms_per_context = terms_per_context
         self.__str_entity_formatter = str_entity_formatter
         self.__word_embedding = embedding
-
-        # TODO. To common.
-        self.__frames_collection = RuSentiFramesCollection.read_collection(
-            version=RuSentiFramesVersions.V20,
-            labels_fmt=ExperimentRuSentiFramesLabelsFormatter())
-
-        # TODO. To common.
-        self.__frame_variant_collection = FrameVariantsCollection()
-        self.__frame_variant_collection.fill_from_iterable(
-            variants_with_id=self.__frames_collection.iter_frame_id_and_variants(),
-            overwrite_existed_variant=True,
-            raise_error_on_existed_variant=False)
-
+        self.__frames_collection = create_frames_collection()
+        self.__frame_variant_collection = create_and_fill_variant_collection(self.__frames_collection)
         self.__frame_roles_label_scaler = ThreeLabelScaler()
         self.__frames_connotation_provider = RuSentiFramesConnotationProvider(collection=self.__frames_collection)
-
 
     @property
     def PosTagger(self):
