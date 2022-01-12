@@ -109,6 +109,21 @@ class NetworkInputHelper(object):
         opinions_repo.write(writer=experiment.ExperimentIO.create_opinions_writer(),
                             target=experiment.ExperimentIO.create_opinions_writer_target(data_type=data_type))
 
+    @staticmethod
+    def __perform_annotation(experiment, data_type):
+        collections_it = experiment.DataIO.Annotator.iter_annotated_collections(
+            data_type=data_type,
+            doc_ops=experiment.DocumentOperations,
+            opin_ops=experiment.OpinionOperations)
+
+        for doc_id, collection in collections_it:
+            target = experiment.ExperimentIO.create_opinion_collection_target(doc_id=doc_id,
+                                                                              data_type=data_type)
+            experiment.ExperimentIO.write_opinion_collection(
+                collection=collection,
+                target=target,
+                labels_formatter=experiment.OpinionOperations.LabelsFormatter)
+
     # endregion
 
     @staticmethod
@@ -121,18 +136,11 @@ class NetworkInputHelper(object):
 
         for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
-            collections_it = experiment.DataIO.Annotator.iter_annotated_collections(
-                data_type=data_type,
-                doc_ops=experiment.DocumentOperations,
-                opin_ops=experiment.OpinionOperations)
+            # Perform annotation
+            NetworkInputHelper.__perform_annotation(experiment=experiment,
+                                                    data_type=data_type)
 
-            for doc_id, collection in collections_it:
-                target = experiment.ExperimentIO.create_opinion_collection_target(doc_id=doc_id, data_type=data_type)
-                experiment.ExperimentIO.write_opinion_collection(
-                    collection=collection,
-                    target=target,
-                    labels_formatter=experiment.OpinionOperations.LabelsFormatter)
-
+            # Compose opinion provider
             opinion_provider = InputTextOpinionProvider.create(
                 value_to_group_id_func=value_to_group_id_func,
                 parse_news_func=lambda doc_id: experiment.DocumentOperations.parse_doc(doc_id),
