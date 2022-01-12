@@ -17,9 +17,8 @@ from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.network.args.common import ExperimentTypeArg, LabelsCountArg, RusVectoresEmbeddingFilepathArg, \
     TermsPerContextArg, RuSentiFramesVersionArg, StemmerArg, UseBalancingArg, DistanceInTermsBetweenAttitudeEndsArg
 from examples.network.train.common import Common
-from examples.rusentrel.data import RuSentRelExperimentSerializationData
 from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO
-
+from examples.rusentrel.serialization_data import RuSentRelExperimentSerializationData
 
 if __name__ == '__main__':
 
@@ -67,7 +66,6 @@ if __name__ == '__main__':
         embedding=Common.load_rusvectores_embedding(filepath=embedding_filepath, stemmer=stemmer),
         terms_per_context=terms_per_context,
         frames_version=frames_version,
-        rusentrel_version=rusentrel_version,
         str_entity_formatter=create_entity_formatter(entity_fmt),
         stemmer=stemmer,
         pos_tagger=pos_tagger,
