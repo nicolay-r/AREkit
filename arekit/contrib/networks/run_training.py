@@ -62,7 +62,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         inference_ctx.initialize(
             dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             create_samples_view_func=lambda data_type: self._experiment.ExperimentIO.create_samples_view(data_type),
-            has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state,
+            has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state(),
             labels_count=self._experiment.DataIO.LabelsCount,
             vocab=self._experiment.ExperimentIO.load_vocab(),
             bags_collection_type=self.__bags_collection_type,
