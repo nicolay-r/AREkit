@@ -37,7 +37,7 @@ class SentenceObjectsParserPipelineItem(BasePipelineItem):
 
         # Release everything after the last entity.
         last_part = sentence.Text[start:len(sentence.Text)]
-        entries.extend(last_part)
+        entries.extend([last_part])
 
         # update information in pipeline
         pipeline_ctx.update("src", entries)
