@@ -9,6 +9,7 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.experiment_rusentrel.model_io.embedding import EmbeddingHelper
 from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
@@ -31,13 +32,6 @@ class NetworkIOUtils(BaseIOUtils):
 
     # region public methods
 
-    def _get_target_dir(self):
-        """ Represents an experiment dir of specific label scale format,
-            defined by labels scaler.
-        """
-        return join_dir_with_subfolder_name(subfolder_name=self.__get_experiment_folder_name(),
-                                            dir=self._get_experiment_sources_dir())
-
     def create_docs_stat_target(self):
         return join(self._get_target_dir(), "docs_stat.txt")
 
@@ -50,18 +44,10 @@ class NetworkIOUtils(BaseIOUtils):
                                   template="".join([f_name_template, '-e{e_index}'.format(e_index=epoch_index)]),
                                   prefix="result")
 
-    def get_input_opinions_target(self, data_type):
-        template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="opinion")
-
-    def get_input_sample_target(self, data_type):
-        template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="sample")
-
     def create_samples_view(self, data_type):
         assert(isinstance(data_type, DataType))
         storage = BaseRowsStorage.from_tsv(
-            filepath=self.get_input_sample_target(data_type=data_type))
+            filepath=self.__get_input_sample_target(data_type=data_type))
 
         return BaseSampleStorageView(storage=storage,
                                      row_ids_provider=MultipleIDProvider())
@@ -69,7 +55,7 @@ class NetworkIOUtils(BaseIOUtils):
     def create_opinions_view(self, data_type):
         assert(isinstance(data_type, DataType))
         storage = BaseRowsStorage.from_tsv(
-            filepath=self.get_input_opinions_target(data_type=data_type))
+            filepath=self.__get_input_opinions_target(data_type=data_type))
         return BaseOpinionStorageView(storage)
 
     def create_opinions_writer(self):
@@ -79,10 +65,10 @@ class NetworkIOUtils(BaseIOUtils):
         return TsvWriter(write_header=True)
 
     def create_opinions_writer_target(self, data_type):
-        return self.get_input_opinions_target(data_type)
+        return self.__get_input_opinions_target(data_type)
 
     def create_samples_writer_target(self, data_type):
-        return self.get_input_sample_target(data_type)
+        return self.__get_input_sample_target(data_type)
 
     def get_vocab_source(self):
         """ It is possible to load a predefined embedding from another experiment
@@ -93,24 +79,25 @@ class NetworkIOUtils(BaseIOUtils):
         return model_io.get_model_vocab_filepath() if self.__model_is_pretrained_state_provided(model_io) \
             else self.__get_default_vocab_filepath()
 
-    def get_vocab_target(self):
-        return self.__get_default_vocab_filepath()
+    def save_vocab(self, data):
+        target = self.__get_default_vocab_filepath()
+        return EmbeddingHelper.save_vocab(data=data, target=target)
+
+    def load_vocab(self):
+        source = self.get_vocab_source()
+        return EmbeddingHelper.load_vocab(source)
+
+    def save_embedding(self, data):
+        target = self.__get_default_embedding_filepath()
+        EmbeddingHelper.save_embedding(data=data, target=target)
+
+    def load_embedding(self):
+        source = self.__get_term_embedding_source()
+        return EmbeddingHelper.load_embedding(source)
 
     def has_model_predefined_state(self):
         model_io = self._experiment.DataIO.ModelIO
         return self.__model_is_pretrained_state_provided(model_io)
-
-    def get_term_embedding_source(self):
-        """ It is possible to load a predefined embedding from another experiment
-            using the related filepath provided by model_io.
-        """
-        model_io = self._experiment.DataIO.ModelIO
-        assert(isinstance(model_io, NeuralNetworkModelIO))
-        return model_io.get_model_embedding_filepath() if self.__model_is_pretrained_state_provided(model_io) \
-            else self.__get_default_embedding_filepath()
-
-    def get_term_embedding_target(self):
-        return self.__get_default_embedding_filepath()
 
     def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
         assert(isinstance(epoch_index, int))
@@ -121,10 +108,10 @@ class NetworkIOUtils(BaseIOUtils):
         for data_type in data_types_iter:
 
             filepaths = [
-                self.get_input_sample_target(data_type=data_type),
-                self.get_input_opinions_target(data_type=data_type),
-                self.get_vocab_target(),
-                self.get_term_embedding_target()
+                self.__get_input_sample_target(data_type=data_type),
+                self.__get_input_opinions_target(data_type=data_type),
+                self.__get_default_vocab_filepath(),
+                self.__get_term_embedding_target()
             ]
 
             if not self.__check_targets_existence(targets=filepaths, logger=logger):
@@ -134,6 +121,26 @@ class NetworkIOUtils(BaseIOUtils):
     # endregion
 
     # region private methods
+
+    def __get_input_opinions_target(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="opinion")
+
+    def __get_input_sample_target(self, data_type):
+        template = self._filename_template(data_type=data_type)
+        return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="sample")
+
+    def __get_term_embedding_target(self):
+        return self.__get_default_embedding_filepath()
+
+    def __get_term_embedding_source(self):
+        """ It is possible to load a predefined embedding from another experiment
+            using the related filepath provided by model_io.
+        """
+        model_io = self._experiment.DataIO.ModelIO
+        assert(isinstance(model_io, NeuralNetworkModelIO))
+        return model_io.get_model_embedding_filepath() if self.__model_is_pretrained_state_provided(model_io) \
+            else self.__get_default_embedding_filepath()
 
     def __get_experiment_folder_name(self):
         return "{name}_{scale}l".format(name=self._experiment.Name,
@@ -203,6 +210,13 @@ class NetworkIOUtils(BaseIOUtils):
 
     def _get_experiment_sources_dir(self):
         raise NotImplementedError()
+
+    def _get_target_dir(self):
+        """ Represents an experiment dir of specific label scale format,
+            defined by labels scaler.
+        """
+        return join_dir_with_subfolder_name(subfolder_name=self.__get_experiment_folder_name(),
+                                            dir=self._get_experiment_sources_dir())
 
     def _create_opinion_collection_provider(self):
         return RuSentRelOpinionCollectionProvider()

@@ -69,12 +69,12 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path):
 
     frame_variants_collection = create_frame_variants_collection()
 
-    # Step 2. Annotate text.
+    # Step 1. Annotate text.
     synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
         stemmer=stemmer,
         version=RuSentRelVersions.V11)
 
-    # Step 1. Parse text.
+    # Step 2. Parse text.
     news = News(doc_id=0, sentences=sentences)
 
     text_parser = BaseTextParser(

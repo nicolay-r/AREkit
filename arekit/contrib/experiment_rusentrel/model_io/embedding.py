@@ -1,7 +1,6 @@
 import logging
 
 import numpy as np
-
 from arekit.contrib.networks.core.input.providers.npz_utils import NpzRepositoryUtils
 
 logger = logging.getLogger(__name__)

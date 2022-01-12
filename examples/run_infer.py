@@ -11,7 +11,7 @@ from arekit.common.labels.scaler.base import BaseLabelScaler
 
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
-from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
+from arekit.contrib.experiment_rusentrel.model_io.embedding import EmbeddingHelper
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider

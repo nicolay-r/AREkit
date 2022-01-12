@@ -13,7 +13,6 @@ from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
-from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
@@ -149,17 +148,13 @@ class NetworkInputHelper(object):
                 balance=balance,
                 term_embedding_pairs=term_embedding_pairs)
 
-        # Assign targets
-        vocab_target = experiment.ExperimentIO.get_vocab_target()
-        embedding_target = experiment.ExperimentIO.get_term_embedding_target()
-
         # Save embedding information additionally.
         term_embedding = Embedding.from_word_embedding_pairs_iter(iter(term_embedding_pairs.items()))
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
 
         # Save embedding matrix
-        EmbeddingHelper.save_embedding(data=embedding_matrix, target=embedding_target)
-        EmbeddingHelper.save_vocab(data=vocab, target=vocab_target)
+        experiment.ExperimentIO.save_embedding(data=embedding_matrix)
+        experiment.ExperimentIO.save_vocab(data=vocab)
 
         del embedding_matrix

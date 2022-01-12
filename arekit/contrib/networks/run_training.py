@@ -6,7 +6,6 @@ from arekit.common.experiment.engine import ExperimentEngine
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
-from arekit.contrib.networks.core.input.helper_embedding import EmbeddingHelper
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 from arekit.contrib.networks.shapes import NetworkInputShapes
@@ -55,7 +54,7 @@ class NetworksTrainingEngine(ExperimentEngine):
             raise Exception("Data has not been initialized/serialized!")
 
         # Reading embedding.
-        embedding_data = EmbeddingHelper.load_embedding(source=self._experiment.ExperimentIO.get_term_embedding_source())
+        embedding_data = self._experiment.ExperimentIO.load_embedding()
         self.__config.set_term_embedding(embedding_data)
 
         # Performing samples reading process.
@@ -64,9 +63,8 @@ class NetworksTrainingEngine(ExperimentEngine):
             dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             create_samples_view_func=lambda data_type: self._experiment.ExperimentIO.create_samples_view(data_type),
             has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state,
-            exp_io=self._experiment.ExperimentIO,
             labels_count=self._experiment.DataIO.LabelsCount,
-            vocab=EmbeddingHelper.load_vocab(source=self._experiment.ExperimentIO.get_vocab_source()),
+            vocab=self._experiment.ExperimentIO.load_vocab(),
             bags_collection_type=self.__bags_collection_type,
             input_shapes=NetworkInputShapes(iter_pairs=[
                 (NetworkInputShapes.FRAMES_PER_CONTEXT, self.__config.FramesPerContext),
