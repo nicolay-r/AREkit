@@ -2,7 +2,9 @@ import logging
 import unittest
 
 from arekit.common.frames.variants.collection import FrameVariantsCollection
+from arekit.common.news.base import News
 from arekit.common.news.parser import NewsParser
+from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
@@ -21,6 +23,13 @@ from tests.processing.text.debug_text import debug_show_news_terms
 
 
 class TestTextParser(unittest.TestCase):
+
+    def test_parse_sinle_string(self):
+        text = "А контроль над этими провинциями — это господство над без малого половиной сирийской территории."
+        parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True)])
+        news = News(doc_id=0, sentences=[BaseNewsSentence(text.split())])
+        parsed_news = NewsParser.parse(news=news, text_parser=parser)
+        debug_show_news_terms(parsed_news=parsed_news)
 
     def test_parsing(self):
 
