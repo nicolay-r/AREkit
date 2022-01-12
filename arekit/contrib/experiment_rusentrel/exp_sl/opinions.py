@@ -38,12 +38,12 @@ class RuSentrelOpinionOperations(OpinionOperations):
 
         collections = []
 
+        # Picking an annotated collection.
+        target = self.__experiment_io.create_opinion_collection_target(doc_id=doc_id, data_type=data_type)
+
         # Reading automatically annotated collection of neutral opinions.
         auto_neutral = self.__experiment_io.read_opinion_collection(
-            target=self.__experiment_io.create_result_opinion_collection_target(
-                doc_id=doc_id,
-                data_type=data_type,
-                check_existance=True),
+            target=target,
             labels_formatter=self.__neutral_labels_fmt,
             create_collection_func=self.__create_collection)
 
