@@ -2,14 +2,14 @@ class Callback(object):
 
     def __init__(self, epochs_count):
         self.__epochs_count = epochs_count
+        self._experiment = None
 
     @property
     def Epochs(self):
         return self.__epochs_count
 
     def set_experiment(self, experiment):
-        # Do nothing by default.
-        pass
+        self._experiment = experiment
 
     def on_initialized(self, network):
         # Do nothing by default.

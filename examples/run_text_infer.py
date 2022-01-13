@@ -17,7 +17,7 @@ from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
-from examples.network.args.const import NEURAL_NETWORKS_TARGET_DIR
+from examples.network.args.const import NEURAL_NETWORKS_TARGET_DIR, BAG_SIZE
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, ModelNameTagArg
 from examples.network.common import create_bags_collection_type, create_network_model_io
@@ -110,6 +110,7 @@ if __name__ == '__main__':
     config.set_term_embedding(serialized_exp_io.load_embedding())
     config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
     config.modify_classes_count(labels_scaler.LabelsCount)
+    config.modify_bag_size(BAG_SIZE)
     config.modify_bags_per_minibatch(bags_per_minibatch)
     config.set_class_weights([1, 1, 1])
 

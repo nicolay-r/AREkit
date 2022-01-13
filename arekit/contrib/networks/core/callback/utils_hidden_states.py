@@ -5,6 +5,7 @@ import numpy as np
 
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
+from arekit.contrib.networks.core.model import BaseTensorflowModel
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -17,10 +18,9 @@ __hiddenParams_template = 'hparams_{}_e{}'
 __input_dependent_params_template = 'idparams_{data}_e{epoch_index}'
 
 
-def save_model_hidden_values(log_dir, model, epoch_index, save_hidden_parameters):
-
-    if not save_hidden_parameters:
-        return
+def save_model_hidden_values(log_dir, model, epoch_index):
+    assert(isinstance(log_dir, str))
+    assert(isinstance(model, BaseTensorflowModel))
 
     names, values = model.get_hidden_parameters()
 

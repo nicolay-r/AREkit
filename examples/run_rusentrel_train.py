@@ -19,6 +19,7 @@ from examples.network.args.const import BAG_SIZE, NEURAL_NETWORKS_TARGET_DIR
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
 from examples.network.common import create_bags_collection_type, create_network_model_io
+from examples.rusentrel.callback import TrainingCallback
 from examples.rusentrel.common import Common
 from examples.rusentrel.config_setups import optionally_modify_config_for_experiment, modify_config_for_model
 from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO
@@ -73,7 +74,7 @@ if __name__ == '__main__':
     model_name_tag = ModelNameTagArg.read_argument(args)
     epochs_count = EpochsCountArg.read_argument(args)
     model_load_dir = ModelLoadDirArg.read_argument(args)
-    use_balancing = UseBalancingArg.add_argument(args)
+    use_balancing = UseBalancingArg.read_argument(args)
 
     # Init handler.
     bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)
@@ -83,9 +84,14 @@ if __name__ == '__main__':
 
     labels_scaler = Common.create_labels_scaler(labels_count)
 
+    # Initialize callback.
+    callback = TrainingCallback(epochs_count=epochs_count,
+                                train_acc_limit=0.99,
+                                log_dir=model_target_dir)
+
     # Creating experiment
     experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount,
-                                   callback=Callback(epochs_count))
+                                   callback=callback)
 
     extra_name_suffix = Common.create_exp_name_suffix(
         use_balancing=use_balancing,
