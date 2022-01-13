@@ -7,13 +7,14 @@ class NeuralNetworkModelIO(BaseModelIO):
     """ Provides an API for saving model states
     """
 
-    def __init__(self, target_dir, full_model_name, model_name_tag,
+    def __init__(self, full_model_name, model_name_tag,
+                 target_dir=None,
                  source_dir=None,
                  embedding_filepath=None,
                  vocab_filepath=None):
-        assert(isinstance(target_dir, str))
         assert(isinstance(full_model_name, str))
         assert(isinstance(model_name_tag, str))
+        assert(isinstance(target_dir, str) or target_dir is None)
         assert(isinstance(source_dir, str) or source_dir is None)
 
         self.__target_dir = target_dir

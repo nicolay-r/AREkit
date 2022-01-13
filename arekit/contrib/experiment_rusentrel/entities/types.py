@@ -40,3 +40,7 @@ class EntityFormattersService:
     @staticmethod
     def iter_supported_names():
         return EntityFormattersService.__iter_supported_names()
+
+    @staticmethod
+    def is_supported(name):
+        return name in EntityFormattersService.__names

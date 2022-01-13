@@ -13,4 +13,4 @@ BAG_SIZE = 1
 DATA_DIR = os.path.join(current_dir, "../../data")
 EMBEDDING_FILENAME = "news_mystem_skipgram_1000_20_2015.bin.gz"
 EMBEDDING_FILEPATH = os.path.join(utils.get_default_download_dir(), EMBEDDING_FILENAME)
-VOCAB_DEFAULT_FILENAME = "vocab-0.txt.npz"
+NEURAL_NETWORKS_TARGET_DIR = DATA_DIR

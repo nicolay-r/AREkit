@@ -5,8 +5,6 @@ from examples.network.args import const
 
 class BagsPerMinibatchArg(BaseArg):
 
-    default = const.BAGS_PER_MINIBATCH
-
     def __init__(self):
         pass
 
@@ -15,18 +13,16 @@ class BagsPerMinibatchArg(BaseArg):
         return args.bags_per_minibatch
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=const.BAGS_PER_MINIBATCH):
         parser.add_argument('--bags-per-minibatch',
                             dest='bags_per_minibatch',
                             type=int,
-                            default=BagsPerMinibatchArg.default,
+                            default=default,
                             nargs='?',
-                            help='Bags per minibatch count (Default: {})'.format(BagsPerMinibatchArg.default))
+                            help='Bags per minibatch count (Default: {})'.format(default))
 
 
 class DropoutKeepProbArg(BaseArg):
-
-    default = const.DROPOUT_KEEP_PROB
 
     def __init__(self):
         pass
@@ -36,18 +32,16 @@ class DropoutKeepProbArg(BaseArg):
         return args.dropout_keep_prob
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=const.DROPOUT_KEEP_PROB):
         parser.add_argument('--dropout-keep-prob',
                             dest='dropout_keep_prob',
                             type=float,
-                            default=DropoutKeepProbArg.default,
+                            default=default,
                             nargs='?',
-                            help='Dropout keep prob (Default: {})'.format(DropoutKeepProbArg.default))
+                            help='Dropout keep prob (Default: {})'.format(default))
 
 
 class EpochsCountArg(BaseArg):
-
-    default = const.EPOCHS_COUNT
 
     def __init__(self):
         pass
@@ -57,13 +51,13 @@ class EpochsCountArg(BaseArg):
         return args.epochs
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=const.EPOCHS_COUNT):
         parser.add_argument('--epochs',
                             dest='epochs',
                             type=int,
-                            default=EpochsCountArg.default,
+                            default=default,
                             nargs='?',
-                            help='Epochs count (Default: {})'.format(EpochsCountArg.default))
+                            help='Epochs count (Default: {})'.format(default))
 
 
 class LearningRateArg(BaseArg):
@@ -78,13 +72,13 @@ class LearningRateArg(BaseArg):
         return args.learning_rate
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=const.LEARNING_RATE):
         parser.add_argument('--learning-rate',
                             dest='learning_rate',
                             type=float,
-                            default=LearningRateArg.default,
+                            default=default,
                             nargs='?',
-                            help='Learning Rate (Default: {})'.format(LearningRateArg.default))
+                            help='Learning Rate (Default: {})'.format(default))
 
 
 class ModelInputTypeArg(BaseArg):
@@ -99,22 +93,19 @@ class ModelInputTypeArg(BaseArg):
         return ModelInputTypeService.get_type_by_name(args.input_type)
 
     @staticmethod
-    def add_argument(parser):
-        str_def = ModelInputTypeService.find_name_by_type(ModelInputTypeArg._default)
+    def add_argument(parser, default=ModelInputTypeService.find_name_by_type(ModelInputType.SingleInstance)):
         parser.add_argument('--model-input-type',
                             dest='input_type',
                             type=str,
                             choices=list(ModelInputTypeService.iter_supported_names()),
-                            default=str_def,
+                            default=default,
                             nargs='?',
-                            help='Input format type (Default: {})'.format(str_def))
+                            help='Input format type (Default: {})'.format(default))
 
 
 class ModelNameTagArg(BaseArg):
 
     NO_TAG = u''
-
-    default = NO_TAG
 
     def __init__(self):
         pass
@@ -124,10 +115,10 @@ class ModelNameTagArg(BaseArg):
         return str(args.model_tag)
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=NO_TAG):
         parser.add_argument('--model-tag',
                             dest='model_tag',
                             type=str,
-                            default=ModelNameTagArg.NO_TAG,
+                            default=default,
                             nargs='?',
-                            help='Optional and additional custom model name suffix.')
+                            help='Optional and additional custom model name suffix. (Default: {})'.format(default))

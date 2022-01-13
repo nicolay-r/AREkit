@@ -13,8 +13,9 @@ from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
 from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, RusVectoresEmbeddingFilepathArg, \
-    ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg, ModelLoadDirArg
-from examples.network.args.const import BAG_SIZE
+    ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg, ModelLoadDirArg, \
+    UseBalancingArg
+from examples.network.args.const import BAG_SIZE, NEURAL_NETWORKS_TARGET_DIR
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
 from examples.network.common import create_bags_collection_type, create_network_model_io
@@ -33,6 +34,7 @@ if __name__ == '__main__':
     rusentrel_version = RuSentRelVersions.V11
     ra_version = RuAttitudesVersions.V20LargeNeut
     folding_type = FoldingType.Fixed
+    model_target_dir = NEURAL_NETWORKS_TARGET_DIR
 
     # Composing cmd arguments.
     LabelsCountArg.add_argument(parser)
@@ -49,14 +51,8 @@ if __name__ == '__main__':
     EpochsCountArg.add_argument(parser)
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     VocabFilepathArg.add_argument(parser)
-    ModelLoadDirArg.add_argument(parser)
-
-    parser.add_argument('--balanced-input',
-                        dest='balanced_input',
-                        type=lambda x: (str(x).lower() == 'true'),
-                        default='True',
-                        nargs=1,
-                        help='Balanced input of the Train set"')
+    ModelLoadDirArg.add_argument(parser, default=None)
+    UseBalancingArg.add_argument(parser)
 
     # Parsing arguments.
     args = parser.parse_args()
@@ -73,13 +69,13 @@ if __name__ == '__main__':
     bags_per_minibatch = BagsPerMinibatchArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
     learning_rate = LearningRateArg.read_argument(args)
-    balanced_input = args.balanced_input
     dist_in_terms_between_attitude_ends = DistanceInTermsBetweenAttitudeEndsArg.read_argument(args)
     model_name_tag = ModelNameTagArg.read_argument(args)
     epochs_count = EpochsCountArg.read_argument(args)
     model_load_dir = ModelLoadDirArg.read_argument(args)
+    use_balancing = UseBalancingArg.add_argument(args)
 
-    # init handler
+    # Init handler.
     bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)
     network_func, network_config_func = create_network_and_network_config_funcs(
         model_name=model_name,
@@ -92,7 +88,7 @@ if __name__ == '__main__':
                                    callback=Callback(epochs_count))
 
     extra_name_suffix = Common.create_exp_name_suffix(
-        use_balancing=balanced_input,
+        use_balancing=use_balancing,
         terms_per_context=terms_per_context,
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
@@ -109,7 +105,8 @@ if __name__ == '__main__':
                                                     input_type=model_input_type)
 
     model_io = create_network_model_io(full_model_name=full_model_name,
-                                       model_load_dir=model_load_dir,
+                                       source_dir=model_load_dir,
+                                       target_dir=model_target_dir,
                                        embedding_filepath=None,
                                        vocab_filepath=vocab_filepath,
                                        model_name_tag=model_name_tag)

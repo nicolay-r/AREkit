@@ -7,7 +7,6 @@ from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.enum_input_types import ModelInputType
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from examples.network.args.const import DATA_DIR
 
 
 def create_infer_experiment_name_provider():
@@ -40,12 +39,12 @@ def create_bags_collection_type(model_input_type):
         return MultiInstanceBagsCollection
 
 
-def create_network_model_io(full_model_name, model_load_dir, embedding_filepath,
-                            vocab_filepath, model_name_tag):
+def create_network_model_io(full_model_name, source_dir, embedding_filepath,
+                            target_dir, vocab_filepath, model_name_tag):
 
     return NeuralNetworkModelIO(full_model_name=full_model_name,
-                                target_dir=DATA_DIR,
-                                source_dir=model_load_dir,
+                                target_dir=target_dir,
+                                source_dir=source_dir,
                                 embedding_filepath=embedding_filepath,
                                 vocab_filepath=vocab_filepath,
                                 model_name_tag=model_name_tag)

@@ -14,11 +14,11 @@ class VocabFilepathArg(BaseArg):
         return args.vocab_filepath
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=None):
         parser.add_argument('--vocab-filepath',
                             dest='vocab_filepath',
                             type=str,
-                            default=const.VOCAB_DEFAULT_FILENAME,
+                            default=default,
                             nargs='?',
                             help='Custom vocabulary filepath')
 
@@ -33,11 +33,11 @@ class UseBalancingArg(BaseArg):
         return args.balance_samples
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default="True"):
         parser.add_argument('--balance-samples',
                             dest='balance_samples',
                             type=lambda x: (str(x).lower() == 'true'),
-                            default="True",
+                            default=default,
                             nargs=1,
                             help='Use balancing for Train type during sample serialization process"')
 
@@ -49,11 +49,11 @@ class DistanceInTermsBetweenAttitudeEndsArg(BaseArg):
         return args.dist_between_ends
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=None):
         parser.add_argument('--dist-between-att-ends',
                             dest='dist_between_ends',
                             type=int,
-                            default=None,
+                            default=default,
                             nargs='?',
                             help='Distance in terms between attitude participants in terms.'
                                  '(Default: {})'.format(None))
@@ -66,11 +66,11 @@ class RusVectoresEmbeddingFilepathArg(BaseArg):
         return args.embedding_filepath
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=const.EMBEDDING_FILEPATH):
         parser.add_argument('--emb-filepath',
                             dest='embedding_filepath',
                             type=str,
-                            default=const.EMBEDDING_FILEPATH,
+                            default=default,
                             nargs=1,
                             help='RusVectores embedding filepath')
 
@@ -83,12 +83,12 @@ class ExperimentTypeArg(BaseArg):
         return ExperimentTypesService.get_type_by_name(exp_name)
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default="rsr"):
         parser.add_argument('--experiment',
                             dest='exp_type',
                             type=str,
                             choices=list(ExperimentTypesService.iter_supported_names()),
-                            default="rsr",
+                            default=default,
                             nargs=1,
                             help='Experiment type')
 
@@ -100,18 +100,15 @@ class RuSentiFramesVersionArg(BaseArg):
         return RuSentiFramesVersionsService.get_type_by_name(args.frames_version)
 
     @staticmethod
-    def add_argument(parser):
-
-        default_name = RuSentiFramesVersionsService.get_name_by_type(
-            RuSentiFramesVersions.V20)
+    def add_argument(parser, default=RuSentiFramesVersionsService.get_name_by_type(RuSentiFramesVersions.V20)):
 
         parser.add_argument('--frames-version',
                             dest='frames_version',
                             type=str,
-                            default=default_name,
+                            default=default,
                             choices=list(RuSentiFramesVersionsService.iter_supported_names()),
                             nargs='?',
-                            help='Version of RuSentiFrames collection (Default: {})'.format(default_name))
+                            help='Version of RuSentiFrames collection (Default: {})'.format(default))
 
 
 class LabelsCountArg(BaseArg):
@@ -121,20 +118,18 @@ class LabelsCountArg(BaseArg):
         return args.labels_count
 
     @staticmethod
-    def add_argument(parser):
-        choices = [2, 3]
+    def add_argument(parser, default=3):
+        choices = [2, default]
         parser.add_argument('--labels-count',
                             dest="labels_count",
                             type=int,
-                            choices=[2, 3],
-                            default=choices[-1],
+                            choices=choices,
+                            default=default,
                             nargs=1,
                             help="Labels count in an output classifier")
 
 
 class StemmerArg(BaseArg):
-
-    default = u"mystem"
 
     supported = {
         u"mystem": MystemWrapper()
@@ -148,35 +143,34 @@ class StemmerArg(BaseArg):
         return StemmerArg.supported[args.stemmer]
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=u"mystem"):
+        assert(default in StemmerArg.supported)
         parser.add_argument('--stemmer',
                             dest='stemmer',
                             type=str,
                             choices=list(StemmerArg.supported.keys()),
-                            default=StemmerArg.default,
+                            default=default,
                             nargs='?',
-                            help='Stemmer (Default: {})'.format(StemmerArg.default))
+                            help='Stemmer (Default: {})'.format(default))
 
 
 class TermsPerContextArg(BaseArg):
-
-    default = const.TERMS_PER_CONTEXT
 
     @staticmethod
     def read_argument(args):
         return args.terms_per_context
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=const.TERMS_PER_CONTEXT):
         parser.add_argument('--terms-per-context',
                             dest='terms_per_context',
                             type=int,
-                            default=TermsPerContextArg.default,
+                            default=default,
                             nargs='?',
                             help='The max possible length of an input context in terms (Default: {})\n'
                                  'NOTE: Use greater or equal value for this parameter during experiment'
                                  'process; otherwise you may encounter with exception during sample '
-                                 'creation process!'.format(TermsPerContextArg.default))
+                                 'creation process!'.format(default))
 
 
 class ModelNameArg(BaseArg):
@@ -186,12 +180,12 @@ class ModelNameArg(BaseArg):
         return ModelNamesService.get_type_by_name(args.model_name)
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=ModelNames.PCNN.value):
         parser.add_argument('--model-name',
                             dest='model_name',
                             type=str,
                             choices=list(ModelNamesService.iter_supported_names()),
-                            default=ModelNames.PCNN.value,
+                            default=default,
                             nargs=1,
                             help='Name of a model to be utilized in experiment')
 
@@ -203,10 +197,10 @@ class ModelLoadDirArg(BaseArg):
         return args.model_load_dir
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default=None):
         parser.add_argument('--model-state-dir',
                             dest='model_load_dir',
                             type=str,
-                            default=None,
+                            default=default,
                             nargs='?',
                             help='Use pretrained state as initial')

@@ -5,5 +5,5 @@ class BaseArg:
         raise NotImplementedError()
 
     @staticmethod
-    def add_argument(parser):
+    def add_argument(parser, default):
         raise NotImplementedError()

@@ -4,8 +4,6 @@ import logging
 import numpy as np
 import tensorflow as tf
 
-from tensorflow.python.training.saver import Saver
-
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
@@ -157,9 +155,7 @@ class BaseTensorflowModel(BaseModel):
             groups_count += 1
 
         if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
-            save_fp = self.IO.get_model_target_path_tf_prefix()
-            logger.info("Update TensorFlow model state: {}".format(save_fp))
-            self.save_model(save_path=save_fp)
+            self.__do_save_model()
 
         return fit_total_cost / groups_count, fit_total_acc / groups_count
 
@@ -217,33 +213,40 @@ class BaseTensorflowModel(BaseModel):
 
         return predict_log
 
-    # endregion
-
-    def load_model(self, save_path):
-        assert(isinstance(self.__saver, Saver))
+    def __load_model(self, save_path):
+        assert(isinstance(self.__saver, tf.compat.v1.train.Saver))
         save_dir = os.path.dirname(save_path)
+        print(save_path)
         self.__saver.restore(sess=self.__sess,
                              save_path=tf.train.latest_checkpoint(save_dir))
 
-    def save_model(self, save_path):
-        assert(isinstance(self.__saver, Saver))
+    def __save_model(self, save_path):
+        assert(isinstance(self.__saver, tf.compat.v1.train.Saver))
         self.__saver.save(self.__sess,
                           save_path=save_path,
                           write_meta_graph=False)
 
+    def __do_save_model(self):
+        save_fp = self.IO.get_model_target_path_tf_prefix()
+        logger.info("Update TensorFlow model state: {}".format(save_fp))
+        self.__save_model(save_path=save_fp)
+
+    def __do_load_model(self):
+        saved_model_dir = "{}/".format(self.IO.get_model_source_path_tf_prefix())
+        logger.info("Loading Tensorflow model state: {}".format(saved_model_dir))
+        self.__load_model(saved_model_dir)
+
+    # endregion
+
     def run_training(self, model_params, seed):
         assert(isinstance(model_params, NeuralNetworkModelParams))
-
         self.__network.compile(self.Config, reset_graph=True, graph_seed=seed)
         self.__set_optimiser()
         self.__notify_initialized()
-
         self.__initialize_session()
 
         if self.IO.IsPretrainedStateProvided:
-            saved_model_path = "{}.state".format(self.IO.get_model_source_path_tf_prefix())
-            logger.info("Loading model: {}".format(saved_model_path))
-            self.load_model(saved_model_path)
+            self.__do_load_model()
 
         self.fit(epochs_count=model_params.EpochsCount)
         self.__dispose_session()
@@ -297,6 +300,10 @@ class BaseTensorflowModel(BaseModel):
             self.__network.compile(config=self.Config,
                                    reset_graph=True,
                                    graph_seed=graph_seed)
+
+        if self.IO.IsPretrainedStateProvided:
+            self.__initialize_session()
+            self.__do_load_model()
 
         labeled_samples = self.__get_labeled_samples_collection(data_type=data_type)
 

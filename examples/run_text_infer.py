@@ -17,6 +17,7 @@ from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
+from examples.network.args.const import NEURAL_NETWORKS_TARGET_DIR
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, ModelNameTagArg
 from examples.network.common import create_bags_collection_type, create_network_model_io
@@ -32,6 +33,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Inference")
 
+    # Input data.
+    text = EXAMPLES["simple"]
+
     # Providing arguments.
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     BagsPerMinibatchArg.add_argument(parser)
@@ -41,9 +45,9 @@ if __name__ == '__main__':
     ModelInputTypeArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
     EntityFormatterTypesArg.add_argument(parser)
-    ModelLoadDirArg.add_argument(parser)
     VocabFilepathArg.add_argument(parser)
     StemmerArg.add_argument(parser)
+    ModelLoadDirArg.add_argument(parser, default=NEURAL_NETWORKS_TARGET_DIR)
 
     # Parsing arguments.
     args = parser.parse_args()
@@ -57,19 +61,21 @@ if __name__ == '__main__':
     model_input_type = ModelInputTypeArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
     entity_fmt_type = EntityFormatterTypesArg.read_argument(args)
-    bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)
-    model_load_dir = ModelLoadDirArg.read_argument(args)
     vocab_filepath = VocabFilepathArg.read_argument(args)
     stemmer = StemmerArg.read_argument(args)
+    model_load_dir = ModelLoadDirArg.read_argument(args)
 
     # Implement extra structures.
     labels_scaler = Common.create_labels_scaler(labels_count)
+
+    # Initialize bags collection type.
+    bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)
 
     # Parsing arguments.
     args = parser.parse_args()
 
     # Execute pipeline elements.
-    serialized_exp_io = run_serializer(sentences_text_list=EXAMPLES["simple"],
+    serialized_exp_io = run_serializer(sentences_text_list=text,
                                        embedding_path=rusvectores_embedding_path,
                                        terms_per_context=terms_per_context,
                                        entity_fmt_type=entity_fmt_type,
@@ -77,7 +83,7 @@ if __name__ == '__main__':
 
     assert(isinstance(serialized_exp_io, InferIOUtils))
 
-    # Deserialize data.
+    # Create network an configuration.
     network_func, config_func = create_network_and_network_config_funcs(
         model_name=model_name, model_input_type=model_input_type)
 
@@ -94,8 +100,9 @@ if __name__ == '__main__':
                                                     input_type=model_input_type)
 
     nn_io = create_network_model_io(full_model_name=full_model_name,
-                                    model_load_dir=model_load_dir,
+                                    source_dir=model_load_dir,
                                     embedding_filepath=None,
+                                    target_dir=model_load_dir,
                                     vocab_filepath=vocab_filepath,
                                     model_name_tag=model_name_tag)
 
