@@ -72,7 +72,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         tf.compat.v1.reset_default_graph()
 
         if graph_seed is not None:
-            tf.set_random_seed(graph_seed)
+            tf.compat.v1.set_random_seed(graph_seed)
 
         with tf.variable_scope(self.__ctx_network_scope):
             self.__context_network.compile_hidden_states_only(config=config.ContextConfig)

@@ -122,8 +122,8 @@ class BaseTensorflowModel(BaseModel):
         Tensorflow session initialization
         """
         init_op = tf.compat.v1.global_variables_initializer()
-        gpu_options = tf.GPUOptions(allow_growth=True)
-        sess = tf.compat.v1.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
+        sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options))
         sess.run(init_op)
         self.__saver = tf.compat.v1.train.Saver(max_to_keep=2)
         self.__sess = sess

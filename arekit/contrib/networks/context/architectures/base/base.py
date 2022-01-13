@@ -142,7 +142,7 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
             tf.compat.v1.reset_default_graph()
 
         if graph_seed is not None:
-            tf.set_random_seed(graph_seed)
+            tf.compat.v1.set_random_seed(graph_seed)
 
         self.init_input()
         self.__init_embedding_hidden_states()
