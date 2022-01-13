@@ -22,7 +22,7 @@ from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, 
 from examples.network.common import create_bags_collection_type, create_network_model_io
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, \
     LabelsCountArg, TermsPerContextArg, \
-    ModelNameArg, ModelLoadDirArg, VocabFilepathArg
+    ModelNameArg, ModelLoadDirArg, VocabFilepathArg, StemmerArg
 from examples.network.infer.io_utils import InferIOUtils
 from examples.run_text_serialize import run_serializer
 from examples.rusentrel.common import Common
@@ -43,6 +43,7 @@ if __name__ == '__main__':
     EntityFormatterTypesArg.add_argument(parser)
     ModelLoadDirArg.add_argument(parser)
     VocabFilepathArg.add_argument(parser)
+    StemmerArg.add_argument(parser)
 
     # Parsing arguments.
     args = parser.parse_args()
@@ -59,6 +60,7 @@ if __name__ == '__main__':
     bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)
     model_load_dir = ModelLoadDirArg.read_argument(args)
     vocab_filepath = VocabFilepathArg.read_argument(args)
+    stemmer = StemmerArg.read_argument(args)
 
     # Implement extra structures.
     labels_scaler = Common.create_labels_scaler(labels_count)
@@ -70,7 +72,8 @@ if __name__ == '__main__':
     serialized_exp_io = run_serializer(sentences_text_list=EXAMPLES["simple"],
                                        embedding_path=rusvectores_embedding_path,
                                        terms_per_context=terms_per_context,
-                                       entity_fmt_type=entity_fmt_type)
+                                       entity_fmt_type=entity_fmt_type,
+                                       stemmer=stemmer)
 
     assert(isinstance(serialized_exp_io, InferIOUtils))
 

@@ -26,7 +26,7 @@ from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentime
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 from examples.input import EXAMPLES
-from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg
+from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg, StemmerArg
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.network.common import create_infer_experiment_name_provider,\
     create_and_fill_variant_collection, \
@@ -39,7 +39,7 @@ from examples.network.text_parser.entities import TextEntitiesParser
 from examples.network.text_parser.terms import TermsSplitterParser
 
 
-def run_serializer(sentences_text_list, terms_per_context, embedding_path, entity_fmt_type):
+def run_serializer(sentences_text_list, terms_per_context, embedding_path, entity_fmt_type, stemmer):
     assert(isinstance(sentences_text_list, list))
     assert(isinstance(terms_per_context, int))
     assert(isinstance(embedding_path, str))
@@ -52,7 +52,6 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
 
     # TODO. split text onto sentences.
     sentences = list(map(lambda text: BaseNewsSentence(text), sentences_text_list))
-    stemmer = MystemWrapper()
 
     annot_algo = PairBasedAnnotationAlgorithm(
         dist_in_terms_bound=None,
@@ -121,15 +120,19 @@ if __name__ == '__main__':
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
     EntityFormatterTypesArg.add_argument(parser)
+    StemmerArg.add_argument(parser)
 
     # Parsing arguments.
     args = parser.parse_args()
 
+    # Reading provided arguments.
     terms_per_context = TermsPerContextArg.read_argument(args)
     embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
     entity_fmt = EntityFormatterTypesArg.read_argument(args)
+    stemmer = StemmerArg.read_argument(args)
 
     run_serializer(sentences_text_list=EXAMPLES["simple"],
                    terms_per_context=terms_per_context,
                    embedding_path=embedding_filepath,
-                   entity_fmt_type=entity_fmt)
+                   entity_fmt_type=entity_fmt,
+                   stemmer=stemmer)

@@ -1,8 +1,8 @@
-from arekit.contrib.experiment_rusentrel.model_io.tf_networks import NetworkIOUtils
+from arekit.contrib.experiment_rusentrel.model_io.tf_networks import RuSentRelExperimentNetworkIOUtils
 from examples.network.args.const import DATA_DIR
 
 
-class CustomRuSentRelNetworkExperimentIO(NetworkIOUtils):
+class CustomRuSentRelNetworkExperimentIO(RuSentRelExperimentNetworkIOUtils):
 
     def try_prepare(self):
         pass

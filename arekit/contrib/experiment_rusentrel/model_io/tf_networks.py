@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class NetworkIOUtils(BaseIOUtils):
+class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
     """ Provides additional Input/Output paths generation functions for:
         - model directory;
         - embedding matrix;
@@ -70,25 +70,12 @@ class NetworkIOUtils(BaseIOUtils):
     def create_samples_writer_target(self, data_type):
         return self.__get_input_sample_target(data_type)
 
-    def get_vocab_source(self):
-        """ It is possible to load a predefined embedding from another experiment
-            using the related filepath provided by model_io.
-        """
-        model_io = self._experiment.DataIO.ModelIO
-
-        if model_io is None:
-            return self.__get_default_vocab_filepath()
-
-        assert(isinstance(model_io, NeuralNetworkModelIO))
-        return model_io.get_model_vocab_filepath() if self.__model_is_pretrained_state_provided(model_io) \
-            else self.__get_default_vocab_filepath()
-
     def save_vocab(self, data):
         target = self.__get_default_vocab_filepath()
         return EmbeddingHelper.save_vocab(data=data, target=target)
 
     def load_vocab(self):
-        source = self.get_vocab_source()
+        source = self.___get_vocab_source()
         return EmbeddingHelper.load_vocab(source)
 
     def save_embedding(self, data):
@@ -136,6 +123,24 @@ class NetworkIOUtils(BaseIOUtils):
 
     def __get_term_embedding_target(self):
         return self.__get_default_embedding_filepath()
+
+    @staticmethod
+    def __model_is_pretrained_state_provided(model_io):
+        assert(isinstance(model_io, NeuralNetworkModelIO))
+        return model_io.IsPretrainedStateProvided
+
+    def ___get_vocab_source(self):
+        """ It is possible to load a predefined embedding from another experiment
+            using the related filepath provided by model_io.
+        """
+        model_io = self._experiment.DataIO.ModelIO
+
+        if model_io is None:
+            return self.__get_default_vocab_filepath()
+
+        assert(isinstance(model_io, NeuralNetworkModelIO))
+        return model_io.get_model_vocab_filepath() if self.__model_is_pretrained_state_provided(model_io) \
+            else self.__get_default_vocab_filepath()
 
     def __get_term_embedding_source(self):
         """ It is possible to load a predefined embedding from another experiment
@@ -203,11 +208,6 @@ class NetworkIOUtils(BaseIOUtils):
 
         return result_dir
 
-    @staticmethod
-    def __model_is_pretrained_state_provided(model_io):
-        assert(isinstance(model_io, NeuralNetworkModelIO))
-        return model_io.IsPretrainedStateProvided
-
     def __get_annotator_dir(self):
         return join_dir_with_subfolder_name(dir=self._get_target_dir(),
                                             subfolder_name=self._get_annotator_name())
@@ -236,7 +236,7 @@ class NetworkIOUtils(BaseIOUtils):
     def _get_filepath(out_dir, template, prefix):
         assert(isinstance(template, str))
         assert(isinstance(prefix, str))
-        return join(out_dir, NetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+        return join(out_dir, RuSentRelExperimentNetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
 
     def _experiment_iter_index(self):
         return self._experiment.DocumentOperations.DataFolding.IterationIndex

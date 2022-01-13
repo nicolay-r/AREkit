@@ -1,10 +1,10 @@
 import os
 
-from arekit.contrib.experiment_rusentrel.model_io.tf_networks import NetworkIOUtils
+from arekit.contrib.experiment_rusentrel.model_io.tf_networks import RuSentRelExperimentNetworkIOUtils
 from examples.network.args.const import DATA_DIR
 
 
-class InferIOUtils(NetworkIOUtils):
+class InferIOUtils(RuSentRelExperimentNetworkIOUtils):
 
     def __create_target(self, doc_id, data_type):
         filename = "result_d{doc_id}_{data_type}.txt".format(doc_id=doc_id, data_type=data_type.name)

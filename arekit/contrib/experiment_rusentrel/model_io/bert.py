@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class BertIOUtils(BaseIOUtils):
+class RuSentRelExperimentBertIOUtils(BaseIOUtils):
 
     def _get_experiment_sources_dir(self):
         """ Provides directory for samples.
@@ -159,7 +159,7 @@ class BertIOUtils(BaseIOUtils):
     def __get_filepath(out_dir, template, prefix):
         assert(isinstance(template, str))
         assert(isinstance(prefix, str))
-        return join(out_dir, BertIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+        return join(out_dir, RuSentRelExperimentBertIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
 
     @staticmethod
     def __generate_tsv_archive_filename(template, prefix):
