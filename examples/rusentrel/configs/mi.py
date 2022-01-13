@@ -1,5 +1,5 @@
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
-from examples.network.configs.common import MI_CONTEXTS_PER_OPINION
+from examples.rusentrel.configs.common import MI_CONTEXTS_PER_OPINION
 
 
 def apply_ds_mi_settings(config):

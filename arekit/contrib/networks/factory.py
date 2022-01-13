@@ -31,7 +31,7 @@ from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceC
 from arekit.contrib.networks.multi.configurations.max_pooling import MaxPoolingOverSentencesConfig
 
 
-def compose_network_and_network_config_funcs(model_name, model_input_type):
+def create_network_and_network_config_funcs(model_name, model_input_type):
     assert(isinstance(model_name, ModelNames))
     assert(isinstance(model_input_type, ModelInputType))
 

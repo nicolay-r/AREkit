@@ -5,7 +5,7 @@ from arekit.common.experiment.callback import Callback
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
+from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.run_training import NetworksTrainingEngine
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -13,14 +13,13 @@ from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 from examples.input import EXAMPLES
 from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, RusVectoresEmbeddingFilepathArg, \
-    ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg
-from examples.network.args.const import DATA_DIR, BAG_SIZE
+    ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg, ModelLoadDirArg
+from examples.network.args.const import BAG_SIZE
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
-from examples.network.factory.networks import compose_network_and_network_config_funcs
-from examples.network.factory.bags_collection import create_bags_collection_type
-from examples.network.factory.config_setups import modify_config_for_model, optionally_modify_config_for_experiment
+from examples.network.common import create_bags_collection_type, create_network_model_io
 from examples.rusentrel.common import Common
+from examples.rusentrel.config_setups import optionally_modify_config_for_experiment, modify_config_for_model
 from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO
 
 if __name__ == '__main__':
@@ -50,13 +49,7 @@ if __name__ == '__main__':
     EpochsCountArg.add_argument(parser)
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     VocabFilepathArg.add_argument(parser)
-
-    parser.add_argument('--model-state-dir',
-                        dest='model_load_dir',
-                        type=str,
-                        default=None,
-                        nargs='?',
-                        help='Use pretrained state as initial')
+    ModelLoadDirArg.add_argument(parser)
 
     parser.add_argument('--balanced-input',
                         dest='balanced_input',
@@ -73,7 +66,6 @@ if __name__ == '__main__':
     labels_count = LabelsCountArg.read_argument(args)
     stemmer = StemmerArg.read_argument(args)
     model_input_type = ModelInputTypeArg.read_argument(args)
-    model_load_dir = args.model_load_dir
     model_name = ModelNameArg.read_argument(args)
     embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
     vocab_filepath = VocabFilepathArg.read_argument(args)
@@ -85,10 +77,11 @@ if __name__ == '__main__':
     dist_in_terms_between_attitude_ends = DistanceInTermsBetweenAttitudeEndsArg.read_argument(args)
     model_name_tag = ModelNameTagArg.read_argument(args)
     epochs_count = EpochsCountArg.read_argument(args)
+    model_load_dir = ModelLoadDirArg.read_argument(args)
 
     # init handler
     bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)
-    network_func, network_config_func = compose_network_and_network_config_funcs(
+    network_func, network_config_func = create_network_and_network_config_funcs(
         model_name=model_name,
         model_input_type=model_input_type)
 
@@ -112,15 +105,14 @@ if __name__ == '__main__':
                                    extra_name_suffix=extra_name_suffix,
                                    load_ruattitude_docs=False)
 
-    full_model_name = Common.create_full_model_name(folding_type=folding_type,
-                                                    model_name=model_name,
+    full_model_name = Common.create_full_model_name(model_name=model_name,
                                                     input_type=model_input_type)
 
-    model_io = NeuralNetworkModelIO(full_model_name=full_model_name,
-                                    target_dir=DATA_DIR,
-                                    source_dir=model_load_dir,
-                                    vocab_filepath=vocab_filepath,
-                                    model_name_tag=model_name_tag)
+    model_io = create_network_model_io(full_model_name=full_model_name,
+                                       model_load_dir=model_load_dir,
+                                       embedding_filepath=None,
+                                       vocab_filepath=vocab_filepath,
+                                       model_name_tag=model_name_tag)
 
     # Setup model io.
     experiment_data.set_model_io(model_io)

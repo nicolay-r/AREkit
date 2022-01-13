@@ -34,9 +34,9 @@ from examples.network.common import create_infer_experiment_name_provider,\
 from examples.network.embedding import RusvectoresEmbedding
 from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
-from examples.network.parser.terms import TermsSplitterParser
-from examples.network.parser.entities import TextEntitiesParser
 from examples.network.serialization_data import RuSentRelExperimentSerializationData
+from examples.network.text_parser.entities import TextEntitiesParser
+from examples.network.text_parser.terms import TermsSplitterParser
 
 
 def run_serializer(sentences_text_list, terms_per_context, embedding_path, entity_fmt_type):

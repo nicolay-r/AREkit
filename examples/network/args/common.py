@@ -194,3 +194,19 @@ class ModelNameArg(BaseArg):
                             default=ModelNames.PCNN.value,
                             nargs=1,
                             help='Name of a model to be utilized in experiment')
+
+
+class ModelLoadDirArg(BaseArg):
+
+    @staticmethod
+    def read_argument(args):
+        return args.model_load_dir
+
+    @staticmethod
+    def add_argument(parser):
+        parser.add_argument('--model-state-dir',
+                            dest='model_load_dir',
+                            type=str,
+                            default=None,
+                            nargs='?',
+                            help='Use pretrained state as initial')

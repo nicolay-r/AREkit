@@ -2,18 +2,16 @@ import argparse
 import os
 from os.path import join
 
-from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
 
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
-from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
-from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
+from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.shapes import NetworkInputShapes
 
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
@@ -21,12 +19,12 @@ from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 from examples.input import EXAMPLES
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, ModelNameTagArg
-from examples.network.factory.networks import compose_network_and_network_config_funcs
+from examples.network.common import create_bags_collection_type, create_network_model_io
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, \
     LabelsCountArg, TermsPerContextArg, \
-    ModelNameArg
+    ModelNameArg, ModelLoadDirArg, VocabFilepathArg
 from examples.network.infer.io_utils import InferIOUtils
-from examples.run_serialize_text import run_serializer
+from examples.run_text_serialize import run_serializer
 from examples.rusentrel.common import Common
 
 
@@ -43,6 +41,8 @@ if __name__ == '__main__':
     ModelInputTypeArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
     EntityFormatterTypesArg.add_argument(parser)
+    ModelLoadDirArg.add_argument(parser)
+    VocabFilepathArg.add_argument(parser)
 
     # Parsing arguments.
     args = parser.parse_args()
@@ -56,10 +56,12 @@ if __name__ == '__main__':
     model_input_type = ModelInputTypeArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
     entity_fmt_type = EntityFormatterTypesArg.read_argument(args)
+    bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)
+    model_load_dir = ModelLoadDirArg.read_argument(args)
+    vocab_filepath = VocabFilepathArg.read_argument(args)
 
     # Implement extra structures.
     labels_scaler = Common.create_labels_scaler(labels_count)
-    label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
     # Parsing arguments.
     args = parser.parse_args()
@@ -73,7 +75,7 @@ if __name__ == '__main__':
     assert(isinstance(serialized_exp_io, InferIOUtils))
 
     # Deserialize data.
-    network_func, config_func = compose_network_and_network_config_funcs(
+    network_func, config_func = create_network_and_network_config_funcs(
         model_name=model_name, model_input_type=model_input_type)
 
     network = network_func()
@@ -85,10 +87,14 @@ if __name__ == '__main__':
 
     samples_filepath = serialized_exp_io.create_samples_writer_target(DataType.Test)
     result_filepath = join(root, "out.txt.gz")
-    model_target_dir = ".model"
-    nn_io = NeuralNetworkModelIO(target_dir=model_target_dir,
-                                 full_model_name=model_name.value,
-                                 model_name_tag=model_name_tag)
+    full_model_name = Common.create_full_model_name(model_name=model_name,
+                                                    input_type=model_input_type)
+
+    nn_io = create_network_model_io(full_model_name=full_model_name,
+                                    model_load_dir=model_load_dir,
+                                    embedding_filepath=None,
+                                    vocab_filepath=vocab_filepath,
+                                    model_name_tag=model_name_tag)
 
     # Setup config parameters.
     config.set_term_embedding(serialized_exp_io.load_embedding())
@@ -100,7 +106,7 @@ if __name__ == '__main__':
     inference_ctx = InferenceContext.create_empty()
     inference_ctx.initialize(
         dtypes=[DataType.Test],
-        bags_collection_type=SingleBagsCollection,
+        bags_collection_type=bags_collection_type,
         create_samples_view_func=lambda data_type: BaseSampleStorageView(
             storage=BaseRowsStorage.from_tsv(samples_filepath),
             row_ids_provider=MultipleIDProvider()),
@@ -120,8 +126,7 @@ if __name__ == '__main__':
         network=network,
         config=config,
         inference_ctx=inference_ctx,
-        bags_collection_type=SingleBagsCollection,      # Используем на вход 1 пример.
-    )
+        bags_collection_type=bags_collection_type)
 
     model.predict(do_compile=True)
 

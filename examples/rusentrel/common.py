@@ -41,9 +41,9 @@ class Common:
             raise NotImplementedError(u"Input type `{}` was not declared".format(input_type))
 
     @staticmethod
-    def create_full_model_name(folding_type, model_name, input_type):
+    def create_full_model_name(model_name, input_type):
         assert(isinstance(model_name, ModelNames))
-        return u'_'.join([Common.__create_folding_type_prefix(folding_type),
+        return u'_'.join([Common.__create_folding_type_prefix(FoldingType.Fixed),
                           Common.__create_input_type_prefix(input_type),
                           model_name.value])
 
