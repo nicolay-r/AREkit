@@ -139,7 +139,7 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
         self.__cfg = config
 
         if reset_graph:
-            tf.reset_default_graph()
+            tf.compat.v1.reset_default_graph()
 
         if graph_seed is not None:
             tf.set_random_seed(graph_seed)

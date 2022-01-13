@@ -27,8 +27,8 @@ class TestContextNetworkFeeding(unittest.TestCase):
 
     @staticmethod
     def init_session():
-        init_op = tf.global_variables_initializer()
-        sess = tf.Session()
+        init_op = tf.compat.v1.global_variables_initializer()
+        sess = tf.compat.v1.Session()
         sess.run(init_op)
         return sess
 

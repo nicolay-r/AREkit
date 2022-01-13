@@ -121,11 +121,11 @@ class BaseTensorflowModel(BaseModel):
         """
         Tensorflow session initialization
         """
-        init_op = tf.global_variables_initializer()
+        init_op = tf.compat.v1.global_variables_initializer()
         gpu_options = tf.GPUOptions(allow_growth=True)
-        sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        sess = tf.compat.v1.Session(config=tf.ConfigProto(gpu_options=gpu_options))
         sess.run(init_op)
-        self.__saver = tf.train.Saver(max_to_keep=2)
+        self.__saver = tf.compat.v1.train.Saver(max_to_keep=2)
         self.__sess = sess
 
     def __fit_epoch(self, minibatches_iter, total):

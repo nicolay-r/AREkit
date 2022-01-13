@@ -69,7 +69,7 @@ class BaseMultiInstanceNeuralNetwork(NeuralNetwork):
         assert(isinstance(graph_seed, int) or graph_seed is None)
 
         self.__cfg = config
-        tf.reset_default_graph()
+        tf.compat.v1.reset_default_graph()
 
         if graph_seed is not None:
             tf.set_random_seed(graph_seed)
