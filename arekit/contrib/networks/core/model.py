@@ -1,17 +1,15 @@
 import collections
-import os
 import logging
 import numpy as np
-import tensorflow as tf
 
-from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.base import BaseModel
-from arekit.common.experiment.data_type import DataType
 from arekit.common.utils import progress_bar_defined
+from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.callback import Callback
+from arekit.common.experiment.labeling import LabeledCollection
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 
-from arekit.common.experiment.callback import Callback
 from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
@@ -23,6 +21,9 @@ from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBa
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.core.nn import NeuralNetwork
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
+
+from arekit.contrib.networks.tf_helpers.nn_states import TensorflowNetworkStatesProvider
+from arekit.contrib.networks.tf_helpers.session import initialize_session
 
 logger = logging.getLogger(__name__)
 
@@ -51,12 +52,12 @@ class BaseTensorflowModel(BaseModel):
         super(BaseTensorflowModel, self).__init__(io=nn_io)
 
         self.__sess = None
-        self.__saver = None
         self.__optimiser = None
         self.__inference_ctx = inference_ctx
         self.__network = network
         self.__callback = callback
         self.__current_epoch_index = 0
+        self.__states_provider = TensorflowNetworkStatesProvider()
 
         self.__config = config
         self.__bags_collection_type = bags_collection_type
@@ -83,8 +84,7 @@ class BaseTensorflowModel(BaseModel):
         self.__set_optimiser_value(optimiser)
 
     def __dispose_session(self):
-        """
-        Tensorflow session dispose method
+        """ Tensorflow session dispose method
         """
         self.__sess.close()
 
@@ -115,17 +115,6 @@ class BaseTensorflowModel(BaseModel):
         if self.__callback is not None:
             self.__callback.on_initialized(self)
 
-    def __initialize_session(self):
-        """
-        Tensorflow session initialization
-        """
-        init_op = tf.compat.v1.global_variables_initializer()
-        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-        sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options))
-        sess.run(init_op)
-        self.__saver = tf.compat.v1.train.Saver(max_to_keep=2)
-        self.__sess = sess
-
     def __fit_epoch(self, minibatches_iter, total):
         assert(isinstance(minibatches_iter, collections.Iterable))
 
@@ -133,6 +122,7 @@ class BaseTensorflowModel(BaseModel):
         fit_total_acc = 0
         groups_count = 0
 
+        # TODO. Implement via callback!
         it = progress_bar_defined(iterable=minibatches_iter,
                                   unit='mbs',
                                   desc="Training e={}".format(self.__current_epoch_index),
@@ -155,7 +145,8 @@ class BaseTensorflowModel(BaseModel):
             groups_count += 1
 
         if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
-            self.__do_save_model()
+            self.__states_provider.save_model(sess=self.__sess,
+                                              path_tf_prefix=self.IO.get_model_target_path_tf_prefix())
 
         return fit_total_cost / groups_count, fit_total_acc / groups_count
 
@@ -180,6 +171,7 @@ class BaseTensorflowModel(BaseModel):
         bags_group_it = bags_collection.iter_by_groups(bags_per_group=bags_per_group,
                                                        text_opinion_ids_set=None)
 
+        # TODO. Implement via callback!
         it = progress_bar_defined(
             iterable=bags_group_it,
             desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index, dtype=data_type),
@@ -213,29 +205,6 @@ class BaseTensorflowModel(BaseModel):
 
         return predict_log
 
-    def __load_model(self, save_path):
-        assert(isinstance(self.__saver, tf.compat.v1.train.Saver))
-        save_dir = os.path.dirname(save_path)
-        print(save_path)
-        self.__saver.restore(sess=self.__sess,
-                             save_path=tf.train.latest_checkpoint(save_dir))
-
-    def __save_model(self, save_path):
-        assert(isinstance(self.__saver, tf.compat.v1.train.Saver))
-        self.__saver.save(self.__sess,
-                          save_path=save_path,
-                          write_meta_graph=False)
-
-    def __do_save_model(self):
-        save_fp = self.IO.get_model_target_path_tf_prefix()
-        logger.info("Update TensorFlow model state: {}".format(save_fp))
-        self.__save_model(save_path=save_fp)
-
-    def __do_load_model(self):
-        saved_model_dir = "{}/".format(self.IO.get_model_source_path_tf_prefix())
-        logger.info("Loading Tensorflow model state: {}".format(saved_model_dir))
-        self.__load_model(saved_model_dir)
-
     # endregion
 
     def run_training(self, model_params, seed):
@@ -243,10 +212,11 @@ class BaseTensorflowModel(BaseModel):
         self.__network.compile(self.Config, reset_graph=True, graph_seed=seed)
         self.__set_optimiser()
         self.__notify_initialized()
-        self.__initialize_session()
+        self.__sess = initialize_session()
 
         if self.IO.IsPretrainedStateProvided:
-            self.__do_load_model()
+            self.__states_provider.load_model(sess=self.__sess,
+                                              path_tf_prefix=self.IO.get_model_source_path_tf_prefix())
 
         self.fit(epochs_count=model_params.EpochsCount)
         self.__dispose_session()
@@ -262,7 +232,9 @@ class BaseTensorflowModel(BaseModel):
         bags_per_group = self.Config.BagsPerMinibatch
         # However this is not a precise value.
         minibatches_count = bags_collection.get_groups_count(bags_per_group)
-        logger.info("Minibatches passing per epoch count: ~{} (Might be greater or equal, as the last bag is expanded)".format(minibatches_count))
+        logger.info("Minibatches passing per epoch count: ~{} "
+                    "(Might be greater or equal, as the last "
+                    "bag is expanded)".format(minibatches_count))
 
         if self.__callback is not None:
             # This might be used to perform
@@ -302,8 +274,9 @@ class BaseTensorflowModel(BaseModel):
                                    graph_seed=graph_seed)
 
         if self.IO.IsPretrainedStateProvided:
-            self.__initialize_session()
-            self.__do_load_model()
+            self.__sess = initialize_session()
+            self.__states_provider.load_model(sess=self.__sess,
+                                              path_tf_prefix=self.IO.get_model_source_path_tf_prefix())
 
         labeled_samples = self.__get_labeled_samples_collection(data_type=data_type)
 
@@ -313,7 +286,7 @@ class BaseTensorflowModel(BaseModel):
 
         # Guarantee and initialize session if the latter was not.
         if self.__sess is None:
-            self.__initialize_session()
+            self.__sess = initialize_session()
 
         return self.__label_samples(data_type=data_type)
 
