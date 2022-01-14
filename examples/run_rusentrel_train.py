@@ -1,7 +1,6 @@
 import argparse
 
 from arekit.common.experiment.api.ctx_training import TrainingData
-from arekit.common.experiment.callback import Callback
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -11,10 +10,9 @@ from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
-from examples.input import EXAMPLES
-from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, RusVectoresEmbeddingFilepathArg, \
-    ExperimentTypeArg, LabelsCountArg, StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg, ModelLoadDirArg, \
-    UseBalancingArg
+from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, ExperimentTypeArg, LabelsCountArg, \
+    StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg, ModelLoadDirArg, UseBalancingArg, \
+    EmbeddingMatrixFilepathArg
 from examples.network.args.const import BAG_SIZE, NEURAL_NETWORKS_TARGET_DIR
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
@@ -24,9 +22,8 @@ from examples.rusentrel.common import Common
 from examples.rusentrel.config_setups import optionally_modify_config_for_experiment, modify_config_for_model
 from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO
 
-if __name__ == '__main__':
 
-    text = EXAMPLES["simple"]
+if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Training script for obtaining Tensorflow based states, "
                                                  "based on the RuSentRel and RuAttitudes datasets (optionally)")
@@ -41,17 +38,17 @@ if __name__ == '__main__':
     LabelsCountArg.add_argument(parser)
     ExperimentTypeArg.add_argument(parser)
     StemmerArg.add_argument(parser)
-    DropoutKeepProbArg.add_argument(parser)
     BagsPerMinibatchArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
-    LearningRateArg.add_argument(parser)
     DistanceInTermsBetweenAttitudeEndsArg.add_argument(parser)
     ModelInputTypeArg.add_argument(parser)
     ModelNameArg.add_argument(parser)
     ModelNameTagArg.add_argument(parser)
-    EpochsCountArg.add_argument(parser)
-    RusVectoresEmbeddingFilepathArg.add_argument(parser)
-    VocabFilepathArg.add_argument(parser)
+    DropoutKeepProbArg.add_argument(parser, default=0.5)
+    LearningRateArg.add_argument(parser, default=0.1)
+    EpochsCountArg.add_argument(parser, default=150)
+    VocabFilepathArg.add_argument(parser, default=None)
+    EmbeddingMatrixFilepathArg.add_argument(parser, default=None)
     ModelLoadDirArg.add_argument(parser, default=None)
     UseBalancingArg.add_argument(parser)
 
@@ -64,7 +61,7 @@ if __name__ == '__main__':
     stemmer = StemmerArg.read_argument(args)
     model_input_type = ModelInputTypeArg.read_argument(args)
     model_name = ModelNameArg.read_argument(args)
-    embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
+    embedding_matrix_filepath = EmbeddingMatrixFilepathArg.add_argument(parser)
     vocab_filepath = VocabFilepathArg.read_argument(args)
     dropout_keep_prob = DropoutKeepProbArg.read_argument(args)
     bags_per_minibatch = BagsPerMinibatchArg.read_argument(args)
@@ -113,7 +110,7 @@ if __name__ == '__main__':
     model_io = create_network_model_io(full_model_name=full_model_name,
                                        source_dir=model_load_dir,
                                        target_dir=model_target_dir,
-                                       embedding_filepath=None,
+                                       embedding_filepath=embedding_matrix_filepath,
                                        vocab_filepath=vocab_filepath,
                                        model_name_tag=model_name_tag)
 

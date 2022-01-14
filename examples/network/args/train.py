@@ -32,7 +32,8 @@ class DropoutKeepProbArg(BaseArg):
         return args.dropout_keep_prob
 
     @staticmethod
-    def add_argument(parser, default=const.DROPOUT_KEEP_PROB):
+    def add_argument(parser, default):
+        assert(isinstance(default, float))
         parser.add_argument('--dropout-keep-prob',
                             dest='dropout_keep_prob',
                             type=float,
@@ -51,7 +52,8 @@ class EpochsCountArg(BaseArg):
         return args.epochs
 
     @staticmethod
-    def add_argument(parser, default=const.EPOCHS_COUNT):
+    def add_argument(parser, default):
+        assert(isinstance(default, int))
         parser.add_argument('--epochs',
                             dest='epochs',
                             type=int,
@@ -62,8 +64,6 @@ class EpochsCountArg(BaseArg):
 
 class LearningRateArg(BaseArg):
 
-    default = const.LEARNING_RATE
-
     def __init__(self):
         pass
 
@@ -72,7 +72,8 @@ class LearningRateArg(BaseArg):
         return args.learning_rate
 
     @staticmethod
-    def add_argument(parser, default=const.LEARNING_RATE):
+    def add_argument(parser, default):
+        assert(isinstance(default, float))
         parser.add_argument('--learning-rate',
                             dest='learning_rate',
                             type=float,

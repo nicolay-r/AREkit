@@ -4,29 +4,29 @@ from collections import OrderedDict
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
-from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
-from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
-from arekit.common.news.base import News
+from arekit.common.labels.scaler.base import BaseLabelScaler
+from arekit.common.labels.base import NoLabel
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
-from arekit.contrib.experiment_rusentrel.entities.types import EntityFormatterTypes
+from arekit.common.news.base import News
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
+from arekit.contrib.experiment_rusentrel.entities.types import EntityFormatterTypes
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
+from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 
 from examples.input import EXAMPLES
-from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg, StemmerArg
+from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg, StemmerArg, InputTextArg
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.network.common import create_infer_experiment_name_provider,\
     create_and_fill_variant_collection, \
@@ -117,6 +117,7 @@ if __name__ == '__main__':
                                                  "required for inference and training.")
 
     # Provide arguments.
+    InputTextArg.add_argument(parser, default=EXAMPLES["simple"][0])
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
     EntityFormatterTypesArg.add_argument(parser)
@@ -126,12 +127,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Reading provided arguments.
+    input_text = InputTextArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
     embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
     entity_fmt = EntityFormatterTypesArg.read_argument(args)
     stemmer = StemmerArg.read_argument(args)
 
-    run_serializer(sentences_text_list=EXAMPLES["simple"],
+    run_serializer(sentences_text_list=[input_text],
                    terms_per_context=terms_per_context,
                    embedding_path=embedding_filepath,
                    entity_fmt_type=entity_fmt,

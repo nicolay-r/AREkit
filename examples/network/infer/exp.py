@@ -1,6 +1,6 @@
 from arekit.common.experiment.api.base import BaseExperiment
+from examples.network.infer.exp_io import InferIOUtils
 from examples.network.infer.opin_ops import CustomOpinionOperations
-from examples.network.infer.io_utils import InferIOUtils
 
 
 class CustomExperiment(BaseExperiment):

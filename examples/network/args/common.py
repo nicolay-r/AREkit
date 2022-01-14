@@ -1,10 +1,42 @@
-from arekit.contrib.experiment_rusentrel.entities.types import EntityFormattersService
 from arekit.contrib.experiment_rusentrel.types import ExperimentTypesService
 from arekit.contrib.networks.enum_name_types import ModelNamesService, ModelNames
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersionsService, RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from examples.network.args.base import BaseArg
 from examples.network.args import const
+
+
+class InputTextArg(BaseArg):
+
+    @staticmethod
+    def read_argument(args):
+        return args.input_text
+
+    @staticmethod
+    def add_argument(parser, default):
+        assert(isinstance(default, str))
+        parser.add_argument('--text',
+                            dest='input_text',
+                            type=str,
+                            default=default,
+                            nargs='?',
+                            help='Input text for processing')
+
+
+class PredictOutputFilepathArg(BaseArg):
+
+    @staticmethod
+    def read_argument(args):
+        return args.inference_output_filepath
+
+    @staticmethod
+    def add_argument(parser, default):
+        parser.add_argument('-o',
+                            dest='inference_output_filepath',
+                            type=str,
+                            default=default,
+                            nargs='?',
+                            help='Inference output filepath')
 
 
 class VocabFilepathArg(BaseArg):
@@ -69,6 +101,24 @@ class RusVectoresEmbeddingFilepathArg(BaseArg):
     def add_argument(parser, default=const.EMBEDDING_FILEPATH):
         parser.add_argument('--emb-filepath',
                             dest='embedding_filepath',
+                            type=str,
+                            default=default,
+                            nargs=1,
+                            help='RusVectores embedding filepath')
+
+
+class EmbeddingMatrixFilepathArg(BaseArg):
+    """ Embedding matrix, utilized as an input for model.
+    """
+
+    @staticmethod
+    def read_argument(args):
+        return args.embedding_matrix_filepath
+
+    @staticmethod
+    def add_argument(parser, default=None):
+        parser.add_argument('--emb-npz-filepath',
+                            dest='embedding_matrix_filepath',
                             type=str,
                             default=default,
                             nargs=1,
