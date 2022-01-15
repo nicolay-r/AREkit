@@ -40,7 +40,15 @@ class TensorflowNetworkStatesProvider(object):
 
     def load_model(self, sess, path_tf_prefix):
         assert(isinstance(sess, tf.compat.v1.Session))
+
         saved_model_dir = "{}/".format(path_tf_prefix)
+
+        if not os.path.exists(saved_model_dir):
+            # Skip the case when model is not available.
+            logger.info('Model was not found at: "{path}"'.format(path=saved_model_dir))
+            logger.info('Skipping loading process!"')
+            return
+
         logger.info("Loading Tensorflow model state: {}".format(saved_model_dir))
         self.__load_model_core(session=sess, save_path=saved_model_dir)
 
