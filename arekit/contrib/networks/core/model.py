@@ -40,12 +40,12 @@ class BaseTensorflowModel(BaseModel):
     SaveTensorflowModelStateOnFit = True
     FeedDictShow = False
 
-    def __init__(self, nn_io, network, inference_ctx, bags_collection_type, config, callback=None):
+    def __init__(self, nn_io, network, inference_ctx, bags_collection_type, config, callback):
         assert(isinstance(nn_io, NeuralNetworkModelIO))
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(inference_ctx, InferenceContext))
         assert(issubclass(bags_collection_type, BagsCollection))
-        assert(isinstance(callback, NetworkCallback) or callback is None)
+        assert(isinstance(callback, NetworkCallback))
         assert(isinstance(config, DefaultNetworkConfig))
 
         super(BaseTensorflowModel, self).__init__(io=nn_io)
@@ -110,8 +110,7 @@ class BaseTensorflowModel(BaseModel):
         return self.__inference_ctx.LabeledSamplesCollections[data_type]
 
     def __notify_initialized(self):
-        if self.__callback is not None:
-            self.__callback.on_initialized(self)
+        self.__callback.on_initialized(self)
 
     def __fit_epoch(self, bags_group_it):
         assert(isinstance(bags_group_it, collections.Iterable))

@@ -9,6 +9,7 @@ from arekit.common.experiment.data_type import DataType
 
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.model import BaseTensorflowModel
+from arekit.contrib.networks.core.network_callback import NetworkCallback
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
@@ -143,7 +144,9 @@ if __name__ == '__main__':
         network=network,
         config=config,
         inference_ctx=inference_ctx,
-        bags_collection_type=bags_collection_type)
+        bags_collection_type=bags_collection_type,
+        # TODO. This is weird to pass epochs_count! Temporary fix.
+        callback=NetworkCallback(epochs_count=100))
 
     model.predict(do_compile=True)
 
