@@ -1,3 +1,8 @@
+import logging
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+
 class Callback(object):
 
     def __init__(self, epochs_count):

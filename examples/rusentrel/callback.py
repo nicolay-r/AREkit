@@ -1,18 +1,16 @@
 import logging
 from collections import OrderedDict
 
-from arekit.common.experiment.callback import Callback
-
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_model_hidden_values
 from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.model import BaseTensorflowModel
-from examples.rusentrel.utils import get_message
+from arekit.contrib.networks.core.network_callback import NetworkCallback
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class TrainingCallback(Callback):
+class TrainingCallback(NetworkCallback):
 
     def __init__(self, train_acc_limit, epochs_count, log_dir):
         assert(isinstance(train_acc_limit, float) or train_acc_limit is None)
@@ -46,10 +44,10 @@ class TrainingCallback(Callback):
         assert(isinstance(epoch_index, int))
         assert(isinstance(operation_cancel, OperationCancellation))
 
-        message = get_message(epoch_index=epoch_index, avg_fit_cost=avg_fit_cost, avg_fit_acc=avg_fit_acc)
-
-        # Providing information into main logger.
-        logger.info(message)
+        super(TrainingCallback, self).on_epoch_finished(avg_fit_cost=avg_fit_cost,
+                                                        avg_fit_acc=avg_fit_acc,
+                                                        epoch_index=epoch_index,
+                                                        operation_cancel=operation_cancel)
 
         if self.__is_cancel_needed(avg_fit_acc):
             operation_cancel.Cancel()

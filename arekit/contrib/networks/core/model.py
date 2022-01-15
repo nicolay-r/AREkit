@@ -3,9 +3,7 @@ import logging
 import numpy as np
 
 from arekit.common.model.base import BaseModel
-from arekit.common.utils import progress_bar_defined
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.callback import Callback
 from arekit.common.experiment.labeling import LabeledCollection
 
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -19,6 +17,7 @@ from arekit.contrib.networks.core.feeding.bags.collection.single import SingleBa
 from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.feeding.batch.multi import MultiInstanceMiniBatch
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
+from arekit.contrib.networks.core.network_callback import NetworkCallback
 from arekit.contrib.networks.core.nn import NeuralNetwork
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 
@@ -46,7 +45,7 @@ class BaseTensorflowModel(BaseModel):
         assert(isinstance(network, NeuralNetwork))
         assert(isinstance(inference_ctx, InferenceContext))
         assert(issubclass(bags_collection_type, BagsCollection))
-        assert(isinstance(callback, Callback) or callback is None)
+        assert(isinstance(callback, NetworkCallback) or callback is None)
         assert(isinstance(config, DefaultNetworkConfig))
 
         super(BaseTensorflowModel, self).__init__(io=nn_io)
@@ -56,7 +55,6 @@ class BaseTensorflowModel(BaseModel):
         self.__inference_ctx = inference_ctx
         self.__network = network
         self.__callback = callback
-        self.__current_epoch_index = 0
         self.__states_provider = TensorflowNetworkStatesProvider()
 
         self.__config = config
@@ -115,20 +113,14 @@ class BaseTensorflowModel(BaseModel):
         if self.__callback is not None:
             self.__callback.on_initialized(self)
 
-    def __fit_epoch(self, minibatches_iter, total):
-        assert(isinstance(minibatches_iter, collections.Iterable))
+    def __fit_epoch(self, bags_group_it):
+        assert(isinstance(bags_group_it, collections.Iterable))
 
         fit_total_cost = 0
         fit_total_acc = 0
         groups_count = 0
 
-        # TODO. Implement via callback!
-        it = progress_bar_defined(iterable=minibatches_iter,
-                                  unit='mbs',
-                                  desc="Training e={}".format(self.__current_epoch_index),
-                                  total=total)
-
-        for bags_group in it:
+        for bags_group in bags_group_it:
             minibatch = self.__create_batch_by_bags_group(bags_group)
             feed_dict = self.__create_feed_dict(minibatch, data_type=DataType.Train)
 
@@ -171,13 +163,12 @@ class BaseTensorflowModel(BaseModel):
         bags_group_it = bags_collection.iter_by_groups(bags_per_group=bags_per_group,
                                                        text_opinion_ids_set=None)
 
-        # TODO. Implement via callback!
-        it = progress_bar_defined(
-            iterable=bags_group_it,
-            desc="Predict e={epoch} [{dtype}]".format(epoch=self.__current_epoch_index, dtype=data_type),
-            total=bags_collection.get_groups_count(bags_per_group))
+        batches_it = self.__callback.handle_batches_iter(
+            batches_iter=bags_group_it,
+            total=bags_collection.get_groups_count(bags_per_group),
+            prefix="Predict [{dtype}]".format(dtype=data_type))
 
-        for bags_group in it:
+        for bags_group in batches_it:
 
             minibatch = self.__create_batch_by_bags_group(bags_group)
             feed_dict = self.__create_feed_dict(minibatch=minibatch,
@@ -224,7 +215,7 @@ class BaseTensorflowModel(BaseModel):
     def fit(self, epochs_count):
         assert(isinstance(epochs_count, int))
         assert(self.__sess is not None)
-        assert(isinstance(self.__callback, Callback))
+        assert(isinstance(self.__callback, NetworkCallback))
 
         operation_cancel = OperationCancellation()
         bags_collection = self.__get_bags_collection(DataType.Train)
@@ -248,17 +239,18 @@ class BaseTensorflowModel(BaseModel):
 
             bags_collection.shuffle()
 
-            e_fit_cost, e_fit_acc = self.__fit_epoch(
-                minibatches_iter=bags_collection.iter_by_groups(bags_per_group=bags_per_group),
-                total=minibatches_count)
+            bags_group_it = self.__callback.handle_batches_iter(
+                batches_iter=bags_collection.iter_by_groups(bags_per_group=bags_per_group),
+                total=minibatches_count,
+                prefix="Training")
+
+            e_fit_cost, e_fit_acc = self.__fit_epoch(bags_group_it)
 
             if self.__callback is not None:
                 self.__callback.on_epoch_finished(avg_fit_cost=e_fit_cost,
                                                   avg_fit_acc=e_fit_acc,
                                                   epoch_index=epoch_index,
                                                   operation_cancel=operation_cancel)
-
-            self.__current_epoch_index += 1
 
         if self.__callback is not None:
             self.__callback.on_fit_finished()
