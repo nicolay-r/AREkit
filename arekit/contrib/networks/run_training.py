@@ -20,6 +20,7 @@ class NetworksTrainingEngine(ExperimentEngine):
     def __init__(self, bags_collection_type, experiment,
                  load_model, config,
                  create_network_func,
+                 training_epochs,
                  prepare_model_root=True,
                  seed=None):
         assert(callable(create_network_func))
@@ -27,6 +28,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(load_model, bool))
         assert(isinstance(seed, int) or seed is None)
+        assert(isinstance(training_epochs, int))
 
         super(NetworksTrainingEngine, self).__init__(experiment)
 
@@ -35,6 +37,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         self.__create_network_func = create_network_func
         self.__bags_collection_type = bags_collection_type
         self.__load_model = load_model
+        self.__training_epochs = training_epochs
         self.__seed = seed
 
     def __get_model_dir(self):
@@ -94,7 +97,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                                     nn_io=self._experiment.DataIO.ModelIO)
 
         # Initialize model params instance.
-        model_params = NeuralNetworkModelParams(epochs_count=callback.Epochs)
+        model_params = NeuralNetworkModelParams(epochs_count=self.__training_epochs)
 
         # Run model
         with callback:

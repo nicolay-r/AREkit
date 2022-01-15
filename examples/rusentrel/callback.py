@@ -12,9 +12,9 @@ logger.setLevel(logging.INFO)
 
 class TrainingCallback(NetworkCallback):
 
-    def __init__(self, train_acc_limit, epochs_count, log_dir):
+    def __init__(self, train_acc_limit, log_dir):
         assert(isinstance(train_acc_limit, float) or train_acc_limit is None)
-        super(TrainingCallback, self).__init__(epochs_count)
+        super(TrainingCallback, self).__init__()
         self.__model = None
         self.__test_results_exp_history = OrderedDict()
         self.__log_dir = log_dir
@@ -24,6 +24,7 @@ class TrainingCallback(NetworkCallback):
 
     def on_initialized(self, model):
         assert(isinstance(model, BaseTensorflowModel))
+        super(TrainingCallback, self).on_initialized()
         self.__model = model
 
     # endregion

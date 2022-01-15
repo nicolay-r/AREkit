@@ -82,8 +82,7 @@ if __name__ == '__main__':
     labels_scaler = Common.create_labels_scaler(labels_count)
 
     # Initialize callback.
-    callback = TrainingCallback(epochs_count=epochs_count,
-                                train_acc_limit=0.99,
+    callback = TrainingCallback(train_acc_limit=0.99,
                                 log_dir=model_target_dir)
 
     # Creating experiment
@@ -152,6 +151,7 @@ if __name__ == '__main__':
                                              experiment=experiment,
                                              create_network_func=network_func,
                                              config=config,
-                                             bags_collection_type=bags_collection_type)
+                                             bags_collection_type=bags_collection_type,
+                                             training_epochs=epochs_count)
 
     training_engine.run()

@@ -145,8 +145,7 @@ if __name__ == '__main__':
         config=config,
         inference_ctx=inference_ctx,
         bags_collection_type=bags_collection_type,
-        # TODO. This is weird to pass epochs_count! Temporary fix.
-        callback=NetworkCallback(epochs_count=100))
+        callback=NetworkCallback())
 
     model.predict(do_compile=True)
 

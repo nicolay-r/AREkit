@@ -5,13 +5,8 @@ logger.setLevel(logging.INFO)
 
 class Callback(object):
 
-    def __init__(self, epochs_count):
-        self.__epochs_count = epochs_count
+    def __init__(self):
         self._experiment = None
-
-    @property
-    def Epochs(self):
-        return self.__epochs_count
 
     def set_experiment(self, experiment):
         self._experiment = experiment

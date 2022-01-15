@@ -15,8 +15,8 @@ class NetworkCallback(Callback):
         and epoch termination notifications.
     """
 
-    def __init__(self, epochs_count):
-        super(NetworkCallback, self).__init__(epochs_count)
+    def __init__(self):
+        super(NetworkCallback, self).__init__()
         self.__training_epochs_passed = 0
 
     @staticmethod
