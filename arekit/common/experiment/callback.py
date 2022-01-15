@@ -11,7 +11,7 @@ class Callback(object):
     def set_experiment(self, experiment):
         self._experiment = experiment
 
-    def on_initialized(self, network):
+    def on_initialized(self, model):
         # Do nothing by default.
         pass
 

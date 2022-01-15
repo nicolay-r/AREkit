@@ -24,7 +24,7 @@ class TrainingCallback(NetworkCallback):
 
     def on_initialized(self, model):
         assert(isinstance(model, BaseTensorflowModel))
-        super(TrainingCallback, self).on_initialized()
+        super(TrainingCallback, self).on_initialized(model)
         self.__model = model
 
     # endregion
