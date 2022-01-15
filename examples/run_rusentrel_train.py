@@ -61,7 +61,7 @@ if __name__ == '__main__':
     stemmer = StemmerArg.read_argument(args)
     model_input_type = ModelInputTypeArg.read_argument(args)
     model_name = ModelNameArg.read_argument(args)
-    embedding_matrix_filepath = EmbeddingMatrixFilepathArg.add_argument(parser)
+    embedding_matrix_filepath = EmbeddingMatrixFilepathArg.read_argument(args)
     vocab_filepath = VocabFilepathArg.read_argument(args)
     dropout_keep_prob = DropoutKeepProbArg.read_argument(args)
     bags_per_minibatch = BagsPerMinibatchArg.read_argument(args)
