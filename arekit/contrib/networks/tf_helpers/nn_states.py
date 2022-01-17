@@ -29,11 +29,8 @@ class TensorflowNetworkStatesProvider(object):
         self.__saver.restore(sess=session, save_path=tf.train.latest_checkpoint(save_dir))
 
     def __save_model_core(self, session, save_path):
-        assert(isinstance(self.__saver, tf.compat.v1.train.Saver))
-
         if self.__saver is None:
             self.__init_saver()
-
         self.__saver.save(sess=session, save_path=save_path, write_meta_graph=False)
 
     # endregion

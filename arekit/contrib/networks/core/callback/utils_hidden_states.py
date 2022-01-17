@@ -22,7 +22,7 @@ def save_model_hidden_values(log_dir, model, epoch_index):
     assert(isinstance(log_dir, str))
     assert(isinstance(model, BaseTensorflowModel))
 
-    names, values = model.get_hidden_parameters()
+    names, values = model.Context.get_hidden_parameters()
 
     assert (isinstance(names, list))
     assert (isinstance(values, list))

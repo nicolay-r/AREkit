@@ -17,6 +17,7 @@ class LabeledCollection:
         self.__original_uint_labels = collections.OrderedDict(uint_labeled_ids)
         self.__assigned_uint_labels = {}
 
+    # TODO. #257. Remove.
     def is_empty(self):
         return len(self.__assigned_uint_labels) == 0
 
@@ -31,6 +32,7 @@ class LabeledCollection:
         if sample_row_id not in self.__assigned_uint_labels:
             self.__assigned_uint_labels[sample_row_id] = uint_label
 
+    # TODO. #257. Remove.
     def reset_labels(self):
         self.__assigned_uint_labels.clear()
 

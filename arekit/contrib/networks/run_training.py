@@ -7,7 +7,11 @@ from arekit.contrib.networks.context.configurations.base.base import DefaultNetw
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
+from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
+from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
+from arekit.contrib.networks.core.pipeline_keep_hidden import MinibatchHiddenFetcherPipelineItem
+from arekit.contrib.networks.core.pipeline_predict import EpochLabelsPredictorPipelineItem
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.utils import rm_dir_contents
 
@@ -89,20 +93,27 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Initialize network and model.
         network = self.__create_network_func()
-        model = BaseTensorflowModel(network=network,
-                                    config=self.__config,
-                                    inference_ctx=inference_ctx,
-                                    bags_collection_type=self.__bags_collection_type,
-                                    callback=callback,
-                                    nn_io=self._experiment.DataIO.ModelIO)
+        model = BaseTensorflowModel(
+            context=TensorflowModelContext(
+                network=network,
+                config=self.__config,
+                inference_ctx=inference_ctx,
+                bags_collection_type=self.__bags_collection_type,
+                nn_io=self._experiment.DataIO.ModelIO),
+            callback=callback,
+            predict_pipeline=[
+                EpochLabelsPredictorPipelineItem(),
+                MinibatchHiddenFetcherPipelineItem()
+            ],
+            fit_pipeline=[MinibatchFittingPipelineItem()])
 
         # Initialize model params instance.
         model_params = NeuralNetworkModelParams(epochs_count=self.__training_epochs)
 
         # Run model
         with callback:
-            model.run_training(model_params=model_params,
-                               seed=self.__seed)
+            model.fit(model_params=model_params,
+                      seed=self.__seed)
 
         del network
         del model

@@ -9,7 +9,11 @@ from arekit.common.experiment.data_type import DataType
 
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.model import BaseTensorflowModel
+from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
 from arekit.contrib.networks.core.network_callback import NetworkCallback
+from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
+from arekit.contrib.networks.core.pipeline_keep_hidden import MinibatchHiddenFetcherPipelineItem
+from arekit.contrib.networks.core.pipeline_predict import EpochLabelsPredictorPipelineItem
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
@@ -140,17 +144,24 @@ if __name__ == '__main__':
 
     # Model preparation.
     model = BaseTensorflowModel(
-        nn_io=nn_io,
-        network=network,
-        config=config,
-        inference_ctx=inference_ctx,
-        bags_collection_type=bags_collection_type,
-        callback=NetworkCallback())
+        context=TensorflowModelContext(
+            nn_io=nn_io,
+            network=network,
+            config=config,
+            inference_ctx=inference_ctx,
+            bags_collection_type=bags_collection_type),
+        callback=NetworkCallback(),
+        predict_pipeline=[
+            EpochLabelsPredictorPipelineItem(),
+            MinibatchHiddenFetcherPipelineItem()
+        ],
+        fit_pipeline=[MinibatchFittingPipelineItem()])
 
     model.predict(do_compile=True)
 
     # Gather annotated contexts onto document level.
-    labeled_samples = model.get_labeled_samples_collection(data_type=DataType.Test)
+    item = model.from_predicted(EpochLabelsPredictorPipelineItem)
+    labeled_samples = item.LabeledSamples
 
     predict_provider = BasePredictProvider()
 
