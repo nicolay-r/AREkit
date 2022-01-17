@@ -56,8 +56,8 @@ class TensorflowModelContext(object):
     def get_bags_collection(self, data_type):
         return self.__inference_ctx.BagsCollections[data_type]
 
-    def get_labeled_samples_collection(self, data_type):
-        return self.__inference_ctx.LabeledSamplesCollections[data_type]
+    def get_sample_id_label_pairs(self, data_type):
+        return self.__inference_ctx.SampleIdAndLabelPairs[data_type]
 
     def get_hidden_parameters(self):
         names = []

@@ -14,6 +14,7 @@ from arekit.contrib.networks.core.network_callback import NetworkCallback
 from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
 from arekit.contrib.networks.core.pipeline_keep_hidden import MinibatchHiddenFetcherPipelineItem
 from arekit.contrib.networks.core.pipeline_predict import EpochLabelsPredictorPipelineItem
+from arekit.contrib.networks.core.pipeline_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
@@ -153,6 +154,7 @@ if __name__ == '__main__':
         callback=NetworkCallback(),
         predict_pipeline=[
             EpochLabelsPredictorPipelineItem(),
+            EpochLabelsCollectorPipelineItem(),
             MinibatchHiddenFetcherPipelineItem()
         ],
         fit_pipeline=[MinibatchFittingPipelineItem()])
@@ -160,7 +162,7 @@ if __name__ == '__main__':
     model.predict(do_compile=True)
 
     # Gather annotated contexts onto document level.
-    item = model.from_predicted(EpochLabelsPredictorPipelineItem)
+    item = model.from_predicted(EpochLabelsCollectorPipelineItem)
     labeled_samples = item.LabeledSamples
 
     predict_provider = BasePredictProvider()

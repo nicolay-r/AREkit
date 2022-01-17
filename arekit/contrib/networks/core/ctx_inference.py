@@ -15,10 +15,10 @@ logging.basicConfig(level=logging.INFO)
 
 class InferenceContext(object):
 
-    def __init__(self, labeled_samples_dict, bags_collections_dict):
-        assert(isinstance(labeled_samples_dict, dict))
+    def __init__(self, sample_label_pairs_dict, bags_collections_dict):
+        assert(isinstance(sample_label_pairs_dict, dict))
         assert(isinstance(bags_collections_dict, dict))
-        self.__labeled_samples_dict = labeled_samples_dict
+        self.__sample_label_pairs_dict = sample_label_pairs_dict
         self.__bags_collections_dict = bags_collections_dict
         self.__train_stat_uint_labeled_sample_row_ids = None
 
@@ -29,8 +29,8 @@ class InferenceContext(object):
         return self.__bags_collections_dict
 
     @property
-    def LabeledSamplesCollections(self):
-        return self.__labeled_samples_dict
+    def SampleIdAndLabelPairs(self):
+        return self.__sample_label_pairs_dict
 
     @property
     def HasNormalizedWeights(self):
@@ -40,7 +40,7 @@ class InferenceContext(object):
 
     @classmethod
     def create_empty(cls):
-        return cls(labeled_samples_dict={}, bags_collections_dict={})
+        return cls(sample_label_pairs_dict={}, bags_collections_dict={})
 
     def initialize(self, dtypes, create_samples_view_func, has_model_predefined_state,
                    vocab, labels_count, bags_collection_type, bag_size, input_shapes):
@@ -71,8 +71,7 @@ class InferenceContext(object):
 
             # Saving into dictionaries.
             self.__bags_collections_dict[data_type] = bags_collection
-            self.__labeled_samples_dict[data_type] = LabeledCollection(
-                uint_labeled_ids=uint_labeled_sample_row_ids)
+            self.__sample_label_pairs_dict[data_type] = list(uint_labeled_sample_row_ids)
 
             if data_type == DataType.Train:
                 self.__train_stat_uint_labeled_sample_row_ids = uint_labeled_sample_row_ids
