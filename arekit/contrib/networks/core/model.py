@@ -134,7 +134,6 @@ class BaseTensorflowModel(BaseModel):
             self.__fit_epoch()
 
             if self.__callback is not None:
-                self.__fit_pipeline
                 self.__callback.on_epoch_finished(epoch_index=epoch_index,
                                                   operation_cancel=operation_cancel)
 
