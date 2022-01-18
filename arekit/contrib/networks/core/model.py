@@ -41,14 +41,14 @@ class BaseTensorflowModel(BaseModel):
 
     # region private methods
 
-    def __fit_epoch(self):
-        data_type = DataType.Train
+    def __run_epoch_pipeline(self, data_type, pipeline, prefix):
+        assert(isinstance(pipeline, list))
+        assert(isinstance(prefix, str))
 
         bags_per_group = self.__context.Config.BagsPerMinibatch
         bags_collection = self.__context.get_bags_collection(data_type)
-        bags_collection.shuffle()
-
         minibatches_count = bags_collection.get_groups_count(bags_per_group)
+
         logger.info("Minibatches passing per epoch count: ~{} "
                     "(Might be greater or equal, as the last "
                     "bag is expanded)".format(minibatches_count))
@@ -58,35 +58,12 @@ class BaseTensorflowModel(BaseModel):
             total=minibatches_count,
             prefix="Training")
 
-        self.__run_epoch_pipeline(batches_it=groups_it,
-                                  pipeline=self.__fit_pipeline,
-                                  data_type=data_type)
-
-    def __predict(self, data_type):
-        assert(isinstance(data_type, DataType))
-        bags_collection = self.__context.get_bags_collection(data_type)
-        bags_per_group = self.__context.Config.BagsPerMinibatch
-        minibatches_count = bags_collection.get_groups_count(bags_per_group)
-        groups_it = self.__callback.handle_batches_iter(
-            batches_iter=bags_collection.iter_by_groups(bags_per_group=bags_per_group,
-                                                        text_opinion_ids_set=None),
-            total=minibatches_count,
-            prefix="Predict [{dtype}]".format(dtype=data_type))
-
-        self.__run_epoch_pipeline(batches_it=groups_it,
-                                  pipeline=self.__predict_pipeline,
-                                  data_type=data_type)
-
-    def __run_epoch_pipeline(self, batches_it, data_type, pipeline):
-        assert(isinstance(batches_it, collections.Iterable))
-        assert(isinstance(pipeline, list))
-
         for item in pipeline:
             assert(isinstance(item, EpochHandlingPipelineItem))
             item.before_epoch(model_context=self.__context,
                               data_type=data_type)
 
-        for bags_group in batches_it:
+        for bags_group in groups_it:
             assert(isinstance(bags_group, list))
 
             # Composing minibatch from bags group.
@@ -94,9 +71,7 @@ class BaseTensorflowModel(BaseModel):
                 bags_coolection_type=self.__context.BagsCollectionType,
                 bags_group=bags_group)
 
-            ctx = PipelineContext({
-                "src": minibatch
-            })
+            ctx = PipelineContext({"src": minibatch})
 
             for item in pipeline:
                 item.apply(pipeline_ctx=ctx)
@@ -131,7 +106,7 @@ class BaseTensorflowModel(BaseModel):
 
             bags_collection.shuffle()
 
-            self.__fit_epoch()
+            self.__run_epoch_pipeline(pipeline=self.__fit_pipeline, data_type=DataType.Train, prefix="Training")
 
             if self.__callback is not None:
                 self.__callback.on_epoch_finished(epoch_index=epoch_index,
@@ -165,7 +140,9 @@ class BaseTensorflowModel(BaseModel):
             self.__context.Network.compile(config=self.__context.Config, reset_graph=True, graph_seed=graph_seed)
         self.__context.initialize_session()
         self.__try_load_state()
-        return self.__predict(data_type=data_type)
+        self.__run_epoch_pipeline(pipeline=self.__predict_pipeline,
+                                  data_type=data_type,
+                                  prefix="Predict [{dtype}]".format(dtype=data_type))
 
     def from_fitted(self, item_type):
         assert(issubclass(item_type, EpochHandlingPipelineItem))
