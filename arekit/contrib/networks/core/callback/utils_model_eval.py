@@ -1,4 +1,5 @@
 import logging
+from os.path import join
 
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
@@ -9,11 +10,11 @@ from arekit.common.experiment.pipelines.opinion_collections import output_to_opi
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item_handle import HandleIterPipelineItem
-from arekit.common.utils import progress_bar_iter
 
 from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
 from arekit.contrib.networks.core.model import BaseTensorflowModel
+from arekit.contrib.networks.core.pipeline_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
@@ -43,7 +44,8 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     samples_view = experiment.ExperimentIO.create_samples_view(data_type)
 
     # Create and save output.
-    labeled_samples = model.get_labeled_samples_collection(data_type=data_type)
+    ppl_item = model.from_predicted(EpochLabelsCollectorPipelineItem)
+    labeled_samples = ppl_item.LabeledSamples
     sample_id_with_uint_labels_iter = labeled_samples.iter_non_duplicated_labeled_sample_row_ids()
 
     ######################################################################################################
@@ -109,16 +111,25 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     if save_hidden_params:
         save_minibatch_all_input_dependent_hidden_values(
             predict_log=idhp,
-            data_type=data_type,
-            log_dir=log_dir,
-            epoch_index=epoch_index)
+            path_by_var_name_func=lambda var_name: __path_by_var_name(
+                var_name=var_name,
+                log_dir=log_dir,
+                epoch_index=epoch_index,
+                data_type=data_type))
 
     return result
 
 
+def __path_by_var_name(var_name, data_type, epoch_index, log_dir):
+    filname = 'idparams_{data}_e{epoch_index}'.format(
+        data='{}-{}'.format(var_name, data_type),
+        epoch_index=epoch_index)
+
+    return join(log_dir, filname)
+
+
 def __calculate_doc_id_by_sample_id_dict(rows_iter):
-    """
-    Iter sample_ids with the related labels (if the latter presented in dataframe)
+    """ Iter sample_ids with the related labels (if the latter presented in dataframe)
     """
     d = {}
 
@@ -132,9 +143,3 @@ def __calculate_doc_id_by_sample_id_dict(rows_iter):
         d[sample_id] = row[const.DOC_ID]
 
     return d
-
-
-def __log_wrap_collections_conversion_iter(it):
-    return progress_bar_iter(iterable=it,
-                             desc="Converting: Output Rows -> Opinion Collections",
-                             unit="colls")

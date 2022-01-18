@@ -1,4 +1,4 @@
 class BaseWriter(object):
 
-    def save(self, storage, target):
+    def write(self, storage, target):
         raise NotImplementedError()
