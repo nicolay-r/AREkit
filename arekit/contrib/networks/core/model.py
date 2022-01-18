@@ -1,4 +1,3 @@
-import collections
 import logging
 
 from arekit.common.model.base import BaseModel
@@ -11,6 +10,7 @@ from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
 from arekit.contrib.networks.core.network_callback import NetworkCallback
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 from arekit.contrib.networks.core.pipeline_epoch import EpochHandlingPipelineItem
+from arekit.contrib.networks.core.utils import get_item_from_pipeline
 from arekit.contrib.networks.tf_helpers.nn_states import TensorflowNetworkStatesProvider
 
 logger = logging.getLogger(__name__)
@@ -81,15 +81,6 @@ class BaseTensorflowModel(BaseModel):
             self.__states_provider.load_model(sess=self.__context.Session,
                                               path_tf_prefix=self.__context.IO.get_model_source_path_tf_prefix())
 
-    @staticmethod
-    def __get_item_from_pipeline(pipeline, item_type):
-        assert(isinstance(pipeline, list))
-        assert(issubclass(item_type, EpochHandlingPipelineItem))
-
-        for item in pipeline:
-            if isinstance(item, item_type):
-                return item
-
     def __fit(self, epochs_count):
         assert(isinstance(epochs_count, int))
         assert(self.__context.Session is not None)
@@ -109,7 +100,7 @@ class BaseTensorflowModel(BaseModel):
             self.__run_epoch_pipeline(pipeline=self.__fit_pipeline, data_type=DataType.Train, prefix="Training")
 
             if self.__callback is not None:
-                self.__callback.on_epoch_finished(epoch_index=epoch_index,
+                self.__callback.on_epoch_finished(pipeline=self.__fit_pipeline,
                                                   operation_cancel=operation_cancel)
 
             if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
@@ -125,7 +116,7 @@ class BaseTensorflowModel(BaseModel):
         assert(isinstance(model_params, NeuralNetworkModelParams))
         self.__context.Network.compile(self.__context.Config, reset_graph=True, graph_seed=seed)
         self.__context.set_optimiser()
-        self.__callback.on_initialized(self)
+        self.__callback.on_initialized(self.__context)
         self.__context.initialize_session()
         self.__try_load_state()
         self.__fit(epochs_count=model_params.EpochsCount)
@@ -133,11 +124,11 @@ class BaseTensorflowModel(BaseModel):
         self.__context.dispose_session()
 
     def predict(self, data_type=DataType.Test, do_compile=False, graph_seed=0):
-        """ Fills the related labeling collection.
-        """
+
         # Optionally perform network compilation
         if do_compile:
             self.__context.Network.compile(config=self.__context.Config, reset_graph=True, graph_seed=graph_seed)
+
         self.__context.initialize_session()
         self.__try_load_state()
         self.__run_epoch_pipeline(pipeline=self.__predict_pipeline,
@@ -146,8 +137,8 @@ class BaseTensorflowModel(BaseModel):
 
     def from_fitted(self, item_type):
         assert(issubclass(item_type, EpochHandlingPipelineItem))
-        return self.__get_item_from_pipeline(pipeline=self.__fit_pipeline, item_type=item_type)
+        return get_item_from_pipeline(pipeline=self.__fit_pipeline, item_type=item_type)
 
     def from_predicted(self, item_type):
         assert (issubclass(item_type, EpochHandlingPipelineItem))
-        return self.__get_item_from_pipeline(pipeline=self.__predict_pipeline, item_type=item_type)
+        return get_item_from_pipeline(pipeline=self.__predict_pipeline, item_type=item_type)

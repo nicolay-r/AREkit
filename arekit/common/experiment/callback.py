@@ -11,7 +11,7 @@ class Callback(object):
     def set_experiment(self, experiment):
         self._experiment = experiment
 
-    def on_initialized(self, model):
+    def on_initialized(self, model_ctx):
         # Do nothing by default.
         pass
 
@@ -23,7 +23,7 @@ class Callback(object):
         # Do nothing by default.
         pass
 
-    def on_epoch_finished(self, epoch_index, operation_cancel):
+    def on_epoch_finished(self, pipeline, operation_cancel):
         # Do nothing by default.
         pass
 

@@ -5,6 +5,7 @@ from arekit.contrib.networks.core.callback.utils_hidden_states import save_model
 from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.network_callback import NetworkCallback
 from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
+from arekit.contrib.networks.core.utils import get_item_from_pipeline
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -29,13 +30,12 @@ class TrainingCallback(NetworkCallback):
 
     # endregion
 
-    def on_epoch_finished(self, epoch_index, operation_cancel):
-        assert(isinstance(epoch_index, int))
+    def on_epoch_finished(self, pipeline, operation_cancel):
         assert(isinstance(operation_cancel, OperationCancellation))
-        super(TrainingCallback, self).on_epoch_finished(epoch_index=epoch_index,
+        super(TrainingCallback, self).on_epoch_finished(pipeline=pipeline,
                                                         operation_cancel=operation_cancel)
 
-        item = self._model.from_predicted(MinibatchFittingPipelineItem)
+        item = get_item_from_pipeline(pipeline=pipeline, item_type=MinibatchFittingPipelineItem)
 
         if item is None:
             return
@@ -49,4 +49,6 @@ class TrainingCallback(NetworkCallback):
             return
 
         # Saving model hidden values using the related numpy utils.
-        save_model_hidden_values(log_dir=self.__log_dir, epoch_index=epoch_index, model=self._model)
+        save_model_hidden_values(log_dir=self.__log_dir,
+                                 epoch_index=self._training_epochs_passed,
+                                 model_ctx=self._model_ctx)
