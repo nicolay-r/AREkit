@@ -3,7 +3,6 @@ import logging
 
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
