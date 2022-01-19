@@ -1,17 +1,18 @@
 from os.path import join
 
-from arekit.contrib.networks.core.callback.np_writer import NpzDataWriter
+from arekit.contrib.networks.core.base_writer import BaseWriter
 from arekit.contrib.networks.core.callback_network import NetworkCallback
 
 
 class HiddenStatesWriterCallback(NetworkCallback):
 
-    def __init__(self, log_dir):
+    def __init__(self, log_dir, writer):
+        assert(isinstance(writer, BaseWriter))
         super(HiddenStatesWriterCallback, self).__init__()
 
         self.__epochs_passed = 0
         self.__log_dir = log_dir
-        self.__writer = NpzDataWriter()
+        self.__writer = writer
 
     def __target_provider(self, name, epoch_index):
         return join(self.__log_dir, 'hparams_{name}_e{epoch}'.format(name=name, epoch=epoch_index))
@@ -22,6 +23,7 @@ class HiddenStatesWriterCallback(NetworkCallback):
 
         self.__epochs_passed += 1
 
+        # TODO. This might be taken from pipeline item.
         names, values = self._model_ctx.get_hidden_parameters()
 
         assert(isinstance(names, list))

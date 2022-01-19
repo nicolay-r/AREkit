@@ -1,5 +1,4 @@
 import logging
-from os.path import join
 
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
@@ -11,7 +10,6 @@ from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item_handle import HandleIterPipelineItem
 
-from arekit.contrib.networks.core.callback.utils_hidden_states import save_minibatch_all_input_dependent_hidden_values
 from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.pipeline_predict_labeling import EpochLabelsCollectorPipelineItem
@@ -22,9 +20,9 @@ from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 logger = logging.getLogger(__name__)
 
 
+# TODO. split onto callback items.
 def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
-                   labels_formatter, save_hidden_params,
-                   label_calc_mode, log_dir):
+                   labels_formatter, label_calc_mode, log_dir):
     """ Performs Model Evaluation on a particular state (i.e. epoch),
         for a particular data type.
     """
@@ -33,7 +31,6 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     assert(isinstance(model, BaseTensorflowModel))
     assert(isinstance(data_type, DataType))
     assert(isinstance(epoch_index, int))
-    assert(isinstance(save_hidden_params, bool))
 
     # Prediction result is a pair of the following parameters:
     # idhp -- input dependent variables that might be saved for additional research.
@@ -103,29 +100,9 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     for _ in pipeline_ctx.provide("src"):
         pass
 
-    # Evaluate.
+    # TODO. Callback evaluator.
     result = experiment.evaluate(data_type=data_type,
                                  epoch_index=epoch_index)
-
-    # optionally save input-dependent hidden parameters.
-    if save_hidden_params:
-        save_minibatch_all_input_dependent_hidden_values(
-            predict_log=idhp,
-            path_by_var_name_func=lambda var_name: __path_by_var_name(
-                var_name=var_name,
-                log_dir=log_dir,
-                epoch_index=epoch_index,
-                data_type=data_type))
-
-    return result
-
-
-def __path_by_var_name(var_name, data_type, epoch_index, log_dir):
-    filname = 'idparams_{data}_e{epoch_index}'.format(
-        data='{}-{}'.format(var_name, data_type),
-        epoch_index=epoch_index)
-
-    return join(log_dir, filname)
 
 
 def __calculate_doc_id_by_sample_id_dict(rows_iter):

@@ -4,7 +4,6 @@ import gc
 
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.networks.core.callback_stat import TrainingStatProviderCallback
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -16,8 +15,6 @@ from arekit.contrib.networks.core.pipeline_predict import EpochLabelsPredictorPi
 from arekit.contrib.networks.core.pipeline_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.utils import rm_dir_contents
-from examples.rusentrel.callback_hidden import HiddenStatesWriterCallback
-from examples.rusentrel.callback_training import TrainingLimiterCallback
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -113,7 +110,10 @@ class NetworksTrainingEngine(ExperimentEngine):
                 EpochLabelsCollectorPipelineItem(),
                 MinibatchHiddenFetcherPipelineItem()
             ],
-            fit_pipeline=[MinibatchFittingPipelineItem()])
+            fit_pipeline=[
+                MinibatchFittingPipelineItem(),
+                MinibatchHiddenFetcherPipelineItem()
+            ])
 
         # Initialize model params instance.
         model_params = NeuralNetworkModelParams(epochs_count=self.__training_epochs)

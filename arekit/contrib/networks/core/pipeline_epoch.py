@@ -8,6 +8,10 @@ class EpochHandlingPipelineItem(BasePipelineItem):
         self._context = None
         self._data_type = None
 
+    @property
+    def DataType(self):
+        return self._data_type
+
     def before_epoch(self, model_context, data_type):
         assert(isinstance(model_context, TensorflowModelContext))
         self._context = model_context

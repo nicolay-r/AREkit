@@ -9,7 +9,11 @@ class MinibatchHiddenFetcherPipelineItem(EpochHandlingPipelineItem):
         super(MinibatchHiddenFetcherPipelineItem, self).__init__()
         self.__idh_names = None
         self.__idh_tensors = None
-        self.__predict_log = None
+        self.__input_dependent_params = None
+
+    @property
+    def InputDependentParams(self):
+        return self.__input_dependent_params
 
     def before_epoch(self, model_context, data_type):
         super(MinibatchHiddenFetcherPipelineItem, self).before_epoch(
@@ -22,7 +26,7 @@ class MinibatchHiddenFetcherPipelineItem(EpochHandlingPipelineItem):
             self.__idh_names.append(name)
             self.__idh_tensors.append(tensor)
 
-        self.__predict_log = NetworkInputDependentVariables()
+        self.__input_dependent_params = NetworkInputDependentVariables()
 
     def apply(self, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
@@ -36,7 +40,7 @@ class MinibatchHiddenFetcherPipelineItem(EpochHandlingPipelineItem):
         if not (len(self.__idh_names) > 0 and len(idh_values) > 0):
             return
 
-        self.__predict_log.add_input_dependent_values(
+        self.__input_dependent_params.add_input_dependent_values(
             names_list=self.__idh_names,
             tensor_values_list=idh_values,
             text_opinion_ids=[sample.ID for sample in

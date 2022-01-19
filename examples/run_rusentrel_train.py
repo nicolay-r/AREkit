@@ -5,8 +5,11 @@ from arekit.common.experiment.callback import ExperimentCallback
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.contrib.networks.core.callback_hidden import HiddenStatesWriterCallback
+from arekit.contrib.networks.core.callback_hidden_input import InputHiddenStatesWriterCallback
 from arekit.contrib.networks.core.callback_stat import TrainingStatProviderCallback
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
+from arekit.contrib.networks.np_utils.writer import NpzDataWriter
 from arekit.contrib.networks.run_training import NetworksTrainingEngine
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -19,7 +22,6 @@ from examples.network.args.const import BAG_SIZE, NEURAL_NETWORKS_TARGET_DIR
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
 from examples.network.common import create_bags_collection_type, create_network_model_io
-from examples.rusentrel.callback_hidden import HiddenStatesWriterCallback
 from examples.rusentrel.callback_training import TrainingLimiterCallback
 from examples.rusentrel.common import Common
 from examples.rusentrel.config_setups import optionally_modify_config_for_experiment, modify_config_for_model
@@ -146,10 +148,13 @@ if __name__ == '__main__':
                             model_input_type=model_input_type,
                             config=config)
 
+    data_writer = NpzDataWriter()
+
     nework_callbacks = [
         TrainingLimiterCallback(train_acc_limit=0.99),
         TrainingStatProviderCallback(),
-        HiddenStatesWriterCallback(log_dir=model_target_dir),
+        HiddenStatesWriterCallback(log_dir=model_target_dir, writer=data_writer),
+        InputHiddenStatesWriterCallback(log_dir=model_target_dir, writer=data_writer)
     ]
 
     training_engine = NetworksTrainingEngine(load_model=model_load_dir is not None,
