@@ -1,6 +1,6 @@
 import logging
 
-from arekit.contrib.networks.core.callback_network import NetworkCallback
+from arekit.contrib.networks.core.callback.base import NetworkCallback
 from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
 from arekit.contrib.networks.core.utils import get_item_from_pipeline

@@ -1,7 +1,7 @@
 from os.path import join
 
 from arekit.contrib.networks.core.base_writer import BaseWriter
-from arekit.contrib.networks.core.callback_network import NetworkCallback
+from arekit.contrib.networks.core.callback.base import NetworkCallback
 
 
 class HiddenStatesWriterCallback(NetworkCallback):

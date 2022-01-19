@@ -5,9 +5,10 @@ from arekit.common.experiment.callback import ExperimentCallback
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.contrib.networks.core.callback_hidden import HiddenStatesWriterCallback
-from arekit.contrib.networks.core.callback_hidden_input import InputHiddenStatesWriterCallback
-from arekit.contrib.networks.core.callback_stat import TrainingStatProviderCallback
+from arekit.contrib.networks.core.callback.hidden import HiddenStatesWriterCallback
+from arekit.contrib.networks.core.callback.hidden_input import InputHiddenStatesWriterCallback
+from arekit.contrib.networks.core.callback.stat import TrainingStatProviderCallback
+from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterCallback
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.np_utils.writer import NpzDataWriter
 from arekit.contrib.networks.run_training import NetworksTrainingEngine
@@ -22,7 +23,6 @@ from examples.network.args.const import BAG_SIZE, NEURAL_NETWORKS_TARGET_DIR
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
 from examples.network.common import create_bags_collection_type, create_network_model_io
-from examples.rusentrel.callback_training import TrainingLimiterCallback
 from examples.rusentrel.common import Common
 from examples.rusentrel.config_setups import optionally_modify_config_for_experiment, modify_config_for_model
 from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO

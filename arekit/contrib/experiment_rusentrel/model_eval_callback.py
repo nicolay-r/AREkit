@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 # TODO. split onto callback items.
 def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
-                   labels_formatter, label_calc_mode, log_dir):
+                   labels_formatter, label_calc_mode):
     """ Performs Model Evaluation on a particular state (i.e. epoch),
         for a particular data type.
     """
@@ -101,6 +101,7 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
         pass
 
     # TODO. Callback evaluator.
+    # TODO. This is an experiment callback.
     result = experiment.evaluate(data_type=data_type,
                                  epoch_index=epoch_index)
 

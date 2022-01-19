@@ -6,7 +6,8 @@ from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.networks.core.callback_stat import TrainingStatProviderCallback
+from arekit.contrib.networks.core.callback.stat import TrainingStatProviderCallback
+from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterCallback
 
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -32,7 +33,6 @@ from examples.network.args.common import RusVectoresEmbeddingFilepathArg, Labels
     EmbeddingMatrixFilepathArg
 from examples.network.infer.exp_io import InferIOUtils
 from examples.run_text_serialize import run_serializer
-from examples.rusentrel.callback_training import TrainingLimiterCallback
 from examples.rusentrel.common import Common
 
 
