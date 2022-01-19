@@ -6,11 +6,11 @@ from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.networks.core.callback_stat import TrainingStatProviderCallback
 
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
-from arekit.contrib.networks.core.network_callback import NetworkCallback
 from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
 from arekit.contrib.networks.core.pipeline_keep_hidden import MinibatchHiddenFetcherPipelineItem
 from arekit.contrib.networks.core.pipeline_predict import EpochLabelsPredictorPipelineItem
@@ -32,6 +32,7 @@ from examples.network.args.common import RusVectoresEmbeddingFilepathArg, Labels
     EmbeddingMatrixFilepathArg
 from examples.network.infer.exp_io import InferIOUtils
 from examples.run_text_serialize import run_serializer
+from examples.rusentrel.callback_training import TrainingLimiterCallback
 from examples.rusentrel.common import Common
 
 
@@ -151,7 +152,10 @@ if __name__ == '__main__':
             config=config,
             inference_ctx=inference_ctx,
             bags_collection_type=bags_collection_type),
-        callback=NetworkCallback(),
+        callbacks=[
+            TrainingLimiterCallback(train_acc_limit=0.99),
+            TrainingStatProviderCallback(),
+        ],
         predict_pipeline=[
             EpochLabelsPredictorPipelineItem(),
             EpochLabelsCollectorPipelineItem(),

@@ -1,13 +1,14 @@
+import collections
 import logging
 
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
 from arekit.common.pipeline.context import PipelineContext
+from arekit.common.utils import progress_bar_defined
 
 from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.feeding.bags.collection.factory import create_batch_by_bags_group
 from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
-from arekit.contrib.networks.core.network_callback import NetworkCallback
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 from arekit.contrib.networks.core.pipeline_epoch import EpochHandlingPipelineItem
 from arekit.contrib.networks.core.utils import get_item_from_pipeline
@@ -20,17 +21,17 @@ class BaseTensorflowModel(BaseModel):
 
     SaveTensorflowModelStateOnFit = True
 
-    def __init__(self, context, callback,
+    def __init__(self, context, callbacks,
                  predict_pipeline=None,
                  fit_pipeline=None):
         assert(isinstance(context, TensorflowModelContext))
-        assert(isinstance(callback, NetworkCallback))
+        assert(isinstance(callbacks, list))
         assert(isinstance(predict_pipeline, list))
         assert(isinstance(fit_pipeline, list))
         super(BaseTensorflowModel, self).__init__()
 
         self.__context = context
-        self.__callback = callback
+        self.__callbacks = callbacks
         self.__predict_pipeline = predict_pipeline
         self.__fit_pipeline = fit_pipeline
         self.__states_provider = TensorflowNetworkStatesProvider()
@@ -40,6 +41,20 @@ class BaseTensorflowModel(BaseModel):
         return self.__context
 
     # region private methods
+
+    def __callback_do(self, call_func):
+        for callback in self.__callbacks:
+            call_func(callback)
+
+    @staticmethod
+    def __handle_batches_iter(batches_iter, total, prefix, unit='mbs'):
+        """ Do wrapping progress notification.
+        """
+        assert(isinstance(batches_iter, collections.Iterable))
+        assert(isinstance(unit, str))
+        assert(isinstance(prefix, str))
+        desc = "{prefix}".format(prefix=prefix)
+        return progress_bar_defined(iterable=batches_iter, unit=unit, total=total, desc=desc)
 
     def __run_epoch_pipeline(self, data_type, pipeline, prefix):
         assert(isinstance(pipeline, list))
@@ -53,10 +68,10 @@ class BaseTensorflowModel(BaseModel):
                     "(Might be greater or equal, as the last "
                     "bag is expanded)".format(minibatches_count))
 
-        groups_it = self.__callback.handle_batches_iter(
+        groups_it = self.__handle_batches_iter(
             batches_iter=bags_collection.iter_by_groups(bags_per_group=bags_per_group),
             total=minibatches_count,
-            prefix="Training")
+            prefix=prefix)
 
         for item in pipeline:
             assert(isinstance(item, EpochHandlingPipelineItem))
@@ -84,11 +99,11 @@ class BaseTensorflowModel(BaseModel):
     def __fit(self, epochs_count):
         assert(isinstance(epochs_count, int))
         assert(self.__context.Session is not None)
-        assert(isinstance(self.__callback, NetworkCallback))
 
         operation_cancel = OperationCancellation()
         bags_collection = self.__context.get_bags_collection(DataType.Train)
-        self.__callback.on_fit_started(operation_cancel)
+
+        self.__callback_do(lambda callback: callback.on_fit_started(operation_cancel))
 
         for epoch_index in range(epochs_count):
 
@@ -97,18 +112,19 @@ class BaseTensorflowModel(BaseModel):
 
             bags_collection.shuffle()
 
-            self.__run_epoch_pipeline(pipeline=self.__fit_pipeline, data_type=DataType.Train, prefix="Training")
+            self.__run_epoch_pipeline(pipeline=self.__fit_pipeline,
+                                      data_type=DataType.Train,
+                                      prefix="Training")
 
-            if self.__callback is not None:
-                self.__callback.on_epoch_finished(pipeline=self.__fit_pipeline,
-                                                  operation_cancel=operation_cancel)
+            self.__callback_do(lambda callback: callback.on_epoch_finished(
+                pipeline=self.__fit_pipeline,
+                operation_cancel=operation_cancel))
 
             if BaseTensorflowModel.SaveTensorflowModelStateOnFit:
                 self.__states_provider.save_model(sess=self.__context.Session,
                                                   path_tf_prefix=self.__context.IO.get_model_target_path_tf_prefix())
 
-        if self.__callback is not None:
-            self.__callback.on_fit_finished()
+        self.__callback_do(lambda callback: callback.on_fit_finished())
 
     # endregion
 
@@ -116,7 +132,7 @@ class BaseTensorflowModel(BaseModel):
         assert(isinstance(model_params, NeuralNetworkModelParams))
         self.__context.Network.compile(self.__context.Config, reset_graph=True, graph_seed=seed)
         self.__context.set_optimiser()
-        self.__callback.on_initialized(self.__context)
+        self.__callback_do(lambda callback: callback.on_initialized(self.__context)),
         self.__context.initialize_session()
         self.__try_load_state()
         self.__fit(epochs_count=model_params.EpochsCount)

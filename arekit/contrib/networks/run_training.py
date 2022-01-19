@@ -4,6 +4,7 @@ import gc
 
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.contrib.networks.core.callback_stat import TrainingStatProviderCallback
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -15,6 +16,8 @@ from arekit.contrib.networks.core.pipeline_predict import EpochLabelsPredictorPi
 from arekit.contrib.networks.core.pipeline_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.utils import rm_dir_contents
+from examples.rusentrel.callback_hidden import HiddenStatesWriterCallback
+from examples.rusentrel.callback_training import TrainingLimiterCallback
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -26,6 +29,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                  load_model, config,
                  create_network_func,
                  training_epochs,
+                 network_callbacks,
                  prepare_model_root=True,
                  seed=None):
         assert(callable(create_network_func))
@@ -34,6 +38,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         assert(isinstance(load_model, bool))
         assert(isinstance(seed, int) or seed is None)
         assert(isinstance(training_epochs, int))
+        assert(isinstance(network_callbacks, list))
 
         super(NetworksTrainingEngine, self).__init__(experiment)
 
@@ -41,6 +46,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         self.__config = config
         self.__create_network_func = create_network_func
         self.__bags_collection_type = bags_collection_type
+        self.__network_callbacks = network_callbacks
         self.__load_model = load_model
         self.__training_epochs = training_epochs
         self.__seed = seed
@@ -101,7 +107,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                 inference_ctx=inference_ctx,
                 bags_collection_type=self.__bags_collection_type,
                 nn_io=self._experiment.DataIO.ModelIO),
-            callback=callback,
+            callbacks=self.__network_callbacks,
             predict_pipeline=[
                 EpochLabelsPredictorPipelineItem(),
                 EpochLabelsCollectorPipelineItem(),
@@ -128,10 +134,6 @@ class NetworksTrainingEngine(ExperimentEngine):
         if self.__clear_model_root_before_experiment:
             rm_dir_contents(dir_path=self.__get_model_dir(),
                             logger=self._logger)
-
-        # Setup callback
-        callback = self._experiment.DataIO.Callback
-        callback.set_experiment(self._experiment)
 
         # Disable tensorflow logging
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

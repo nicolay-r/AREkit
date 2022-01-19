@@ -1,9 +1,11 @@
 import argparse
 
 from arekit.common.experiment.api.ctx_training import TrainingData
+from arekit.common.experiment.callback import ExperimentCallback
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
+from arekit.contrib.networks.core.callback_stat import TrainingStatProviderCallback
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.run_training import NetworksTrainingEngine
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -17,7 +19,8 @@ from examples.network.args.const import BAG_SIZE, NEURAL_NETWORKS_TARGET_DIR
 from examples.network.args.train import BagsPerMinibatchArg, DropoutKeepProbArg, EpochsCountArg, LearningRateArg, \
     ModelInputTypeArg, ModelNameTagArg
 from examples.network.common import create_bags_collection_type, create_network_model_io
-from examples.rusentrel.callback import TrainingCallback
+from examples.rusentrel.callback_hidden import HiddenStatesWriterCallback
+from examples.rusentrel.callback_training import TrainingLimiterCallback
 from examples.rusentrel.common import Common
 from examples.rusentrel.config_setups import optionally_modify_config_for_experiment, modify_config_for_model
 from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO
@@ -81,13 +84,9 @@ if __name__ == '__main__':
 
     labels_scaler = Common.create_labels_scaler(labels_count)
 
-    # Initialize callback.
-    callback = TrainingCallback(train_acc_limit=0.99,
-                                log_dir=model_target_dir)
-
     # Creating experiment
     experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount,
-                                   callback=callback)
+                                   callback=ExperimentCallback())
 
     extra_name_suffix = Common.create_exp_name_suffix(
         use_balancing=use_balancing,
@@ -147,11 +146,18 @@ if __name__ == '__main__':
                             model_input_type=model_input_type,
                             config=config)
 
+    nework_callbacks = [
+        TrainingLimiterCallback(train_acc_limit=0.99),
+        TrainingStatProviderCallback(),
+        HiddenStatesWriterCallback(log_dir=model_target_dir),
+    ]
+
     training_engine = NetworksTrainingEngine(load_model=model_load_dir is not None,
                                              experiment=experiment,
                                              create_network_func=network_func,
                                              config=config,
                                              bags_collection_type=bags_collection_type,
+                                             network_callbacks=nework_callbacks,
                                              training_epochs=epochs_count)
 
     training_engine.run()

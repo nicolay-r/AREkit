@@ -3,31 +3,9 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
-class Callback(object):
-
-    def __init__(self):
-        self._experiment = None
-
-    def set_experiment(self, experiment):
-        self._experiment = experiment
-
-    def on_initialized(self, model_ctx):
-        # Do nothing by default.
-        pass
+class ExperimentCallback(object):
 
     def on_experiment_iteration_begin(self):
-        # Do nothing by default.
-        pass
-
-    def on_fit_started(self, operation_cancel):
-        # Do nothing by default.
-        pass
-
-    def on_epoch_finished(self, pipeline, operation_cancel):
-        # Do nothing by default.
-        pass
-
-    def on_fit_finished(self):
         # Do nothing by default.
         pass
 
