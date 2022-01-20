@@ -12,10 +12,10 @@ from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterC
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
-from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
-from arekit.contrib.networks.core.pipeline_keep_hidden import MinibatchHiddenFetcherPipelineItem
-from arekit.contrib.networks.core.pipeline_predict import EpochLabelsPredictorPipelineItem
-from arekit.contrib.networks.core.pipeline_predict_labeling import EpochLabelsCollectorPipelineItem
+from arekit.contrib.networks.core.pipeline.item_fit import MinibatchFittingPipelineItem
+from arekit.contrib.networks.core.pipeline.item_keep_hidden import MinibatchHiddenFetcherPipelineItem
+from arekit.contrib.networks.core.pipeline.item_predict import EpochLabelsPredictorPipelineItem
+from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs

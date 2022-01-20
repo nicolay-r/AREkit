@@ -10,7 +10,7 @@ from arekit.contrib.networks.core.cancellation import OperationCancellation
 from arekit.contrib.networks.core.feeding.bags.collection.factory import create_batch_by_bags_group
 from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
-from arekit.contrib.networks.core.pipeline_epoch import EpochHandlingPipelineItem
+from arekit.contrib.networks.core.pipeline.item_base import EpochHandlingPipelineItem
 from arekit.contrib.networks.core.utils import get_item_from_pipeline
 from arekit.contrib.networks.tf_helpers.nn_states import TensorflowNetworkStatesProvider
 
@@ -132,7 +132,6 @@ class BaseTensorflowModel(BaseModel):
         assert(isinstance(model_params, NeuralNetworkModelParams))
         self.__context.Network.compile(self.__context.Config, reset_graph=True, graph_seed=seed)
         self.__context.set_optimiser()
-        self.__callback_do(lambda callback: callback.on_initialized(self.__context)),
         self.__context.initialize_session()
         self.__try_load_state()
         self.__fit(epochs_count=model_params.EpochsCount)

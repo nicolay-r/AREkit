@@ -1,4 +1,4 @@
-from arekit.contrib.networks.core.pipeline_epoch import EpochHandlingPipelineItem
+from arekit.contrib.networks.core.pipeline.item_base import EpochHandlingPipelineItem
 
 
 def get_item_from_pipeline(pipeline, item_type):

@@ -44,10 +44,6 @@ class TensorflowModelContext(object):
     def BagsCollectionType(self):
         return self.__bags_collection_type
 
-    @property
-    def InferenceContext(self):
-        return self.__inference_ctx
-
     # endregion
 
     def __set_optimiser_value(self, value):
@@ -58,17 +54,6 @@ class TensorflowModelContext(object):
 
     def get_sample_id_label_pairs(self, data_type):
         return self.__inference_ctx.SampleIdAndLabelPairs[data_type]
-
-    def get_hidden_parameters(self):
-        names = []
-        tensors = []
-
-        for name, tensor in self.__network.iter_hidden_parameters():
-            names.append(name)
-            tensors.append(tensor)
-
-        result_list = self.__sess.run(tensors)
-        return names, result_list
 
     def set_optimiser(self):
         optimiser = self.Config.Optimiser.minimize(self.__network.Cost)

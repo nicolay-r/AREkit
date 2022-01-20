@@ -2,7 +2,7 @@ import logging
 
 from arekit.contrib.networks.core.callback.base import NetworkCallback
 from arekit.contrib.networks.core.cancellation import OperationCancellation
-from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
+from arekit.contrib.networks.core.pipeline.item_fit import MinibatchFittingPipelineItem
 from arekit.contrib.networks.core.utils import get_item_from_pipeline
 
 logger = logging.getLogger(__name__)

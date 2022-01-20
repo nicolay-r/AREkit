@@ -1,7 +1,7 @@
 import math
+from collections import OrderedDict
 
 import numpy as np
-from collections import OrderedDict
 
 
 class NetworkInputDependentVariables:

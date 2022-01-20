@@ -1,5 +1,5 @@
 from arekit.common.pipeline.context import PipelineContext
-from arekit.contrib.networks.core.pipeline_epoch import EpochHandlingPipelineItem
+from arekit.contrib.networks.core.pipeline.item_base import EpochHandlingPipelineItem
 
 
 class EpochLabelsPredictorPipelineItem(EpochHandlingPipelineItem):

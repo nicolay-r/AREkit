@@ -10,9 +10,9 @@ from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item_handle import HandleIterPipelineItem
 
-from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
+from arekit.contrib.networks.core.idhv_collection import NetworkInputDependentVariables
 from arekit.contrib.networks.core.model import BaseTensorflowModel
-from arekit.contrib.networks.core.pipeline_predict_labeling import EpochLabelsCollectorPipelineItem
+from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.core.predict.provider import BasePredictProvider
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter

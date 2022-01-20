@@ -1,6 +1,6 @@
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.common.pipeline.context import PipelineContext
-from arekit.contrib.networks.core.pipeline_epoch import EpochHandlingPipelineItem
+from arekit.contrib.networks.core.pipeline.item_base import EpochHandlingPipelineItem
 
 
 class EpochLabelsCollectorPipelineItem(EpochHandlingPipelineItem):
@@ -16,7 +16,7 @@ class EpochLabelsCollectorPipelineItem(EpochHandlingPipelineItem):
     def before_epoch(self, model_context, data_type):
         super(EpochLabelsCollectorPipelineItem, self).before_epoch(model_context=model_context,
                                                                    data_type=data_type)
-        pairs = self._context.InferenceContext.SampleIdAndLabelPairs[data_type]
+        pairs = self._context.get_sample_id_label_pairs(data_type)
         self.__labeled_samples = LabeledCollection(uint_labeled_ids=pairs)
 
     def apply(self, pipeline_ctx):

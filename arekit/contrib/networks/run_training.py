@@ -9,10 +9,10 @@ from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollec
 from arekit.contrib.networks.core.model import BaseTensorflowModel
 from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
-from arekit.contrib.networks.core.pipeline_fit import MinibatchFittingPipelineItem
-from arekit.contrib.networks.core.pipeline_keep_hidden import MinibatchHiddenFetcherPipelineItem
-from arekit.contrib.networks.core.pipeline_predict import EpochLabelsPredictorPipelineItem
-from arekit.contrib.networks.core.pipeline_predict_labeling import EpochLabelsCollectorPipelineItem
+from arekit.contrib.networks.core.pipeline.item_fit import MinibatchFittingPipelineItem
+from arekit.contrib.networks.core.pipeline.item_keep_hidden import MinibatchHiddenFetcherPipelineItem
+from arekit.contrib.networks.core.pipeline.item_predict import EpochLabelsPredictorPipelineItem
+from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.utils import rm_dir_contents
 

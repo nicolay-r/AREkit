@@ -23,8 +23,12 @@ class HiddenStatesWriterCallback(NetworkCallback):
 
         self.__epochs_passed += 1
 
-        # TODO. This might be taken from pipeline item.
-        names, values = self._model_ctx.get_hidden_parameters()
+        if len(pipeline) == 0:
+            return
+
+        model_ctx = pipeline[0].ModelContext
+        names, tensors = map(list, zip(*model_ctx.Network.iter_hidden_parameters()))
+        values = model_ctx.Session.run(tensors)
 
         assert(isinstance(names, list))
         assert(isinstance(values, list))

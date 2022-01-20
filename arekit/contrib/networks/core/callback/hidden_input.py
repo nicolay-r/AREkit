@@ -2,8 +2,8 @@ from os.path import join
 
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.networks.core.callback.base import NetworkCallback
-from arekit.contrib.networks.core.ctx_predict_log import NetworkInputDependentVariables
-from arekit.contrib.networks.core.pipeline_keep_hidden import MinibatchHiddenFetcherPipelineItem
+from arekit.contrib.networks.core.idhv_collection import NetworkInputDependentVariables
+from arekit.contrib.networks.core.pipeline.item_keep_hidden import MinibatchHiddenFetcherPipelineItem
 from arekit.contrib.networks.core.utils import get_item_from_pipeline
 
 
