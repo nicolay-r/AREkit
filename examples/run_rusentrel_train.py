@@ -1,7 +1,7 @@
 import argparse
 
 from arekit.common.experiment.api.ctx_training import TrainingData
-from arekit.common.experiment.callback import ExperimentCallback
+from arekit.common.experiment.handler import ExperimentEngineHandler
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -87,8 +87,7 @@ if __name__ == '__main__':
     labels_scaler = Common.create_labels_scaler(labels_count)
 
     # Creating experiment
-    experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount,
-                                   callback=ExperimentCallback())
+    experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount)
 
     extra_name_suffix = Common.create_exp_name_suffix(
         use_balancing=use_balancing,
@@ -165,4 +164,6 @@ if __name__ == '__main__':
                                              network_callbacks=nework_callbacks,
                                              training_epochs=epochs_count)
 
-    training_engine.run()
+    training_engine.run(handlers=[
+        ExperimentEngineHandler(exp_data=experiment_data)
+    ])

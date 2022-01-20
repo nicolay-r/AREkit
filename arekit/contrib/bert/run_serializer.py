@@ -12,6 +12,7 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 
 
+# TODO. 262. Refactor as handler (weird inheritance, limits capabilities).
 class BertExperimentInputSerializer(ExperimentEngine):
 
     def __init__(self, experiment,

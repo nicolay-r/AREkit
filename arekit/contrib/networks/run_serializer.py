@@ -3,6 +3,7 @@ from arekit.common.experiment.engine import ExperimentEngine
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 
 
+# TODO. 262. Refactor as handler (weird inheritance, limits capabilities).
 class NetworksExperimentInputSerializer(ExperimentEngine):
 
     def __init__(self, experiment, force_serialize, value_to_group_id_func, balance, skip_folder_if_exists):

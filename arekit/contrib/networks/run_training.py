@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
+# TODO. 262. Refactor as handler (weird inheritance, limits capabilities).
 class NetworksTrainingEngine(ExperimentEngine):
 
     def __init__(self, bags_collection_type, experiment,
@@ -91,10 +92,6 @@ class NetworksTrainingEngine(ExperimentEngine):
         # Update parameters after iteration preparation has been completed.
         self.__config.reinit_config_dependent_parameters()
 
-        # Setup callback.
-        callback = self._experiment.DataIO.Callback
-        callback.on_experiment_iteration_begin()
-
         # Initialize network and model.
         network = self.__create_network_func()
         model = BaseTensorflowModel(
@@ -118,10 +115,8 @@ class NetworksTrainingEngine(ExperimentEngine):
         # Initialize model params instance.
         model_params = NeuralNetworkModelParams(epochs_count=self.__training_epochs)
 
-        # Run model
-        with callback:
-            model.fit(model_params=model_params,
-                      seed=self.__seed)
+        model.fit(model_params=model_params,
+                  seed=self.__seed)
 
         del network
         del model
@@ -140,8 +135,5 @@ class NetworksTrainingEngine(ExperimentEngine):
 
         # Notify other subscribers that initialization process has been completed.
         self.__config.init_initializers()
-
-    def _after_running(self):
-        self._experiment.DataIO.Callback.on_experiment_finished()
 
     # endregion

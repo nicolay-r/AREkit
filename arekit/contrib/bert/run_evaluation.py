@@ -18,16 +18,16 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
+# TODO. 262. Refactor as handler (weird inheritance, limits capabilities).
 class LanguageModelExperimentEvaluator(ExperimentEngine):
 
     def __init__(self, experiment, data_type, eval_helper, max_epochs_count,
-                 label_scaler, labels_formatter, eval_last_only=True, log_dir="./"):
+                 label_scaler, labels_formatter, eval_last_only=True):
         assert(isinstance(eval_helper, EvalHelper))
         assert(isinstance(max_epochs_count, int))
         assert(isinstance(eval_last_only, bool))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        assert(isinstance(log_dir, str))
 
         super(LanguageModelExperimentEvaluator, self).__init__(experiment=experiment)
 
@@ -37,19 +37,9 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         self.__eval_last_only = eval_last_only
         self.__labels_formatter = labels_formatter
         self.__label_scaler = label_scaler
-        self.__log_dir = log_dir
-
-    def _log_info(self, message, forced=False):
-        assert(isinstance(message, str))
-
-        if not self._experiment._do_log and not forced:
-            return
-
-        logger.info(message)
 
     def __run_pipeline(self, epoch_index, iter_index):
         exp_io = self._experiment.ExperimentIO
-        exp_data = self._experiment.DataIO
         doc_ops = self._experiment.DocumentOperations
 
         cmp_doc_ids_set = set(doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
@@ -96,37 +86,16 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
     def _handle_iteration(self, iter_index):
         exp_data = self._experiment.DataIO
         assert(isinstance(exp_data, TrainingData))
-
-        # Setup callback.
-        callback = exp_data.Callback
-        assert(isinstance(callback, Callback))
-        callback.set_iter_index(iter_index)
+        super(LanguageModelExperimentEvaluator, self)._handle_iteration(iter_index)
 
         if not self._experiment.ExperimentIO.try_prepare():
             return
 
-        if callback.check_log_exists():
-            self._log_info("Skipping [Log file already exist]")
-            return
+        for epoch_index in reversed(list(range(self.__max_epochs_count))):
 
-        with callback:
-            for epoch_index in reversed(list(range(self.__max_epochs_count))):
+            # Perform iteration related actions.
+            self.__run_pipeline(epoch_index=epoch_index, iter_index=iter_index)
 
-                # Perform iteration related actions.
-                self.__run_pipeline(epoch_index=epoch_index, iter_index=iter_index)
-
-                # Evaluate.
-                result = self._experiment.evaluate(data_type=self.__data_type, epoch_index=epoch_index)
-                result.calculate()
-
-                # Saving results.
-                callback.write_results(result=result, data_type=self.__data_type, epoch_index=epoch_index)
-
-                if self.__eval_last_only:
-                    self._log_info("Evaluation done [Evaluating last only]")
-                    return
-
-    def _before_running(self):
-        # Providing a root dir for logging.
-        callback = self._experiment.DataIO.Callback
-        callback.set_log_dir(self.__log_dir)
+            # Evaluate.
+            result = self._experiment.evaluate(data_type=self.__data_type, epoch_index=epoch_index)
+            result.calculate()
