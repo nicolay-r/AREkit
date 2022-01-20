@@ -69,7 +69,6 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
             doc_ids_set=cmp_doc_ids_set,
             create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
             labels_scaler=self.__label_scaler,
-            supported_labels=exp_data.SupportedCollectionLabels,
             label_calc_mode=LabelCalculationMode.AVERAGE)
 
         # Writing opinion collection.

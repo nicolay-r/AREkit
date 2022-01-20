@@ -2,10 +2,6 @@ from arekit.common.model.model_io import BaseModelIO
 
 
 class DataIO(object):
-    """ This base class aggregates all the data necessary for
-        cv-based experiment organization
-        (data-serialization, training, etc.).
-    """
 
     def __init__(self):
         self.__model_io = None
@@ -21,12 +17,6 @@ class DataIO(object):
     @property
     def LabelsCount(self):
         raise NotImplementedError()
-
-    @property
-    def SupportedCollectionLabels(self):
-        """ All labels considered as supported and might appear in OpinionCollection by default.
-        """
-        return None
 
     def set_model_io(self, model_io):
         """ Providing model_io in experiment data.

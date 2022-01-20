@@ -34,7 +34,7 @@ def __linkages_to_opinions(linkages_iter, labels_helper, label_calc_mode):
         yield __create_labeled_opinion(linkage.First, agg_label)
 
 
-def __create_and_fill_opinion_collection(opinions_iter, collection, supported_labels):
+def __fill_opinion_collection(opinions_iter, collection, supported_labels):
     assert(isinstance(opinions_iter, collections.Iterable))
     assert(isinstance(collection, OpinionCollection))
     assert(isinstance(supported_labels, set) or supported_labels is None)
@@ -59,12 +59,11 @@ def __create_and_fill_opinion_collection(opinions_iter, collection, supported_la
 def output_to_opinion_collections_pipeline(doc_ids_set, labels_scaler,
                                            iter_opinion_linkages_func,
                                            create_opinion_collection_func,
-                                           label_calc_mode, supported_labels):
+                                           label_calc_mode):
     """ Opinion collection generation pipeline.
     """
     assert(isinstance(labels_scaler, BaseLabelScaler))
     assert(isinstance(label_calc_mode, LabelCalculationMode))
-    assert(isinstance(supported_labels, set) or supported_labels is None)
     assert(callable(iter_opinion_linkages_func))
     assert(callable(create_opinion_collection_func))
 
@@ -84,8 +83,8 @@ def output_to_opinion_collections_pipeline(doc_ids_set, labels_scaler,
         # Filling opinion collection.
         MapPipelineItem(lambda data:
                         (data[0],
-                         __create_and_fill_opinion_collection(
+                         __fill_opinion_collection(
                              opinions_iter=data[1],
                              collection=create_opinion_collection_func(),
-                             supported_labels=supported_labels))),
+                             supported_labels=None))),
     ])

@@ -45,8 +45,7 @@ class TestOutputFormatters(unittest.TestCase):
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
                 doc_id=doc_id,
                 opinions_view=opinion_view),
-            label_calc_mode=LabelCalculationMode.AVERAGE,
-            supported_labels=None)
+            label_calc_mode=LabelCalculationMode.AVERAGE)
 
         doc_ids = set(opinion_storage.iter_column_values(column_name=const.DOC_ID, dtype=int))
 
