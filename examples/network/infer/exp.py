@@ -5,8 +5,7 @@ from examples.network.infer.opin_ops import CustomOpinionOperations
 
 class CustomExperiment(BaseExperiment):
 
-    def __init__(self, exp_data, synonyms, doc_ops, labels_formatter,
-                 neutral_labels_fmt, name_provider):
+    def __init__(self, exp_data, synonyms, doc_ops, labels_formatter, neutral_labels_fmt):
 
         exp_io = InferIOUtils(self)
 
@@ -17,5 +16,4 @@ class CustomExperiment(BaseExperiment):
             neutral_labels_fmt=neutral_labels_fmt)
 
         super(CustomExperiment, self).__init__(exp_data=exp_data, experiment_io=exp_io,
-                                               opin_ops=opin_ops, doc_ops=doc_ops,
-                                               name_provider=name_provider)
+                                               opin_ops=opin_ops, doc_ops=doc_ops)

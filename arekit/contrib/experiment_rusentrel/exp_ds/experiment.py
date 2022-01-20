@@ -19,7 +19,7 @@ class RuAttitudesExperiment(BaseExperiment):
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, load_docs, extra_name_suffix, do_log):
+    def __init__(self, exp_data, experiment_io_type, version, load_docs, do_log):
         assert(isinstance(version, RuAttitudesVersions))
         assert(isinstance(load_docs, bool))
         assert(isinstance(do_log, bool))
@@ -28,7 +28,6 @@ class RuAttitudesExperiment(BaseExperiment):
         self._init_log_flag(do_log)
 
         self.__version = version
-        self.__extra_name_suffix = extra_name_suffix
         self.__do_log = do_log
 
         self.log_info("Init experiment io ...")
@@ -54,15 +53,10 @@ class RuAttitudesExperiment(BaseExperiment):
         self.log_info("Create opinion operations ... ")
         opin_ops = RuAttitudesOpinionOperations(ru_attitudes=ru_attitudes)
 
-        exp_name = "ra-{ra_version}".format(ra_version=self.__version.value)
-
         super(RuAttitudesExperiment, self).__init__(exp_data=exp_data,
                                                     experiment_io=experiment_io,
                                                     opin_ops=opin_ops,
-                                                    doc_ops=doc_ops,
-                                                    name_provider=ExperimentNameProvider(
-                                                        name=exp_name,
-                                                        suffix=extra_name_suffix))
+                                                    doc_ops=doc_ops)
 
     def log_info(self, message, forced=False):
         assert (isinstance(message, str))

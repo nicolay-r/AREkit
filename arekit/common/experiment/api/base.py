@@ -9,7 +9,6 @@ from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.utils import progress_bar_iter
 
 logger = logging.getLogger(__name__)
@@ -17,24 +16,18 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    def __init__(self, exp_data, experiment_io, opin_ops, doc_ops, name_provider):
+    def __init__(self, exp_data, experiment_io, opin_ops, doc_ops):
         assert(isinstance(exp_data, DataIO))
         assert(isinstance(experiment_io, BaseIOUtils))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
-        assert(isinstance(name_provider, ExperimentNameProvider))
 
         self.__experiment_data = exp_data
         self.__experiment_io = experiment_io
         self.__opin_ops = opin_ops
         self.__doc_ops = doc_ops
-        self.__name_provider = name_provider
 
     # region Properties
-
-    @property
-    def Name(self):
-        return self.__name_provider.provide()
 
     @property
     def DataIO(self):

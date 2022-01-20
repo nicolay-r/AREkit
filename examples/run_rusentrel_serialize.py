@@ -2,6 +2,7 @@ import argparse
 
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
+from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
@@ -27,6 +28,7 @@ if __name__ == '__main__':
     # Default parameters
     rusentrel_version = RuSentRelVersions.V11
     ra_version = RuAttitudesVersions.V20LargeNeut
+    folding_type = FoldingType.Fixed
 
     # Provide arguments.
     ExperimentTypeArg.add_argument(parser)
@@ -58,6 +60,15 @@ if __name__ == '__main__':
         dist_in_terms_bound=None,
         label_provider=PairSingleLabelProvider(label_instance=ExperimentNeutralLabel()))
 
+    exp_name = Common.create_exp_name(rusentrel_version=rusentrel_version,
+                                      ra_version=ra_version,
+                                      folding_type=folding_type)
+
+    extra_name_suffix = Common.create_exp_name_suffix(
+        use_balancing=use_balancing,
+        terms_per_context=terms_per_context,
+        dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
+
     # Preparing necessary structures for further initializations.
     experiment_data = RuSentRelExperimentSerializationData(
         labels_scaler=Common.create_labels_scaler(labels_count),
@@ -66,17 +77,13 @@ if __name__ == '__main__':
         str_entity_formatter=create_entity_formatter(entity_fmt),
         stemmer=stemmer,
         pos_tagger=pos_tagger,
-        annotator=DefaultAnnotator(annot_algo=annot_algo))
-
-    extra_name_suffix = Common.create_exp_name_suffix(
-        use_balancing=use_balancing,
-        terms_per_context=terms_per_context,
-        dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
+        annotator=DefaultAnnotator(annot_algo=annot_algo),
+        name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
 
     experiment = create_experiment(
         exp_type=exp_type,
         experiment_data=experiment_data,
-        folding_type=FoldingType.Fixed,
+        folding_type=folding_type,
         rusentrel_version=RuSentRelVersions.V11,
         ruattitudes_version=ra_version,
         experiment_io_type=CustomRuSentRelNetworkExperimentIO,

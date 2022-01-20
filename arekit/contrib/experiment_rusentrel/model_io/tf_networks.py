@@ -156,7 +156,7 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
             else self.__get_default_embedding_filepath()
 
     def __get_experiment_folder_name(self):
-        return "{name}_{scale}l".format(name=self._experiment.Name,
+        return "{name}_{scale}l".format(name=self._experiment.DataIO.Name,
                                         scale=str(self._experiment.DataIO.LabelsCount))
 
     @staticmethod

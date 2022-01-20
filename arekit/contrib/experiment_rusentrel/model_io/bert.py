@@ -88,7 +88,7 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
         return join(default_dir, self._experiment.DataIO.ModelIO.get_model_name())
 
     def __get_experiment_folder_name(self):
-        return "{name}_{scale}l".format(name=self._experiment.Name,
+        return "{name}_{scale}l".format(name=self._experiment.DataIO.Name,
                                         scale=str(self._experiment.DataIO.LabelsCount))
 
     # endregion

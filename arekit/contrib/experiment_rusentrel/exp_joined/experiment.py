@@ -32,7 +32,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     """
 
     def __init__(self, exp_data, experiment_io_type, folding_type, ruattitudes_version,
-                 rusentrel_version, load_docs, extra_name_suffix, do_log=True):
+                 rusentrel_version, load_docs, do_log=True):
         assert(isinstance(ruattitudes_version, RuAttitudesVersions))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
@@ -95,17 +95,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             get_ruattitudes_op=self.__get_or_load_ruattitudes_opin_ops,
             is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))
 
-        exp_name = "rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
-            rsr_version=self.__rusentrel_version.value,
-            ra_version=self.__ruattitudes_version.value,
-            folding_type=doc_ops.DataFolding.Name)
-
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(
-            exp_data=exp_data,
-            doc_ops=doc_ops,
-            opin_ops=opin_ops,
-            experiment_io=experiment_io,
-            name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
+            exp_data=exp_data, doc_ops=doc_ops, opin_ops=opin_ops, experiment_io=experiment_io)
 
     # region private methods
 

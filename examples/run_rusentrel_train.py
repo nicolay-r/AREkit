@@ -2,6 +2,7 @@ import argparse
 
 from arekit.common.experiment.api.ctx_training import TrainingData
 from arekit.common.experiment.handler import ExperimentEngineHandler
+from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
@@ -86,13 +87,18 @@ if __name__ == '__main__':
 
     labels_scaler = Common.create_labels_scaler(labels_count)
 
-    # Creating experiment
-    experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount)
+    exp_name = Common.create_exp_name(rusentrel_version=rusentrel_version,
+                                      ra_version=ra_version,
+                                      folding_type=folding_type)
 
     extra_name_suffix = Common.create_exp_name_suffix(
         use_balancing=use_balancing,
         terms_per_context=terms_per_context,
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
+
+    # Creating experiment
+    experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount,
+                                   name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
 
     experiment = create_experiment(exp_type=exp_type,
                                    experiment_data=experiment_data,
@@ -100,7 +106,6 @@ if __name__ == '__main__':
                                    rusentrel_version=rusentrel_version,
                                    ruattitudes_version=ra_version,
                                    experiment_io_type=CustomRuSentRelNetworkExperimentIO,
-                                   extra_name_suffix=extra_name_suffix,
                                    load_ruattitude_docs=False)
 
     full_model_name = Common.create_full_model_name(model_name=model_name,

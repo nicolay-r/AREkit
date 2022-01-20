@@ -90,7 +90,8 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
         annotator=DefaultAnnotator(annot_algo=annot_algo),
         terms_per_context=terms_per_context,
         str_entity_formatter=create_entity_formatter(entity_fmt_type),
-        pos_tagger=POSMystemWrapper(MystemWrapper().MystemInstance))
+        pos_tagger=POSMystemWrapper(MystemWrapper().MystemInstance),
+        name_provider=create_infer_experiment_name_provider())
 
     labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
 
@@ -100,8 +101,7 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
         doc_ops=SingleDocOperations(news=news, text_parser=text_parser),
         labels_formatter=labels_fmt,
         synonyms=synonyms,
-        neutral_labels_fmt=labels_fmt,
-        name_provider=create_infer_experiment_name_provider())
+        neutral_labels_fmt=labels_fmt)
 
     NetworkInputHelper.prepare(experiment=experiment,
                                terms_per_context=terms_per_context,

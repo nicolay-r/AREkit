@@ -48,6 +48,13 @@ class Common:
                           model_name.value])
 
     @staticmethod
+    def create_exp_name(rusentrel_version, ra_version, folding_type):
+        return "rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
+            rsr_version=rusentrel_version.value,
+            ra_version=ra_version.value,
+            folding_type=folding_type.value)
+
+    @staticmethod
     def create_exp_name_suffix(use_balancing, terms_per_context, dist_in_terms_between_att_ends):
         """ Provides an external parameters that assumes to be synchronized both
             by serialization and training experiment stages.

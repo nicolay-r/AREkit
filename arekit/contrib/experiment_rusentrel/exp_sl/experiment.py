@@ -26,8 +26,7 @@ class RuSentRelExperiment(BaseExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, folding_type, extra_name_suffix,
-                 do_log=True):
+    def __init__(self, exp_data, experiment_io_type, version, folding_type, do_log=True):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
@@ -64,16 +63,10 @@ class RuSentRelExperiment(BaseExperiment):
                                               text_parser=text_parser,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
-        exp_name = "rsr-{version}-{format}".format(version=version.value,
-                                                   format=doc_ops.DataFolding.Name)
-
         super(RuSentRelExperiment, self).__init__(exp_data=exp_data,
                                                   experiment_io=experiment_io,
                                                   doc_ops=doc_ops,
-                                                  opin_ops=opin_ops,
-                                                  name_provider=ExperimentNameProvider(
-                                                      name=exp_name,
-                                                      suffix=extra_name_suffix))
+                                                  opin_ops=opin_ops)
 
     # region protected methods
 
