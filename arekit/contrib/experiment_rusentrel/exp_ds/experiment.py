@@ -1,7 +1,6 @@
 import logging
 
 from arekit.common.experiment.api.base import BaseExperiment
-from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
