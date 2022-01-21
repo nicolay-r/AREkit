@@ -9,9 +9,9 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.experiment_rusentrel.model_io.embedding import EmbeddingHelper
 from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
+from arekit.contrib.networks.np_utils.embedding import EmbeddingHelper
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.rusentrel.opinions.writer import RuSentRelOpinionCollectionWriter
 

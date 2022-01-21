@@ -2,7 +2,7 @@ import logging
 
 import numpy as np
 
-from arekit.contrib.experiment_rusentrel.model_io.npz_utils import NpzRepositoryUtils
+from arekit.contrib.networks.np_utils.npz_utils import NpzRepositoryUtils
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
