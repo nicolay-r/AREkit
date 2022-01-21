@@ -87,7 +87,6 @@ if __name__ == '__main__':
         rusentrel_version=RuSentRelVersions.V11,
         ruattitudes_version=ra_version,
         experiment_io_type=CustomRuSentRelNetworkExperimentIO,
-        extra_name_suffix=extra_name_suffix,
         load_ruattitude_docs=True)
 
     # Performing serialization process.
