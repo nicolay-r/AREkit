@@ -78,7 +78,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__rusentrel_doc_ids = rusentrel_doc.DataFolding.iter_doc_ids()
 
         # Init opinions
-        rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_ctx,
+        rusentrel_op = RuSentrelOpinionOperations(exp_ctx=exp_ctx,
                                                   version=rusentrel_version,
                                                   experiment_io=experiment_io,
                                                   get_synonyms_func=self._get_synonyms)

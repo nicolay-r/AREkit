@@ -41,7 +41,7 @@ class RuSentRelExperiment(BaseExperiment):
         experiment_io = experiment_io_type(self)
 
         self.log_info("Create opinion operations ... ")
-        opin_ops = RuSentrelOpinionOperations(experiment_data=exp_ctx,
+        opin_ops = RuSentrelOpinionOperations(exp_ctx=exp_ctx,
                                               version=version,
                                               experiment_io=experiment_io,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)

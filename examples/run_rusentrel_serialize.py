@@ -70,7 +70,7 @@ if __name__ == '__main__':
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
     # Preparing necessary structures for further initializations.
-    experiment_data = RuSentRelExperimentSerializationContext(
+    exp_ctx = RuSentRelExperimentSerializationContext(
         labels_scaler=Common.create_labels_scaler(labels_count),
         embedding=Common.load_rusvectores_embedding(filepath=embedding_filepath, stemmer=stemmer),
         terms_per_context=terms_per_context,
@@ -82,7 +82,7 @@ if __name__ == '__main__':
 
     experiment = create_experiment(
         exp_type=exp_type,
-        experiment_data=experiment_data,
+        exp_ctx=exp_ctx,
         folding_type=folding_type,
         rusentrel_version=RuSentRelVersions.V11,
         ruattitudes_version=ra_version,

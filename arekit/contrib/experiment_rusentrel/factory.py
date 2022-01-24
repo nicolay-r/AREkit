@@ -7,7 +7,7 @@ from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
 
 
 def create_experiment(exp_type,
-                      experiment_data,
+                      exp_ctx,
                       folding_type,
                       rusentrel_version,
                       load_ruattitude_docs,
@@ -19,13 +19,13 @@ def create_experiment(exp_type,
     """
 
     assert(isinstance(exp_type, ExperimentTypes))
-    assert(isinstance(experiment_data, ExperimentContext))
+    assert(isinstance(exp_ctx, ExperimentContext))
     assert(isinstance(folding_type, FoldingType))
     assert(isinstance(load_ruattitude_docs, bool))
 
     if exp_type == ExperimentTypes.RuSentRel:
         # Supervised learning experiment type.
-        return RuSentRelExperiment(exp_ctx=experiment_data,
+        return RuSentRelExperiment(exp_ctx=exp_ctx,
                                    version=rusentrel_version,
                                    folding_type=folding_type,
                                    experiment_io_type=experiment_io_type,
@@ -33,7 +33,7 @@ def create_experiment(exp_type,
 
     if exp_type == ExperimentTypes.RuAttitudes:
         # Application of the distant supervision only (assumes for pretraining purposes)
-        return RuAttitudesExperiment(exp_ctx=experiment_data,
+        return RuAttitudesExperiment(exp_ctx=exp_ctx,
                                      version=ruattitudes_version,
                                      experiment_io_type=experiment_io_type,
                                      load_docs=load_ruattitude_docs,
@@ -42,7 +42,7 @@ def create_experiment(exp_type,
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
         # Supervised learning with an application of distant supervision in training process.
         return RuSentRelWithRuAttitudesExperiment(ruattitudes_version=ruattitudes_version,
-                                                  exp_ctx=experiment_data,
+                                                  exp_ctx=exp_ctx,
                                                   rusentrel_version=rusentrel_version,
                                                   folding_type=folding_type,
                                                   experiment_io_type=experiment_io_type,

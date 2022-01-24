@@ -17,8 +17,8 @@ logging.basicConfig(level=logging.INFO)
 
 class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, experiment_data, experiment_io, get_synonyms_func, version):
-        assert(isinstance(experiment_data, ExperimentContext))
+    def __init__(self, exp_ctx, experiment_io, get_synonyms_func, version):
+        assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(version, RuSentRelVersions))
         super(RuSentrelOpinionOperations, self).__init__()
 

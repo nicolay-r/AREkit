@@ -97,11 +97,11 @@ if __name__ == '__main__':
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
     # Creating experiment
-    experiment_data = ExperimentTrainingContext(labels_count=labels_scaler.LabelsCount,
-                                                name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
+    exp_ctx = ExperimentTrainingContext(labels_count=labels_scaler.LabelsCount,
+                                        name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
 
     experiment = create_experiment(exp_type=exp_type,
-                                   experiment_data=experiment_data,
+                                   exp_ctx=exp_ctx,
                                    folding_type=folding_type,
                                    rusentrel_version=rusentrel_version,
                                    ruattitudes_version=ra_version,
@@ -119,7 +119,7 @@ if __name__ == '__main__':
                                        model_name_tag=model_name_tag)
 
     # Setup model io.
-    experiment_data.set_model_io(model_io)
+    exp_ctx.set_model_io(model_io)
 
     ###################
     # Initialize config
@@ -170,5 +170,5 @@ if __name__ == '__main__':
                                              training_epochs=epochs_count)
 
     training_engine.run(handlers=[
-        ExperimentEngineHandler(exp_ctx=experiment_data)
+        ExperimentEngineHandler(exp_ctx=exp_ctx)
     ])
