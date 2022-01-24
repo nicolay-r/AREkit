@@ -1,7 +1,7 @@
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 
 
-class ExperimentEngineHandler(object):
+class ExperimentIterationHandler(object):
 
     def __init__(self, exp_ctx):
         assert(isinstance(exp_ctx, ExperimentContext))

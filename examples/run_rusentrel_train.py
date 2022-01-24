@@ -1,7 +1,7 @@
 import argparse
 
 from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
-from arekit.common.experiment.handler import ExperimentEngineHandler
+from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
@@ -170,5 +170,5 @@ if __name__ == '__main__':
                                              training_epochs=epochs_count)
 
     training_engine.run(handlers=[
-        ExperimentEngineHandler(exp_ctx=exp_ctx)
+        ExperimentIterationHandler(exp_ctx=exp_ctx)
     ])
