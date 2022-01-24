@@ -2,7 +2,7 @@ import logging
 
 from arekit.common.data import const
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
-from arekit.common.experiment.api.ctx_training import TrainingData
+from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
@@ -83,8 +83,8 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
             pass
 
     def _handle_iteration(self, iter_index):
-        exp_data = self._experiment.DataIO
-        assert(isinstance(exp_data, TrainingData))
+        exp_ctx = self._experiment.ExperimentContext
+        assert(isinstance(exp_ctx, ExperimentTrainingContext))
         super(LanguageModelExperimentEvaluator, self)._handle_iteration(iter_index)
 
         if not self._experiment.ExperimentIO.try_prepare():

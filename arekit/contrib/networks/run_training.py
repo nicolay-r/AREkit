@@ -50,7 +50,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         self.__seed = seed
 
     def __get_model_dir(self):
-        return self._experiment.DataIO.ModelIO.get_model_dir()
+        return self._experiment.ExperimentContext.ModelIO.get_model_dir()
 
     # region protected methods
 
@@ -75,7 +75,7 @@ class NetworksTrainingEngine(ExperimentEngine):
             dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
             create_samples_view_func=lambda data_type: self._experiment.ExperimentIO.create_samples_view(data_type),
             has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state(),
-            labels_count=self._experiment.DataIO.LabelsCount,
+            labels_count=self._experiment.ExperimentContext.LabelsCount,
             vocab=self._experiment.ExperimentIO.load_vocab(),
             bags_collection_type=self.__bags_collection_type,
             input_shapes=NetworkInputShapes(iter_pairs=[
@@ -86,7 +86,7 @@ class NetworksTrainingEngine(ExperimentEngine):
             bag_size=self.__config.BagSize)
 
         if inference_ctx.HasNormalizedWeights:
-            weights = inference_ctx.calc_normalized_weigts(labels_count=self._experiment.DataIO.LabelsCount)
+            weights = inference_ctx.calc_normalized_weigts(labels_count=self._experiment.ExperimentContext.LabelsCount)
             self.__config.set_class_weights(weights)
 
         # Update parameters after iteration preparation has been completed.
@@ -100,7 +100,7 @@ class NetworksTrainingEngine(ExperimentEngine):
                 config=self.__config,
                 inference_ctx=inference_ctx,
                 bags_collection_type=self.__bags_collection_type,
-                nn_io=self._experiment.DataIO.ModelIO),
+                nn_io=self._experiment.ExperimentContext.ModelIO),
             callbacks=self.__network_callbacks,
             predict_pipeline=[
                 EpochLabelsPredictorPipelineItem(),

@@ -34,7 +34,7 @@ from examples.network.common import create_infer_experiment_name_provider,\
 from examples.network.embedding import RusvectoresEmbedding
 from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
-from examples.network.serialization_data import RuSentRelExperimentSerializationData
+from examples.network.serialization_data import RuSentRelExperimentSerializationContext
 from examples.network.text_parser.entities import TextEntitiesParser
 from examples.network.text_parser.terms import TermsSplitterParser
 
@@ -83,7 +83,7 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
     embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
     embedding.set_stemmer(stemmer)
 
-    exp_data = RuSentRelExperimentSerializationData(
+    exp_ctx = RuSentRelExperimentSerializationContext(
         labels_scaler=label_provider.LabelScaler,
         stemmer=stemmer,
         embedding=embedding,
@@ -97,7 +97,7 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
 
     # Step 3. Serialize data
     experiment = CustomExperiment(
-        exp_data=exp_data,
+        exp_ctx=exp_ctx,
         doc_ops=SingleDocOperations(news=news, text_parser=text_parser),
         labels_formatter=labels_fmt,
         synonyms=synonyms,

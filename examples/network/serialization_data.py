@@ -2,13 +2,13 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
-from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
+from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.embeddings.base import Embedding
 from arekit.processing.pos.base import POSTagger
 from examples.network.common import create_frames_collection, create_and_fill_variant_collection
 
 
-class RuSentRelExperimentSerializationData(NetworkSerializationData):
+class RuSentRelExperimentSerializationContext(NetworkSerializationContext):
 
     def __init__(self, labels_scaler, stemmer, pos_tagger, embedding,
                  terms_per_context, str_entity_formatter, annotator,
@@ -19,9 +19,9 @@ class RuSentRelExperimentSerializationData(NetworkSerializationData):
         assert(isinstance(str_entity_formatter, StringEntitiesFormatter))
         assert(isinstance(terms_per_context, int))
 
-        super(RuSentRelExperimentSerializationData, self).__init__(labels_scaler=labels_scaler,
-                                                                   annot=annotator,
-                                                                   name_provider=name_provider)
+        super(RuSentRelExperimentSerializationContext, self).__init__(labels_scaler=labels_scaler,
+                                                                      annot=annotator,
+                                                                      name_provider=name_provider)
 
         self.__pos_tagger = pos_tagger
         self.__terms_per_context = terms_per_context

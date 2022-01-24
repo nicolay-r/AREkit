@@ -11,7 +11,7 @@ from arekit.common.data.input.repositories.sample import BaseInputSamplesReposit
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.networks.core.input.data_serialization import NetworkSerializationData
+from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
@@ -29,14 +29,14 @@ class NetworkInputHelper(object):
     # region private methods
 
     @staticmethod
-    def __create_text_provider(term_embedding_pairs, exp_data):
-        assert(isinstance(exp_data, NetworkSerializationData))
+    def __create_text_provider(term_embedding_pairs, exp_ctx):
+        assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(term_embedding_pairs, OrderedDict))
 
         terms_with_embeddings_terms_mapper = StringWithEmbeddingNetworkTermMapping(
-            predefined_embedding=exp_data.WordEmbedding,
-            string_entities_formatter=exp_data.StringEntityFormatter,
-            string_emb_entity_formatter=exp_data.StringEntityEmbeddingFormatter)
+            predefined_embedding=exp_ctx.WordEmbedding,
+            string_entities_formatter=exp_ctx.StringEntityFormatter,
+            string_emb_entity_formatter=exp_ctx.StringEntityEmbeddingFormatter)
 
         return NetworkSingleTextProvider(
             text_terms_mapper=terms_with_embeddings_terms_mapper,
@@ -46,15 +46,15 @@ class NetworkInputHelper(object):
                 emb_vector=pair[1]))
 
     @staticmethod
-    def __create_samples_repo(exp_data, term_embedding_pairs):
+    def __create_samples_repo(exp_ctx, term_embedding_pairs):
         sample_row_provider = NetworkSampleRowProvider(
-            label_provider=exp_data.LabelProvider,
+            label_provider=exp_ctx.LabelProvider,
             text_provider=NetworkInputHelper.__create_text_provider(
                 term_embedding_pairs=term_embedding_pairs,
-                exp_data=exp_data),
-            frames_connotation_provider=exp_data.FramesConnotationProvider,
-            frame_role_label_scaler=exp_data.FrameRolesLabelScaler,
-            pos_terms_mapper=PosTermsMapper(exp_data.PosTagger))
+                exp_ctx=exp_ctx),
+            frames_connotation_provider=exp_ctx.FramesConnotationProvider,
+            frame_role_label_scaler=exp_ctx.FrameRolesLabelScaler,
+            pos_terms_mapper=PosTermsMapper(exp_ctx.PosTagger))
 
         return BaseInputSamplesRepository(
             columns_provider=SampleColumnsProvider(store_labels=True),
@@ -87,7 +87,7 @@ class NetworkInputHelper(object):
 
         opinions_repo = NetworkInputHelper.__create_opinions_repo()
         samples_repo = NetworkInputHelper.__create_samples_repo(
-            exp_data=experiment.DataIO,
+            exp_ctx=experiment.ExperimentContext,
             term_embedding_pairs=term_embedding_pairs)
 
         # Populate repositories
@@ -111,7 +111,7 @@ class NetworkInputHelper(object):
 
     @staticmethod
     def __perform_annotation(experiment, data_type):
-        collections_it = experiment.DataIO.Annotator.iter_annotated_collections(
+        collections_it = experiment.ExperimentContext.Annotator.iter_annotated_collections(
             data_type=data_type,
             doc_ops=experiment.DocumentOperations,
             opin_ops=experiment.OpinionOperations)

@@ -87,7 +87,7 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
         return EmbeddingHelper.load_embedding(source)
 
     def has_model_predefined_state(self):
-        model_io = self._experiment.DataIO.ModelIO
+        model_io = self._experiment.ExperimentContext.ModelIO
         return self.__model_is_pretrained_state_provided(model_io)
 
     def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
@@ -133,7 +133,7 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
-        model_io = self._experiment.DataIO.ModelIO
+        model_io = self._experiment.ExperimentContext.ModelIO
 
         if model_io is None:
             return self.__get_default_vocab_filepath()
@@ -146,7 +146,7 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
-        model_io = self._experiment.DataIO.ModelIO
+        model_io = self._experiment.ExperimentContext.ModelIO
 
         if model_io is None:
             return self.__get_default_embedding_filepath()
@@ -156,8 +156,8 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
             else self.__get_default_embedding_filepath()
 
     def __get_experiment_folder_name(self):
-        return "{name}_{scale}l".format(name=self._experiment.DataIO.Name,
-                                        scale=str(self._experiment.DataIO.LabelsCount))
+        return "{name}_{scale}l".format(name=self._experiment.ExperimentContext.Name,
+                                        scale=str(self._experiment.ExperimentContext.LabelsCount))
 
     @staticmethod
     def __generate_tsv_archive_filename(template, prefix):
@@ -191,7 +191,7 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
     def __get_model_dir(self):
         # Perform access to the model, since all the IO information
         # that is related to the model, assumes to be stored in ModelIO.
-        model_io = self._experiment.DataIO.ModelIO
+        model_io = self._experiment.ExperimentContext.ModelIO
         assert(isinstance(model_io, NeuralNetworkModelIO))
         return model_io.get_model_dir()
 
@@ -250,7 +250,7 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
         """ We use custom implementation as it allows to
             be independent of NeutralAnnotator instance.
         """
-        return "annot_{labels_count}l".format(labels_count=self._experiment.DataIO.LabelsCount)
+        return "annot_{labels_count}l".format(labels_count=self._experiment.ExperimentContext.LabelsCount)
 
     def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
         assert(isinstance(doc_id, int))

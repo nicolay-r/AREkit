@@ -25,7 +25,7 @@ class RuSentRelExperiment(BaseExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, folding_type, do_log=True):
+    def __init__(self, exp_ctx, experiment_io_type, version, folding_type, do_log=True):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
         assert(issubclass(experiment_io_type, BaseIOUtils))
@@ -41,7 +41,7 @@ class RuSentRelExperiment(BaseExperiment):
         experiment_io = experiment_io_type(self)
 
         self.log_info("Create opinion operations ... ")
-        opin_ops = RuSentrelOpinionOperations(experiment_data=exp_data,
+        opin_ops = RuSentrelOpinionOperations(experiment_data=exp_ctx,
                                               version=version,
                                               experiment_io=experiment_io,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
@@ -53,7 +53,7 @@ class RuSentRelExperiment(BaseExperiment):
                                                            experiment_io=experiment_io)
 
         text_parser = create_text_parser(
-            exp_data=exp_data,
+            exp_ctx=exp_ctx,
             entities_parser=RuSentRelTextEntitiesParser(),
             value_to_group_id_func=self._get_or_load_synonyms_collection().get_synonym_group_index)
 
@@ -62,7 +62,7 @@ class RuSentRelExperiment(BaseExperiment):
                                               text_parser=text_parser,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
-        super(RuSentRelExperiment, self).__init__(exp_data=exp_data,
+        super(RuSentRelExperiment, self).__init__(exp_ctx=exp_ctx,
                                                   experiment_io=experiment_io,
                                                   doc_ops=doc_ops,
                                                   opin_ops=opin_ops)

@@ -1,6 +1,6 @@
 import argparse
 
-from arekit.common.experiment.api.ctx_training import TrainingData
+from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
 from arekit.common.experiment.handler import ExperimentEngineHandler
 from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
@@ -97,8 +97,8 @@ if __name__ == '__main__':
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
     # Creating experiment
-    experiment_data = TrainingData(labels_count=labels_scaler.LabelsCount,
-                                   name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
+    experiment_data = ExperimentTrainingContext(labels_count=labels_scaler.LabelsCount,
+                                                name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
 
     experiment = create_experiment(exp_type=exp_type,
                                    experiment_data=experiment_data,
@@ -170,5 +170,5 @@ if __name__ == '__main__':
                                              training_epochs=epochs_count)
 
     training_engine.run(handlers=[
-        ExperimentEngineHandler(exp_data=experiment_data)
+        ExperimentEngineHandler(exp_ctx=experiment_data)
     ])

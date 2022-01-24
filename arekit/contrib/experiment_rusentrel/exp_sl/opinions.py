@@ -1,6 +1,6 @@
 import logging
 
-from arekit.common.experiment.api.ctx_base import DataIO
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 class RuSentrelOpinionOperations(OpinionOperations):
 
     def __init__(self, experiment_data, experiment_io, get_synonyms_func, version):
-        assert(isinstance(experiment_data, DataIO))
+        assert(isinstance(experiment_data, ExperimentContext))
         assert(isinstance(version, RuSentRelVersions))
         super(RuSentrelOpinionOperations, self).__init__()
 

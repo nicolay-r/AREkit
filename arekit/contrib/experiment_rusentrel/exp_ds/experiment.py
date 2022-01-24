@@ -18,7 +18,7 @@ class RuAttitudesExperiment(BaseExperiment):
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
-    def __init__(self, exp_data, experiment_io_type, version, load_docs, do_log):
+    def __init__(self, exp_ctx, experiment_io_type, version, load_docs, do_log):
         assert(isinstance(version, RuAttitudesVersions))
         assert(isinstance(load_docs, bool))
         assert(isinstance(do_log, bool))
@@ -40,7 +40,7 @@ class RuAttitudesExperiment(BaseExperiment):
         folding = create_ruattitudes_experiment_data_folding(
             doc_ids_to_fold=list(ru_attitudes.keys()))
 
-        text_parser = create_text_parser(exp_data=exp_data,
+        text_parser = create_text_parser(exp_ctx=exp_ctx,
                                          entities_parser=RuAttitudesTextEntitiesParser(),
                                          value_to_group_id_func=None)
 
@@ -52,7 +52,7 @@ class RuAttitudesExperiment(BaseExperiment):
         self.log_info("Create opinion operations ... ")
         opin_ops = RuAttitudesOpinionOperations(ru_attitudes=ru_attitudes)
 
-        super(RuAttitudesExperiment, self).__init__(exp_data=exp_data,
+        super(RuAttitudesExperiment, self).__init__(exp_ctx=exp_ctx,
                                                     experiment_io=experiment_io,
                                                     opin_ops=opin_ops,
                                                     doc_ops=doc_ops)

@@ -2,7 +2,7 @@ from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.model.model_io import BaseModelIO
 
 
-class DataIO(object):
+class ExperimentContext(object):
 
     def __init__(self, name_provider):
         assert(isinstance(name_provider, ExperimentNameProvider))

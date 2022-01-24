@@ -41,7 +41,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         sample_rows_provider = create_bert_sample_provider(
             labels_formatter=self.__labels_formatter,
             provider_type=self.__sample_provider_type,
-            label_scaler=self._experiment.DataIO.LabelsScaler,
+            label_scaler=self._experiment.ExperimentContext.LabelsScaler,
             entity_formatter=self.__entity_formatter)
 
         # Create repositories
@@ -60,7 +60,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
             parse_news_func=lambda doc_id: self._experiment.DocumentOperations.parse_doc(doc_id),
             iter_doc_opins=lambda doc_id:
                 self._experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
-            terms_per_context=self._experiment.DataIO.TermsPerContext)
+            terms_per_context=self._experiment.ExperimentContext.TermsPerContext)
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
@@ -98,7 +98,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
 
         for data_type in self._experiment.DocumentOperations.DataFolding.iter_supported_data_types():
 
-            collections_it = self._experiment.DataIO.Annotator.iter_annotated_collections(
+            collections_it = self._experiment.ExperimentContext.Annotator.iter_annotated_collections(
                 data_type=data_type,
                 opin_ops=self._experiment.OpinionOperations,
                 doc_ops=self._experiment.DocumentOperations)

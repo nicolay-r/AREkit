@@ -2,8 +2,8 @@ import logging
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
-from arekit.common.experiment.api.ctx_base import DataIO
-from arekit.common.experiment.api.ctx_training import TrainingData
+from arekit.common.experiment.api.ctx_base import ExperimentContext
+from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
@@ -16,13 +16,12 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    def __init__(self, exp_data, experiment_io, opin_ops, doc_ops):
-        assert(isinstance(exp_data, DataIO))
+    def __init__(self, exp_ctx, experiment_io, opin_ops, doc_ops):
+        assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(experiment_io, BaseIOUtils))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
-
-        self.__experiment_data = exp_data
+        self.__exp_ctx = exp_ctx
         self.__experiment_io = experiment_io
         self.__opin_ops = opin_ops
         self.__doc_ops = doc_ops
@@ -30,11 +29,8 @@ class BaseExperiment(object):
     # region Properties
 
     @property
-    def DataIO(self):
-        """ TODO. Should be renamed
-            Related to extra resources, utlized in experiment organization.
-        """
-        return self.__experiment_data
+    def ExperimentContext(self):
+        return self.__exp_ctx
 
     @property
     def ExperimentIO(self):
@@ -75,7 +71,7 @@ class BaseExperiment(object):
         """
         assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int))
-        assert(isinstance(self.__experiment_data, TrainingData))
+        assert(isinstance(self.__exp_ctx, ExperimentTrainingContext))
 
         # Extracting all docs to cmp and those that is related to data_type.
         cmp_doc_ids_iter = self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare)
@@ -93,7 +89,7 @@ class BaseExperiment(object):
                 epoch_index=epoch_index))
 
         # getting evaluator.
-        evaluator = self.__experiment_data.Evaluator
+        evaluator = self.__exp_ctx.Evaluator
         assert(isinstance(evaluator, BaseEvaluator))
 
         # evaluate every document.

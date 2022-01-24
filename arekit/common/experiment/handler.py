@@ -1,11 +1,11 @@
-from arekit.common.experiment.api.ctx_base import DataIO
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 
 
 class ExperimentEngineHandler(object):
 
-    def __init__(self, exp_data):
-        assert(isinstance(exp_data, DataIO))
-        self._exp_data = exp_data
+    def __init__(self, exp_ctx):
+        assert(isinstance(exp_ctx, ExperimentContext))
+        self._exp_ctx = exp_ctx
 
     def on_before_iteration(self):
         pass

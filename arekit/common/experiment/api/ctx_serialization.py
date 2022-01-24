@@ -1,16 +1,16 @@
 from arekit.common.experiment.annot.base import BaseAnnotator
-from arekit.common.experiment.api.ctx_base import DataIO
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.labels.scaler.base import BaseLabelScaler
 
 
-class SerializationData(DataIO):
+class ExperimentSerializationContext(ExperimentContext):
     """ Data, that is necessary for models training stage.
     """
 
     def __init__(self, label_scaler, annot, name_provider):
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(annot, BaseAnnotator))
-        super(SerializationData, self).__init__(name_provider)
+        super(ExperimentSerializationContext, self).__init__(name_provider)
 
         self.__label_scaler = label_scaler
 

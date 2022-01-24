@@ -30,7 +30,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, exp_data, experiment_io_type, folding_type, ruattitudes_version,
+    def __init__(self, exp_ctx, experiment_io_type, folding_type, ruattitudes_version,
                  rusentrel_version, load_docs, do_log=True):
         assert(isinstance(ruattitudes_version, RuAttitudesVersions))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
@@ -44,7 +44,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__ruattitudes_version = ruattitudes_version
         self.__rusentrel_version = rusentrel_version
         self.__load_docs = load_docs
-        self.__exp_data = exp_data
+        self.__exp_ctx = exp_ctx
         self.__do_log = do_log
 
         # To be initialized later (on demand)
@@ -66,7 +66,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         # init text parser.
         # TODO. Limitation, depending on document, entities parser may vary.
         text_parser = create_text_parser(
-            exp_data=self.__exp_data,
+            exp_ctx=self.__exp_ctx,
             entities_parser=RuSentRelTextEntitiesParser(),
             value_to_group_id_func=self._get_synonyms().get_synonym_group_index)
 
@@ -78,7 +78,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__rusentrel_doc_ids = rusentrel_doc.DataFolding.iter_doc_ids()
 
         # Init opinions
-        rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_data,
+        rusentrel_op = RuSentrelOpinionOperations(experiment_data=exp_ctx,
                                                   version=rusentrel_version,
                                                   experiment_io=experiment_io,
                                                   get_synonyms_func=self._get_synonyms)
@@ -95,7 +95,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))
 
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(
-            exp_data=exp_data, doc_ops=doc_ops, opin_ops=opin_ops, experiment_io=experiment_io)
+            exp_ctx=exp_ctx, doc_ops=doc_ops, opin_ops=opin_ops, experiment_io=experiment_io)
 
     # region private methods
 
@@ -126,7 +126,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             doc_ids_to_fold=list(ru_attitudes.keys()))
 
         text_parser = create_text_parser(
-            exp_data=self.__exp_data,
+            exp_ctx=self.__exp_ctx,
             entities_parser=RuAttitudesTextEntitiesParser(),
             value_to_group_id_func=self._get_synonyms().get_synonym_group_index)
 

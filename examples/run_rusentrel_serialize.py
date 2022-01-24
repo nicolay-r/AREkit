@@ -17,7 +17,7 @@ from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.network.args.common import ExperimentTypeArg, LabelsCountArg, RusVectoresEmbeddingFilepathArg, \
     TermsPerContextArg, StemmerArg, UseBalancingArg, DistanceInTermsBetweenAttitudeEndsArg
-from examples.network.serialization_data import RuSentRelExperimentSerializationData
+from examples.network.serialization_data import RuSentRelExperimentSerializationContext
 from examples.rusentrel.common import Common
 from examples.rusentrel.exp_io import CustomRuSentRelNetworkExperimentIO
 
@@ -70,7 +70,7 @@ if __name__ == '__main__':
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
     # Preparing necessary structures for further initializations.
-    experiment_data = RuSentRelExperimentSerializationData(
+    experiment_data = RuSentRelExperimentSerializationContext(
         labels_scaler=Common.create_labels_scaler(labels_count),
         embedding=Common.load_rusvectores_embedding(filepath=embedding_filepath, stemmer=stemmer),
         terms_per_context=terms_per_context,
