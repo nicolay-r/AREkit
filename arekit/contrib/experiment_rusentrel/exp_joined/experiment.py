@@ -67,7 +67,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
                                                     version=rusentrel_version,
                                                     get_synonyms_func=self._get_synonyms,
                                                     text_parser=text_parser)
-        self.__rusentrel_doc_ids = rusentrel_doc.DataFolding.iter_doc_ids()
+        self.__rusentrel_doc_ids = exp_ctx.DataFolding.iter_doc_ids()
 
         # Init opinions
         rusentrel_op = RuSentrelOpinionOperations(exp_ctx=exp_ctx,
@@ -84,7 +84,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
             rusentrel_op=rusentrel_op,
             get_ruattitudes_op=self.__get_or_load_ruattitudes_opin_ops,
-            is_rusentrel_doc=lambda doc_id: rusentrel_doc.DataFolding.contains_doc_id(doc_id))
+            is_rusentrel_doc=lambda doc_id: exp_ctx.DataFolding.contains_doc_id(doc_id))
 
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(
             exp_ctx=exp_ctx, doc_ops=doc_ops, opin_ops=opin_ops, experiment_io=experiment_io)
