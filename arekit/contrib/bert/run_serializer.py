@@ -90,13 +90,13 @@ class BertExperimentInputSerializer(ExperimentEngine):
     def _handle_iteration(self, it_index):
         """ Performing data serialization for a particular iteration
         """
-        for data_type in self._experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+        for data_type in self._experiment.ExperimentContext.DataFolding.iter_supported_data_types():
             self.__handle_iteration(data_type)
 
     def _before_running(self):
         self._logger.info("Perform annotation ...")
 
-        for data_type in self._experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+        for data_type in self._experiment.ExperimentContext.DataFolding.iter_supported_data_types():
 
             collections_it = self._experiment.ExperimentContext.Annotator.iter_annotated_collections(
                 data_type=data_type,

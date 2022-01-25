@@ -60,7 +60,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         assert(isinstance(it_index, int))
 
         targets_existed = self._experiment.ExperimentIO.check_targets_existed(
-            data_types_iter=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types())
+            data_types_iter=self._experiment.ExperimentContext.DataFolding.iter_supported_data_types())
 
         if not targets_existed:
             raise Exception("Data has not been initialized/serialized!")
@@ -72,7 +72,7 @@ class NetworksTrainingEngine(ExperimentEngine):
         # Performing samples reading process.
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
-            dtypes=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types(),
+            dtypes=self._experiment.ExperimentContext.DataFolding.iter_supported_data_types(),
             create_samples_view_func=lambda data_type: self._experiment.ExperimentIO.create_samples_view(data_type),
             has_model_predefined_state=self._experiment.ExperimentIO.has_model_predefined_state(),
             labels_count=self._experiment.ExperimentContext.LabelsCount,

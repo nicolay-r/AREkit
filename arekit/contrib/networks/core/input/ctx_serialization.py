@@ -4,9 +4,10 @@ from arekit.common.experiment.api.ctx_serialization import ExperimentSerializati
 
 class NetworkSerializationContext(ExperimentSerializationContext):
 
-    def __init__(self, labels_scaler, annot, name_provider):
+    def __init__(self, labels_scaler, annot, name_provider, data_folding):
         super(NetworkSerializationContext, self).__init__(
-            label_scaler=labels_scaler, annot=annot, name_provider=name_provider)
+            label_scaler=labels_scaler, annot=annot,
+            name_provider=name_provider, data_folding=data_folding)
         self.__label_provider = MultipleLabelProvider(labels_scaler)
 
     @property

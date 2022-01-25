@@ -4,7 +4,7 @@ from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
 from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.factory import create_experiment
+from arekit.contrib.experiment_rusentrel.factory import create_experiment, create_folding
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.callback.hidden import HiddenStatesWriterCallback
 from arekit.contrib.networks.core.callback.hidden_input import InputHiddenStatesWriterCallback
@@ -96,9 +96,14 @@ if __name__ == '__main__':
         terms_per_context=terms_per_context,
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
+    data_folding = create_folding(exp_type=exp_type,
+                                  folding_type=folding_type,
+                                  rusentrel_version=rusentrel_version)
+
     # Creating experiment
     exp_ctx = ExperimentTrainingContext(labels_count=labels_scaler.LabelsCount,
-                                        name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
+                                        name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix),
+                                        data_folding=data_folding)
 
     experiment = create_experiment(exp_type=exp_type,
                                    exp_ctx=exp_ctx,

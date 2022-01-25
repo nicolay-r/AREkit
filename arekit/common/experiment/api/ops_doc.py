@@ -1,4 +1,4 @@
-from arekit.common.folding.base import BaseDataFolding
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
 
@@ -8,22 +8,11 @@ class DocumentOperations(object):
     Provides operations with documents
     """
 
-    def __init__(self, folding, text_parser=None):
-        assert(isinstance(folding, BaseDataFolding))
+    def __init__(self, exp_ctx, text_parser=None):
+        assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(text_parser, BaseTextParser) or text_parser is None)
-        self.__folding = folding
+        self.__exp_ctx = exp_ctx
         self.__text_parser = text_parser
-
-    # region properties
-
-    @property
-    def DataFolding(self):
-        """ Algorithm, utilized in order to provide variety of foldings, such as
-                cross-validation, fixed, none, etc.
-        """
-        return self.__folding
-
-    # endregion
 
     # region abstract methods
 
@@ -42,7 +31,7 @@ class DocumentOperations(object):
     def iter_doc_ids(self, data_type):
         """ Provides a news indices, related to a particular `data_type`
         """
-        data_types_splits = self.__folding.fold_doc_ids_set()
+        data_types_splits = self.__exp_ctx.DataFolding.fold_doc_ids_set()
 
         if data_type not in data_types_splits:
             return

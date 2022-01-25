@@ -56,6 +56,6 @@ class ExperimentEngine(object):
         """
         self.__handlers = handlers
         self._before_running()
-        for iter_index, _ in enumerate(self._experiment.DocumentOperations.DataFolding.iter_states()):
+        for iter_index, _ in enumerate(self._experiment.ExperimentContext.DataFolding.iter_states()):
             self._handle_iteration(iter_index)
         self._after_running()

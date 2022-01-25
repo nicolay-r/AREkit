@@ -134,7 +134,7 @@ class NetworkInputHelper(object):
 
         term_embedding_pairs = collections.OrderedDict()
 
-        for data_type in experiment.DocumentOperations.DataFolding.iter_supported_data_types():
+        for data_type in experiment.ExperimentContext.DataFolding.iter_supported_data_types():
 
             # Perform annotation
             NetworkInputHelper.__perform_annotation(experiment=experiment,

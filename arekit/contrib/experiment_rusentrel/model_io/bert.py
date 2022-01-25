@@ -170,7 +170,7 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
                                             subfolder_name=self.__get_annotator_name())
 
     def __experiment_iter_index(self):
-        return self._experiment.DocumentOperations.DataFolding.IterationIndex
+        return self._experiment.ExperimentContext.DataFolding.IterationIndex
 
     def __filename_template(self, data_type):
         assert(isinstance(data_type, DataType))

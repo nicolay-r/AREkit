@@ -4,6 +4,8 @@ from collections import OrderedDict
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
+from arekit.common.experiment.data_type import DataType
+from arekit.common.folding.nofold import NoFolding
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.labels.scaler.base import BaseLabelScaler
@@ -91,14 +93,16 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
         terms_per_context=terms_per_context,
         str_entity_formatter=create_entity_formatter(entity_fmt_type),
         pos_tagger=POSMystemWrapper(MystemWrapper().MystemInstance),
-        name_provider=create_infer_experiment_name_provider())
+        name_provider=create_infer_experiment_name_provider(),
+        data_folding=NoFolding(doc_ids_to_fold=[0],
+                               supported_data_types=[DataType.Test]))
 
     labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
 
     # Step 3. Serialize data
     experiment = CustomExperiment(
         exp_ctx=exp_ctx,
-        doc_ops=SingleDocOperations(news=news, text_parser=text_parser),
+        doc_ops=SingleDocOperations(exp_ctx=exp_ctx, news=news, text_parser=text_parser),
         labels_formatter=labels_fmt,
         synonyms=synonyms,
         neutral_labels_fmt=labels_fmt)

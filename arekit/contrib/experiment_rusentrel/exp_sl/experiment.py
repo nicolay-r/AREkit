@@ -6,7 +6,6 @@ from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel import common
 from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
-from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
@@ -46,18 +45,12 @@ class RuSentRelExperiment(BaseExperiment):
                                               experiment_io=experiment_io,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
-        self.log_info("Create document operations ... ")
-        folding = create_rusentrel_experiment_data_folding(folding_type=folding_type,
-                                                           version=version,
-                                                           docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
-                                                           experiment_io=experiment_io)
-
         text_parser = create_text_parser(
             exp_ctx=exp_ctx,
             entities_parser=RuSentRelTextEntitiesParser(),
             value_to_group_id_func=self._get_or_load_synonyms_collection().get_synonym_group_index)
 
-        doc_ops = RuSentrelDocumentOperations(folding=folding,
+        doc_ops = RuSentrelDocumentOperations(exp_ctx=exp_ctx,
                                               version=version,
                                               text_parser=text_parser,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)

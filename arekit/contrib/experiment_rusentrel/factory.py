@@ -1,8 +1,11 @@
 from arekit.common.experiment.api.ctx_base import ExperimentContext
+from arekit.common.experiment.data_type import DataType
+from arekit.common.folding.nofold import NoFolding
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.exp_ds.experiment import RuAttitudesExperiment
 from arekit.contrib.experiment_rusentrel.exp_joined.experiment import RuSentRelWithRuAttitudesExperiment
 from arekit.contrib.experiment_rusentrel.exp_sl.experiment import RuSentRelExperiment
+from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
 
 
@@ -48,3 +51,20 @@ def create_experiment(exp_type,
                                                   experiment_io_type=experiment_io_type,
                                                   load_docs=load_ruattitude_docs,
                                                   do_log=do_log)
+
+
+def create_folding(exp_type, folding_type, rusentrel_version):
+    assert(isinstance(exp_type, ExperimentTypes))
+
+    if exp_type == ExperimentTypes.RuSentRel:
+        return create_rusentrel_experiment_data_folding(folding_type=folding_type,
+                                                        version=rusentrel_version)
+
+    if exp_type == ExperimentTypes.RuAttitudes:
+        pass
+        return NoFolding(doc_ids_to_fold=doc_ids_to_fold,
+                         supported_data_types=[DataType.Train])
+
+    if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
+        return create_rusentrel_experiment_data_folding(folding_type=folding_type,
+                                                        version=rusentrel_version)

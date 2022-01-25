@@ -24,7 +24,7 @@ class NetworksExperimentInputSerializer(ExperimentEngine):
         assert(isinstance(self._experiment.ExperimentContext, ExperimentSerializationContext))
 
         targets_existed = self._experiment.ExperimentIO.check_targets_existed(
-            data_types_iter=self._experiment.DocumentOperations.DataFolding.iter_supported_data_types())
+            data_types_iter=self._experiment.ExperimentContext.DataFolding.iter_supported_data_types())
 
         if targets_existed and not self.__force_serialize:
             return

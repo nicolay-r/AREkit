@@ -12,7 +12,6 @@ from arekit.contrib.experiment_rusentrel.exp_ds.utils import read_ruattitudes_in
 from arekit.contrib.experiment_rusentrel.exp_joined.documents import RuSentrelWithRuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_joined.opinions import RuSentrelWithRuAttitudesOpinionOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
-from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
@@ -56,13 +55,6 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.log_info("Init experiment io ...")
         experiment_io = experiment_io_type(self)
 
-        # RuSentRel doc operations init.
-        rusentrel_folding = create_rusentrel_experiment_data_folding(
-            folding_type=folding_type,
-            version=rusentrel_version,
-            docs_reader_func=lambda doc_id: doc_ops.get_doc(doc_id),
-            experiment_io=experiment_io)
-
         # init text parser.
         # TODO. Limitation, depending on document, entities parser may vary.
         text_parser = create_text_parser(
@@ -71,8 +63,8 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             value_to_group_id_func=self._get_synonyms().get_synonym_group_index)
 
         # init documents.
-        rusentrel_doc = RuSentrelDocumentOperations(version=rusentrel_version,
-                                                    folding=rusentrel_folding,
+        rusentrel_doc = RuSentrelDocumentOperations(exp_ctx=exp_ctx,
+                                                    version=rusentrel_version,
                                                     get_synonyms_func=self._get_synonyms,
                                                     text_parser=text_parser)
         self.__rusentrel_doc_ids = rusentrel_doc.DataFolding.iter_doc_ids()

@@ -1,7 +1,5 @@
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
-from arekit.common.experiment.data_type import DataType
-from arekit.common.folding.nofold import NoFolding
 
 
 class SingleDocOperations(DocumentOperations):
@@ -13,9 +11,8 @@ class SingleDocOperations(DocumentOperations):
         assert(tag == BaseDocumentTag.Annotate)
         return [0]
 
-    def __init__(self, news, text_parser):
-        folding = NoFolding(doc_ids_to_fold=[0], supported_data_types=[DataType.Test])
-        super(SingleDocOperations, self).__init__(folding, text_parser)
+    def __init__(self, news, exp_ctx, text_parser):
+        super(SingleDocOperations, self).__init__(exp_ctx, text_parser)
         self.__doc = news
 
     def get_doc(self, doc_id):

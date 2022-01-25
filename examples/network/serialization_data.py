@@ -12,16 +12,16 @@ class RuSentRelExperimentSerializationContext(NetworkSerializationContext):
 
     def __init__(self, labels_scaler, stemmer, pos_tagger, embedding,
                  terms_per_context, str_entity_formatter, annotator,
-                 name_provider):
+                 name_provider, data_folding):
         assert(isinstance(embedding, Embedding))
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(pos_tagger, POSTagger))
         assert(isinstance(str_entity_formatter, StringEntitiesFormatter))
         assert(isinstance(terms_per_context, int))
 
-        super(RuSentRelExperimentSerializationContext, self).__init__(labels_scaler=labels_scaler,
-                                                                      annot=annotator,
-                                                                      name_provider=name_provider)
+        super(RuSentRelExperimentSerializationContext, self).__init__(
+            labels_scaler=labels_scaler, annot=annotator,
+            name_provider=name_provider, data_folding=data_folding)
 
         self.__pos_tagger = pos_tagger
         self.__terms_per_context = terms_per_context

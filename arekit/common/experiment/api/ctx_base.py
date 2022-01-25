@@ -1,13 +1,20 @@
 from arekit.common.experiment.name_provider import ExperimentNameProvider
+from arekit.common.folding.base import BaseDataFolding
 from arekit.common.model.model_io import BaseModelIO
 
 
 class ExperimentContext(object):
 
-    def __init__(self, name_provider):
+    def __init__(self, name_provider, data_folding):
+        assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(name_provider, ExperimentNameProvider))
         self.__model_io = None
+        self.__data_folding = data_folding
         self.__name_provider = name_provider
+
+    @property
+    def DataFolding(self):
+        return self.__data_folding
 
     @property
     def ModelIO(self):

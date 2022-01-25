@@ -6,7 +6,7 @@ from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
-from arekit.contrib.experiment_rusentrel.factory import create_experiment
+from arekit.contrib.experiment_rusentrel.factory import create_experiment, create_folding
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.run_serializer import NetworksExperimentInputSerializer
@@ -69,6 +69,10 @@ if __name__ == '__main__':
         terms_per_context=terms_per_context,
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
+    data_folding = create_folding(exp_type=exp_type,
+                                  folding_type=folding_type,
+                                  rusentrel_version=rusentrel_version)
+
     # Preparing necessary structures for further initializations.
     exp_ctx = RuSentRelExperimentSerializationContext(
         labels_scaler=Common.create_labels_scaler(labels_count),
@@ -78,7 +82,8 @@ if __name__ == '__main__':
         stemmer=stemmer,
         pos_tagger=pos_tagger,
         annotator=DefaultAnnotator(annot_algo=annot_algo),
-        name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix))
+        name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix),
+        data_folding=data_folding)
 
     experiment = create_experiment(
         exp_type=exp_type,

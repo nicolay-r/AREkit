@@ -1,26 +1,21 @@
 from collections import OrderedDict
-from os.path import join
 
-from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.cv.base import TwoClassCVFolding
+from arekit.common.experiment.cv.splitters.default import SimpleCrossValidataionSplitter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.fixed import FixedFolding
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.cv.doc_stat.sentence import SentenceBasedDocumentStatGenerator
-from arekit.contrib.experiment_rusentrel.cv.statistical import StatBasedCrossValidataionSplitter
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
 
 DEFAULT_CV_COUNT = 3
 
 
-def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_func, experiment_io):
+def create_rusentrel_experiment_data_folding(folding_type, version):
     """ Supported data folding in experiments with RuSentRelCollection.
     """
     assert(isinstance(folding_type, FoldingType))
     assert(isinstance(version, RuSentRelVersions))
-    assert(callable(docs_reader_func))
-    assert(isinstance(experiment_io, BaseIOUtils))
 
     # Providing doc_ids
     train_doc_ids, test_doc_ids, all_doc_ids = __get_rusentrel_inds(version)
@@ -50,9 +45,10 @@ def create_rusentrel_experiment_data_folding(folding_type, version, docs_reader_
         """
 
         # We utilize sentence-based cv-splitter.
-        splitter = StatBasedCrossValidataionSplitter(
-            docs_stat=SentenceBasedDocumentStatGenerator(docs_reader_func),
-            docs_stat_filepath_func=lambda: join(experiment_io.create_docs_stat_target()))
+        # splitter = StatBasedCrossValidataionSplitter(
+        #     docs_stat=SentenceBasedDocumentStatGenerator(docs_reader_func),
+        #     docs_stat_filepath_func=lambda: experiment_io.create_docs_stat_target())
+        splitter = SimpleCrossValidataionSplitter()
 
         return TwoClassCVFolding(doc_ids_to_fold=all_doc_ids,
                                  supported_data_types=supported_data_types,
