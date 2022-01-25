@@ -22,7 +22,7 @@ class RuSentrelDocumentOperations(DocumentOperations):
     def iter_tagget_doc_ids(self, tag):
         assert(isinstance(tag, BaseDocumentTag))
         assert(tag == BaseDocumentTag.Compare or tag == BaseDocumentTag.Annotate)
-        return self.DataFolding.iter_doc_ids()
+        return self._exp_ctx.DataFolding.iter_doc_ids()
 
     def get_doc(self, doc_id):
         assert(isinstance(doc_id, int))

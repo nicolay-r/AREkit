@@ -1,6 +1,7 @@
 import logging
 
 from arekit.common.experiment.api.base import BaseExperiment
+from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.opinions import RuAttitudesOpinionOperations
@@ -17,8 +18,9 @@ class RuAttitudesExperiment(BaseExperiment):
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
 
-    def __init__(self, exp_ctx, experiment_io_type, version, load_docs, do_log):
+    def __init__(self, exp_ctx, exp_io, version, load_docs, do_log):
         assert(isinstance(version, RuAttitudesVersions))
+        assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(load_docs, bool))
         assert(isinstance(do_log, bool))
 
@@ -27,9 +29,6 @@ class RuAttitudesExperiment(BaseExperiment):
 
         self.__version = version
         self.__do_log = do_log
-
-        self.log_info("Init experiment io ...")
-        experiment_io = experiment_io_type(self)
 
         self.log_info("Loading RuAttitudes collection optionally [{version}] ...".format(version=version))
         ru_attitudes = read_ruattitudes_in_memory(version=version,
@@ -49,7 +48,7 @@ class RuAttitudesExperiment(BaseExperiment):
         opin_ops = RuAttitudesOpinionOperations(ru_attitudes=ru_attitudes)
 
         super(RuAttitudesExperiment, self).__init__(exp_ctx=exp_ctx,
-                                                    experiment_io=experiment_io,
+                                                    exp_io=exp_io,
                                                     opin_ops=opin_ops,
                                                     doc_ops=doc_ops)
 

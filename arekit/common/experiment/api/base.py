@@ -16,13 +16,13 @@ logger = logging.getLogger(__name__)
 
 class BaseExperiment(object):
 
-    def __init__(self, exp_ctx, experiment_io, opin_ops, doc_ops):
+    def __init__(self, exp_ctx, exp_io, opin_ops, doc_ops):
         assert(isinstance(exp_ctx, ExperimentContext))
-        assert(isinstance(experiment_io, BaseIOUtils))
+        assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(doc_ops, DocumentOperations))
         self.__exp_ctx = exp_ctx
-        self.__experiment_io = experiment_io
+        self.__exp_io = exp_io
         self.__opin_ops = opin_ops
         self.__doc_ops = doc_ops
 
@@ -36,7 +36,7 @@ class BaseExperiment(object):
     def ExperimentIO(self):
         """ Filepaths, related to experiment
         """
-        return self.__experiment_io
+        return self.__exp_io
 
     @property
     def OpinionOperations(self):

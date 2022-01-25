@@ -85,11 +85,11 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
             subfolder_name=self.__get_experiment_folder_name(),
             dir=self._get_experiment_sources_dir())
 
-        return join(default_dir, self._experiment.ExperimentContext.ModelIO.get_model_name())
+        return join(default_dir, self._exp_ctx.ModelIO.get_model_name())
 
     def __get_experiment_folder_name(self):
-        return "{name}_{scale}l".format(name=self._experiment.ExperimentContext.Name,
-                                        scale=str(self._experiment.ExperimentContext.LabelsCount))
+        return "{name}_{scale}l".format(name=self._exp_ctx.Name,
+                                        scale=str(self._exp_ctx.LabelsCount))
 
     # endregion
 
@@ -170,7 +170,7 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
                                             subfolder_name=self.__get_annotator_name())
 
     def __experiment_iter_index(self):
-        return self._experiment.ExperimentContext.DataFolding.IterationIndex
+        return self._exp_ctx.DataFolding.IterationIndex
 
     def __filename_template(self, data_type):
         assert(isinstance(data_type, DataType))
@@ -181,7 +181,7 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
         """ We use custom implementation as it allows to
             be independent of NeutralAnnotator instance.
         """
-        return "annot_{labels_count}l".format(labels_count=self._experiment.ExperimentContext.LabelsCount)
+        return "annot_{labels_count}l".format(labels_count=self._exp_ctx.LabelsCount)
 
     # endregion
 

@@ -17,14 +17,14 @@ logging.basicConfig(level=logging.INFO)
 
 class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, exp_ctx, experiment_io, get_synonyms_func, version):
+    def __init__(self, exp_ctx, exp_io, get_synonyms_func, version):
         assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(version, RuSentRelVersions))
         super(RuSentrelOpinionOperations, self).__init__()
 
         self.__get_synonyms_func = get_synonyms_func
         self.__version = version
-        self.__experiment_io = experiment_io
+        self.__exp_io = exp_io
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
 
@@ -39,10 +39,10 @@ class RuSentrelOpinionOperations(OpinionOperations):
         collections = []
 
         # Picking an annotated collection.
-        target = self.__experiment_io.create_opinion_collection_target(doc_id=doc_id, data_type=data_type)
+        target = self.__exp_io.create_opinion_collection_target(doc_id=doc_id, data_type=data_type)
 
         # Reading automatically annotated collection of neutral opinions.
-        auto_neutral = self.__experiment_io.read_opinion_collection(
+        auto_neutral = self.__exp_io.read_opinion_collection(
             target=target,
             labels_formatter=self.__neutral_labels_fmt,
             create_collection_func=self.__create_collection)
@@ -80,10 +80,10 @@ class RuSentrelOpinionOperations(OpinionOperations):
             we need to guarantee the presence of a function that returns filepath
             by using isinstance command.
         """
-        assert(isinstance(self.__experiment_io, BaseIOUtils))
+        assert(isinstance(self.__exp_io, BaseIOUtils))
 
-        return self.__experiment_io.read_opinion_collection(
-            target=self.__experiment_io.create_result_opinion_collection_target(
+        return self.__exp_io.read_opinion_collection(
+            target=self.__exp_io.create_result_opinion_collection_target(
                 doc_id=doc_id,
                 data_type=data_type,
                 epoch_index=epoch_index),

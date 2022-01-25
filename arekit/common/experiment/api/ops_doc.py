@@ -11,7 +11,7 @@ class DocumentOperations(object):
     def __init__(self, exp_ctx, text_parser=None):
         assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(text_parser, BaseTextParser) or text_parser is None)
-        self.__exp_ctx = exp_ctx
+        self._exp_ctx = exp_ctx
         self.__text_parser = text_parser
 
     # region abstract methods
@@ -31,7 +31,7 @@ class DocumentOperations(object):
     def iter_doc_ids(self, data_type):
         """ Provides a news indices, related to a particular `data_type`
         """
-        data_types_splits = self.__exp_ctx.DataFolding.fold_doc_ids_set()
+        data_types_splits = self._exp_ctx.DataFolding.fold_doc_ids_set()
 
         if data_type not in data_types_splits:
             return

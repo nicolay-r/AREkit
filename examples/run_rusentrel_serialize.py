@@ -88,10 +88,10 @@ if __name__ == '__main__':
     experiment = create_experiment(
         exp_type=exp_type,
         exp_ctx=exp_ctx,
+        exp_io=CustomRuSentRelNetworkExperimentIO(exp_ctx),
         folding_type=folding_type,
         rusentrel_version=RuSentRelVersions.V11,
         ruattitudes_version=ra_version,
-        experiment_io_type=CustomRuSentRelNetworkExperimentIO,
         load_ruattitude_docs=True)
 
     # Performing serialization process.

@@ -24,10 +24,10 @@ class RuSentRelExperiment(BaseExperiment):
         https://wwww.easychair.org/publications/download/pQrC
     """
 
-    def __init__(self, exp_ctx, experiment_io_type, version, folding_type, do_log=True):
+    def __init__(self, exp_ctx, exp_io, version, folding_type, do_log=True):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
-        assert(issubclass(experiment_io_type, BaseIOUtils))
+        assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(do_log, bool))
 
         # Setup logging option.
@@ -36,13 +36,10 @@ class RuSentRelExperiment(BaseExperiment):
         self.__rsr_version = version
         self.__synonyms = None
 
-        self.log_info("Init experiment io ...")
-        experiment_io = experiment_io_type(self)
-
         self.log_info("Create opinion operations ... ")
         opin_ops = RuSentrelOpinionOperations(exp_ctx=exp_ctx,
                                               version=version,
-                                              experiment_io=experiment_io,
+                                              exp_io=exp_io,
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
         text_parser = create_text_parser(
@@ -56,7 +53,7 @@ class RuSentRelExperiment(BaseExperiment):
                                               get_synonyms_func=self._get_or_load_synonyms_collection)
 
         super(RuSentRelExperiment, self).__init__(exp_ctx=exp_ctx,
-                                                  experiment_io=experiment_io,
+                                                  exp_io=exp_io,
                                                   doc_ops=doc_ops,
                                                   opin_ops=opin_ops)
 

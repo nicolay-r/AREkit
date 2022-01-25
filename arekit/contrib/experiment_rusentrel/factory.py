@@ -1,4 +1,5 @@
 from arekit.common.experiment.api.ctx_base import ExperimentContext
+from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.folding.types import FoldingType
@@ -11,16 +12,17 @@ from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
 
 def create_experiment(exp_type,
                       exp_ctx,
+                      exp_io,
                       folding_type,
                       rusentrel_version,
                       load_ruattitude_docs,
-                      experiment_io_type,
                       do_log=True,
                       ruattitudes_version=None):
     """ This method allows to instanciate all the supported experiments
         by `contrib/experiments/` module of AREkit framework.
     """
 
+    assert(isinstance(exp_io, BaseIOUtils))
     assert(isinstance(exp_type, ExperimentTypes))
     assert(isinstance(exp_ctx, ExperimentContext))
     assert(isinstance(folding_type, FoldingType))
@@ -31,14 +33,14 @@ def create_experiment(exp_type,
         return RuSentRelExperiment(exp_ctx=exp_ctx,
                                    version=rusentrel_version,
                                    folding_type=folding_type,
-                                   experiment_io_type=experiment_io_type,
+                                   exp_io=exp_io,
                                    do_log=do_log)
 
     if exp_type == ExperimentTypes.RuAttitudes:
         # Application of the distant supervision only (assumes for pretraining purposes)
         return RuAttitudesExperiment(exp_ctx=exp_ctx,
                                      version=ruattitudes_version,
-                                     experiment_io_type=experiment_io_type,
+                                     exp_io=exp_io,
                                      load_docs=load_ruattitude_docs,
                                      do_log=do_log)
 
@@ -48,7 +50,7 @@ def create_experiment(exp_type,
                                                   exp_ctx=exp_ctx,
                                                   rusentrel_version=rusentrel_version,
                                                   folding_type=folding_type,
-                                                  experiment_io_type=experiment_io_type,
+                                                  exp_io=exp_io,
                                                   load_docs=load_ruattitude_docs,
                                                   do_log=do_log)
 
@@ -61,8 +63,12 @@ def create_folding(exp_type, folding_type, rusentrel_version):
                                                         version=rusentrel_version)
 
     if exp_type == ExperimentTypes.RuAttitudes:
-        pass
-        return NoFolding(doc_ids_to_fold=doc_ids_to_fold,
+        # ru_attitudes = read_ruattitudes_in_memory(version=version,
+        #                                           used_doc_ids_set=None,
+        #                                           keep_doc_ids_only=not load_docs)
+        # doc_ids_to_fold = ru_attitudes.keys()
+
+        return NoFolding(doc_ids_to_fold=None,
                          supported_data_types=[DataType.Train])
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:

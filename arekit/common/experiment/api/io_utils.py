@@ -1,3 +1,4 @@
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.data_type import DataType
 
 
@@ -7,8 +8,9 @@ class BaseIOUtils(object):
         results -- evaluation of experiments.
     """
 
-    def __init__(self, experiment):
-        self._experiment = experiment
+    def __init__(self, exp_ctx):
+        assert(isinstance(exp_ctx, ExperimentContext))
+        self._exp_ctx = exp_ctx
         self.__opinion_collection_provider = self._create_opinion_collection_provider()
         self.__opinion_collection_writer = self._create_opinion_collection_writer()
 

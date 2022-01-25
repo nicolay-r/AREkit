@@ -29,12 +29,12 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
     """
 
-    def __init__(self, exp_ctx, experiment_io_type, folding_type, ruattitudes_version,
+    def __init__(self, exp_ctx, exp_io, folding_type, ruattitudes_version,
                  rusentrel_version, load_docs, do_log=True):
         assert(isinstance(ruattitudes_version, RuAttitudesVersions))
         assert(isinstance(rusentrel_version, RuSentRelVersions))
         assert(isinstance(folding_type, FoldingType))
-        assert(issubclass(experiment_io_type, BaseIOUtils))
+        assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(do_log, bool))
 
         # Setup logging option.
@@ -51,9 +51,6 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         self.__ru_attitudes = None
         self.__ruattitudes_doc = None
         self.__ruattitudes_op = None
-
-        self.log_info("Init experiment io ...")
-        experiment_io = experiment_io_type(self)
 
         # init text parser.
         # TODO. Limitation, depending on document, entities parser may vary.
@@ -72,7 +69,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
         # Init opinions
         rusentrel_op = RuSentrelOpinionOperations(exp_ctx=exp_ctx,
                                                   version=rusentrel_version,
-                                                  experiment_io=experiment_io,
+                                                  exp_io=exp_io,
                                                   get_synonyms_func=self._get_synonyms)
 
         # Init experiment doc_ops and opin_ops
@@ -87,7 +84,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             is_rusentrel_doc=lambda doc_id: exp_ctx.DataFolding.contains_doc_id(doc_id))
 
         super(RuSentRelWithRuAttitudesExperiment, self).__init__(
-            exp_ctx=exp_ctx, doc_ops=doc_ops, opin_ops=opin_ops, experiment_io=experiment_io)
+            exp_ctx=exp_ctx, doc_ops=doc_ops, opin_ops=opin_ops, exp_io=exp_io)
 
     # region private methods
 

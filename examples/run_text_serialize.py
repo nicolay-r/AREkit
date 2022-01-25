@@ -36,6 +36,7 @@ from examples.network.common import create_infer_experiment_name_provider,\
 from examples.network.embedding import RusvectoresEmbedding
 from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
+from examples.network.infer.exp_io import InferIOUtils
 from examples.network.serialization_data import RuSentRelExperimentSerializationContext
 from examples.network.text_parser.entities import TextEntitiesParser
 from examples.network.text_parser.terms import TermsSplitterParser
@@ -99,8 +100,11 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
 
     labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
 
+    exp_io = InferIOUtils(exp_ctx)
+
     # Step 3. Serialize data
     experiment = CustomExperiment(
+        exp_io=exp_io,
         exp_ctx=exp_ctx,
         doc_ops=SingleDocOperations(exp_ctx=exp_ctx, news=news, text_parser=text_parser),
         labels_formatter=labels_fmt,
