@@ -33,13 +33,15 @@ class SimpleCrossValidataionSplitter(CrossValidationSplitter):
         Splits array of indices into list of pairs (train_indices_list,
         test_indices_list)
         """
-        assert(isinstance(doc_ids, list))
+        assert(isinstance(doc_ids, set))
         assert(isinstance(cv_count, int))
 
-        if self.__shuffle:
-            random.Random(self.__seed).shuffle(doc_ids)
+        doc_ids_list = list(doc_ids)
 
-        chunks = self.__chunk_it(doc_ids, cv_count)
+        if self.__shuffle:
+            random.Random(self.__seed).shuffle(doc_ids_list)
+
+        chunks = self.__chunk_it(doc_ids_list, cv_count)
 
         for test_index, chunk in enumerate(chunks):
             train_indices = list(range(len(chunks)))
