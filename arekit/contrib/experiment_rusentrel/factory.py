@@ -2,10 +2,10 @@ from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
 from arekit.common.folding.united import UnitedFolding
-from arekit.contrib.experiment_rusentrel.exp_ds.experiment import RuAttitudesExperiment
+from arekit.contrib.experiment_rusentrel.exp_ds.factory import create_ruattitudes_experiment
 from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
-from arekit.contrib.experiment_rusentrel.exp_joined.experiment import RuSentRelWithRuAttitudesExperiment
-from arekit.contrib.experiment_rusentrel.exp_sl.experiment import RuSentRelExperiment
+from arekit.contrib.experiment_rusentrel.exp_joined.experiment import create_rusentrel_with_ruattitudes_expriment
+from arekit.contrib.experiment_rusentrel.exp_sl.factory import create_rusentrel_experiment
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
@@ -32,29 +32,26 @@ def create_experiment(exp_type,
 
     if exp_type == ExperimentTypes.RuSentRel:
         # Supervised learning experiment type.
-        return RuSentRelExperiment(exp_ctx=exp_ctx,
-                                   version=rusentrel_version,
-                                   folding_type=folding_type,
-                                   exp_io=exp_io,
-                                   do_log=do_log)
+        return create_rusentrel_experiment(exp_ctx=exp_ctx,
+                                           version=rusentrel_version,
+                                           folding_type=folding_type,
+                                           exp_io=exp_io)
 
     if exp_type == ExperimentTypes.RuAttitudes:
         # Application of the distant supervision only (assumes for pretraining purposes)
-        return RuAttitudesExperiment(exp_ctx=exp_ctx,
-                                     version=ruattitudes_version,
-                                     exp_io=exp_io,
-                                     load_docs=load_ruattitude_docs,
-                                     do_log=do_log)
+        return create_ruattitudes_experiment(exp_ctx=exp_ctx,
+                                             version=ruattitudes_version,
+                                             exp_io=exp_io,
+                                             load_docs=load_ruattitude_docs)
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
         # Supervised learning with an application of distant supervision in training process.
-        return RuSentRelWithRuAttitudesExperiment(ruattitudes_version=ruattitudes_version,
-                                                  exp_ctx=exp_ctx,
-                                                  rusentrel_version=rusentrel_version,
-                                                  folding_type=folding_type,
-                                                  exp_io=exp_io,
-                                                  load_docs=load_ruattitude_docs,
-                                                  do_log=do_log)
+        return create_rusentrel_with_ruattitudes_expriment(exp_io=exp_io,
+                                                           exp_ctx=exp_ctx,
+                                                           folding_type=folding_type,
+                                                           ruattitudes_version=ruattitudes_version,
+                                                           rusentrel_version=rusentrel_version,
+                                                           load_docs=load_ruattitude_docs)
 
 
 def create_folding(exp_type, rusentrel_folding_type, rusentrel_version, ruattitudes_version):

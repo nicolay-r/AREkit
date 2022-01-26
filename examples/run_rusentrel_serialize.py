@@ -71,7 +71,8 @@ if __name__ == '__main__':
 
     data_folding = create_folding(exp_type=exp_type,
                                   rusentrel_folding_type=folding_type,
-                                  rusentrel_version=rusentrel_version)
+                                  rusentrel_version=rusentrel_version,
+                                  ruattitudes_version=ra_version)
 
     # Preparing necessary structures for further initializations.
     exp_ctx = RuSentRelExperimentSerializationContext(
