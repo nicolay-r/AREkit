@@ -70,7 +70,7 @@ if __name__ == '__main__':
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
     data_folding = create_folding(exp_type=exp_type,
-                                  folding_type=folding_type,
+                                  rusentrel_folding_type=folding_type,
                                   rusentrel_version=rusentrel_version)
 
     # Preparing necessary structures for further initializations.

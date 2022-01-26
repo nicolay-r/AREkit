@@ -1,8 +1,14 @@
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
+from arekit.contrib.experiment_rusentrel.exp_ds.utils import read_ruattitudes_in_memory
+from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 
 
-def create_ruattitudes_experiment_data_folding(doc_ids_to_fold):
-    supported_data_types = [DataType.Train]
-    return NoFolding(doc_ids_to_fold=doc_ids_to_fold,
-                     supported_data_types=supported_data_types)
+def create_ruattitudes_experiment_data_folding(version, states_count=1):
+    assert(isinstance(version, RuAttitudesVersions))
+    ru_attitudes = read_ruattitudes_in_memory(version=version,
+                                              used_doc_ids_set=None,
+                                              keep_doc_ids_only=True)
+    return NoFolding(doc_ids_to_fold=list(ru_attitudes.keys()),
+                     supported_data_types=[DataType.Train],
+                     dup_count=states_count)

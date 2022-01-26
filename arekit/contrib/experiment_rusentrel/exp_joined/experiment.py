@@ -110,10 +110,6 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
             used_doc_ids_set=set(self.__rusentrel_doc_ids),
             keep_doc_ids_only=not self.__load_docs)
 
-        # RuAttitudes doc operations init.
-        ruattiudes_folding = create_ruattitudes_experiment_data_folding(
-            doc_ids_to_fold=list(ru_attitudes.keys()))
-
         text_parser = create_text_parser(
             exp_ctx=self.__exp_ctx,
             entities_parser=RuAttitudesTextEntitiesParser(),
@@ -121,7 +117,7 @@ class RuSentRelWithRuAttitudesExperiment(BaseExperiment):
 
         # Completing initialization.
         self.__ruattitudes_doc = RuAttitudesDocumentOperations(
-            folding=ruattiudes_folding,
+            exp_ctx=self.__exp_ctx,
             ru_attitudes=ru_attitudes,
             text_parser=text_parser)
         self.__ru_attitudes = ru_attitudes

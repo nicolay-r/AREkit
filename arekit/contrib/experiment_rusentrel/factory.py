@@ -1,13 +1,15 @@
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
-from arekit.common.experiment.data_type import DataType
-from arekit.common.folding.nofold import NoFolding
 from arekit.common.folding.types import FoldingType
+from arekit.common.folding.united import UnitedFolding
 from arekit.contrib.experiment_rusentrel.exp_ds.experiment import RuAttitudesExperiment
+from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.exp_joined.experiment import RuSentRelWithRuAttitudesExperiment
 from arekit.contrib.experiment_rusentrel.exp_sl.experiment import RuSentRelExperiment
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
+from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 
 def create_experiment(exp_type,
@@ -55,22 +57,23 @@ def create_experiment(exp_type,
                                                   do_log=do_log)
 
 
-def create_folding(exp_type, folding_type, rusentrel_version):
+def create_folding(exp_type, rusentrel_folding_type, rusentrel_version, ruattitudes_version):
+    assert(isinstance(rusentrel_folding_type, FoldingType))
     assert(isinstance(exp_type, ExperimentTypes))
+    assert(isinstance(rusentrel_version, RuSentRelVersions))
+    assert(isinstance(ruattitudes_version, RuAttitudesVersions))
 
     if exp_type == ExperimentTypes.RuSentRel:
-        return create_rusentrel_experiment_data_folding(folding_type=folding_type,
+        return create_rusentrel_experiment_data_folding(folding_type=rusentrel_folding_type,
                                                         version=rusentrel_version)
 
     if exp_type == ExperimentTypes.RuAttitudes:
-        # ru_attitudes = read_ruattitudes_in_memory(version=version,
-        #                                           used_doc_ids_set=None,
-        #                                           keep_doc_ids_only=not load_docs)
-        # doc_ids_to_fold = ru_attitudes.keys()
-
-        return NoFolding(doc_ids_to_fold=None,
-                         supported_data_types=[DataType.Train])
+        return create_ruattitudes_experiment_data_folding(ruattitudes_version)
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
-        return create_rusentrel_experiment_data_folding(folding_type=folding_type,
-                                                        version=rusentrel_version)
+        rsr = create_rusentrel_experiment_data_folding(folding_type=rusentrel_folding_type,
+                                                       version=rusentrel_version)
+        ra = create_ruattitudes_experiment_data_folding(version=ruattitudes_version,
+                                                        states_count=rsr.StatesCount)
+        return UnitedFolding(foldings=[rsr, ra])
+

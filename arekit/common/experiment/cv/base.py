@@ -14,17 +14,13 @@ class TwoClassCVFolding(BaseDataFolding):
             raise NotImplementedError("Experiments with such amount of data-types are not supported!")
 
         super(TwoClassCVFolding, self).__init__(doc_ids_to_fold=doc_ids_to_fold,
-                                                supported_data_types=supported_data_types)
+                                                supported_data_types=supported_data_types,
+                                                states_count=cv_count)
 
-        self.__iteration_ind = 0
         self.__cv_count = cv_count
         self.__splitter = splitter
 
     # region Properties
-
-    @property
-    def IterationIndex(self):
-        return self.__iteration_ind
 
     @property
     def CVCount(self):
@@ -59,17 +55,10 @@ class TwoClassCVFolding(BaseDataFolding):
 
         for index, pair in enumerate(it):
             large, small = pair
-            if index == self.__iteration_ind:
+            if index == self._state_index:
                 return {
                     data_types[0]: large,
                     data_types[1]: small
                 }
-
-    def iter_states(self):
-        """ Performing iteration over possible foldings.
-        """
-        for i in range(self.__cv_count):
-            self.__iteration_ind = i
-            yield None
 
     # endregion
