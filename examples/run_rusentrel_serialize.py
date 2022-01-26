@@ -2,7 +2,9 @@ import argparse
 
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.name_provider import ExperimentNameProvider
+from arekit.common.folding.nofold import NoFolding
 from arekit.common.folding.types import FoldingType
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
@@ -11,7 +13,7 @@ from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLa
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.run_serializer import NetworksExperimentInputSerializer
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from examples.network.args.serialize import EntityFormatterTypesArg
@@ -69,10 +71,9 @@ if __name__ == '__main__':
         terms_per_context=terms_per_context,
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
-    data_folding = create_folding(exp_type=exp_type,
-                                  rusentrel_folding_type=folding_type,
-                                  rusentrel_version=rusentrel_version,
-                                  ruattitudes_version=ra_version)
+    # TODO. Provide united, including NoFolding for RuAttitudes data.
+    data_folding = NoFolding(doc_ids_to_fold=list(RuSentRelIOUtils.iter_train_indices(rusentrel_version)),
+                             supported_data_types=[DataType.Train])
 
     # Preparing necessary structures for further initializations.
     exp_ctx = RuSentRelExperimentSerializationContext(
