@@ -16,10 +16,15 @@ class TwoClassCVFolding(BaseDataFolding):
         super(TwoClassCVFolding, self).__init__(doc_ids_to_fold=doc_ids_to_fold,
                                                 supported_data_types=supported_data_types)
 
+        self.__iteration_ind = 0
         self.__cv_count = cv_count
         self.__splitter = splitter
 
     # region Properties
+
+    @property
+    def IterationIndex(self):
+        return self.__iteration_ind
 
     @property
     def CVCount(self):
@@ -54,7 +59,7 @@ class TwoClassCVFolding(BaseDataFolding):
 
         for index, pair in enumerate(it):
             large, small = pair
-            if index == self.IterationIndex:
+            if index == self.__iteration_ind:
                 return {
                     data_types[0]: large,
                     data_types[1]: small
@@ -64,7 +69,7 @@ class TwoClassCVFolding(BaseDataFolding):
         """ Performing iteration over possible foldings.
         """
         for i in range(self.__cv_count):
-            self._iteration_index = i
+            self.__iteration_ind = i
             yield None
 
     # endregion

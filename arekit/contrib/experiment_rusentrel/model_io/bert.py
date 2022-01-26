@@ -11,7 +11,7 @@ from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.bert.output.eval_helper import EvalHelper
 from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
-from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name
+from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -142,7 +142,7 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
             self.__get_target_dir(),
             join("eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type.name,
-                iter_index=self.__experiment_iter_index(),
+                iter_index=experiment_iter_index(self._exp_ctx.DataFolding),
                 epoch_index=str(epoch_index))))
 
         return result_dir
@@ -169,13 +169,10 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
         return join_dir_with_subfolder_name(dir=self.__get_target_dir(),
                                             subfolder_name=self.__get_annotator_name())
 
-    def __experiment_iter_index(self):
-        return self._exp_ctx.DataFolding.IterationIndex
-
     def __filename_template(self, data_type):
         assert(isinstance(data_type, DataType))
         return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
-                                                 iter_index=self.__experiment_iter_index())
+                                                 iter_index=experiment_iter_index(self._exp_ctx.DataFolding))
 
     def __get_annotator_name(self):
         """ We use custom implementation as it allows to

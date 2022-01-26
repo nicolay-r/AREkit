@@ -10,15 +10,10 @@ class BaseDataFolding(object):
         assert(isinstance(supported_data_types, list))
         self._doc_ids_to_fold_set = set(doc_ids_to_fold)
         self._supported_data_types = supported_data_types
-        self._iteration_index = 0
 
     @property
     def Name(self):
         raise NotImplementedError()
-
-    @property
-    def IterationIndex(self):
-        return self._iteration_index
 
     def contains_doc_id(self, doc_id):
         assert(isinstance(doc_id, int))

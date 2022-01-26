@@ -9,7 +9,7 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name
+from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.np_utils.embedding import EmbeddingHelper
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
@@ -181,12 +181,12 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
     def __get_default_vocab_filepath(self):
         return join(self._get_target_dir(),
                     self.VOCABULARY_FILENAME_TEMPLATE.format(
-                        cv_index=self._experiment_iter_index()) + '.npz')
+                        cv_index=experiment_iter_index(self._exp_ctx.DataFolding)) + '.npz')
 
     def __get_default_embedding_filepath(self):
         return join(self._get_target_dir(),
                     self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                        cv_index=self._experiment_iter_index()) + '.npz')
+                        cv_index=experiment_iter_index(self._exp_ctx.DataFolding)) + '.npz')
 
     def __get_model_dir(self):
         # Perform access to the model, since all the IO information
@@ -203,7 +203,7 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
             self.__get_model_dir(),
             join("eval/{data_type}/{iter_index}/{epoch_index}".format(
                 data_type=data_type.name,
-                iter_index=self._experiment_iter_index(),
+                iter_index=experiment_iter_index(self._exp_ctx.DataFolding),
                 epoch_index=str(epoch_index))))
 
         return result_dir
@@ -238,13 +238,10 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
         assert(isinstance(prefix, str))
         return join(out_dir, RuSentRelExperimentNetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
 
-    def _experiment_iter_index(self):
-        return self._exp_ctx.DataFolding.IterationIndex
-
     def _filename_template(self, data_type):
         assert(isinstance(data_type, DataType))
         return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
-                                                 iter_index=self._experiment_iter_index())
+                                                 iter_index=experiment_iter_index(self._exp_ctx.DataFolding))
 
     def _get_annotator_name(self):
         """ We use custom implementation as it allows to
