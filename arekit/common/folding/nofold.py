@@ -20,8 +20,3 @@ class NoFolding(BaseDataFolding):
         return {
             self._supported_data_types[0]: list(self._doc_ids_to_fold_set)
         }
-
-    def get_current_state(self):
-        """ Returns in order to be compatible with cv-based experiment format.
-        """
-        return "0"

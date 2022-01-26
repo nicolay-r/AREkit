@@ -25,8 +25,3 @@ class FixedFolding(BaseDataFolding):
             folded[d_type].append(doc_id)
 
         return folded
-
-    def get_current_state(self):
-        """ Returns in order to be compatible with cv-based experiment format.
-        """
-        return "0"

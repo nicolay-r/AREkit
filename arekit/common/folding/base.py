@@ -47,8 +47,3 @@ class BaseDataFolding(object):
         """ Perform the doc_ids folding process onto provided data_types
         """
         raise NotImplementedError()
-
-    def get_current_state(self):
-        """ Provides the name of the current state.
-        """
-        raise NotImplementedError()

@@ -67,9 +67,4 @@ class TwoClassCVFolding(BaseDataFolding):
             self._iteration_index = i
             yield None
 
-    def get_current_state(self):
-        """ Providing current iteration index.
-        """
-        return str(self._iteration_index)
-
     # endregion
