@@ -4,7 +4,7 @@ from arekit.common.folding.types import FoldingType
 from arekit.common.folding.united import UnitedFolding
 from arekit.contrib.experiment_rusentrel.exp_ds.factory import create_ruattitudes_experiment
 from arekit.contrib.experiment_rusentrel.exp_ds.folding import create_ruattitudes_experiment_data_folding
-from arekit.contrib.experiment_rusentrel.exp_joined.experiment import create_rusentrel_with_ruattitudes_expriment
+from arekit.contrib.experiment_rusentrel.exp_joined.factory import create_rusentrel_with_ruattitudes_expriment
 from arekit.contrib.experiment_rusentrel.exp_sl.factory import create_rusentrel_experiment
 from arekit.contrib.experiment_rusentrel.exp_sl.folding import create_rusentrel_experiment_data_folding
 from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
@@ -18,7 +18,6 @@ def create_experiment(exp_type,
                       folding_type,
                       rusentrel_version,
                       load_ruattitude_docs,
-                      do_log=True,
                       ruattitudes_version=None):
     """ This method allows to instanciate all the supported experiments
         by `contrib/experiments/` module of AREkit framework.
