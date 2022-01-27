@@ -24,6 +24,12 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
         """
         raise NotImplementedError()
 
+    def _create_opinion_collection_provider(self):
+        pass
+
+    def _create_opinion_collection_writer(self):
+        pass
+
     def create_docs_stat_target(self):
         return join(self.__get_target_dir(), "docs_stat.txt")
 

@@ -5,32 +5,35 @@ from arekit.common.data.input.providers.rows.opinions import BaseOpinionsRowProv
 from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.experiment.api.base import BaseExperiment
+from arekit.common.experiment.api.io_utils import BaseIOUtils
+from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.engine import ExperimentEngine
+from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 
 
-# TODO. 262. Refactor as handler (weird inheritance, limits capabilities).
-class BertExperimentInputSerializer(ExperimentEngine):
+class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, experiment,
-                 labels_formatter,
-                 skip_if_folder_exists,
-                 sample_provider_type,
-                 entity_formatter,
-                 balance_train_samples):
-        assert(isinstance(experiment, BaseExperiment))
+    def __init__(self, exp_io, exp_ctx, doc_ops, opin_ops, labels_formatter, skip_if_folder_exists,
+                 sample_provider_type, entity_formatter, balance_train_samples):
         assert(isinstance(skip_if_folder_exists, bool))
+        assert(isinstance(exp_io, BaseIOUtils))
+        assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        super(BertExperimentInputSerializer, self).__init__(experiment)
+        super(BertExperimentInputSerializerIterationHandler, self).__init__()
 
         self.__skip_if_folder_exists = skip_if_folder_exists
         self.__entity_formatter = entity_formatter
         self.__sample_provider_type = sample_provider_type
         self.__balance_train_samples = balance_train_samples
         self.__labels_formatter = labels_formatter
+        self.__exp_io = exp_io
+        self.__exp_ctx = exp_ctx
+        self.__doc_ops = doc_ops
+        self.__opin_ops = opin_ops
 
     # region private methods
 
@@ -41,7 +44,7 @@ class BertExperimentInputSerializer(ExperimentEngine):
         sample_rows_provider = create_bert_sample_provider(
             labels_formatter=self.__labels_formatter,
             provider_type=self.__sample_provider_type,
-            label_scaler=self._experiment.ExperimentContext.LabelsScaler,
+            label_scaler=self.__exp_ctx.LabelsScaler,
             entity_formatter=self.__entity_formatter)
 
         # Create repositories
@@ -57,59 +60,55 @@ class BertExperimentInputSerializer(ExperimentEngine):
         # Create opinion provider
         opinion_provider = InputTextOpinionProvider.create(
             value_to_group_id_func=None,
-            parse_news_func=lambda doc_id: self._experiment.DocumentOperations.parse_doc(doc_id),
-            iter_doc_opins=lambda doc_id:
-                self._experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
-            terms_per_context=self._experiment.ExperimentContext.TermsPerContext)
+            parse_news_func=lambda doc_id: self.__doc_ops.parse_doc(doc_id),
+            iter_doc_opins=lambda doc_id: self.__opin_ops.iter_opinions_for_extraction(
+                doc_id=doc_id, data_type=data_type),
+            terms_per_context=self.__exp_ctx.TermsPerContext)
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
-                               doc_ids=list(self._experiment.DocumentOperations.iter_doc_ids(data_type)),
+                               doc_ids=list(self.__doc_ops.iter_doc_ids(data_type)),
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
-                              doc_ids=list(self._experiment.DocumentOperations.iter_doc_ids(data_type)),
+                              doc_ids=list(self.__doc_ops.iter_doc_ids(data_type)),
                               desc="sample")
 
-        if self._experiment.ExperimentIO.balance_samples(data_type=data_type, balance=self.__balance_train_samples):
+        if self.__exp_io.balance_samples(data_type=data_type, balance=self.__balance_train_samples):
             samples_repo.balance()
 
         # Save repositories
         samples_repo.write(
-            target=self._experiment.ExperimentIO.create_samples_writer_target(data_type),
-            writer=self._experiment.ExperimentIO.create_samples_writer())
+            target=self.__exp_io.create_samples_writer_target(data_type),
+            writer=self.__exp_io.create_samples_writer())
 
         opinions_repo.write(
-            target=self._experiment.ExperimentIO.create_opinions_writer_target(data_type),
-            writer=self._experiment.ExperimentIO.create_opinions_writer())
+            target=self.__exp_io.create_opinions_writer_target(data_type),
+            writer=self.__exp_io.create_opinions_writer())
 
     # endregion
 
     # region protected methods
 
-    def _handle_iteration(self, it_index):
+    def on_iteration(self, iter_index):
         """ Performing data serialization for a particular iteration
         """
-        for data_type in self._experiment.ExperimentContext.DataFolding.iter_supported_data_types():
+        for data_type in self.__exp_ctx.DataFolding.iter_supported_data_types():
             self.__handle_iteration(data_type)
 
-    def _before_running(self):
-        self._logger.info("Perform annotation ...")
+    def on_before_iteration(self):
+        for data_type in self.__exp_ctx.DataFolding.iter_supported_data_types():
 
-        for data_type in self._experiment.ExperimentContext.DataFolding.iter_supported_data_types():
-
-            collections_it = self._experiment.ExperimentContext.Annotator.iter_annotated_collections(
-                data_type=data_type,
-                opin_ops=self._experiment.OpinionOperations,
-                doc_ops=self._experiment.DocumentOperations)
+            collections_it = self.__exp_ctx.Annotator.iter_annotated_collections(
+                data_type=data_type, opin_ops=self.__opin_ops, doc_ops=self.__doc_ops)
 
             for doc_id, collection in collections_it:
 
-                target = self._experiment.ExperimentIO.create_opinion_collection_target(
+                target = self.__exp_io.create_opinion_collection_target(
                     doc_id=doc_id,
                     data_type=data_type)
 
-                self._experiment.write_opinion_collection(
+                self.__exp_io.write_opinion_collection(
                     collection=collection,
                     target=target,
                     labels_formatter=self.__labels_formatter)

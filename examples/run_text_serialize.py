@@ -111,7 +111,10 @@ def run_serializer(sentences_text_list, terms_per_context, embedding_path, entit
         synonyms=synonyms,
         neutral_labels_fmt=labels_fmt)
 
-    NetworkInputHelper.prepare(experiment=experiment,
+    NetworkInputHelper.prepare(exp_ctx=experiment.ExperimentContext,
+                               exp_io=experiment.ExperimentIO,
+                               doc_ops=experiment.DocumentOperations,
+                               opin_ops=experiment.OpinionOperations,
                                terms_per_context=terms_per_context,
                                balance=False,
                                value_to_group_id_func=synonyms.get_synonym_group_index)

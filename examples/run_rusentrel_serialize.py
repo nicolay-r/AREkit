@@ -3,15 +3,16 @@ import argparse
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.folding.types import FoldingType
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
-from arekit.contrib.experiment_rusentrel.factory import create_experiment, create_folding
+from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.networks.run_serializer import NetworksExperimentInputSerializer
+from arekit.contrib.networks.handlers.serializer import NetworksInputSerializerExperimentIteration
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -97,11 +98,16 @@ if __name__ == '__main__':
         load_ruattitude_docs=True)
 
     # Performing serialization process.
-    serialization_engine = NetworksExperimentInputSerializer(
-        experiment=experiment,
+    serialization_handler = NetworksInputSerializerExperimentIteration(
+        exp_ctx=experiment.ExperimentContext,
+        doc_ops=experiment.DocumentOperations,
+        opin_ops=experiment.OpinionOperations,
+        exp_io=experiment.ExperimentIO,
         balance=use_balancing,
         force_serialize=True,
         skip_folder_if_exists=True,
         value_to_group_id_func=synonyms_collection.get_synonym_group_index)
 
-    serialization_engine.run()
+    engine = ExperimentEngine(exp_ctx.DataFolding)
+
+    engine.run(handlers=[serialization_handler])

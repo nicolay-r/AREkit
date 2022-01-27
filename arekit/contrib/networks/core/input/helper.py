@@ -9,7 +9,6 @@ from arekit.common.data.input.providers.rows.opinions import BaseOpinionsRowProv
 from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
@@ -47,6 +46,8 @@ class NetworkInputHelper(object):
 
     @staticmethod
     def __create_samples_repo(exp_ctx, term_embedding_pairs):
+        assert(isinstance(exp_ctx, NetworkSerializationContext))
+
         sample_row_provider = NetworkSampleRowProvider(
             label_provider=exp_ctx.LabelProvider,
             text_provider=NetworkInputHelper.__create_text_provider(
@@ -75,81 +76,80 @@ class NetworkInputHelper(object):
         dict_data[term] = emb_vector
 
     @staticmethod
-    def __perform_writing(experiment, data_type, opinion_provider,
+    def __perform_writing(exp_ctx, exp_io, doc_ops, data_type, opinion_provider,
                           terms_per_context, balance, term_embedding_pairs):
         """
         Perform experiment input serialization
         """
-        assert(isinstance(experiment, BaseExperiment))
         assert(isinstance(data_type, DataType))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
 
         opinions_repo = NetworkInputHelper.__create_opinions_repo()
-        samples_repo = NetworkInputHelper.__create_samples_repo(
-            exp_ctx=experiment.ExperimentContext,
-            term_embedding_pairs=term_embedding_pairs)
+        samples_repo = NetworkInputHelper.__create_samples_repo(exp_ctx=exp_ctx,
+                                                                term_embedding_pairs=term_embedding_pairs)
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
-                               doc_ids=list(experiment.DocumentOperations.iter_doc_ids(data_type)),
+                               doc_ids=list(doc_ops.iter_doc_ids(data_type)),
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
-                              doc_ids=list(experiment.DocumentOperations.iter_doc_ids(data_type)),
+                              doc_ids=list(doc_ops.iter_doc_ids(data_type)),
                               desc="sample")
 
-        if experiment.ExperimentIO.balance_samples(data_type=data_type, balance=balance):
+        if exp_io.balance_samples(data_type=data_type, balance=balance):
             samples_repo.balance()
 
         # Write repositories
-        samples_repo.write(writer=experiment.ExperimentIO.create_samples_writer(),
-                           target=experiment.ExperimentIO.create_samples_writer_target(data_type=data_type))
+        samples_repo.write(writer=exp_io.create_samples_writer(),
+                           target=exp_io.create_samples_writer_target(data_type=data_type))
 
-        opinions_repo.write(writer=experiment.ExperimentIO.create_opinions_writer(),
-                            target=experiment.ExperimentIO.create_opinions_writer_target(data_type=data_type))
+        opinions_repo.write(writer=exp_io.create_opinions_writer(),
+                            target=exp_io.create_opinions_writer_target(data_type=data_type))
 
     @staticmethod
-    def __perform_annotation(experiment, data_type):
-        collections_it = experiment.ExperimentContext.Annotator.iter_annotated_collections(
-            data_type=data_type,
-            doc_ops=experiment.DocumentOperations,
-            opin_ops=experiment.OpinionOperations)
+    def __perform_annotation(exp_ctx, exp_io, doc_ops, opin_ops, data_type):
+        collections_it = exp_ctx.Annotator.iter_annotated_collections(
+            data_type=data_type, doc_ops=doc_ops, opin_ops=opin_ops)
 
         for doc_id, collection in collections_it:
-            target = experiment.ExperimentIO.create_opinion_collection_target(doc_id=doc_id,
-                                                                              data_type=data_type)
-            experiment.ExperimentIO.write_opinion_collection(
-                collection=collection,
-                target=target,
-                labels_formatter=experiment.OpinionOperations.LabelsFormatter)
+            target = exp_io.create_opinion_collection_target(doc_id=doc_id, data_type=data_type)
+            exp_io.write_opinion_collection(collection=collection,
+                                            target=target,
+                                            labels_formatter=opin_ops.LabelsFormatter)
 
     # endregion
 
     @staticmethod
-    def prepare(experiment, terms_per_context, balance, value_to_group_id_func):
-        assert(isinstance(experiment, BaseExperiment))
+    def prepare(exp_ctx, exp_io, doc_ops, opin_ops, terms_per_context, balance, value_to_group_id_func):
+        assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
 
         term_embedding_pairs = collections.OrderedDict()
 
-        for data_type in experiment.ExperimentContext.DataFolding.iter_supported_data_types():
+        for data_type in exp_ctx.DataFolding.iter_supported_data_types():
 
             # Perform annotation
-            NetworkInputHelper.__perform_annotation(experiment=experiment,
+            NetworkInputHelper.__perform_annotation(exp_ctx=exp_ctx,
+                                                    exp_io=exp_io,
+                                                    doc_ops=doc_ops,
+                                                    opin_ops=opin_ops,
                                                     data_type=data_type)
 
             # Compose opinion provider
             opinion_provider = InputTextOpinionProvider.create(
                 value_to_group_id_func=value_to_group_id_func,
-                parse_news_func=lambda doc_id: experiment.DocumentOperations.parse_doc(doc_id),
+                parse_news_func=lambda doc_id: doc_ops.parse_doc(doc_id),
                 iter_doc_opins=lambda doc_id:
-                    experiment.OpinionOperations.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
+                    opin_ops.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
                 terms_per_context=terms_per_context)
 
             NetworkInputHelper.__perform_writing(
-                experiment=experiment,
+                exp_ctx=exp_ctx,
+                exp_io=exp_io,
+                doc_ops=doc_ops,
                 data_type=data_type,
                 opinion_provider=opinion_provider,
                 terms_per_context=terms_per_context,
@@ -162,7 +162,7 @@ class NetworkInputHelper(object):
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
 
         # Save embedding matrix
-        experiment.ExperimentIO.save_embedding(data=embedding_matrix)
-        experiment.ExperimentIO.save_vocab(data=vocab)
+        exp_io.save_embedding(data=embedding_matrix)
+        exp_io.save_vocab(data=vocab)
 
         del embedding_matrix

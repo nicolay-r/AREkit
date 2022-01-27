@@ -1,6 +1,4 @@
-import logging
-
-from arekit.common.experiment.api.base import BaseExperiment
+from arekit.common.folding.base import BaseDataFolding
 
 
 class ExperimentEngine(object):
@@ -9,21 +7,10 @@ class ExperimentEngine(object):
         iteration in and runs handler during the latter.
     """
 
-    def __init__(self, experiment):
-        assert(isinstance(experiment, BaseExperiment))
-        self._experiment = experiment
-        self._logger = self.__create_logger()
+    def __init__(self, data_folding):
+        assert(isinstance(data_folding, BaseDataFolding))
+        self.__data_folding = data_folding
         self.__handlers = None
-
-    @staticmethod
-    def __create_logger():
-        stream_handler = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s %(levelname)8s %(name)s | %(message)s')
-        stream_handler.setFormatter(formatter)
-        logger = logging.getLogger(__name__)
-        logger.setLevel(logging.INFO)
-        logger.addHandler(stream_handler)
-        return logger
 
     def __call_all_handlers(self, call_func):
         assert(callable(call_func))
@@ -56,6 +43,6 @@ class ExperimentEngine(object):
         """
         self.__handlers = handlers
         self._before_running()
-        for iter_index, _ in enumerate(self._experiment.ExperimentContext.DataFolding.iter_states()):
+        for iter_index, _ in enumerate(self.__data_folding.iter_states()):
             self._handle_iteration(iter_index)
         self._after_running()

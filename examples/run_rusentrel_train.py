@@ -1,10 +1,10 @@
 import argparse
 
 from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
-from arekit.common.experiment.handler import ExperimentIterationHandler
+from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.factory import create_experiment, create_folding
+from arekit.contrib.experiment_rusentrel.factory import create_folding
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.callback.hidden import HiddenStatesWriterCallback
 from arekit.contrib.networks.core.callback.hidden_input import InputHiddenStatesWriterCallback
@@ -12,7 +12,7 @@ from arekit.contrib.networks.core.callback.stat import TrainingStatProviderCallb
 from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterCallback
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.np_utils.writer import NpzDataWriter
-from arekit.contrib.networks.run_training import NetworksTrainingEngine
+from arekit.contrib.networks.handlers.training import NetworksTrainingIterationHandler
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
@@ -106,13 +106,7 @@ if __name__ == '__main__':
                                         name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix),
                                         data_folding=data_folding)
 
-    experiment = create_experiment(exp_type=exp_type,
-                                   exp_ctx=exp_ctx,
-                                   exp_io=CustomRuSentRelNetworkExperimentIO(exp_ctx),
-                                   folding_type=folding_type,
-                                   rusentrel_version=rusentrel_version,
-                                   ruattitudes_version=ra_version,
-                                   load_ruattitude_docs=False)
+    exp_io = CustomRuSentRelNetworkExperimentIO(exp_ctx)
 
     full_model_name = Common.create_full_model_name(model_name=model_name,
                                                     input_type=model_input_type)
@@ -167,14 +161,16 @@ if __name__ == '__main__':
         InputHiddenStatesWriterCallback(log_dir=model_target_dir, writer=data_writer)
     ]
 
-    training_engine = NetworksTrainingEngine(load_model=model_load_dir is not None,
-                                             experiment=experiment,
-                                             create_network_func=network_func,
-                                             config=config,
-                                             bags_collection_type=bags_collection_type,
-                                             network_callbacks=nework_callbacks,
-                                             training_epochs=epochs_count)
+    training_handler = NetworksTrainingIterationHandler(
+        load_model=model_load_dir is not None,
+        exp_ctx=exp_ctx,
+        exp_io=exp_io,
+        create_network_func=network_func,
+        config=config,
+        bags_collection_type=bags_collection_type,
+        network_callbacks=nework_callbacks,
+        training_epochs=epochs_count)
 
-    training_engine.run(handlers=[
-        ExperimentIterationHandler(exp_ctx=exp_ctx)
-    ])
+    engine = ExperimentEngine(exp_ctx.DataFolding)
+
+    engine.run(handlers=[training_handler])

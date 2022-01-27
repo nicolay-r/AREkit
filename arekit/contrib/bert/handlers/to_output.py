@@ -2,9 +2,11 @@ import logging
 
 from arekit.common.data import const
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
-from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
 from arekit.common.experiment.api.enums import BaseDocumentTag
-from arekit.common.experiment.engine import ExperimentEngine
+from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_opin import OpinionOperations
+from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
@@ -12,24 +14,30 @@ from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item_handle import HandleIterPipelineItem
 from arekit.contrib.bert.output.eval_helper import EvalHelper
+from arekit.contrib.experiment_rusentrel.model_io.bert import RuSentRelExperimentBertIOUtils
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-# TODO. 262. Refactor as handler (weird inheritance, limits capabilities).
-class LanguageModelExperimentEvaluator(ExperimentEngine):
+class LanguageModelEvaluationIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, experiment, data_type, eval_helper, max_epochs_count,
+    def __init__(self, exp_io, doc_ops, opin_ops, data_type, eval_helper, max_epochs_count,
                  label_scaler, labels_formatter, eval_last_only=True):
+        assert(isinstance(exp_io, RuSentRelExperimentBertIOUtils))
+        assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(opin_ops, OpinionOperations))
+        assert(isinstance(data_type, DataType))
         assert(isinstance(eval_helper, EvalHelper))
         assert(isinstance(max_epochs_count, int))
         assert(isinstance(eval_last_only, bool))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+        super(LanguageModelEvaluationIterationHandler, self).__init__()
 
-        super(LanguageModelExperimentEvaluator, self).__init__(experiment=experiment)
-
+        self.__exp_io = exp_io
+        self.__doc_ops = doc_ops
+        self.__opin_ops = opin_ops
         self.__data_type = data_type
         self.__eval_helper = eval_helper
         self.__max_epochs_count = max_epochs_count
@@ -38,12 +46,10 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         self.__label_scaler = label_scaler
 
     def __run_pipeline(self, epoch_index, iter_index):
-        exp_io = self._experiment.ExperimentIO
-        doc_ops = self._experiment.DocumentOperations
 
-        cmp_doc_ids_set = set(doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
+        cmp_doc_ids_set = set(self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
 
-        output_storage = exp_io.get_output_storage(
+        output_storage = self.__exp_io.get_output_storage(
             epoch_index=epoch_index, iter_index=iter_index, eval_helper=self.__eval_helper)
 
         # We utilize google bert format, where every row
@@ -54,19 +60,19 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         ppl = output_to_opinion_collections_pipeline(
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
                 doc_id=doc_id,
-                opinions_view=exp_io.create_opinions_view(self.__data_type)),
+                opinions_view=self.__exp_io.create_opinions_view(self.__data_type)),
             doc_ids_set=cmp_doc_ids_set,
-            create_opinion_collection_func=self._experiment.OpinionOperations.create_opinion_collection,
+            create_opinion_collection_func=self.__opin_ops.create_opinion_collection,
             labels_scaler=self.__label_scaler,
             label_calc_mode=LabelCalculationMode.AVERAGE)
 
         # Writing opinion collection.
         save_item = HandleIterPipelineItem(
             lambda data:
-            exp_io.write_opinion_collection(
+            self.__exp_io.write_opinion_collection(
                 collection=data[1],
                 labels_formatter=self.__labels_formatter,
-                target=exp_io.create_result_opinion_collection_target(
+                target=self.__exp_io.create_result_opinion_collection_target(
                     data_type=self.__data_type,
                     epoch_index=epoch_index,
                     doc_id=data[0])))
@@ -82,19 +88,10 @@ class LanguageModelExperimentEvaluator(ExperimentEngine):
         for _ in pipeline_ctx.provide("src"):
             pass
 
-    def _handle_iteration(self, iter_index):
-        exp_ctx = self._experiment.ExperimentContext
-        assert(isinstance(exp_ctx, ExperimentTrainingContext))
-        super(LanguageModelExperimentEvaluator, self)._handle_iteration(iter_index)
+    def on_iteration(self, iter_index):
 
-        if not self._experiment.ExperimentIO.try_prepare():
+        if not self.__exp_io.try_prepare():
             return
 
         for epoch_index in reversed(list(range(self.__max_epochs_count))):
-
-            # Perform iteration related actions.
             self.__run_pipeline(epoch_index=epoch_index, iter_index=iter_index)
-
-            # Evaluate.
-            result = self._experiment.evaluate(data_type=self.__data_type, epoch_index=epoch_index)
-            result.calculate()
