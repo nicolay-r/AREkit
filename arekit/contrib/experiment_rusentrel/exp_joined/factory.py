@@ -16,7 +16,7 @@ from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinion
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -38,6 +38,7 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type,
                                           rusentrel_version=rusentrel_version,
                                           load_docs=load_docs,
                                           # TODO. This is incorrect!!! (Here we pass all the documents.
+                                          # TODO. but it is expected to be a RuSentRel related one)
                                           rusentrel_doc_ids=exp_ctx.DataFolding.iter_doc_ids())
 
     # init text parser.
@@ -61,6 +62,7 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type,
 
     # Init experiment doc_ops and opin_ops
     doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
+        rusentrel_doc_ids=set(RuSentRelIOUtils.iter_test_indices(rusentrel_version)),
         rusentrel_doc=rusentrel_doc,
         get_ruattitudes_doc=optional_data.get_or_load_ruattitudes_doc_ops,
         text_parser=text_parser)

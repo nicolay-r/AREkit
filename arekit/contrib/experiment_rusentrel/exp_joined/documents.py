@@ -5,7 +5,8 @@ from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocume
 
 class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
 
-    def __init__(self, rusentrel_doc, get_ruattitudes_doc, text_parser):
+    def __init__(self, rusentrel_doc_ids, rusentrel_doc, get_ruattitudes_doc, text_parser):
+        assert(isinstance(rusentrel_doc_ids, set))
         assert(isinstance(rusentrel_doc, RuSentrelDocumentOperations))
         assert(callable(get_ruattitudes_doc))
 
@@ -13,26 +14,17 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
         # The latter utilized in experiment as `main`, while
         # RuAttitude data-folding considered as `auxiliary`.
         super(RuSentrelWithRuAttitudesDocumentOperations, self).__init__(
-            folding=rusentrel_doc.DataFolding,
-            text_parser=text_parser)
+            # Note: remporary hack in terms of exp_ctx == None.
+            exp_ctx=None, text_parser=text_parser)
 
         self.__rusentrel_doc = rusentrel_doc
+        self.__rusentrel_doc_ids = rusentrel_doc_ids
         self.__get_ruattitudes_doc = get_ruattitudes_doc
 
     # region private methods
 
     def __select_doc_ops(self, doc_id):
-        if self.__rusentrel_doc.DataFolding.contains_doc_id(doc_id):
-            return self.__rusentrel_doc
-
-        ruattitudes_doc = self.__get_ruattitudes_doc()
-        assert(isinstance(ruattitudes_doc, RuAttitudesDocumentOperations))
-
-        if ruattitudes_doc.DataFolding.contains_doc_id(doc_id):
-            return ruattitudes_doc
-
-        raise Exception(
-            "Doc-id {} has not been found both in RuSentRel and RuAttitudes related doc formatters.".format(doc_id))
+        return self.__rusentrel_doc if doc_id in self.__rusentrel_doc_ids else self.__get_ruattitudes_doc()
 
     # endregion
 

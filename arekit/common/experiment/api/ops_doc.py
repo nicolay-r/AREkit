@@ -9,7 +9,7 @@ class DocumentOperations(object):
     """
 
     def __init__(self, exp_ctx, text_parser=None):
-        assert(isinstance(exp_ctx, ExperimentContext))
+        assert(isinstance(exp_ctx, ExperimentContext) or exp_ctx is None)
         assert(isinstance(text_parser, BaseTextParser) or text_parser is None)
         self._exp_ctx = exp_ctx
         self.__text_parser = text_parser
