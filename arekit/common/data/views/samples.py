@@ -14,7 +14,7 @@ class BaseSampleStorageView(object):
         self.__row_ids_provider = row_ids_provider
         self._storage = storage
 
-    # TODO. #240 This is just a wrapper over storage.
+    # TODO. #269 This is just a particular wrapper over storage.
     def iter_rows(self, handle_rows):
         assert(callable(handle_rows) or handle_rows is None)
 
@@ -25,6 +25,7 @@ class BaseSampleStorageView(object):
             else:
                 yield handle_rows(row)
 
+    # TODO. #269 This is just a particular wrapper over storage.
     def iter_rows_linked_by_text_opinions(self):
         undefined = -1
 
