@@ -68,6 +68,8 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
         storage=storage)
 
     # Convert output to result.
+    # TODO. #270 -- this might be removed since it will be generalized operation of the experiment
+    # TODO. that might be optionally added.
     ppl = output_to_opinion_collections_pipeline(
         iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
             doc_id=doc_id,
@@ -98,11 +100,6 @@ def evaluate_model(experiment, label_scaler, data_type, epoch_index, model,
     # iterate over the result.
     for _ in pipeline_ctx.provide("src"):
         pass
-
-    # TODO. Callback evaluator.
-    # TODO. This is an experiment callback.
-    result = experiment.evaluate(data_type=data_type,
-                                 epoch_index=epoch_index)
 
 
 def __calculate_doc_id_by_sample_id_dict(rows_iter):

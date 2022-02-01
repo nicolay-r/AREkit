@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
+# TODO. #270 -- to common experiment iteration handler.
 class LanguageModelEvaluationIterationHandler(ExperimentIterationHandler):
 
     def __init__(self, exp_io, doc_ops, opin_ops, data_type, eval_helper, max_epochs_count,
@@ -45,6 +46,8 @@ class LanguageModelEvaluationIterationHandler(ExperimentIterationHandler):
         self.__labels_formatter = labels_formatter
         self.__label_scaler = label_scaler
 
+    # TODO. #270 -- this might be a part of the general experiment iteration handler.
+    # TODO. Which converts output data into opinion collecitons.
     def __run_pipeline(self, epoch_index, iter_index):
 
         cmp_doc_ids_set = set(self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
