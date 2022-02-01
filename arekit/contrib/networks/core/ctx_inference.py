@@ -95,6 +95,7 @@ class InferenceContext(object):
                              bag_size, input_shapes, desc=""):
         assert(isinstance(samples_view, BaseSampleStorageView))
 
+        # TODO. #268 Return this parameter.
         bags_collection = bags_collection_type.from_formatted_samples(
             formatted_samples_iter=samples_view.iter_rows_linked_by_text_opinions(),
             desc=desc,
@@ -119,6 +120,7 @@ class InferenceContext(object):
         rows_it = samples_view.iter_rows(
             handle_rows=lambda row: InferenceContext.__extract_labeled_rows(row))
 
+        # TODO. #268 Return this parameter within a different function.
         labeled_sample_row_ids = list(rows_it)
 
         return bags_collection, labeled_sample_row_ids
