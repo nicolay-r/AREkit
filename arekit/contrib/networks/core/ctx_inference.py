@@ -59,7 +59,7 @@ class InferenceContext(object):
             samples_view = create_samples_view_func(data_type)
 
             # Extracting such information from serialized files.
-            bags_collection, uint_labeled_sample_row_ids = self.__read_for_data_type(
+            bags_collection = self.__read_for_data_type(
                 samples_view=samples_view,
                 is_external_vocab=has_model_predefined_state,
                 bags_collection_type=bags_collection_type,
@@ -68,9 +68,11 @@ class InferenceContext(object):
                 input_shapes=input_shapes,
                 desc="Filling bags collection [{}]".format(data_type))
 
+            uint_labeled_sample_row_ids = self.__get_labeled_sample_row_ids(samples_view)
+
             # Saving into dictionaries.
             self.__bags_collections_dict[data_type] = bags_collection
-            self.__sample_label_pairs_dict[data_type] = list(uint_labeled_sample_row_ids)
+            self.__sample_label_pairs_dict[data_type] = uint_labeled_sample_row_ids
 
             if data_type == DataType.Train:
                 self.__train_stat_uint_labeled_sample_row_ids = uint_labeled_sample_row_ids
@@ -95,8 +97,7 @@ class InferenceContext(object):
                              bag_size, input_shapes, desc=""):
         assert(isinstance(samples_view, BaseSampleStorageView))
 
-        # TODO. #268 Return this parameter.
-        bags_collection = bags_collection_type.from_formatted_samples(
+        return bags_collection_type.from_formatted_samples(
             formatted_samples_iter=samples_view.iter_rows_linked_by_text_opinions(),
             desc=desc,
             bag_size=bag_size,
@@ -117,13 +118,10 @@ class InferenceContext(object):
                 input_shapes=input_shapes,
                 pos_tags=row.PartOfSpeechTags))
 
-        rows_it = samples_view.iter_rows(
-            handle_rows=lambda row: InferenceContext.__extract_labeled_rows(row))
-
-        # TODO. #268 Return this parameter within a different function.
-        labeled_sample_row_ids = list(rows_it)
-
-        return bags_collection, labeled_sample_row_ids
+    @staticmethod
+    def __get_labeled_sample_row_ids(samples_view):
+        rows_it = samples_view.iter_rows(handle_rows=lambda row: InferenceContext.__extract_labeled_rows(row))
+        return list(rows_it)
 
     @staticmethod
     def __extract_labeled_rows(row):
