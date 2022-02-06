@@ -203,80 +203,80 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
         """
         prefix = 'ctx_'
 
-        self.__input[InputSample.I_X_INDS] = tf.placeholder(
+        self.__input[InputSample.I_X_INDS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_X_INDS)
 
-        self.__input[InputSample.I_SUBJ_DISTS] = tf.placeholder(
+        self.__input[InputSample.I_SUBJ_DISTS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_SUBJ_DISTS)
 
-        self.__input[InputSample.I_SYN_SUBJ_INDS] = tf.placeholder(
+        self.__input[InputSample.I_SYN_SUBJ_INDS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.SynonymsPerContext],
             name=prefix + InputSample.I_SYN_SUBJ_INDS)
 
-        self.__input[InputSample.I_NEAREST_SUBJ_DISTS] = tf.placeholder(
+        self.__input[InputSample.I_NEAREST_SUBJ_DISTS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_NEAREST_SUBJ_DISTS)
 
-        self.__input[InputSample.I_OBJ_DISTS] = tf.placeholder(
+        self.__input[InputSample.I_OBJ_DISTS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_OBJ_DISTS)
 
-        self.__input[InputSample.I_SYN_OBJ_INDS] = tf.placeholder(
+        self.__input[InputSample.I_SYN_OBJ_INDS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.SynonymsPerContext],
             name=prefix + InputSample.I_SYN_OBJ_INDS)
 
-        self.__input[InputSample.I_NEAREST_OBJ_DISTS] = tf.placeholder(
+        self.__input[InputSample.I_NEAREST_OBJ_DISTS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_NEAREST_OBJ_DISTS)
 
-        self.__input[InputSample.I_TERM_TYPE] = tf.placeholder(
+        self.__input[InputSample.I_TERM_TYPE] = tf.compat.v1.placeholder(
             dtype=tf.float32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_TERM_TYPE)
 
-        self.__input[InputSample.I_POS_INDS] = tf.placeholder(
+        self.__input[InputSample.I_POS_INDS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_POS_INDS)
 
-        self.__input[InputSample.I_SUBJ_IND] = tf.placeholder(
+        self.__input[InputSample.I_SUBJ_IND] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize],
             name=prefix + InputSample.I_SUBJ_IND)
 
-        self.__input[InputSample.I_OBJ_IND] = tf.placeholder(
+        self.__input[InputSample.I_OBJ_IND] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize],
             name=prefix + InputSample.I_OBJ_IND)
 
-        self.__input[InputSample.I_FRAME_SENT_ROLES] = tf.placeholder(
+        self.__input[InputSample.I_FRAME_SENT_ROLES] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.TermsPerContext],
             name=prefix + InputSample.I_FRAME_SENT_ROLES)
 
-        self.__input[InputSample.I_FRAME_INDS] = tf.placeholder(
+        self.__input[InputSample.I_FRAME_INDS] = tf.compat.v1.placeholder(
             dtype=tf.int32,
             shape=[self.__cfg.BatchSize, self.__cfg.FramesPerContext],
             name=prefix + InputSample.I_FRAME_INDS)
 
-        self.__y = tf.placeholder(dtype=tf.int32,
-                                  shape=[self.__cfg.BagsPerMinibatch],
-                                  name=prefix + MiniBatch.I_LABELS)
+        self.__y = tf.compat.v1.placeholder(dtype=tf.int32,
+                                            shape=[self.__cfg.BagsPerMinibatch],
+                                            name=prefix + MiniBatch.I_LABELS)
 
-        self.__dropout_keep_prob = tf.placeholder(dtype=tf.float32,
-                                                  name="ctx_dropout_keep_prob")
+        self.__dropout_keep_prob = tf.compat.v1.placeholder(dtype=tf.float32,
+                                                            name="ctx_dropout_keep_prob")
 
-        self.__embedding_dropout_keep_prob = tf.placeholder(dtype=tf.float32,
-                                                            name="cxt_emb_dropout_keep_prob")
+        self.__embedding_dropout_keep_prob = tf.compat.v1.placeholder(dtype=tf.float32,
+                                                                      name="cxt_emb_dropout_keep_prob")
 
     def init_cost(self, logits_unscaled_dropped):
         with tf.name_scope("cost"):
@@ -371,22 +371,25 @@ class SingleInstanceNeuralNetwork(NeuralNetwork):
                                       dtype=tf.float32,
                                       shape=self.__cfg.TermEmbeddingShape)
 
-        self.__dist_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=self.__cfg.EmbeddingInitializer,
-                                          shape=[self.__cfg.TermsPerContext, self.__cfg.DistanceEmbeddingSize],
-                                          trainable=True,
-                                          name="dist_emb")
+        self.__dist_emb = tf.compat.v1.get_variable(
+            dtype=tf.float32,
+            initializer=self.__cfg.EmbeddingInitializer,
+            shape=[self.__cfg.TermsPerContext, self.__cfg.DistanceEmbeddingSize],
+            trainable=True,
+            name="dist_emb")
 
-        self.__pos_emb = tf.get_variable(dtype=tf.float32,
-                                         initializer=self.__cfg.EmbeddingInitializer,
-                                         shape=[self.__cfg.PosCount, self.__cfg.PosEmbeddingSize],
-                                         trainable=True,
-                                         name="pos_emb")
+        self.__pos_emb = tf.compat.v1.get_variable(
+            dtype=tf.float32,
+            initializer=self.__cfg.EmbeddingInitializer,
+            shape=[self.__cfg.PosCount, self.__cfg.PosEmbeddingSize],
+            trainable=True,
+            name="pos_emb")
 
-        self.__sent_emb = tf.get_variable(dtype=tf.float32,
-                                          initializer=self.__cfg.EmbeddingInitializer,
-                                          shape=[3, self.__cfg.SentimentEmbeddingSize],
-                                          trainable=True,
-                                          name="sent_emb")
+        self.__sent_emb = tf.compat.v1.get_variable(
+            dtype=tf.float32,
+            initializer=self.__cfg.EmbeddingInitializer,
+            shape=[3, self.__cfg.SentimentEmbeddingSize],
+            trainable=True,
+            name="sent_emb")
 
     # endregion

@@ -62,34 +62,34 @@ class IANBase(FullyConnectedLayer):
 
     def init_input(self):
         super(IANBase, self).init_input()
-        self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
-                                                      name='ctx_' + "dropout_rnn_keep_prob")
+        self.__dropout_rnn_keep_prob = tf.compat.v1.placeholder(dtype=tf.float32,
+                                                                name='ctx_' + "dropout_rnn_keep_prob")
 
     def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, IANBaseConfig))
 
-        self.__w_a = tf.get_variable(
+        self.__w_a = tf.compat.v1.get_variable(
             name=self.ASPECT_W,
             shape=[self.Config.HiddenSize, self.Config.HiddenSize],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.__w_c = tf.get_variable(
+        self.__w_c = tf.compat.v1.get_variable(
             name=self.CONTEXT_W,
             shape=[self.Config.HiddenSize, self.Config.HiddenSize],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.__b_a = tf.get_variable(
+        self.__b_a = tf.compat.v1.get_variable(
             name=self.ASPECT_B,
             shape=[self.Config.MaxAspectLength, 1],
             initializer=self.Config.BiasInitializer,
             regularizer=self.Config.LayerRegularizer,
             trainable=True)
 
-        self.__b_c = tf.get_variable(
+        self.__b_c = tf.compat.v1.get_variable(
             name=self.CONTEXT_B,
             shape=[self.Config.MaxContextLength, 1],
             initializer=self.Config.BiasInitializer,

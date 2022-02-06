@@ -60,7 +60,7 @@ class PiecewiseCNN(VanillaCNN):
         assert(isinstance(self.Config, CNNConfig))
         super(PiecewiseCNN, self).init_body_dependent_hidden_states()
 
-        self.Hidden[self.H_W] = tf.get_variable(
+        self.Hidden[self.H_W] = tf.compat.v1.get_variable(
             name='PCNN_{}'.format(self.H_W),
             shape=[self.ContextEmbeddingSize, self.Config.HiddenSize],
             initializer=self.Config.WeightInitializer,

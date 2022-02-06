@@ -83,7 +83,7 @@ class VanillaCNN(SingleInstanceNeuralNetwork):
 
     def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
-        self.__hidden[self.H_conv_filter] = tf.get_variable(
+        self.__hidden[self.H_conv_filter] = tf.compat.v1.get_variable(
             name=self.H_conv_filter,
             shape=[self.Config.WindowSize * self.TermEmbeddingSize, 1, self.Config.FiltersCount],
             initializer=self.Config.WeightInitializer,
@@ -93,27 +93,27 @@ class VanillaCNN(SingleInstanceNeuralNetwork):
     def init_logits_hidden_states(self):
         assert(isinstance(self.Config, CNNConfig))
 
-        self.__hidden[self.H_W] = tf.get_variable(
+        self.__hidden[self.H_W] = tf.compat.v1.get_variable(
             name=self.H_W,
             shape=[self.ContextEmbeddingSize, self.Config.HiddenSize],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32)
 
-        self.__hidden[self.H_b] = tf.get_variable(
+        self.__hidden[self.H_b] = tf.compat.v1.get_variable(
             name=self.H_b,
             shape=[self.Config.HiddenSize],
             initializer=self.Config.BiasInitializer,
             dtype=tf.float32)
 
-        self.__hidden[self.H_W2] = tf.get_variable(
+        self.__hidden[self.H_W2] = tf.compat.v1.get_variable(
             name=self.H_W2,
             shape=[self.Config.HiddenSize, self.Config.ClassesCount],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32)
 
-        self.__hidden[self.H_b2] = tf.get_variable(
+        self.__hidden[self.H_b2] = tf.compat.v1.get_variable(
             name=self.H_b2,
             shape=[self.Config.ClassesCount],
             initializer=self.Config.BiasInitializer,

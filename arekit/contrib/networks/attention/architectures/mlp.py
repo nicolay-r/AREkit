@@ -76,25 +76,25 @@ class MLPAttention(object):
 
     def init_hidden(self):
 
-        self.__hidden[self.H_W_we] = tf.get_variable(
+        self.__hidden[self.H_W_we] = tf.compat.v1.get_variable(
             name=self.H_W_we,
             shape=[2 * self.__term_embedding_size, self.__cfg.HiddenSize],
             initializer=self.__cfg.LayerInitializer,
             dtype=tf.float32)
 
-        self.__hidden[self.H_b_we] = tf.get_variable(
+        self.__hidden[self.H_b_we] = tf.compat.v1.get_variable(
             name=self.H_b_we,
             shape=[self.__cfg.HiddenSize],
             initializer=self.__cfg.LayerInitializer,
             dtype=tf.float32)
 
-        self.__hidden[self.H_W_a] = tf.get_variable(
+        self.__hidden[self.H_W_a] = tf.compat.v1.get_variable(
             name=self.H_W_a,
             shape=[self.__cfg.HiddenSize, 1],
             initializer=self.__cfg.LayerInitializer,
             dtype=tf.float32)
 
-        self.__hidden[self.H_b_a] = tf.get_variable(
+        self.__hidden[self.H_b_a] = tf.compat.v1.get_variable(
             name=self.H_b_a,
             shape=[1],
             initializer=self.__cfg.LayerInitializer,

@@ -23,13 +23,13 @@ class BaseMultiInstanceSingleMLP(BaseMultiInstanceNeuralNetwork):
 
     def init_hidden_states(self):
 
-        self.__hidden[self.H_W1] = tf.get_variable(
+        self.__hidden[self.H_W1] = tf.compat.v1.get_variable(
             shape=[self.EmbeddingSize, self.Config.ClassesCount],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer,
             dtype=tf.float32,
             name=self.H_W1)
-        self.__hidden[self.H_b1] = tf.get_variable(
+        self.__hidden[self.H_b1] = tf.compat.v1.get_variable(
             shape=[self.Config.ClassesCount],
             initializer=self.Config.BaseInitializer,
             regularizer=self.Config.LayerRegularizer,

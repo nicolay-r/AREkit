@@ -51,8 +51,8 @@ class SelfAttentionBiLSTM(SingleInstanceNeuralNetwork):
 
     def init_input(self):
         super(SelfAttentionBiLSTM, self).init_input()
-        self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
-                                                      name="ctx_dropout_rnn_keep_prob")
+        self.__dropout_rnn_keep_prob = tf.compat.v1.placeholder(dtype=tf.float32,
+                                                                name="ctx_dropout_rnn_keep_prob")
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
@@ -97,13 +97,13 @@ class SelfAttentionBiLSTM(SingleInstanceNeuralNetwork):
     def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
 
-        self.__W_s1 = tf.get_variable(
+        self.__W_s1 = tf.compat.v1.get_variable(
             name="W_s1",
             shape=[2 * self.Config.HiddenSize, self.Config.DASize],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.WeightInitializer)
 
-        self.__W_s2 = tf.get_variable(
+        self.__W_s2 = tf.compat.v1.get_variable(
             name="W_s2",
             shape=[self.Config.DASize, self.Config.RSize],
             regularizer=self.Config.LayerRegularizer,
@@ -112,25 +112,25 @@ class SelfAttentionBiLSTM(SingleInstanceNeuralNetwork):
     def init_logits_hidden_states(self):
         assert(isinstance(self.Config, SelfAttentionBiLSTMConfig))
 
-        self.__W_output = tf.get_variable(
+        self.__W_output = tf.compat.v1.get_variable(
             name="W_output",
             shape=[self.Config.FullyConnectionSize, self.Config.ClassesCount],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.WeightInitializer)
 
-        self.__b_output = tf.get_variable(
+        self.__b_output = tf.compat.v1.get_variable(
             name="b_output",
             shape=[self.Config.ClassesCount],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.BiasInitializer)
 
-        self.__W_fc = tf.get_variable(
+        self.__W_fc = tf.compat.v1.get_variable(
             name="W_fc",
             shape=[2 * self.Config.HiddenSize * self.Config.RSize, self.Config.FullyConnectionSize],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.WeightInitializer)
 
-        self.__b_fc = tf.get_variable(
+        self.__b_fc = tf.compat.v1.get_variable(
             name="b_fc",
             shape=[self.Config.FullyConnectionSize],
             regularizer=self.Config.LayerRegularizer,

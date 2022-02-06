@@ -65,9 +65,9 @@ def self_attention_by_z_yang(inputs, attention_size, time_major=False, return_al
     initializer = tf.random_normal_initializer(stddev=0.1)
 
     # Trainable parameters
-    w_omega = tf.get_variable(name="w_omega", shape=[hidden_size, attention_size], initializer=initializer)
-    b_omega = tf.get_variable(name="b_omega", shape=[attention_size], initializer=initializer)
-    u_omega = tf.get_variable(name="u_omega", shape=[attention_size], initializer=initializer)
+    w_omega = tf.compat.v1.get_variable(name="w_omega", shape=[hidden_size, attention_size], initializer=initializer)
+    b_omega = tf.compat.v1.get_variable(name="b_omega", shape=[attention_size], initializer=initializer)
+    u_omega = tf.compat.v1.get_variable(name="u_omega", shape=[attention_size], initializer=initializer)
 
     with tf.name_scope('v'):
         # Applying fully connected layer with non-linear activation to each of the B*T timestamps;

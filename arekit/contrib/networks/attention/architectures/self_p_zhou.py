@@ -17,9 +17,9 @@ def self_attention_by_peng_zhou(inputs):
 
     # Trainable parameters
     hidden_size = inputs.shape[2].value
-    u_omega = tf.get_variable(name="u_omega",
-                              shape=[hidden_size],
-                              initializer=tf.keras.initializers.glorot_normal())
+    u_omega = tf.compat.v1.get_variable(name="u_omega",
+                                        shape=[hidden_size],
+                                        initializer=tf.keras.initializers.glorot_normal())
 
     with tf.name_scope('v'):
         v = tf.tanh(inputs)

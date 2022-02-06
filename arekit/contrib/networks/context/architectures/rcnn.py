@@ -43,8 +43,8 @@ class RCNN(FullyConnectedLayer):
 
     def init_input(self):
         super(RCNN, self).init_input()
-        self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
-                                                      name="ctx_dropout_rnn_keep_prob")
+        self.__dropout_rnn_keep_prob = tf.compat.v1.placeholder(dtype=tf.float32,
+                                                                name="ctx_dropout_rnn_keep_prob")
 
     def modify_rnn_outputs_optional(self, output_fw, output_bw):
         # Nothing modifies
@@ -92,13 +92,13 @@ class RCNN(FullyConnectedLayer):
     def init_body_dependent_hidden_states(self):
         assert(isinstance(self.Config, RCNNConfig))
 
-        self.__hidden[self.H_W_text] = tf.get_variable(
+        self.__hidden[self.H_W_text] = tf.compat.v1.get_variable(
             name=self.H_W_text,
             shape=[self.__text_embedding_size(), self.Config.HiddenSize],
             regularizer=self.Config.LayerRegularizer,
             initializer=self.Config.WeightInitializer)
 
-        self.__hidden[self.H_b_text] = tf.get_variable(
+        self.__hidden[self.H_b_text] = tf.compat.v1.get_variable(
             name=self.H_b_text,
             shape=[self.Config.HiddenSize],
             regularizer=self.Config.LayerRegularizer,

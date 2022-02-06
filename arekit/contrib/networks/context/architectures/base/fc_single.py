@@ -24,13 +24,13 @@ class FullyConnectedLayer(SingleInstanceNeuralNetwork):
 
     def init_logits_hidden_states(self):
 
-        self.__hidden[self.H_W] = tf.get_variable(
+        self.__hidden[self.H_W] = tf.compat.v1.get_variable(
             name=self.H_W,
             shape=[self.ContextEmbeddingSize, self.Config.ClassesCount],
             initializer=self.Config.WeightInitializer,
             regularizer=self.Config.LayerRegularizer)
 
-        self.__hidden[self.H_b] = tf.get_variable(
+        self.__hidden[self.H_b] = tf.compat.v1.get_variable(
             name=self.H_b,
             shape=[self.Config.ClassesCount],
             regularizer=self.Config.LayerRegularizer,

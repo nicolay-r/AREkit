@@ -42,8 +42,8 @@ class BiLSTM(FullyConnectedLayer):
 
     def init_input(self):
         super(BiLSTM, self).init_input()
-        self.__dropout_rnn_keep_prob = tf.placeholder(dtype=tf.float32,
-                                                      name="ctx_dropout_rnn_keep_prob")
+        self.__dropout_rnn_keep_prob = tf.compat.v1.placeholder(dtype=tf.float32,
+                                                                name="ctx_dropout_rnn_keep_prob")
 
     def init_context_embedding(self, embedded_terms):
         assert(isinstance(self.Config, BiLSTMConfig))
