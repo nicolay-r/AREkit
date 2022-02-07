@@ -32,7 +32,7 @@ if __name__ == '__main__':
     folding_type = FoldingType.Fixed
 
     # Provide arguments.
-    ExperimentTypeArg.add_argument(parser, default="rsr")
+    ExperimentTypeArg.add_argument(parser, default="rsr+ra")
     LabelsCountArg.add_argument(parser)
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
@@ -70,8 +70,10 @@ if __name__ == '__main__':
         terms_per_context=terms_per_context,
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
-    data_folding = Common.create_folding(rusentrel_version=rusentrel_version,
-                                         ruattitudes_version=ra_version)
+    data_folding = Common.create_folding(
+        rusentrel_version=rusentrel_version,
+        ruattitudes_version=ra_version,
+        doc_id_func=lambda doc_id: Common.ra_doc_id_func(doc_id=doc_id))
 
     # Preparing necessary structures for further initializations.
     exp_ctx = RuSentRelExperimentSerializationContext(
@@ -92,7 +94,8 @@ if __name__ == '__main__':
         folding_type=folding_type,
         rusentrel_version=rusentrel_version,
         ruattitudes_version=ra_version,
-        load_ruattitude_docs=True)
+        load_ruattitude_docs=True,
+        ra_doc_id_func=lambda doc_id: Common.ra_doc_id_func(doc_id=doc_id))
 
     # Performing serialization process.
     serialization_handler = NetworksInputSerializerExperimentIteration(

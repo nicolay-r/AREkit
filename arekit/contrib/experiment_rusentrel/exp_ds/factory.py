@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-def create_ruattitudes_experiment(exp_ctx, exp_io, version, load_docs):
+def create_ruattitudes_experiment(exp_ctx, exp_io, version, load_docs, ra_doc_ids_func):
     """ Application of distant supervision, especially for pretraining purposes.
         Suggested to utilize with a large RuAttitudes-format collections (v2.0-large).
     """
@@ -22,7 +22,7 @@ def create_ruattitudes_experiment(exp_ctx, exp_io, version, load_docs):
     assert(isinstance(load_docs, bool))
 
     ru_attitudes = read_ruattitudes_in_memory(version=version,
-                                              used_doc_ids_set=None,
+                                              doc_id_func=ra_doc_ids_func,
                                               keep_doc_ids_only=not load_docs)
 
     text_parser = create_text_parser(exp_ctx=exp_ctx,

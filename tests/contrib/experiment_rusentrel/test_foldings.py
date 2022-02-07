@@ -13,7 +13,8 @@ class TestFoldings(unittest.TestCase):
         folding = create_folding(exp_type=ExperimentTypes.RuSentRelWithRuAttitudes,
                                  rusentrel_folding_type=FoldingType.CrossValidation,
                                  rusentrel_version=RuSentRelVersions.V11,
-                                 ruattitudes_version=RuAttitudesVersions.V20LargeNeut)
+                                 ruattitudes_version=RuAttitudesVersions.V20LargeNeut,
+                                 ra_doc_id_func=lambda doc_id: doc_id)
 
         print("States: {}".format(folding.StatesCount))
         for i, _ in enumerate(folding.iter_states()):

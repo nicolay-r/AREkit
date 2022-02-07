@@ -10,24 +10,16 @@ from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
 logger = logging.getLogger(__name__)
 
 
-def read_ruattitudes_in_memory(version, keep_doc_ids_only, used_doc_ids_set=None):
-    """
-    Performs reading of ruattitude formatted documents and
-    selection according to 'doc_ids_set' parameter.
-
-    used_doc_ids_set: set or None
-        ids of documents that already used and could not be assigned
-        'None' corresponds to an empty set.
+def read_ruattitudes_in_memory(version, keep_doc_ids_only, doc_id_func):
+    """ Performs reading of ruattitude formatted documents and
+        selection according to 'doc_ids_set' parameter.
     """
     assert(isinstance(version, RuAttitudesVersions))
     assert(isinstance(keep_doc_ids_only, bool))
-    assert(isinstance(used_doc_ids_set, set) or used_doc_ids_set is None)
-
-    d = {}
-    id_offset = max(used_doc_ids_set) + 1 if used_doc_ids_set is not None else 0
+    assert(callable(doc_id_func))
 
     it = RuAttitudesCollection.iter_news(version=version,
-                                         get_news_index_func=lambda _: id_offset + len(d),
+                                         get_news_index_func=doc_id_func,
                                          label_convereter=ExperimentRuAttitudesLabelConverter(),
                                          return_inds_only=keep_doc_ids_only)
 
@@ -37,12 +29,8 @@ def read_ruattitudes_in_memory(version, keep_doc_ids_only, used_doc_ids_set=None
         desc="Loading RuAttitudes Collection [{}]".format("doc ids only" if keep_doc_ids_only else "fully"),
         unit='docs')
 
+    d = {}
     for doc_id, news in it_formatted_and_logged:
-        if used_doc_ids_set is not None:
-            if doc_id in used_doc_ids_set:
-                logger.info("Document with id='{}' already used. Skipping".format(doc_id))
-                continue
-
         d[doc_id] = news
 
     return d

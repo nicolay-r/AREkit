@@ -12,6 +12,7 @@ class RuAttitudesDocumentOperations(DocumentOperations):
     # region DocumentOperations
 
     def get_doc(self, doc_id):
+        assert(isinstance(doc_id, int))
         return self.__ru_attitudes[doc_id]
 
     def iter_tagget_doc_ids(self, tag):

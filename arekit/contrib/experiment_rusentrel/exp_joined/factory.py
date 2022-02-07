@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type,
+def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, ra_doc_id_func,
                                                 ruattitudes_version, rusentrel_version, load_docs):
     """
     IO for the experiment with distant supervision for sentiment attitude extraction task.
@@ -32,14 +32,13 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type,
     assert(isinstance(rusentrel_version, RuSentRelVersions))
     assert(isinstance(folding_type, FoldingType))
     assert(isinstance(exp_io, BaseIOUtils))
+    assert(callable(ra_doc_id_func))
 
     optional_data = OptnionalDataProvider(exp_ctx=exp_ctx,
                                           ruattitudes_version=ruattitudes_version,
                                           rusentrel_version=rusentrel_version,
                                           load_docs=load_docs,
-                                          # TODO. This is incorrect!!! (Here we pass all the documents.
-                                          # TODO. but it is expected to be a RuSentRel related one)
-                                          rusentrel_doc_ids=exp_ctx.DataFolding.iter_doc_ids())
+                                          ra_doc_id_func=ra_doc_id_func)
 
     # init text parser.
     # TODO. Limitation, depending on document, entities parser may vary.
@@ -80,14 +79,13 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type,
 
 class OptnionalDataProvider(object):
 
-    def __init__(self, exp_ctx, ruattitudes_version, rusentrel_version, load_docs, rusentrel_doc_ids):
+    def __init__(self, exp_ctx, ruattitudes_version, rusentrel_version, load_docs, ra_doc_id_func):
         assert(isinstance(exp_ctx, ExperimentContext))
         self.__exp_ctx = exp_ctx
         self.__load_docs = load_docs
         self.__ruattitudes_version = ruattitudes_version
-        self.__rusentrel_version = rusentrel_version
         self.__synonyms_provider = OptionalSynonymsProvider(version=rusentrel_version)
-        self.__rusentrel_doc_ids = rusentrel_doc_ids
+        self.__ra_doc_id_func = ra_doc_id_func
         self.__ruattitudes_op = None
         self.__ruattitudes_doc = None
 
@@ -111,10 +109,9 @@ class OptnionalDataProvider(object):
             load ru_attitudes collection in memory.
         """
         # Loading ru_attitudes in memory
-        ru_attitudes = read_ruattitudes_in_memory(
-            version=self.__ruattitudes_version,
-            used_doc_ids_set=set(self.__rusentrel_doc_ids),
-            keep_doc_ids_only=not self.__load_docs)
+        ru_attitudes = read_ruattitudes_in_memory(version=self.__ruattitudes_version,
+                                                  doc_id_func=self.__ra_doc_id_func,
+                                                  keep_doc_ids_only=not self.__load_docs)
 
         text_parser = create_text_parser(
             exp_ctx=self.__exp_ctx,

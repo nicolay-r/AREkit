@@ -1,6 +1,9 @@
+from itertools import chain
+
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.folding.types import FoldingType
+from arekit.contrib.experiment_rusentrel.exp_ds.utils import read_ruattitudes_in_memory
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.labels.scalers.two import TwoLabelScaler
 from arekit.contrib.networks.enum_input_types import ModelInputType
@@ -51,9 +54,18 @@ class Common:
                           model_name.value])
 
     @staticmethod
-    def create_folding(rusentrel_version, ruattitudes_version):
-        # TODO. Adopt ruattitudes indicies as well.
-        return NoFolding(doc_ids_to_fold=list(RuSentRelIOUtils.iter_collection_indices(rusentrel_version)),
+    def ra_doc_id_func(doc_id):
+        return 10000 + doc_id
+
+    @staticmethod
+    def create_folding(rusentrel_version, ruattitudes_version, doc_id_func):
+        rsr_indices_it = [list(RuSentRelIOUtils.iter_collection_indices(rusentrel_version))[0]]
+
+        ra_indices_it = read_ruattitudes_in_memory(version=ruattitudes_version,
+                                                   keep_doc_ids_only=True,
+                                                   doc_id_func=doc_id_func)
+
+        return NoFolding(doc_ids_to_fold=list(chain(rsr_indices_it, ra_indices_it.keys())),
                          supported_data_types=[DataType.Train])
 
     @staticmethod

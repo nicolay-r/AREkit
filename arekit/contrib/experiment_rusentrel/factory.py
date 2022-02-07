@@ -18,6 +18,7 @@ def create_experiment(exp_type,
                       folding_type,
                       rusentrel_version,
                       load_ruattitude_docs,
+                      ra_doc_id_func,
                       ruattitudes_version=None):
     """ This method allows to instanciate all the supported experiments
         by `contrib/experiments/` module of AREkit framework.
@@ -41,7 +42,8 @@ def create_experiment(exp_type,
         return create_ruattitudes_experiment(exp_ctx=exp_ctx,
                                              version=ruattitudes_version,
                                              exp_io=exp_io,
-                                             load_docs=load_ruattitude_docs)
+                                             load_docs=load_ruattitude_docs,
+                                             ra_doc_ids_func=ra_doc_id_func)
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
         # Supervised learning with an application of distant supervision in training process.
@@ -50,26 +52,30 @@ def create_experiment(exp_type,
                                                            folding_type=folding_type,
                                                            ruattitudes_version=ruattitudes_version,
                                                            rusentrel_version=rusentrel_version,
-                                                           load_docs=load_ruattitude_docs)
+                                                           load_docs=load_ruattitude_docs,
+                                                           ra_doc_id_func=ra_doc_id_func)
 
 
-def create_folding(exp_type, rusentrel_folding_type, rusentrel_version, ruattitudes_version):
+def create_folding(exp_type, rusentrel_folding_type, rusentrel_version, ruattitudes_version, ra_doc_id_func):
     assert(isinstance(rusentrel_folding_type, FoldingType))
     assert(isinstance(exp_type, ExperimentTypes))
     assert(isinstance(rusentrel_version, RuSentRelVersions))
     assert(isinstance(ruattitudes_version, RuAttitudesVersions))
+    assert(callable(ra_doc_id_func))
 
     if exp_type == ExperimentTypes.RuSentRel:
         return create_rusentrel_experiment_data_folding(folding_type=rusentrel_folding_type,
                                                         version=rusentrel_version)
 
     if exp_type == ExperimentTypes.RuAttitudes:
-        return create_ruattitudes_experiment_data_folding(ruattitudes_version)
+        return create_ruattitudes_experiment_data_folding(version=ruattitudes_version,
+                                                          doc_id_func=ra_doc_id_func)
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
         rsr = create_rusentrel_experiment_data_folding(folding_type=rusentrel_folding_type,
                                                        version=rusentrel_version)
         ra = create_ruattitudes_experiment_data_folding(version=ruattitudes_version,
+                                                        doc_id_func=ra_doc_id_func,
                                                         states_count=rsr.StatesCount)
         return UnitedFolding(foldings=[rsr, ra])
 
