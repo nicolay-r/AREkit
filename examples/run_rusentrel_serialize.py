@@ -72,9 +72,8 @@ if __name__ == '__main__':
         terms_per_context=terms_per_context,
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
-    # TODO. Provide united, including NoFolding for RuAttitudes data.
-    data_folding = NoFolding(doc_ids_to_fold=list(RuSentRelIOUtils.iter_train_indices(rusentrel_version)),
-                             supported_data_types=[DataType.Train])
+    data_folding = Common.create_folding(rusentrel_version=rusentrel_version,
+                                         ruattitudes_version=ra_version)
 
     # Preparing necessary structures for further initializations.
     exp_ctx = RuSentRelExperimentSerializationContext(

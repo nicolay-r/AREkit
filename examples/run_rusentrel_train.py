@@ -96,10 +96,8 @@ if __name__ == '__main__':
         terms_per_context=terms_per_context,
         dist_in_terms_between_att_ends=dist_in_terms_between_attitude_ends)
 
-    data_folding = create_folding(exp_type=exp_type,
-                                  rusentrel_folding_type=folding_type,
-                                  rusentrel_version=rusentrel_version,
-                                  ruattitudes_version=ra_version)
+    data_folding = Common.create_folding(rusentrel_version=rusentrel_version,
+                                         ruattitudes_version=ra_version)
 
     # Creating experiment
     exp_ctx = ExperimentTrainingContext(labels_count=labels_scaler.LabelsCount,

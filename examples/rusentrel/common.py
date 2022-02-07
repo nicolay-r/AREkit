@@ -1,9 +1,12 @@
+from arekit.common.experiment.data_type import DataType
+from arekit.common.folding.nofold import NoFolding
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.labels.scalers.two import TwoLabelScaler
 from arekit.contrib.networks.enum_input_types import ModelInputType
 from arekit.contrib.networks.enum_name_types import ModelNames
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils
 from examples.network.embedding import RusvectoresEmbedding
 
 
@@ -46,6 +49,12 @@ class Common:
         return u'_'.join([Common.__create_folding_type_prefix(FoldingType.Fixed),
                           Common.__create_input_type_prefix(input_type),
                           model_name.value])
+
+    @staticmethod
+    def create_folding(rusentrel_version, ruattitudes_version):
+        # TODO. Adopt ruattitudes indicies as well.
+        return NoFolding(doc_ids_to_fold=list(RuSentRelIOUtils.iter_collection_indices(rusentrel_version)),
+                         supported_data_types=[DataType.Train])
 
     @staticmethod
     def create_exp_name(rusentrel_version, ra_version, folding_type):
