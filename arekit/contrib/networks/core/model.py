@@ -11,7 +11,6 @@ from arekit.contrib.networks.core.feeding.bags.collection.factory import create_
 from arekit.contrib.networks.core.model_ctx import TensorflowModelContext
 from arekit.contrib.networks.core.params import NeuralNetworkModelParams
 from arekit.contrib.networks.core.pipeline.item_base import EpochHandlingPipelineItem
-from arekit.contrib.networks.core.utils import get_item_from_pipeline
 from arekit.contrib.networks.tf_helpers.nn_states import TensorflowNetworkStatesProvider
 
 logger = logging.getLogger(__name__)
@@ -148,11 +147,3 @@ class BaseTensorflowModel(BaseModel):
                                   data_type=data_type,
                                   prefix="Predict [{dtype}]".format(dtype=data_type))
         self.__callback_do(lambda callback: callback.on_predict_finished(self.__predict_pipeline))
-
-    def from_fitted(self, item_type):
-        assert(issubclass(item_type, EpochHandlingPipelineItem))
-        return get_item_from_pipeline(pipeline=self.__fit_pipeline, item_type=item_type)
-
-    def from_predicted(self, item_type):
-        assert (issubclass(item_type, EpochHandlingPipelineItem))
-        return get_item_from_pipeline(pipeline=self.__predict_pipeline, item_type=item_type)
