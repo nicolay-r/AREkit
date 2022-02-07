@@ -31,7 +31,7 @@ class BasePairProvider(BaseParsedNewsServiceProvider):
                 assert(isinstance(source_entity, Entity))
                 assert(isinstance(target_entity, Entity))
 
-                if filter_func is not None and not filter_func:
+                if filter_func is not None and not filter_func(source_entity, target_entity):
                     continue
 
                 if source_entity == target_entity:
