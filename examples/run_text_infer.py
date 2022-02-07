@@ -8,6 +8,7 @@ from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.core.callback.stat import TrainingStatProviderCallback
 from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterCallback
+from arekit.contrib.networks.core.callback.writer import ResultWriterCallback
 
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -16,8 +17,6 @@ from arekit.contrib.networks.core.pipeline.item_fit import MinibatchFittingPipel
 from arekit.contrib.networks.core.pipeline.item_keep_hidden import MinibatchHiddenFetcherPipelineItem
 from arekit.contrib.networks.core.pipeline.item_predict import EpochLabelsPredictorPipelineItem
 from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLabelsCollectorPipelineItem
-from arekit.contrib.networks.core.predict.provider import BasePredictProvider
-from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.shapes import NetworkInputShapes
 
@@ -155,6 +154,8 @@ if __name__ == '__main__':
         callbacks=[
             TrainingLimiterCallback(train_acc_limit=0.99),
             TrainingStatProviderCallback(),
+            ResultWriterCallback(result_filepath=result_filepath,
+                                 labels_scaler=labels_scaler)
         ],
         predict_pipeline=[
             EpochLabelsPredictorPipelineItem(),
@@ -164,20 +165,3 @@ if __name__ == '__main__':
         fit_pipeline=[MinibatchFittingPipelineItem()])
 
     model.predict(do_compile=True)
-
-    # Gather annotated contexts onto document level.
-    item = model.from_predicted(EpochLabelsCollectorPipelineItem)
-    labeled_samples = item.LabeledSamples
-
-    predict_provider = BasePredictProvider()
-
-    # Saving Results.
-    # TODO. For now it is limited to tsv.
-    with TsvPredictWriter(filepath=result_filepath) as out:
-
-        title, contents_it = predict_provider.provide(
-            sample_id_with_uint_labels_iter=labeled_samples.iter_non_duplicated_labeled_sample_row_ids(),
-            labels_scaler=labels_scaler)
-
-        out.write(title=title,
-                  contents_it=contents_it)

@@ -124,8 +124,6 @@ class BaseTensorflowModel(BaseModel):
                 self.__states_provider.save_model(sess=self.__context.Session,
                                                   path_tf_prefix=self.__context.IO.get_model_target_path_tf_prefix())
 
-        self.__callback_do(lambda callback: callback.on_fit_finished())
-
     # endregion
 
     def fit(self, model_params, seed):
@@ -149,6 +147,7 @@ class BaseTensorflowModel(BaseModel):
         self.__run_epoch_pipeline(pipeline=self.__predict_pipeline,
                                   data_type=data_type,
                                   prefix="Predict [{dtype}]".format(dtype=data_type))
+        self.__callback_do(lambda callback: callback.on_predict_finished(self.__predict_pipeline))
 
     def from_fitted(self, item_type):
         assert(issubclass(item_type, EpochHandlingPipelineItem))
