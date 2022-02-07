@@ -1,100 +1,29 @@
-import logging
-
-from arekit.common.data import const
-from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
-from arekit.common.experiment.api.enums import BaseDocumentTag
-from arekit.common.experiment.api.ops_doc import DocumentOperations
-from arekit.common.experiment.api.ops_opin import OpinionOperations
-from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.handler import ExperimentIterationHandler
-from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
-from arekit.common.labels.scaler.base import BaseLabelScaler
-from arekit.common.labels.str_fmt import StringLabelsFormatter
-from arekit.common.model.labeling.modes import LabelCalculationMode
-from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item_handle import HandleIterPipelineItem
-from arekit.contrib.bert.output.eval_helper import EvalHelper
-from arekit.contrib.experiment_rusentrel.model_io.bert import RuSentRelExperimentBertIOUtils
-
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+from arekit.common.experiment.handlers.to_output import BaseOutputConverterIterationHandler
 
 
-# TODO. #270 -- to common experiment iteration handler.
-class LanguageModelEvaluationIterationHandler(ExperimentIterationHandler):
+class ModelEvaluationIterationHandler(BaseOutputConverterIterationHandler):
 
-    def __init__(self, exp_io, doc_ops, opin_ops, data_type, eval_helper, max_epochs_count,
-                 label_scaler, labels_formatter, eval_last_only=True):
-        assert(isinstance(exp_io, RuSentRelExperimentBertIOUtils))
-        assert(isinstance(doc_ops, DocumentOperations))
-        assert(isinstance(opin_ops, OpinionOperations))
-        assert(isinstance(data_type, DataType))
-        assert(isinstance(eval_helper, EvalHelper))
-        assert(isinstance(max_epochs_count, int))
-        assert(isinstance(eval_last_only, bool))
-        assert(isinstance(label_scaler, BaseLabelScaler))
-        assert(isinstance(labels_formatter, StringLabelsFormatter))
-        super(LanguageModelEvaluationIterationHandler, self).__init__()
-
-        self.__exp_io = exp_io
-        self.__doc_ops = doc_ops
-        self.__opin_ops = opin_ops
-        self.__data_type = data_type
-        self.__eval_helper = eval_helper
+    def __init__(self, exp_io, doc_ops, opin_ops, data_type, eval_helper,
+                 max_epochs_count, label_scaler, labels_formatter):
+        super(ModelEvaluationIterationHandler, self).__init__(
+            exp_io=exp_io, doc_ops=doc_ops, opin_ops=opin_ops, data_type=data_type,
+            label_scaler=label_scaler, labels_formatter=labels_formatter)
         self.__max_epochs_count = max_epochs_count
-        self.__eval_last_only = eval_last_only
-        self.__labels_formatter = labels_formatter
-        self.__label_scaler = label_scaler
+        self.__eval_helper = eval_helper
 
-    # TODO. #270 -- this might be a part of the general experiment iteration handler.
-    # TODO. Which converts output data into opinion collecitons.
-    def __run_pipeline(self, epoch_index, iter_index):
+    def __create_target(self, doc_id, epoch_index):
+        return self.__exp_io.create_result_opinion_collection_target(
+            data_type=self._data_type, epoch_index=epoch_index, doc_id=doc_id)
 
-        cmp_doc_ids_set = set(self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
-
-        output_storage = self.__exp_io.get_output_storage(
-            epoch_index=epoch_index, iter_index=iter_index, eval_helper=self.__eval_helper)
-
-        # We utilize google bert format, where every row
-        # consist of label probabilities per every class
-        linkages_view = MultilableOpinionLinkagesView(labels_scaler=self.__label_scaler,
-                                                      storage=output_storage)
-
-        ppl = output_to_opinion_collections_pipeline(
-            iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
-                doc_id=doc_id,
-                opinions_view=self.__exp_io.create_opinions_view(self.__data_type)),
-            doc_ids_set=cmp_doc_ids_set,
-            create_opinion_collection_func=self.__opin_ops.create_opinion_collection,
-            labels_scaler=self.__label_scaler,
-            label_calc_mode=LabelCalculationMode.AVERAGE)
-
-        # Writing opinion collection.
-        save_item = HandleIterPipelineItem(
-            lambda data:
-            self.__exp_io.write_opinion_collection(
-                collection=data[1],
-                labels_formatter=self.__labels_formatter,
-                target=self.__exp_io.create_result_opinion_collection_target(
-                    data_type=self.__data_type,
-                    epoch_index=epoch_index,
-                    doc_id=data[0])))
-
-        # Executing pipeline.
-        ppl.append(save_item)
-        pipeline_ctx = PipelineContext({
-            "src": set(output_storage.iter_column_values(column_name=const.DOC_ID))
-        })
-        ppl.run(pipeline_ctx)
-
-        # iterate over the result.
-        for _ in pipeline_ctx.provide("src"):
-            pass
+    def _iter_output_and_target_pairs(self, iter_index):
+        for epoch_index in reversed(list(range(self.__max_epochs_count))):
+            output = self.__exp_io.get_output_storage(epoch_index=epoch_index,
+                                                      iter_index=iter_index,
+                                                      eval_helper=self.__eval_helper)
+            target_func = lambda doc_id: self.__create_target(doc_id=doc_id, epoch_index=epoch_index)
+            return output, target_func
 
     def on_iteration(self, iter_index):
-
         if not self.__exp_io.try_prepare():
             return
-
-        for epoch_index in reversed(list(range(self.__max_epochs_count))):
-            self.__run_pipeline(epoch_index=epoch_index, iter_index=iter_index)
+        super(ModelEvaluationIterationHandler, self).on_iteration(iter_index)
