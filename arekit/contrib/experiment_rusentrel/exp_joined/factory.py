@@ -60,9 +60,11 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type,
                                               exp_io=exp_io,
                                               get_synonyms_func=optional_data.get_synonyms)
 
+    all_rusentrel_doc_ids = RuSentRelIOUtils.iter_collection_indices(rusentrel_version)
+
     # Init experiment doc_ops and opin_ops
     doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
-        rusentrel_doc_ids=set(RuSentRelIOUtils.iter_test_indices(rusentrel_version)),
+        rusentrel_doc_ids=set(all_rusentrel_doc_ids),
         rusentrel_doc=rusentrel_doc,
         get_ruattitudes_doc=optional_data.get_or_load_ruattitudes_doc_ops,
         text_parser=text_parser)
