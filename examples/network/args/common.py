@@ -133,7 +133,9 @@ class ExperimentTypeArg(BaseArg):
         return ExperimentTypesService.get_type_by_name(exp_name)
 
     @staticmethod
-    def add_argument(parser, default="rsr"):
+    def add_argument(parser, default):
+        assert(isinstance(default, str))
+
         parser.add_argument('--experiment',
                             dest='exp_type',
                             type=str,

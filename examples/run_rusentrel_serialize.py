@@ -2,10 +2,8 @@ import argparse
 
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
-from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.name_provider import ExperimentNameProvider
-from arekit.common.folding.nofold import NoFolding
 from arekit.common.folding.types import FoldingType
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
@@ -14,7 +12,7 @@ from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLa
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.handlers.serializer import NetworksInputSerializerExperimentIteration
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from examples.network.args.serialize import EntityFormatterTypesArg
@@ -34,7 +32,7 @@ if __name__ == '__main__':
     folding_type = FoldingType.Fixed
 
     # Provide arguments.
-    ExperimentTypeArg.add_argument(parser)
+    ExperimentTypeArg.add_argument(parser, default="rsr")
     LabelsCountArg.add_argument(parser)
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
@@ -92,7 +90,7 @@ if __name__ == '__main__':
         exp_ctx=exp_ctx,
         exp_io=CustomRuSentRelNetworkExperimentIO(exp_ctx),
         folding_type=folding_type,
-        rusentrel_version=RuSentRelVersions.V11,
+        rusentrel_version=rusentrel_version,
         ruattitudes_version=ra_version,
         load_ruattitude_docs=True)
 
