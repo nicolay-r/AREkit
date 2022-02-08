@@ -23,6 +23,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
+from arekit.processing.text.pipeline_terms_splitter import TermsSplitterParser
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
@@ -39,7 +40,6 @@ from examples.network.infer.exp import CustomExperiment
 from examples.network.infer.exp_io import InferIOUtils
 from examples.network.serialization_data import RuSentRelExperimentSerializationContext
 from examples.network.text_parser.entities import TextEntitiesParser
-from examples.network.text_parser.terms import TermsSplitterParser
 
 
 def run_serializer(sentences_text_list, terms_per_context, embedding_path, entity_fmt_type, stemmer):
