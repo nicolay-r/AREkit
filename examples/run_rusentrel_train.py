@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
     # Composing cmd arguments.
     LabelsCountArg.add_argument(parser)
-    ExperimentTypeArg.add_argument(parser)
+    ExperimentTypeArg.add_argument(parser, default="rsr")
     StemmerArg.add_argument(parser)
     BagsPerMinibatchArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
