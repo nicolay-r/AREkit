@@ -4,7 +4,6 @@ from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.factory import create_folding
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.callback.hidden import HiddenStatesWriterCallback
 from arekit.contrib.networks.core.callback.hidden_input import InputHiddenStatesWriterCallback
