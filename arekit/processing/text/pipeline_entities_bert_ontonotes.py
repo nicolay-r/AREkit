@@ -18,9 +18,8 @@ class BertOntonotesNERPipelineItem(SentenceObjectsParserPipelineItem):
         """ Considering list of terms.
         """
         assert(isinstance(sentence, BaseNewsSentence))
-        assert(isinstance(sentence.Text, list))
-
-        original_terms = sentence.Text
+        original_text = sentence.Text
+        original_terms = original_text if isinstance(original_text, list) else original_text.split(' ')
         single_sequence = [original_terms]
         processed_sequences = self.__ontonotes_ner.extract(sequences=single_sequence)
 

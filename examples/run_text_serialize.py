@@ -1,7 +1,8 @@
 import argparse
 
 from examples.input import EXAMPLES
-from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg, StemmerArg, InputTextArg
+from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg, StemmerArg, InputTextArg, \
+    EntitiesParserArg
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.pipelines.serialize import run_data_serialization_pipeline
 
@@ -11,7 +12,8 @@ if __name__ == '__main__':
                                                  "required for inference and training.")
 
     # Provide arguments.
-    InputTextArg.add_argument(parser, default=EXAMPLES["simple"][0])
+    InputTextArg.add_argument(parser, default=EXAMPLES["no_entities"][0])
+    EntitiesParserArg.add_argument(parser, default="bert-ontonotes")
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
     EntityFormatterTypesArg.add_argument(parser)
@@ -21,14 +23,16 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Reading provided arguments.
+    entities_parser = EntitiesParserArg.read_argument(args)
     input_text = InputTextArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
     embedding_filepath = RusVectoresEmbeddingFilepathArg.read_argument(args)
     entity_fmt = EntityFormatterTypesArg.read_argument(args)
     stemmer = StemmerArg.read_argument(args)
 
-    run_data_serialization_pipeline(sentences_text_list=[input_text],
+    run_data_serialization_pipeline(sentences=[input_text],
                                     terms_per_context=terms_per_context,
                                     embedding_path=embedding_filepath,
                                     entity_fmt_type=entity_fmt,
+                                    entities_parser=entities_parser,
                                     stemmer=stemmer)

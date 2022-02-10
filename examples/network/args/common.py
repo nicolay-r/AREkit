@@ -2,6 +2,7 @@ from arekit.contrib.experiment_rusentrel.types import ExperimentTypesService
 from arekit.contrib.networks.enum_name_types import ModelNamesService, ModelNames
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersionsService, RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.processing.text.pipeline_entities_bert_ontonotes import BertOntonotesNERPipelineItem
 from examples.network.args.base import BaseArg
 from examples.network.args import const
 
@@ -223,6 +224,27 @@ class TermsPerContextArg(BaseArg):
                                  'NOTE: Use greater or equal value for this parameter during experiment'
                                  'process; otherwise you may encounter with exception during sample '
                                  'creation process!'.format(default))
+
+
+class EntitiesParserArg(BaseArg):
+
+    @staticmethod
+    def read_argument(args):
+        arg = args.entities_parser
+        if arg == "no":
+            return None
+        elif arg == "bert-ontonotes":
+            return BertOntonotesNERPipelineItem()
+
+    @staticmethod
+    def add_argument(parser, default="no"):
+        parser.add_argument('--entities-parser',
+                            dest='entities_parser',
+                            type=str,
+                            choices=['no', 'bert-ontonotes'],
+                            default=default,
+                            nargs=1,
+                            help='Adopt entities parser in text processing (default: {})'.format(default))
 
 
 class ModelNameArg(BaseArg):

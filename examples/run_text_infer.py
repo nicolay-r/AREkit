@@ -10,7 +10,7 @@ from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, 
 from examples.network.common import create_bags_collection_type, create_network_model_io
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, LabelsCountArg, TermsPerContextArg, \
     ModelNameArg, ModelLoadDirArg, VocabFilepathArg, StemmerArg, InputTextArg, PredictOutputFilepathArg, \
-    EmbeddingMatrixFilepathArg
+    EmbeddingMatrixFilepathArg, EntitiesParserArg
 from examples.pipelines.inference import run_network_inference_pipeline
 
 from examples.pipelines.serialize import run_data_serialization_pipeline
@@ -22,7 +22,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Text inference example")
 
     # Providing arguments.
-    InputTextArg.add_argument(parser, default=EXAMPLES["simple"][1])
+    InputTextArg.add_argument(parser, default=EXAMPLES["no_entities"][1])
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     BagsPerMinibatchArg.add_argument(parser)
     LabelsCountArg.add_argument(parser)
@@ -30,10 +30,12 @@ if __name__ == '__main__':
     ModelNameTagArg.add_argument(parser)
     ModelInputTypeArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
+
     EntityFormatterTypesArg.add_argument(parser)
     VocabFilepathArg.add_argument(parser, default=None)
     EmbeddingMatrixFilepathArg.add_argument(parser, default=None)
     ModelLoadDirArg.add_argument(parser, default=NEURAL_NETWORKS_TARGET_DIR)
+    EntitiesParserArg.add_argument(parser, default="bert-ontonotes")
     StemmerArg.add_argument(parser)
     PredictOutputFilepathArg.add_argument(parser, default=None)
 
@@ -48,6 +50,7 @@ if __name__ == '__main__':
     model_name = ModelNameArg.read_argument(args)
     model_name_tag = ModelNameTagArg.read_argument(args)
     model_input_type = ModelInputTypeArg.read_argument(args)
+    entities_parser = EntitiesParserArg.read_argument(args)
     terms_per_context = TermsPerContextArg.read_argument(args)
     entity_fmt_type = EntityFormatterTypesArg.read_argument(args)
     stemmer = StemmerArg.read_argument(args)
@@ -69,10 +72,11 @@ if __name__ == '__main__':
     # Execute pipeline element.
     #############################
     serialized_exp_io = run_data_serialization_pipeline(
-        sentences_text_list=[text],
+        sentences=[text],
         embedding_path=rusvectores_embedding_path,
         terms_per_context=terms_per_context,
         entity_fmt_type=entity_fmt_type,
+        entities_parser=entities_parser,
         stemmer=stemmer)
 
     #############################

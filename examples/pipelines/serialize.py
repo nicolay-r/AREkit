@@ -12,6 +12,7 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.pipeline.item import BasePipelineItem
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
 from arekit.contrib.experiment_rusentrel.entities.types import EntityFormatterTypes
@@ -34,8 +35,10 @@ from examples.network.serialization_data import RuSentRelExperimentSerialization
 from examples.network.text_parser.entities import TextEntitiesParser
 
 
-def run_data_serialization_pipeline(sentences_text_list, terms_per_context, embedding_path, entity_fmt_type, stemmer):
-    assert(isinstance(sentences_text_list, list))
+def run_data_serialization_pipeline(sentences, terms_per_context, entities_parser,
+                                    embedding_path, entity_fmt_type, stemmer):
+    assert(isinstance(entities_parser, BasePipelineItem) or entities_parser is None)
+    assert(isinstance(sentences, list))
     assert(isinstance(terms_per_context, int))
     assert(isinstance(embedding_path, str))
     assert(isinstance(entity_fmt_type, EntityFormatterTypes))
@@ -46,7 +49,7 @@ def run_data_serialization_pipeline(sentences_text_list, terms_per_context, embe
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
     # TODO. split text onto sentences.
-    sentences = list(map(lambda text: BaseNewsSentence(text), sentences_text_list))
+    sentences = list(map(lambda text: BaseNewsSentence(text), sentences))
 
     annot_algo = PairBasedAnnotationAlgorithm(
         dist_in_terms_bound=None,
@@ -63,17 +66,17 @@ def run_data_serialization_pipeline(sentences_text_list, terms_per_context, embe
     # Step 2. Parse text.
     news = News(doc_id=0, sentences=sentences)
 
-    text_parser = BaseTextParser(
-        pipeline=[
-            TermsSplitterParser(),
-            TextEntitiesParser(),
-            EntitiesGroupingPipelineItem(synonyms.get_synonym_group_index),
-            DefaultTextTokenizer(keep_tokens=True),
-            LemmasBasedFrameVariantsParser(save_lemmas=False,
-                                           stemmer=stemmer,
-                                           frame_variants=frame_variants_collection),
-            FrameVariantsSentimentNegation()
-        ])
+    entities_ppl = [TermsSplitterParser(), TextEntitiesParser()] \
+        if entities_parser is None else [entities_parser]
+
+    common_ppl = [EntitiesGroupingPipelineItem(synonyms.get_synonym_group_index),
+                  DefaultTextTokenizer(keep_tokens=True),
+                  LemmasBasedFrameVariantsParser(save_lemmas=False,
+                                                 stemmer=stemmer,
+                                                 frame_variants=frame_variants_collection),
+                  FrameVariantsSentimentNegation()]
+
+    text_parser = BaseTextParser(pipeline=entities_ppl + common_ppl)
 
     embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
     embedding.set_stemmer(stemmer)
