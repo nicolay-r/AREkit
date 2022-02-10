@@ -51,7 +51,7 @@ class TextOpinionPairsProvider(BasePairProvider):
         """
         assert(isinstance(opinion, Opinion))
 
-        key = self.__entities_collection.KeyType.BY_SYNONYMS
+        key = EntityCollection.KeyType.BY_SYNONYMS
         source_entities = self.__entities_collection.try_get_entities(opinion.SourceValue, group_key=key)
         target_entities = self.__entities_collection.try_get_entities(opinion.TargetValue, group_key=key)
 

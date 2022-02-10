@@ -96,9 +96,11 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
             synonyms=self.synonyms)
 
         # Initialize providers.
-        pairs_provider = TextOpinionPairsProvider(parsed_news=parsed_news,
-                                                  value_to_group_id_func=self.synonyms.get_synonym_group_index)
-        entity_service = EntityServiceProvider(parsed_news=parsed_news)
+        pairs_provider = TextOpinionPairsProvider(value_to_group_id_func=self.synonyms.get_synonym_group_index)
+        entity_service = EntityServiceProvider()
+
+        pairs_provider.init_parsed_news(parsed_news)
+        entity_service.init_parsed_news(parsed_news)
 
         text_opinions = iter_same_sentence_linked_text_opinions(opinions=opinions,
                                                                 pairs_provider=pairs_provider,
