@@ -1,4 +1,5 @@
 from arekit.common.news.base import News
+from arekit.common.news.objects_parser import SentenceObjectsParserPipelineItem
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.parser import BaseTextParser
@@ -29,5 +30,5 @@ class NewsParser(object):
             "src": sentence.Text,                       # source data.
             "s_ind": sent_ind,                          # sentence index. (as Metadata)
             "doc_id": news.ID,                          # document index. (as Metadata)
-            "sentence": sentence
+            SentenceObjectsParserPipelineItem.SRC_KEY: sentence
         })

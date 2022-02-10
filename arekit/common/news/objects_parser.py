@@ -1,9 +1,12 @@
 from arekit.common.bound import Bound
+from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item import BasePipelineItem
 
 
 class SentenceObjectsParserPipelineItem(BasePipelineItem):
+
+    SRC_KEY = "sentence"
 
     def __init__(self, iter_objs_func):
         assert(callable(iter_objs_func))
@@ -11,9 +14,11 @@ class SentenceObjectsParserPipelineItem(BasePipelineItem):
 
     def apply(self, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-        assert("sentence" in pipeline_ctx)
+        assert(self.SRC_KEY in pipeline_ctx)
 
-        sentence = pipeline_ctx.provide("sentence")
+        sentence = pipeline_ctx.provide(self.SRC_KEY)
+
+        assert(isinstance(sentence, BaseNewsSentence))
 
         start = 0
         entries = []
