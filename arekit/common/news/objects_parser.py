@@ -1,55 +1,40 @@
-from arekit.common.bound import Bound
-from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.text.partitioning.base import BasePartitioning
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item import BasePipelineItem
 
 
 class SentenceObjectsParserPipelineItem(BasePipelineItem):
 
-    SRC_KEY = "sentence"
+    def __init__(self, partitioning):
+        assert(isinstance(partitioning, BasePartitioning))
+        self.__partitioning = partitioning
 
-    def __init__(self, iter_objs_func):
-        assert(callable(iter_objs_func))
-        self.__iter_objs_func = iter_objs_func
+    # region protected
+
+    def _get_text(self, pipeline_ctx):
+        raise NotImplementedError()
+
+    def _get_parts_provider_func(self, pipeline_ctx):
+        raise NotImplementedError()
+
+    # endregion
 
     def apply(self, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-        assert(self.SRC_KEY in pipeline_ctx)
 
-        sentence = pipeline_ctx.provide(self.SRC_KEY)
-
-        assert(isinstance(sentence, BaseNewsSentence))
-
-        start = 0
-        entries = []
-
-        for value, bound in self.__iter_objs_func(sentence):
-            assert(isinstance(bound, Bound))
-            assert(bound.Position >= start)
-
-            # Release everything till the current value position.
-            part = sentence.Text[start:bound.Position]
-
-            if isinstance(part, str):
-                entries.append(part)
-            else:
-                entries.extend(part)
-
-            # Release the entity value.
-            entries.extend([value])
-
-            start = bound.Position + bound.Length
-
-        # Release everything after the last entity.
-        last_part = sentence.Text[start:len(sentence.Text)]
-        extension_part = last_part if isinstance(sentence.Text, list) else [last_part]
-        entries.extend(extension_part)
+        parts = self.__partitioning.provide(
+            text=self._get_text(pipeline_ctx),
+            parts_it=self._get_parts_provider_func(pipeline_ctx))
 
         # update information in pipeline
-        pipeline_ctx.update("src", entries)
+        pipeline_ctx.update("src", parts)
+
+    # region base
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         pass
+
+    # endregion

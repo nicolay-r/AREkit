@@ -66,17 +66,15 @@ def run_data_serialization_pipeline(sentences, terms_per_context, entities_parse
     # Step 2. Parse text.
     news = News(doc_id=0, sentences=sentences)
 
-    entities_ppl = [TermsSplitterParser(), TextEntitiesParser()] \
-        if entities_parser is None else [entities_parser]
-
-    common_ppl = [EntitiesGroupingPipelineItem(synonyms.get_synonym_group_index),
-                  DefaultTextTokenizer(keep_tokens=True),
-                  LemmasBasedFrameVariantsParser(save_lemmas=False,
-                                                 stemmer=stemmer,
-                                                 frame_variants=frame_variants_collection),
-                  FrameVariantsSentimentNegation()]
-
-    text_parser = BaseTextParser(pipeline=entities_ppl + common_ppl)
+    text_parser = BaseTextParser(pipeline=[
+        TermsSplitterParser(),
+        TextEntitiesParser() if entities_parser is None else entities_parser,
+        EntitiesGroupingPipelineItem(synonyms.get_synonym_group_index),
+        DefaultTextTokenizer(keep_tokens=True),
+        LemmasBasedFrameVariantsParser(save_lemmas=False,
+                                       stemmer=stemmer,
+                                       frame_variants=frame_variants_collection),
+        FrameVariantsSentimentNegation()])
 
     embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
     embedding.set_stemmer(stemmer)
