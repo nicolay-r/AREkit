@@ -10,3 +10,5 @@ TARGET = 'target'
 S_IND = 's_ind'
 T_IND = 't_ind'
 
+# Provide sentence index.
+SENT_IND = 'sent_ind'
