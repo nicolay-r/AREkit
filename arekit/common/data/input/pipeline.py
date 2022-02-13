@@ -43,22 +43,12 @@ def __to_text_opinion_linkages(provider, opinions, tag_value_func, filter_func):
 def text_opinions_iter_pipeline(parse_news_func, iter_doc_opins,
                                 value_to_group_id_func, terms_per_context):
     """ Opinion collection generation pipeline.
+        NOTE: Here we do not perform IDs assignation!
     """
     assert(callable(parse_news_func))
     assert(callable(iter_doc_opins))
     assert(callable(value_to_group_id_func))
     assert(isinstance(terms_per_context, int))
-
-    def __assign_ids(linkage, curr_id_list):
-        assert(isinstance(linkage, TextOpinionsLinkage))
-        for text_opinion in linkage:
-            assert(isinstance(text_opinion, TextOpinion))
-            current_id = curr_id_list[0]
-            text_opinion.set_text_opinion_id(current_id)
-            curr_id_list[0] += 1
-
-    # List that allows to pass and modify int (current id) into function.
-    curr_id = [0]
 
     return BasePipeline([
         # (id) -> (id, opinions)
@@ -87,8 +77,5 @@ def text_opinions_iter_pipeline(parse_news_func, iter_doc_opins,
                 window_size=terms_per_context))),
 
         # linkages[] -> linkages.
-        FlattenIterPipelineItem(),
-
-        # Assign id.
-        HandleIterPipelineItem(handle_func=lambda linkage: __assign_ids(linkage=linkage, curr_id_list=curr_id))
+        FlattenIterPipelineItem()
     ])
