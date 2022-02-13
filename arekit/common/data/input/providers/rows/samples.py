@@ -66,6 +66,8 @@ class BaseSampleRowProvider(BaseRowProvider):
 
         row[const.DOC_ID] = text_opinion_linkage.First.DocID
 
+        row[const.SENT_IND] = sentence_ind
+
         expected_label = text_opinion_linkage.get_linked_label()
 
         if self.__store_labels:
