@@ -20,9 +20,6 @@ class EntityCollection(object):
             entities=entities,
             key_func=lambda e: value_to_group_id_func(e.Value))
 
-        self.__by_id = self.create_index(entities=entities,
-                                         key_func=lambda e: e.IdInDocument)
-
     @staticmethod
     def __value_or_none(d, key):
         return d[key] if key in d else None
@@ -60,13 +57,6 @@ class EntityCollection(object):
             return self.__value_or_none(self.__by_synonyms, key)
         if group_key == self.KeyType.BY_VALUE:
             return self.__value_or_none(self.__by_value, value)
-
-    def get_entity_by_id(self, id):
-        assert(isinstance(id, int))
-
-        value = self.__by_id[id]
-        assert(len(value) == 1)
-        return value[0]
 
     # endregion
 
