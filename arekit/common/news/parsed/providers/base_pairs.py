@@ -1,35 +1,33 @@
-from arekit.common.entities.base import Entity
+import collections
 from arekit.common.labels.provider.base import BasePairLabelProvider
-from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
 
 
 class BasePairProvider(BaseParsedNewsServiceProvider):
 
-    def __init__(self):
-        self._entities = None
-
     @property
     def Name(self):
         raise NotImplementedError()
-
-    def init_parsed_news(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedNews))
-        self._entities = list(parsed_news.iter_entities())
 
     def _create_pair(self, source_entity, target_entity, label):
         raise NotImplementedError()
 
     # region private methods
 
-    def _iter_from_entities(self, source_entities, target_entities, label_provider, filter_func=None):
+    def _iter_from_entities(self, src_entity_doc_ids, tgt_entity_doc_ids, label_provider, filter_func=None):
+        assert(isinstance(src_entity_doc_ids, list))
+        assert(isinstance(tgt_entity_doc_ids, list))
         assert(isinstance(label_provider, BasePairLabelProvider))
         assert(callable(filter_func) or filter_func is None)
 
-        for source_entity in source_entities:
-            for target_entity in target_entities:
-                assert(isinstance(source_entity, Entity))
-                assert(isinstance(target_entity, Entity))
+        for src_e_doc_id in src_entity_doc_ids:
+            for tgt_e_doc_id in tgt_entity_doc_ids:
+                assert(isinstance(src_e_doc_id, int))
+                assert(isinstance(tgt_e_doc_id, int))
+
+                # Extract entities by doc_id.
+                source_entity = self._doc_entities[src_e_doc_id]
+                target_entity = self._doc_entities[tgt_e_doc_id]
 
                 if filter_func is not None and not filter_func(source_entity, target_entity):
                     continue
@@ -48,8 +46,7 @@ class BasePairProvider(BaseParsedNewsServiceProvider):
 
     def iter_from_all(self, label_provider, filter_func):
         assert(isinstance(label_provider, BasePairLabelProvider))
-
-        return self._iter_from_entities(source_entities=self._entities,
-                                        target_entities=self._entities,
+        return self._iter_from_entities(src_entity_doc_ids=list(map(lambda e: e.IdInDocument, self._doc_entities)),
+                                        tgt_entity_doc_ids=list(map(lambda e: e.IdInDocument, self._doc_entities)),
                                         label_provider=label_provider,
                                         filter_func=filter_func)

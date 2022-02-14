@@ -1,6 +1,6 @@
-from arekit.common.entities.base import Entity
 from arekit.common.experiment.annot.algo.base import BaseAnnotationAlgorithm
 from arekit.common.labels.provider.base import BasePairLabelProvider
+from arekit.common.news.entity import DocumentEntity
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType
 from arekit.common.news.parsed.providers.opinion_pairs import OpinionPairsProvider
@@ -31,8 +31,8 @@ class PairBasedAnnotationAlgorithm(BaseAnnotationAlgorithm):
 
     @staticmethod
     def __create_key_by_entity_pair(e1, e2):
-        assert(isinstance(e1, Entity))
-        assert(isinstance(e2, Entity))
+        assert(isinstance(e1, DocumentEntity))
+        assert(isinstance(e2, DocumentEntity))
         return "{}_{}".format(e1.IdInDocument, e2.IdInDocument)
 
     def __is_ignored_entity_value(self, entity_value):
@@ -41,8 +41,8 @@ class PairBasedAnnotationAlgorithm(BaseAnnotationAlgorithm):
 
     def __try_create_pair_key(self, entity_service, e1, e2, existed_opinions):
         assert(isinstance(entity_service, EntityServiceProvider))
-        assert(isinstance(e1, Entity))
-        assert(isinstance(e2, Entity))
+        assert(isinstance(e1, DocumentEntity))
+        assert(isinstance(e2, DocumentEntity))
 
         if e1.IdInDocument == e2.IdInDocument:
             return

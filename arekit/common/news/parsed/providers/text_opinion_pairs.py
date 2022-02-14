@@ -1,7 +1,7 @@
 import logging
 
-from arekit.common.entities.base import Entity
 from arekit.common.entities.collection import EntityCollection
+from arekit.common.news.entity import DocumentEntity
 from arekit.common.news.parsed.providers.base_pairs import BasePairProvider
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.base import TextOpinion
@@ -27,8 +27,8 @@ class TextOpinionPairsProvider(BasePairProvider):
         return self.NAME
 
     def _create_pair(self, source_entity, target_entity, label):
-        assert(isinstance(source_entity, Entity))
-        assert(isinstance(target_entity, Entity))
+        assert(isinstance(source_entity, DocumentEntity))
+        assert(isinstance(target_entity, DocumentEntity))
 
         return TextOpinion(doc_id=self.__doc_id,
                            source_id=source_entity.IdInDocument,
@@ -41,7 +41,7 @@ class TextOpinionPairsProvider(BasePairProvider):
         super(TextOpinionPairsProvider, self).init_parsed_news(parsed_news)
         self.__doc_id = parsed_news.RelatedDocID
         self.__entities_collection = EntityCollection(
-            entities=list(self._entities),
+            entities=list(self._doc_entities),
             value_to_group_id_func=self.__value_to_group_id_func)
 
     def iter_from_opinion(self, opinion, debug=False):
@@ -71,8 +71,8 @@ class TextOpinionPairsProvider(BasePairProvider):
 
         label_provider = PairSingleLabelProvider(label_instance=opinion.Sentiment)
 
-        pairs_it = self._iter_from_entities(source_entities=source_entities,
-                                            target_entities=target_entities,
+        pairs_it = self._iter_from_entities(src_entity_doc_ids=list(map(lambda e: e.IdInDocument, source_entities)),
+                                            tgt_entity_doc_ids=list(map(lambda e: e.IdInDocument, target_entities)),
                                             label_provider=label_provider)
 
         for pair in pairs_it:

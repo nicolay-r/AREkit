@@ -22,7 +22,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Text inference example")
 
     # Providing arguments.
-    InputTextArg.add_argument(parser, default=EXAMPLES["no_entities"][1])
+    InputTextArg.add_argument(parser, default=EXAMPLES["no_entities"])
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     BagsPerMinibatchArg.add_argument(parser)
     LabelsCountArg.add_argument(parser)
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # Reading provided arguments.
-    text = InputTextArg.read_argument(args)
+    sentences = InputTextArg.read_argument(args)
     rusvectores_embedding_path = RusVectoresEmbeddingFilepathArg.read_argument(args)
     bags_per_minibatch = BagsPerMinibatchArg.read_argument(args)
     labels_count = LabelsCountArg.read_argument(args)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     # Execute pipeline element.
     #############################
     serialized_exp_io = run_data_serialization_pipeline(
-        sentences=[text],
+        sentences=sentences,
         embedding_path=rusvectores_embedding_path,
         terms_per_context=terms_per_context,
         entity_fmt_type=entity_fmt_type,

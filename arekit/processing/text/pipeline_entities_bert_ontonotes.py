@@ -10,7 +10,6 @@ from arekit.processing.entities.obj_desc import NerObjectDescriptor
 class BertOntonotesNERPipelineItem(SentenceObjectsParserPipelineItem):
 
     KEY = "src"
-    NEXT_ENTITY_ID_KEY = "next_entity_id"
 
     def __init__(self):
         # Initialize bert-based model instance.
@@ -18,23 +17,16 @@ class BertOntonotesNERPipelineItem(SentenceObjectsParserPipelineItem):
         super(BertOntonotesNERPipelineItem, self).__init__(TermsPartitioning())
 
     def _get_parts_provider_func(self, pipeline_ctx):
-        return self.__iter_subs_values_with_bounds(pipeline_ctx)
+        assert(isinstance(pipeline_ctx, PipelineContext))
+        terms_list = self._get_text(pipeline_ctx)
+        return self.__iter_subs_values_with_bounds(terms_list)
 
     def _get_text(self, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
         assert(self.KEY in pipeline_ctx)
         return pipeline_ctx.provide(self.KEY)
 
-    def __get_and_register_next_entity_id(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
-        target_id = pipeline_ctx.provide(param=self.NEXT_ENTITY_ID_KEY) \
-            if self.NEXT_ENTITY_ID_KEY in pipeline_ctx else 0
-        pipeline_ctx.update(param=self.NEXT_ENTITY_ID_KEY, value=target_id + 1)
-        return target_id
-
-    def __iter_subs_values_with_bounds(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
-        terms_list = self._get_text(pipeline_ctx)
+    def __iter_subs_values_with_bounds(self, terms_list):
         assert(isinstance(terms_list, list))
 
         single_sequence = [terms_list]
@@ -43,11 +35,6 @@ class BertOntonotesNERPipelineItem(SentenceObjectsParserPipelineItem):
         for p_sequence in processed_sequences:
             for s_obj in p_sequence:
                 assert(isinstance(s_obj, NerObjectDescriptor))
-
                 value = " ".join(terms_list[s_obj.Position:s_obj.Position + s_obj.Length])
-
-                entity = Entity(value=value,
-                                e_type=s_obj.ObjectType,
-                                id_in_doc=self.__get_and_register_next_entity_id(pipeline_ctx))
-
+                entity = Entity(value=value, e_type=s_obj.ObjectType)
                 yield entity, Bound(pos=s_obj.Position, length=s_obj.Length)

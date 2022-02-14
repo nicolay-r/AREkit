@@ -37,8 +37,8 @@ from examples.network.text_parser.entities import TextEntitiesParser
 
 def run_data_serialization_pipeline(sentences, terms_per_context, entities_parser,
                                     embedding_path, entity_fmt_type, stemmer):
-    assert(isinstance(entities_parser, BasePipelineItem) or entities_parser is None)
     assert(isinstance(sentences, list))
+    assert(isinstance(entities_parser, BasePipelineItem) or entities_parser is None)
     assert(isinstance(terms_per_context, int))
     assert(isinstance(embedding_path, str))
     assert(isinstance(entity_fmt_type, EntityFormatterTypes))
@@ -48,7 +48,6 @@ def run_data_serialization_pipeline(sentences, terms_per_context, entities_parse
 
     label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
-    # TODO. split text onto sentences.
     sentences = list(map(lambda text: BaseNewsSentence(text), sentences))
 
     annot_algo = PairBasedAnnotationAlgorithm(

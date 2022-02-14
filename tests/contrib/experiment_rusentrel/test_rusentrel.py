@@ -86,12 +86,12 @@ class TestRuSentRel(unittest.TestCase):
                 for entity, bound in sentence.iter_entity_with_local_bounds():
                     assert(isinstance(entity, RuSentRelEntity))
                     assert(isinstance(bound, Bound))
-                    logger.info("\tEntity: {} ({}), text position: ({}-{}), IdInDocument: {}".format(
+                    logger.info("\tEntity: {} ({}), text position: ({}-{}), ID: {}".format(
                         entity.Value,
                         entity.Type,
                         bound.Position,
                         bound.Position + bound.Length,
-                        entity.IdInDocument))
+                        entity.ID))
 
     def test_linked_text_opinion_extraction(self):
 

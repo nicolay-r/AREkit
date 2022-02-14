@@ -1,11 +1,10 @@
 from enum import Enum
 
 from arekit.common.entities.base import Entity
+from arekit.common.news.entity import DocumentEntity
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
 from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
-from arekit.common.text.enums import TermFormat
-from arekit.common.text.parsed import BaseParsedText
 from arekit.common.text_opinions.base import TextOpinion
 
 
@@ -43,9 +42,9 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
     NAME = "entity-service-provider"
 
     def __init__(self):
+        super(EntityServiceProvider, self).__init__()
         # Initialize API.
         self.__iter_raw_terms_func = None
-        self.__get_sent = None
         # Initialize entity positions.
         self.__entity_positions = None
 
@@ -54,9 +53,9 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
         return self.NAME
 
     def init_parsed_news(self, parsed_news):
+        super(EntityServiceProvider, self).init_parsed_news(parsed_news)
         assert(isinstance(parsed_news, ParsedNews))
         self.__iter_raw_terms_func = lambda: parsed_news.iter_terms(filter_func=None, term_only=False)
-        self.__get_sent = parsed_news.get_sentence
         self.__init_entity_positions()
 
     # region public 'extract' methods
@@ -90,8 +89,8 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
             position_type=DistanceType.to_position_type(distance_type))
 
     def calc_dist_between_entities(self, e1, e2, distance_type):
-        assert(isinstance(e1, Entity))
-        assert(isinstance(e2, Entity))
+        assert(isinstance(e1, DocumentEntity))
+        assert(isinstance(e2, DocumentEntity))
         assert(isinstance(distance_type, DistanceType))
 
         return self.__calc_distance(
@@ -113,15 +112,7 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
         return e_pos.get_index(position_type)
 
     def get_entity_value(self, id_in_document):
-        position = self.__entity_positions[id_in_document]
-        assert(isinstance(position, TermPosition))
-
-        sent_ind = position.get_index(position_type=TermPositionTypes.SentenceIndex)
-        sentence = self.__get_sent(sent_ind)
-
-        assert(isinstance(sentence, BaseParsedText))
-        entity = sentence.get_term(position.get_index(position_type=TermPositionTypes.IndexInSentence),
-                                   term_format=TermFormat.Raw)
+        entity = self._doc_entities[id_in_document]
         assert(isinstance(entity, Entity))
         return entity.Value
 
@@ -159,15 +150,18 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
         self.__entity_positions = self.__calculate_entity_positions()
 
     def __calculate_entity_positions(self):
-        positions = {}
+        """ Note: here we consider the same order as in self._entities.
+        """
+        positions = []
         t_ind_in_doc = 0
 
         for s_ind, t_ind_in_sent, term in self.__iter_raw_terms_func():
 
             if isinstance(term, Entity):
-                positions[term.IdInDocument] = TermPosition(term_ind_in_doc=t_ind_in_doc,
-                                                            term_ind_in_sent=t_ind_in_sent,
-                                                            s_ind=s_ind)
+                position = TermPosition(term_ind_in_doc=t_ind_in_doc,
+                                        term_ind_in_sent=t_ind_in_sent,
+                                        s_ind=s_ind)
+                positions.append(position)
 
             t_ind_in_doc += 1
 

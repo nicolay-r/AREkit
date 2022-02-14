@@ -15,7 +15,6 @@ class InputTextArg(BaseArg):
 
     @staticmethod
     def add_argument(parser, default):
-        assert(isinstance(default, str))
         parser.add_argument('--text',
                             dest='input_text',
                             type=str,
