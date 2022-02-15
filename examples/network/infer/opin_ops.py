@@ -17,6 +17,7 @@ class CustomOpinionOperations(OpinionOperations):
 
     def iter_opinions_for_extraction(self, doc_id, data_type):
         # Reading automatically annotated collection of neutral opinions.
+        # TODO. #250, #251 provide opinion annotation here for the particular document.
         return self.__exp_io.read_opinion_collection(
             target=self.__exp_io.create_result_opinion_collection_target(
                 doc_id=doc_id,
