@@ -108,6 +108,9 @@ class NetworkInputHelper(object):
         opinions_repo.write(writer=exp_io.create_opinions_writer(),
                             target=exp_io.create_opinions_writer_target(data_type=data_type))
 
+    # TODO. #250 this part is not related to a helper.
+    # TODO. This is a particular implementation, which is considered to be
+    # TODO. Implemented at iter_opins_for_extraction (OpinionOperations)
     @staticmethod
     def __perform_annotation(exp_ctx, exp_io, doc_ops, opin_ops, data_type):
         collections_it = exp_ctx.Annotator.iter_annotated_collections(
@@ -143,6 +146,7 @@ class NetworkInputHelper(object):
                 value_to_group_id_func=value_to_group_id_func,
                 parse_news_func=lambda doc_id: doc_ops.parse_doc(doc_id),
                 iter_doc_opins=lambda doc_id:
+                    # TODO. Perform annotation here.
                     opin_ops.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
                 terms_per_context=terms_per_context)
 
