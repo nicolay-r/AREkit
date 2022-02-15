@@ -1,4 +1,3 @@
-import collections
 from arekit.common.labels.provider.base import BasePairLabelProvider
 from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
 
