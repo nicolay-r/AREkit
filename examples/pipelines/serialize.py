@@ -21,6 +21,7 @@ from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
+from arekit.processing.text.pipeline_frames import FrameVariantsParser
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
 from arekit.processing.text.pipeline_terms_splitter import TermsSplitterParser
@@ -70,6 +71,7 @@ def run_data_serialization_pipeline(sentences, terms_per_context, entities_parse
         TextEntitiesParser() if entities_parser is None else entities_parser,
         EntitiesGroupingPipelineItem(synonyms.get_synonym_group_index),
         DefaultTextTokenizer(keep_tokens=True),
+        FrameVariantsParser(frame_variants=frame_variants_collection),
         LemmasBasedFrameVariantsParser(save_lemmas=False,
                                        stemmer=stemmer,
                                        frame_variants=frame_variants_collection),
