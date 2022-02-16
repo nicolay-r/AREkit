@@ -7,13 +7,9 @@ class TextEntitiesParser(BasePipelineItem):
 
     def __init__(self):
         super(TextEntitiesParser, self).__init__()
-        self.__id_in_doc = 0
 
     def apply(self, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-
-        # reset counter.
-        self.__id_in_doc = 0
 
         # extract terms.
         words = pipeline_ctx.provide("src")
@@ -27,8 +23,7 @@ class TextEntitiesParser(BasePipelineItem):
 
         # If this is a special word which is related to the [entity] mention.
         if word[0] == "[" and word[-1] == "]":
-            entity = Entity(value=word[1:-1], e_type=None, id_in_doc=self.__id_in_doc)
-            self.__id_in_doc += 1
+            entity = Entity(value=word[1:-1], e_type=None)
             return entity
 
         return word
