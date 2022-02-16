@@ -8,6 +8,7 @@ from arekit.common.data.input.providers.label.multiple import MultipleLabelProvi
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
+from arekit.common.entities.base import Entity
 from arekit.common.labels.base import Label
 
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
@@ -75,12 +76,18 @@ class BaseSampleRowProvider(BaseRowProvider):
                 expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
                 etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
 
+        sentence_terms = list(self._provide_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind))
+
         self.__text_provider.add_text_in_row(
             set_text_func=lambda column, value: __assign_value(column, value),
-            sentence_terms=list(self._provide_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind)),
+            sentence_terms=sentence_terms,
             s_ind=s_ind,
             t_ind=t_ind,
             expected_label=expected_label)
+
+        entities = list(filter(lambda term: isinstance(term, Entity), sentence_terms))
+        row[const.ENTITY_VALUES] = ",".join([e.Value.replace(',', '') for e in entities])
+        row[const.ENTITY_TYPES] = ",".join([e.Type.replace(',', '') for e in entities])
 
         row[const.S_IND] = s_ind
         row[const.T_IND] = t_ind
