@@ -56,14 +56,16 @@ class TestBratEmbedding(unittest.TestCase):
         return [neg, pos]
 
     @staticmethod
-    def create_entity_types():
+    def create_object_types():
         entity_types = []
         org = {"type": 'ORG', "labels": ['ORG'], "bgColor": '#7fa2ff', "borderColor": 'darken'}
         person = {"type": 'PERSON', "labels": ['PERSON', 'PER'], "bgColor": '#7fa200', "borderColor": 'darken'}
         gpe = {"type": 'GPE', "labels": ['GPE'], "bgColor": '#7f00ff', "borderColor": 'darken'}
+        frame = {"type": 'Frame', "labels": ['Frame', 'F'], "bgColor": '#00a2ff', "borderColor": 'darken'}
         entity_types.append(org)
         entity_types.append(person)
         entity_types.append(gpe)
+        entity_types.append(frame)
         return entity_types
 
     @staticmethod
@@ -106,10 +108,15 @@ class TestBratEmbedding(unittest.TestCase):
         """
         assert(isinstance(text_terms, list))
 
+        entities_count = 0
+        for term in text_terms:
+            if isinstance(term, DocumentEntity):
+                entities_count = max(entities_count, term.IdInDocument)
+
+        frame_ind = entities_count + 1
         char_ind = 0
 
-        entities = []
-        triggers = []
+        objects = []
 
         for term in text_terms:
             t_from = char_ind
@@ -117,15 +124,16 @@ class TestBratEmbedding(unittest.TestCase):
             if isinstance(term, DocumentEntity):
                 t_to = t_from + len(term.Value)
                 entity = ["T{}".format(term.IdInDocument), term.Type, [[t_from, t_to]]]
-                entities.append(entity)
+                objects.append(entity)
                 # update to next
                 char_ind = t_to
 
             elif isinstance(term, FrameVariant):
                 value = term.get_value()
                 t_to = t_from + len(value)
-                trigger = ["T{}".format(len(triggers)), "Frame", [[t_from, t_to]]]
-                triggers.append(trigger)
+                frame = ["T{}".format(frame_ind), "Frame", [[t_from, t_to]]]
+                frame_ind += 1
+                objects.append(frame)
                 char_ind = t_to
 
             else:
@@ -134,7 +142,7 @@ class TestBratEmbedding(unittest.TestCase):
             # Considering sep
             char_ind += 1
 
-        return entities, triggers
+        return objects
 
     @staticmethod
     def event_types():
@@ -260,20 +268,19 @@ class TestBratEmbedding(unittest.TestCase):
         samples_data_path = join(self.DATA_DIR, samples_data)
         text_terms, relations = self.create_data(samples_data_path)
         text = " ".join([self.term_to_text(t) for t in text_terms])
-        entities, triggers = self.extract_objects(text_terms)
+        objects = self.extract_objects(text_terms)
 
         # Filling coll data.
         coll_data = dict()
-        coll_data['entity_types'] = self.create_entity_types()
+        coll_data['entity_types'] = self.create_object_types()
         coll_data['relation_types'] = self.create_relation_types()
         coll_data['event_types'] = self.event_types()
 
         # Filling doc data.
         doc_data = dict()
         doc_data['text'] = text
-        doc_data['entities'] = entities
+        doc_data['entities'] = objects
         doc_data['relations'] = self.extract_relations(relations=relations, result_data_file=result_data_source)
-        doc_data['triggers'] = triggers
 
         print(doc_data)
 
