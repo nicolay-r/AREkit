@@ -6,6 +6,7 @@ from arekit.common.news.base import News
 from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
+from arekit.processing.text.pipeline_frames import FrameVariantsParser
 
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
@@ -27,6 +28,27 @@ class TestTextParser(unittest.TestCase):
     def test_parse_sinle_string(self):
         text = "А контроль над этими провинциями — это господство над без малого половиной сирийской территории."
         parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True)])
+        news = News(doc_id=0, sentences=[BaseNewsSentence(text.split())])
+        parsed_news = NewsParser.parse(news=news, text_parser=parser)
+        debug_show_news_terms(parsed_news=parsed_news)
+
+    def test_parse_frame_variants(self):
+        text = "США пытается ввести санкции против Роccии"
+
+        # Initializing stemmer.
+        stemmer = MystemWrapper()
+
+        # frame and variants.
+        frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
+        frame_variants = FrameVariantsCollection()
+        frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants(),
+                                          overwrite_existed_variant=True,
+                                          raise_error_on_existed_variant=False)
+
+        parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True),
+                                          FrameVariantsParser(frame_variants=frame_variants),
+                                          LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
+                                                                         stemmer=stemmer)])
         news = News(doc_id=0, sentences=[BaseNewsSentence(text.split())])
         parsed_news = NewsParser.parse(news=news, text_parser=parser)
         debug_show_news_terms(parsed_news=parsed_news)
