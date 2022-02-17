@@ -25,7 +25,7 @@ from tests.processing.text.debug_text import debug_show_news_terms
 
 class TestTextParser(unittest.TestCase):
 
-    def test_parse_sinle_string(self):
+    def test_parse_single_string(self):
         text = "А контроль над этими провинциями — это господство над без малого половиной сирийской территории."
         parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True)])
         news = News(doc_id=0, sentences=[BaseNewsSentence(text.split())])
