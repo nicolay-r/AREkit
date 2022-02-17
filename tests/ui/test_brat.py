@@ -6,6 +6,7 @@ from os.path import join, dirname, realpath
 from arekit.common.data import const
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.entities.base import Entity
+from arekit.common.frames.variants.base import FrameVariant
 from arekit.common.news.entity import DocumentEntity
 
 
@@ -22,7 +23,8 @@ class TestBratEmbedding(unittest.TestCase):
         df = pd.read_csv(input_file,
                          compression='gzip',
                          sep='\t',
-                         encoding='utf-8')
+                         encoding='utf-8',
+                         dtype={'frames': str})
 
         for row_index, _ in enumerate(df[const.ID]):
             yield df.iloc[row_index]
@@ -65,11 +67,12 @@ class TestBratEmbedding(unittest.TestCase):
         return entity_types
 
     @staticmethod
-    def handle_document_sentences(sentences, entity_inds, entity_values, entity_types):
+    def handle_document_sentences(sentences, entity_inds, entity_values, entity_types, frame_inds):
         assert(isinstance(sentences, dict))
         assert(isinstance(entity_inds, dict))
         assert(isinstance(entity_values, dict))
         assert(isinstance(entity_types, dict))
+        assert(isinstance(frame_inds, dict))
 
         e_doc_id = 0
         for s_ind, sentence in sentences.items():
@@ -88,40 +91,61 @@ class TestBratEmbedding(unittest.TestCase):
 
                 e_doc_id += 1
 
+            if s_ind in frame_inds:
+                for i, f_ind in enumerate(frame_inds[s_ind]):
+                    value = text_terms[f_ind]
+                    text_terms[f_ind] = FrameVariant(text=value, frame_id="0")
+
             # Update sentence contents.
             sentences[s_ind] = text_terms
 
     @staticmethod
-    def extract_entities(text_terms):
-        """ ['T1', 'Person', [[0, 11]]]
+    def extract_objects(text_terms):
+        """ Entities: ['T1', 'Person', [[0, 11]]]
+            Triggers: ['T1', 'Frame', [[12, 21]]]
         """
         assert(isinstance(text_terms, list))
 
         char_ind = 0
+
         entities = []
+        triggers = []
+
         for term in text_terms:
+            t_from = char_ind
+
             if isinstance(term, DocumentEntity):
-
-                t_from = char_ind
                 t_to = t_from + len(term.Value)
-                entry = ["T{}".format(term.IdInDocument), term.Type, [[t_from, t_to]]]
-
-                entities.append(entry)
-
+                entity = ["T{}".format(term.IdInDocument), term.Type, [[t_from, t_to]]]
+                entities.append(entity)
                 # update to next
                 char_ind = t_to
+
+            elif isinstance(term, FrameVariant):
+                value = term.get_value()
+                t_to = t_from + len(value)
+                trigger = ["T{}".format(len(triggers)), "Frame", [[t_from, t_to]]]
+                triggers.append(trigger)
+                char_ind = t_to
+
             else:
                 char_ind += len(term)
 
             # Considering sep
             char_ind += 1
 
-        return entities
+        return entities, triggers
 
-    def trigger_types(self):
+    @staticmethod
+    def event_types():
         event_types = []
-        frame = {"type": 'Frame', "labels": ['Frame', 'F'], "bgColor": '#00a2ff', "borderColor": 'darken'}
-        event_types.append(frame)
+        frame_based_event = {"type": 'Frame',
+                             "labels": ['Frame', 'F'],
+                             "bgColor": '#00a2ff',
+                             "borderColor": 'darken',
+                             "args": [{"type": "Subject", "labels": ["SUBJ"]},
+                                      {"type": "Object", "labels": ["OBJ"]}]}
+        event_types.append(frame_based_event)
         return event_types
 
     def extract_relations(self, relations, result_data_file):
@@ -156,6 +180,8 @@ class TestBratEmbedding(unittest.TestCase):
         entity_inds = dict()
         entity_values = dict()
         entity_types = dict()
+        frame_inds = dict()
+
         relations = []
 
         for row in self.__iter_tsv_gzip(input_samples_file):
@@ -172,11 +198,17 @@ class TestBratEmbedding(unittest.TestCase):
             entity_values[sent_ind] = row[const.ENTITY_VALUES].split(',')
             entity_types[sent_ind] = row[const.ENTITY_TYPES].split(',')
 
+            if str(row["frames"]) == 'nan':
+                continue
+
+            frame_inds[sent_ind] = [int(ind) for ind in row["frames"].split(',')]
+
         # Handle sentences
         self.handle_document_sentences(sentences=sentences,
                                        entity_inds=entity_inds,
                                        entity_values=entity_values,
-                                       entity_types=entity_types)
+                                       entity_types=entity_types,
+                                       frame_inds=frame_inds)
 
         # Handle relations
         for r_ind, r_data in enumerate(relations):
@@ -199,6 +231,15 @@ class TestBratEmbedding(unittest.TestCase):
 
         return doc_terms, relations
 
+    # TODO. Process text back via pipeline.
+    @staticmethod
+    def term_to_text(term):
+        if isinstance(term, Entity):
+            return term.Value
+        if isinstance(term, FrameVariant):
+            return term.get_value()
+        return term
+
     def test(self):
 
         #################
@@ -218,20 +259,21 @@ class TestBratEmbedding(unittest.TestCase):
         # Composing whole output document text.
         samples_data_path = join(self.DATA_DIR, samples_data)
         text_terms, relations = self.create_data(samples_data_path)
-        text = " ".join([t.Value if isinstance(t, Entity) else t for t in text_terms])
+        text = " ".join([self.term_to_text(t) for t in text_terms])
+        entities, triggers = self.extract_objects(text_terms)
 
         # Filling coll data.
         coll_data = dict()
         coll_data['entity_types'] = self.create_entity_types()
         coll_data['relation_types'] = self.create_relation_types()
-        coll_data['event_types'] = self.trigger_types()
+        coll_data['event_types'] = self.event_types()
 
         # Filling doc data.
         doc_data = dict()
         doc_data['text'] = text
-        doc_data['entities'] = self.extract_entities(text_terms)
+        doc_data['entities'] = entities
         doc_data['relations'] = self.extract_relations(relations=relations, result_data_file=result_data_source)
-        doc_data['triggers'] = self
+        doc_data['triggers'] = triggers
 
         print(doc_data)
 
