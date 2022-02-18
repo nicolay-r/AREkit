@@ -15,24 +15,18 @@ class FrameVariantsSentimentNegation(BasePipelineItem):
     def __get_preposition(terms, index):
         return terms[index-1] if index > 0 else None
 
-    def __update(self, terms):
+    def apply_core(self, input_data, pipeline_ctx):
+        assert(isinstance(input_data, list))
+        assert(isinstance(pipeline_ctx, PipelineContext))
 
-        for curr_ind, term in enumerate(terms):
+        for curr_ind, term in enumerate(input_data):
 
             if not isinstance(term, TextFrameVariant):
                 continue
 
-            prep_term = self.__get_preposition(terms=terms, index=curr_ind)
+            prep_term = self.__get_preposition(terms=input_data, index=curr_ind)
             is_negated = self._locale_mods.is_negation_word(prep_term) if prep_term is not None else False
 
             term.set_is_negated(is_negated)
 
-    def apply(self, pipeline_ctx):
-        assert (isinstance(pipeline_ctx, PipelineContext))
-
-        # extract terms.
-        terms_list = list(pipeline_ctx.provide("src"))
-        self.__update(terms_list)
-
-        # update the result.
-        pipeline_ctx.update("src", value=terms_list)
+        return input_data

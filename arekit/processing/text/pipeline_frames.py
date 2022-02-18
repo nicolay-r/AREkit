@@ -80,12 +80,7 @@ class FrameVariantsParser(BasePipelineItem):
 
     # endregion
 
-    def apply(self, pipeline_ctx):
+    def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-
-        # extract terms.
-        terms = pipeline_ctx.provide("src")
-        processed_it = self._iter_processed(terms=terms, origin=terms)
-
-        # update the result.
-        pipeline_ctx.update("src", value=list(processed_it))
+        processed_it = self._iter_processed(terms=input_data, origin=input_data)
+        return list(processed_it)

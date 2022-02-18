@@ -5,7 +5,6 @@ from arekit.common.utils import split_by_whitespaces
 
 class TermsSplitterParser(BasePipelineItem):
 
-    def apply(self, pipeline_ctx):
+    def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-        return pipeline_ctx.update(param="src",
-                                   value=split_by_whitespaces(pipeline_ctx.provide("src")))
+        return split_by_whitespaces(input_data)

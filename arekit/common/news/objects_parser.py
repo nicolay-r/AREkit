@@ -19,15 +19,11 @@ class SentenceObjectsParserPipelineItem(BasePipelineItem):
 
     # endregion
 
-    def apply(self, pipeline_ctx):
+    def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-
-        parts = self.__partitioning.provide(
+        return self.__partitioning.provide(
             text=self._get_text(pipeline_ctx),
             parts_it=self._get_parts_provider_func(pipeline_ctx))
-
-        # update information in pipeline
-        pipeline_ctx.update("src", parts)
 
     # region base
 

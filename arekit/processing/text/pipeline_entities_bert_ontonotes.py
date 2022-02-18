@@ -9,8 +9,6 @@ from arekit.processing.entities.obj_desc import NerObjectDescriptor
 
 class BertOntonotesNERPipelineItem(SentenceObjectsParserPipelineItem):
 
-    KEY = "src"
-
     def __init__(self):
         # Initialize bert-based model instance.
         self.__ontonotes_ner = BertOntonotesNER()
@@ -23,8 +21,8 @@ class BertOntonotesNERPipelineItem(SentenceObjectsParserPipelineItem):
 
     def _get_text(self, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-        assert(self.KEY in pipeline_ctx)
-        return pipeline_ctx.provide(self.KEY)
+        assert(self.SOURCE_KEY in pipeline_ctx)
+        return pipeline_ctx.provide(self.SOURCE_KEY)
 
     def __iter_subs_values_with_bounds(self, terms_list):
         assert(isinstance(terms_list, list))

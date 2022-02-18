@@ -23,7 +23,7 @@ class LemmasBasedFrameVariantsParser(FrameVariantsParser):
         # then we replace certain chars according to the locale restrictions.
         return self.__locale_mods.replace_specific_word_chars(lemma)
 
-    def __lemmatize_terms(self, terms):
+    def __provide_lemmatized_terms(self, terms):
         """
         Compose a list of lemmatized versions of parsed_news
         PS: Might be significantly slow, depending on stemmer were used.
@@ -31,15 +31,8 @@ class LemmasBasedFrameVariantsParser(FrameVariantsParser):
         assert(isinstance(terms, list))
         return [self.__lemmatize_term(term) if isinstance(term, str) else term for term in terms]
 
-    def apply(self, pipeline_ctx):
+    def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-
-        # extract terms.
-        terms = pipeline_ctx.provide("src")
-        lemmas = self.__lemmatize_terms(terms)
-
-        processed_it = self._iter_processed(terms=lemmas,
-                                            origin=lemmas if self.__save_lemmas else terms)
-
-        # update the result.
-        pipeline_ctx.update("src", value=list(processed_it))
+        lemmas = self.__provide_lemmatized_terms(input_data)
+        processed_it = self._iter_processed(terms=lemmas, origin=lemmas if self.__save_lemmas else input_data)
+        return list(processed_it)

@@ -1,6 +1,6 @@
 import numpy as np
 
-from arekit.common.pipeline.context import PipelineContext
+from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.pipeline.item_base import EpochHandlingPipelineItem
 
 
@@ -27,11 +27,10 @@ class MinibatchFittingPipelineItem(EpochHandlingPipelineItem):
         self.__fit_total_acc = 0
         self.__groups_count = 0
 
-    def apply(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
-        minibatch = pipeline_ctx.provide("src")
+    def apply_core(self, input_data, pipeline_ctx):
+        assert(isinstance(input_data, MiniBatch))
 
-        feed_dict = self._context.create_feed_dict(minibatch=minibatch, data_type=self._data_type)
+        feed_dict = self._context.create_feed_dict(minibatch=input_data, data_type=self._data_type)
 
         hidden_list = list(self._context.Network.iter_hidden_parameters())
         fetches_default = [self._context.Optimiser, self._context.Network.Cost, self._context.Network.Accuracy]

@@ -24,9 +24,9 @@ class MinibatchHiddenFetcherPipelineItem(EpochHandlingPipelineItem):
 
         self.__input_dependent_params = NetworkInputDependentVariables()
 
-    def apply(self, pipeline_ctx):
+    def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
-        minibatch = pipeline_ctx.provide("src")
+        minibatch = input_data
         feed_dict = self._context.create_feed_dict(minibatch=minibatch, data_type=self._data_type)
         idh_values = self._context.Session.run(self.__idh_tensors, feed_dict=feed_dict)
 

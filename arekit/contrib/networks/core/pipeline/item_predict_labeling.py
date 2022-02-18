@@ -1,5 +1,5 @@
 from arekit.common.experiment.labeling import LabeledCollection
-from arekit.common.pipeline.context import PipelineContext
+from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.pipeline.item_base import EpochHandlingPipelineItem
 
 
@@ -19,15 +19,14 @@ class EpochLabelsCollectorPipelineItem(EpochHandlingPipelineItem):
         pairs = self._context.get_sample_id_label_pairs(data_type)
         self.__labeled_samples = LabeledCollection(uint_labeled_ids=pairs)
 
-    def apply(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
+    def apply_core(self, input_data, pipeline_ctx):
+        assert(isinstance(input_data, MiniBatch))
         assert("uint_labels" in pipeline_ctx)
 
-        minibatch = pipeline_ctx.provide("src")
         uint_labels = pipeline_ctx.provide("uint_labels")
 
         # Apply labeling.
-        for bag_index, bag in enumerate(minibatch.iter_by_bags()):
+        for bag_index, bag in enumerate(input_data.iter_by_bags()):
             uint_label = int(uint_labels[bag_index])
             for sample in bag:
                 self.__labeled_samples.assign_uint_label(uint_label, sample.ID)

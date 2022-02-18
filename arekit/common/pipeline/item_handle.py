@@ -1,6 +1,3 @@
-import collections
-
-from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.item import BasePipelineItem
 
 
@@ -16,8 +13,5 @@ class HandleIterPipelineItem(BasePipelineItem):
             self.__handle_func(item)
             yield item
 
-    def apply(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
-        items_iter = pipeline_ctx.provide("src")
-        assert(isinstance(items_iter, collections.Iterable))
-        pipeline_ctx.update("src", value=self.__updated_data(items_iter))
+    def apply_core(self, input_data, pipeline_ctx):
+        return self.__updated_data(input_data)

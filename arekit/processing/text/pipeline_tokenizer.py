@@ -21,15 +21,12 @@ class DefaultTextTokenizer(BasePipelineItem):
 
     # region protected methods
 
-    def apply(self, pipeline_ctx):
-        assert (isinstance(pipeline_ctx, PipelineContext))
-        parts_list = pipeline_ctx.provide("src")
-        result = self.__process_parts(parts_list)
-
+    def apply_core(self, input_data, pipeline_ctx):
+        assert(isinstance(pipeline_ctx, PipelineContext))
+        output_data = self.__process_parts(input_data)
         if not self.__keep_tokens:
-            result = [word for word in result if not isinstance(word, Token)]
-
-        pipeline_ctx.update("src", result)
+            output_data = [word for word in output_data if not isinstance(word, Token)]
+        return output_data
 
     # endregion
 
