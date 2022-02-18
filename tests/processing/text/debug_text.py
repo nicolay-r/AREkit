@@ -26,6 +26,8 @@ def debug_show_terms(terms):
         elif isinstance(term, Entity):
             logger.debug("Entity:\t\t'{}'".format(term.Value))
         elif isinstance(term, TextFrameVariant):
-            logger.debug("TextFV:\t\t'{}'".format(term.Variant.get_value()))
+            text = "TextFV({is_neg}):\t'{v}'".format(is_neg="+" if term.IsNegated else "-",
+                                                     v=term.Variant.get_value())
+            logger.debug(text)
         else:
             raise Exception("unsuported type {}".format(term))

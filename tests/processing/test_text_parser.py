@@ -33,7 +33,7 @@ class TestTextParser(unittest.TestCase):
         debug_show_news_terms(parsed_news=parsed_news)
 
     def test_parse_frame_variants(self):
-        text = "США пытается ввести санкции против Роccии"
+        text = "США не пытается ввести санкции против Роccии"
 
         # Initializing stemmer.
         stemmer = MystemWrapper()
@@ -48,7 +48,8 @@ class TestTextParser(unittest.TestCase):
         parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True),
                                           FrameVariantsParser(frame_variants=frame_variants),
                                           LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
-                                                                         stemmer=stemmer)])
+                                                                         stemmer=stemmer),
+                                          FrameVariantsSentimentNegation()])
         news = News(doc_id=0, sentences=[BaseNewsSentence(text.split())])
         parsed_news = NewsParser.parse(news=news, text_parser=parser)
         debug_show_news_terms(parsed_news=parsed_news)
