@@ -11,7 +11,8 @@ from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVa
 
 class TestFramesAnnotation(unittest.TestCase):
 
-    def __create_frames_variants_collection(self):
+    @staticmethod
+    def __create_frames_variants_collection():
         frames = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
         frame_variant_collection = FrameVariantsCollection()
         frame_variant_collection.fill_from_iterable(
