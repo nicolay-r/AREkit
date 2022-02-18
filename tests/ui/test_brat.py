@@ -232,6 +232,10 @@ class TestBratEmbedding(unittest.TestCase):
             r_data[1] = e_src.IdInDocument
             r_data[2] = e_tgt.IdInDocument
 
+        # Provide sentence endings.
+        for _, sentence in sentences.items():
+            sentence.append('\n')
+
         # Join all the sentences withing a single list of terms.
         doc_terms = []
         for _, s_terms in sentences.items():
@@ -247,6 +251,11 @@ class TestBratEmbedding(unittest.TestCase):
         if isinstance(term, FrameVariant):
             return term.get_value()
         return term
+
+    @staticmethod
+    def sentence_to_text(sentence_terms):
+        assert(isinstance(sentence_terms, list))
+        return " ".join([TestBratEmbedding.term_to_text(t) for t in sentence_terms])
 
     def test(self):
 
