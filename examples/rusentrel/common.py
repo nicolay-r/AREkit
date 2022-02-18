@@ -59,21 +59,22 @@ class Common:
 
     @staticmethod
     def create_folding(rusentrel_version, ruattitudes_version, doc_id_func):
-        rsr_indices_it = [list(RuSentRelIOUtils.iter_collection_indices(rusentrel_version))[0]]
+        rsr_indices = list(RuSentRelIOUtils.iter_collection_indices(rusentrel_version))
 
-        ra_indices_it = read_ruattitudes_in_memory(version=ruattitudes_version,
-                                                   keep_doc_ids_only=True,
-                                                   doc_id_func=doc_id_func)
+        ra_indices_dict = dict()
+        if ruattitudes_version is not None:
+            ra_indices_dict = read_ruattitudes_in_memory(version=ruattitudes_version,
+                                                         keep_doc_ids_only=True,
+                                                         doc_id_func=doc_id_func)
 
-        return NoFolding(doc_ids_to_fold=list(chain(rsr_indices_it, ra_indices_it.keys())),
+        return NoFolding(doc_ids_to_fold=list(chain(rsr_indices, ra_indices_dict.keys())),
                          supported_data_types=[DataType.Train])
 
     @staticmethod
     def create_exp_name(rusentrel_version, ra_version, folding_type):
-        return "rsr-{rsr_version}-ra-{ra_version}-{folding_type}".format(
-            rsr_version=rusentrel_version.value,
-            ra_version=ra_version.value,
-            folding_type=folding_type.value)
+        return "".join(["rsr-{v}".format(v=rusentrel_version.value),
+                        "-ra-{v}".format(v=ra_version.value) if ra_version is not None else "",
+                        "-{ft}".format(ft=folding_type.value)])
 
     @staticmethod
     def create_exp_name_suffix(use_balancing, terms_per_context, dist_in_terms_between_att_ends):

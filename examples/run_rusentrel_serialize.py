@@ -10,6 +10,7 @@ from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_f
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
 from arekit.contrib.networks.handlers.serializer import NetworksInputSerializerExperimentIteration
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -26,13 +27,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="RuSentRel dataset serialization script")
 
-    # Default parameters
-    rusentrel_version = RuSentRelVersions.V11
-    ra_version = RuAttitudesVersions.V20LargeNeut
-    folding_type = FoldingType.Fixed
-
     # Provide arguments.
-    ExperimentTypeArg.add_argument(parser, default="rsr+ra")
+    ExperimentTypeArg.add_argument(parser, default="rsr")
     LabelsCountArg.add_argument(parser)
     RusVectoresEmbeddingFilepathArg.add_argument(parser)
     TermsPerContextArg.add_argument(parser)
@@ -54,6 +50,11 @@ if __name__ == '__main__':
     use_balancing = UseBalancingArg.read_argument(args)
     dist_in_terms_between_attitude_ends = DistanceInTermsBetweenAttitudeEndsArg.read_argument(args)
     pos_tagger = POSMystemWrapper(MystemWrapper().MystemInstance)
+
+    # Default parameters
+    rusentrel_version = RuSentRelVersions.V11
+    ra_version = None if exp_type == ExperimentTypes.RuSentRel else RuAttitudesVersions.V20LargeNeut
+    folding_type = FoldingType.Fixed
 
     synonyms_collection = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)
 

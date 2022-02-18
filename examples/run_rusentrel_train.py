@@ -4,6 +4,7 @@ from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
+from arekit.contrib.experiment_rusentrel.types import ExperimentTypes
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.callback.hidden import HiddenStatesWriterCallback
 from arekit.contrib.networks.core.callback.hidden_input import InputHiddenStatesWriterCallback
@@ -32,12 +33,6 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description="Training script for obtaining Tensorflow based states, "
                                                  "based on the RuSentRel and RuAttitudes datasets (optionally)")
-
-    # Utilize predefined versions and folding format.
-    rusentrel_version = RuSentRelVersions.V11
-    ra_version = RuAttitudesVersions.V20LargeNeut
-    folding_type = FoldingType.Fixed
-    model_target_dir = NEURAL_NETWORKS_TARGET_DIR
 
     # Composing cmd arguments.
     LabelsCountArg.add_argument(parser)
@@ -77,6 +72,12 @@ if __name__ == '__main__':
     epochs_count = EpochsCountArg.read_argument(args)
     model_load_dir = ModelLoadDirArg.read_argument(args)
     use_balancing = UseBalancingArg.read_argument(args)
+
+    # Utilize predefined versions and folding format.
+    rusentrel_version = RuSentRelVersions.V11
+    ra_version = None if exp_type == ExperimentTypes.RuSentRel else RuAttitudesVersions.V20LargeNeut
+    folding_type = FoldingType.Fixed
+    model_target_dir = NEURAL_NETWORKS_TARGET_DIR
 
     # Init handler.
     bags_collection_type = create_bags_collection_type(model_input_type=model_input_type)
