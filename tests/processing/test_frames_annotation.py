@@ -2,7 +2,6 @@ import unittest
 
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
-from arekit.common.pipeline.context import PipelineContext
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -25,17 +24,16 @@ class TestFramesAnnotation(unittest.TestCase):
     def test(self):
         frame_variants_collection = self.__create_frames_variants_collection()
         stemmer = MystemWrapper()
-        p = LemmasBasedFrameVariantsParser(save_lemmas=False,
-                                           stemmer=stemmer,
-                                           frame_variants=frame_variants_collection)
+        parser = LemmasBasedFrameVariantsParser(save_lemmas=False,
+                                                stemmer=stemmer,
+                                                frame_variants=frame_variants_collection)
 
-        ctx = PipelineContext(d={"src": "мы пытались его осудить но не получилось".split()})
+        input_terms = "мы пытались его осудить но не получилось".split()
 
-        p.apply(ctx)
-
-        for t in ctx.provide("src"):
-            s = "[{}]".format(t.Variant.get_value()) if isinstance(t, TextFrameVariant) else t
-            print(s)
+        for term in parser.apply(input_terms):
+            str_term = "[{}]".format(term.Variant.get_value()) \
+                if isinstance(term, TextFrameVariant) else term
+            print(str_term)
 
 
 if __name__ == '__main__':

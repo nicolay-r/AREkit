@@ -8,7 +8,6 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.pipeline.context import PipelineContext
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -49,15 +48,8 @@ class TestOutputFormatters(unittest.TestCase):
 
         doc_ids = set(opinion_storage.iter_column_values(column_name=const.DOC_ID, dtype=int))
 
-        print(doc_ids)
-
-        pipeline_ctx = PipelineContext({"src": doc_ids})
-
-        # Running pipeline.
-        ppl.run(pipeline_ctx)
-
         # Iterate over the result.
-        for doc_id, collection in pipeline_ctx.provide("src"):
+        for doc_id, collection in ppl.run(doc_ids):
             print("d:{}, ct:{}, count:{}".format(doc_id, type(collection), len(collection)))
 
 

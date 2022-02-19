@@ -1,4 +1,3 @@
-from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.stemmer import Stemmer
 from arekit.processing.languages.ru.mods import RussianLanguageMods
 from arekit.processing.text.pipeline_frames import FrameVariantsParser
@@ -32,7 +31,6 @@ class LemmasBasedFrameVariantsParser(FrameVariantsParser):
         return [self.__lemmatize_term(term) if isinstance(term, str) else term for term in terms]
 
     def apply_core(self, input_data, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
         lemmas = self.__provide_lemmatized_terms(input_data)
         processed_it = self._iter_processed(terms=lemmas, origin=lemmas if self.__save_lemmas else input_data)
         return list(processed_it)

@@ -1,7 +1,7 @@
 import logging
 
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import BasePipelineItem
+from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.utils import split_by_whitespaces
 from arekit.processing.text.tokens import Tokens
 from arekit.processing.text.token import Token

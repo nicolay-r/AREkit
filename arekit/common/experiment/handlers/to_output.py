@@ -10,8 +10,7 @@ from arekit.common.experiment.pipelines.opinion_collections import output_to_opi
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
-from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item_handle import HandleIterPipelineItem
+from arekit.common.pipeline.items.handle import HandleIterPipelineItem
 from arekit.contrib.experiment_rusentrel.model_io.bert import RuSentRelExperimentBertIOUtils
 
 
@@ -67,13 +66,11 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
 
         # Executing pipeline.
         ppl.append(save_item)
-        pipeline_ctx = PipelineContext({
-            "src": set(output_storage.iter_column_values(column_name=const.DOC_ID))
-        })
-        ppl.run(pipeline_ctx)
+
+        input_data = set(output_storage.iter_column_values(column_name=const.DOC_ID))
 
         # iterate over the result.
-        for _ in pipeline_ctx.provide("src"):
+        for _ in ppl.run(input_data):
             pass
 
     def _iter_output_and_target_pairs(self, iter_index):

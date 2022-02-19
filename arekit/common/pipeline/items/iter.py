@@ -1,4 +1,4 @@
-from arekit.common.pipeline.item import BasePipelineItem
+from arekit.common.pipeline.items.base import BasePipelineItem
 
 
 class FilterPipelineItem(BasePipelineItem):

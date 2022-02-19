@@ -3,7 +3,7 @@ import logging
 
 from arekit.common.model.base import BaseModel
 from arekit.common.experiment.data_type import DataType
-from arekit.common.pipeline.context import PipelineContext
+from arekit.common.pipeline.base import BasePipeline
 from arekit.common.utils import progress_bar_defined
 
 from arekit.contrib.networks.core.cancellation import OperationCancellation
@@ -55,8 +55,8 @@ class BaseTensorflowModel(BaseModel):
         desc = "{prefix}".format(prefix=prefix)
         return progress_bar_defined(iterable=batches_iter, unit=unit, total=total, desc=desc)
 
-    def __run_epoch_pipeline(self, data_type, pipeline, prefix):
-        assert(isinstance(pipeline, list))
+    def __run_epoch_pipeline(self, data_type, pipeline_items, prefix):
+        assert(isinstance(pipeline_items, list))
         assert(isinstance(prefix, str))
 
         bags_per_group = self.__context.Config.BagsPerMinibatch
@@ -72,10 +72,12 @@ class BaseTensorflowModel(BaseModel):
             total=minibatches_count,
             prefix=prefix)
 
-        for item in pipeline:
+        for item in pipeline_items:
             assert(isinstance(item, EpochHandlingPipelineItem))
             item.before_epoch(model_context=self.__context,
                               data_type=data_type)
+
+        pipeline = BasePipeline(pipeline_items)
 
         for bags_group in groups_it:
             assert(isinstance(bags_group, list))
@@ -85,10 +87,7 @@ class BaseTensorflowModel(BaseModel):
                 bags_coolection_type=self.__context.BagsCollectionType,
                 bags_group=bags_group)
 
-            ctx = PipelineContext({"src": minibatch})
-
-            for item in pipeline:
-                item.apply(pipeline_ctx=ctx)
+            pipeline.run(minibatch)
 
     def __try_load_state(self):
         if self.__context.IO.IsPretrainedStateProvided:
@@ -111,7 +110,7 @@ class BaseTensorflowModel(BaseModel):
 
             bags_collection.shuffle()
 
-            self.__run_epoch_pipeline(pipeline=self.__fit_pipeline,
+            self.__run_epoch_pipeline(pipeline_items=self.__fit_pipeline,
                                       data_type=DataType.Train,
                                       prefix="Training")
 
@@ -143,7 +142,7 @@ class BaseTensorflowModel(BaseModel):
 
         self.__context.initialize_session()
         self.__try_load_state()
-        self.__run_epoch_pipeline(pipeline=self.__predict_pipeline,
+        self.__run_epoch_pipeline(pipeline_items=self.__predict_pipeline,
                                   data_type=data_type,
                                   prefix="Predict [{dtype}]".format(dtype=data_type))
         self.__callback_do(lambda callback: callback.on_predict_finished(self.__predict_pipeline))

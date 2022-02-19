@@ -17,7 +17,7 @@ class RuSentRelTextEntitiesParser(SentenceObjectsParserPipelineItem):
         sentence = self.__get_sentence(pipeline_ctx)
         return sentence.Text
 
-    def _get_parts_provider_func(self, pipeline_ctx):
+    def _get_parts_provider_func(self, input_data, pipeline_ctx):
         sentence = self.__get_sentence(pipeline_ctx)
         return self.__iter_subs_values_with_bounds(sentence)
 

@@ -1,7 +1,6 @@
 from arekit.common.bound import Bound
 from arekit.common.entities.base import Entity
 from arekit.common.news.objects_parser import SentenceObjectsParserPipelineItem
-from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.partitioning.terms import TermsPartitioning
 from arekit.processing.entities.bert_ontonotes import BertOntonotesNER
 from arekit.processing.entities.obj_desc import NerObjectDescriptor
@@ -14,15 +13,8 @@ class BertOntonotesNERPipelineItem(SentenceObjectsParserPipelineItem):
         self.__ontonotes_ner = BertOntonotesNER()
         super(BertOntonotesNERPipelineItem, self).__init__(TermsPartitioning())
 
-    def _get_parts_provider_func(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
-        terms_list = self._get_text(pipeline_ctx)
-        return self.__iter_subs_values_with_bounds(terms_list)
-
-    def _get_text(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
-        assert(self.SOURCE_KEY in pipeline_ctx)
-        return pipeline_ctx.provide(self.SOURCE_KEY)
+    def _get_parts_provider_func(self, input_data, pipeline_ctx):
+        return self.__iter_subs_values_with_bounds(input_data)
 
     def __iter_subs_values_with_bounds(self, terms_list):
         assert(isinstance(terms_list, list))

@@ -1,6 +1,6 @@
 from arekit.common.experiment.api.ctx_serialization import ExperimentSerializationContext
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
-from arekit.common.pipeline.item import BasePipelineItem
+from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.text.parser import BaseTextParser
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser

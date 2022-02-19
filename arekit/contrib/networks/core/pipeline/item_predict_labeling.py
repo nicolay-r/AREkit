@@ -1,6 +1,7 @@
 from arekit.common.experiment.labeling import LabeledCollection
 from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.pipeline.item_base import EpochHandlingPipelineItem
+from arekit.contrib.networks.core.pipeline.item_predict import EpochLabelsPredictorPipelineItem
 
 
 class EpochLabelsCollectorPipelineItem(EpochHandlingPipelineItem):
@@ -21,9 +22,8 @@ class EpochLabelsCollectorPipelineItem(EpochHandlingPipelineItem):
 
     def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(input_data, MiniBatch))
-        assert("uint_labels" in pipeline_ctx)
-
-        uint_labels = pipeline_ctx.provide("uint_labels")
+        assert(EpochLabelsPredictorPipelineItem.KEY in pipeline_ctx)
+        uint_labels = pipeline_ctx.provide(EpochLabelsPredictorPipelineItem.KEY)
 
         # Apply labeling.
         for bag_index, bag in enumerate(input_data.iter_by_bags()):

@@ -1,7 +1,7 @@
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import BasePipelineItem
+from arekit.common.pipeline.items.base import BasePipelineItem
 
 
 class FrameVariantsParser(BasePipelineItem):

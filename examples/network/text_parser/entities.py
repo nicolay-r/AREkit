@@ -1,5 +1,5 @@
 from arekit.common.entities.base import Entity
-from arekit.common.pipeline.item import BasePipelineItem
+from arekit.common.pipeline.items.base import BasePipelineItem
 
 
 class TextEntitiesParser(BasePipelineItem):

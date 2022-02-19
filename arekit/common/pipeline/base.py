@@ -1,5 +1,5 @@
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.item import BasePipelineItem
+from arekit.common.pipeline.items.base import BasePipelineItem
 
 
 class BasePipeline(object):
@@ -8,12 +8,16 @@ class BasePipeline(object):
         assert(isinstance(pipeline, list))
         self.__pipeline = pipeline
 
-    def run(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
+    def run(self, input_data, params_dict=None):
+        assert(isinstance(params_dict, dict) or params_dict is None)
+
+        pipeline_ctx = PipelineContext(params_dict if params_dict is not None else dict())
 
         for item in filter(lambda itm: itm is not None, self.__pipeline):
             assert(isinstance(item, BasePipelineItem))
-            item.apply(pipeline_ctx)
+            input_data = item.apply(input_data=input_data, pipeline_ctx=pipeline_ctx)
+
+        return input_data
 
     def append(self, item):
         assert(isinstance(item, BasePipelineItem))

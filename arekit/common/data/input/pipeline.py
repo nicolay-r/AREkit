@@ -5,7 +5,7 @@ from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPa
 from arekit.common.news.parsed.service import ParsedNewsService
 from arekit.common.opinions.base import Opinion
 from arekit.common.pipeline.base import BasePipeline
-from arekit.common.pipeline.item_flatten import FlattenIterPipelineItem
+from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
 from arekit.common.pipeline.item_map import MapPipelineItem
 from arekit.common.text_opinions.base import TextOpinion
 
