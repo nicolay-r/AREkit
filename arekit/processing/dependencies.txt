@@ -1,4 +1,1 @@
 pymystem3==0.2.0
-deeppavlov==0.11.0
-# deeppavlov bert-dp dependencies:
-git+https://github.com/deepmipt/bert.git@feat/multi_gpu

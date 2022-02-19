@@ -262,7 +262,6 @@ class TestBratEmbedding(unittest.TestCase):
         #################
         # Declaring data.
         result_data = "out.tsv.gz"
-        opinions_data = "opinion-test-0.tsv.gz"
         samples_data = "sample-test-0.tsv.gz"
         brat_url = "http://localhost:8001/"
 

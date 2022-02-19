@@ -33,7 +33,7 @@ from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
 from examples.network.infer.exp_io import InferIOUtils
 from examples.network.serialization_data import RuSentRelExperimentSerializationContext
-from examples.network.text_parser.entities import TextEntitiesParser
+from examples.text.pipeline_entities_default import TextEntitiesParser
 
 
 def run_data_serialization_pipeline(sentences, terms_per_context, entities_parser,

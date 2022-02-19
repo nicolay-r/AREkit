@@ -1,3 +1,7 @@
 gensim==3.2.0
 numpy==1.19.5
 scipy==1.5.4
+# For named entities recognition via DeepPavlov library:
+deeppavlov==0.11.0
+# DeepPavlov bert-dp dependencies:
+git+https://github.com/deepmipt/bert.git@feat/multi_gpu
