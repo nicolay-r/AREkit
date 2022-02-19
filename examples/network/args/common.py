@@ -2,9 +2,9 @@ from arekit.contrib.experiment_rusentrel.types import ExperimentTypesService
 from arekit.contrib.networks.enum_name_types import ModelNamesService, ModelNames
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersionsService, RuSentiFramesVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.pipeline_entities_bert_ontonotes import BertOntonotesNERPipelineItem
 from examples.network.args.base import BaseArg
 from examples.network.args import const
+from examples.text.pipeline_entities_bert_ontonotes import BertOntonotesNERPipelineItem
 
 
 class InputTextArg(BaseArg):
