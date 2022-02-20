@@ -5,7 +5,11 @@
 </p>
 
 ## Dependencies
-* DeepPavlov == 1.11.0
+
+* arekit == 0.22.0
+* gensim == 3.2.0
+* deeppavlov == 1.11.0
+* brat-v1.3 [[github]](https://github.com/nlplab/brat)
 
 We adopt [DeepPavlov](https://github.com/deepmipt/DeepPavlov) 
 for Named Entity Recognition in text sentences (BertOntoNotes model).
