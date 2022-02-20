@@ -21,6 +21,7 @@ def __process_int_values_list(value):
 
 parse_value = {
     const.ID: lambda value: value,
+    const.DOC_ID: lambda value: int(value),
     const.S_IND: lambda value: int(value),
     const.T_IND: lambda value: int(value),
     const.SENT_IND: lambda value: int(value),

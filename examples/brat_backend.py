@@ -16,9 +16,13 @@ class BratBackend(object):
     current_dir = dirname(realpath(__file__))
     DATA_DIR = join(current_dir, "data")
 
+    SUBJECT_ROLE = "Subj"
+    OBJECT_ROLE = "Obj"
+
     @staticmethod
-    def __create_relation_types(relation_color_types):
+    def __create_relation_types(relation_color_types, entity_types):
         assert(isinstance(relation_color_types, dict))
+        assert(isinstance(entity_types, list))
 
         types = []
         for rel_type, rel_color in relation_color_types.items():
@@ -28,8 +32,8 @@ class BratBackend(object):
                 "dashArray": '3,3',
                 "color": rel_color,
                 "args": [
-                    {"role": 'Subject', "targets": ['Entity']},
-                    {"role": 'Object', "targets": ['Entity']}]
+                    {"role":  BratBackend.SUBJECT_ROLE, "targets": entity_types},
+                    {"role":  BratBackend.OBJECT_ROLE, "targets": entity_types}]
             })
 
         return types
@@ -97,10 +101,14 @@ class BratBackend(object):
         assert(isinstance(relations, list))
         assert(isinstance(result_data, BaseRowsStorage))
 
-        brat_rels = []
-        for r_ind, row in result_data:
+        relations = sorted(relations, key=lambda item: item[0])
 
-            s_ind, t_ind = relations[r_ind]
+        brat_rels = []
+        for res_ind, row in result_data:
+
+            rel_id, s_ind, t_ind = relations[res_ind]
+
+            assert(res_ind == rel_id)
 
             neu = int(row['0'])
             pos = int(row['1'])
@@ -108,23 +116,25 @@ class BratBackend(object):
             if neu > 0:
                 continue
 
-            rel_id = 'R{}'.format(r_ind)
+            rel_id = 'R{}'.format(rel_id)
             rel_type = "POS" if pos > 0 else "NEG"
 
-            brat_rels.append([rel_id, rel_type, [['Subj', 'T{}'.format(s_ind)],
-                                                 ['Obj', 'T{}'.format(t_ind)]]])
+            brat_rels.append([rel_id, rel_type, [
+                [BratBackend.SUBJECT_ROLE, 'T{}'.format(s_ind)],
+                [BratBackend.OBJECT_ROLE, 'T{}'.format(t_ind)]
+            ]])
 
         return brat_rels
 
     @staticmethod
-    def __to_terms(sentences_data):
-        assert (isinstance(sentences_data, dict))
+    def __to_terms(doc_data):
+        assert (isinstance(doc_data, dict))
 
-        sentence_terms = {}
+        sentence_terms = []
 
         e_doc_id = 0
-        for s_ind, sent_data in sentences_data.items():
-
+        for s_ind in sorted(doc_data):
+            sent_data = doc_data[s_ind]
             text_terms = sent_data[BaseSingleTextProvider.TEXT_A]
             for i, e_ind in enumerate(sent_data[Entities]):
                 sentence_entity_values = sent_data[const.ENTITY_VALUES]
@@ -143,21 +153,62 @@ class BratBackend(object):
                 text_terms[f_ind] = FrameVariant(text=value, frame_id="0")
 
             # Update sentence contents.
-            sentence_terms[s_ind] = text_terms
+            sentence_terms.append(text_terms)
 
         return sentence_terms
 
     @staticmethod
-    def __iter_relations(sentences_data):
-        assert(isinstance(sentences_data, dict))
-        for s_ind, r_data in sentences_data.items():
-            for relation in sentences_data[s_ind]["relations"]:
-                terms = sentences_data[s_ind][BaseSingleTextProvider.TEXT_A]
-                s_obj = terms[relation[0]]
-                t_obj = terms[relation[1]]
-                yield [s_obj.IdInDocument, t_obj.IdInDocument]
+    def __iter_relations(doc_data):
+        assert(isinstance(doc_data, dict))
+        for s_ind in sorted(doc_data):
+            r_data = doc_data[s_ind]
+            for relation in r_data["relations"]:
+                terms = r_data[BaseSingleTextProvider.TEXT_A]
+                r_ind = relation[0]
+                s_obj = terms[relation[1]]
+                t_obj = terms[relation[2]]
+                yield [r_ind, s_obj.IdInDocument, t_obj.IdInDocument]
 
-    def __create_data(self, samples):
+    @staticmethod
+    def __iter_docs_data(samples, sent_data_cols):
+
+        def __create_doc_data():
+            return dict()
+
+        doc_data = __create_doc_data()
+        curr_doc_id = None
+
+        for row_ind, row in samples:
+
+            parsed = ParsedSampleRow.parse(row)
+            doc_id = parsed[const.DOC_ID]
+
+            if curr_doc_id is None:
+                curr_doc_id = doc_id
+            elif curr_doc_id != doc_id:
+                yield curr_doc_id, doc_data
+                doc_data = __create_doc_data()
+
+            curr_doc_id = doc_id
+            sent_ind = parsed[const.SENT_IND]
+            has_row = sent_ind in doc_data
+            s_data = {"relations": []} if not has_row else doc_data[sent_ind]
+            s_data["relations"].append(
+                [row_ind, parsed[const.S_IND], parsed[const.T_IND]]
+            )
+
+            if has_row:
+                continue
+
+            for col in sent_data_cols:
+                s_data[col] = parsed[col]
+
+            doc_data[sent_ind] = s_data
+
+        if len(doc_data) > 0:
+            yield curr_doc_id, doc_data
+
+    def __extract_data_from_samples(self, samples):
         assert(isinstance(samples, BaseRowsStorage))
 
         sent_data_cols = [BaseSingleTextProvider.TEXT_A,
@@ -166,39 +217,31 @@ class BratBackend(object):
                           Entities,
                           FrameVariantIndices]
 
-        sentences_data = dict()
-
-        for _, row in samples:
-
-            parsed = ParsedSampleRow.parse(row)
-
-            sent_ind = parsed[const.SENT_IND]
-            has_row = sent_ind in sentences_data
-            s_data = {"relations": []} if not has_row else sentences_data[sent_ind]
-            s_data["relations"].append([parsed[const.S_IND], parsed[const.T_IND]])
-
-            if has_row:
-                continue
-
-            for col in sent_data_cols:
-                s_data[col] = parsed[col]
-
-            sentences_data[sent_ind] = s_data
-
-        # Handle sentences
-        sentences_terms = self.__to_terms(sentences_data=sentences_data)
-        relations = list(self.__iter_relations(sentences_data=sentences_data))
-
-        # Provide sentence endings.
-        for _, terms in sentences_terms.items():
-            terms.append('\n')
-
         # Join all the sentences within a single list of terms.
-        doc_terms = []
-        for s_terms in sentences_terms.values():
-            doc_terms.extend(s_terms)
+        text_terms = []
+        relations = []
 
-        return doc_terms, relations
+        for doc_id, doc_data in self.__iter_docs_data(samples, sent_data_cols=sent_data_cols):
+
+            # Handle sentences
+            sentences_terms = self.__to_terms(doc_data=doc_data)
+            relations.extend(self.__iter_relations(doc_data=doc_data))
+
+            # Provide sentence endings.
+            for sent_terms in sentences_terms:
+                sent_terms.append('\n')
+
+            # Document preamble.
+            text_terms.extend(["DOC: {}".format(doc_id), '\n'])
+
+            # Document contents.
+            for sent_terms in sentences_terms:
+                text_terms.extend(sent_terms)
+
+            # Document appendix.
+            text_terms.append('\n')
+
+        return text_terms, relations
 
     # TODO. Process text back via pipeline.
     @staticmethod
@@ -210,17 +253,21 @@ class BratBackend(object):
         return term
 
     def __to_data(self, samples, result, obj_color_types, rel_color_types):
+        assert(isinstance(obj_color_types, dict))
+        assert(isinstance(rel_color_types, dict))
         assert(isinstance(samples, BaseRowsStorage))
         assert(isinstance(result, BaseRowsStorage))
 
         # Composing whole output document text.
-        text_terms, relations = self.__create_data(samples)
+        text_terms, relations = self.__extract_data_from_samples(samples)
         text = " ".join([self.__term_to_text(t) for t in text_terms])
 
         # Filling coll data.
         coll_data = dict()
         coll_data['entity_types'] = self.__create_object_types(obj_color_types)
-        coll_data['relation_types'] = self.__create_relation_types(rel_color_types)
+        coll_data['relation_types'] = self.__create_relation_types(
+            relation_color_types=rel_color_types,
+            entity_types=list(obj_color_types.keys()))
 
         # Filling doc data.
         doc_data = dict()
@@ -229,11 +276,16 @@ class BratBackend(object):
         doc_data['relations'] = self.__extract_relations(relations=relations,
                                                          result_data=result)
 
+        print(doc_data['entities'])
+        print(doc_data['relations'])
+        print(coll_data['relation_types'])
+
         return text, coll_data, doc_data
 
     def to_html(self, obj_color_types, rel_color_types,
                 samples_data_filepath, result_data_filepath,
-                brat_url="http://localhost:8001/"):
+                docs_range=None, brat_url="http://localhost:8001/"):
+        assert(isinstance(docs_range, tuple) or docs_range is None)
 
         text, coll_data, doc_data = self.__to_data(
             samples=BaseRowsStorage.from_tsv(samples_data_filepath, col_types={'frames': str}),
