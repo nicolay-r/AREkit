@@ -7,6 +7,10 @@ from . import const as network_input_const
 empty_list = []
 
 
+def __process_values_list(value):
+    return value.split(network_input_const.ArgsSep)
+
+
 def __process_indices_list(value):
     return [int(v) for v in str(value).split(network_input_const.ArgsSep)]
 
@@ -19,6 +23,9 @@ parse_value = {
     const.ID: lambda value: value,
     const.S_IND: lambda value: int(value),
     const.T_IND: lambda value: int(value),
+    const.SENT_IND: lambda value: int(value),
+    const.ENTITY_VALUES: lambda value: __process_values_list(value),
+    const.ENTITY_TYPES: lambda value: __process_values_list(value),
     network_input_const.FrameVariantIndices: lambda value:
         __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.FrameConnotations: lambda value:
@@ -97,6 +104,10 @@ class ParsedSampleRow(object):
     @property
     def SynonymSubjectInds(self):
         return self.__params[network_input_const.SynonymSubject]
+
+    def __getitem__(self, item):
+        assert (isinstance(item, str) or item is None)
+        return self.__params[item] if item is not None else None
 
     @classmethod
     def parse(cls, row):

@@ -25,12 +25,18 @@ class BaseRowsStorage(object):
     # endregion
 
     @classmethod
-    def from_tsv(cls, filepath, sep='\t', compression='gzip', encoding='utf-8', header="infer"):
+    def from_tsv(cls, filepath, sep='\t', compression='gzip', encoding='utf-8', header="infer", col_types=None):
         instance = cls()
+
+        # Speciall assignation of types for certain columns.
+        if col_types is None:
+            col_types = dict()
+
         instance._df = pd.read_csv(filepath,
                                    sep=sep,
                                    encoding=encoding,
                                    compression=compression,
+                                   dtype=col_types,
                                    header=header)
         return instance
 

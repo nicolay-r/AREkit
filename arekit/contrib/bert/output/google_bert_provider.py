@@ -27,7 +27,12 @@ class GoogleBertOutputStorage(BaseRowsStorage):
         df.columns = [str(c) for c in df.columns]
 
     @classmethod
-    def from_tsv(cls, filepath, sep='\t', compression='infer', encoding='utf-8', header=None):
-        return super(GoogleBertOutputStorage, cls).from_tsv(filepath=filepath, sep=sep, compression=compression, encoding=encoding, header=header)
+    def from_tsv(cls, filepath, sep='\t', compression='infer', encoding='utf-8', header=None, col_types=None):
+        return super(GoogleBertOutputStorage, cls).from_tsv(filepath=filepath,
+                                                            sep=sep,
+                                                            compression=compression,
+                                                            encoding=encoding,
+                                                            header=header,
+                                                            col_types=col_types)
 
     # endregion
