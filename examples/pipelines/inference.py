@@ -19,6 +19,7 @@ from examples.network.args.const import BAG_SIZE
 from examples.network.infer.exp_io import InferIOUtils
 
 
+# TODO. #285 reorganize in a form of a pipeline item.
 def run_network_inference_pipeline(serialized_exp_io, model_name, bags_collection_type,
                                    model_input_type, bags_per_minibatch, nn_io, labels_scaler,
                                    predict_writer):

@@ -36,6 +36,7 @@ from examples.network.serialization_data import RuSentRelExperimentSerialization
 from examples.text.pipeline_entities_default import TextEntitiesParser
 
 
+# TODO. #285 reorganize in a form of a pipeline item.
 def run_data_serialization_pipeline(sentences, terms_per_context, entities_parser,
                                     embedding_path, entity_fmt_type, stemmer):
     assert(isinstance(sentences, list) or isinstance(sentences, str))

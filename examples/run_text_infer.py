@@ -2,15 +2,17 @@ import argparse
 import os
 from os.path import join
 
+from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from examples.input import EXAMPLES
-from examples.network.args.const import NEURAL_NETWORKS_TARGET_DIR
+from examples.network.args.const import NEURAL_NETWORKS_TARGET_DIR, DATA_DIR
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, ModelNameTagArg
 from examples.network.common import create_bags_collection_type, create_network_model_io
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, LabelsCountArg, TermsPerContextArg, \
     ModelNameArg, ModelLoadDirArg, VocabFilepathArg, StemmerArg, InputTextArg, PredictOutputFilepathArg, \
     EmbeddingMatrixFilepathArg, EntitiesParserArg
+from examples.pipelines.backend import pipeline_brat_backend
 from examples.pipelines.inference import run_network_inference_pipeline
 
 from examples.pipelines.serialize import run_data_serialization_pipeline
@@ -107,3 +109,10 @@ if __name__ == '__main__':
                                    model_input_type=model_input_type,
                                    nn_io=nn_io,
                                    labels_scaler=labels_scaler)
+
+    pipeline_brat_backend(
+        output_data_filepath=result_filepath,
+        sample_data_filepath=serialized_exp_io.create_samples_writer_target(DataType.Test),
+        obj_color_types={"ORG": '#7fa2ff', "GPE": "#7fa200", "PERSON": "#7f00ff", "Frame": "#00a2ff"},
+        rel_color_types={"POS": "GREEN", "NEG": "RED"},
+        target=join(DATA_DIR, "brat_result.html"))
