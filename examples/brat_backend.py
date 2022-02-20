@@ -11,6 +11,8 @@ from arekit.common.frames.variants.base import FrameVariant
 from arekit.common.news.entity import DocumentEntity
 from arekit.contrib.networks.core.input.const import Entities, FrameVariantIndices
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
+from arekit.processing.text.token import Token
+from arekit.processing.text.tokens import Tokens
 
 
 class BratBackend(object):
@@ -75,26 +77,20 @@ class BratBackend(object):
         for term in text_terms:
             t_from = char_ind
 
+            text_term = BratBackend.__term_to_text(term)
+            t_to = t_from + len(text_term)
+
             if isinstance(term, DocumentEntity):
-                t_to = t_from + len(term.Value)
                 entity = ["T{}".format(term.IdInDocument), term.Type, [[t_from, t_to]]]
                 objects.append(entity)
-                # update to next
-                char_ind = t_to
 
             elif isinstance(term, FrameVariant):
-                value = term.get_value()
-                t_to = t_from + len(value)
                 frame = ["T{}".format(frame_ind), "Frame", [[t_from, t_to]]]
                 frame_ind += 1
                 objects.append(frame)
-                char_ind = t_to
-
-            else:
-                char_ind += len(term)
 
             # Considering sep
-            char_ind += 1
+            char_ind = t_to + 1
 
         return objects
 
@@ -154,6 +150,14 @@ class BratBackend(object):
             for i, f_ind in enumerate(sent_data[FrameVariantIndices]):
                 value = text_terms[f_ind]
                 text_terms[f_ind] = FrameVariant(text=value, frame_id="0")
+
+            for i, term in enumerate(text_terms):
+                if not isinstance(term, str):
+                    continue
+                token = Tokens.try_parse(term)
+                if token is None:
+                    continue
+                text_terms[i] = token
 
             # Update sentence contents.
             sentence_terms.append(text_terms)
@@ -258,6 +262,8 @@ class BratBackend(object):
             return term.Value
         if isinstance(term, FrameVariant):
             return term.get_value()
+        if isinstance(term, Token):
+            return term.get_meta_value()
         return term
 
     def __to_data(self, samples, result, obj_color_types, rel_color_types, label_to_rel, docs_range):

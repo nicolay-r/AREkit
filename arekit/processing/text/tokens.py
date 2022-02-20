@@ -83,6 +83,13 @@ class Tokens:
         return Token(term=subterm, token_value=Tokens.__token_mapping[subterm])
 
     @staticmethod
+    def try_parse(term):
+        assert(isinstance(term, str))
+        for origin, token_value in Tokens.__token_mapping.items():
+            if term == token_value:
+                return Token(term=origin, token_value=token_value)
+
+    @staticmethod
     def try_create_number(term):
         assert(isinstance(term, str))
         if not term.isdigit():
