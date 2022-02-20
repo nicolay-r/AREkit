@@ -3,6 +3,7 @@ import os
 from os.path import join
 
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
 from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from examples.input import EXAMPLES
 from examples.network.args.const import NEURAL_NETWORKS_TARGET_DIR, DATA_DIR
@@ -57,7 +58,7 @@ if __name__ == '__main__':
     entity_fmt_type = EntityFormatterTypesArg.read_argument(args)
     stemmer = StemmerArg.read_argument(args)
     model_load_dir = ModelLoadDirArg.read_argument(args)
-    result_filepath = PredictOutputFilepathArg.read_argument(args)
+    predicted_result_filepath = PredictOutputFilepathArg.read_argument(args)
     vocab_filepath = VocabFilepathArg.read_argument(args)
     embedding_matrix_filepath = EmbeddingMatrixFilepathArg.read_argument(args)
 
@@ -94,12 +95,13 @@ if __name__ == '__main__':
                                     vocab_filepath=vocab_filepath,
                                     model_name_tag=model_name_tag)
 
-    # Setup predicted result writer.
-    if result_filepath is None:
-        root = os.path.join(serialized_exp_io._get_experiment_sources_dir(),
+    exp_root = os.path.join(serialized_exp_io._get_experiment_sources_dir(),
                             serialized_exp_io.get_experiment_folder_name())
-        result_filepath = join(root, "out.tsv.gz")
-    writer = TsvPredictWriter(result_filepath)
+
+    # Setup predicted result writer.
+    if predicted_result_filepath is None:
+        predicted_result_filepath = join(exp_root, "out.tsv.gz")
+    writer = TsvPredictWriter(predicted_result_filepath)
 
     run_network_inference_pipeline(serialized_exp_io=serialized_exp_io,
                                    model_name=model_name,
@@ -111,8 +113,16 @@ if __name__ == '__main__':
                                    labels_scaler=labels_scaler)
 
     pipeline_brat_backend(
-        output_data_filepath=result_filepath,
+        output_data_filepath=predicted_result_filepath,
         sample_data_filepath=serialized_exp_io.create_samples_writer_target(DataType.Test),
-        obj_color_types={"ORG": '#7fa2ff', "GPE": "#7fa200", "PERSON": "#7f00ff", "Frame": "#00a2ff"},
-        rel_color_types={"POS": "GREEN", "NEG": "RED"},
-        target=join(DATA_DIR, "brat_result.html"))
+        label_to_rel={
+            str(labels_scaler.label_to_uint(ExperimentPositiveLabel())): "POS",
+            str(labels_scaler.label_to_uint(ExperimentNegativeLabel())): "NEG"},
+        obj_color_types={
+            "ORG": '#7fa2ff',
+            "GPE": "#7fa200",
+            "PERSON": "#7f00ff",
+            "Frame": "#00a2ff"},
+        rel_color_types={"POS": "GREEN",
+                         "NEG": "RED"},
+        target=join(exp_root, "output.html"))

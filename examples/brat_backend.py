@@ -97,9 +97,9 @@ class BratBackend(object):
         return objects
 
     @staticmethod
-    def __extract_relations(relations, result_data):
-        assert(isinstance(relations, list))
+    def __extract_relations(relations, result_data, label_to_rel):
         assert(isinstance(result_data, BaseRowsStorage))
+        assert(isinstance(label_to_rel, dict))
 
         relations = sorted(relations, key=lambda item: item[0])
 
@@ -110,14 +110,15 @@ class BratBackend(object):
 
             assert(res_ind == rel_id)
 
-            neu = int(row['0'])
-            pos = int(row['1'])
+            rel_type = None
+            for col_label, rel_name in label_to_rel.items():
+                if row[col_label] > 0:
+                    rel_type = rel_name
+                    break
 
-            if neu > 0:
+            # Was not found.
+            if rel_type is None:
                 continue
-
-            rel_id = 'R{}'.format(rel_id)
-            rel_type = "POS" if pos > 0 else "NEG"
 
             brat_rels.append([rel_id, rel_type, [
                 [BratBackend.SUBJECT_ROLE, 'T{}'.format(s_ind)],
@@ -252,9 +253,10 @@ class BratBackend(object):
             return term.get_value()
         return term
 
-    def __to_data(self, samples, result, obj_color_types, rel_color_types):
+    def __to_data(self, samples, result, obj_color_types, rel_color_types, label_to_rel):
         assert(isinstance(obj_color_types, dict))
         assert(isinstance(rel_color_types, dict))
+        assert(isinstance(label_to_rel, dict))
         assert(isinstance(samples, BaseRowsStorage))
         assert(isinstance(result, BaseRowsStorage))
 
@@ -274,25 +276,23 @@ class BratBackend(object):
         doc_data['text'] = text
         doc_data['entities'] = self.__extract_objects(text_terms)
         doc_data['relations'] = self.__extract_relations(relations=relations,
-                                                         result_data=result)
-
-        print(doc_data['entities'])
-        print(doc_data['relations'])
-        print(coll_data['relation_types'])
+                                                         result_data=result,
+                                                         label_to_rel=label_to_rel)
 
         return text, coll_data, doc_data
 
     def to_html(self, obj_color_types, rel_color_types,
                 samples_data_filepath, result_data_filepath,
-                docs_range=None, brat_url="http://localhost:8001/"):
+                label_to_rel, docs_range=None, brat_url="http://localhost:8001/"):
         assert(isinstance(docs_range, tuple) or docs_range is None)
+        assert(isinstance(label_to_rel, dict))
 
         text, coll_data, doc_data = self.__to_data(
             samples=BaseRowsStorage.from_tsv(samples_data_filepath, col_types={'frames': str}),
             result=BaseRowsStorage.from_tsv(result_data_filepath),
             obj_color_types=obj_color_types,
             rel_color_types=rel_color_types,
-            )
+            label_to_rel=label_to_rel)
 
         # Loading template file.
         template_source = join(self.current_dir, "brat_template.html")
