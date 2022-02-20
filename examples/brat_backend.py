@@ -1,6 +1,8 @@
 import json
 from os.path import dirname, realpath, join
 
+from tqdm import tqdm
+
 from arekit.common.data import const
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.data.storages.base import BaseRowsStorage
@@ -209,8 +211,9 @@ class BratBackend(object):
         if len(doc_data) > 0:
             yield curr_doc_id, doc_data
 
-    def __extract_data_from_samples(self, samples):
+    def __extract_data_from_samples(self, samples, docs_range):
         assert(isinstance(samples, BaseRowsStorage))
+        assert(isinstance(docs_range, tuple) or docs_range is None)
 
         sent_data_cols = [BaseSingleTextProvider.TEXT_A,
                           const.ENTITY_VALUES,
@@ -222,7 +225,11 @@ class BratBackend(object):
         text_terms = []
         relations = []
 
-        for doc_id, doc_data in self.__iter_docs_data(samples, sent_data_cols=sent_data_cols):
+        for doc_id, doc_data in tqdm(self.__iter_docs_data(samples, sent_data_cols=sent_data_cols)):
+
+            # Check whether document to be saved is actually in range.
+            if docs_range is not None and not (doc_id >= docs_range[0] and doc_id <= docs_range[1]):
+                continue
 
             # Handle sentences
             sentences_terms = self.__to_terms(doc_data=doc_data)
@@ -253,7 +260,7 @@ class BratBackend(object):
             return term.get_value()
         return term
 
-    def __to_data(self, samples, result, obj_color_types, rel_color_types, label_to_rel):
+    def __to_data(self, samples, result, obj_color_types, rel_color_types, label_to_rel, docs_range):
         assert(isinstance(obj_color_types, dict))
         assert(isinstance(rel_color_types, dict))
         assert(isinstance(label_to_rel, dict))
@@ -261,7 +268,7 @@ class BratBackend(object):
         assert(isinstance(result, BaseRowsStorage))
 
         # Composing whole output document text.
-        text_terms, relations = self.__extract_data_from_samples(samples)
+        text_terms, relations = self.__extract_data_from_samples(samples=samples, docs_range=docs_range)
         text = " ".join([self.__term_to_text(t) for t in text_terms])
 
         # Filling coll data.
@@ -292,7 +299,8 @@ class BratBackend(object):
             result=BaseRowsStorage.from_tsv(result_data_filepath),
             obj_color_types=obj_color_types,
             rel_color_types=rel_color_types,
-            label_to_rel=label_to_rel)
+            label_to_rel=label_to_rel,
+            docs_range=docs_range)
 
         # Loading template file.
         template_source = join(self.current_dir, "brat_template.html")
