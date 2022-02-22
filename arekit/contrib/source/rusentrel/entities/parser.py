@@ -4,6 +4,7 @@ from arekit.common.text.partitioning.str import StringPartitioning
 from arekit.contrib.source.rusentrel.sentence import RuSentRelSentence
 
 
+# TODO. #287 to brat. (BratDocumentEntitiesParser)
 class RuSentRelTextEntitiesParser(SentenceObjectsParserPipelineItem):
 
     KEY = "sentence"

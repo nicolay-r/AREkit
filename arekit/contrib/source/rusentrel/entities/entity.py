@@ -1,6 +1,7 @@
 from arekit.common.entities.base import Entity
 
 
+# TODO. #285. To brat entities (BratEntity)
 class RuSentRelEntity(Entity):
     """ Annotated entity in RuSentRel corpus.
         Provides bounds, i.e. char indices in related sentence.

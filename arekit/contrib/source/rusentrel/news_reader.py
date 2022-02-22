@@ -33,8 +33,9 @@ class RuSentRelNews:
             process_func=file_to_doc,
             version=version)
 
+    # TODO. #287 to brat. (BratDocumentReader)
     @staticmethod
-    def __from_file( doc_id, input_file, entities):
+    def __from_file(doc_id, input_file, entities):
         assert(isinstance(doc_id, int))
         assert(isinstance(entities, RuSentRelDocumentEntityCollection))
 
@@ -75,10 +76,12 @@ class RuSentRelNews:
 
     # region private methods
 
+    # TODO. #287 to brat. (BratDocumentReader)
     @staticmethod
     def __read_sentences(input_file):
         sentences = []
         line_start = 0
+        # TODO. Consider it as a special case for RuSentRel.
         unknown_entity = "Unknown}"
 
         for line in input_file.readlines():

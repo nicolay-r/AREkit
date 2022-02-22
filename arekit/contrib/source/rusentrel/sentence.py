@@ -3,6 +3,7 @@ from arekit.common.news.sentence import BaseNewsSentence
 from arekit.contrib.source.rusentrel.entities.entity import RuSentRelEntity
 
 
+# TODO. #287 to brat.
 class RuSentRelSentence(BaseNewsSentence):
     """ Represent a raw sentence of rusentrel.
         Provides text could be used to parse then.

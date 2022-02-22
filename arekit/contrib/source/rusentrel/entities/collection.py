@@ -28,6 +28,7 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
                 value_to_group_id_func=synonyms.get_synonym_group_index),
             version=version)
 
+    # TODO. #285. To brat folder. (BratDocumentEntityCollection)
     @staticmethod
     def __extract_entities(input_file):
         """
