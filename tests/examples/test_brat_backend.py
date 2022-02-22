@@ -24,11 +24,15 @@ class TestBratEmbedding(unittest.TestCase):
                           str(labels_scaler.label_to_uint(ExperimentNegativeLabel())): "NEG"},
             obj_color_types={"ORG": '#7fa2ff',
                              "GPE": "#7fa200",
+                             "PER": "#7f00ff",
+                             "LOC": "#5f00aa",
                              "PERSON": "#7f00ff",
+                             "GEOPOLIT": "#7fa200",
                              "Frame": "#00a2ff"},
             rel_color_types={"POS": "GREEN",
                              "NEG": "RED"},
-            brat_url="http://localhost:8001/")
+            brat_url="http://localhost:8001/",
+            docs_range=(0, 5))
 
         with open(join(self.DATA_DIR, "output.html"), "w") as output:
             output.write(template)
