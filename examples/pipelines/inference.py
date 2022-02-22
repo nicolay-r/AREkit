@@ -1,9 +1,12 @@
+import os
+from os.path import join
+
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.networks.core.callback.stat import TrainingStatProviderCallback
-from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterCallback
+from arekit.common.pipeline.context import PipelineContext
+from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.networks.core.callback.writer import PredictResultWriterCallback
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.model import BaseTensorflowModel
@@ -12,6 +15,7 @@ from arekit.contrib.networks.core.pipeline.item_fit import MinibatchFittingPipel
 from arekit.contrib.networks.core.pipeline.item_keep_hidden import MinibatchHiddenFetcherPipelineItem
 from arekit.contrib.networks.core.pipeline.item_predict import EpochLabelsPredictorPipelineItem
 from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLabelsCollectorPipelineItem
+from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
@@ -19,68 +23,88 @@ from examples.network.args.const import BAG_SIZE
 from examples.network.infer.exp_io import InferIOUtils
 
 
-# TODO. #285 reorganize in a form of a pipeline item.
-def run_network_inference_pipeline(serialized_exp_io, model_name, bags_collection_type,
-                                   model_input_type, bags_per_minibatch, nn_io, labels_scaler,
-                                   predict_writer):
-    """ NeuralNetwork-based inference example.
-    """
-    assert (isinstance(serialized_exp_io, InferIOUtils))
+class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
 
-    # Create network an configuration.
-    network_func, config_func = create_network_and_network_config_funcs(
-        model_name=model_name, model_input_type=model_input_type)
+    def __init__(self, model_name, bags_collection_type, model_input_type,
+                 bags_per_minibatch, nn_io, labels_scaler, callbacks):
+        assert(isinstance(callbacks, list))
 
-    network = network_func()
-    config = config_func()
+        # Create network an configuration.
+        network_func, config_func = create_network_and_network_config_funcs(
+            model_name=model_name, model_input_type=model_input_type)
 
-    samples_filepath = serialized_exp_io.create_samples_writer_target(DataType.Test)
-    embedding = serialized_exp_io.load_embedding()
-    vocab = serialized_exp_io.load_vocab()
+        # setup network and config parameters.
+        self.__network = network_func()
+        self.__config = config_func()
+        self.__config.modify_classes_count(labels_scaler.LabelsCount)
+        self.__config.modify_bag_size(BAG_SIZE)
+        self.__config.modify_bags_per_minibatch(bags_per_minibatch)
+        self.__config.set_class_weights([1, 1, 1])
 
-    # Setup config parameters.
-    config.set_term_embedding(embedding)
-    config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
-    config.modify_classes_count(labels_scaler.LabelsCount)
-    config.modify_bag_size(BAG_SIZE)
-    config.modify_bags_per_minibatch(bags_per_minibatch)
-    config.set_class_weights([1, 1, 1])
-
-    inference_ctx = InferenceContext.create_empty()
-    inference_ctx.initialize(
-        dtypes=[DataType.Test],
-        bags_collection_type=bags_collection_type,
-        create_samples_view_func=lambda data_type: BaseSampleStorageView(
-            storage=BaseRowsStorage.from_tsv(samples_filepath),
-            row_ids_provider=MultipleIDProvider()),
-        has_model_predefined_state=True,
-        vocab=vocab,
-        labels_count=config.ClassesCount,
-        input_shapes=NetworkInputShapes(iter_pairs=[
-            (NetworkInputShapes.FRAMES_PER_CONTEXT, config.FramesPerContext),
-            (NetworkInputShapes.TERMS_PER_CONTEXT, config.TermsPerContext),
-            (NetworkInputShapes.SYNONYMS_PER_CONTEXT, config.SynonymsPerContext),
-        ]),
-        bag_size=config.BagSize)
-
-    # Model preparation.
-    model = BaseTensorflowModel(
-        context=TensorflowModelContext(
+        # intialize model context.
+        self.__create_model_ctx = lambda inference_ctx: TensorflowModelContext(
             nn_io=nn_io,
-            network=network,
-            config=config,
+            network=self.__network,
+            config=self.__config,
             inference_ctx=inference_ctx,
-            bags_collection_type=bags_collection_type),
-        callbacks=[
-            TrainingLimiterCallback(train_acc_limit=0.99),
-            TrainingStatProviderCallback(),
-            PredictResultWriterCallback(labels_scaler=labels_scaler, writer=predict_writer)
-        ],
-        predict_pipeline=[
-            EpochLabelsPredictorPipelineItem(),
-            EpochLabelsCollectorPipelineItem(),
-            MinibatchHiddenFetcherPipelineItem()
-        ],
-        fit_pipeline=[MinibatchFittingPipelineItem()])
+            bags_collection_type=bags_collection_type)
 
-    model.predict(do_compile=True)
+        self.__callbacks = callbacks
+        self.__labels_scaler = labels_scaler
+        self.__bags_collection_type = bags_collection_type
+
+    def apply_core(self, input_data, pipeline_ctx):
+        assert(isinstance(input_data, InferIOUtils))
+        assert(isinstance(pipeline_ctx, PipelineContext))
+
+        # Setup predicted result writer.
+        tgt = pipeline_ctx.provide_or_none("predict_fp")
+        if tgt is None:
+            exp_root = os.path.join(input_data._get_experiment_sources_dir(),
+                                    input_data.get_experiment_folder_name())
+            tgt = join(exp_root, "predict.tsv.gz")
+
+        # Update for further pipeline items.
+        pipeline_ctx.update("predict_fp", tgt)
+
+        # Fetch other required in furter information from input_data.
+        samples_filepath = input_data.create_samples_writer_target(DataType.Test)
+        embedding = input_data.load_embedding()
+        vocab = input_data.load_vocab()
+
+        # Setup config parameters.
+        self.__config.set_term_embedding(embedding)
+        self.__config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
+
+        inference_ctx = InferenceContext.create_empty()
+        inference_ctx.initialize(
+            dtypes=[DataType.Test],
+            bags_collection_type=self.__bags_collection_type,
+            create_samples_view_func=lambda data_type: BaseSampleStorageView(
+                storage=BaseRowsStorage.from_tsv(samples_filepath),
+                row_ids_provider=MultipleIDProvider()),
+            has_model_predefined_state=True,
+            vocab=vocab,
+            labels_count=self.__config.ClassesCount,
+            input_shapes=NetworkInputShapes(iter_pairs=[
+                (NetworkInputShapes.FRAMES_PER_CONTEXT, self.__config.FramesPerContext),
+                (NetworkInputShapes.TERMS_PER_CONTEXT, self.__config.TermsPerContext),
+                (NetworkInputShapes.SYNONYMS_PER_CONTEXT, self.__config.SynonymsPerContext),
+            ]),
+            bag_size=self.__config.BagSize)
+
+        predict_callback = PredictResultWriterCallback(labels_scaler=self.__labels_scaler,
+                                                       writer=TsvPredictWriter(tgt))
+
+        # Model preparation.
+        model = BaseTensorflowModel(
+            context=self.__create_model_ctx(inference_ctx),
+            callbacks=self.__callbacks + [predict_callback],
+            predict_pipeline=[
+                EpochLabelsPredictorPipelineItem(),
+                EpochLabelsCollectorPipelineItem(),
+                MinibatchHiddenFetcherPipelineItem()
+            ],
+            fit_pipeline=[MinibatchFittingPipelineItem()])
+
+        model.predict(do_compile=True)

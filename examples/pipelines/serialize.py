@@ -1,6 +1,7 @@
 from collections import OrderedDict
 
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.common.experiment.data_type import DataType
@@ -14,8 +15,7 @@ from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
-from arekit.contrib.experiment_rusentrel.entities.types import EntityFormatterTypes
+from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -36,85 +36,94 @@ from examples.network.serialization_data import RuSentRelExperimentSerialization
 from examples.text.pipeline_entities_default import TextEntitiesParser
 
 
-# TODO. #285 reorganize in a form of a pipeline item.
-def run_data_serialization_pipeline(sentences, terms_per_context, entities_parser,
-                                    embedding_path, entity_fmt_type, stemmer):
-    assert(isinstance(sentences, list) or isinstance(sentences, str))
-    assert(isinstance(entities_parser, BasePipelineItem) or entities_parser is None)
-    assert(isinstance(terms_per_context, int))
-    assert(isinstance(embedding_path, str))
-    assert(isinstance(entity_fmt_type, EntityFormatterTypes))
+class TextSerializationPipelineItem(BasePipelineItem):
 
-    if isinstance(sentences, str):
-        sentences = [sentences]
+    def __init__(self, terms_per_context, entities_parser, embedding_path, entity_fmt, stemmer):
+        assert(isinstance(entities_parser, BasePipelineItem) or entities_parser is None)
+        assert(isinstance(entity_fmt, StringEntitiesFormatter))
+        assert(isinstance(terms_per_context, int))
+        assert(isinstance(embedding_path, str))
+        assert(isinstance(stemmer, Stemmer))
 
-    labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
-                                    int_dict=OrderedDict([(NoLabel(), 0)]))
+        # Initalize embedding.
+        self.__embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
+        self.__embedding.set_stemmer(stemmer)
 
-    label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
+        # Initialize synonyms collection.
+        self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
+            stemmer=stemmer, version=RuSentRelVersions.V11)
 
-    sentences = list(map(lambda text: BaseNewsSentence(text), sentences))
+        self.__entities_parser = TextEntitiesParser() if entities_parser is None else entities_parser
+        self.__stemmer = stemmer
+        self.__terms_per_context = terms_per_context
+        self.__entity_fmt = entity_fmt
 
-    annot_algo = PairBasedAnnotationAlgorithm(
-        dist_in_terms_bound=None,
-        label_provider=PairSingleLabelProvider(label_instance=NoLabel()))
+    def apply_core(self, input_data, pipeline_ctx):
+        assert(isinstance(input_data, list) or isinstance(input_data, str))
 
-    frames_collection = create_frames_collection()
-    frame_variants_collection = create_and_fill_variant_collection(frames_collection)
+        sentences = input_data
+        if isinstance(sentences, str):
+            sentences = [sentences]
 
-    # Step 1. Annotate text.
-    synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
-        stemmer=stemmer,
-        version=RuSentRelVersions.V11)
+        labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
+                                        int_dict=OrderedDict([(NoLabel(), 0)]))
 
-    # Step 2. Parse text.
-    news = News(doc_id=0, sentences=sentences)
+        label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
-    text_parser = BaseTextParser(pipeline=[
-        TermsSplitterParser(),
-        TextEntitiesParser() if entities_parser is None else entities_parser,
-        EntitiesGroupingPipelineItem(synonyms.get_synonym_group_index),
-        DefaultTextTokenizer(keep_tokens=True),
-        FrameVariantsParser(frame_variants=frame_variants_collection),
-        LemmasBasedFrameVariantsParser(save_lemmas=False,
-                                       stemmer=stemmer,
-                                       frame_variants=frame_variants_collection),
-        FrameVariantsSentimentNegation()])
+        sentences = list(map(lambda text: BaseNewsSentence(text), sentences))
 
-    embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
-    embedding.set_stemmer(stemmer)
+        annot_algo = PairBasedAnnotationAlgorithm(
+            dist_in_terms_bound=None,
+            label_provider=PairSingleLabelProvider(label_instance=NoLabel()))
 
-    exp_ctx = RuSentRelExperimentSerializationContext(
-        labels_scaler=label_provider.LabelScaler,
-        stemmer=stemmer,
-        embedding=embedding,
-        annotator=DefaultAnnotator(annot_algo=annot_algo),
-        terms_per_context=terms_per_context,
-        str_entity_formatter=create_entity_formatter(entity_fmt_type),
-        pos_tagger=POSMystemWrapper(MystemWrapper().MystemInstance),
-        name_provider=create_infer_experiment_name_provider(),
-        data_folding=NoFolding(doc_ids_to_fold=[0],
-                               supported_data_types=[DataType.Test]))
+        frames_collection = create_frames_collection()
+        frame_variants_collection = create_and_fill_variant_collection(frames_collection)
 
-    labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
+        # Parse text.
+        news = News(doc_id=0, sentences=sentences)
 
-    exp_io = InferIOUtils(exp_ctx)
+        text_parser = BaseTextParser(pipeline=[
+            TermsSplitterParser(),
+            self.__entities_parser,
+            EntitiesGroupingPipelineItem(self.__synonyms.get_synonym_group_index),
+            DefaultTextTokenizer(keep_tokens=True),
+            FrameVariantsParser(frame_variants=frame_variants_collection),
+            LemmasBasedFrameVariantsParser(save_lemmas=False,
+                                           stemmer=self.__stemmer,
+                                           frame_variants=frame_variants_collection),
+            FrameVariantsSentimentNegation()])
 
-    # Step 3. Serialize data
-    experiment = CustomExperiment(
-        exp_io=exp_io,
-        exp_ctx=exp_ctx,
-        doc_ops=SingleDocOperations(exp_ctx=exp_ctx, news=news, text_parser=text_parser),
-        labels_formatter=labels_fmt,
-        synonyms=synonyms,
-        neutral_labels_fmt=labels_fmt)
+        exp_ctx = RuSentRelExperimentSerializationContext(
+            labels_scaler=label_provider.LabelScaler,
+            stemmer=self.__stemmer,
+            embedding=self.__embedding,
+            annotator=DefaultAnnotator(annot_algo=annot_algo),
+            terms_per_context=self.__terms_per_context,
+            str_entity_formatter=self.__entity_fmt,
+            pos_tagger=POSMystemWrapper(MystemWrapper().MystemInstance),
+            name_provider=create_infer_experiment_name_provider(),
+            data_folding=NoFolding(doc_ids_to_fold=[0],
+                                   supported_data_types=[DataType.Test]))
 
-    NetworkInputHelper.prepare(exp_ctx=experiment.ExperimentContext,
-                               exp_io=experiment.ExperimentIO,
-                               doc_ops=experiment.DocumentOperations,
-                               opin_ops=experiment.OpinionOperations,
-                               terms_per_context=terms_per_context,
-                               balance=False,
-                               value_to_group_id_func=synonyms.get_synonym_group_index)
+        labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
 
-    return experiment.ExperimentIO
+        exp_io = InferIOUtils(exp_ctx)
+
+        # Step 3. Serialize data
+        experiment = CustomExperiment(
+            exp_io=exp_io,
+            exp_ctx=exp_ctx,
+            doc_ops=SingleDocOperations(exp_ctx=exp_ctx, news=news, text_parser=text_parser),
+            labels_formatter=labels_fmt,
+            synonyms=self.__synonyms,
+            neutral_labels_fmt=labels_fmt)
+
+        NetworkInputHelper.prepare(exp_ctx=experiment.ExperimentContext,
+                                   exp_io=experiment.ExperimentIO,
+                                   doc_ops=experiment.DocumentOperations,
+                                   opin_ops=experiment.OpinionOperations,
+                                   terms_per_context=self.__terms_per_context,
+                                   balance=False,
+                                   value_to_group_id_func=self.__synonyms.get_synonym_group_index)
+
+        return experiment.ExperimentIO

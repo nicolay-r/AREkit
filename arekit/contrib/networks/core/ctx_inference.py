@@ -4,6 +4,7 @@ import logging
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.data_type import DataType
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
+from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
 
 from arekit.contrib.networks.core.input.rows_parser import ParsedSampleRow
 from arekit.contrib.networks.sample import InputSample
@@ -95,6 +96,7 @@ class InferenceContext(object):
     def __read_for_data_type(samples_view, is_external_vocab,
                              bags_collection_type, vocab,
                              bag_size, input_shapes, desc=""):
+        assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(samples_view, BaseSampleStorageView))
 
         return bags_collection_type.from_formatted_samples(
