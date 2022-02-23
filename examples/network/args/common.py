@@ -1,9 +1,12 @@
+from arekit.common.synonyms import SynonymsCollection
+from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.types import ExperimentTypesService
-from arekit.contrib.networks.enum_name_types import ModelNamesService, ModelNames
+from arekit.contrib.networks.enum_name_types import ModelNamesService
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersionsService, RuSentiFramesVersions
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.utils import iter_synonym_groups
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from examples.network.args.base import BaseArg
-from examples.network.args import const
 from examples.text.pipeline_entities_bert_ontonotes import BertOntonotesNERPipelineItem
 
 
@@ -224,6 +227,36 @@ class TermsPerContextArg(BaseArg):
                                  'creation process!'.format(default))
 
 
+class SynonymsCollectionArg(BaseArg):
+
+    @staticmethod
+    def __iter_groups(filepath):
+        with open(filepath, 'r') as file:
+            for group in iter_synonym_groups(file):
+                yield group
+
+    @staticmethod
+    def read_argument(args):
+        filepath = args.synonyms_filepath
+        if filepath is None:
+            # Provide RuSentRel collection by default.
+            return RuSentRelSynonymsCollectionProvider.load_collection(stemmer=MystemWrapper(),
+                                                                       version=RuSentRelVersions.V11)
+        else:
+            # Provide collection from file.
+            return SynonymsCollection(iter_group_values_lists=SynonymsCollectionArg.__iter_groups(filepath),
+                                      is_read_only=True,
+                                      debug=False)
+
+    @staticmethod
+    def add_argument(parser, default):
+        parser.add_argument('--synonyms-filepath',
+                            dest='synonyms_filepath',
+                            type=str,
+                            default=None,
+                            help="List of synonyms provided in lines of the source text file.")
+
+
 class EntitiesParserArg(BaseArg):
 
     @staticmethod
@@ -235,7 +268,7 @@ class EntitiesParserArg(BaseArg):
             return BertOntonotesNERPipelineItem()
 
     @staticmethod
-    def add_argument(parser, default="no"):
+    def add_argument(parser, default):
         parser.add_argument('--entities-parser',
                             dest='entities_parser',
                             type=str,

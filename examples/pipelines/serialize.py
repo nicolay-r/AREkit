@@ -13,11 +13,10 @@ from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.pipeline.items.base import BasePipelineItem
+from arekit.common.synonyms import SynonymsCollection
 from arekit.common.text.parser import BaseTextParser
 from arekit.common.text.stemmer import Stemmer
-from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.networks.core.input.helper import NetworkInputHelper
-from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.text.pipeline_frames import FrameVariantsParser
@@ -37,10 +36,11 @@ from examples.text.pipeline_entities_default import TextEntitiesParser
 
 class TextSerializationPipelineItem(BasePipelineItem):
 
-    def __init__(self, terms_per_context, entities_parser,
+    def __init__(self, terms_per_context, entities_parser, synonyms,
                  embedding_path, entity_fmt, stemmer, data_folding):
         assert(isinstance(entities_parser, BasePipelineItem) or entities_parser is None)
         assert(isinstance(entity_fmt, StringEntitiesFormatter))
+        assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(embedding_path, str))
         assert(isinstance(stemmer, Stemmer))
@@ -51,14 +51,12 @@ class TextSerializationPipelineItem(BasePipelineItem):
         self.__embedding.set_stemmer(stemmer)
 
         # Initialize synonyms collection.
-        self.__synonyms = RuSentRelSynonymsCollectionProvider.load_collection(
-            stemmer=stemmer, version=RuSentRelVersions.V11)
-
         self.__entities_parser = TextEntitiesParser() if entities_parser is None else entities_parser
         self.__stemmer = stemmer
         self.__terms_per_context = terms_per_context
         self.__entity_fmt = entity_fmt
         self.__data_folding = data_folding
+        self.__synonyms = synonyms
 
     def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(input_data, list) or isinstance(input_data, str))

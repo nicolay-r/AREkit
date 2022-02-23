@@ -17,7 +17,7 @@ from examples.network.args.train import BagsPerMinibatchArg, ModelInputTypeArg, 
 from examples.network.common import create_bags_collection_type, create_network_model_io
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, LabelsCountArg, TermsPerContextArg, \
     ModelNameArg, ModelLoadDirArg, VocabFilepathArg, StemmerArg, InputTextArg, PredictOutputFilepathArg, \
-    EmbeddingMatrixFilepathArg, EntitiesParserArg
+    EmbeddingMatrixFilepathArg, EntitiesParserArg, SynonymsCollectionArg
 from examples.pipelines.backend import BratBackendPipelineItem
 from examples.pipelines.inference import TensorflowNetworkInferencePipelineItem
 from examples.pipelines.serialize import TextSerializationPipelineItem
@@ -31,6 +31,7 @@ if __name__ == '__main__':
 
     # Providing arguments.
     InputTextArg.add_argument(parser, default=EXAMPLES["no_entities"])
+    SynonymsCollectionArg.add_argument(parser, default=None)
     RusVectoresEmbeddingFilepathArg.add_argument(parser, default=const.EMBEDDING_FILEPATH)
     BagsPerMinibatchArg.add_argument(parser, default=const.BAGS_PER_MINIBATCH)
     LabelsCountArg.add_argument(parser, default=3)
@@ -38,7 +39,6 @@ if __name__ == '__main__':
     ModelNameTagArg.add_argument(parser, default=ModelNameTagArg.NO_TAG)
     ModelInputTypeArg.add_argument(parser, default=ModelInputType.SingleInstance)
     TermsPerContextArg.add_argument(parser, default=const.TERMS_PER_CONTEXT)
-
     EntityFormatterTypesArg.add_argument(parser, default="simple")
     VocabFilepathArg.add_argument(parser, default=None)
     EmbeddingMatrixFilepathArg.add_argument(parser, default=None)
@@ -79,6 +79,7 @@ if __name__ == '__main__':
     # Declaring pipeline.
     ppl = BasePipeline(pipeline=[
         TextSerializationPipelineItem(
+            synonyms=SynonymsCollectionArg.read_argument(args),
             terms_per_context=TermsPerContextArg.read_argument(args),
             entities_parser=EntitiesParserArg.read_argument(args),
             embedding_path=RusVectoresEmbeddingFilepathArg.read_argument(args),

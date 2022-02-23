@@ -7,7 +7,7 @@ from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_f
 from examples.input import EXAMPLES
 from examples.network.args import const
 from examples.network.args.common import RusVectoresEmbeddingFilepathArg, TermsPerContextArg, StemmerArg, InputTextArg, \
-    EntitiesParserArg
+    EntitiesParserArg, SynonymsCollectionArg
 from examples.network.args.serialize import EntityFormatterTypesArg
 from examples.pipelines.serialize import TextSerializationPipelineItem
 
@@ -24,6 +24,7 @@ if __name__ == '__main__':
     TermsPerContextArg.add_argument(parser, default=const.TERMS_PER_CONTEXT)
     EntityFormatterTypesArg.add_argument(parser, default="simple")
     StemmerArg.add_argument(parser, default="mystem")
+    SynonymsCollectionArg.add_argument(parser, default=None)
 
     # Parsing arguments.
     args = parser.parse_args()
@@ -31,6 +32,7 @@ if __name__ == '__main__':
     ppl = BasePipeline([
         TextSerializationPipelineItem(
             terms_per_context=TermsPerContextArg.read_argument(args),
+            synonyms=SynonymsCollectionArg.read_argument(args),
             entities_parser=EntitiesParserArg.read_argument(args),
             embedding_path=RusVectoresEmbeddingFilepathArg.read_argument(args),
             entity_fmt=create_entity_formatter(EntityFormatterTypesArg.read_argument(args)),
