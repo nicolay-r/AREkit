@@ -10,12 +10,15 @@ from arekit.contrib.networks.core.callback.hidden import HiddenStatesWriterCallb
 from arekit.contrib.networks.core.callback.hidden_input import InputHiddenStatesWriterCallback
 from arekit.contrib.networks.core.callback.stat import TrainingStatProviderCallback
 from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterCallback
+from arekit.contrib.networks.enum_input_types import ModelInputType
+from arekit.contrib.networks.enum_name_types import ModelNames
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.np_utils.writer import NpzDataWriter
 from arekit.contrib.networks.handlers.training import NetworksTrainingIterationHandler
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
+from examples.network.args import const
 
 from examples.network.args.common import DistanceInTermsBetweenAttitudeEndsArg, ExperimentTypeArg, LabelsCountArg, \
     StemmerArg, TermsPerContextArg, ModelNameArg, VocabFilepathArg, ModelLoadDirArg, UseBalancingArg, \
@@ -35,22 +38,22 @@ if __name__ == '__main__':
                                                  "based on the RuSentRel and RuAttitudes datasets (optionally)")
 
     # Composing cmd arguments.
-    LabelsCountArg.add_argument(parser)
+    LabelsCountArg.add_argument(parser, default=3)
     ExperimentTypeArg.add_argument(parser, default="rsr")
-    StemmerArg.add_argument(parser)
-    BagsPerMinibatchArg.add_argument(parser)
-    TermsPerContextArg.add_argument(parser)
-    DistanceInTermsBetweenAttitudeEndsArg.add_argument(parser)
-    ModelInputTypeArg.add_argument(parser)
-    ModelNameArg.add_argument(parser)
-    ModelNameTagArg.add_argument(parser)
+    StemmerArg.add_argument(parser, default="mystem")
+    BagsPerMinibatchArg.add_argument(parser, default=const.BAGS_PER_MINIBATCH)
+    TermsPerContextArg.add_argument(parser, default=const.TERMS_PER_CONTEXT)
+    DistanceInTermsBetweenAttitudeEndsArg.add_argument(parser, default=None)
+    ModelInputTypeArg.add_argument(parser, default=ModelInputType.SingleInstance)
+    ModelNameArg.add_argument(parser, default=ModelNames.PCNN.value)
+    ModelNameTagArg.add_argument(parser, default=ModelNameTagArg.NO_TAG)
     DropoutKeepProbArg.add_argument(parser, default=0.5)
     LearningRateArg.add_argument(parser, default=0.1)
     EpochsCountArg.add_argument(parser, default=150)
     VocabFilepathArg.add_argument(parser, default=None)
     EmbeddingMatrixFilepathArg.add_argument(parser, default=None)
     ModelLoadDirArg.add_argument(parser, default=None)
-    UseBalancingArg.add_argument(parser)
+    UseBalancingArg.add_argument(parser, default=True)
 
     # Parsing arguments.
     args = parser.parse_args()

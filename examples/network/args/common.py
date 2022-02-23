@@ -46,7 +46,7 @@ class VocabFilepathArg(BaseArg):
         return args.vocab_filepath
 
     @staticmethod
-    def add_argument(parser, default=None):
+    def add_argument(parser, default):
         parser.add_argument('--vocab-filepath',
                             dest='vocab_filepath',
                             type=str,
@@ -65,11 +65,12 @@ class UseBalancingArg(BaseArg):
         return args.balance_samples
 
     @staticmethod
-    def add_argument(parser, default="True"):
+    def add_argument(parser, default):
+        assert(isinstance(default, bool))
         parser.add_argument('--balance-samples',
                             dest='balance_samples',
                             type=lambda x: (str(x).lower() == 'true'),
-                            default=default,
+                            default=str(default),
                             nargs=1,
                             help='Use balancing for Train type during sample serialization process"')
 
@@ -81,7 +82,7 @@ class DistanceInTermsBetweenAttitudeEndsArg(BaseArg):
         return args.dist_between_ends
 
     @staticmethod
-    def add_argument(parser, default=None):
+    def add_argument(parser, default):
         parser.add_argument('--dist-between-att-ends',
                             dest='dist_between_ends',
                             type=int,
@@ -98,7 +99,7 @@ class RusVectoresEmbeddingFilepathArg(BaseArg):
         return args.embedding_filepath
 
     @staticmethod
-    def add_argument(parser, default=const.EMBEDDING_FILEPATH):
+    def add_argument(parser, default):
         parser.add_argument('--emb-filepath',
                             dest='embedding_filepath',
                             type=str,
@@ -116,7 +117,7 @@ class EmbeddingMatrixFilepathArg(BaseArg):
         return args.embedding_matrix_filepath
 
     @staticmethod
-    def add_argument(parser, default=None):
+    def add_argument(parser, default):
         parser.add_argument('--emb-npz-filepath',
                             dest='embedding_matrix_filepath',
                             type=str,
@@ -170,12 +171,10 @@ class LabelsCountArg(BaseArg):
         return args.labels_count
 
     @staticmethod
-    def add_argument(parser, default=3):
-        choices = [2, default]
+    def add_argument(parser, default):
         parser.add_argument('--labels-count',
                             dest="labels_count",
                             type=int,
-                            choices=choices,
                             default=default,
                             nargs=1,
                             help="Labels count in an output classifier")
@@ -195,7 +194,7 @@ class StemmerArg(BaseArg):
         return StemmerArg.supported[args.stemmer]
 
     @staticmethod
-    def add_argument(parser, default=u"mystem"):
+    def add_argument(parser, default):
         assert(default in StemmerArg.supported)
         parser.add_argument('--stemmer',
                             dest='stemmer',
@@ -213,7 +212,7 @@ class TermsPerContextArg(BaseArg):
         return args.terms_per_context
 
     @staticmethod
-    def add_argument(parser, default=const.TERMS_PER_CONTEXT):
+    def add_argument(parser, default):
         parser.add_argument('--terms-per-context',
                             dest='terms_per_context',
                             type=int,
@@ -253,7 +252,7 @@ class ModelNameArg(BaseArg):
         return ModelNamesService.get_type_by_name(args.model_name)
 
     @staticmethod
-    def add_argument(parser, default=ModelNames.PCNN.value):
+    def add_argument(parser, default):
         parser.add_argument('--model-name',
                             dest='model_name',
                             type=str,

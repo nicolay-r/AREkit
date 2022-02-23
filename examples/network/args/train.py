@@ -13,7 +13,7 @@ class BagsPerMinibatchArg(BaseArg):
         return args.bags_per_minibatch
 
     @staticmethod
-    def add_argument(parser, default=const.BAGS_PER_MINIBATCH):
+    def add_argument(parser, default):
         parser.add_argument('--bags-per-minibatch',
                             dest='bags_per_minibatch',
                             type=int,
@@ -94,12 +94,13 @@ class ModelInputTypeArg(BaseArg):
         return ModelInputTypeService.get_type_by_name(args.input_type)
 
     @staticmethod
-    def add_argument(parser, default=ModelInputTypeService.find_name_by_type(ModelInputType.SingleInstance)):
+    def add_argument(parser, default):
+        assert(isinstance(default, ModelInputType))
         parser.add_argument('--model-input-type',
                             dest='input_type',
                             type=str,
                             choices=list(ModelInputTypeService.iter_supported_names()),
-                            default=default,
+                            default=ModelInputTypeService.find_name_by_type(default),
                             nargs='?',
                             help='Input format type (Default: {})'.format(default))
 
@@ -116,7 +117,7 @@ class ModelNameTagArg(BaseArg):
         return str(args.model_tag)
 
     @staticmethod
-    def add_argument(parser, default=NO_TAG):
+    def add_argument(parser, default):
         parser.add_argument('--model-tag',
                             dest='model_tag',
                             type=str,

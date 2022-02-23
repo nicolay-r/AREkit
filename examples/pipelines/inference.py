@@ -26,8 +26,9 @@ from examples.network.infer.exp_io import InferIOUtils
 class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
 
     def __init__(self, model_name, bags_collection_type, model_input_type,
-                 bags_per_minibatch, nn_io, labels_scaler, callbacks):
+                 data_type, bags_per_minibatch, nn_io, labels_scaler, callbacks):
         assert(isinstance(callbacks, list))
+        assert(isinstance(data_type, DataType))
 
         # Create network an configuration.
         network_func, config_func = create_network_and_network_config_funcs(
@@ -52,6 +53,7 @@ class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
         self.__callbacks = callbacks
         self.__labels_scaler = labels_scaler
         self.__bags_collection_type = bags_collection_type
+        self.__data_type = data_type
 
     def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(input_data, InferIOUtils))
@@ -68,7 +70,7 @@ class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
         pipeline_ctx.update("predict_fp", tgt)
 
         # Fetch other required in furter information from input_data.
-        samples_filepath = input_data.create_samples_writer_target(DataType.Test)
+        samples_filepath = input_data.create_samples_writer_target(self.__data_type)
         embedding = input_data.load_embedding()
         vocab = input_data.load_vocab()
 
@@ -78,7 +80,7 @@ class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
 
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
-            dtypes=[DataType.Test],
+            dtypes=[self.__data_type],
             bags_collection_type=self.__bags_collection_type,
             create_samples_view_func=lambda data_type: BaseSampleStorageView(
                 storage=BaseRowsStorage.from_tsv(samples_filepath),

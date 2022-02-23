@@ -10,7 +10,7 @@ class EntityFormatterTypesArg(BaseArg):
         return EntityFormattersService.get_type_by_name(name)
 
     @staticmethod
-    def add_argument(parser, default='simple'):
+    def add_argument(parser, default):
         assert(EntityFormattersService.is_supported(default))
         parser.add_argument('--entity-fmt',
                             dest='entity_fmt',

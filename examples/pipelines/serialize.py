@@ -4,8 +4,7 @@ from arekit.common.data.input.providers.label.multiple import MultipleLabelProvi
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
-from arekit.common.experiment.data_type import DataType
-from arekit.common.folding.nofold import NoFolding
+from arekit.common.folding.base import BaseDataFolding
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.single_label import PairSingleLabelProvider
 from arekit.common.labels.scaler.base import BaseLabelScaler
@@ -32,18 +31,20 @@ from examples.network.embedding import RusvectoresEmbedding
 from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
 from examples.network.infer.exp_io import InferIOUtils
-from examples.network.serialization_data import RuSentRelExperimentSerializationContext
+from examples.network.serialization_data import CustomSerializationContext
 from examples.text.pipeline_entities_default import TextEntitiesParser
 
 
 class TextSerializationPipelineItem(BasePipelineItem):
 
-    def __init__(self, terms_per_context, entities_parser, embedding_path, entity_fmt, stemmer):
+    def __init__(self, terms_per_context, entities_parser,
+                 embedding_path, entity_fmt, stemmer, data_folding):
         assert(isinstance(entities_parser, BasePipelineItem) or entities_parser is None)
         assert(isinstance(entity_fmt, StringEntitiesFormatter))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(embedding_path, str))
         assert(isinstance(stemmer, Stemmer))
+        assert(isinstance(data_folding, BaseDataFolding))
 
         # Initalize embedding.
         self.__embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
@@ -57,6 +58,7 @@ class TextSerializationPipelineItem(BasePipelineItem):
         self.__stemmer = stemmer
         self.__terms_per_context = terms_per_context
         self.__entity_fmt = entity_fmt
+        self.__data_folding = data_folding
 
     def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(input_data, list) or isinstance(input_data, str))
@@ -65,8 +67,10 @@ class TextSerializationPipelineItem(BasePipelineItem):
         if isinstance(sentences, str):
             sentences = [sentences]
 
+        # Labels scalers and formatters setup.
         labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
                                         int_dict=OrderedDict([(NoLabel(), 0)]))
+        labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
 
         label_provider = MultipleLabelProvider(label_scaler=labels_scaler)
 
@@ -93,7 +97,7 @@ class TextSerializationPipelineItem(BasePipelineItem):
                                            frame_variants=frame_variants_collection),
             FrameVariantsSentimentNegation()])
 
-        exp_ctx = RuSentRelExperimentSerializationContext(
+        exp_ctx = CustomSerializationContext(
             labels_scaler=label_provider.LabelScaler,
             stemmer=self.__stemmer,
             embedding=self.__embedding,
@@ -102,10 +106,7 @@ class TextSerializationPipelineItem(BasePipelineItem):
             str_entity_formatter=self.__entity_fmt,
             pos_tagger=POSMystemWrapper(MystemWrapper().MystemInstance),
             name_provider=create_infer_experiment_name_provider(),
-            data_folding=NoFolding(doc_ids_to_fold=[0],
-                                   supported_data_types=[DataType.Test]))
-
-        labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
+            data_folding=self.__data_folding)
 
         exp_io = InferIOUtils(exp_ctx)
 

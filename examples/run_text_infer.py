@@ -1,9 +1,13 @@
 import argparse
+
+from arekit.common.experiment.data_type import DataType
+from arekit.common.folding.nofold import NoFolding
 from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
 from arekit.contrib.networks.core.callback.stat import TrainingStatProviderCallback
 from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterCallback
+from arekit.contrib.networks.enum_input_types import ModelInputType
 from arekit.contrib.networks.enum_name_types import ModelNames
 from examples.input import EXAMPLES
 from examples.network.args import const
@@ -32,10 +36,10 @@ if __name__ == '__main__':
     LabelsCountArg.add_argument(parser, default=3)
     ModelNameArg.add_argument(parser, default=ModelNames.PCNN.value)
     ModelNameTagArg.add_argument(parser, default=ModelNameTagArg.NO_TAG)
-    ModelInputTypeArg.add_argument(parser)
+    ModelInputTypeArg.add_argument(parser, default=ModelInputType.SingleInstance)
     TermsPerContextArg.add_argument(parser, default=const.TERMS_PER_CONTEXT)
 
-    EntityFormatterTypesArg.add_argument(parser)
+    EntityFormatterTypesArg.add_argument(parser, default="simple")
     VocabFilepathArg.add_argument(parser, default=None)
     EmbeddingMatrixFilepathArg.add_argument(parser, default=None)
     ModelLoadDirArg.add_argument(parser, default=NEURAL_NETWORKS_TARGET_DIR)
@@ -79,10 +83,12 @@ if __name__ == '__main__':
             entities_parser=EntitiesParserArg.read_argument(args),
             embedding_path=RusVectoresEmbeddingFilepathArg.read_argument(args),
             entity_fmt=create_entity_formatter(EntityFormatterTypesArg.read_argument(args)),
-            stemmer=StemmerArg.read_argument(args)),
+            stemmer=StemmerArg.read_argument(args),
+            data_folding=NoFolding(doc_ids_to_fold=[0], supported_data_types=[DataType.Test])),
         TensorflowNetworkInferencePipelineItem(
             nn_io=nn_io,
             model_name=model_name,
+            data_type=DataType.Test,
             bags_per_minibatch=BagsPerMinibatchArg.read_argument(args),
             bags_collection_type=create_bags_collection_type(model_input_type=model_input_type),
             model_input_type=model_input_type,
