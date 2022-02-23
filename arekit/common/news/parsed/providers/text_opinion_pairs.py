@@ -5,7 +5,7 @@ from arekit.common.news.entity import DocumentEntity
 from arekit.common.news.parsed.providers.base_pairs import BasePairProvider
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.common.labels.provider.single_label import PairSingleLabelProvider
+from arekit.common.labels.provider.constant import ConstantLabelProvider
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +69,7 @@ class TextOpinionPairsProvider(BasePairProvider):
             return
             yield
 
-        label_provider = PairSingleLabelProvider(label_instance=opinion.Sentiment)
+        label_provider = ConstantLabelProvider(label_instance=opinion.Sentiment)
 
         pairs_it = self._iter_from_entities(src_entity_doc_ids=list(map(lambda e: e.IdInDocument, source_entities)),
                                             tgt_entity_doc_ids=list(map(lambda e: e.IdInDocument, target_entities)),

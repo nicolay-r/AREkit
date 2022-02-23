@@ -5,7 +5,7 @@ from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.common.experiment.engine import ExperimentEngine
 from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.types import FoldingType
-from arekit.common.labels.provider.single_label import PairSingleLabelProvider
+from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
 from arekit.contrib.experiment_rusentrel.factory import create_experiment
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     annot_algo = PairBasedAnnotationAlgorithm(
         dist_in_terms_bound=None,
-        label_provider=PairSingleLabelProvider(label_instance=ExperimentNeutralLabel()))
+        label_provider=ConstantLabelProvider(label_instance=ExperimentNeutralLabel()))
 
     exp_name = Common.create_exp_name(rusentrel_version=rusentrel_version,
                                       ra_version=ra_version,

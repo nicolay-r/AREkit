@@ -1,7 +1,11 @@
 import argparse
 
+from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
+from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
+from arekit.common.labels.base import NoLabel
+from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
@@ -81,10 +85,14 @@ if __name__ == '__main__':
         TextSerializationPipelineItem(
             synonyms=SynonymsCollectionArg.read_argument(args),
             terms_per_context=TermsPerContextArg.read_argument(args),
-            entities_parser=EntitiesParserArg.read_argument(args),
             embedding_path=RusVectoresEmbeddingFilepathArg.read_argument(args),
+            entities_parser=EntitiesParserArg.read_argument(args),
             entity_fmt=create_entity_formatter(EntityFormatterTypesArg.read_argument(args)),
             stemmer=StemmerArg.read_argument(args),
+            opin_annot=DefaultAnnotator(
+                PairBasedAnnotationAlgorithm(
+                    dist_in_terms_bound=None,
+                    label_provider=ConstantLabelProvider(label_instance=NoLabel()))),
             data_folding=NoFolding(doc_ids_to_fold=[0], supported_data_types=[DataType.Test])),
         TensorflowNetworkInferencePipelineItem(
             nn_io=nn_io,
