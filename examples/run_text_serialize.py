@@ -1,5 +1,7 @@
 import argparse
 
+from arekit.common.experiment.data_type import DataType
+from arekit.common.folding.nofold import NoFolding
 from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_formatter
 from examples.input import EXAMPLES
@@ -32,7 +34,8 @@ if __name__ == '__main__':
             entities_parser=EntitiesParserArg.read_argument(args),
             embedding_path=RusVectoresEmbeddingFilepathArg.read_argument(args),
             entity_fmt=create_entity_formatter(EntityFormatterTypesArg.read_argument(args)),
-            stemmer=StemmerArg.read_argument(args))
+            stemmer=StemmerArg.read_argument(args),
+            data_folding=NoFolding(doc_ids_to_fold=[0], supported_data_types=[DataType.Test]))
     ])
 
     ppl.run(InputTextArg.read_argument(args))
