@@ -8,6 +8,7 @@ from arekit.contrib.source.rusentrel.utils import iter_synonym_groups
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from examples.network.args.base import BaseArg
 from examples.text.pipeline_entities_bert_ontonotes import BertOntonotesNERPipelineItem
+from examples.text.pipeline_entities_default import TextEntitiesParser
 
 
 class InputTextArg(BaseArg):
@@ -262,8 +263,8 @@ class EntitiesParserArg(BaseArg):
     @staticmethod
     def read_argument(args):
         arg = args.entities_parser
-        if arg == "no":
-            return None
+        if arg == "default":
+            return TextEntitiesParser()
         elif arg == "bert-ontonotes":
             return BertOntonotesNERPipelineItem()
 

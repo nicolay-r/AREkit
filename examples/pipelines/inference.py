@@ -15,7 +15,7 @@ from arekit.contrib.networks.core.pipeline.item_fit import MinibatchFittingPipel
 from arekit.contrib.networks.core.pipeline.item_keep_hidden import MinibatchHiddenFetcherPipelineItem
 from arekit.contrib.networks.core.pipeline.item_predict import EpochLabelsPredictorPipelineItem
 from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLabelsCollectorPipelineItem
-from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
+from arekit.contrib.networks.core.predict.base_writer import BasePredictWriter
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
@@ -25,9 +25,10 @@ from examples.network.infer.exp_io import InferIOUtils
 
 class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
 
-    def __init__(self, model_name, bags_collection_type, model_input_type,
+    def __init__(self, model_name, bags_collection_type, model_input_type, predict_writer,
                  data_type, bags_per_minibatch, nn_io, labels_scaler, callbacks):
         assert(isinstance(callbacks, list))
+        assert(isinstance(predict_writer, BasePredictWriter))
         assert(isinstance(data_type, DataType))
 
         # Create network an configuration.
@@ -41,6 +42,7 @@ class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
         self.__config.modify_bag_size(BAG_SIZE)
         self.__config.modify_bags_per_minibatch(bags_per_minibatch)
         self.__config.set_class_weights([1, 1, 1])
+        self.__config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
 
         # intialize model context.
         self.__create_model_ctx = lambda inference_ctx: TensorflowModelContext(
@@ -50,8 +52,11 @@ class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
             inference_ctx=inference_ctx,
             bags_collection_type=bags_collection_type)
 
-        self.__callbacks = callbacks
-        self.__labels_scaler = labels_scaler
+        self.__callbacks = callbacks + [
+            PredictResultWriterCallback(labels_scaler=labels_scaler, writer=predict_writer)
+        ]
+
+        self.__writer = predict_writer
         self.__bags_collection_type = bags_collection_type
         self.__data_type = data_type
 
@@ -76,7 +81,6 @@ class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
 
         # Setup config parameters.
         self.__config.set_term_embedding(embedding)
-        self.__config.set_pos_count(PartOfSpeechTypesService.get_mystem_pos_count())
 
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
@@ -95,18 +99,17 @@ class TensorflowNetworkInferencePipelineItem(BasePipelineItem):
             ]),
             bag_size=self.__config.BagSize)
 
-        predict_callback = PredictResultWriterCallback(labels_scaler=self.__labels_scaler,
-                                                       writer=TsvPredictWriter(tgt))
-
         # Model preparation.
         model = BaseTensorflowModel(
             context=self.__create_model_ctx(inference_ctx),
-            callbacks=self.__callbacks + [predict_callback],
+            callbacks=self.__callbacks,
             predict_pipeline=[
                 EpochLabelsPredictorPipelineItem(),
                 EpochLabelsCollectorPipelineItem(),
                 MinibatchHiddenFetcherPipelineItem()
             ],
             fit_pipeline=[MinibatchFittingPipelineItem()])
+
+        self.__writer.set_target(tgt)
 
         model.predict(do_compile=True)

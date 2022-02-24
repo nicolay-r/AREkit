@@ -6,9 +6,8 @@ from arekit.contrib.networks.core.predict.base_writer import BasePredictWriter
 
 class TsvPredictWriter(BasePredictWriter):
 
-    def __init__(self, filepath):
-        assert(isinstance(filepath, str))
-        super(TsvPredictWriter, self).__init__(target=filepath)
+    def __init__(self):
+        super(TsvPredictWriter, self).__init__()
         self.__col_separator = '\t'
         self.__f = None
 

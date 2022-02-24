@@ -1,9 +1,7 @@
-from collections import OrderedDict
-
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.labels.base import NoLabel
-from arekit.common.labels.scaler.base import BaseLabelScaler
+from arekit.common.labels.scaler.single import SingleLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.base import News
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
@@ -27,14 +25,13 @@ from examples.network.infer.doc_ops import SingleDocOperations
 from examples.network.infer.exp import CustomExperiment
 from examples.network.infer.exp_io import InferIOUtils
 from examples.network.serialization_data import CustomSerializationContext
-from examples.text.pipeline_entities_default import TextEntitiesParser
 
 
 class TextSerializationPipelineItem(BasePipelineItem):
 
     def __init__(self, terms_per_context, entities_parser, synonyms, opin_annot,
                  embedding_path, entity_fmt, stemmer, data_folding):
-        assert(isinstance(entities_parser, BasePipelineItem) or entities_parser is None)
+        assert(isinstance(entities_parser, BasePipelineItem))
         assert(isinstance(entity_fmt, StringEntitiesFormatter))
         assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(terms_per_context, int))
@@ -51,9 +48,6 @@ class TextSerializationPipelineItem(BasePipelineItem):
         pos_tagger = POSMystemWrapper(MystemWrapper().MystemInstance)
 
         # Label provider setup.
-        labels_scaler = BaseLabelScaler(uint_dict=OrderedDict([(NoLabel(), 0)]),
-                                        int_dict=OrderedDict([(NoLabel(), 0)]))
-
         self.__labels_fmt = StringLabelsFormatter(stol={"neu": NoLabel})
 
         # Initialize text parser with the related dependencies.
@@ -61,7 +55,7 @@ class TextSerializationPipelineItem(BasePipelineItem):
         frame_variants_collection = create_and_fill_variant_collection(frames_collection)
         self.__text_parser = BaseTextParser(pipeline=[
             TermsSplitterParser(),
-            TextEntitiesParser() if entities_parser is None else entities_parser,
+            entities_parser,
             EntitiesGroupingPipelineItem(self.__synonyms.get_synonym_group_index),
             DefaultTextTokenizer(keep_tokens=True),
             FrameVariantsParser(frame_variants=frame_variants_collection),
@@ -72,7 +66,7 @@ class TextSerializationPipelineItem(BasePipelineItem):
 
         # initialize expriment related data.
         self.__exp_ctx = CustomSerializationContext(
-            labels_scaler=labels_scaler,
+            labels_scaler=SingleLabelScaler(NoLabel()),
             stemmer=stemmer,
             embedding=embedding,
             annotator=opin_annot,

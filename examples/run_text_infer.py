@@ -11,6 +11,7 @@ from arekit.contrib.experiment_rusentrel.entities.factory import create_entity_f
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel
 from arekit.contrib.networks.core.callback.stat import TrainingStatProviderCallback
 from arekit.contrib.networks.core.callback.train_limiter import TrainingLimiterCallback
+from arekit.contrib.networks.core.predict.tsv_writer import TsvPredictWriter
 from arekit.contrib.networks.enum_input_types import ModelInputType
 from arekit.contrib.networks.enum_name_types import ModelNames
 from examples.input import EXAMPLES
@@ -102,9 +103,10 @@ if __name__ == '__main__':
             bags_collection_type=create_bags_collection_type(model_input_type=model_input_type),
             model_input_type=model_input_type,
             labels_scaler=labels_scaler,
+            predict_writer=TsvPredictWriter(),
             callbacks=[
                 TrainingLimiterCallback(train_acc_limit=0.99),
-                TrainingStatProviderCallback()
+                TrainingStatProviderCallback(),
             ]),
         BratBackendPipelineItem(label_to_rel={
                 str(labels_scaler.label_to_uint(ExperimentPositiveLabel())): "POS",
