@@ -1,6 +1,5 @@
 from arekit.contrib.networks.enum_input_types import ModelInputType, ModelInputTypeService
 from examples.network.args.base import BaseArg
-from examples.network.args import const
 
 
 class BagsPerMinibatchArg(BaseArg):

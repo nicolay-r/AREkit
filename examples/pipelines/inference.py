@@ -19,8 +19,8 @@ from arekit.contrib.networks.core.predict.base_writer import BasePredictWriter
 from arekit.contrib.networks.factory import create_network_and_network_config_funcs
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
+from examples.exp.exp_io import InferIOUtils
 from examples.network.args.const import BAG_SIZE
-from examples.network.infer.exp_io import InferIOUtils
 
 
 class TensorflowNetworkInferencePipelineItem(BasePipelineItem):

@@ -18,12 +18,12 @@ from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVa
 from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
 from arekit.processing.text.pipeline_terms_splitter import TermsSplitterParser
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
+from examples.exp.doc_ops import SingleDocOperations
+from examples.exp.exp import CustomExperiment
+from examples.exp.exp_io import InferIOUtils
 from examples.network.common import create_frames_collection, create_and_fill_variant_collection, \
     create_infer_experiment_name_provider
 from examples.network.embedding import RusvectoresEmbedding
-from examples.network.infer.doc_ops import SingleDocOperations
-from examples.network.infer.exp import CustomExperiment
-from examples.network.infer.exp_io import InferIOUtils
 from examples.network.serialization_data import CustomSerializationContext
 
 
