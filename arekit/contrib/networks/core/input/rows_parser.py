@@ -55,6 +55,8 @@ class ParsedSampleRow(object):
 
             if key == const.LABEL:
                 self.__uint_label = int(value)
+                # TODO: To be adopted in future instead of __uint_label
+                self.__params[key] = value
                 continue
 
             if key not in parse_value:
@@ -108,6 +110,8 @@ class ParsedSampleRow(object):
 
     def __getitem__(self, item):
         assert (isinstance(item, str) or item is None)
+        if item not in self.__params:
+            return None
         return self.__params[item] if item is not None else None
 
     @classmethod

@@ -1,3 +1,4 @@
+import collections
 import json
 from os.path import dirname, realpath, join
 
@@ -95,24 +96,54 @@ class BratBackend(object):
         return objects
 
     @staticmethod
-    def __extract_relations(relations, result_data, label_to_rel):
+    def __iter_predicted_labels(result_data, label_to_rel):
         assert(isinstance(result_data, BaseRowsStorage))
         assert(isinstance(label_to_rel, dict))
 
-        relations = sorted(relations, key=lambda item: item[0])
-
-        brat_rels = []
         for res_ind, row in result_data:
-
-            rel_id, s_ind, t_ind = relations[res_ind]
-
-            assert(res_ind == rel_id)
 
             rel_type = None
             for col_label, rel_name in label_to_rel.items():
                 if row[col_label] > 0:
                     rel_type = rel_name
                     break
+
+            yield res_ind, rel_type
+
+    @staticmethod
+    def __iter_sample_labels(samples, label_to_rel):
+        assert(isinstance(samples, BaseRowsStorage))
+
+        for row_ind, row in samples:
+            str_label = str(row[const.LABEL]) if const.LABEL in row else None
+            label = label_to_rel[str_label] if str_label in label_to_rel else None
+            yield row_ind, label
+
+    @staticmethod
+    def __extract_relations(relations, labels_iter):
+        assert(isinstance(relations, list))
+        assert(isinstance(labels_iter, collections.Iterable))
+
+        def __rel_id(r_data):
+            return r_data[0]
+
+        relations = sorted(relations, key=lambda item: __rel_id(item))
+
+        # Map relation id towards the related index in list.
+        id_to_ind = {}
+        for r_ind, r_data in enumerate(relations):
+            key = r_data[0]
+            id_to_ind[key] = r_ind
+
+        brat_rels = []
+        for row_id, rel_type in labels_iter:
+
+            if row_id not in id_to_ind:
+                continue
+
+            __id = id_to_ind[row_id]
+            rel_id, s_ind, t_ind = relations[__id]
+            assert(row_id == rel_id)
 
             # Was not found.
             if rel_type is None:
@@ -271,11 +302,18 @@ class BratBackend(object):
         assert(isinstance(rel_color_types, dict))
         assert(isinstance(label_to_rel, dict))
         assert(isinstance(samples, BaseRowsStorage))
-        assert(isinstance(result, BaseRowsStorage))
+        assert(isinstance(result, BaseRowsStorage) or result is None)
 
         # Composing whole output document text.
-        text_terms, relations = self.__extract_data_from_samples(samples=samples, docs_range=docs_range)
+        text_terms, relations = self.__extract_data_from_samples(
+            samples=samples,
+            docs_range=docs_range)
+
         text = " ".join([self.__term_to_text(t) for t in text_terms])
+
+        # Defining the source of labels: from result or predefined.
+        labels_src = self.__iter_predicted_labels(result, label_to_rel) \
+            if result is not None else self.__iter_sample_labels(samples, label_to_rel)
 
         # Filling coll data.
         coll_data = dict()
@@ -288,9 +326,7 @@ class BratBackend(object):
         doc_data = dict()
         doc_data['text'] = text
         doc_data['entities'] = self.__extract_objects(text_terms)
-        doc_data['relations'] = self.__extract_relations(relations=relations,
-                                                         result_data=result,
-                                                         label_to_rel=label_to_rel)
+        doc_data['relations'] = self.__extract_relations(relations, labels_src)
 
         return text, coll_data, doc_data
 
@@ -302,7 +338,7 @@ class BratBackend(object):
 
         text, coll_data, doc_data = self.__to_data(
             samples=BaseRowsStorage.from_tsv(samples_data_filepath, col_types={'frames': str}),
-            result=BaseRowsStorage.from_tsv(result_data_filepath),
+            result=BaseRowsStorage.from_tsv(result_data_filepath) if result_data_filepath is not None else None,
             obj_color_types=obj_color_types,
             rel_color_types=rel_color_types,
             label_to_rel=label_to_rel,
