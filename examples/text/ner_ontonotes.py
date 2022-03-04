@@ -1,5 +1,5 @@
 import importlib
-from arekit.processing.entities.base import BaseNER
+from examples.text.ner_base import BaseNER
 
 
 class BertOntonotesNER(BaseNER):

@@ -2,6 +2,9 @@ from arekit.processing.entities.obj_desc import NerObjectDescriptor
 
 
 class BaseNER(object):
+    """ CoNLL format based Named Entity Extractor
+        for list of input sequences, where sequence is a list of terms.
+    """
 
     separator = '-'
     begin_tag = 'B'
