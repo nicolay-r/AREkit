@@ -9,7 +9,6 @@ class RuAttitudesVersions(Enum):
     Debug = "dbg"
     V10 = "v1_0"
     V11 = "v1_1"
-    V12 = "v1_2"
     V20Base = 'v2_0_base'
     V20Large = 'v2_0_large'
     V20BaseNeut = 'v2_0_base_neut'

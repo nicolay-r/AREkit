@@ -17,7 +17,6 @@ class Common:
 
     __tags = {
         None: None,
-        RuAttitudesVersions.V12: u'ra12',
         RuAttitudesVersions.V20Base: u'ra20b',
         RuAttitudesVersions.V20BaseNeut: u'ra20bn',
         RuAttitudesVersions.V20Large: u'ra20l',
