@@ -1,4 +1,5 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
+from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.scaler.single import SingleLabelScaler
@@ -21,15 +22,14 @@ from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from examples.exp.doc_ops import SingleDocOperations
 from examples.exp.exp import CustomExperiment
 from examples.exp.exp_io import InferIOUtils
-from examples.network.common import create_frames_collection, create_and_fill_variant_collection, \
-    create_infer_experiment_name_provider
+from examples.network.common import create_frames_collection, create_and_fill_variant_collection
 from examples.network.embedding import RusvectoresEmbedding
 from examples.network.serialization_data import CustomSerializationContext
 
 
 class TextSerializationPipelineItem(BasePipelineItem):
 
-    def __init__(self, terms_per_context, entities_parser, synonyms, opin_annot,
+    def __init__(self, terms_per_context, entities_parser, synonyms, opin_annot, name_provider,
                  embedding_path, entity_fmt, stemmer, data_folding):
         assert(isinstance(entities_parser, BasePipelineItem))
         assert(isinstance(entity_fmt, StringEntitiesFormatter))
@@ -38,6 +38,7 @@ class TextSerializationPipelineItem(BasePipelineItem):
         assert(isinstance(embedding_path, str))
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(data_folding, BaseDataFolding))
+        assert(isinstance(name_provider, ExperimentNameProvider))
 
         # Initalize embedding.
         embedding = RusvectoresEmbedding.from_word2vec_format(filepath=embedding_path, binary=True)
@@ -73,7 +74,7 @@ class TextSerializationPipelineItem(BasePipelineItem):
             terms_per_context=terms_per_context,
             str_entity_formatter=entity_fmt,
             pos_tagger=pos_tagger,
-            name_provider=create_infer_experiment_name_provider(),
+            name_provider=name_provider,
             data_folding=data_folding)
         self.__exp_io = InferIOUtils(self.__exp_ctx)
 

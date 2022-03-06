@@ -3,6 +3,7 @@ import argparse
 from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.experiment.annot.default import DefaultAnnotator
 from arekit.common.experiment.data_type import DataType
+from arekit.common.experiment.name_provider import ExperimentNameProvider
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
@@ -39,6 +40,7 @@ if __name__ == '__main__':
             synonyms=SynonymsCollectionArg.read_argument(args),
             entities_parser=EntitiesParserArg.read_argument(args),
             embedding_path=RusVectoresEmbeddingFilepathArg.read_argument(args),
+            name_provider=ExperimentNameProvider(name="example", suffix="serialize"),
             entity_fmt=create_entity_formatter(EntityFormatterTypesArg.read_argument(args)),
             opin_annot=DefaultAnnotator(annot_algo=PairBasedAnnotationAlgorithm(
                 dist_in_terms_bound=None,
