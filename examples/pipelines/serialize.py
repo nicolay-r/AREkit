@@ -68,7 +68,6 @@ class TextSerializationPipelineItem(BasePipelineItem):
         # initialize expriment related data.
         self.__exp_ctx = CustomSerializationContext(
             labels_scaler=SingleLabelScaler(NoLabel()),
-            stemmer=stemmer,
             embedding=embedding,
             annotator=opin_annot,
             terms_per_context=terms_per_context,

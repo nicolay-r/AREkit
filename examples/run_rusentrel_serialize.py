@@ -83,7 +83,6 @@ if __name__ == '__main__':
         embedding=Common.load_rusvectores_embedding(filepath=embedding_filepath, stemmer=stemmer),
         terms_per_context=terms_per_context,
         str_entity_formatter=create_entity_formatter(entity_fmt),
-        stemmer=stemmer,
         pos_tagger=pos_tagger,
         annotator=DefaultAnnotator(annot_algo=annot_algo),
         name_provider=ExperimentNameProvider(name=exp_name, suffix=extra_name_suffix),

@@ -1,5 +1,4 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.experiment_rusentrel.connotations.provider import RuSentiFramesConnotationProvider
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
@@ -10,11 +9,10 @@ from examples.network.common import create_frames_collection, create_and_fill_va
 
 class CustomSerializationContext(NetworkSerializationContext):
 
-    def __init__(self, labels_scaler, stemmer, pos_tagger, embedding,
+    def __init__(self, labels_scaler, pos_tagger, embedding,
                  terms_per_context, str_entity_formatter, annotator,
                  name_provider, data_folding):
         assert(isinstance(embedding, Embedding))
-        assert(isinstance(stemmer, Stemmer))
         assert(isinstance(pos_tagger, POSTagger))
         assert(isinstance(str_entity_formatter, StringEntitiesFormatter))
         assert(isinstance(terms_per_context, int))
