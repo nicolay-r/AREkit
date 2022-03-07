@@ -5,7 +5,7 @@ from arekit.contrib.networks.embeddings.base import Embedding
 logger = logging.getLogger(__name__)
 
 
-def create_term_embedding(term, embedding, check, word_separator=' '):
+def create_term_embedding(term, embedding, word_separator=' '):
     """
     Embedding algorithm based on parts (trigrams originally)
     """
@@ -17,7 +17,6 @@ def create_term_embedding(term, embedding, check, word_separator=' '):
     else:
         word, embedding = __compose_from_parts(term=term,
                                                embedding=embedding,
-                                               check=check,
                                                word_separator=word_separator)
 
     # In order to prevent a problem of the further separations during reading process.
@@ -27,13 +26,9 @@ def create_term_embedding(term, embedding, check, word_separator=' '):
     return word, embedding
 
 
-def __compose_from_parts(term, embedding, check, word_separator, max_part_size=3, do_lowercase=True):
+def __compose_from_parts(term, embedding, word_separator, max_part_size=3, do_lowercase=True):
     # remove empty spaces before and after.
     term = term.strip()
-
-    if check:
-        if ' ' in term:
-            print("FAILED: [{}]".format(term))
 
     # perform lowercasing
     if do_lowercase:
