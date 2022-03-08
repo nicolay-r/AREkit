@@ -1,4 +1,4 @@
 pandas>=0.20.3
-tqdm==4.48.0
+tqdm
 enum34==1.1.10
 numpy==1.14.5
