@@ -1,6 +1,11 @@
 ## Unit Testing
 
-Performing a quick library installation
+Install test required dependencies:
+```bash
+pip install -r dependencies.txt
+```
+
+Performing a quick `AREkit` library installation
 [[link]](https://stackoverflow.com/questions/19048732/python-setup-py-develop-vs-install)
 ```bash
 pip install -e ../ --no-deps
