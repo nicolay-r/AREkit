@@ -1,5 +1,7 @@
 from enum import Enum
 
+from arekit.common.utils import EnumConversionService
+
 
 class EntityFormatterTypes(Enum):
 
@@ -10,37 +12,12 @@ class EntityFormatterTypes(Enum):
     SimpleSharpPrefixed = 5
 
 
-class EntityFormattersService:
+class EntityFormattersService(EnumConversionService):
 
-    __names = {
+    _data = {
         "rus-cased-fmt": EntityFormatterTypes.RussianCased,
         'rus-simple': EntityFormatterTypes.RussianSimple,
         'simple-uppercase': EntityFormatterTypes.SimpleUppercase,
         'simple': EntityFormatterTypes.Simple,
-        'sharp-simple': EntityFormatterTypes.SimpleSharpPrefixed,
+        'sharp-simple': EntityFormatterTypes.SimpleSharpPrefixed
     }
-
-    @staticmethod
-    def __iter_supported_names():
-        return iter(list(EntityFormattersService.__names.keys()))
-
-    @staticmethod
-    def get_type_by_name(name):
-        return EntityFormattersService.__names[name]
-
-    @staticmethod
-    def find_name_by_type(entity_fmt_type):
-        assert(isinstance(entity_fmt_type, EntityFormatterTypes))
-
-        for name in EntityFormattersService.__iter_supported_names():
-            related_type = EntityFormattersService.__names[name]
-            if related_type == entity_fmt_type:
-                return name
-
-    @staticmethod
-    def iter_supported_names():
-        return EntityFormattersService.__iter_supported_names()
-
-    @staticmethod
-    def is_supported(name):
-        return name in EntityFormattersService.__names

@@ -1,5 +1,7 @@
 from enum import Enum
 
+from arekit.common.utils import EnumConversionService
+
 
 class ExperimentTypes(Enum):
 
@@ -8,19 +10,10 @@ class ExperimentTypes(Enum):
     RuSentRelWithRuAttitudes = 3
 
 
-class ExperimentTypesService:
+class ExperimentTypesService(EnumConversionService):
 
-    __names = {
+    _data = {
         'rsr': ExperimentTypes.RuSentRel,
         'ra': ExperimentTypes.RuAttitudes,
         'rsr+ra': ExperimentTypes.RuSentRelWithRuAttitudes
     }
-
-    @staticmethod
-    def get_type_by_name(name):
-        return ExperimentTypesService.__names[name]
-
-    @staticmethod
-    def iter_supported_names():
-        return iter(list(ExperimentTypesService.__names.keys()))
-
