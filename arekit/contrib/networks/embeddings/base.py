@@ -47,7 +47,7 @@ class Embedding(object):
             matrix.append(vector)
             words.append(word)
 
-        return cls(matrix=np.array(matrix),
+        return cls(matrix=np.array(matrix) if len(matrix) > 0 else np.empty(shape=(0, 0)),
                    words=words)
 
     @classmethod
