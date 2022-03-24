@@ -14,7 +14,7 @@ def get_requirements(filenames):
 
 setup(
     name='arekit',
-    version='0.21.1',
+    version='0.22.0',
     description='Library devoted to Document level Attitude and Relation Extraction '
                 'for text objects with entity-linking (EL) API support',
     url='https://github.com/nicolay-r/AREkit',
