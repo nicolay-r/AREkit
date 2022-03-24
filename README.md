@@ -27,7 +27,7 @@ both applicable for sentiment attitude extraction task.
 ## Installation 
 
 ```
-pip install git+https://github.com/nicolay-r/AREkit.git@0.21.1-rc
+pip install git+https://github.com/nicolay-r/AREkit.git@0.22.0-rc
 ```
 
 ## Download Resources
