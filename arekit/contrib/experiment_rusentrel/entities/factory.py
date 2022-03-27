@@ -15,12 +15,12 @@ def create_entity_formatter(fmt_type, create_russian_pos_tagger_func=None):
 
     if fmt_type == EntityFormatterTypes.RussianCased:
         return RussianEntitiesCasedFormatter(create_russian_pos_tagger_func())
-    elif fmt_type == EntityFormatterTypes.SimpleSharpPrefixed:
+    elif fmt_type == EntityFormatterTypes.HiddenBertStyled:
         return SharpPrefixedEntitiesSimpleFormatter()
-    elif fmt_type == EntityFormatterTypes.RussianSimple:
+    elif fmt_type == EntityFormatterTypes.HiddenSimpleRus:
         return RussianEntitiesFormatter()
-    elif fmt_type == EntityFormatterTypes.Simple:
+    elif fmt_type == EntityFormatterTypes.HiddenSimpleEng:
         return StringEntitiesSimpleFormatter()
-    elif fmt_type == EntityFormatterTypes.SimpleUppercase:
+    elif fmt_type == EntityFormatterTypes.HiddenSimpleUppercase:
         return SimpleUppercasedEntityFormatter()
 

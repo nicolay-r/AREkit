@@ -18,8 +18,8 @@ class EnumReadingTest(unittest.TestCase):
         assert(n_exp == n_act)
 
         # 2
-        n_exp = 'rus-simple'
-        t_exp = EntityFormatterTypes.RussianSimple
+        n_exp = 'hidden-simple-rus'
+        t_exp = EntityFormatterTypes.HiddenSimpleRus
         t_act = EntityFormattersService.name_to_type(n_exp)
         n_act = EntityFormattersService.type_to_name(t_exp)
         assert(t_exp == t_act)
