@@ -12,4 +12,4 @@ def iter_synonym_groups(input_file, desc=""):
                                     unit="opins")
 
     for line in lines_it:
-        yield line.decode('utf-8').split(',')
+        yield line.split(',')
