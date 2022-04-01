@@ -49,3 +49,4 @@ download_data()
 
 *  **OpenNRE** [[github]](https://github.com/thunlp/OpenNRE) [[paper]](https://aclanthology.org/D19-3029.pdf)
 *  **DeRE** [[github]](https://github.com/ims-tcl/DeRE) [[paper]](https://aclanthology.org/D18-2008/)
+*  **CREST** [[github]](https://github.com/phosseini/CREST) [[paper]](https://arxiv.org/abs/2103.13606)
