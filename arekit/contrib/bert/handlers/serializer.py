@@ -16,16 +16,14 @@ from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, exp_io, exp_ctx, doc_ops, opin_ops, labels_formatter, skip_if_folder_exists,
+    def __init__(self, exp_io, exp_ctx, doc_ops, opin_ops, labels_formatter,
                  sample_provider_type, entity_formatter, balance_train_samples):
-        assert(isinstance(skip_if_folder_exists, bool))
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         super(BertExperimentInputSerializerIterationHandler, self).__init__()
 
-        self.__skip_if_folder_exists = skip_if_folder_exists
         self.__entity_formatter = entity_formatter
         self.__sample_provider_type = sample_provider_type
         self.__balance_train_samples = balance_train_samples
