@@ -12,4 +12,8 @@ def iter_synonym_groups(input_file, desc=""):
                                     unit="opins")
 
     for line in lines_it:
+
+        if isinstance(line, bytes):
+            line = line.decode()
+
         yield line.split(',')
