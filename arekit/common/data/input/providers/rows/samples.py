@@ -85,9 +85,12 @@ class BaseSampleRowProvider(BaseRowProvider):
             t_ind=t_ind,
             expected_label=expected_label)
 
+        # Entity indicies from the related context.
         entities = list(filter(lambda term: isinstance(term, Entity), sentence_terms))
+        entity_inds = [i for i, t in sentence_terms if isinstance(t, Entity)]
         row[const.ENTITY_VALUES] = ",".join([e.Value.replace(',', '') for e in entities])
         row[const.ENTITY_TYPES] = ",".join([e.Type.replace(',', '') for e in entities])
+        row[const.ENTITIES] = ",".join(entity_inds)
 
         row[const.S_IND] = s_ind
         row[const.T_IND] = t_ind

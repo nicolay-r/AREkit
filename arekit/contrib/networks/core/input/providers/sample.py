@@ -61,9 +61,6 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         # Synonyms for target.
         uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=t_ind)
 
-        # Entity indicies from the related context.
-        entity_inds = list(self.__iter_indices(terms=terms, filter=lambda t: self.__is_entity(t)))
-
         # Part of speech tags
         pos_int_tags = [int(pos_tag) for pos_tag in self.__pos_terms_mapper.iter_mapped(terms)]
 
@@ -72,7 +69,6 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         row[const.FrameConnotations] = self.__to_arg(uint_frame_connotations)
         row[const.SynonymSubject] = self.__to_arg(uint_syn_s_inds)
         row[const.SynonymObject] = self.__to_arg(uint_syn_t_inds)
-        row[const.Entities] = self.__to_arg(entity_inds)
         row[const.PosTags] = self.__to_arg(pos_int_tags)
 
     # region private methods

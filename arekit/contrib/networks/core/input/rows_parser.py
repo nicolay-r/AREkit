@@ -27,13 +27,13 @@ parse_value = {
     const.SENT_IND: lambda value: int(value),
     const.ENTITY_VALUES: lambda value: __process_values_list(value),
     const.ENTITY_TYPES: lambda value: __process_values_list(value),
+    const.ENTITIES: lambda value: __process_indices_list(value),
     network_input_const.FrameVariantIndices: lambda value:
         __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.FrameConnotations: lambda value:
         __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.SynonymObject: lambda value: __process_indices_list(value),
     network_input_const.SynonymSubject: lambda value: __process_indices_list(value),
-    network_input_const.Entities: lambda value: __process_indices_list(value),
     network_input_const.PosTags: lambda value: __process_int_values_list(value),
     "text_a": lambda value: filter_whitespaces([term for term in split_by_whitespaces(value)])
 }
@@ -98,7 +98,7 @@ class ParsedSampleRow(object):
 
     @property
     def EntityInds(self):
-        return self.__params[network_input_const.Entities]
+        return self.__params[const.ENTITIES]
 
     @property
     def SynonymObjectInds(self):

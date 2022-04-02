@@ -16,3 +16,4 @@ SENT_IND = 'sent_ind'
 # Entity parameters
 ENTITY_VALUES = 'entity_values'
 ENTITY_TYPES = 'entity_types'
+ENTITIES = 'entities'

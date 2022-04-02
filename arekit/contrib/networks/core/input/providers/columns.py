@@ -12,7 +12,6 @@ class NetworkSampleColumnsProvider(SampleColumnsProvider):
         dtypes_list.append((const.FrameConnotations, str))
         dtypes_list.append((const.SynonymSubject, str))
         dtypes_list.append((const.SynonymObject, str))
-        dtypes_list.append((const.Entities, str))
         dtypes_list.append((const.PosTags, str))
 
         return dtypes_list
