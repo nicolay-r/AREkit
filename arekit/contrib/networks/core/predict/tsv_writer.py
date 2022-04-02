@@ -12,7 +12,7 @@ class TsvPredictWriter(BasePredictWriter):
         self.__f = None
 
     def __write(self, params):
-        line = "{}\n".format(self.__col_separator.join(params))
+        line = "{}\n".format(self.__col_separator.join([str(p) for p in params]))
         self.__f.write(line.encode())
 
     def write(self, title, contents_it):
