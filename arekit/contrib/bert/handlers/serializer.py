@@ -17,13 +17,16 @@ from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
     def __init__(self, exp_io, exp_ctx, doc_ops, opin_ops, labels_formatter,
+                 value_to_group_id_func,
                  sample_provider_type, entity_formatter, balance_train_samples):
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(callable(value_to_group_id_func))
         super(BertExperimentInputSerializerIterationHandler, self).__init__()
 
+        self.__value_to_group_id_func = value_to_group_id_func
         self.__entity_formatter = entity_formatter
         self.__sample_provider_type = sample_provider_type
         self.__balance_train_samples = balance_train_samples
@@ -57,7 +60,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
         # Create opinion provider
         opinion_provider = InputTextOpinionProvider.create(
-            value_to_group_id_func=None,
+            value_to_group_id_func=self.__value_to_group_id_func,
             parse_news_func=lambda doc_id: self.__doc_ops.parse_doc(doc_id),
             iter_doc_opins=lambda doc_id: self.__opin_ops.iter_opinions_for_extraction(
                 doc_id=doc_id, data_type=data_type),
