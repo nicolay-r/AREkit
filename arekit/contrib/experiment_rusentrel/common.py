@@ -2,6 +2,7 @@ from arekit.common.experiment.api.ctx_serialization import ExperimentSerializati
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.text.parser import BaseTextParser
+from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
 def create_text_parser(exp_ctx, entities_parser, value_to_group_id_func, ppl_items):
@@ -25,6 +26,11 @@ def create_text_parser(exp_ctx, entities_parser, value_to_group_id_func, ppl_ite
 
     # We may customize the pipeline after the entities annotation and grouping stages.
     pipeline = [entities_parser, ppl_entities_grouping] + \
-               ppl_items if ppl_items is not None else []
+               (ppl_items if ppl_items is not None else [])
 
     return BaseTextParser(pipeline)
+
+
+def create_stemmer():
+    # This is the only stemmer supported by the experiment.
+    return MystemWrapper()
