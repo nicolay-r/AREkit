@@ -20,8 +20,8 @@ for sentence level relations preparation (dubbed as contexts)
 (2) API for contexts extraction
 (3) relations transferring from sentence-level onto document-level, and more.
 It providers contrib modules of 
-[neural networks](https://github.com/nicolay-r/AREkit/tree/0.21.1-rc/arekit/contrib/networks) (like OpenNRE) and 
-[BERT](https://github.com/nicolay-r/AREkit/tree/0.21.1-rc/arekit/contrib/bert),
+**neural networks** (like OpenNRE) and 
+**BERT**,
 both applicable for sentiment attitude extraction task.
 
 ## Installation 
