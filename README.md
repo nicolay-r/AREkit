@@ -36,13 +36,17 @@ from arekit.data import download_data
 download_data()
 ```
 
-## Deep-Learning Applications
+## Applications
 
+* **ARElight** [[site]](https://nicolay-r.github.io/arelight-page/) [[github]](https://github.com/nicolay-r/ARElight)
+    * **Infer attitudes** from large Mass-media documents or **sample texts** for your Machine Learning models applications
+
+#### Papers
 * Frame-Based attitude extraction workflow for news processing [[code]](https://github.com/nicolay-r/frame-based-attitude-extraction-workflow)
     * Represents an attitude annotation workflow based on [RuSentiFrames](https://github.com/nicolay-r/RuSentiFrames) lexicon which is utilized for news processing;
-* **AREnets** for analytical articles [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction/tree/0.21.1)
+* Neural Networks Applications in Sentiment Attitude Extraction [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction)
     * Neural Networks application for attitude extraction from analytical articles;
-* **AREbert** for analytical articles processing [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction/tree/0.21.1)
+* BERT-based model utils for Sentiment Attitude Extraction task [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction)
     * Analytical news formatter for BERT-based models;
 
 ## Related Frameworks
