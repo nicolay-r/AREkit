@@ -16,13 +16,14 @@ from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, exp_io, exp_ctx, doc_ops, opin_ops, labels_formatter,
-                 value_to_group_id_func,
+    def __init__(self, exp_io, exp_ctx, doc_ops, opin_ops,
+                 sample_labels_fmt, annot_labels_fmt, value_to_group_id_func,
                  sample_provider_type, entity_formatter, balance_train_samples):
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
-        assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(isinstance(sample_labels_fmt, StringLabelsFormatter))
+        assert(isinstance(annot_labels_fmt, StringLabelsFormatter))
         assert(callable(value_to_group_id_func))
         super(BertExperimentInputSerializerIterationHandler, self).__init__()
 
@@ -30,7 +31,8 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         self.__entity_formatter = entity_formatter
         self.__sample_provider_type = sample_provider_type
         self.__balance_train_samples = balance_train_samples
-        self.__labels_formatter = labels_formatter
+        self.__sample_label_formatter = sample_labels_fmt
+        self.__annot_label_formatter = annot_labels_fmt
         self.__exp_io = exp_io
         self.__exp_ctx = exp_ctx
         self.__doc_ops = doc_ops
@@ -43,7 +45,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
         # Create samples formatter.
         sample_rows_provider = create_bert_sample_provider(
-            labels_formatter=self.__labels_formatter,
+            labels_formatter=self.__sample_label_formatter,
             provider_type=self.__sample_provider_type,
             label_scaler=self.__exp_ctx.LabelsScaler,
             entity_formatter=self.__entity_formatter)
@@ -112,6 +114,6 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
                 self.__exp_io.write_opinion_collection(
                     collection=collection,
                     target=target,
-                    labels_formatter=self.__labels_formatter)
+                    labels_formatter=self.__annot_label_formatter)
 
     # endregion
