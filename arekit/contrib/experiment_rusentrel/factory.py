@@ -19,6 +19,7 @@ def create_experiment(exp_type,
                       rusentrel_version,
                       load_ruattitude_docs,
                       ra_doc_id_func,
+                      text_parser_items=None,
                       ruattitudes_version=None):
     """ This method allows to instanciate all the supported experiments
         by `contrib/experiments/` module of AREkit framework.
@@ -29,13 +30,15 @@ def create_experiment(exp_type,
     assert(isinstance(exp_ctx, ExperimentContext))
     assert(isinstance(folding_type, FoldingType))
     assert(isinstance(load_ruattitude_docs, bool))
+    assert(isinstance(text_parser_items, list) or text_parser_items is None)
 
     if exp_type == ExperimentTypes.RuSentRel:
         # Supervised learning experiment type.
         return create_rusentrel_experiment(exp_ctx=exp_ctx,
                                            version=rusentrel_version,
                                            folding_type=folding_type,
-                                           exp_io=exp_io)
+                                           exp_io=exp_io,
+                                           ppl_items=text_parser_items)
 
     if exp_type == ExperimentTypes.RuAttitudes:
         # Application of the distant supervision only (assumes for pretraining purposes)
@@ -43,7 +46,8 @@ def create_experiment(exp_type,
                                              version=ruattitudes_version,
                                              exp_io=exp_io,
                                              load_docs=load_ruattitude_docs,
-                                             ra_doc_ids_func=ra_doc_id_func)
+                                             ra_doc_ids_func=ra_doc_id_func,
+                                             ppl_items=text_parser_items)
 
     if exp_type == ExperimentTypes.RuSentRelWithRuAttitudes:
         # Supervised learning with an application of distant supervision in training process.
@@ -53,7 +57,8 @@ def create_experiment(exp_type,
                                                            ruattitudes_version=ruattitudes_version,
                                                            rusentrel_version=rusentrel_version,
                                                            load_docs=load_ruattitude_docs,
-                                                           ra_doc_id_func=ra_doc_id_func)
+                                                           ra_doc_id_func=ra_doc_id_func,
+                                                           ppl_items=text_parser_items)
 
 
 def create_folding(exp_type, rusentrel_folding_type, rusentrel_version, ruattitudes_version, ra_doc_id_func):

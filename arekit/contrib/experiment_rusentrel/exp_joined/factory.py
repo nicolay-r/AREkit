@@ -23,7 +23,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, ra_doc_id_func,
-                                                ruattitudes_version, rusentrel_version, load_docs):
+                                                ruattitudes_version, rusentrel_version, load_docs,
+                                                ppl_items):
     """
     IO for the experiment with distant supervision for sentiment attitude extraction task.
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
@@ -32,20 +33,23 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, r
     assert(isinstance(rusentrel_version, RuSentRelVersions))
     assert(isinstance(folding_type, FoldingType))
     assert(isinstance(exp_io, BaseIOUtils))
+    assert(isinstance(ppl_items, list) or ppl_items is None)
     assert(callable(ra_doc_id_func))
 
     optional_data = OptnionalDataProvider(exp_ctx=exp_ctx,
                                           ruattitudes_version=ruattitudes_version,
                                           rusentrel_version=rusentrel_version,
                                           load_docs=load_docs,
-                                          ra_doc_id_func=ra_doc_id_func)
+                                          ra_doc_id_func=ra_doc_id_func,
+                                          ppl_items=ppl_items)
 
     # init text parser.
     # TODO. Limitation, depending on document, entities parser may vary.
     text_parser = create_text_parser(
         exp_ctx=exp_ctx,
         entities_parser=RuSentRelTextEntitiesParser(),
-        value_to_group_id_func=optional_data.get_synonyms().get_synonym_group_index)
+        value_to_group_id_func=optional_data.get_synonyms().get_synonym_group_index,
+        ppl_items=ppl_items)
 
     # init documents.
     rusentrel_doc = RuSentrelDocumentOperations(exp_ctx=exp_ctx,
@@ -79,8 +83,9 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, r
 
 class OptnionalDataProvider(object):
 
-    def __init__(self, exp_ctx, ruattitudes_version, rusentrel_version, load_docs, ra_doc_id_func):
+    def __init__(self, exp_ctx, ruattitudes_version, rusentrel_version, load_docs, ra_doc_id_func, ppl_items):
         assert(isinstance(exp_ctx, ExperimentContext))
+        assert(isinstance(ppl_items, list) or ppl_items is None)
         self.__exp_ctx = exp_ctx
         self.__load_docs = load_docs
         self.__ruattitudes_version = ruattitudes_version
@@ -88,6 +93,7 @@ class OptnionalDataProvider(object):
         self.__ra_doc_id_func = ra_doc_id_func
         self.__ruattitudes_op = None
         self.__ruattitudes_doc = None
+        self.__ppl_items = None
 
     def get_synonyms(self):
         return self.__synonyms_provider.get_or_load_synonyms_collection()
@@ -116,7 +122,8 @@ class OptnionalDataProvider(object):
         text_parser = create_text_parser(
             exp_ctx=self.__exp_ctx,
             entities_parser=RuAttitudesTextEntitiesParser(),
-            value_to_group_id_func=self.__synonyms_provider.get_or_load_synonyms_collection().get_synonym_group_index)
+            value_to_group_id_func=self.__synonyms_provider.get_or_load_synonyms_collection().get_synonym_group_index,
+            ppl_items=self.__ppl_items)
 
         # Completing initialization.
         self.__ruattitudes_doc = RuAttitudesDocumentOperations(
