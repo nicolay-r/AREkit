@@ -146,12 +146,20 @@ class BaseRowsStorage(object):
         del self._df
         gc.collect()
 
+    @staticmethod
+    def __iter_core(df):
+        for row_index, row in df.iterrows():
+            yield row_index, row
+
+    def iter_shuffled(self):
+        shuffled_df = self._df.sample(frac=1)
+        return self.__iter_core(shuffled_df)
+
     # endregion
 
     # region base methods
 
     def __iter__(self):
-        for row_index, row in self._df.iterrows():
-            yield row_index, row
+        return self.__iter_core(self._df)
 
     # endregion
