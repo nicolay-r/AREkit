@@ -45,7 +45,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
         # Create samples formatter.
         sample_rows_provider = create_bert_sample_provider(
-            labels_formatter=self.__sample_label_formatter,
+            text_b_labels_fmt=self.__sample_label_formatter,
             provider_type=self.__sample_provider_type,
             label_scaler=self.__exp_ctx.LabelsScaler,
             entity_formatter=self.__entity_formatter)

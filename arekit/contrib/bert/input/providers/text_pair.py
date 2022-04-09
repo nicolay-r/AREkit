@@ -13,7 +13,7 @@ class PairTextProvider(BaseSingleTextProvider):
 
     TEXT_B = "text_b"
 
-    def __init__(self, text_b_template, labels_formatter, text_terms_mapper):
+    def __init__(self, text_b_template, text_b_labels_fmt, text_terms_mapper):
         """
         text_b_template: unicode
             assumes to include {subject}, {object}, and {context} in related template,
@@ -21,10 +21,10 @@ class PairTextProvider(BaseSingleTextProvider):
         labels_formatter: StringLabelsFormatter
         """
         assert(isinstance(text_b_template, str))
-        assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(isinstance(text_b_labels_fmt, StringLabelsFormatter))
         super(PairTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
         self.__text_b_template = text_b_template
-        self.__labels_formatter = labels_formatter
+        self.__text_b_labels_fmt = text_b_labels_fmt
 
     def get_text_template(self):
         raise NotImplementedError()
@@ -60,6 +60,6 @@ class PairTextProvider(BaseSingleTextProvider):
             subject=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Subject),
             object=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Object),
             context=self._process_text(inner_context),
-            label=self.__labels_formatter.label_to_str(expected_label))
+            label=self.__text_b_labels_fmt.label_to_str(expected_label))
 
         set_text_func(column=self.TEXT_B, value=value)

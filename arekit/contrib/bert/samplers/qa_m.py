@@ -16,14 +16,14 @@ class QaMultipleSampleProvider(BaseSampleRowProvider):
     https://www.aclweb.org/anthology/N19-1035.pdf
     """
 
-    def __init__(self, label_scaler, labels_formatter, text_terms_mapper):
-        assert(isinstance(labels_formatter, StringLabelsFormatter))
+    def __init__(self, label_scaler, text_b_labels_fmt, text_terms_mapper):
+        assert(isinstance(text_b_labels_fmt, StringLabelsFormatter))
         assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
         text_b_template = 'Что вы думаете по поводу отношения {subject} к {object} в контексте : << {context} >> ?'
         super(QaMultipleSampleProvider, self).__init__(
             text_provider=PairTextProvider(
                 text_b_template=text_b_template,
-                labels_formatter=labels_formatter,
+                text_b_labels_fmt=text_b_labels_fmt,
                 text_terms_mapper=text_terms_mapper),
             label_provider=MultipleLabelProvider(label_scaler=label_scaler))
