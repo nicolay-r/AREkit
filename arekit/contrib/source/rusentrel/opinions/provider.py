@@ -33,7 +33,7 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
 
     # region public methods
 
-    def iter_opinions(self, source, labels_formatter, error_on_non_supported=True):
+    def iter_opinions(self, source, encoding, labels_formatter, error_on_non_supported=True):
         """
         Important: For externally saved collections (using save_to_file method) and related usage
         """
@@ -41,7 +41,7 @@ class RuSentRelOpinionCollectionProvider(OpinionCollectionsProvider):
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(error_on_non_supported, bool))
 
-        with open(source, 'r') as input_file:
+        with open(source, 'r', encoding=encoding) as input_file:
 
             it = RuSentRelOpinionCollectionProvider._iter_opinions_from_file(
                 input_file=input_file,

@@ -71,6 +71,7 @@ class BaseIOUtils(object):
         self.__opinion_collection_writer.serialize(
             target=target,
             collection=collection,
+            encoding='utf-8',
             labels_formatter=labels_formatter)
 
     def read_opinion_collection(self, target, labels_formatter, create_collection_func,
@@ -82,6 +83,7 @@ class BaseIOUtils(object):
 
         opinions = self.__opinion_collection_provider.iter_opinions(
             source=target,
+            encoding='utf-8',
             labels_formatter=labels_formatter,
             error_on_non_supported=error_on_non_supported)
 

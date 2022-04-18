@@ -10,7 +10,7 @@ from arekit.contrib.source.rusentrel.opinions.converter import OpinionConverter
 
 class RuSentRelOpinionCollectionWriter(OpinionCollectionWriter):
 
-    def serialize(self, collection, target, labels_formatter, error_on_non_supported=True):
+    def serialize(self, collection, target, encoding, labels_formatter, error_on_non_supported=True):
         assert(isinstance(collection, OpinionCollection))
         assert(isinstance(target, str))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
@@ -24,7 +24,7 @@ class RuSentRelOpinionCollectionWriter(OpinionCollectionWriter):
 
         create_dir_if_not_exists(target)
 
-        with io.open(target, 'w') as f:
+        with io.open(target, 'w', encoding=encoding) as f:
             for o in sorted_ops:
 
                 str_value = OpinionConverter.try_to_string(
