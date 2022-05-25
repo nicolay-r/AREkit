@@ -1,4 +1,4 @@
-# AREkit 0.22.0
+# AREkit 0.22.1
 
 ![](https://img.shields.io/badge/Python-3.6-brightgreen.svg)
 
@@ -27,7 +27,7 @@ both applicable for sentiment attitude extraction task.
 ## Installation 
 
 ```
-pip install git+https://github.com/nicolay-r/AREkit.git@0.22.0-rc
+pip install git+https://github.com/nicolay-r/AREkit.git@0.22.1-rc
 ```
 
 ## Download Resources
