@@ -3,7 +3,7 @@ import numpy as np
 from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.entities.types import EntityType
+from arekit.common.entities.types import OpinionEntityType
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.contrib.networks.core.input.embedding.custom import create_term_embedding
 from arekit.contrib.networks.embeddings.base import Embedding
@@ -100,11 +100,11 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
         assert(isinstance(subj_ind_set, set))
         assert(isinstance(obj_ind_set, set))
 
-        result = EntityType.Other
+        result = OpinionEntityType.Other
         if e_ind in obj_ind_set:
-            result = EntityType.Object
+            result = OpinionEntityType.Object
         elif e_ind in subj_ind_set:
-            result = EntityType.Subject
+            result = OpinionEntityType.Subject
 
         return result
 

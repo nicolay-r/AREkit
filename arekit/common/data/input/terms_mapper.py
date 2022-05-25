@@ -1,7 +1,7 @@
 from arekit.common.context.terms_mapper import TextTermsMapper
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.entities.types import EntityType
+from arekit.common.entities.types import OpinionEntityType
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.processing.text.token import Token
 
@@ -54,19 +54,19 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
     def map_entity(self, e_ind, entity):
         if e_ind == self.__s_ind:
             return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=EntityType.Subject)
+                                                       entity_type=OpinionEntityType.Subject)
         elif e_ind == self.__t_ind:
             return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=EntityType.Object)
+                                                       entity_type=OpinionEntityType.Object)
         elif self.__is_in_same_group(self.__syn_group(entity), self.__s_group):
             return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=EntityType.SynonymSubject)
+                                                       entity_type=OpinionEntityType.SynonymSubject)
         elif self.__is_in_same_group(self.__syn_group(entity), self.__t_group):
             return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=EntityType.SynonymObject)
+                                                       entity_type=OpinionEntityType.SynonymObject)
         else:
             return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=EntityType.Other)
+                                                       entity_type=OpinionEntityType.Other)
 
     @staticmethod
     def __is_in_same_group(g1, g2):

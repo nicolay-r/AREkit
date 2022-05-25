@@ -1,5 +1,5 @@
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.entities.types import EntityType
+from arekit.common.entities.types import OpinionEntityType
 from arekit.common.labels.base import Label
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 
@@ -57,8 +57,8 @@ class PairTextProvider(BaseSingleTextProvider):
         inner_context = self._handle_terms_and_compose_text(sentence_terms=inner_terms)
 
         value = self.__text_b_template.format(
-            subject=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Subject),
-            object=self._mapper.StringEntitiesFormatter.to_string(None, EntityType.Object),
+            subject=self._mapper.StringEntitiesFormatter.to_string(None, OpinionEntityType.Subject),
+            object=self._mapper.StringEntitiesFormatter.to_string(None, OpinionEntityType.Object),
             context=self._process_text(inner_context),
             label=self.__text_b_labels_fmt.label_to_str(expected_label))
 

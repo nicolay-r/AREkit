@@ -1,5 +1,5 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.entities.types import EntityType
+from arekit.common.entities.types import OpinionEntityType
 
 
 class StringEntitiesSimpleFormatter(StringEntitiesFormatter):
@@ -12,13 +12,13 @@ class StringEntitiesSimpleFormatter(StringEntitiesFormatter):
         Returns: str (unicode)
             Value that assumes to be utilized in Word2Vec model embedding search.
         """
-        assert(isinstance(entity_type, EntityType))
+        assert(isinstance(entity_type, OpinionEntityType))
 
-        if entity_type == EntityType.Other:
+        if entity_type == OpinionEntityType.Other:
             return "e"
-        elif entity_type == EntityType.Object or entity_type == EntityType.SynonymObject:
+        elif entity_type == OpinionEntityType.Object or entity_type == OpinionEntityType.SynonymObject:
             return "object"
-        elif entity_type == EntityType.Subject or entity_type == EntityType.SynonymSubject:
+        elif entity_type == OpinionEntityType.Subject or entity_type == OpinionEntityType.SynonymSubject:
             return "subject"
 
         return None

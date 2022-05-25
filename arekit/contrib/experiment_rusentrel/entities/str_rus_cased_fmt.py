@@ -1,6 +1,6 @@
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.entities.types import EntityType
+from arekit.common.entities.types import OpinionEntityType
 from arekit.processing.languages.ru.cases import RussianCases
 from arekit.processing.languages.ru.number import RussianNumberType
 from arekit.processing.pos.russian import RussianPOSTagger
@@ -36,18 +36,18 @@ class RussianEntitiesCasedFormatter(StringEntitiesFormatter):
 
     def to_string(self, original_value, entity_type):
         assert(isinstance(original_value, Entity))
-        assert(isinstance(entity_type, EntityType))
+        assert(isinstance(entity_type, OpinionEntityType))
 
         template = None
         cases_map = None
 
-        if (entity_type == EntityType.Object) or (entity_type == EntityType.SynonymObject):
+        if (entity_type == OpinionEntityType.Object) or (entity_type == OpinionEntityType.SynonymObject):
             template = "объект"
             cases_map = self.obj_subj_cases_map
-        elif (entity_type == EntityType.Subject) or (entity_type == EntityType.SynonymSubject):
+        elif (entity_type == OpinionEntityType.Subject) or (entity_type == OpinionEntityType.SynonymSubject):
             template = "субъект"
             cases_map = self.obj_subj_cases_map
-        elif entity_type == EntityType.Other:
+        elif entity_type == OpinionEntityType.Other:
             template = "сущност"
             cases_map = self.entity_cases_map
 

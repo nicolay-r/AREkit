@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class EntityType(Enum):
+class OpinionEntityType(Enum):
     Object = 1
     Subject = 2
     SynonymSubject = 3

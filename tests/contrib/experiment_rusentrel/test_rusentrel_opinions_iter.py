@@ -26,7 +26,7 @@ from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPa
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
-from arekit.common.entities.types import EntityType
+from arekit.common.entities.types import OpinionEntityType
 from arekit.common.text.parser import BaseTextParser
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -62,11 +62,11 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
         for i, term in enumerate(terms):
             if isinstance(term, Entity):
                 if i == s_ind:
-                    result = entities_formatter.to_string(term, EntityType.Subject)
+                    result = entities_formatter.to_string(term, OpinionEntityType.Subject)
                 elif i == t_ind:
-                    result = entities_formatter.to_string(term, EntityType.Object)
+                    result = entities_formatter.to_string(term, OpinionEntityType.Object)
                 else:
-                    result = entities_formatter.to_string(term, EntityType.Other)
+                    result = entities_formatter.to_string(term, OpinionEntityType.Other)
             elif isinstance(term, Token):
                 result = term.get_token_value()
             else:
