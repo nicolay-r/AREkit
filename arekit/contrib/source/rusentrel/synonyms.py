@@ -1,4 +1,4 @@
-from arekit.contrib.source.rusentrel.utils import iter_synonym_groups
+from arekit.contrib.source.synonyms.utils import iter_synonym_groups
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils
 
 

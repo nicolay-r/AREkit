@@ -1,8 +1,8 @@
 from arekit.common.utils import progress_bar_defined
 
 
-def iter_synonym_groups(input_file, desc=""):
-    """ All the synonyms groups organized in lines, where synonyms demarcated by ',' sign
+def iter_synonym_groups(input_file, sep=",", desc=""):
+    """ All the synonyms groups organized in lines, separated by `sep`
     """
     lines = input_file.readlines()
 
@@ -16,4 +16,4 @@ def iter_synonym_groups(input_file, desc=""):
         if isinstance(line, bytes):
             line = line.decode()
 
-        yield line.split(',')
+        yield line.split(sep)

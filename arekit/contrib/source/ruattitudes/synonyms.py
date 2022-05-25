@@ -1,5 +1,5 @@
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesIOUtils
-from arekit.contrib.source.rusentrel.utils import iter_synonym_groups
+from arekit.contrib.source.synonyms.utils import iter_synonym_groups
 
 
 class RuAttitudesSynonymsCollectionHelper(object):
