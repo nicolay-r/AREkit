@@ -6,6 +6,7 @@ from arekit.common.news.base import News
 from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
 from arekit.processing.text.pipeline_frames import FrameVariantsParser
 
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
@@ -14,8 +15,7 @@ from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
-from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
+from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
@@ -71,7 +71,7 @@ class TestTextParser(unittest.TestCase):
                                           overwrite_existed_variant=True,
                                           raise_error_on_existed_variant=False)
 
-        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(),
                                                DefaultTextTokenizer(keep_tokens=True),
                                                LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
                                                                               stemmer=stemmer,
@@ -85,9 +85,9 @@ class TestTextParser(unittest.TestCase):
         for doc_id in RuSentRelIOUtils.iter_collection_indices(version):
 
             # Parsing
-            news = RuSentRelNews.read_document(doc_id=doc_id,
-                                               synonyms=synonyms,
-                                               version=version)
+            news = RuSentRelNewsReader.read_document(doc_id=doc_id,
+                                                     synonyms=synonyms,
+                                                     version=version)
 
             # Perform text parsing.
             parsed_news = NewsParser.parse(news=news, text_parser=text_parser)

@@ -19,7 +19,7 @@ from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.text.parser import BaseTextParser
 
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
@@ -56,7 +56,7 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(),
                                                DefaultTextTokenizer(keep_tokens=True),
                                                LemmasBasedFrameVariantsParser(
                                                    frame_variants=self.unique_frame_variants,

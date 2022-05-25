@@ -11,9 +11,9 @@ from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynon
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.news_reader import RuSentRelNews
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.text.token import Token
@@ -42,15 +42,15 @@ class TestPartOfSpeech(unittest.TestCase):
     def test_rusentrel_news_text_parsing(self):
         version = RuSentRelVersions.V11
 
-        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(),
                                                DefaultTextTokenizer(keep_tokens=True)])
 
         stemmer = MystemWrapper()
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer,
                                                                        version=version)
-        news = RuSentRelNews.read_document(doc_id=1,
-                                           synonyms=synonyms,
-                                           version=version)
+        news = RuSentRelNewsReader.read_document(doc_id=1,
+                                                 synonyms=synonyms,
+                                                 version=version)
 
         # Parse news via external parser.
         parsed_news = NewsParser.parse(news=news, text_parser=text_parser)

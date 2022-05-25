@@ -15,7 +15,7 @@ from arekit.contrib.experiment_rusentrel.exp_sl.factory import OptionalSynonymsP
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
 logger = logging.getLogger(__name__)
@@ -47,7 +47,7 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, r
     # TODO. Limitation, depending on document, entities parser may vary.
     text_parser = create_text_parser(
         exp_ctx=exp_ctx,
-        entities_parser=RuSentRelTextEntitiesParser(),
+        entities_parser=BratTextEntitiesParser(),
         value_to_group_id_func=optional_data.get_synonyms().get_synonym_group_index,
         ppl_items=ppl_items)
 

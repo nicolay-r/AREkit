@@ -1,9 +1,8 @@
 from arekit.common.entities.base import Entity
 
 
-# TODO. #285. To brat entities (BratEntity)
-class RuSentRelEntity(Entity):
-    """ Annotated entity in RuSentRel corpus.
+class BratEntity(Entity):
+    """ Annotated entity in Brat-based collection corpus.
         Provides bounds, i.e. char indices in related sentence.
     """
 
@@ -11,7 +10,7 @@ class RuSentRelEntity(Entity):
         assert(isinstance(e_type, str))
         assert(isinstance(char_index_begin, int))
         assert(isinstance(char_index_end, int))
-        super(RuSentRelEntity, self).__init__(value=value, e_type=e_type)
+        super(BratEntity, self).__init__(value=value, e_type=e_type)
 
         self.__e_type = e_type
         self.__begin = char_index_begin

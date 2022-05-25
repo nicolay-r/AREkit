@@ -8,7 +8,7 @@ from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,7 @@ def create_rusentrel_experiment(exp_ctx, exp_io, version, folding_type, ppl_item
 
     text_parser = create_text_parser(
         exp_ctx=exp_ctx,
-        entities_parser=RuSentRelTextEntitiesParser(),
+        entities_parser=BratTextEntitiesParser(),
         value_to_group_id_func=synonyms_provider.get_or_load_synonyms_collection().get_synonym_group_index,
         ppl_items=ppl_items)
 
