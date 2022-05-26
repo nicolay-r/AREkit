@@ -9,9 +9,10 @@ class BratDocumentReader(object):
     # TODO. Transform into sentences reader
     # TODO. Return list of sentences.
     @staticmethod
-    def from_file(doc_id, input_file, entities, line_handler=None):
+    def from_file(doc_id, input_file, entities, line_handler=None, skip_entity_func=None):
         assert(isinstance(doc_id, int))
         assert(isinstance(entities, EntityCollection))
+        assert(callable(skip_entity_func) or skip_entity_func is None)
 
         sentences = BratDocumentReader.__parse_sentences(input_file=input_file,
                                                          line_handler=line_handler)
@@ -34,7 +35,7 @@ class BratDocumentReader(object):
                 e_ind += 1
                 continue
 
-            if e.Value in ['author', 'unknown']:
+            if skip_entity_func is not None and skip_entity_func(e):
                 e_ind += 1
                 continue
 

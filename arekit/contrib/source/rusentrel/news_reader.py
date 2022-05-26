@@ -32,7 +32,8 @@ class RuSentRelNewsReader(object):
                 doc_id=target_doc_id if target_doc_id is not None else doc_id,
                 input_file=input_file,
                 entities=entities,
-                line_handler=lambda line: RuSentRelNewsReader.hide_first_entry(line, entry="Unknown}"))
+                line_handler=lambda line: RuSentRelNewsReader.hide_first_entry(line, entry="Unknown}"),
+                skip_entity_func=lambda entity: entity.Value in ['author', 'unknown'])
 
         entities = RuSentRelDocumentEntityCollection.read_collection(
             doc_id=doc_id,
