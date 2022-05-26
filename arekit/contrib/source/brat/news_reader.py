@@ -1,21 +1,17 @@
 from arekit.common.entities.collection import EntityCollection
-from arekit.common.news.base import News
 from arekit.contrib.source.brat.entities.entity import BratEntity
 from arekit.contrib.source.brat.sentence import BratSentence
 
 
-class BratDocumentReader(object):
+class BratDocumentSentencesReader(object):
 
-    # TODO. Transform into sentences reader
-    # TODO. Return list of sentences.
     @staticmethod
-    def from_file(doc_id, input_file, entities, line_handler=None, skip_entity_func=None):
-        assert(isinstance(doc_id, int))
+    def from_file(input_file, entities, line_handler=None, skip_entity_func=None):
         assert(isinstance(entities, EntityCollection))
         assert(callable(skip_entity_func) or skip_entity_func is None)
 
-        sentences = BratDocumentReader.__parse_sentences(input_file=input_file,
-                                                         line_handler=line_handler)
+        sentences = BratDocumentSentencesReader.__parse_sentences(input_file=input_file,
+                                                                  line_handler=line_handler)
 
         s_ind = 0
         e_ind = 0
@@ -46,7 +42,7 @@ class BratDocumentReader(object):
 
         assert(e_ind == len(entities))
 
-        return News(doc_id=doc_id, sentences=sentences)
+        return sentences
 
     # endregion
 

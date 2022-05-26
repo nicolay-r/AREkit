@@ -1,5 +1,6 @@
+from arekit.common.news.base import News
 from arekit.common.synonyms import SynonymsCollection
-from arekit.contrib.source.brat.news_reader import BratDocumentReader
+from arekit.contrib.source.brat.news_reader import BratDocumentSentencesReader
 from arekit.contrib.source.rusentrel.entities import RuSentRelDocumentEntityCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
@@ -28,12 +29,15 @@ class RuSentRelNewsReader(object):
         assert(isinstance(target_doc_id, int) or target_doc_id is None)
 
         def file_to_doc(input_file):
-            return BratDocumentReader.from_file(
-                doc_id=target_doc_id if target_doc_id is not None else doc_id,
+
+            sentences = BratDocumentSentencesReader.from_file(
                 input_file=input_file,
                 entities=entities,
                 line_handler=lambda line: RuSentRelNewsReader.hide_first_entry(line, entry="Unknown}"),
                 skip_entity_func=lambda entity: entity.Value in ['author', 'unknown'])
+
+            return News(doc_id=target_doc_id if target_doc_id is not None else doc_id,
+                        sentences=sentences)
 
         entities = RuSentRelDocumentEntityCollection.read_collection(
             doc_id=doc_id,
