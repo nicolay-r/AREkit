@@ -9,11 +9,12 @@ class BratDocumentReader(object):
     # TODO. Transform into sentences reader
     # TODO. Return list of sentences.
     @staticmethod
-    def from_file(doc_id, input_file, entities):
+    def from_file(doc_id, input_file, entities, line_handler=None):
         assert(isinstance(doc_id, int))
         assert(isinstance(entities, EntityCollection))
 
-        sentences = BratDocumentReader.__read_sentences(input_file)
+        sentences = BratDocumentReader.__parse_sentences(input_file=input_file,
+                                                         line_handler=line_handler)
 
         s_ind = 0
         e_ind = 0
@@ -51,27 +52,22 @@ class BratDocumentReader(object):
     # region private methods
 
     @staticmethod
-    def __read_sentences(input_file):
+    def __parse_sentences(input_file, line_handler):
+        assert(callable(line_handler) or line_handler is None)
         sentences = []
         line_start = 0
-
-        # TODO. #319 Consider it as a special case for RuSentRel.
-        unknown_entity = "Unknown}"
 
         for line in input_file.readlines():
 
             line = line.decode('utf-8')
+            handled_line = line_handler(line) if line_handler is not None else line
 
-            # TODO. #319 Consider it as a special case for RuSentRel.
-            if unknown_entity in line:
-                offset = line.index(unknown_entity) + len(unknown_entity)
-                line_start += offset
-                line = line[offset:]
+            assert(len(line) == len(handled_line))
 
-            line_end = line_start + len(line) - 1
+            line_end = line_start + len(handled_line) - 1
 
-            if line != str('\r\n'):
-                s = BratSentence(text=line,
+            if handled_line != str('\r\n'):
+                s = BratSentence(text=handled_line,
                                  char_ind_begin=line_start,
                                  char_ind_end=line_end)
                 sentences.append(s)
