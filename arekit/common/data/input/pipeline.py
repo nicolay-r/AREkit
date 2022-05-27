@@ -44,17 +44,27 @@ def text_opinions_iter_pipeline(parse_news_func, iter_doc_opins,
     """ Opinion collection generation pipeline.
         NOTE: Here we do not perform IDs assignation!
     """
+    # TODO. #250, separate. Part 1. parameters.
     assert(callable(parse_news_func))
     assert(callable(iter_doc_opins))
+
+    # TODO. Part separate. Part 2. parameters.
     assert(callable(value_to_group_id_func))
     assert(isinstance(terms_per_context, int))
 
     return BasePipeline([
+
+        ### TODO. #250. Separate
+        ### TODO. #250. Separate PART 1. (Related to ids -> (parsed_news, opinions)
+
         # (id) -> (id, opinions)
         MapPipelineItem(map_func=lambda doc_id: (doc_id, list(iter_doc_opins(doc_id)))),
 
         # (id, opinions) -> (parsed_news, opinions).
         MapPipelineItem(map_func=lambda data: (parse_news_func(data[0]), data[1])),
+
+        ### TODO. Separate
+        ### TODO. Separate PART 2. (parsed_news, opinions) -> linkages[]
 
         # (parsed_news, opinions) -> (opins_provider, entities_provider, opinions).
         MapPipelineItem(map_func=lambda data: (
@@ -74,6 +84,9 @@ def text_opinions_iter_pipeline(parse_news_func, iter_doc_opins,
                 entity_service=data[0].get_provider(EntityServiceProvider.NAME),
                 text_opinion=text_opinion,
                 window_size=terms_per_context))),
+
+        ### TODO. #250. Separate
+        ### TODO. #250. Separate Part 3. Flatten. linkage[] -> linkages.
 
         # linkages[] -> linkages.
         FlattenIterPipelineItem()

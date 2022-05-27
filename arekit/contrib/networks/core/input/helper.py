@@ -1,6 +1,7 @@
 import collections
 import logging
 
+from arekit.common.data.input.pipeline import text_opinions_iter_pipeline
 from arekit.common.data.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
@@ -92,15 +93,12 @@ class NetworkInputHelper(object):
     # TODO. This is a particular implementation, which is considered to be
     # TODO. Implemented at iter_opins_for_extraction (OpinionOperations)
     @staticmethod
-    def __perform_annotation(exp_ctx, exp_io, doc_ops, opin_ops, data_type):
-        collections_it = exp_ctx.Annotator.iter_annotated_collections(
-            data_type=data_type, doc_ops=doc_ops, opin_ops=opin_ops)
-
+    def __save_annotation(exp_io, labels_fmt, data_type, collections_it):
         for doc_id, collection in collections_it:
             target = exp_io.create_opinion_collection_target(doc_id=doc_id, data_type=data_type)
             exp_io.write_opinion_collection(collection=collection,
                                             target=target,
-                                            labels_formatter=opin_ops.LabelsFormatter)
+                                            labels_formatter=labels_fmt)
 
     # endregion
 
@@ -127,18 +125,22 @@ class NetworkInputHelper(object):
         for data_type in exp_ctx.DataFolding.iter_supported_data_types():
 
             # Perform annotation
-            NetworkInputHelper.__perform_annotation(exp_ctx=exp_ctx,
-                                                    exp_io=exp_io,
-                                                    doc_ops=doc_ops,
-                                                    opin_ops=opin_ops,
-                                                    data_type=data_type)
+            # TODO. #250. This should be transformed into pipeline element.
+            # TODO. And then combined (embedded) into pipeline below.
+            NetworkInputHelper.__save_annotation(
+                exp_io=exp_io,
+                labels_fmt=opin_ops.LabelsFormatter,
+                data_type=data_type,
+                collections_it=opin_ops.iter_annot_collections())
 
-            # Compose opinion provider
-            opinion_provider = InputTextOpinionProvider.create(
-                value_to_group_id_func=value_to_group_id_func,
+            # TODO. #250. Organize a complete pipeline.
+            # TODO. Now InputTextOpinionProvider has only a part from annotated opinions
+            # TODO. We need to extend our pipeline with the related pre-processing (annotation).
+            # TODO. See text_opinions_iter_pipeline method.
+            pipeline = text_opinions_iter_pipeline(
                 parse_news_func=lambda doc_id: doc_ops.parse_doc(doc_id),
+                value_to_group_id_func=value_to_group_id_func,
                 iter_doc_opins=lambda doc_id:
-                    # TODO. Perform annotation here.
                     opin_ops.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
                 terms_per_context=terms_per_context)
 
@@ -147,7 +149,7 @@ class NetworkInputHelper(object):
                 exp_io=exp_io,
                 doc_ops=doc_ops,
                 data_type=data_type,
-                opinion_provider=opinion_provider,
+                opinion_provider=InputTextOpinionProvider(pipeline),
                 terms_per_context=terms_per_context,
                 balance=balance,
                 text_provider=text_provider)

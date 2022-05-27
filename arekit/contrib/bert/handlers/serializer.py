@@ -1,3 +1,4 @@
+from arekit.common.data.input.pipeline import text_opinions_iter_pipeline
 from arekit.common.data.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
@@ -60,13 +61,17 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
             rows_provider=sample_rows_provider,
             storage=BaseRowsStorage())
 
-        # Create opinion provider
-        opinion_provider = InputTextOpinionProvider.create(
-            value_to_group_id_func=self.__value_to_group_id_func,
+        # TODO. #250. Expand this pipeline with the annotation (in advance).
+        # TODO. Check out the same comment at NetworkInputHelper.
+        pipeline = text_opinions_iter_pipeline(
             parse_news_func=lambda doc_id: self.__doc_ops.parse_doc(doc_id),
+            value_to_group_id_func=self.__value_to_group_id_func,
             iter_doc_opins=lambda doc_id: self.__opin_ops.iter_opinions_for_extraction(
                 doc_id=doc_id, data_type=data_type),
             terms_per_context=self.__exp_ctx.TermsPerContext)
+
+        # Create opinion provider
+        opinion_provider = InputTextOpinionProvider(pipeline)
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
@@ -102,8 +107,11 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
     def on_before_iteration(self):
         for data_type in self.__exp_ctx.DataFolding.iter_supported_data_types():
 
-            collections_it = self.__exp_ctx.Annotator.iter_annotated_collections(
-                data_type=data_type, opin_ops=self.__opin_ops, doc_ops=self.__doc_ops)
+            # TODO. #250. A part of the further pipeline.
+            # TODO. This might be included in InputTextOpinionProvider, as an initial operation
+            # TODO. In a whole pipeline. This code duplicates the one in NetworkInputHelper.
+            collections_it = self.__opin_ops.iter_annot_collections(
+                exp_ctx=self.__exp_ctx, doc_ops=self.__doc_ops, data_type=data_type)
 
             for doc_id, collection in collections_it:
 
