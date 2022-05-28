@@ -40,10 +40,6 @@ class DocumentOperations(object):
         for doc_id in data_types_splits[data_type]:
             yield doc_id
 
-    def iter_parsed_docs(self, doc_ids):
-        for doc_id in doc_ids:
-            yield self.__parse_doc(doc_id=doc_id)
-
     def parse_doc(self, doc_id):
         return self.__parse_doc(doc_id=doc_id)
 
