@@ -23,8 +23,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, ra_doc_id_func,
-                                                ruattitudes_version, rusentrel_version, load_docs,
-                                                ppl_items):
+                                                ruattitudes_version, rusentrel_version, load_docs):
     """
     IO for the experiment with distant supervision for sentiment attitude extraction task.
     Original Paper (RuAttitudes-1.0): https://www.aclweb.org/anthology/R19-1118/
@@ -33,29 +32,18 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, r
     assert(isinstance(rusentrel_version, RuSentRelVersions))
     assert(isinstance(folding_type, FoldingType))
     assert(isinstance(exp_io, BaseIOUtils))
-    assert(isinstance(ppl_items, list) or ppl_items is None)
     assert(callable(ra_doc_id_func))
 
     optional_data = OptnionalDataProvider(exp_ctx=exp_ctx,
                                           ruattitudes_version=ruattitudes_version,
                                           rusentrel_version=rusentrel_version,
                                           load_docs=load_docs,
-                                          ra_doc_id_func=ra_doc_id_func,
-                                          ppl_items=ppl_items)
-
-    # init text parser.
-    # TODO. Limitation, depending on document, entities parser may vary.
-    text_parser = create_text_parser(
-        exp_ctx=exp_ctx,
-        entities_parser=BratTextEntitiesParser(),
-        value_to_group_id_func=optional_data.get_synonyms().get_synonym_group_index,
-        ppl_items=ppl_items)
+                                          ra_doc_id_func=ra_doc_id_func)
 
     # init documents.
     rusentrel_doc = RuSentrelDocumentOperations(exp_ctx=exp_ctx,
                                                 version=rusentrel_version,
-                                                get_synonyms_func=optional_data.get_synonyms,
-                                                text_parser=text_parser)
+                                                get_synonyms_func=optional_data.get_synonyms)
 
     # Init opinions
     rusentrel_op = RuSentrelOpinionOperations(exp_ctx=exp_ctx,
@@ -69,8 +57,7 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, r
     doc_ops = RuSentrelWithRuAttitudesDocumentOperations(
         rusentrel_doc_ids=set(all_rusentrel_doc_ids),
         rusentrel_doc=rusentrel_doc,
-        get_ruattitudes_doc=optional_data.get_or_load_ruattitudes_doc_ops,
-        text_parser=text_parser)
+        get_ruattitudes_doc=optional_data.get_or_load_ruattitudes_doc_ops)
 
     opin_ops = RuSentrelWithRuAttitudesOpinionOperations(
         rusentrel_op=rusentrel_op,
@@ -83,9 +70,8 @@ def create_rusentrel_with_ruattitudes_expriment(exp_ctx, exp_io, folding_type, r
 
 class OptnionalDataProvider(object):
 
-    def __init__(self, exp_ctx, ruattitudes_version, rusentrel_version, load_docs, ra_doc_id_func, ppl_items):
+    def __init__(self, exp_ctx, ruattitudes_version, rusentrel_version, load_docs, ra_doc_id_func):
         assert(isinstance(exp_ctx, ExperimentContext))
-        assert(isinstance(ppl_items, list) or ppl_items is None)
         self.__exp_ctx = exp_ctx
         self.__load_docs = load_docs
         self.__ruattitudes_version = ruattitudes_version
@@ -119,15 +105,6 @@ class OptnionalDataProvider(object):
                                                   doc_id_func=self.__ra_doc_id_func,
                                                   keep_doc_ids_only=not self.__load_docs)
 
-        text_parser = create_text_parser(
-            exp_ctx=self.__exp_ctx,
-            entities_parser=RuAttitudesTextEntitiesParser(),
-            value_to_group_id_func=self.__synonyms_provider.get_or_load_synonyms_collection().get_synonym_group_index,
-            ppl_items=self.__ppl_items)
-
         # Completing initialization.
-        self.__ruattitudes_doc = RuAttitudesDocumentOperations(
-            exp_ctx=self.__exp_ctx,
-            ru_attitudes=ru_attitudes,
-            text_parser=text_parser)
+        self.__ruattitudes_doc = RuAttitudesDocumentOperations(exp_ctx=self.__exp_ctx, ru_attitudes=ru_attitudes)
         self.__ru_attitudes = ru_attitudes

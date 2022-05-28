@@ -18,8 +18,7 @@ class BaseAnnotator(object):
 
     # region public methods
 
-    def annotate_collection(self, data_type, doc_id, doc_ops, opin_ops):
-        parsed_news = doc_ops.parse_doc(doc_id)
+    def annotate_collection(self, data_type, parsed_news, opin_ops):
         return parsed_news.RelatedDocID, \
                self._annot_collection_core(parsed_news=parsed_news, data_type=data_type, opin_ops=opin_ops)
 

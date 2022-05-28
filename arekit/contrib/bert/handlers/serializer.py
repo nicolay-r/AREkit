@@ -11,22 +11,26 @@ from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.common.news.parser import NewsParser
 from arekit.common.pipeline.base import BasePipeline
+from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
 from arekit.contrib.utils.pipeline import ppl_text_ids_to_parsed_news, ppl_parsed_news_to_opinion_linkages, \
-    ppl_text_ids_to_annotated
+    ppl_parsed_to_annotation
 
 
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
     def __init__(self, exp_io, exp_ctx, doc_ops, opin_ops,
                  sample_labels_fmt, annot_labels_fmt, value_to_group_id_func,
-                 sample_provider_type, entity_formatter, balance_train_samples):
+                 sample_provider_type, entity_formatter, balance_train_samples,
+                 text_parser):
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(sample_labels_fmt, StringLabelsFormatter))
         assert(isinstance(annot_labels_fmt, StringLabelsFormatter))
+        assert(isinstance(text_parser, BaseTextParser))
         assert(callable(value_to_group_id_func))
         super(BertExperimentInputSerializerIterationHandler, self).__init__()
 
@@ -40,6 +44,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         self.__exp_ctx = exp_ctx
         self.__doc_ops = doc_ops
         self.__opin_ops = opin_ops
+        self.__text_parser = text_parser
 
     # region private methods
 
@@ -64,13 +69,15 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
             storage=BaseRowsStorage())
 
         pipeline = BasePipeline(
-            ppl_text_ids_to_annotated(
+            ppl_text_ids_to_parsed_news(
+                parse_news_func=lambda doc_id: NewsParser.parse(
+                    news=self.__doc_ops.get_doc(doc_id),
+                    text_parser=self.__text_parser))
+            +
+            ppl_parsed_to_annotation(
                 annotator=self.__exp_ctx.Annotator,
                 data_type=data_type,
-                doc_ops=self.__doc_ops,
                 opin_ops=self.__opin_ops)
-            +
-            ppl_text_ids_to_parsed_news(parse_news_func=lambda doc_id: self.__doc_ops.parse_doc(doc_id))
             +
             ppl_parsed_news_to_opinion_linkages(
                 value_to_group_id_func=self.__value_to_group_id_func,

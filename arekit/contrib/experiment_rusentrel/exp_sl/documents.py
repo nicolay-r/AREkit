@@ -9,10 +9,10 @@ class RuSentrelDocumentOperations(DocumentOperations):
     Limitations: Supported only train/test collections format
     """
 
-    def __init__(self, exp_ctx, text_parser, version, get_synonyms_func):
+    def __init__(self, exp_ctx, version, get_synonyms_func):
         assert(isinstance(version, RuSentRelVersions))
         assert(callable(get_synonyms_func))
-        super(RuSentrelDocumentOperations, self).__init__(exp_ctx=exp_ctx, text_parser=text_parser)
+        super(RuSentrelDocumentOperations, self).__init__(exp_ctx=exp_ctx)
 
         self.__version = version
         self.__get_synonyms_func = get_synonyms_func

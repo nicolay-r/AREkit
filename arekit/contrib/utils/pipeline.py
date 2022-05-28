@@ -10,25 +10,22 @@ from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
 from arekit.common.text_opinions.base import TextOpinion
 
 
-def ppl_text_ids_to_annotated(annotator, data_type, doc_ops, opin_ops):
-    assert(isinstance(annotator, BaseAnnotator))
-
-    return [
-        # (id) -> (id, opinions)
-        MapPipelineItem(map_func=lambda doc_id: (
-            doc_id, annotator.annotate_collection(data_type=data_type,
-                                                  doc_id=doc_id,
-                                                  doc_ops=doc_ops,
-                                                  opin_ops=opin_ops)))
-    ]
-
-
 def ppl_text_ids_to_parsed_news(parse_news_func):
     assert(callable(parse_news_func))
 
     return [
-        # (id, opinions) -> (parsed_news, opinions).
-        MapPipelineItem(map_func=lambda data: (parse_news_func(data[0]), data[1])),
+        # (id) -> (id, parsed_news).
+        MapPipelineItem(map_func=lambda doc_id: (doc_id, parse_news_func(doc_id)))
+    ]
+
+
+def ppl_parsed_to_annotation(annotator, data_type, opin_ops):
+    assert(isinstance(annotator, BaseAnnotator))
+
+    return [
+        # (id, parsed_news) -> (id, opinions)
+        MapPipelineItem(map_func=lambda data: (
+            data[0], annotator.annotate_collection(data_type=data_type, parsed_news=data[1], opin_ops=opin_ops)))
     ]
 
 

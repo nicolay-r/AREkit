@@ -5,7 +5,7 @@ from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocume
 
 class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
 
-    def __init__(self, rusentrel_doc_ids, rusentrel_doc, get_ruattitudes_doc, text_parser):
+    def __init__(self, rusentrel_doc_ids, rusentrel_doc, get_ruattitudes_doc):
         assert(isinstance(rusentrel_doc_ids, set))
         assert(isinstance(rusentrel_doc, RuSentrelDocumentOperations))
         assert(callable(get_ruattitudes_doc))
@@ -15,7 +15,7 @@ class RuSentrelWithRuAttitudesDocumentOperations(DocumentOperations):
         # RuAttitude data-folding considered as `auxiliary`.
         super(RuSentrelWithRuAttitudesDocumentOperations, self).__init__(
             # Note: remporary hack in terms of exp_ctx == None.
-            exp_ctx=None, text_parser=text_parser)
+            exp_ctx=None)
 
         self.__rusentrel_doc = rusentrel_doc
         self.__rusentrel_doc_ids = rusentrel_doc_ids

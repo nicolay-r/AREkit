@@ -9,6 +9,7 @@ from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepo
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.data_type import DataType
+from arekit.common.news.parser import NewsParser
 from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
@@ -19,7 +20,7 @@ from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbedding
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
 from arekit.contrib.networks.embeddings.base import Embedding
 from arekit.contrib.utils.pipeline import ppl_parsed_news_to_opinion_linkages, ppl_text_ids_to_parsed_news, \
-    ppl_text_ids_to_annotated
+    ppl_parsed_to_annotation
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -94,8 +95,7 @@ class NetworkInputHelper(object):
     # endregion
 
     @staticmethod
-    # TODO. Provide text_parser here.
-    def prepare(exp_ctx, exp_io, doc_ops, opin_ops, terms_per_context, balance, value_to_group_id_func):
+    def prepare(exp_ctx, exp_io, doc_ops, opin_ops, terms_per_context, balance, value_to_group_id_func, text_parser):
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
@@ -117,13 +117,14 @@ class NetworkInputHelper(object):
         for data_type in exp_ctx.DataFolding.iter_supported_data_types():
 
             pipeline = BasePipeline(
-                ppl_text_ids_to_annotated(annotator=exp_ctx.Annotator,
-                                          data_type=data_type,
-                                          doc_ops=doc_ops,
-                                          opin_ops=opin_ops)
-                +
                 ppl_text_ids_to_parsed_news(
-                    parse_news_func=lambda doc_id: doc_ops.parse_doc(doc_id))
+                    parse_news_func=lambda doc_id: NewsParser.parse(
+                        news=doc_ops.get_doc(doc_id),
+                        text_parser=text_parser))
+                +
+                ppl_parsed_to_annotation(annotator=exp_ctx.Annotator,
+                                         data_type=data_type,
+                                         opin_ops=opin_ops)
                 +
                 ppl_parsed_news_to_opinion_linkages(value_to_group_id_func=value_to_group_id_func,
                                                     terms_per_context=terms_per_context)
