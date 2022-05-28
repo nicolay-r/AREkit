@@ -1,4 +1,3 @@
-from arekit.common.data.input.pipeline import text_opinions_iter_pipeline
 from arekit.common.data.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
@@ -12,7 +11,10 @@ from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
+from arekit.contrib.utils.pipeline import ppl_text_ids_to_parsed_news, ppl_parsed_news_to_opinion_linkages, \
+    ppl_text_ids_to_annotated
 
 
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
@@ -61,14 +63,22 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
             rows_provider=sample_rows_provider,
             storage=BaseRowsStorage())
 
-        # TODO. #250. Expand this pipeline with the annotation (in advance).
-        # TODO. Check out the same comment at NetworkInputHelper.
-        pipeline = text_opinions_iter_pipeline(
-            parse_news_func=lambda doc_id: self.__doc_ops.parse_doc(doc_id),
-            value_to_group_id_func=self.__value_to_group_id_func,
-            iter_doc_opins=lambda doc_id: self.__opin_ops.iter_opinions_for_extraction(
-                doc_id=doc_id, data_type=data_type),
-            terms_per_context=self.__exp_ctx.TermsPerContext)
+        pipeline = BasePipeline(
+            ppl_text_ids_to_annotated(
+                annotator=self.__exp_ctx.Annotator,
+                data_type=data_type,
+                doc_ops=self.__doc_ops,
+                opin_ops=self.__opin_ops)
+            +
+            ppl_text_ids_to_parsed_news(
+                parse_news_func=lambda doc_id: self.__doc_ops.parse_doc(doc_id),
+                iter_doc_opins=lambda doc_id: self.__opin_ops.iter_opinions_for_extraction(
+                    doc_id=doc_id, data_type=data_type))
+            +
+            ppl_parsed_news_to_opinion_linkages(
+                value_to_group_id_func=self.__value_to_group_id_func,
+                terms_per_context=self.__exp_ctx.TermsPerContext)
+        )
 
         # Create opinion provider
         opinion_provider = InputTextOpinionProvider(pipeline)
@@ -103,25 +113,5 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         """
         for data_type in self.__exp_ctx.DataFolding.iter_supported_data_types():
             self.__handle_iteration(data_type)
-
-    def on_before_iteration(self):
-        for data_type in self.__exp_ctx.DataFolding.iter_supported_data_types():
-
-            # TODO. #250. A part of the further pipeline.
-            # TODO. This might be included in InputTextOpinionProvider, as an initial operation
-            # TODO. In a whole pipeline. This code duplicates the one in NetworkInputHelper.
-            collections_it = self.__opin_ops.iter_annot_collections(
-                exp_ctx=self.__exp_ctx, doc_ops=self.__doc_ops, data_type=data_type)
-
-            for doc_id, collection in collections_it:
-
-                target = self.__exp_io.create_opinion_collection_target(
-                    doc_id=doc_id,
-                    data_type=data_type)
-
-                self.__exp_io.write_opinion_collection(
-                    collection=collection,
-                    target=target,
-                    labels_formatter=self.__annot_label_formatter)
 
     # endregion

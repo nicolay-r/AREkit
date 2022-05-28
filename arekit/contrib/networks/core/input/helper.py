@@ -1,7 +1,6 @@
 import collections
 import logging
 
-from arekit.common.data.input.pipeline import text_opinions_iter_pipeline
 from arekit.common.data.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
@@ -10,6 +9,7 @@ from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepo
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.data_type import DataType
+from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
@@ -18,6 +18,8 @@ from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingO
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
 from arekit.contrib.networks.embeddings.base import Embedding
+from arekit.contrib.utils.pipeline import ppl_parsed_news_to_opinion_linkages, ppl_text_ids_to_parsed_news, \
+    ppl_text_ids_to_annotated
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -89,17 +91,6 @@ class NetworkInputHelper(object):
         opinions_repo.write(writer=exp_io.create_opinions_writer(),
                             target=exp_io.create_opinions_writer_target(data_type=data_type))
 
-    # TODO. #250 this part is not related to a helper.
-    # TODO. This is a particular implementation, which is considered to be
-    # TODO. Implemented at iter_opins_for_extraction (OpinionOperations)
-    @staticmethod
-    def __save_annotation(exp_io, labels_fmt, data_type, collections_it):
-        for doc_id, collection in collections_it:
-            target = exp_io.create_opinion_collection_target(doc_id=doc_id, data_type=data_type)
-            exp_io.write_opinion_collection(collection=collection,
-                                            target=target,
-                                            labels_formatter=labels_fmt)
-
     # endregion
 
     @staticmethod
@@ -124,25 +115,20 @@ class NetworkInputHelper(object):
 
         for data_type in exp_ctx.DataFolding.iter_supported_data_types():
 
-            # Perform annotation
-            # TODO. #250. This should be transformed into pipeline element.
-            # TODO. And then combined (embedded) into pipeline below.
-            NetworkInputHelper.__save_annotation(
-                exp_io=exp_io,
-                labels_fmt=opin_ops.LabelsFormatter,
-                data_type=data_type,
-                collections_it=opin_ops.iter_annot_collections())
-
-            # TODO. #250. Organize a complete pipeline.
-            # TODO. Now InputTextOpinionProvider has only a part from annotated opinions
-            # TODO. We need to extend our pipeline with the related pre-processing (annotation).
-            # TODO. See text_opinions_iter_pipeline method.
-            pipeline = text_opinions_iter_pipeline(
-                parse_news_func=lambda doc_id: doc_ops.parse_doc(doc_id),
-                value_to_group_id_func=value_to_group_id_func,
-                iter_doc_opins=lambda doc_id:
-                    opin_ops.iter_opinions_for_extraction(doc_id=doc_id, data_type=data_type),
-                terms_per_context=terms_per_context)
+            pipeline = BasePipeline(
+                ppl_text_ids_to_annotated(annotator=exp_ctx.Annotator,
+                                          data_type=data_type,
+                                          doc_ops=doc_ops,
+                                          opin_ops=opin_ops)
+                +
+                ppl_text_ids_to_parsed_news(
+                    parse_news_func=lambda doc_id: doc_ops.parse_doc(doc_id),
+                    iter_doc_opins=lambda doc_id: opin_ops.iter_opinions_for_extraction(
+                        doc_id=doc_id, data_type=data_type))
+                +
+                ppl_parsed_news_to_opinion_linkages(value_to_group_id_func=value_to_group_id_func,
+                                                    terms_per_context=terms_per_context)
+            )
 
             NetworkInputHelper.__perform_writing(
                 exp_ctx=exp_ctx,

@@ -42,12 +42,13 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
 
     # region public methods
 
-    def iter_annotated_collections(self, data_type, doc_ops, opin_ops):
+    def annotate_collection(self, data_type, doc_id, doc_ops, opin_ops):
 
         if data_type == DataType.Train:
-            return
+            # Return empty collection.
+            return opin_ops.create_opinion_collection()
 
-        super(TwoScaleTaskAnnotator, self).iter_annotated_collections(
-            data_type, doc_ops=doc_ops, opin_ops=opin_ops)
+        super(TwoScaleTaskAnnotator, self).annotate_collection(
+            data_type, doc_ops=doc_ops, doc_id=doc_id, opin_ops=opin_ops)
 
     # endregion
