@@ -23,9 +23,8 @@ def ppl_text_ids_to_annotated(annotator, data_type, doc_ops, opin_ops):
     ]
 
 
-def ppl_text_ids_to_parsed_news(parse_news_func, iter_doc_opins):
+def ppl_text_ids_to_parsed_news(parse_news_func):
     assert(callable(parse_news_func))
-    assert(callable(iter_doc_opins))
 
     return [
         # (id, opinions) -> (parsed_news, opinions).

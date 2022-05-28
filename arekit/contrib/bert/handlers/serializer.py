@@ -70,10 +70,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
                 doc_ops=self.__doc_ops,
                 opin_ops=self.__opin_ops)
             +
-            ppl_text_ids_to_parsed_news(
-                parse_news_func=lambda doc_id: self.__doc_ops.parse_doc(doc_id),
-                iter_doc_opins=lambda doc_id: self.__opin_ops.iter_opinions_for_extraction(
-                    doc_id=doc_id, data_type=data_type))
+            ppl_text_ids_to_parsed_news(parse_news_func=lambda doc_id: self.__doc_ops.parse_doc(doc_id))
             +
             ppl_parsed_news_to_opinion_linkages(
                 value_to_group_id_func=self.__value_to_group_id_func,

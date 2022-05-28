@@ -94,6 +94,7 @@ class NetworkInputHelper(object):
     # endregion
 
     @staticmethod
+    # TODO. Provide text_parser here.
     def prepare(exp_ctx, exp_io, doc_ops, opin_ops, terms_per_context, balance, value_to_group_id_func):
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(terms_per_context, int))
@@ -122,9 +123,7 @@ class NetworkInputHelper(object):
                                           opin_ops=opin_ops)
                 +
                 ppl_text_ids_to_parsed_news(
-                    parse_news_func=lambda doc_id: doc_ops.parse_doc(doc_id),
-                    iter_doc_opins=lambda doc_id: opin_ops.iter_opinions_for_extraction(
-                        doc_id=doc_id, data_type=data_type))
+                    parse_news_func=lambda doc_id: doc_ops.parse_doc(doc_id))
                 +
                 ppl_parsed_news_to_opinion_linkages(value_to_group_id_func=value_to_group_id_func,
                                                     terms_per_context=terms_per_context)
