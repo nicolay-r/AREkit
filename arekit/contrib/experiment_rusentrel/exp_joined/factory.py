@@ -4,7 +4,6 @@ from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
-from arekit.contrib.experiment_rusentrel.common import create_text_parser
 from arekit.contrib.experiment_rusentrel.exp_ds.documents import RuAttitudesDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.opinions import RuAttitudesOpinionOperations
 from arekit.contrib.experiment_rusentrel.exp_ds.utils import read_ruattitudes_in_memory
@@ -13,9 +12,7 @@ from arekit.contrib.experiment_rusentrel.exp_joined.opinions import RuSentrelWit
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.factory import OptionalSynonymsProvider
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
-from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
 logger = logging.getLogger(__name__)

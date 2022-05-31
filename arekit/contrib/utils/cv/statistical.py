@@ -1,7 +1,7 @@
 from os import path
 import numpy as np
 from arekit.common.experiment.cv.splitters.base import CrossValidationSplitter
-from arekit.contrib.experiment_rusentrel.cv.doc_stat.base import BaseDocumentStatGenerator
+from arekit.contrib.utils.cv.doc_stat.base import BaseDocumentStatGenerator
 
 
 class StatBasedCrossValidataionSplitter(CrossValidationSplitter):

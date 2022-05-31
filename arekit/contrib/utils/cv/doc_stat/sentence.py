@@ -1,5 +1,5 @@
 from arekit.common.news.base import News
-from arekit.contrib.experiment_rusentrel.cv.doc_stat.base import BaseDocumentStatGenerator
+from arekit.contrib.utils.cv.doc_stat.base import BaseDocumentStatGenerator
 
 
 class SentenceBasedDocumentStatGenerator(BaseDocumentStatGenerator):

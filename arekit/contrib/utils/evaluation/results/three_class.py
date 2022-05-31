@@ -4,10 +4,10 @@ from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.results.utils import calc_f1_3c_macro, calc_f1_single_class
 from arekit.common.labels.base import Label
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.evaluation.results import metrics
-from arekit.contrib.experiment_rusentrel.evaluation.results.metrics import calc_precision_micro, calc_recall_micro
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel, \
     ExperimentNeutralLabel
+from arekit.contrib.utils.evaluation.results import metrics
+from arekit.contrib.utils.evaluation.results.metrics import calc_precision_micro, calc_recall_micro
 
 
 class ThreeClassEvalResult(BaseEvalResult):

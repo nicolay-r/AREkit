@@ -12,14 +12,14 @@ from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
-from arekit.contrib.experiment_rusentrel.evaluation.evaluators.two_class import TwoClassEvaluator
-from arekit.contrib.experiment_rusentrel.evaluation.results.two_class import TwoClassEvalResult
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
+from arekit.contrib.utils.evaluation.evaluators.two_class import TwoClassEvaluator
+from arekit.contrib.utils.evaluation.results.two_class import TwoClassEvalResult
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
@@ -85,7 +85,9 @@ class ZippedResultsIOUtils(ZipArchiveUtils):
             version=result_version)
 
 
-class TestRuSentRelEvaluation(unittest.TestCase):
+class TestEvaluation(unittest.TestCase):
+    """ Based on the RuSentRel collection
+    """
 
     __display_cmp_table = False
     __rusentrel_version = RuSentRelVersions.V11

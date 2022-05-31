@@ -2,7 +2,7 @@ from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.evaluation.results.three_class import ThreeClassEvalResult
+from arekit.contrib.utils.evaluation.results.three_class import ThreeClassEvalResult
 
 
 class ThreeClassEvaluator(BaseEvaluator):

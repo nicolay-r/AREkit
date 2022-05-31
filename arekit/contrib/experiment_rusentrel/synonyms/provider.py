@@ -1,7 +1,7 @@
 from arekit.common.text.stemmer import Stemmer
-from arekit.contrib.experiment_rusentrel.synonyms.collection import StemmerBasedSynonymCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
+from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
 
 
 class RuSentRelSynonymsCollectionProvider(object):

@@ -1,6 +1,6 @@
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
-from arekit.contrib.experiment_rusentrel.evaluation.results.two_class import TwoClassEvalResult
+from arekit.contrib.utils.evaluation.results.two_class import TwoClassEvalResult
 
 
 class TwoClassEvaluator(BaseEvaluator):
