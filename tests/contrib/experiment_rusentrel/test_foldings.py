@@ -10,7 +10,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 class TestFoldings(unittest.TestCase):
 
     def test(self):
-        folding = create_folding(exp_type=ExperimentTypes.RuSentRelWithRuAttitudes,
+        folding = create_folding(exp_type=ExperimentTypes.RuAttitudes,
                                  rusentrel_folding_type=FoldingType.CrossValidation,
                                  rusentrel_version=RuSentRelVersions.V11,
                                  ruattitudes_version=RuAttitudesVersions.V20LargeNeut,
