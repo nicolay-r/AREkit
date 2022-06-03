@@ -1,5 +1,5 @@
-from arekit.common.experiment.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.common.labels.provider.constant import ConstantLabelProvider
+from arekit.common.opinions.annot.algo.pair_based import PairBasedAnnotationAlgorithm
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
 
 

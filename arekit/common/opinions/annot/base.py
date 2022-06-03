@@ -13,13 +13,13 @@ class BaseAnnotator(object):
     def __init__(self):
         logger.info("Init annotator: [{}]".format(self.__class__))
 
-    def _annot_collection_core(self, parsed_news, data_type, opin_ops):
+    def _annot_collection_core(self, parsed_news, data_type):
         raise NotImplementedError
 
     # region public methods
 
-    def annotate_collection(self, data_type, parsed_news, opin_ops):
+    def annotate_collection(self, data_type, parsed_news):
         return parsed_news.RelatedDocID, \
-               self._annot_collection_core(parsed_news=parsed_news, data_type=data_type, opin_ops=opin_ops)
+               self._annot_collection_core(parsed_news=parsed_news, data_type=data_type)
 
     # endregion

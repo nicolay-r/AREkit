@@ -1,6 +1,6 @@
-from arekit.common.experiment.annot.base import BaseAnnotator
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.labels.scaler.base import BaseLabelScaler
+from arekit.common.opinions.annot.base import BaseAnnotator
 
 
 class ExperimentSerializationContext(ExperimentContext):

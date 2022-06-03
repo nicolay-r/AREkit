@@ -1,9 +1,9 @@
-from arekit.common.experiment.annot.algo.base import BaseAnnotationAlgorithm
 from arekit.common.labels.provider.base import BasePairLabelProvider
 from arekit.common.news.entity import DocumentEntity
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType
 from arekit.common.news.parsed.providers.opinion_pairs import OpinionPairsProvider
+from arekit.common.opinions.annot.algo.base import BaseAnnotationAlgorithm
 from arekit.common.opinions.base import Opinion
 
 
