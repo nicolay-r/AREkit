@@ -6,12 +6,12 @@ from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
-from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
 from arekit.contrib.experiment_rusentrel.model_io.bert import RuSentRelExperimentBertIOUtils
+from arekit.contrib.utils.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 
 
 class BaseOutputConverterIterationHandler(ExperimentIterationHandler):

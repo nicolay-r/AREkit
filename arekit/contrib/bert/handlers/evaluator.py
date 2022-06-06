@@ -1,4 +1,4 @@
-from arekit.common.experiment.handlers.to_output import BaseOutputConverterIterationHandler
+from arekit.contrib.utils.handlers.to_output import BaseOutputConverterIterationHandler
 
 
 class ModelEvaluationIterationHandler(BaseOutputConverterIterationHandler):

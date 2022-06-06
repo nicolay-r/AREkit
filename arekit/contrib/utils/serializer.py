@@ -11,9 +11,8 @@ from arekit.common.news.parser import NewsParser
 from arekit.common.pipeline.base import BasePipeline
 
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
-from arekit.contrib.utils.pipeline import ppl_parsed_news_to_opinion_linkages, \
-    ppl_text_ids_to_parsed_news, \
-    ppl_parsed_to_annotation
+from arekit.contrib.utils.pipelines.opinion_annotation import ppl_text_ids_to_parsed_news, ppl_parsed_to_annotation, \
+    ppl_parsed_news_to_opinion_linkages
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

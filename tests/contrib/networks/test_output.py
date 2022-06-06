@@ -5,11 +5,11 @@ from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.data.views.opinions import BaseOpinionStorageView
-from arekit.common.experiment.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.utils.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
