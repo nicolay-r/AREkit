@@ -1,6 +1,6 @@
 import random
 
-from arekit.common.experiment.cv.splitters.base import CrossValidationSplitter
+from arekit.contrib.utils.cv.splitters.base import CrossValidationSplitter
 
 
 class SimpleCrossValidataionSplitter(CrossValidationSplitter):

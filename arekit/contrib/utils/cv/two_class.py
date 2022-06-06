@@ -1,5 +1,5 @@
-from arekit.common.experiment.cv.splitters.base import CrossValidationSplitter
 from arekit.common.folding.base import BaseDataFolding
+from arekit.contrib.utils.cv.splitters.base import CrossValidationSplitter
 
 
 class TwoClassCVFolding(BaseDataFolding):
