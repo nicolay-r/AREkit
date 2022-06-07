@@ -14,6 +14,12 @@ class BratEntityCollectionHelper:
             line = line.decode('utf-8')
 
             args = line.split()
+
+            record_type = args[0][1]
+            # Entities (objects) are prefixed with `T`
+            if record_type != 'T':
+                continue
+
             e_id = int(args[0][1:])
             e_str_type = args[1]
             e_begin = int(args[2])
