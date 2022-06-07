@@ -5,13 +5,13 @@ from arekit.contrib.source.brat.entities.entity import BratEntity
 class BratEntityCollectionHelper:
 
     @staticmethod
-    def extract_entities(input_file):
+    def extract_entities(input_file, encoding='utf-8'):
         """ Read annotation collection from file
         """
         entities = []
 
         for line in input_file.readlines():
-            line = line.decode('utf-8')
+            line = line.decode(encoding)
 
             args = line.split()
 
