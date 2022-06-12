@@ -9,14 +9,14 @@ class SentenceOpinion(object):
     Specific for RuAttitudes collection, as the latter provides connections within a sentence.
     """
 
-    def __init__(self, source_id, target_id, sentiment, tag):
+    def __init__(self, source_id, target_id, label, tag):
         assert(isinstance(source_id, int))
         assert(isinstance(target_id, int))
-        assert(isinstance(sentiment, Label))
+        assert(isinstance(label, Label))
 
         self.__source_id = source_id
         self.__target_id = target_id
-        self.__sentiment = sentiment
+        self.__label = label
         self.__tag = tag
 
     # region properties
@@ -30,8 +30,8 @@ class SentenceOpinion(object):
         return self.__target_id
 
     @property
-    def Sentiment(self):
-        return self.__sentiment
+    def Label(self):
+        return self.__label
 
     @property
     def Tag(self):
@@ -48,7 +48,7 @@ class SentenceOpinion(object):
                            source_id=end_to_doc_id_func(self.__source_id),
                            target_id=end_to_doc_id_func(self.__target_id),
                            owner=None,
-                           label=self.__sentiment)
+                           label=self.__label)
 
     def to_opinion(self, source_value, target_value):
         """
@@ -57,7 +57,7 @@ class SentenceOpinion(object):
         """
         opinion = Opinion(source_value=source_value,
                           target_value=target_value,
-                          sentiment=self.__sentiment)
+                          sentiment=self.__label)
 
         # Using this tag allows to perform a revert operation,
         # i.e. to find opinion_ref by opinion.

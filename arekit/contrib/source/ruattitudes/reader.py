@@ -195,7 +195,7 @@ class RuAttitudesFormatReader(object):
 
         sentence_opin = SentenceOpinion(source_id=source_object_id_in_sentence,
                                         target_id=target_object_id_in_sentence,
-                                        sentiment=label,
+                                        label=label,
                                         tag=opninion_key)
 
         return sentence_opin

@@ -140,7 +140,7 @@ class TestRuAttitudes(unittest.TestCase):
                     s = "{src}->{target} ({label}) (t:[{src_type},{target_type}]) tag=[{tag}]".format(
                         src=source.Value,
                         target=target.Value,
-                        label=str(sentence_opin.Sentiment.to_class_str()),
+                        label=str(sentence_opin.Label.to_class_str()),
                         tag=sentence_opin.Tag,
                         src_type=str(source.Type),
                         target_type=str(target.Type))
