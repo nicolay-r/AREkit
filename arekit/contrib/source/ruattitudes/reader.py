@@ -54,6 +54,8 @@ class RuAttitudesFormatReader(object):
     @staticmethod
     def iter_news(input_file, get_news_index_func, label_converter):
         assert(callable(get_news_index_func))
+        # TODO. #322 -- remove label converter and adopt the latter only when we need to perform
+        # TODO. #322 a conversion towards the opinion (text_opinion).
         assert(isinstance(label_converter, RuAttitudesLabelConverter))
 
         reset = False
