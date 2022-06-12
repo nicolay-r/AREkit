@@ -52,7 +52,11 @@ class RuAttitudesNewsHelper(object):
             if opinion is not None:
                 continue
 
-            opinion = sentence_opin.to_opinion()
+            source, target = sentence.get_objects(sentence_opin)
+
+            opinion = sentence_opin.to_opinion(
+                source_value=source.Value,
+                target_value=target.Value)
 
         return opinion, related_sentences
 

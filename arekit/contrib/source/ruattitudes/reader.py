@@ -78,9 +78,7 @@ class RuAttitudesFormatReader(object):
 
             if RuAttitudesFormatReader.OPINION_KEY in line:
                 sentence_opin = RuAttitudesFormatReader.__parse_sentence_opin(
-                    line=line,
-                    objects_list=objects_list,
-                    label_converter=label_converter)
+                    line=line, label_converter=label_converter)
                 opinions_list.append(sentence_opin)
 
             if RuAttitudesFormatReader.FRAMEVAR_TITLE in line:
@@ -175,8 +173,7 @@ class RuAttitudesFormatReader(object):
         return text.strip()
 
     @staticmethod
-    def __parse_sentence_opin(line, objects_list, label_converter):
-        assert(isinstance(objects_list, list))
+    def __parse_sentence_opin(line, label_converter):
         assert(isinstance(label_converter, RuAttitudesLabelConverter))
 
         line = line[len(RuAttitudesFormatReader.OPINION_KEY):]
@@ -198,8 +195,6 @@ class RuAttitudesFormatReader(object):
 
         sentence_opin = SentenceOpinion(source_id=source_object_id_in_sentence,
                                         target_id=target_object_id_in_sentence,
-                                        source_value=objects_list[source_object_id_in_sentence].Value,
-                                        target_value=objects_list[target_object_id_in_sentence].Value,
                                         sentiment=label,
                                         tag=opninion_key)
 
