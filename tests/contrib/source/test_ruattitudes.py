@@ -19,6 +19,7 @@ from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
+from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
 
 from arekit.processing.text.token import Token
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
@@ -30,7 +31,6 @@ logging.basicConfig(level=logging.DEBUG)
 class TestRuAttitudes(unittest.TestCase):
 
     __ra_versions = [
-        RuAttitudesVersions.V12,
         RuAttitudesVersions.V20Base,
         RuAttitudesVersions.V20Large,
         RuAttitudesVersions.V20BaseNeut,
@@ -126,6 +126,8 @@ class TestRuAttitudes(unittest.TestCase):
 
             logger.debug("News: {}".format(news.ID))
 
+            label_scaler = RuAttitudesLabelScaler()
+
             for sentence in news.iter_sentences():
                 assert(isinstance(sentence, RuAttitudesSentence))
                 # text
@@ -140,7 +142,7 @@ class TestRuAttitudes(unittest.TestCase):
                     s = "{src}->{target} ({label}) (t:[{src_type},{target_type}]) tag=[{tag}]".format(
                         src=source.Value,
                         target=target.Value,
-                        label=str(sentence_opin.Label.to_class_str()),
+                        label=str(label_scaler.int_to_label(sentence_opin.Label)),
                         tag=sentence_opin.Tag,
                         src_type=str(source.Type),
                         target_type=str(target.Type))
@@ -150,7 +152,9 @@ class TestRuAttitudes(unittest.TestCase):
 
                 # Providing aggregated opinions.
                 logger.info("Providing information for opinions with the related sentences:")
-                for o, sentences in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news):
+                data_it = RuAttitudesNewsHelper.iter_opinions_with_related_sentences(
+                    news=news, label_scaler=label_scaler)
+                for o, sentences in data_it:
                     assert(isinstance(o, Opinion))
                     assert(isinstance(sentences, list))
                     logger.debug("'{source}'->'{target}' ({s_count})".format(

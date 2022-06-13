@@ -6,7 +6,6 @@ from arekit.common.news.parser import NewsParser
 from arekit.common.text.enums import TermFormat
 from arekit.common.text.parsed import BaseParsedText
 from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.experiment_rusentrel.labels.scalers.ruattitudes import ExperimentRuAttitudesLabelConverter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
@@ -24,7 +23,6 @@ class TestPartOfSpeech(unittest.TestCase):
     def test_ruattitudes_news_text_parsing(self):
         news_it = RuAttitudesCollection.iter_news(version=RuAttitudesVersions.Debug,
                                                   get_news_index_func=lambda _: 0,
-                                                  label_convereter=ExperimentRuAttitudesLabelConverter(),
                                                   return_inds_only=False)
 
         text_parser = BaseTextParser(pipeline=[RuAttitudesTextEntitiesParser()])

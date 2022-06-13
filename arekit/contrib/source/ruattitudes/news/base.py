@@ -1,6 +1,8 @@
+from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.news.base import News
 from arekit.common.opinions.base import Opinion
+from arekit.contrib.source.ruattitudes.news.opin_converter import RuAttitudesSentenceOpinionConverter
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 
 
@@ -50,18 +52,21 @@ class RuAttitudesNews(News):
 
     # region base News
 
-    def extract_text_opinions_linkages(self, opinion):
+    def extract_text_opinions_linkages(self, opinion, label_scaler):
         """
         Note: Complexity is O(N)
         """
         assert(isinstance(opinion, Opinion))
-        return TextOpinionsLinkage(self.__iter_all_text_opinions_in_sentences(opinion=opinion))
+        assert(isinstance(label_scaler, BaseLabelScaler))
+
+        return TextOpinionsLinkage(self.__iter_all_text_opinions_in_sentences(
+            opinion=opinion, label_scaler=label_scaler))
 
     # endregion
 
     # region Private methods
 
-    def __iter_all_text_opinions_in_sentences(self, opinion):
+    def __iter_all_text_opinions_in_sentences(self, opinion, label_scaler):
         for sentence in self.iter_sentences():
             assert(isinstance(sentence, RuAttitudesSentence))
 
@@ -69,9 +74,11 @@ class RuAttitudesNews(News):
             if sentence_opin is None:
                 continue
 
-            yield sentence_opin.to_text_opinion(
+            yield RuAttitudesSentenceOpinionConverter.to_text_opinion(
+                sentence_opinion=sentence_opin,
                 doc_id=sentence.Owner.ID,
                 end_to_doc_id_func=lambda sent_level_id: sentence.get_doc_level_text_object_id(sent_level_id),
-                text_opinion_id=None)
+                text_opinion_id=None,
+                label_scaler=label_scaler)
 
     # endregion

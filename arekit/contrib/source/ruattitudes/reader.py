@@ -1,5 +1,5 @@
 from arekit.common.utils import split_by_whitespaces
-from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelConverter
+from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
@@ -52,11 +52,8 @@ class RuAttitudesFormatReader(object):
                                                               local_index=local_news_ind)
 
     @staticmethod
-    def iter_news(input_file, get_news_index_func, label_converter):
+    def iter_news(input_file, get_news_index_func):
         assert(callable(get_news_index_func))
-        # TODO. #322 -- remove label converter and adopt the latter only when we need to perform
-        # TODO. #322 a conversion towards the opinion (text_opinion).
-        assert(isinstance(label_converter, RuAttitudesLabelConverter))
 
         reset = False
         title = None
@@ -79,8 +76,7 @@ class RuAttitudesFormatReader(object):
                 objects_list.append(object)
 
             if RuAttitudesFormatReader.OPINION_KEY in line:
-                sentence_opin = RuAttitudesFormatReader.__parse_sentence_opin(
-                    line=line, label_converter=label_converter)
+                sentence_opin = RuAttitudesFormatReader.__parse_sentence_opin(line)
                 opinions_list.append(sentence_opin)
 
             if RuAttitudesFormatReader.FRAMEVAR_TITLE in line:
@@ -175,14 +171,12 @@ class RuAttitudesFormatReader(object):
         return text.strip()
 
     @staticmethod
-    def __parse_sentence_opin(line, label_converter):
-        assert(isinstance(label_converter, RuAttitudesLabelConverter))
-
+    def __parse_sentence_opin(line):
         line = line[len(RuAttitudesFormatReader.OPINION_KEY):]
 
         s_from = line.index('b:(')
         s_to = line.index(')', s_from)
-        label = label_converter.int_to_label(int(line[s_from + 3:s_to]))
+        label = int(line[s_from + 3:s_to])
 
         o_from = line.index('oi:[')
         o_to = line.index(']', o_from)
@@ -197,7 +191,7 @@ class RuAttitudesFormatReader(object):
 
         sentence_opin = SentenceOpinion(source_id=source_object_id_in_sentence,
                                         target_id=target_object_id_in_sentence,
-                                        label=label,
+                                        label_int=label,
                                         tag=opninion_key)
 
         return sentence_opin

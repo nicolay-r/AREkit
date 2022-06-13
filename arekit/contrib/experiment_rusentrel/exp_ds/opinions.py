@@ -1,5 +1,6 @@
 from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
+from arekit.contrib.experiment_rusentrel.labels.scalers.ruattitudes import ExperimentRuAttitudesLabelConverter
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 
 
@@ -10,14 +11,17 @@ class RuAttitudesOpinionOperations(OpinionOperations):
         super(RuAttitudesOpinionOperations, self).__init__()
 
         self.__ru_attitudes = ru_attitudes
+        self.__label_scaler = ExperimentRuAttitudesLabelConverter()
 
     # region private methods
 
     def __get_opinion_list_in_doc(self, doc_id, opinion_check=lambda _: True):
         news = self.__ru_attitudes[doc_id]
-        return [opinion
-                for opinion, _ in RuAttitudesNewsHelper.iter_opinions_with_related_sentences(news)
-                if opinion_check(opinion)]
+
+        data_it = RuAttitudesNewsHelper.iter_opinions_with_related_sentences(
+            news=news, label_scaler=self.__label_scaler)
+
+        return [opinion for opinion, _ in data_it if opinion_check(opinion)]
 
     # endregion
 

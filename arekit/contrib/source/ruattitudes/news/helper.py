@@ -1,4 +1,6 @@
+from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.news.opin_converter import RuAttitudesSentenceOpinionConverter
 from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
 
@@ -12,8 +14,9 @@ class RuAttitudesNewsHelper(object):
         return RuAttitudesNewsHelper.__build_opinion_dict(news)
 
     @staticmethod
-    def iter_opinions_with_related_sentences(news):
+    def iter_opinions_with_related_sentences(news, label_scaler):
         assert(isinstance(news, RuAttitudesNews))
+        assert(isinstance(label_scaler, BaseLabelScaler))
 
         doc_opinions = RuAttitudesNewsHelper.build_opinion_dict(news=news)
         assert(isinstance(doc_opinions, dict))
@@ -22,7 +25,8 @@ class RuAttitudesNewsHelper(object):
 
             opinion, related_sentences = RuAttitudesNewsHelper.__extract_opinion_with_related_sentences(
                 news=news,
-                sentence_opin_tag=sentence_opin_tag)
+                sentence_opin_tag=sentence_opin_tag,
+                label_scaler=label_scaler)
 
             if opinion is None:
                 continue
@@ -34,7 +38,7 @@ class RuAttitudesNewsHelper(object):
     # region private methods
 
     @staticmethod
-    def __extract_opinion_with_related_sentences(news, sentence_opin_tag):
+    def __extract_opinion_with_related_sentences(news, sentence_opin_tag, label_scaler):
         opinion = None
         related_sentences = []
 
@@ -54,9 +58,11 @@ class RuAttitudesNewsHelper(object):
 
             source, target = sentence.get_objects(sentence_opin)
 
-            opinion = sentence_opin.to_opinion(
+            opinion = RuAttitudesSentenceOpinionConverter.to_opinion(
+                sentence_opinion=sentence_opin,
                 source_value=source.Value,
-                target_value=target.Value)
+                target_value=target.Value,
+                label_scaler=label_scaler)
 
         return opinion, related_sentences
 
