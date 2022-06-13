@@ -11,7 +11,7 @@ class SentenceOpinion(object):
 
         self.__source_id = source_id
         self.__target_id = target_id
-        self.__label = label_int
+        self.__label_int = label_int
         self.__tag = tag
 
     # region properties
@@ -26,7 +26,7 @@ class SentenceOpinion(object):
 
     @property
     def Label(self):
-        return self.__label
+        return self.__label_int
 
     @property
     def Tag(self):
