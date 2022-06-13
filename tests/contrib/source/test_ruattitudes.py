@@ -11,7 +11,7 @@ from arekit.common.utils import progress_bar_iter
 from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
 
-from arekit.contrib.source.rusentrel.entities.parser import RuSentRelTextEntitiesParser
+from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
 from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
@@ -30,7 +30,6 @@ logging.basicConfig(level=logging.DEBUG)
 class TestRuAttitudes(unittest.TestCase):
 
     __ra_versions = [
-        RuAttitudesVersions.V12,
         RuAttitudesVersions.V20Base,
         RuAttitudesVersions.V20Large,
         RuAttitudesVersions.V20BaseNeut,
@@ -64,7 +63,7 @@ class TestRuAttitudes(unittest.TestCase):
 
     def __test_parsing(self, ra_version):
         # Initialize text parser pipeline.
-        text_parser = BaseTextParser(pipeline=[RuSentRelTextEntitiesParser(),
+        text_parser = BaseTextParser(pipeline=[RuAttitudesTextEntitiesParser(),
                                                DefaultTextTokenizer(keep_tokens=True)])
 
         # iterating through collection
