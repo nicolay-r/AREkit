@@ -1,6 +1,6 @@
 from arekit.common.entities.collection import EntityCollection
 from arekit.common.synonyms import SynonymsCollection
-from arekit.contrib.source.brat.entities.reader import BratEntityCollectionHelper
+from arekit.contrib.source.brat.annot import BratAnnotationParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 
 
@@ -21,6 +21,6 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
         return RuSentRelIOUtils.read_from_zip(
             inner_path=RuSentRelIOUtils.get_entity_innerpath(doc_id),
             process_func=lambda input_file: cls(
-                entities=BratEntityCollectionHelper.extract_entities(input_file),
+                entities=BratAnnotationParser.parse_annotations(input_file)["entities"],
                 value_to_group_id_func=synonyms.get_synonym_group_index),
             version=version)
