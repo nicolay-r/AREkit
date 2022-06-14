@@ -28,7 +28,7 @@ class BratAnnotationParser:
     @staticmethod
     def handle_relation(args):
 
-        e_id = int(args[0][1:])
+        e_id = args[0][1:]
 
         rel_type = args[1]
         source_id = args[2].split(':')[1]
@@ -51,7 +51,7 @@ class BratAnnotationParser:
 
             args = line.split()
 
-            record_type = args[0][1]
+            record_type = args[0][0]
 
             # Entities (objects) are prefixed with `T`
             if record_type == "T":
