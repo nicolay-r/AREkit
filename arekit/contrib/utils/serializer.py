@@ -8,10 +8,12 @@ from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepo
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.news.parser import NewsParser
+from arekit.common.opinions.annot.base import BaseAnnotator
 from arekit.common.pipeline.base import BasePipeline
 
-from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
-from arekit.contrib.utils.pipelines.opinion_annotation import ppl_text_ids_to_parsed_news, ppl_parsed_to_annotation, \
+from arekit.contrib.utils.pipelines.opinion_annotation import \
+    ppl_text_ids_to_parsed_news, \
+    ppl_parsed_to_annotation, \
     ppl_parsed_news_to_opinion_linkages
 
 logger = logging.getLogger(__name__)
@@ -21,9 +23,9 @@ logging.basicConfig(level=logging.INFO)
 class InputDataSerializationHelper(object):
 
     @staticmethod
-    def serialize(exp_ctx, exp_io, doc_ops, opin_ops, terms_per_context, balance,
+    def serialize(annotator, exp_io, doc_ops, opin_ops, terms_per_context, balance,
                   data_type, value_to_group_id_func, text_parser, sample_rows_provider):
-        assert(isinstance(exp_ctx, NetworkSerializationContext))
+        assert(isinstance(annotator, BaseAnnotator))
         assert(isinstance(terms_per_context, int))
         assert(isinstance(balance, bool))
 
@@ -33,7 +35,7 @@ class InputDataSerializationHelper(object):
                     news=doc_ops.get_doc(doc_id),
                     text_parser=text_parser))
             +
-            ppl_parsed_to_annotation(annotator=exp_ctx.Annotator,
+            ppl_parsed_to_annotation(annotator=annotator,
                                      data_type=data_type,
                                      opin_ops=opin_ops)
             +

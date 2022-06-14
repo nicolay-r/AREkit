@@ -45,7 +45,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
         InputDataSerializationHelper.serialize(
             exp_io=self.__exp_io,
-            exp_ctx=self.__exp_ctx,
+            annotator=self.__exp_ctx.Annotator,
             doc_ops=self.__doc_ops,
             opin_ops=self.__opin_ops,
             terms_per_context=self.__exp_ctx.TermsPerContext,
