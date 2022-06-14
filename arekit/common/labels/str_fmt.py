@@ -26,7 +26,10 @@ class StringLabelsFormatter(object):
 
     def str_to_label(self, value):
         assert(isinstance(value, str))
-        assert(value in self._stol)
+
+        if not value in self._stol:
+            raise Exception("Label value `{}` is not supported.".format(value))
+
         label_type = self._stol[value]
         return label_type()
 
