@@ -1,8 +1,7 @@
 from arekit.common.utils import split_by_whitespaces
-from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
-from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
-from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
+from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
+from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 
 

@@ -1,7 +1,7 @@
 from arekit.common.news.objects_parser import SentenceObjectsParserPipelineItem
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.partitioning.terms import TermsPartitioning
-from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
+from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 
 

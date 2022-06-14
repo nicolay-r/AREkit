@@ -11,21 +11,25 @@ from arekit.common.utils import progress_bar_iter
 from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
 
+from arekit.contrib.source.ruattitudes.opinions.utils import RuAttitudesSentenceOpinionUtils
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.text_object import TextObject
-from arekit.contrib.source.ruattitudes.news.helper import RuAttitudesNewsHelper
-from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
-from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
-from arekit.contrib.source.ruattitudes.sentence.base import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
+from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
+from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 
 from arekit.processing.text.token import Token
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
+
+
+class RuAttitudesNewsUtils(object):
+    pass
 
 
 class TestRuAttitudes(unittest.TestCase):
@@ -152,7 +156,7 @@ class TestRuAttitudes(unittest.TestCase):
 
                 # Providing aggregated opinions.
                 logger.info("Providing information for opinions with the related sentences:")
-                data_it = RuAttitudesNewsHelper.iter_opinions_with_related_sentences(
+                data_it = RuAttitudesSentenceOpinionUtils.iter_opinions_with_related_sentences(
                     news=news, label_scaler=label_scaler)
                 for o, sentences in data_it:
                     assert(isinstance(o, Opinion))

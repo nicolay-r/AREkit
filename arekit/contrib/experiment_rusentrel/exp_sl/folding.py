@@ -1,12 +1,11 @@
 from collections import OrderedDict
 
-from arekit.common.experiment.cv.base import TwoClassCVFolding
-from arekit.common.experiment.cv.splitters.default import SimpleCrossValidataionSplitter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.fixed import FixedFolding
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
-
+from arekit.contrib.utils.cv.splitters.default import SimpleCrossValidataionSplitter
+from arekit.contrib.utils.cv.two_class import TwoClassCVFolding
 
 DEFAULT_CV_COUNT = 3
 

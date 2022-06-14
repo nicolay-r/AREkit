@@ -1,5 +1,4 @@
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions, RuAttitudesIOUtils
-from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
 from arekit.contrib.source.ruattitudes.reader import RuAttitudesFormatReader
 
 

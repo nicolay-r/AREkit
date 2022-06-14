@@ -1,7 +1,7 @@
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
+from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 
 
 class RuAttitudesSentenceOpinionConverter:

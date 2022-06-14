@@ -1,6 +1,6 @@
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.utils import split_by_whitespaces
-from arekit.contrib.source.ruattitudes.sentence.opinion import SentenceOpinion
+from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 
 
 class RuAttitudesSentence(BaseNewsSentence):

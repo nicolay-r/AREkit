@@ -20,13 +20,13 @@ class BratRelation(object):
         return self.__rel_type
 
     @property
-    def SourceId(self):
+    def SourceID(self):
         """ Arg0.
         """
         return self.__source_id
 
     @property
-    def TargetId(self):
+    def TargetID(self):
         """ Arg1.
         """
         return self.__target_id

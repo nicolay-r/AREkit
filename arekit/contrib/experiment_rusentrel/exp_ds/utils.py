@@ -3,8 +3,7 @@ import logging
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
-from arekit.contrib.source.ruattitudes.news.base import RuAttitudesNews
-
+from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
 
 logger = logging.getLogger(__name__)
 
