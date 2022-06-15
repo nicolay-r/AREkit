@@ -5,6 +5,9 @@ from arekit.common.text.partitioning.base import BasePartitioning
 
 
 class StringPartitioning(BasePartitioning):
+    """ NOTE: considering that provided parts
+        has no intersections between each other
+    """
 
     def provide(self, text, parts_it):
         assert(isinstance(text, str))
