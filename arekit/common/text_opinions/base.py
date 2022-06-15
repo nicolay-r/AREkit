@@ -23,10 +23,10 @@ class TextOpinion(object):
         self.__modifiable_label = label
 
     @classmethod
-    def create_copy(cls, other):
+    def create_copy(cls, other, keep_text_opinion_id=True):
         assert(isinstance(other, TextOpinion))
         return TextOpinion(doc_id=other.__doc_id,
-                           text_opinion_id=other.__text_opinion_id,
+                           text_opinion_id=other.__text_opinion_id if keep_text_opinion_id else None,
                            source_id=other.SourceId,
                            target_id=other.TargetId,
                            owner=other.Owner,
