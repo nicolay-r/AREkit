@@ -9,7 +9,7 @@ class ExperimentSerializationContext(ExperimentContext):
 
     def __init__(self, label_scaler, annot, name_provider, data_folding):
         assert(isinstance(label_scaler, BaseLabelScaler))
-        assert(isinstance(annot, BaseAnnotator))
+        assert(isinstance(annot, BaseAnnotator) or annot is None)
         super(ExperimentSerializationContext, self).__init__(name_provider=name_provider,
                                                              data_folding=data_folding)
 
