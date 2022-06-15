@@ -6,6 +6,7 @@ from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.bert.samplers.factory import create_bert_sample_provider
+from arekit.contrib.utils.pipelines.annot.base import sentiment_attitude_extraction_default_pipeline
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
@@ -43,15 +44,22 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
     def __handle_iteration(self, data_type):
         assert(isinstance(data_type, DataType))
 
-        InputDataSerializationHelper.serialize(
-            exp_io=self.__exp_io,
+        # We adopt as an example the pipeline, in which
+        # we provide a manual annotation for a given doc_id
+        default_pipeline = sentiment_attitude_extraction_default_pipeline(
             annotator=self.__exp_ctx.Annotator,
-            doc_ops=self.__doc_ops,
             opin_ops=self.__opin_ops,
+            get_doc_func=lambda doc_id: self.__doc_ops.get_doc(doc_id),
             terms_per_context=self.__exp_ctx.TermsPerContext,
-            balance=self.__balance_train_samples,
             value_to_group_id_func=self.__value_to_group_id_func,
-            text_parser=self.__text_parser,
+            data_type=data_type,
+            text_parser=self.__text_parser)
+
+        InputDataSerializationHelper.serialize(
+            pipeline=default_pipeline,
+            exp_io=self.__exp_io,
+            iter_doc_ids_func=lambda dtype: self.__doc_ops.iter_doc_ids(dtype),
+            balance=self.__balance_train_samples,
             data_type=data_type,
             sample_rows_provider=self.__sample_rows_provider)
 

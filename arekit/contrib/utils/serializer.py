@@ -7,14 +7,7 @@ from arekit.common.data.input.providers.rows.opinions import BaseOpinionsRowProv
 from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.news.parser import NewsParser
-from arekit.common.opinions.annot.base import BaseAnnotator
 from arekit.common.pipeline.base import BasePipeline
-
-from arekit.contrib.utils.pipelines.opinion_annotation import \
-    ppl_text_ids_to_parsed_news, \
-    ppl_parsed_to_annotation, \
-    ppl_parsed_news_to_opinion_linkages
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -23,25 +16,17 @@ logging.basicConfig(level=logging.INFO)
 class InputDataSerializationHelper(object):
 
     @staticmethod
-    def serialize(annotator, exp_io, doc_ops, opin_ops, terms_per_context, balance,
-                  data_type, value_to_group_id_func, text_parser, sample_rows_provider):
-        assert(isinstance(annotator, BaseAnnotator))
-        assert(isinstance(terms_per_context, int))
+    def serialize(pipeline, exp_io, iter_doc_ids_func, balance, data_type, sample_rows_provider):
+        """ pipeline:
+                note, it is important to provide a pipeline which results in linked opinions iteration
+                for a particular document.
+                    document (id, instance) -> ... -> linked opinion list
+            iter_doc_ids:
+                func(data_type)
+        """
+        assert(isinstance(pipeline, BasePipeline))
+        assert(callable(iter_doc_ids_func))
         assert(isinstance(balance, bool))
-
-        pipeline = BasePipeline(
-            ppl_text_ids_to_parsed_news(
-                parse_news_func=lambda doc_id: NewsParser.parse(
-                    news=doc_ops.get_doc(doc_id),
-                    text_parser=text_parser))
-            +
-            ppl_parsed_to_annotation(annotator=annotator,
-                                     data_type=data_type,
-                                     opin_ops=opin_ops)
-            +
-            ppl_parsed_news_to_opinion_linkages(value_to_group_id_func=value_to_group_id_func,
-                                                terms_per_context=terms_per_context)
-        )
 
         opinions_repo = BaseInputOpinionsRepository(
             columns_provider=OpinionColumnsProvider(),
@@ -57,11 +42,11 @@ class InputDataSerializationHelper(object):
 
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
-                               doc_ids=list(doc_ops.iter_doc_ids(data_type)),
+                               doc_ids=list(iter_doc_ids_func(data_type)),
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
-                              doc_ids=list(doc_ops.iter_doc_ids(data_type)),
+                              doc_ids=list(iter_doc_ids_func(data_type)),
                               desc="sample")
 
         if exp_io.balance_samples(data_type=data_type, balance=balance):

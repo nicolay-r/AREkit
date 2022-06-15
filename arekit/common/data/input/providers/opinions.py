@@ -8,6 +8,7 @@ class InputTextOpinionProvider(object):
     def __init__(self, pipeline):
         """ NOTE: it is important that the output of the pipeline
             results in a TextOpinionLinkage instances.
+            pipeline: id -> ... -> TextOpinionLinkage[]
         """
         assert(isinstance(pipeline, BasePipeline))
         self.__pipeline = pipeline

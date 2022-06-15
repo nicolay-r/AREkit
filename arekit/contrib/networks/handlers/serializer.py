@@ -13,6 +13,7 @@ from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRow
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embeddings.base import Embedding
+from arekit.contrib.utils.pipelines.annot.base import sentiment_attitude_extraction_default_pipeline
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
@@ -46,16 +47,23 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
     def __handle_iteration(self, data_type, rows_provider):
 
+        # We adopt as an example the pipeline, in which
+        # we provide a manual annotation for a given doc_id
+        default_pipeline = sentiment_attitude_extraction_default_pipeline(
+            annotator=self.__exp_ctx.Annotator,
+            opin_ops=self.__opin_ops,
+            get_doc_func=lambda doc_id: self.__doc_ops.get_doc(doc_id),
+            terms_per_context=self.__exp_ctx.TermsPerContext,
+            value_to_group_id_func=self.__value_to_group_id_func,
+            data_type=data_type,
+            text_parser=self.__text_parser)
+
         # Perform data serialization.
         InputDataSerializationHelper.serialize(
+            pipeline=default_pipeline,
             exp_io=self.__exp_io,
-            annotator=self.__exp_ctx.Annotator,
-            doc_ops=self.__doc_ops,
-            opin_ops=self.__opin_ops,
-            terms_per_context=self.__exp_ctx.TermsPerContext,
+            iter_doc_ids_func=lambda dtype: self.__doc_ops.iter_doc_ids(dtype),
             balance=self.__balance,
-            value_to_group_id_func=self.__value_to_group_id_func,
-            text_parser=self.__text_parser,
             data_type=data_type,
             sample_rows_provider=rows_provider)
 
