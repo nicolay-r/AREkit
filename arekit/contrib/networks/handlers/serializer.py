@@ -1,9 +1,8 @@
 import collections
 
 from arekit.common.experiment.api.ops_doc import DocumentOperations
-from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.handler import ExperimentIterationHandler
-from arekit.common.text.parser import BaseTextParser
+from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.experiment_rusentrel.model_io.tf_networks import RuSentRelExperimentNetworkIOUtils
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
@@ -13,29 +12,28 @@ from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRow
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embeddings.base import Embedding
-from arekit.contrib.utils.pipelines.annot.base import sentiment_attitude_extraction_default_pipeline
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
-    def __init__(self, exp_ctx, exp_io, doc_ops, opin_ops, value_to_group_id_func, text_parser, balance):
-        assert(callable(value_to_group_id_func))
+    def __init__(self, pipeline, exp_ctx, exp_io, doc_ops, balance):
+        """ pipeline:
+                doc_id -> parsed_news -> annot -> opinion linkages
+                for example, function: sentiment_attitude_extraction_default_pipeline
+        """
+        assert(isinstance(pipeline, BasePipeline))
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(exp_io, RuSentRelExperimentNetworkIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
-        assert(isinstance(opin_ops, OpinionOperations))
-        assert(isinstance(text_parser, BaseTextParser))
         assert(isinstance(balance, bool))
         super(NetworksInputSerializerExperimentIteration, self).__init__()
 
         self.__exp_ctx = exp_ctx
         self.__exp_io = exp_io
         self.__doc_ops = doc_ops
-        self.__opin_ops = opin_ops
-        self.__value_to_group_id_func = value_to_group_id_func
         self.__balance = balance
-        self.__text_parser = text_parser
+        self.__pipeline = pipeline
 
     # region protected methods
 
@@ -47,20 +45,9 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
     def __handle_iteration(self, data_type, rows_provider):
 
-        # We adopt as an example the pipeline, in which
-        # we provide a manual annotation for a given doc_id
-        default_pipeline = sentiment_attitude_extraction_default_pipeline(
-            annotator=self.__exp_ctx.Annotator,
-            opin_ops=self.__opin_ops,
-            get_doc_func=lambda doc_id: self.__doc_ops.get_doc(doc_id),
-            terms_per_context=self.__exp_ctx.TermsPerContext,
-            value_to_group_id_func=self.__value_to_group_id_func,
-            data_type=data_type,
-            text_parser=self.__text_parser)
-
         # Perform data serialization.
         InputDataSerializationHelper.serialize(
-            pipeline=default_pipeline,
+            pipeline=self.__pipeline,
             exp_io=self.__exp_io,
             iter_doc_ids_func=lambda dtype: self.__doc_ops.iter_doc_ids(dtype),
             balance=self.__balance,
