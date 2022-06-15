@@ -25,11 +25,19 @@ class BratSentence(BaseNewsSentence):
         assert(isinstance(entity, BratEntity))
         self.__entities.append(entity)
 
-    def iter_entity_with_local_bounds(self):
+    def iter_entity_with_local_bounds(self, avoid_intersection=True):
+        last_position = -1
+
         for entity in self.__entities:
             start = entity.CharIndexBegin - self.__begin
             end = entity.CharIndexEnd - self.__begin
+
+            if start <= last_position and avoid_intersection:
+                # intersected with the previous one.
+                continue
+
             yield entity, Bound(pos=start, length=end - start)
+            last_position = end
 
     def is_entity_goes_after(self, entity):
         assert(isinstance(entity, BratEntity))
