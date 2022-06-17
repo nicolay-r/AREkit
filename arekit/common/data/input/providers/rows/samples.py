@@ -151,7 +151,8 @@ class BaseSampleRowProvider(BaseRowProvider):
                                     etalon_label=etalon_label,
                                     idle_mode=idle_mode)
 
-    def __create_row(self, row, parsed_news, entity_service, text_opinions_linkage, index_in_linked, etalon_label, idle_mode):
+    def __create_row(self, row, parsed_news, entity_service, text_opinions_linkage,
+                     index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:
             [id, label, type, text_a]
@@ -174,12 +175,20 @@ class BaseSampleRowProvider(BaseRowProvider):
 
         row.clear()
 
+        source_s_ind = entity_service.extract_entity_position(
+            text_opinion=text_opinion, end_type=EntityEndType.Source,
+            position_type=TermPositionTypes.SentenceIndex)
+
+        target_s_ind = entity_service.extract_entity_position(
+            text_opinion=text_opinion, end_type=EntityEndType.Target,
+            position_type=TermPositionTypes.SentenceIndex)
+
+        if target_s_ind != source_s_ind:
+            raise Exception("Limitation: Multi-Sentence text_opinions are not supported.")
+
         self._fill_row_core(row=row,
                             parsed_news=parsed_news,
-                            sentence_ind=entity_service.extract_entity_position(
-                                text_opinion=text_opinion,
-                                end_type=EntityEndType.Source,
-                                position_type=TermPositionTypes.SentenceIndex),
+                            sentence_ind=source_s_ind,
                             text_opinion_linkage=text_opinions_linkage,
                             index_in_linked=index_in_linked,
                             etalon_label=etalon_label,
