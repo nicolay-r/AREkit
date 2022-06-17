@@ -24,7 +24,7 @@ from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
+from arekit.contrib.utils.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.processing.pos.mystem_wrap import POSMystemWrapper

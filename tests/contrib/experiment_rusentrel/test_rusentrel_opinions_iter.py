@@ -3,7 +3,6 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
-
 from tests.text.utils import terms_to_str
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 
@@ -11,7 +10,7 @@ from tests.contrib.source.text.news import init_rusentrel_doc
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.contrib.experiment_rusentrel.entities.str_rus_cased_fmt import RussianEntitiesCasedFormatter
+from arekit.contrib.utils.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.contrib.experiment_rusentrel.frame_variants import ExperimentFrameVariantsCollection
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentiframes import \
