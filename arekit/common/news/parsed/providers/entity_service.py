@@ -41,8 +41,8 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
 
     NAME = "entity-service-provider"
 
-    def __init__(self):
-        super(EntityServiceProvider, self).__init__()
+    def __init__(self, entity_index_func):
+        super(EntityServiceProvider, self).__init__(entity_index_func=entity_index_func)
         # Initialize API.
         self.__iter_raw_terms_func = None
         # Initialize entity positions.
