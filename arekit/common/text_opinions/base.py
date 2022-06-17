@@ -25,10 +25,38 @@ class TextOpinion(object):
     @classmethod
     def create_copy(cls, other, keep_text_opinion_id=True):
         assert(isinstance(other, TextOpinion))
+        assert(isinstance(keep_text_opinion_id, bool))
+        return TextOpinion.__try_create_copy_core(other=other, keep_text_opinion_id=keep_text_opinion_id)
+
+    @classmethod
+    def convert(cls, other, convert_func):
+        """ Creates a copy of `other` opinion with different id of opinion participants.
+            Use cases: required for BaseParsedNewsServiceProvider, when we decided to bring the outside
+            opinion into one which is based on DocumentEntities.
+        """
+        assert(isinstance(other, TextOpinion))
+        assert(callable(convert_func))
+        return TextOpinion.__try_create_copy_core(other=other, convert_id_func=convert_func)
+
+    @staticmethod
+    def __try_create_copy_core(other, convert_id_func=lambda part_id: part_id, keep_text_opinion_id=True):
+        """ Tries to compose a copy by considering an optional id conversion,
+            and identification keeping.
+            convert_id:
+                func(id) -> id
+        """
+        assert(callable(convert_id_func))
+
+        source_id = convert_id_func(other.SourceId)
+        target_id = convert_id_func(other.TargetId)
+
+        if source_id is None or target_id is None:
+            return None
+
         return TextOpinion(doc_id=other.__doc_id,
                            text_opinion_id=other.__text_opinion_id if keep_text_opinion_id else None,
-                           source_id=other.SourceId,
-                           target_id=other.TargetId,
+                           source_id=source_id,
+                           target_id=target_id,
                            owner=other.Owner,
                            label=other.Sentiment)
 
