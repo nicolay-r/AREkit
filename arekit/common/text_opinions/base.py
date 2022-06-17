@@ -36,7 +36,9 @@ class TextOpinion(object):
         """
         assert(isinstance(other, TextOpinion))
         assert(callable(convert_func))
-        return TextOpinion.__try_create_copy_core(other=other, convert_id_func=convert_func)
+        return TextOpinion.__try_create_copy_core(other=other,
+                                                  convert_id_func=convert_func,
+                                                  keep_text_opinion_id=False)
 
     @staticmethod
     def __try_create_copy_core(other, convert_id_func=lambda part_id: part_id, keep_text_opinion_id=True):
