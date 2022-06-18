@@ -7,8 +7,8 @@ class BratDocumentSentencesReader(object):
 
     @staticmethod
     def from_file(input_file, entities, line_handler=None, skip_entity_func=None):
-        assert(isinstance(entities, EntityCollection))
-        assert(callable(skip_entity_func) or skip_entity_func is None)
+        assert (isinstance(entities, EntityCollection))
+        assert (callable(skip_entity_func) or skip_entity_func is None)
 
         sentences = BratDocumentSentencesReader.__parse_sentences(input_file=input_file,
                                                                   line_handler=line_handler)
@@ -18,7 +18,7 @@ class BratDocumentSentencesReader(object):
 
         while s_ind < len(sentences) and e_ind < len(entities):
             e = entities.get_entity_by_index(e_ind)
-            assert(isinstance(e, BratEntity))
+            assert (isinstance(e, BratEntity))
 
             s = sentences[s_ind]
 
@@ -35,12 +35,21 @@ class BratDocumentSentencesReader(object):
                 e_ind += 1
                 continue
 
-            raise Exception("e_i:{} e:('{}',{},{}), s_i:{}".format(
-                e_ind,
-                e.Value.encode('utf-8'), e.CharIndexBegin, e.CharIndexEnd,
-                s_ind))
+            if e.CharIndexEnd > s.EndBound:
+                # Intersects with the right border of sentence
+                s_ind += 1
+                continue
 
-        assert(e_ind == len(entities))
+            if e.CharIndexBegin < s.BeginBound:
+                # Intersects with the left border of sentence
+                e_ind += 1
+                continue
+
+            raise Exception("e_i:{} e:('{}',{},{}), s_i:{}, s_b: [{} {}]".format(
+                e_ind,
+                e.Value, e.CharIndexBegin, e.CharIndexEnd,
+                s_ind,
+                s.BeginBound, s.EndBound))
 
         return sentences
 

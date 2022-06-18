@@ -43,6 +43,14 @@ class BratSentence(BaseNewsSentence):
         assert(isinstance(entity, BratEntity))
         return entity.CharIndexBegin > self.__end
 
+    @property
+    def BeginBound(self):
+        return self.__begin
+
+    @property
+    def EndBound(self):
+        return self.__end
+
     # endregion
 
     # region overriden methods
