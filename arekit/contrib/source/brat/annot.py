@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from arekit.contrib.source.brat.entities.entity import BratEntity
 from arekit.contrib.source.brat.relation import BratRelation
 
@@ -7,11 +6,14 @@ class BratAnnotationParser:
 
     @staticmethod
     def __non_prefixed_id(value):
-        assert(isinstance(value, str))
+        assert (isinstance(value, str))
         return value[1:]
-    
+
     @staticmethod
     def handle_entity(args):
+
+        if not str.isdigit(args[2]) or not str.isdigit(args[3]):
+            return None
 
         e_id = int(BratAnnotationParser.__non_prefixed_id(args[0]))
         e_str_type = args[1]
@@ -55,7 +57,10 @@ class BratAnnotationParser:
 
             # Entities (objects) are prefixed with `T`
             if record_type == "T":
-                entities.append(BratAnnotationParser.handle_entity(args))
+                entity = BratAnnotationParser.handle_entity(args)
+                if entity is not None:
+                    entities.append(entity)
+
             elif record_type == "R":
                 relations.append(BratAnnotationParser.handle_relation(args))
 
