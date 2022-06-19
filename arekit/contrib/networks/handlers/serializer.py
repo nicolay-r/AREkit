@@ -3,7 +3,6 @@ import collections
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.pipeline.base import BasePipeline
-from arekit.contrib.experiment_rusentrel.model_io.tf_networks import RuSentRelExperimentNetworkIOUtils
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
@@ -12,6 +11,7 @@ from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRow
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embeddings.base import Embedding
+from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
@@ -24,7 +24,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         """
         assert(isinstance(pipeline, BasePipeline))
         assert(isinstance(exp_ctx, NetworkSerializationContext))
-        assert(isinstance(exp_io, RuSentRelExperimentNetworkIOUtils))
+        assert(isinstance(exp_io, DefaultNetworkIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(balance, bool))
         super(NetworksInputSerializerExperimentIteration, self).__init__()

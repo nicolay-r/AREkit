@@ -4,7 +4,6 @@ import os
 
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.handler import ExperimentIterationHandler
-from arekit.contrib.experiment_rusentrel.model_io.tf_networks import RuSentRelExperimentNetworkIOUtils
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
@@ -18,6 +17,8 @@ from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLab
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.utils import rm_dir_contents
 
+from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
+
 
 class NetworksTrainingIterationHandler(ExperimentIterationHandler):
 
@@ -26,7 +27,7 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
                  network_callbacks, prepare_model_root=True, seed=None):
         assert(callable(create_network_func))
         assert(isinstance(exp_ctx, ExperimentContext))
-        assert(isinstance(exp_io, RuSentRelExperimentNetworkIOUtils))
+        assert(isinstance(exp_io, DefaultNetworkIOUtils))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(load_model, bool))

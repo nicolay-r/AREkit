@@ -11,13 +11,17 @@ from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.bert.output.eval_helper import EvalHelper
 from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
-from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index
+from arekit.contrib.utils.model_io.utils import experiment_iter_index, join_dir_with_subfolder_name
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class RuSentRelExperimentBertIOUtils(BaseIOUtils):
+class DefaultBertIOUtils(BaseIOUtils):
+    """ This is a default file-based Input-output utils,
+        which describes file-paths towards the resources, required
+        for BERT-related data preparation.
+    """
 
     def _get_experiment_sources_dir(self):
         """ Provides directory for samples.
@@ -165,7 +169,7 @@ class RuSentRelExperimentBertIOUtils(BaseIOUtils):
     def __get_filepath(out_dir, template, prefix):
         assert(isinstance(template, str))
         assert(isinstance(prefix, str))
-        return join(out_dir, RuSentRelExperimentBertIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+        return join(out_dir, DefaultBertIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
 
     @staticmethod
     def __generate_tsv_archive_filename(template, prefix):

@@ -9,22 +9,25 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.experiment_rusentrel.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.networks.np_utils.embedding import EmbeddingHelper
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.rusentrel.opinions.writer import RuSentRelOpinionCollectionWriter
-
+from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
-    """ Provides additional Input/Output paths generation functions for:
-        - model directory;
-        - embedding matrix;
-        - embedding vocabulary.
+class DefaultNetworkIOUtils(BaseIOUtils):
+    """ This is a default file-based Input-output utils,
+        which describes file-paths towards the resources, required
+        for BERT-related data preparation.
+
+        Provides additional Input/Output paths generation functions for:
+            - model directory;
+            - embedding matrix;
+            - embedding vocabulary.
     """
 
     TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding-{cv_index}'
@@ -236,7 +239,7 @@ class RuSentRelExperimentNetworkIOUtils(BaseIOUtils):
     def _get_filepath(out_dir, template, prefix):
         assert(isinstance(template, str))
         assert(isinstance(prefix, str))
-        return join(out_dir, RuSentRelExperimentNetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
+        return join(out_dir, DefaultNetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
 
     def _filename_template(self, data_type):
         assert(isinstance(data_type, DataType))

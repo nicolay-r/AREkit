@@ -10,21 +10,20 @@ from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
-from arekit.contrib.experiment_rusentrel.model_io.bert import RuSentRelExperimentBertIOUtils
+from arekit.contrib.utils.model_io.bert import DefaultBertIOUtils
 from arekit.contrib.utils.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 
 
 class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
 
     def __init__(self, exp_io, doc_ops, opin_ops, data_type, label_scaler, labels_formatter):
-        assert(isinstance(exp_io, RuSentRelExperimentBertIOUtils))
+        assert(isinstance(exp_io, DefaultBertIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(data_type, DataType))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        super(BaseOutputConverterIterationHandler, self).__init__(exp_io=exp_io,
-                                                                  )
+        super(BaseOutputConverterIterationHandler, self).__init__(exp_io=exp_io)
         self._data_type = data_type
 
         self.__exp_io = exp_io
