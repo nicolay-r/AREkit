@@ -1,4 +1,4 @@
-from arekit.common.folding.base import BaseDataFolding
+import collections
 
 
 class ExperimentEngine(object):
@@ -7,9 +7,7 @@ class ExperimentEngine(object):
         iteration in and runs handler during the latter.
     """
 
-    def __init__(self, data_folding):
-        assert(isinstance(data_folding, BaseDataFolding))
-        self.__data_folding = data_folding
+    def __init__(self):
         self.__handlers = None
 
     def __call_all_handlers(self, call_func):
@@ -38,11 +36,14 @@ class ExperimentEngine(object):
 
     # endregion
 
-    def run(self, handlers=None):
+    def run(self, states_iter, handlers=None):
         """ Running cv_index iteration and calling handler during every iteration.
+            states_iter: any iterator
         """
+        assert(isinstance(states_iter, collections.Iterable))
+
         self.__handlers = handlers
         self._before_running()
-        for iter_index, _ in enumerate(self.__data_folding.iter_states()):
+        for iter_index, _ in enumerate(states_iter):
             self._handle_iteration(iter_index)
         self._after_running()
