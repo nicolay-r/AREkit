@@ -17,6 +17,24 @@ class FixedFolding(BaseDataFolding):
     def Name(self):
         return "fixed"
 
+    @classmethod
+    def from_parts(cls, parts, dup_count=1):
+        """ parts: dict
+                dictionary of {data_type: [doc_ids]}
+        """
+        assert(isinstance(parts, dict))
+
+        doc_to_type = {}
+        for data_type, doc_ids in parts.items():
+            for doc_id in doc_ids:
+                assert(doc_id not in doc_to_type)
+                doc_to_type[doc_id] = data_type
+
+        return cls(doc_to_dtype_func=lambda doc_id: doc_to_type[doc_id],
+                   doc_ids_to_fold=doc_to_type.keys(),
+                   supported_data_types=list(parts.keys()),
+                   dup_count=dup_count)
+
     def fold_doc_ids_set(self):
 
         folded = {}
