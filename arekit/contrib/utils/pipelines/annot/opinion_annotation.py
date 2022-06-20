@@ -25,7 +25,7 @@ def ppl_parsed_to_annotation(annotator, data_type):
     return [
         # (id, parsed_news) -> (id, opinions)
         MapPipelineItem(map_func=lambda data: (
-            data[0], annotator.annotate_collection(data_type=data_type, parsed_news=data[1])))
+            data[1], annotator.annotate_collection(data_type=data_type, parsed_news=data[1])))
     ]
 
 
