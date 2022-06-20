@@ -20,9 +20,7 @@ for sentence level relations preparation (dubbed as contexts)
 (2) API for contexts extraction
 (3) relations transferring from sentence-level onto document-level, and more.
 It providers contrib modules of 
-**neural networks** (like OpenNRE) and 
-**BERT**,
-both applicable for sentiment attitude extraction task.
+**neural networks** (like OpenNRE) applicable for sentiment attitude extraction task.
 
 ## Installation 
 
