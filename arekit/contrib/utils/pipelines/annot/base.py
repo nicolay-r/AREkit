@@ -7,12 +7,15 @@ from arekit.contrib.utils.pipelines.annot.opinion_annotation import ppl_text_ids
 
 
 def attitude_extraction_default_pipeline(annotator, data_type, get_doc_func, text_parser,
-                                         value_to_group_id_func, terms_per_context):
+                                         value_to_group_id_func, entity_index_func, terms_per_context):
     """ This is a default pipeline which found its application in Sentiment Attitude Extraction task [1].
         In a nutshell, the sequence of processing operations is as follows:
 
         get_doc_func:
             func(doc_id)
+
+        entity_index_func: is a way of how we provide an external entity ID
+            fund(entity) -> ID
 
         result: Pipeline with the following transformation
             doc_id -> parsed_news -> annot -> opinion linkages
@@ -21,6 +24,7 @@ def attitude_extraction_default_pipeline(annotator, data_type, get_doc_func, tex
             [1] Extracting Sentiment Attitudes from Analytical Texts https://arxiv.org/pdf/1808.08932.pdf
     """
     assert(callable(get_doc_func))
+    assert(callable(entity_index_func))
     assert(isinstance(annotator, BaseAnnotator))
     assert(isinstance(text_parser, BaseTextParser))
 
@@ -33,5 +37,6 @@ def attitude_extraction_default_pipeline(annotator, data_type, get_doc_func, tex
         ppl_parsed_to_annotation(annotator=annotator, data_type=data_type)
         +
         ppl_parsed_news_to_opinion_linkages(value_to_group_id_func=value_to_group_id_func,
-                                            terms_per_context=terms_per_context)
+                                            terms_per_context=terms_per_context,
+                                            entity_index_func=entity_index_func)
     )

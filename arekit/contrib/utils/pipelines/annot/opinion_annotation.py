@@ -29,12 +29,13 @@ def ppl_parsed_to_annotation(annotator, data_type):
     ]
 
 
-def ppl_parsed_news_to_opinion_linkages(value_to_group_id_func, terms_per_context):
+def ppl_parsed_news_to_opinion_linkages(value_to_group_id_func, terms_per_context, entity_index_func):
     """ Opinion collection generation pipeline.
         NOTE: Here we do not perform IDs assignation!
     """
     assert(callable(value_to_group_id_func))
     assert(isinstance(terms_per_context, int))
+    assert(callable(entity_index_func))
 
     return [
 
@@ -43,7 +44,7 @@ def ppl_parsed_news_to_opinion_linkages(value_to_group_id_func, terms_per_contex
             ParsedNewsService(
                 parsed_news=data[0],
                 providers=[TextOpinionPairsProvider(value_to_group_id_func=value_to_group_id_func),
-                           EntityServiceProvider()]),
+                           EntityServiceProvider(entity_index_func=entity_index_func)]),
             data[1])),
 
         # (opins_provider, entities_provider, opinions) -> linkages[].
