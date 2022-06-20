@@ -85,8 +85,8 @@ class PairBasedAnnotationAlgorithm(BaseAnnotationAlgorithm):
 
         # Initialize providers.
         # TODO. Provide here service #245 issue.
-        opinions_provider = OpinionPairsProvider()
-        entity_service_provider = EntityServiceProvider()
+        opinions_provider = OpinionPairsProvider(entity_index_func=None)
+        entity_service_provider = EntityServiceProvider(entity_index_func=None)
         opinions_provider.init_parsed_news(parsed_news)
         entity_service_provider.init_parsed_news(parsed_news)
 

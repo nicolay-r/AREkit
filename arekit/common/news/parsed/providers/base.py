@@ -5,12 +5,12 @@ from arekit.common.news.parsed.base import ParsedNews
 
 class BaseParsedNewsServiceProvider(object):
 
-    def __init__(self, entity_index_func):
+    def __init__(self, entity_index_func=None):
         """ Outside enity indexing function
             entity_index_func: provides id for a given entity, i.e.
                 func(entity) -> int (id)
         """
-        assert(callable(entity_index_func))
+        assert(callable(entity_index_func) or entity_index_func is None)
         self._doc_entities = None
         self.__entity_map = {}
         self.__entity_index_func = entity_index_func
@@ -33,7 +33,9 @@ class BaseParsedNewsServiceProvider(object):
                                         group_index=entity.GroupIndex)
 
             self._doc_entities.append(doc_entity)
-            self.__entity_map[self.__entity_index_func(entity)] = doc_entity
+
+            if self.__entity_index_func is not None:
+                self.__entity_map[self.__entity_index_func(entity)] = doc_entity
 
     def get_document_entity(self, entity):
         """ Maps entity to the related one with DocumentEntity type
