@@ -5,8 +5,8 @@ from arekit.contrib.bert.samplers.nli_b import NliBinarySampleProvider
 from arekit.contrib.bert.samplers.nli_m import NliMultipleSampleProvider
 from arekit.contrib.bert.samplers.qa_b import QaBinarySampleProvider
 from arekit.contrib.bert.samplers.qa_m import QaMultipleSampleProvider
-from arekit.contrib.bert.samplers.types import BertSampleProviderTypes
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
+from arekit.contrib.experiment_rusentrel.samplers.types import BertSampleProviderTypes
 
 
 def create_bert_sample_provider(provider_type, label_scaler,
@@ -32,7 +32,6 @@ def create_bert_sample_provider(provider_type, label_scaler,
         return QaMultipleSampleProvider(label_scaler=label_scaler,
                                         text_b_labels_fmt=text_b_labels_fmt,
                                         text_terms_mapper=text_terms_mapper)
-
     if provider_type == BertSampleProviderTypes.NLI_B:
         return NliBinarySampleProvider(label_scaler=label_scaler,
                                        text_b_labels_fmt=text_b_labels_fmt,
