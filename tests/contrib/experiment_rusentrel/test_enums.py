@@ -1,7 +1,7 @@
 import unittest
 
-from arekit.contrib.bert.samplers.types import SampleFormattersService, BertSampleProviderTypes
 from arekit.contrib.experiment_rusentrel.entities.types import EntityFormattersService, EntityFormatterTypes
+from arekit.contrib.experiment_rusentrel.samplers.types import BertSampleProviderTypes, SampleFormattersService
 from arekit.contrib.experiment_rusentrel.types import ExperimentTypesService, ExperimentTypes
 
 
