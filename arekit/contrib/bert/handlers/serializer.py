@@ -7,7 +7,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, pipeline, sample_rows_provider, exp_io, exp_ctx, doc_ops, balance_train_samples):
+    def __init__(self, pipeline, sample_rows_provider, exp_io, exp_ctx, doc_ops, balance_train_samples, data_types):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -15,6 +15,11 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
             pipeline:
                 doc_id -> parsed_news -> annot -> opinion linkages
                 for example, function: sentiment_attitude_extraction_default_pipeline
+
+            data_types: list
+                data_types, for which the data will be generated; required for:
+                    - document ids
+                    - for the result filenames.
         """
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
@@ -26,6 +31,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         self.__exp_ctx = exp_ctx
         self.__doc_ops = doc_ops
         self.__pipeline = pipeline
+        self.__data_types = data_types
 
     # region private methods
 
@@ -47,7 +53,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
     def on_iteration(self, iter_index):
         """ Performing data serialization for a particular iteration
         """
-        for data_type in self.__exp_ctx.DataFolding.iter_supported_data_types():
+        for data_type in self.__data_types:
             self.__handle_iteration(data_type)
 
     # endregion

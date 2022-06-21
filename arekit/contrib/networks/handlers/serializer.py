@@ -1,6 +1,7 @@
 import collections
 
 from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
@@ -17,23 +18,38 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
-    def __init__(self, pipeline, exp_ctx, exp_io, doc_ops, balance):
-        """ pipeline:
-                doc_id -> parsed_news -> annot -> opinion linkages
-                for example, function: sentiment_attitude_extraction_default_pipeline
+    def __init__(self, data_type_pipelines, exp_ctx, exp_io, doc_ops, balance):
+        """ This hanlder allows to perform a data preparation for neural network models.
+
+            considering a list of the whole data_types with the related pipelines,
+            which are supported and required in a hadler. It is necessary to know
+            data_types in advance as it allows to create a complete vocabulary of input terms,
+            with the related embeddings.
+
+            balance: bool
+                declares whethere there is a need to balance Train samples
+
+            data_type_pipelines: dict of, for example:
+                {
+                    DataType.Train: BasePipeline,
+                    DataType.Test: BasePipeline
+                }
+
+                pipeline: doc_id -> parsed_news -> annot -> opinion linkages
+                    for example, function: sentiment_attitude_extraction_default_pipeline
         """
-        assert(isinstance(pipeline, BasePipeline))
+        assert(isinstance(data_type_pipelines, dict))
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(exp_io, DefaultNetworkIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(balance, bool))
         super(NetworksInputSerializerExperimentIteration, self).__init__()
 
+        self.__data_type_pipelines = data_type_pipelines
         self.__exp_ctx = exp_ctx
         self.__exp_io = exp_io
         self.__doc_ops = doc_ops
         self.__balance = balance
-        self.__pipeline = pipeline
 
     # region protected methods
 
@@ -43,11 +59,13 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
             return
         dict_data[term] = emb_vector
 
-    def __handle_iteration(self, data_type, rows_provider):
+    def __handle_iteration(self, data_type, pipeline, rows_provider):
+        assert(isinstance(data_type, DataType))
+        assert(isinstance(pipeline, BasePipeline))
 
         # Perform data serialization.
         InputDataSerializationHelper.serialize(
-            pipeline=self.__pipeline,
+            pipeline=pipeline,
             exp_io=self.__exp_io,
             iter_doc_ids_func=lambda dtype: self.__doc_ops.iter_doc_ids(dtype),
             balance=self.__balance,
@@ -81,8 +99,8 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
             frame_role_label_scaler=self.__exp_ctx.FrameRolesLabelScaler,
             pos_terms_mapper=PosTermsMapper(self.__exp_ctx.PosTagger))
 
-        for data_type in self.__exp_ctx.DataFolding.iter_supported_data_types():
-            self.__handle_iteration(data_type=data_type, rows_provider=rows_provider)
+        for data_type, pipeline in self.__data_type_pipelines.items():
+            self.__handle_iteration(pipeline=pipeline, data_type=data_type, rows_provider=rows_provider)
 
         # Save embedding information additionally.
         term_embedding = Embedding.from_word_embedding_pairs_iter(iter(term_embedding_pairs.items()))
