@@ -213,5 +213,4 @@ class BaseSampleRowProvider(BaseRowProvider):
 
     def set_store_labels(self, store_labels):
         assert(isinstance(store_labels, bool))
-        assert(self.__store_labels is None)
         self.__store_labels = store_labels
