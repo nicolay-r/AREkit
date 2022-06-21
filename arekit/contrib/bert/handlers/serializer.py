@@ -7,7 +7,8 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, pipeline, sample_rows_provider, exp_io, exp_ctx, doc_ops, balance_train_samples, data_types):
+    def __init__(self, pipeline, sample_rows_provider, exp_io, exp_ctx, doc_ops,
+                 save_labels_func, balance_train_samples, data_types):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -15,6 +16,9 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
             pipeline:
                 doc_id -> parsed_news -> annot -> opinion linkages
                 for example, function: sentiment_attitude_extraction_default_pipeline
+
+            save_labels_func: function
+                data_type -> bool
 
             data_types: list
                 data_types, for which the data will be generated; required for:
@@ -32,6 +36,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         self.__doc_ops = doc_ops
         self.__pipeline = pipeline
         self.__data_types = data_types
+        self.__save_labels_func = save_labels_func
 
     # region private methods
 
@@ -42,6 +47,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
             pipeline=self.__pipeline,
             exp_io=self.__exp_io,
             iter_doc_ids_func=lambda dtype: self.__doc_ops.iter_doc_ids(dtype),
+            keep_labels_func=lambda dtype: self.__save_labels_func(data_type),
             balance=self.__balance_train_samples,
             data_type=data_type,
             sample_rows_provider=self.__sample_rows_provider)

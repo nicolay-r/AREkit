@@ -16,16 +16,19 @@ logging.basicConfig(level=logging.INFO)
 class InputDataSerializationHelper(object):
 
     @staticmethod
-    def serialize(pipeline, exp_io, iter_doc_ids_func, balance, data_type, sample_rows_provider):
+    def serialize(pipeline, exp_io, iter_doc_ids_func, keep_labels_func, balance, data_type, sample_rows_provider):
         """ pipeline:
                 note, it is important to provide a pipeline which results in linked opinions iteration
                 for a particular document.
                     document (id, instance) -> ... -> linked opinion list
+            keep_labels_func: function
+                data_type -> bool
             iter_doc_ids:
                 func(data_type)
         """
         assert(isinstance(pipeline, BasePipeline))
         assert(callable(iter_doc_ids_func))
+        assert(callable(keep_labels_func))
         assert(isinstance(balance, bool))
 
         opinions_repo = BaseInputOpinionsRepository(
@@ -34,7 +37,7 @@ class InputDataSerializationHelper(object):
             storage=BaseRowsStorage())
 
         samples_repo = BaseInputSamplesRepository(
-            columns_provider=SampleColumnsProvider(store_labels=True),
+            columns_provider=SampleColumnsProvider(store_labels=keep_labels_func(data_type)),
             rows_provider=sample_rows_provider,
             storage=BaseRowsStorage())
 

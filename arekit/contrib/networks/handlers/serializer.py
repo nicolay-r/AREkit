@@ -18,7 +18,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
-    def __init__(self, data_type_pipelines, exp_ctx, exp_io, doc_ops, balance):
+    def __init__(self, data_type_pipelines, save_labels_func, exp_ctx, exp_io, doc_ops, balance):
         """ This hanlder allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -28,6 +28,9 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
             balance: bool
                 declares whethere there is a need to balance Train samples
+
+            save_labels_func: function
+                data_type -> bool
 
             data_type_pipelines: dict of, for example:
                 {
@@ -50,6 +53,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         self.__exp_io = exp_io
         self.__doc_ops = doc_ops
         self.__balance = balance
+        self.__save_labels_func = save_labels_func
 
     # region protected methods
 
@@ -68,6 +72,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
             pipeline=pipeline,
             exp_io=self.__exp_io,
             iter_doc_ids_func=lambda dtype: self.__doc_ops.iter_doc_ids(dtype),
+            keep_labels_func=lambda dtype: self.__save_labels_func(data_type),
             balance=self.__balance,
             data_type=data_type,
             sample_rows_provider=rows_provider)
