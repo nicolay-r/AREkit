@@ -18,7 +18,7 @@ This toolkit aims to solve data preparation problems in Relation Extraction rela
 * 📑 relations annotations and filtering rules,
 * *️⃣ entities formatting or masking, and more.
 
-Using AREkit you may focus on preparation and experiments with your ML-models by shift all the data-preparation part onto toolset of this project.
+Using AREkit you may focus on preparation and experiments with your ML-models by shift all the data-preparation part  onto toolset of this project ([tutorial](https://nicolay-r.github.io/blog/articles/2022-05/process-mass-media-relations-with-arekit)).
 In order to do so, we provide:
 * 📚 API for external collection binding (native support of [BRAT](https://brat.nlplab.org/)-based exported annotations) 
 * ➿ pipelines and iterators for handling large-scale collections serialization without out-of-memory issues.
