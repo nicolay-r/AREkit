@@ -14,7 +14,7 @@ is a python toolkit, devoted to document level Attitude and Relation Extraction 
 This toolkit aims to solve data preparation problems in Relation Extraction related taks, considiering such factors as:
 * ⛓️ EL (entity-linking) API support for objects, 
 * ➰ avoidance of cyclic connections,
-* 🔗 distance consideration between relation participants (in terms and sentences).
+* 🔗 distance consideration between relation participants (in `terms` or `sentences`),
 * 📑 relations annotations and filtering rules,
 * *️⃣ entities formatting or masking, and more.
 
