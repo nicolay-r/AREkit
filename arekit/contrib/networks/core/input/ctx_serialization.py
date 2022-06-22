@@ -25,7 +25,3 @@ class NetworkSerializationContext(ExperimentSerializationContext):
     @property
     def PosTagger(self):
         raise NotImplementedError()
-
-    @property
-    def StringEntityEmbeddingFormatter(self):
-        raise NotImplementedError()

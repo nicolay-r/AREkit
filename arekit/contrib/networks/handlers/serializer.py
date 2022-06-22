@@ -87,8 +87,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
         text_terms_mapper = StringWithEmbeddingNetworkTermMapping(
             predefined_embedding=self.__exp_ctx.WordEmbedding,
-            string_entities_formatter=self.__exp_ctx.StringEntityFormatter,
-            string_emb_entity_formatter=self.__exp_ctx.StringEntityEmbeddingFormatter)
+            string_entities_formatter=self.__exp_ctx.StringEntityFormatter)
 
         text_provider = NetworkSingleTextProvider(
             text_terms_mapper=text_terms_mapper,
