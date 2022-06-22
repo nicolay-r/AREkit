@@ -6,14 +6,24 @@
     <img src="logo.png"/>
 </p>
 
-**AREkit** (Attitude and Relation Extraction Toolkit) -- is a python toolkit, devoted to 
-document level Attitude and Relation Extraction between text objects from mass-media news 
-and analytical articles with entity-linking (EL) API support for objects.
+**AREkit** (Attitude and Relation Extraction Toolkit) --
+is a python toolkit, devoted to document level Attitude and Relation Extraction between text objects from mass-media news. 
 
 ## Description
 
-Is an open-source and extensible toolkit focused on data preparation for document-level relation extraction organization. 
-In complements the OpenNRE functionality since *document-level RE setting is not widely explored* (2.4 [[paper]](https://aclanthology.org/D19-3029.pdf)).
+This toolkit aims to solve data preparation problems in Relation Extraction related taks, considiering such factors as:
+* ⛓️ EL (entity-linking) API support for objects, 
+* ➰ avoidance of cyclic connections,
+* 🔗 distance consideration between relation participants (in terms and sentences).
+* 📑 relations annotations and filtering rules,
+* *️⃣ entities formatting or masking, and more.
+
+Using AREkit you may focus on preparation and experiments with your ML-models by shift all the data-preparation part onto toolset of this project.
+In order to do so, we provide:
+* 📚 API for external collection binding (native support of [BRAT](https://brat.nlplab.org/)-based exported annotations) 
+* ➿ pipelines and iterators for handling large-scale collections serialization without out-of-memory issues.
+
+AREkit complements the [OpenNRE](https://github.com/thunlp/OpenNRE) functionality since *document-level RE setting is not widely explored* (2.4 [[paper]](https://aclanthology.org/D19-3029.pdf)).
 The core functionality includes 
 (1) API for document presentation with EL (Entity Linking, i.e. Object Synonymy) support 
 for sentence level relations preparation (dubbed as contexts)
