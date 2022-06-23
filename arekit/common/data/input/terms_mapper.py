@@ -52,21 +52,19 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
         return super(OpinionContainingTextTermsMapper, self).iter_mapped(terms)
 
     def map_entity(self, e_ind, entity):
+
+        entity_type = OpinionEntityType.Other
         if e_ind == self.__s_ind:
-            return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=OpinionEntityType.Subject)
+            entity_type = OpinionEntityType.Subject
         elif e_ind == self.__t_ind:
-            return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=OpinionEntityType.Object)
+            entity_type = OpinionEntityType.Object
         elif self.__is_in_same_group(self.__syn_group(entity), self.__s_group):
-            return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=OpinionEntityType.SynonymSubject)
+            entity_type = OpinionEntityType.SynonymSubject
         elif self.__is_in_same_group(self.__syn_group(entity), self.__t_group):
-            return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=OpinionEntityType.SynonymObject)
-        else:
-            return self.__entities_formatter.to_string(original_value=entity,
-                                                       entity_type=OpinionEntityType.Other)
+            entity_type = OpinionEntityType.SynonymObject
+
+        return self.__entities_formatter.to_string(original_value=entity,
+                                                   entity_type=entity_type)
 
     @staticmethod
     def __is_in_same_group(g1, g2):
