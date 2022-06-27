@@ -88,7 +88,8 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         term_embedding_pairs = collections.OrderedDict()
 
         bpe_vectorizer = BPEVectorizer(embedding=self.__exp_ctx.WordEmbedding, max_part_size=3)
-        norm_vectorizer = RandomNormalVectorizer(vector_size=self.__exp_ctx.WordEmbedding, token_offset=12345)
+        norm_vectorizer = RandomNormalVectorizer(vector_size=self.__exp_ctx.WordEmbedding.VectorSize,
+                                                 token_offset=12345)
 
         text_terms_mapper = StringWithEmbeddingNetworkTermMapping(
             vectorizers={
