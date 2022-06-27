@@ -12,6 +12,8 @@ from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRow
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embeddings.base import Embedding
+from arekit.contrib.networks.embeddings.bpe import BPEVectorizer
+from arekit.contrib.networks.embeddings.random_norm import RandomNormalVectorizer
 from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
@@ -85,8 +87,16 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
         term_embedding_pairs = collections.OrderedDict()
 
+        bpe_vectorizer = BPEVectorizer(embedding=self.__exp_ctx.WordEmbedding, max_part_size=3)
+        norm_vectorizer = RandomNormalVectorizer(vector_size=self.__exp_ctx.WordEmbedding, token_offset=12345)
+
         text_terms_mapper = StringWithEmbeddingNetworkTermMapping(
-            predefined_embedding=self.__exp_ctx.WordEmbedding,
+            vectorizers={
+                StringWithEmbeddingNetworkTermMapping.WORD: bpe_vectorizer,
+                StringWithEmbeddingNetworkTermMapping.ENTITY: bpe_vectorizer,
+                StringWithEmbeddingNetworkTermMapping.FRAME: bpe_vectorizer,
+                StringWithEmbeddingNetworkTermMapping.TOKEN: norm_vectorizer
+            },
             string_entities_formatter=self.__exp_ctx.StringEntityFormatter)
 
         text_provider = NetworkSingleTextProvider(

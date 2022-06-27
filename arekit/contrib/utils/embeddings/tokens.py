@@ -5,8 +5,7 @@ from arekit.processing.text.tokens import Tokens
 
 
 class TokenEmbedding(Embedding):
-    """
-    Embedding vectors for text punctuation, based on Tokens in parsed text
+    """ Embedding vectors for text punctuation, based on Tokens in parsed text
     """
 
     @classmethod
