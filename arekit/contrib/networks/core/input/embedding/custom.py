@@ -13,17 +13,17 @@ def create_term_embedding(term, embedding, word_separator=' '):
     assert(isinstance(embedding, Embedding))
 
     if term in embedding:
-        word, embedding = __get_from_embedding(term=term, embedding=embedding)
+        word, word_embedding = __get_from_embedding(term=term, embedding=embedding)
     else:
-        word, embedding = __compose_from_parts(term=term,
-                                               embedding=embedding,
-                                               word_separator=word_separator)
+        word, word_embedding = __compose_from_parts(term=term,
+                                                    embedding=embedding,
+                                                    word_separator=word_separator)
 
     # In order to prevent a problem of the further separations during reading process.
     # it is necessary to replace the separators with the other chars.
     word = word.replace(word_separator, '-')
 
-    return word, embedding
+    return word, word_embedding
 
 
 def __compose_from_parts(term, embedding, word_separator, max_part_size=3, do_lowercase=True):
@@ -48,8 +48,6 @@ def __compose_from_parts(term, embedding, word_separator, max_part_size=3, do_lo
 
 
 def __get_from_embedding(term, embedding):
-    if ' ' in term:
-        print("EXISTED IN EMBEDDING: [{}]".format(term))
     return embedding.try_get_related_word(term), embedding[term]
 
 
