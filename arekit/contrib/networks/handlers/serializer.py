@@ -12,10 +12,10 @@ from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRow
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embeddings.base import Embedding
-from arekit.contrib.networks.embeddings.bpe import BPEVectorizer
-from arekit.contrib.networks.embeddings.random_norm import RandomNormalVectorizer
 from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
+from arekit.contrib.utils.vectorizers.bpe import BPEVectorizer
+from arekit.contrib.utils.vectorizers.random_norm import RandomNormalVectorizer
 
 
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
