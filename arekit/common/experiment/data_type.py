@@ -8,5 +8,10 @@ class DataType(Enum):
     """
 
     Train = 1
+
     Test = 2
+
+    Dev = 3
+
+    Etalon = 4
 
