@@ -1,7 +1,8 @@
 import numpy as np
 from arekit.common.text.stemmer import Stemmer
-from arekit.contrib.networks.embeddings.base import Embedding
 from gensim.models import KeyedVectors
+
+from arekit.contrib.networks.embedding import Embedding
 
 
 class RusvectoresEmbedding(Embedding):

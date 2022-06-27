@@ -1,6 +1,6 @@
 import numpy as np
 
-from arekit.contrib.utils.vectorizers.base import BaseVectorizer
+from arekit.contrib.networks.vectorizer import BaseVectorizer
 
 
 class RandomNormalVectorizer(BaseVectorizer):

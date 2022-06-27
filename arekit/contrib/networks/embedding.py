@@ -14,8 +14,6 @@ class Embedding(object):
         self.__words = words
         self.__index_by_word = self.__create_index(words)
 
-    # TODO. Add create_term_embedding_func
-
     # region properties
 
     @property

@@ -1,8 +1,8 @@
 import numpy as np
 
 from arekit.common.log_utils import logger
-from arekit.contrib.networks.embeddings.base import Embedding
-from arekit.contrib.utils.vectorizers.base import BaseVectorizer
+from arekit.contrib.networks.embedding import Embedding
+from arekit.contrib.networks.vectorizer import BaseVectorizer
 
 
 class BPEVectorizer(BaseVectorizer):

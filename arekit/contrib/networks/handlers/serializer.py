@@ -11,7 +11,7 @@ from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMap
 from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
-from arekit.contrib.networks.embeddings.base import Embedding
+from arekit.contrib.networks.embedding import Embedding
 from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 from arekit.contrib.utils.vectorizers.bpe import BPEVectorizer

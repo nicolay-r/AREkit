@@ -1,6 +1,6 @@
 import unittest
 
-from arekit.contrib.networks.embeddings.base import Embedding
+from arekit.contrib.networks.embedding import Embedding
 
 
 class TestModelNamesService(unittest.TestCase):
