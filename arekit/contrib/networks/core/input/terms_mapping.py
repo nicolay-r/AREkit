@@ -30,13 +30,15 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
     def map_word(self, w_ind, word):
         value, vector = create_term_embedding(term=word,
-                                              embedding=self.__predefined_embedding)
+                                              embedding=self.__predefined_embedding,
+                                              max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE)
         return value, vector
 
     def map_text_frame_variant(self, fv_ind, text_frame_variant):
         assert(isinstance(text_frame_variant, TextFrameVariant))
         value, embedding = create_term_embedding(term=text_frame_variant.Variant.get_value(),
-                                                 embedding=self.__predefined_embedding)
+                                                 embedding=self.__predefined_embedding,
+                                                 max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE)
 
         return value, embedding
 
@@ -48,6 +50,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         seed_token_offset = self.TOKEN_RANDOM_SEED_OFFSET
 
+        # TODO. #348 related. Move it into `utils` contrib.
         vector = self.__get_random_normal_distribution(
             vector_size=self.__predefined_embedding.VectorSize,
             seed=t_ind + seed_token_offset,
@@ -69,6 +72,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         # Vector extraction
         emb_word, vector = create_term_embedding(term=str_formatted_entity,
+                                                 max_part_size=self.MAX_PART_CUSTOM_EMBEDDING_SIZE,
                                                  embedding=self.__predefined_embedding)
 
         return emb_word, vector

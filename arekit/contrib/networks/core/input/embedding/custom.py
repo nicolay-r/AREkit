@@ -5,7 +5,9 @@ from arekit.contrib.networks.embeddings.base import Embedding
 logger = logging.getLogger(__name__)
 
 
-def create_term_embedding(term, embedding, word_separator=' '):
+# TODO. #348 related. Move it into `utils` contrib.
+
+def create_term_embedding(term, embedding, max_part_size, word_separator=' '):
     """
     Embedding algorithm based on parts (trigrams originally)
     """
@@ -17,6 +19,7 @@ def create_term_embedding(term, embedding, word_separator=' '):
     else:
         word, word_embedding = __compose_from_parts(term=term,
                                                     embedding=embedding,
+                                                    max_part_size=max_part_size,
                                                     word_separator=word_separator)
 
     # In order to prevent a problem of the further separations during reading process.
