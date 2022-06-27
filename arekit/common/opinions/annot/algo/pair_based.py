@@ -1,3 +1,4 @@
+from arekit.common.entities.types import OpinionEntityType
 from arekit.common.labels.provider.base import BasePairLabelProvider
 from arekit.common.news.entity import DocumentEntity
 from arekit.common.news.parsed.base import ParsedNews
@@ -12,20 +13,22 @@ class PairBasedAnnotationAlgorithm(BaseAnnotationAlgorithm):
         assumes to compose source-target entity pairs
     """
 
-    def __init__(self, dist_in_terms_bound, label_provider, dist_in_sents=0, ignored_entity_values=None):
+    def __init__(self, dist_in_terms_bound, label_provider, dist_in_sents=0, is_entity_ignored_func=None):
         """
         dist_in_terms_bound: int
             max allowed distance in term (less than passed value)
+        is_entity_ignored_func: func
+            entity, type -> bool
         """
         assert(isinstance(dist_in_terms_bound, int) or dist_in_terms_bound is None)
         assert(isinstance(label_provider, BasePairLabelProvider))
         assert(isinstance(dist_in_sents, int))
-        assert(isinstance(ignored_entity_values, list) or ignored_entity_values is None)
+        assert(callable(is_entity_ignored_func))
 
-        self.__ignored_entity_values = [] if ignored_entity_values is None else ignored_entity_values
         self.__label_provider = label_provider
         self.__dist_in_terms_bound = dist_in_terms_bound
         self.__dist_in_sents = dist_in_sents
+        self.__is_entity_ignored_func = is_entity_ignored_func
 
     # region private methods
 
@@ -35,10 +38,6 @@ class PairBasedAnnotationAlgorithm(BaseAnnotationAlgorithm):
         assert(isinstance(e2, DocumentEntity))
         return "{}_{}".format(e1.IdInDocument, e2.IdInDocument)
 
-    def __is_ignored_entity_value(self, entity_value):
-        assert(isinstance(entity_value, str))
-        return entity_value in self.__ignored_entity_values
-
     def __try_create_pair_key(self, entity_service, e1, e2, existed_opinions):
         assert(isinstance(entity_service, EntityServiceProvider))
         assert(isinstance(e1, DocumentEntity))
@@ -47,9 +46,9 @@ class PairBasedAnnotationAlgorithm(BaseAnnotationAlgorithm):
         if e1.IdInDocument == e2.IdInDocument:
             return
 
-        if self.__is_ignored_entity_value(entity_value=e1.Value):
+        if self.__is_entity_ignored_func(e1, OpinionEntityType.Subject):
             return
-        if self.__is_ignored_entity_value(entity_value=e2.Value):
+        if self.__is_entity_ignored_func(e2, OpinionEntityType.Object):
             return
 
         s_dist = entity_service.calc_dist_between_entities(e1=e1, e2=e2, distance_type=DistanceType.InSentences)
