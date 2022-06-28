@@ -14,13 +14,12 @@ from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbedding
 from arekit.contrib.networks.embedding import Embedding
 from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
-from arekit.contrib.utils.vectorizers.bpe import BPEVectorizer
-from arekit.contrib.utils.vectorizers.random_norm import RandomNormalVectorizer
 
 
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
-    def __init__(self, data_type_pipelines, save_labels_func, exp_ctx, exp_io, doc_ops, balance):
+    def __init__(self, data_type_pipelines, vectorizers,
+                 save_labels_func, exp_ctx, exp_io, doc_ops, balance):
         """ This hanlder allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -30,6 +29,14 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
             balance: bool
                 declares whethere there is a need to balance Train samples
+
+            vectorizers: dict in which for every type there is an assigned Vectorizer
+                vectorization of term types.
+                {
+                    TermType.Word: Vectorizer,
+                    TermType.Entity: Vectorizer,
+                    ...
+                }
 
             save_labels_func: function
                 data_type -> bool
@@ -47,6 +54,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(exp_io, DefaultNetworkIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(vectorizers, dict))
         assert(isinstance(balance, bool))
         super(NetworksInputSerializerExperimentIteration, self).__init__()
 
@@ -54,8 +62,9 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         self.__exp_ctx = exp_ctx
         self.__exp_io = exp_io
         self.__doc_ops = doc_ops
-        self.__balance = balance
         self.__save_labels_func = save_labels_func
+        self.__vectorizers = vectorizers
+        self.__balance = balance
 
     # region protected methods
 
@@ -87,17 +96,8 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
         term_embedding_pairs = collections.OrderedDict()
 
-        bpe_vectorizer = BPEVectorizer(embedding=self.__exp_ctx.WordEmbedding, max_part_size=3)
-        norm_vectorizer = RandomNormalVectorizer(vector_size=self.__exp_ctx.WordEmbedding.VectorSize,
-                                                 token_offset=12345)
-
         text_terms_mapper = StringWithEmbeddingNetworkTermMapping(
-            vectorizers={
-                StringWithEmbeddingNetworkTermMapping.WORD: bpe_vectorizer,
-                StringWithEmbeddingNetworkTermMapping.ENTITY: bpe_vectorizer,
-                StringWithEmbeddingNetworkTermMapping.FRAME: bpe_vectorizer,
-                StringWithEmbeddingNetworkTermMapping.TOKEN: norm_vectorizer
-            },
+            vectorizers=self.__vectorizers,
             string_entities_formatter=self.__exp_ctx.StringEntityFormatter)
 
         text_provider = NetworkSingleTextProvider(
