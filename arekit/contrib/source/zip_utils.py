@@ -1,7 +1,8 @@
-from . import utils
 import zipfile
 
 import enum
+
+from arekit.common import utils
 
 
 class ZipArchiveUtils(object):

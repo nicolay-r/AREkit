@@ -1,5 +1,6 @@
-from . import utils
 from os.path import join
+
+from arekit.common import utils
 
 
 def download():

@@ -6,6 +6,9 @@ from arekit.contrib.networks.embedding import Embedding
 
 
 class RusvectoresEmbedding(Embedding):
+    """ Wrapper over models from
+        https://rusvectores.org/ru/models/
+    """
 
     def __init__(self, matrix, words):
         super(RusvectoresEmbedding, self).__init__(matrix=matrix,

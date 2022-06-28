@@ -1,6 +1,6 @@
 from enum import Enum
 
-from arekit.common.utils import EnumConversionService
+from arekit.contrib.experiment_rusentrel.utils import EnumConversionService
 
 
 class EntityFormatterTypes(Enum):

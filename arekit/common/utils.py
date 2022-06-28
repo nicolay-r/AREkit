@@ -1,18 +1,18 @@
-from enum import Enum
-from os import makedirs
-from os.path import dirname, exists
+import sys
+import os
+import requests
 from tqdm import tqdm
 
 
 def create_dir_if_not_exists(filepath):
-    dir = dirname(filepath)
+    dir = os.path.dirname(filepath)
 
     # Check whether string is empty.
     if not dir:
         return
 
-    if not exists(dir):
-        makedirs(dir)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
 
 
 def filter_whitespaces(terms):
@@ -48,33 +48,44 @@ def progress_bar_iter(iterable, desc="", unit='it'):
                 unit=unit)
 
 
-class EnumConversionService(object):
+def get_default_download_dir():
+    """ Refered to NLTK toolkit approach
+        https://github.com/nltk/nltk/blob/8e771679cee1b4a9540633cc3ea17f4421ffd6c0/nltk/downloader.py#L1051
+    """
 
-    _data = None
+    # On Windows, use %APPDATA%
+    if sys.platform == "win32" and "APPDATA" in os.environ:
+        homedir = os.environ["APPDATA"]
 
-    @classmethod
-    def is_supported(cls, name):
-        assert(isinstance(cls._data, dict))
-        return name in cls._data
+    # Otherwise, install in the user's home directory.
+    else:
+        homedir = os.path.expanduser("~/")
+        if homedir == "~/":
+            raise ValueError("Could not find a default download directory")
 
-    @classmethod
-    def name_to_type(cls, name):
-        assert(isinstance(cls._data, dict))
-        assert(isinstance(name, str))
-        return cls._data[name]
+    return os.path.join(homedir, ".arekit")
 
-    @classmethod
-    def iter_names(cls):
-        assert(isinstance(cls._data, dict))
-        return iter(list(cls._data.keys()))
 
-    @classmethod
-    def type_to_name(cls, enum_type):
-        assert(isinstance(cls._data, dict))
-        assert(isinstance(enum_type, Enum))
+def download(dest_file_path, source_url):
+    """ Refered to https://github.com/nicolay-r/ner-bilstm-crf-tensorflow/blob/master/ner/utils.py
+        Simple http file downloader
+    """
+    print(('Downloading from {src} to {dest}'.format(src=source_url, dest=dest_file_path)))
 
-        for item_name, item_type in cls._data.items():
-            if item_type == enum_type:
-                return item_name
+    sys.stdout.flush()
+    datapath = os.path.dirname(dest_file_path)
 
-        raise NotImplemented("Formatting type '{}' does not supported".format(enum_type))
+    if not os.path.exists(datapath):
+        os.makedirs(datapath, mode=0o755)
+
+    dest_file_path = os.path.abspath(dest_file_path)
+
+    r = requests.get(source_url, stream=True)
+    total_length = int(r.headers.get('content-length', 0))
+
+    with open(dest_file_path, 'wb') as f:
+        pbar = tqdm(total=total_length, unit='B', unit_scale=True)
+        for chunk in r.iter_content(chunk_size=32 * 1024):
+            if chunk:  # filter out keep-alive new chunks
+                pbar.update(len(chunk))
+                f.write(chunk)
