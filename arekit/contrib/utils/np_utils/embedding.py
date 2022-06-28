@@ -2,13 +2,13 @@ import logging
 
 import numpy as np
 
-from arekit.contrib.networks.np_utils.npz_utils import NpzRepositoryUtils
+from arekit.contrib.utils.np_utils.npz_utils import NpzRepositoryUtils
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class EmbeddingHelper:
+class NpzEmbeddingHelper:
 
     @staticmethod
     def save_embedding(data, target):

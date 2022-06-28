@@ -10,10 +10,10 @@ from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
-from arekit.contrib.networks.np_utils.embedding import EmbeddingHelper
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.rusentrel.opinions.writer import RuSentRelOpinionCollectionWriter
 from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index
+from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -75,19 +75,19 @@ class DefaultNetworkIOUtils(BaseIOUtils):
 
     def save_vocab(self, data):
         target = self.__get_default_vocab_filepath()
-        return EmbeddingHelper.save_vocab(data=data, target=target)
+        return NpzEmbeddingHelper.save_vocab(data=data, target=target)
 
     def load_vocab(self):
         source = self.___get_vocab_source()
-        return EmbeddingHelper.load_vocab(source)
+        return NpzEmbeddingHelper.load_vocab(source)
 
     def save_embedding(self, data):
         target = self.__get_default_embedding_filepath()
-        EmbeddingHelper.save_embedding(data=data, target=target)
+        NpzEmbeddingHelper.save_embedding(data=data, target=target)
 
     def load_embedding(self):
         source = self.__get_term_embedding_source()
-        return EmbeddingHelper.load_embedding(source)
+        return NpzEmbeddingHelper.load_embedding(source)
 
     def has_model_predefined_state(self):
         model_io = self._exp_ctx.ModelIO
