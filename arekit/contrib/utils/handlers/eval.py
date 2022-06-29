@@ -1,8 +1,6 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
-from arekit.common.experiment.api.ctx_base import ExperimentContext
-from arekit.common.experiment.api.ctx_training import ExperimentTrainingContext
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
@@ -13,18 +11,18 @@ from arekit.common.utils import progress_bar_iter
 
 class EvalIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, data_type, exp_ctx, doc_ops, opin_ops, epoch_indices):
+    def __init__(self, data_type, doc_ops, opin_ops, epoch_indices, evaluator):
         assert(isinstance(data_type, DataType))
-        assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(epoch_indices, list))
+        assert(isinstance(evaluator, BaseEvaluator))
 
         self.__data_type = data_type
-        self.__exp_ctx = exp_ctx
         self.__doc_ops = doc_ops
         self.__opin_ops = opin_ops
         self.__epoch_indices = epoch_indices
+        self.__evaluator = evaluator
 
     def __evaluate(self, data_type, epoch_index):
         """
@@ -39,7 +37,6 @@ class EvalIterationHandler(ExperimentIterationHandler):
         """
         assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int))
-        assert(isinstance(self.__exp_ctx, ExperimentTrainingContext))
 
         # Extracting all docs to cmp and those that is related to data_type.
         cmp_doc_ids_iter = self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare)
@@ -56,13 +53,9 @@ class EvalIterationHandler(ExperimentIterationHandler):
                 doc_id=doc_id,
                 epoch_index=epoch_index))
 
-        # getting evaluator.
-        evaluator = self.__exp_ctx.Evaluator
-        assert(isinstance(evaluator, BaseEvaluator))
-
         # evaluate every document.
         logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc="Evaluate", unit='pairs')
-        result = evaluator.evaluate(cmp_pairs=logged_cmp_pairs_it)
+        result = self.__evaluator.evaluate(cmp_pairs=logged_cmp_pairs_it)
         assert(isinstance(result, BaseEvalResult))
 
         # calculate results.

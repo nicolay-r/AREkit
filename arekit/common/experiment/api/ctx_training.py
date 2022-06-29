@@ -13,7 +13,3 @@ class ExperimentTrainingContext(ExperimentContext):
     @property
     def LabelsCount(self):
         return self.__labels_count
-
-    @property
-    def Evaluator(self):
-        raise NotImplementedError()
