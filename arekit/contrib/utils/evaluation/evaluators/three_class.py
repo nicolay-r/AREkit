@@ -1,20 +1,16 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
-from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.utils.evaluation.results.three_class import ThreeClassEvalResult
 
 
 class ThreeClassEvaluator(BaseEvaluator):
 
-    def __init__(self, data_type):
-        """ Evaluation additionally depends on utilized data_type.
-            Since we consider that NEU labels are not a part of the result data.
+    def __init__(self):
+        """ Since we consider that NEU labels are not a part of the result data.
             Therefore if something missed in results then it suppose to be correct classified.
         """
-        assert(isinstance(data_type, DataType))
         super(ThreeClassEvaluator, self).__init__(eval_mode=EvaluationModes.Extraction)
-        self.__data_type = data_type
 
     def _calc_diff(self, etalon_opins, test_opins, is_label_supported):
         assert(isinstance(etalon_opins, OpinionCollection))
