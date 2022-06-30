@@ -39,8 +39,6 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
             parsed news, positions, text_opinions
     """
 
-    NAME = "entity-service-provider"
-
     def __init__(self, entity_index_func):
         super(EntityServiceProvider, self).__init__(entity_index_func=entity_index_func)
         # Initialize API.
@@ -50,7 +48,7 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
 
     @property
     def Name(self):
-        return self.NAME
+        return "entity-service-provider"
 
     def init_parsed_news(self, parsed_news):
         super(EntityServiceProvider, self).init_parsed_news(parsed_news)

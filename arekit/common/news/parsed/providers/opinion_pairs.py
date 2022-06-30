@@ -5,11 +5,9 @@ from arekit.common.opinions.base import Opinion
 
 class OpinionPairsProvider(BasePairProvider):
 
-    NAME = "opinion-pairs-provider"
-
     @property
     def Name(self):
-        return self.NAME
+        return "opinion-pairs-provider"
 
     def _create_pair(self, source_entity, target_entity, label):
         assert(isinstance(source_entity, Entity))
