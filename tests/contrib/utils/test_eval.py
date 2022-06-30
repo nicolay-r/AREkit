@@ -6,6 +6,7 @@ from os.path import dirname
 
 from enum import Enum
 
+from arekit.common.evaluation.comparators.opinions import OpinionBasedComparator
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
@@ -141,7 +142,7 @@ class TestEvaluation(unittest.TestCase):
                 error_on_synonym_end_missed=False))
 
         # getting evaluator.
-        evaluator = TwoClassEvaluator(eval_mode=eval_mode)
+        evaluator = TwoClassEvaluator(comparator=OpinionBasedComparator(eval_mode))
 
         # evaluate every document.
         logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc="Evaluate", unit='pairs')

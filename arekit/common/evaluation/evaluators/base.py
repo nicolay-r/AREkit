@@ -1,17 +1,16 @@
 import collections
 
-from arekit.common.evaluation.calc.opinions import OpinionsComparisonCalculator
 from arekit.common.evaluation.cmp_opinions import OpinionCollectionsToCompare
+from arekit.common.evaluation.comparators.base import BaseComparator
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
-from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.results.base import BaseEvalResult
 
 
 class BaseEvaluator(object):
 
-    def __init__(self, eval_mode):
-        assert(isinstance(eval_mode, EvaluationModes))
-        self.__calc = OpinionsComparisonCalculator(eval_mode)
+    def __init__(self, comparator):
+        assert(isinstance(comparator, BaseComparator))
+        self.__comp = comparator
 
     # region abstract methods
 
@@ -29,7 +28,7 @@ class BaseEvaluator(object):
         assert(callable(is_label_supported))
 
         # Obtaining comparison rows.
-        rows = self.__calc.calc_diff(etalon=etalon_data, test=test_data, is_label_supported=is_label_supported)
+        rows = self.__comp.calc_diff(etalon=etalon_data, test=test_data, is_label_supported=is_label_supported)
 
         # Filling dataframe.
         cmp_table = DocumentCompareTable.create_template_df(rows_count=len(rows))

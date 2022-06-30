@@ -1,4 +1,4 @@
-from arekit.common.evaluation.calc.base import BaseComparisonCalculator
+from arekit.common.evaluation.comparators.base import BaseComparator
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.evaluators.utils import label_to_str, check_is_supported
 from arekit.common.labels.base import Label
@@ -6,7 +6,7 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 
 
-class OpinionsComparisonCalculator(BaseComparisonCalculator):
+class OpinionBasedComparator(BaseComparator):
     """ Performs a comparison of a couple OpinionCollections.
     """
 
