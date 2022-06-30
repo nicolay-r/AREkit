@@ -1,5 +1,5 @@
 from arekit.common.news.parser import NewsParser
-from arekit.common.opinions.annot.base import BaseAnnotator
+from arekit.common.opinions.annot.base import BaseOpinionAnnotator
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.utils.pipelines.annot.opinion_annotation import ppl_text_ids_to_parsed_news, \
@@ -25,7 +25,7 @@ def attitude_extraction_default_pipeline(annotator, data_type, get_doc_func, tex
     """
     assert(callable(get_doc_func))
     assert(callable(entity_index_func))
-    assert(isinstance(annotator, BaseAnnotator))
+    assert(isinstance(annotator, BaseOpinionAnnotator))
     assert(isinstance(text_parser, BaseTextParser))
 
     return BasePipeline(

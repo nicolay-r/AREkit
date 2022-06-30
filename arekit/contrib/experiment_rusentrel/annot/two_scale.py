@@ -1,7 +1,7 @@
 import logging
 
 from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.opinions.annot.base import BaseAnnotator
+from arekit.common.opinions.annot.base import BaseOpinionAnnotator
 from arekit.common.opinions.base import Opinion
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLabel
@@ -9,7 +9,7 @@ from arekit.contrib.experiment_rusentrel.labels.types import ExperimentNeutralLa
 logger = logging.getLogger(__name__)
 
 
-class TwoScaleTaskAnnotator(BaseAnnotator):
+class TwoScaleTaskOpinionAnnotator(BaseOpinionAnnotator):
     """ For two scale classification task.
     """
 
@@ -22,7 +22,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
         """
         assert(callable(create_empty_collection_func))
         assert(callable(get_doc_etalon_opins_func))
-        super(TwoScaleTaskAnnotator, self).__init__()
+        super(TwoScaleTaskOpinionAnnotator, self).__init__()
 
         self.__create_empty_collection_func = create_empty_collection_func
         self.__get_doc_etalon_opins_func = get_doc_etalon_opins_func
@@ -57,7 +57,7 @@ class TwoScaleTaskAnnotator(BaseAnnotator):
             # Return empty collection.
             return self.__create_empty_collection_func()
 
-        super(TwoScaleTaskAnnotator, self).annotate_collection(
+        super(TwoScaleTaskOpinionAnnotator, self).annotate_collection(
             data_type=data_type, parsed_news=parsed_news)
 
     # endregion

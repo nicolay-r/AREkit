@@ -1,5 +1,5 @@
-from arekit.common.opinions.annot.default import DefaultAnnotator
-from arekit.contrib.experiment_rusentrel.annot.two_scale import TwoScaleTaskAnnotator
+from arekit.common.opinions.annot.default import DefaultOpinionAnnotator
+from arekit.contrib.experiment_rusentrel.annot.two_scale import TwoScaleTaskOpinionAnnotator
 
 
 class ExperimentAnnotatorFactory:
@@ -10,9 +10,9 @@ class ExperimentAnnotatorFactory:
         assert(callable(create_algo))
 
         if labels_count == 2:
-            return TwoScaleTaskAnnotator(create_empty_collection_func=create_empty_collection_func,
-                                         get_doc_etalon_opins_func=get_doc_etalon_opins_func)
+            return TwoScaleTaskOpinionAnnotator(create_empty_collection_func=create_empty_collection_func,
+                                                get_doc_etalon_opins_func=get_doc_etalon_opins_func)
         else:
-            return DefaultAnnotator(create_algo(),
-                                    create_empty_collection_func=create_empty_collection_func,
-                                    get_doc_etalon_opins_func=get_doc_etalon_opins_func)
+            return DefaultOpinionAnnotator(create_algo(),
+                                           create_empty_collection_func=create_empty_collection_func,
+                                           get_doc_etalon_opins_func=get_doc_etalon_opins_func)

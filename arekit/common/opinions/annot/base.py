@@ -4,7 +4,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class BaseAnnotator(object):
+class BaseOpinionAnnotator(object):
     """
     Performs annotation for a particular data_type
     using OpinOps and DocOps API.

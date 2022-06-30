@@ -4,11 +4,11 @@ from arekit.common.news.entity import DocumentEntity
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType
 from arekit.common.news.parsed.providers.opinion_pairs import OpinionPairsProvider
-from arekit.common.opinions.annot.algo.base import BaseAnnotationAlgorithm
+from arekit.common.opinions.annot.algo.base import BaseOpinionAnnotationAlgorithm
 from arekit.common.opinions.base import Opinion
 
 
-class PairBasedAnnotationAlgorithm(BaseAnnotationAlgorithm):
+class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
     """ Is a pair-based annotation algorithm which
         assumes to compose source-target entity pairs
     """

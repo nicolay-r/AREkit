@@ -2,7 +2,7 @@ from arekit.common.data.input.sample import InputSampleBase
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
 from arekit.common.news.parsed.service import ParsedNewsService
-from arekit.common.opinions.annot.base import BaseAnnotator
+from arekit.common.opinions.annot.base import BaseOpinionAnnotator
 from arekit.common.pipeline.item_map import MapPipelineItem
 from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
 from arekit.contrib.utils.pipelines.annot.utils import iter_opinions_as_text_opinion_linkages
@@ -18,7 +18,7 @@ def ppl_text_ids_to_parsed_news(parse_news_func):
 
 
 def ppl_parsed_to_annotation(annotator, data_type):
-    assert(isinstance(annotator, BaseAnnotator))
+    assert(isinstance(annotator, BaseOpinionAnnotator))
 
     return [
         # (id, parsed_news) -> (id, opinions)

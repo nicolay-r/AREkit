@@ -2,15 +2,15 @@ import logging
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.opinions.annot.algo.base import BaseAnnotationAlgorithm
-from arekit.common.opinions.annot.base import BaseAnnotator
+from arekit.common.opinions.annot.algo.base import BaseOpinionAnnotationAlgorithm
+from arekit.common.opinions.annot.base import BaseOpinionAnnotator
 from arekit.common.opinions.collection import OpinionCollection
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class DefaultAnnotator(BaseAnnotator):
+class DefaultOpinionAnnotator(BaseOpinionAnnotator):
     """ Algorithm-based annotator
     """
 
@@ -21,9 +21,9 @@ class DefaultAnnotator(BaseAnnotator):
         get_doc_etalon_opins_func:
             function that provides etalon opinions for a document
         """
-        assert(isinstance(annot_algo, BaseAnnotationAlgorithm))
+        assert(isinstance(annot_algo, BaseOpinionAnnotationAlgorithm))
         assert(callable(get_doc_etalon_opins_func))
-        super(DefaultAnnotator, self).__init__()
+        super(DefaultOpinionAnnotator, self).__init__()
 
         self.__annot_algo = annot_algo
         self.__get_doc_etalon_opins_func = get_doc_etalon_opins_func
