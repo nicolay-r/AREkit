@@ -1,5 +1,6 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
+from arekit.common.evaluation.evaluators.utils import check_is_supported
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.utils.evaluation.results.three_class import ThreeClassEvalResult
 
@@ -27,13 +28,13 @@ class ThreeClassEvaluator(BaseEvaluator):
             # We keep only those opinions that were not
             # presented in test and has neutral label
 
-            self._check_is_supported(label=opinion.Sentiment, is_label_supported=is_label_supported)
+            check_is_supported(label=opinion.Sentiment, is_label_supported=is_label_supported)
 
             if not test_opins_expanded.has_synonymous_opinion(opinion) and opinion.Sentiment == neut_label:
                 test_opins_expanded.add_opinion(opinion)
 
-        return super(ThreeClassEvaluator, self)._calc_diff(etalon_opins=etalon_opins,
-                                                           test_opins=test_opins_expanded,
+        return super(ThreeClassEvaluator, self)._calc_diff(etalon_data=etalon_opins,
+                                                           test_data=test_opins_expanded,
                                                            is_label_supported=is_label_supported)
 
     def _create_eval_result(self):
