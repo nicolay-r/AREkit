@@ -32,6 +32,10 @@ class ExperimentContext(object):
     def LabelsCount(self):
         raise NotImplementedError()
 
+    def set_data_folding(self, data_folding):
+        assert(isinstance(data_folding, BaseDataFolding))
+        self.__data_folding = data_folding
+
     def set_model_io(self, model_io):
         """ Providing model_io in experiment data.
         """
