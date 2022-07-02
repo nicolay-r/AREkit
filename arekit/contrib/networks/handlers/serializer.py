@@ -18,8 +18,8 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
-    def __init__(self, data_type_pipelines, vectorizers,
-                 save_labels_func, exp_ctx, exp_io, doc_ops, balance):
+    def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
+                 exp_ctx, exp_io, doc_ops, balance, save_embedding):
         """ This hanlder allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -49,6 +49,9 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
                 pipeline: doc_id -> parsed_news -> annot -> opinion linkages
                     for example, function: sentiment_attitude_extraction_default_pipeline
+
+            save_embedding: bool
+                save embedding and all the related information to it.
         """
         assert(isinstance(data_type_pipelines, dict))
         assert(isinstance(exp_ctx, NetworkSerializationContext))
@@ -56,6 +59,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(vectorizers, dict))
         assert(isinstance(balance, bool))
+        assert(isinstance(save_embedding, bool))
         super(NetworksInputSerializerExperimentIteration, self).__init__()
 
         self.__data_type_pipelines = data_type_pipelines
@@ -65,6 +69,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         self.__save_labels_func = save_labels_func
         self.__vectorizers = vectorizers
         self.__balance = balance
+        self.__save_embedding = save_embedding
 
     # region protected methods
 
@@ -116,6 +121,9 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
         for data_type, pipeline in self.__data_type_pipelines.items():
             self.__handle_iteration(pipeline=pipeline, data_type=data_type, rows_provider=rows_provider)
+
+        if not self.__save_embedding:
+            return
 
         # Save embedding information additionally.
         term_embedding = Embedding.from_word_embedding_pairs_iter(iter(term_embedding_pairs.items()))
