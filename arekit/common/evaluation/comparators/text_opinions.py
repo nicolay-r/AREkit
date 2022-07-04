@@ -13,7 +13,7 @@ class TextOpinionBasedComparator(BaseComparator):
         self.__eval_mode = eval_mode
 
     @staticmethod
-    def __text_opinion_to_id(text_opinion):
+    def text_opinion_to_id(text_opinion):
         """ Compose a unique opinion ID, based on the document information,
             and indices of the opinion participants.
         """
@@ -35,14 +35,14 @@ class TextOpinionBasedComparator(BaseComparator):
         assert(isinstance(test_text_opins, list))
 
         test_by_id = TextOpinionBasedComparator.__create_index_by_id(
-            test_text_opins, id_func=self.__text_opinion_to_id)
+            test_text_opins, id_func=self.text_opinion_to_id)
 
         etalon_by_id = TextOpinionBasedComparator.__create_index_by_id(
-            etalon_text_opins, id_func=self.__text_opinion_to_id)
+            etalon_text_opins, id_func=self.text_opinion_to_id)
 
         for o_etalon in etalon_text_opins:
             assert(isinstance(o_etalon, TextOpinion))
-            o_id = self.__text_opinion_to_id(o_etalon)
+            o_id = self.text_opinion_to_id(o_etalon)
             o_test = test_by_id[o_id] if o_id in test_by_id else None
             has_opinion = o_test is not None
 
@@ -60,7 +60,7 @@ class TextOpinionBasedComparator(BaseComparator):
 
         for o_test in test_text_opins:
             assert (isinstance(o_test, TextOpinion))
-            o_id = self.__text_opinion_to_id(o_test)
+            o_id = self.text_opinion_to_id(o_test)
             has_opinion = etalon_by_id[o_id] if o_id in etalon_by_id else None
 
             if has_opinion:
