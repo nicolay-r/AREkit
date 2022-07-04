@@ -43,11 +43,11 @@ class TwoClassEvalResult(BaseEvalResult):
                                                 cmp_table=cmp_table)
 
         has_pos = self.__has_opinions_with_label(
-            opinions=cmp_pair.EtalonOpinionCollection,
+            opinions=cmp_pair.EtalonData,
             label=self.__pos_label)
 
         has_neg = self.__has_opinions_with_label(
-            opinions=cmp_pair.EtalonOpinionCollection,
+            opinions=cmp_pair.EtalonData,
             label=self.__neg_label)
 
         pos_prec, pos_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,

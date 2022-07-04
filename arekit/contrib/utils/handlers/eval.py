@@ -48,7 +48,7 @@ class EvalIterationHandler(ExperimentIterationHandler):
             doc_ids=[doc_id for doc_id in doc_ids_iter if doc_id in cmp_doc_ids_set],
             read_etalon_collection_func=lambda doc_id: self.__opin_ops.get_etalon_opinion_collection(
                 doc_id=doc_id),
-            read_result_collection_func=lambda doc_id: self.__opin_ops.get_result_opinion_collection(
+            read_test_collection_func=lambda doc_id: self.__opin_ops.get_result_opinion_collection(
                 data_type=data_type,
                 doc_id=doc_id,
                 epoch_index=epoch_index))

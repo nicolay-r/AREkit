@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
-from arekit.common.evaluation.cmp_opinions import OpinionCollectionsToCompare
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
+from arekit.common.evaluation.pairs.base import BasePairToCompare
 
 
 class BaseEvalResult(object):
@@ -44,6 +44,6 @@ class BaseEvalResult(object):
     def reg_doc(self, cmp_pair, cmp_table):
         """ Registering cmp_table.
         """
-        assert(isinstance(cmp_pair, OpinionCollectionsToCompare))
+        assert(isinstance(cmp_pair, BasePairToCompare))
         assert(isinstance(cmp_table, DocumentCompareTable))
         self._cmp_tables[cmp_pair.DocumentID] = cmp_table

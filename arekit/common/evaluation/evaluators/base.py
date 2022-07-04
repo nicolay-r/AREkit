@@ -1,8 +1,8 @@
 import collections
 
-from arekit.common.evaluation.cmp_opinions import OpinionCollectionsToCompare
 from arekit.common.evaluation.comparators.base import BaseComparator
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
+from arekit.common.evaluation.pairs.base import BasePairToCompare
 from arekit.common.evaluation.results.base import BaseEvalResult
 
 
@@ -48,9 +48,9 @@ class BaseEvaluator(object):
 
         # Providing compared pairs in a form of tables.
         for cmp_pair in cmp_pairs:
-            assert(isinstance(cmp_pair, OpinionCollectionsToCompare))
-            cmp_table = self._calc_diff(etalon_data=cmp_pair.EtalonOpinionCollection,
-                                        test_data=cmp_pair.TestOpinionCollection,
+            assert(isinstance(cmp_pair, BasePairToCompare))
+            cmp_table = self._calc_diff(etalon_data=cmp_pair.EtalonData,
+                                        test_data=cmp_pair.TestData,
                                         is_label_supported=result.is_label_supported)
 
             result.reg_doc(cmp_pair=cmp_pair, cmp_table=cmp_table)

@@ -132,7 +132,7 @@ class TestEvaluation(unittest.TestCase):
                 synonyms=actual_synonyms,
                 error_on_duplicates=False,
                 error_on_synonym_end_missed=True),
-            read_result_collection_func=lambda doc_id: OpinionCollection(
+            read_test_collection_func=lambda doc_id: OpinionCollection(
                 opinions=ZippedResultsIOUtils.iter_doc_opinions(
                     doc_id=doc_id,
                     result_version=res_version,
