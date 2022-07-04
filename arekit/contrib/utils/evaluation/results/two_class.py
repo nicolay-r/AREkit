@@ -18,11 +18,14 @@ class TwoClassEvalResult(BaseEvalResult):
     C_F1_POS = 'f1_pos'
     C_F1_NEG = 'f1_neg'
 
-    def __init__(self):
+    def __init__(self, label1, label2):
+        assert(isinstance(label1, Label))
+        assert(isinstance(label2, Label))
+
         self.__doc_results = OrderedDict()
 
-        self.__pos_label = ExperimentPositiveLabel()
-        self.__neg_label = ExperimentNegativeLabel()
+        self.__pos_label = label1
+        self.__neg_label = label2
 
         super(TwoClassEvalResult, self).__init__(
             supported_labels={self.__pos_label, self.__neg_label})

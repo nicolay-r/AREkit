@@ -28,19 +28,19 @@ class ThreeClassEvalResult(BaseEvalResult):
     C_F1_NEU = 'f1_neu'
     C_F1_MICRO = 'f1_micro'
 
-    def __init__(self):
-        self.__pos_label = ExperimentPositiveLabel()
-        self.__neg_label = ExperimentNegativeLabel()
-        self.__neu_label = self.create_neutral_label()
+    def __init__(self, label1, label2, no_label):
+        assert(isinstance(label1, Label))
+        assert(isinstance(label2, Label))
+        assert(isinstance(no_label, Label))
+
+        self.__pos_label = label1
+        self.__neg_label = label2
+        self.__neu_label = no_label
 
         super(ThreeClassEvalResult, self).__init__(
             supported_labels={self.__pos_label, self.__neg_label, self.__neu_label})
 
         self.__doc_results = OrderedDict()
-
-    @staticmethod
-    def create_neutral_label():
-        return ExperimentNeutralLabel()
 
     @staticmethod
     def __has_opinions_with_label(opinions, label):

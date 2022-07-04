@@ -15,6 +15,7 @@ from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
+from arekit.contrib.source.rusentrel.const import POS_LABEL_STR, NEG_LABEL_STR
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
@@ -142,7 +143,9 @@ class TestEvaluation(unittest.TestCase):
                 error_on_synonym_end_missed=False))
 
         # getting evaluator.
-        evaluator = TwoClassEvaluator(comparator=OpinionBasedComparator(eval_mode))
+        evaluator = TwoClassEvaluator(comparator=OpinionBasedComparator(eval_mode),
+                                      label1=labels_formatter.str_to_label(POS_LABEL_STR),
+                                      label2=labels_formatter.str_to_label(NEG_LABEL_STR))
 
         # evaluate every document.
         logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc="Evaluate", unit='pairs')
