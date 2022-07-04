@@ -8,6 +8,8 @@ from arekit.contrib.utils.evaluation.results.three_class import ThreeClassEvalRe
 
 
 class ThreeClassOpinionEvaluator(BaseEvaluator):
+    """ This evaluator is limitied and applied for OpinionCollections.
+    """
 
     def __init__(self, label1, label2, no_label):
         """ Since we consider that NEU labels are not a part of the result data.
@@ -49,4 +51,5 @@ class ThreeClassOpinionEvaluator(BaseEvaluator):
     def _create_eval_result(self):
         return ThreeClassEvalResult(label1=self.__label1,
                                     label2=self.__label2,
-                                    no_label=self.__no_label)
+                                    no_label=self.__no_label,
+                                    get_item_label_func=lambda opinion: opinion.Sentiment)

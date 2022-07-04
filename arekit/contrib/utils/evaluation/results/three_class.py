@@ -1,11 +1,9 @@
+import collections
 from collections import OrderedDict
 
 from arekit.common.evaluation.results.base import BaseEvalResult
 from arekit.common.evaluation.results.utils import calc_f1_3c_macro, calc_f1_single_class
 from arekit.common.labels.base import Label
-from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.experiment_rusentrel.labels.types import ExperimentPositiveLabel, ExperimentNegativeLabel, \
-    ExperimentNeutralLabel
 from arekit.contrib.utils.evaluation.results import metrics
 from arekit.contrib.utils.evaluation.results.metrics import calc_precision_micro, calc_recall_micro
 
@@ -28,26 +26,28 @@ class ThreeClassEvalResult(BaseEvalResult):
     C_F1_NEU = 'f1_neu'
     C_F1_MICRO = 'f1_micro'
 
-    def __init__(self, label1, label2, no_label):
+    def __init__(self, label1, label2, no_label, get_item_label_func):
         assert(isinstance(label1, Label))
         assert(isinstance(label2, Label))
         assert(isinstance(no_label, Label))
+        assert(callable(get_item_label_func))
 
         self.__pos_label = label1
         self.__neg_label = label2
         self.__neu_label = no_label
+        self.__get_item_label_func = get_item_label_func
 
         super(ThreeClassEvalResult, self).__init__(
             supported_labels={self.__pos_label, self.__neg_label, self.__neu_label})
 
         self.__doc_results = OrderedDict()
 
-    @staticmethod
-    def __has_opinions_with_label(opinions, label):
+    def __has_opinions_with_label(self, data_items, label):
+        assert(isinstance(data_items, collections.Iterable))
         assert(isinstance(label, Label))
-        assert(isinstance(opinions, OpinionCollection))
-        for opinion in opinions:
-            if opinion.Sentiment == label:
+
+        for item in data_items:
+            if self.__get_item_label_func(item) == label:
                 return True
         return False
 
@@ -57,15 +57,15 @@ class ThreeClassEvalResult(BaseEvalResult):
                                                   cmp_table=cmp_table)
 
         has_pos = self.__has_opinions_with_label(
-            opinions=cmp_pair.EtalonData,
+            data_items=cmp_pair.EtalonData,
             label=self.__pos_label)
 
         has_neg = self.__has_opinions_with_label(
-            opinions=cmp_pair.EtalonData,
+            data_items=cmp_pair.EtalonData,
             label=self.__neg_label)
 
         has_neu = self.__has_opinions_with_label(
-            opinions=cmp_pair.EtalonData,
+            data_items=cmp_pair.EtalonData,
             label=self.__neu_label)
 
         pos_prec, pos_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,
