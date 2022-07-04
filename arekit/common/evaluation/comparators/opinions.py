@@ -1,7 +1,6 @@
 from arekit.common.evaluation.comparators.base import BaseComparator
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.evaluators.utils import label_to_str, check_is_supported
-from arekit.common.labels.base import Label
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 
@@ -15,16 +14,6 @@ class OpinionBasedComparator(BaseComparator):
         self.__eval_mode = eval_mode
 
     # region private methods
-
-    @staticmethod
-    def __cmp_result(l1, l2):
-        assert (isinstance(l1, Label) or l1 is None)
-        assert (isinstance(l2, Label) or l2 is None)
-
-        if l1 is None or l2 is None:
-            return False
-
-        return l1 == l2
 
     def __iter_diff_core(self, etalon_opins, test_opins):
         assert (isinstance(etalon_opins, OpinionCollection))
@@ -88,7 +77,7 @@ class OpinionBasedComparator(BaseComparator):
                    opin.TargetValue,
                    None if etalon_label is None else label_to_str(etalon_label),
                    None if result_label is None else label_to_str(result_label),
-                   self.__cmp_result(l1=etalon_label, l2=result_label)]
+                   self._cmp_result(l1=etalon_label, l2=result_label)]
 
             rows.append(row)
 
