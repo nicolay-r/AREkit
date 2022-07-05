@@ -13,7 +13,6 @@ class TextOpinion(object):
 
     def __init__(self, doc_id, text_opinion_id, source_id, target_id, owner, label):
         assert(isinstance(doc_id, int))
-        assert(isinstance(text_opinion_id, int) or text_opinion_id is None)
 
         self.__source_id = source_id
         self.__target_id = target_id
@@ -96,7 +95,6 @@ class TextOpinion(object):
 
     def set_text_opinion_id(self, text_opinion_id):
         assert(self.__text_opinion_id is None)
-        assert(isinstance(text_opinion_id, int))
         self.__text_opinion_id = text_opinion_id
 
     def set_label(self, label):
