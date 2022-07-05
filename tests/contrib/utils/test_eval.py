@@ -145,7 +145,8 @@ class TestEvaluation(unittest.TestCase):
         # getting evaluator.
         evaluator = TwoClassEvaluator(comparator=OpinionBasedComparator(eval_mode),
                                       label1=labels_formatter.str_to_label(POS_LABEL_STR),
-                                      label2=labels_formatter.str_to_label(NEG_LABEL_STR))
+                                      label2=labels_formatter.str_to_label(NEG_LABEL_STR),
+                                      get_item_label_func=lambda opinion: opinion.Sentiment)
 
         # evaluate every document.
         logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc="Evaluate", unit='pairs')

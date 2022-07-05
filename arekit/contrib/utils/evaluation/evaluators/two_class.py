@@ -5,13 +5,17 @@ from arekit.contrib.utils.evaluation.results.two_class import TwoClassEvalResult
 
 class TwoClassEvaluator(BaseEvaluator):
 
-    def __init__(self, comparator, label1, label2):
+    def __init__(self, comparator, label1, label2, get_item_label_func):
         assert(isinstance(label1, Label))
         assert(isinstance(label2, Label))
+        assert(callable(get_item_label_func))
         super(TwoClassEvaluator, self).__init__(comparator)
 
         self.__label1 = label1
         self.__label2 = label2
+        self.__get_item_label_func = get_item_label_func
 
     def _create_eval_result(self):
-        return TwoClassEvalResult(label1=self.__label1, label2=self.__label2)
+        return TwoClassEvalResult(label1=self.__label1,
+                                  label2=self.__label2,
+                                  get_item_label_func=self.__get_item_label_func)
