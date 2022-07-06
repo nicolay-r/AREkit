@@ -51,7 +51,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         assert(isinstance(data_type, DataType))
         storage = BaseRowsStorage.from_tsv(
             filepath=self.__get_input_sample_target(data_type=data_type))
-
         return BaseSampleStorageView(storage=storage,
                                      row_ids_provider=MultipleIDProvider())
 
@@ -116,6 +115,20 @@ class DefaultNetworkIOUtils(BaseIOUtils):
 
     # region private methods
 
+    def __get_model_parameter(self, default_value, get_value_func):
+        assert(default_value is not None)
+        assert(callable(get_value_func))
+
+        model_io = self._exp_ctx.ModelIO
+
+        if model_io is None:
+            return default_value
+
+        predefined_value = get_value_func(model_io) if \
+            self.__model_is_pretrained_state_provided(model_io) else None
+
+        return default_value if predefined_value is None else predefined_value
+
     def __get_input_opinions_target(self, data_type):
         template = self._filename_template(data_type=data_type)
         return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="opinion")
@@ -136,27 +149,15 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
-        model_io = self._exp_ctx.ModelIO
-
-        if model_io is None:
-            return self.__get_default_vocab_filepath()
-
-        assert(isinstance(model_io, NeuralNetworkModelIO))
-        return model_io.get_model_vocab_filepath() if self.__model_is_pretrained_state_provided(model_io) \
-            else self.__get_default_vocab_filepath()
+        return self.__get_model_parameter(default_value=self.__get_default_vocab_filepath(),
+                                          get_value_func=lambda model_io: model_io.get_model_vocab_filepath())
 
     def __get_term_embedding_source(self):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
-        model_io = self._exp_ctx.ModelIO
-
-        if model_io is None:
-            return self.__get_default_embedding_filepath()
-
-        assert(isinstance(model_io, NeuralNetworkModelIO))
-        return model_io.get_model_embedding_filepath() if self.__model_is_pretrained_state_provided(model_io) \
-            else self.__get_default_embedding_filepath()
+        return self.__get_model_parameter(default_value=self.__get_default_embedding_filepath(),
+                                          get_value_func=lambda model_io: model_io.get_model_embedding_filepath())
 
     def __get_experiment_folder_name(self):
         return "{name}_{scale}l".format(name=self._exp_ctx.Name,
