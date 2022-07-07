@@ -57,8 +57,10 @@ class PairTextProvider(BaseSingleTextProvider):
         inner_context = self._handle_terms_and_compose_text(sentence_terms=inner_terms)
 
         value = self.__text_b_template.format(
-            subject=self._mapper.StringEntitiesFormatter.to_string(None, OpinionEntityType.Subject),
-            object=self._mapper.StringEntitiesFormatter.to_string(None, OpinionEntityType.Object),
+            subject=self._mapper.StringEntitiesFormatter.to_string(
+                original_value=sentence_terms[first], entity_type=OpinionEntityType.Subject),
+            object=self._mapper.StringEntitiesFormatter.to_string(
+                original_value=sentence_terms[last], entity_type=OpinionEntityType.Object),
             context=self._process_text(inner_context),
             label=self.__text_b_labels_fmt.label_to_str(expected_label))
 
