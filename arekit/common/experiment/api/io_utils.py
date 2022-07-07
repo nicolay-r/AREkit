@@ -56,9 +56,6 @@ class BaseIOUtils(object):
 
     # region public methods
 
-    def balance_samples(self, data_type, balance):
-        return balance and data_type == DataType.Train
-
     def create_opinion_collection_target(self, doc_id, data_type, check_existance=False):
         return self._create_annotated_collection_target(
             doc_id=doc_id,

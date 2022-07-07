@@ -20,7 +20,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
     def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
-                 str_entity_fmt, exp_ctx, exp_io, doc_ops, balance, save_embedding):
+                 str_entity_fmt, exp_ctx, exp_io, doc_ops, balance_func, save_embedding):
         """ This hanlder allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -60,19 +60,20 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
         assert(isinstance(vectorizers, dict))
-        assert(isinstance(balance, bool))
         assert(isinstance(save_embedding, bool))
+        assert(callable(save_labels_func))
+        assert(callable(balance_func))
         super(NetworksInputSerializerExperimentIteration, self).__init__()
 
         self.__data_type_pipelines = data_type_pipelines
         self.__exp_ctx = exp_ctx
         self.__exp_io = exp_io
         self.__doc_ops = doc_ops
-        self.__save_labels_func = save_labels_func
         self.__vectorizers = vectorizers
-        self.__balance = balance
         self.__save_embedding = save_embedding
         self.__str_entity_fmt = str_entity_fmt
+        self.__save_labels_func = save_labels_func
+        self.__balance_func = balance_func
 
     # region protected methods
 
@@ -92,7 +93,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
             exp_io=self.__exp_io,
             iter_doc_ids_func=lambda dtype: self.__doc_ops.iter_doc_ids(dtype),
             keep_labels_func=lambda dtype: self.__save_labels_func(data_type),
-            balance=self.__balance,
+            balance_func=lambda dtype: self.__balance_func(data_type),
             data_type=data_type,
             sample_rows_provider=rows_provider)
 
