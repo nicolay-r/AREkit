@@ -1,5 +1,4 @@
 from arekit.common.experiment.api.ctx_base import ExperimentContext
-from arekit.common.experiment.data_type import DataType
 
 
 class BaseIOUtils(object):
