@@ -18,7 +18,6 @@ class RuAttitudesSentenceOpinionConverter:
                            text_opinion_id=text_opinion_id,
                            source_id=end_to_doc_id_func(sentence_opinion.SourceID),
                            target_id=end_to_doc_id_func(sentence_opinion.TargetID),
-                           owner=None,
                            label=label_scaler.int_to_label(sentence_opinion.Label))
 
     @staticmethod

@@ -33,7 +33,6 @@ def iter_same_sentence_linked_text_opinions(pairs_provider, entity_service, opin
 
         text_opinion = text_opinions_linkage.First
         assert(isinstance(text_opinion, TextOpinion))
-        text_opinion.set_owner(opinions)
         assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
 
         is_same = __is_same_sentence(text_opinion=text_opinion, entity_service=entity_service)

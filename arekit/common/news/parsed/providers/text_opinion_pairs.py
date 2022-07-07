@@ -34,7 +34,6 @@ class TextOpinionPairsProvider(BasePairProvider):
                            source_id=source_entity.IdInDocument,
                            target_id=target_entity.IdInDocument,
                            label=label,
-                           owner=None,
                            text_opinion_id=None)
 
     def init_parsed_news(self, parsed_news):

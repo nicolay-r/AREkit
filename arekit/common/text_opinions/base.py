@@ -11,13 +11,12 @@ class TextOpinion(object):
 
     # region constructors
 
-    def __init__(self, doc_id, text_opinion_id, source_id, target_id, owner, label):
+    def __init__(self, doc_id, text_opinion_id, source_id, target_id, label):
         assert(isinstance(doc_id, int))
 
         self.__source_id = source_id
         self.__target_id = target_id
         self.__doc_id = doc_id
-        self.__owner = owner
         self.__text_opinion_id = text_opinion_id
         self.__modifiable_label = label
 
@@ -58,7 +57,6 @@ class TextOpinion(object):
                            text_opinion_id=other.__text_opinion_id if keep_text_opinion_id else None,
                            source_id=source_id,
                            target_id=target_id,
-                           owner=other.Owner,
                            label=other.Sentiment)
 
     # endregion
@@ -85,10 +83,6 @@ class TextOpinion(object):
     def TargetId(self):
         return self.__target_id
 
-    @property
-    def Owner(self):
-        return self.__owner
-
     # endregion
 
     # region public methods
@@ -100,10 +94,5 @@ class TextOpinion(object):
     def set_label(self, label):
         assert(isinstance(label, Label))
         self.__modifiable_label = label
-
-    def set_owner(self, owner):
-        assert(owner is not None)
-        assert(self.__owner is None)
-        self.__owner = owner
 
     # endregion
