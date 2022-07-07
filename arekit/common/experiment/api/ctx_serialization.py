@@ -37,10 +37,6 @@ class ExperimentSerializationContext(ExperimentContext):
         return self.__annot
 
     @property
-    def StringEntityFormatter(self):
-        raise NotImplementedError()
-
-    @property
     def FramesConnotationProvider(self):
         raise NotImplementedError()
 

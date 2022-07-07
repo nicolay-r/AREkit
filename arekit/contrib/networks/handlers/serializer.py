@@ -1,5 +1,6 @@
 import collections
 
+from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
@@ -19,7 +20,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
     def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
-                 exp_ctx, exp_io, doc_ops, balance, save_embedding):
+                 str_entity_fmt, exp_ctx, exp_io, doc_ops, balance, save_embedding):
         """ This hanlder allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -57,6 +58,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(exp_io, DefaultNetworkIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
         assert(isinstance(vectorizers, dict))
         assert(isinstance(balance, bool))
         assert(isinstance(save_embedding, bool))
@@ -70,6 +72,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         self.__vectorizers = vectorizers
         self.__balance = balance
         self.__save_embedding = save_embedding
+        self.__str_entity_fmt = str_entity_fmt
 
     # region protected methods
 
@@ -103,7 +106,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
         text_terms_mapper = StringWithEmbeddingNetworkTermMapping(
             vectorizers=self.__vectorizers,
-            string_entities_formatter=self.__exp_ctx.StringEntityFormatter)
+            string_entities_formatter=self.__str_entity_fmt)
 
         text_provider = NetworkSingleTextProvider(
             text_terms_mapper=text_terms_mapper,
