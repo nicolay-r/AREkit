@@ -3,7 +3,7 @@ import collections
 from arekit.common.evaluation.pairs.func_based import FuncBasedDataPairsToCompare
 
 
-class DataPairsIteratorFactory:
+class DataPairsIterators:
     """ Provides a variety ways of how the data might be iterated.
         (In most cases by a given set of document identifiers)
     """

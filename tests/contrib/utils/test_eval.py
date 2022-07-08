@@ -9,7 +9,6 @@ from enum import Enum
 from arekit.common.evaluation.comparators.opinions import OpinionBasedComparator
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
-from arekit.common.evaluation.utils import DataPairsIteratorFactory
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
@@ -21,6 +20,7 @@ from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinion
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.contrib.utils.evaluation.evaluators.two_class import TwoClassEvaluator
+from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
 from arekit.contrib.utils.evaluation.results.two_class_prf import TwoClassEvalPrecRecallF1Result
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
@@ -124,7 +124,7 @@ class TestEvaluation(unittest.TestCase):
         labels_formatter = RuSentRelExperimentLabelsFormatter()
 
         # Iter cmp opinions.
-        cmp_pairs_iter = DataPairsIteratorFactory.iter_func_based_collections(
+        cmp_pairs_iter = DataPairsIterators.iter_func_based_collections(
             doc_ids=ZippedResultsIOUtils.iter_doc_ids(res_version),
             read_etalon_collection_func=lambda doc_id: OpinionCollection(
                 opinions=RuSentRelOpinionCollection.iter_opinions_from_doc(
