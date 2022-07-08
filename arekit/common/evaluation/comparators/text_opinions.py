@@ -21,9 +21,9 @@ class TextOpinionBasedComparator(BaseComparator):
         return "{}_{}_{}".format(text_opinion.DocID, text_opinion.SourceId, text_opinion.TargetId)
 
     @staticmethod
-    def __create_index_by_id(etalon_text_opinions, id_func):
+    def __create_index_by_id(text_opinions, id_func):
         index = {}
-        for o_etalon in etalon_text_opinions:
+        for o_etalon in text_opinions:
             assert(isinstance(o_etalon, TextOpinion))
             index[id_func(o_etalon)] = o_etalon
         return index
