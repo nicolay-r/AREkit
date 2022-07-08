@@ -8,29 +8,15 @@ class BaseDataFolding(object):
         and how to such state into string.
     """
 
-    def __init__(self, doc_ids_to_fold, supported_data_types, states_count):
+    def __init__(self, doc_ids_to_fold, supported_data_types):
         assert(isinstance(doc_ids_to_fold, collections.Iterable))
         assert(isinstance(supported_data_types, list))
-        assert(isinstance(states_count, int) and states_count > 0)
         self._doc_ids_to_fold_set = set(doc_ids_to_fold)
         self._supported_data_types = supported_data_types
-        self._states = states_count
-        self._state_index = 0
-
-    @property
-    def StatesCount(self):
-        return self._states
-
-    @property
-    def StateIndex(self):
-        return self._state_index
 
     @property
     def Name(self):
         raise NotImplementedError()
-
-    def _assign_index(self, i):
-        self._state_index = i
 
     def contains_doc_id(self, doc_id):
         assert(isinstance(doc_id, int))
@@ -47,15 +33,6 @@ class BaseDataFolding(object):
             DataType.Train, DataType.Test.
         """
         return iter(self._supported_data_types)
-
-    def iter_states(self):
-        """ Performs iteration over states supported by folding algorithm
-            Default:
-                considering a single state.
-        """
-        for state_index in range(self._states):
-            self._assign_index(state_index)
-            yield None
 
     def fold_doc_ids_set(self):
         """ Perform the doc_ids folding process onto provided data_types

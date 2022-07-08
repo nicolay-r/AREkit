@@ -9,18 +9,23 @@ class TwoClassCVFolding(BaseDataFolding):
 
     def __init__(self, supported_data_types, doc_ids_to_fold, cv_count, splitter):
         assert(isinstance(splitter, CrossValidationSplitter))
+        assert(isinstance(cv_count, int) and cv_count > 0)
 
         if len(supported_data_types) > 2:
             raise NotImplementedError("Experiments with such amount of data-types are not supported!")
 
         super(TwoClassCVFolding, self).__init__(doc_ids_to_fold=doc_ids_to_fold,
-                                                supported_data_types=supported_data_types,
-                                                states_count=cv_count)
+                                                supported_data_types=supported_data_types)
 
         self.__cv_count = cv_count
         self.__splitter = splitter
+        self.__state_index = 0
 
     # region Properties
+
+    @property
+    def StateIndex(self):
+        return self.__state_index
 
     @property
     def CVCount(self):
@@ -32,7 +37,19 @@ class TwoClassCVFolding(BaseDataFolding):
 
     # endregion
 
+    def __assign_index(self, i):
+        self.__state_index = i
+
     # region BaseFolding
+
+    def iter_states(self):
+        """ Performs iteration over states supported by folding algorithm
+            Default:
+                considering a single state.
+        """
+        for state_index in range(self.__cv_count):
+            self.__assign_index(state_index)
+            yield None
 
     def fold_doc_ids_set(self):
 
@@ -55,7 +72,7 @@ class TwoClassCVFolding(BaseDataFolding):
 
         for index, pair in enumerate(it):
             large, small = pair
-            if index == self._state_index:
+            if index == self.__state_index:
                 return {
                     data_types[0]: large,
                     data_types[1]: small
