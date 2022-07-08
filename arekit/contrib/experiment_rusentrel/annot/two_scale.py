@@ -30,6 +30,8 @@ class TwoScaleTaskOpinionAnnotator(BaseOpinionAnnotator):
     # region static methods
 
     def _annot_collection_core(self, parsed_news, data_type):
+        """ # TODO. #354. Remove dependency from data_type. (not used here)
+        """
         assert(isinstance(parsed_news, ParsedNews))
         assert(isinstance(data_type, DataType))
 

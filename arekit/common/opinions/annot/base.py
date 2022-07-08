@@ -14,11 +14,15 @@ class BaseOpinionAnnotator(object):
         logger.info("Init annotator: [{}]".format(self.__class__))
 
     def _annot_collection_core(self, parsed_news, data_type):
+        """ # TODO. #354. Remove dependency from data_type.
+        """
         raise NotImplementedError
 
     # region public methods
 
     def annotate_collection(self, data_type, parsed_news):
+        """ # TODO. #354. Remove dependency from data_type.
+        """
         return self._annot_collection_core(parsed_news=parsed_news, data_type=data_type)
 
     # endregion

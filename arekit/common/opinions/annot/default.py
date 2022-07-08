@@ -33,12 +33,14 @@ class DefaultOpinionAnnotator(BaseOpinionAnnotator):
 
     def _annot_collection_core(self, parsed_news, data_type):
         assert(isinstance(parsed_news, ParsedNews))
+        # TODO. #354. Remove dependency.
         assert(isinstance(data_type, DataType))
 
         opinions = self.__get_doc_etalon_opins_func(parsed_news.RelatedDocID)
 
         annotated_opins_it = self.__annot_algo.iter_opinions(
             parsed_news=parsed_news,
+            # TODO. #354. Remove dependency from data_type. (make an outer check)
             existed_opinions=opinions if data_type == DataType.Train else None)
 
         collection = self.__create_empty_collection_func()
