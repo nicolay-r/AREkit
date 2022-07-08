@@ -5,15 +5,12 @@ class NoFolding(BaseDataFolding):
     """ The case of absent folding in experiment.
     """
 
-    def __init__(self, doc_ids_to_fold, supported_data_types, dup_count=1):
-        assert(isinstance(dup_count, int) and dup_count > 0)
-
+    def __init__(self, doc_ids_to_fold, supported_data_types):
         if len(supported_data_types) > 1:
             raise NotImplementedError("Experiments with such amount of data-types are not supported!")
 
         super(NoFolding, self).__init__(doc_ids_to_fold=doc_ids_to_fold,
-                                        supported_data_types=supported_data_types,
-                                        states_count=dup_count)
+                                        supported_data_types=supported_data_types)
 
     @property
     def Name(self):
