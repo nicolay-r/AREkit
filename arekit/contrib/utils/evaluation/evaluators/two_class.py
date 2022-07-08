@@ -1,6 +1,6 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.labels.base import Label
-from arekit.contrib.utils.evaluation.results.two_class import TwoClassEvalResult
+from arekit.contrib.utils.evaluation.results.two_class_prf import TwoClassEvalPrecRecallF1Result
 
 
 class TwoClassEvaluator(BaseEvaluator):
@@ -16,6 +16,6 @@ class TwoClassEvaluator(BaseEvaluator):
         self.__get_item_label_func = get_item_label_func
 
     def _create_eval_result(self):
-        return TwoClassEvalResult(label1=self.__label1,
-                                  label2=self.__label2,
-                                  get_item_label_func=self.__get_item_label_func)
+        return TwoClassEvalPrecRecallF1Result(label1=self.__label1,
+                                              label2=self.__label2,
+                                              get_item_label_func=self.__get_item_label_func)

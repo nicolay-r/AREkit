@@ -1,13 +1,13 @@
 import collections
 from collections import OrderedDict
 
-from arekit.common.evaluation.results.base import BaseEvalResult
-from arekit.common.evaluation.results.utils import calc_f1_single_class, calc_f1_macro
+from arekit.common.evaluation.result import BaseEvalResult
 from arekit.common.labels.base import Label
-from arekit.contrib.utils.evaluation.results import metrics
+from arekit.contrib.utils.evaluation.results.metrics_f1 import calc_f1_macro, calc_f1_single_class
+from arekit.contrib.utils.evaluation.results.metrics_pr import calc_prec_and_recall
 
 
-class TwoClassEvalResult(BaseEvalResult):
+class TwoClassEvalPrecRecallF1Result(BaseEvalResult):
 
     C_F1 = 'f1'
     C_POS_PREC = 'pos_prec'
@@ -28,7 +28,7 @@ class TwoClassEvalResult(BaseEvalResult):
         self.__neg_label = label2
         self.__get_item_label_func = get_item_label_func
 
-        super(TwoClassEvalResult, self).__init__(
+        super(TwoClassEvalPrecRecallF1Result, self).__init__(
             supported_labels={self.__pos_label, self.__neg_label})
 
         self.__using_labels = {self.__pos_label, self.__neg_label}
@@ -43,8 +43,8 @@ class TwoClassEvalResult(BaseEvalResult):
         return False
 
     def reg_doc(self, cmp_pair, cmp_table):
-        super(TwoClassEvalResult, self).reg_doc(cmp_pair=cmp_pair,
-                                                cmp_table=cmp_table)
+        super(TwoClassEvalPrecRecallF1Result, self).reg_doc(cmp_pair=cmp_pair,
+                                                            cmp_table=cmp_table)
 
         has_pos = self.__has_opinions_with_label(
             data_items=cmp_pair.EtalonData,
@@ -54,13 +54,13 @@ class TwoClassEvalResult(BaseEvalResult):
             data_items=cmp_pair.EtalonData,
             label=self.__neg_label)
 
-        pos_prec, pos_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,
-                                                            label=self.__pos_label,
-                                                            opinions_exist=has_pos)
+        pos_prec, pos_recall = calc_prec_and_recall(cmp_table=cmp_table,
+                                                    label=self.__pos_label,
+                                                    opinions_exist=has_pos)
 
-        neg_prec, neg_recall = metrics.calc_prec_and_recall(cmp_table=cmp_table,
-                                                            label=self.__neg_label,
-                                                            opinions_exist=has_neg)
+        neg_prec, neg_recall = calc_prec_and_recall(cmp_table=cmp_table,
+                                                    label=self.__neg_label,
+                                                    opinions_exist=has_neg)
 
         # Add document results.
         f1 = calc_f1_macro(pos_prec=pos_prec,

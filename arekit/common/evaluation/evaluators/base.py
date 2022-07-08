@@ -3,7 +3,7 @@ import collections
 from arekit.common.evaluation.comparators.base import BaseComparator
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.pairs.base import BasePairToCompare
-from arekit.common.evaluation.results.base import BaseEvalResult
+from arekit.common.evaluation.result import BaseEvalResult
 
 
 class BaseEvaluator(object):

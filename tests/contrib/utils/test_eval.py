@@ -9,7 +9,7 @@ from enum import Enum
 from arekit.common.evaluation.comparators.opinions import OpinionBasedComparator
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
-from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
+from arekit.common.evaluation.utils import DataPairsIteratorFactory
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
@@ -21,7 +21,7 @@ from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinion
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.contrib.utils.evaluation.evaluators.two_class import TwoClassEvaluator
-from arekit.contrib.utils.evaluation.results.two_class import TwoClassEvalResult
+from arekit.contrib.utils.evaluation.results.two_class_prf import TwoClassEvalPrecRecallF1Result
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
@@ -124,7 +124,7 @@ class TestEvaluation(unittest.TestCase):
         labels_formatter = RuSentRelExperimentLabelsFormatter()
 
         # Iter cmp opinions.
-        cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
+        cmp_pairs_iter = DataPairsIteratorFactory.iter_func_based_collections(
             doc_ids=ZippedResultsIOUtils.iter_doc_ids(res_version),
             read_etalon_collection_func=lambda doc_id: OpinionCollection(
                 opinions=RuSentRelOpinionCollection.iter_opinions_from_doc(
@@ -151,7 +151,7 @@ class TestEvaluation(unittest.TestCase):
         # evaluate every document.
         logged_cmp_pairs_it = progress_bar_iter(cmp_pairs_iter, desc="Evaluate", unit='pairs')
         result = evaluator.evaluate(cmp_pairs=logged_cmp_pairs_it)
-        assert(isinstance(result, TwoClassEvalResult))
+        assert(isinstance(result, TwoClassEvalPrecRecallF1Result))
 
         # calculate results.
         result.calculate()
@@ -172,7 +172,7 @@ class TestEvaluation(unittest.TestCase):
             print("------------------------")
 
         if check_results:
-            self.__is_equal_results(v1=result.get_result_by_metric(TwoClassEvalResult.C_F1),
+            self.__is_equal_results(v1=result.get_result_by_metric(TwoClassEvalPrecRecallF1Result.C_F1),
                                     v2=f1_rusentrel_v11_results[res_version])
 
     def test_ann_cnn(self):

@@ -4,7 +4,7 @@ from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.evaluation.evaluators.utils import check_is_supported
 from arekit.common.labels.base import Label
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.contrib.utils.evaluation.results.three_class import ThreeClassEvalResult
+from arekit.contrib.utils.evaluation.results.three_class_prf import ThreeClassPrecRecallF1EvalResult
 
 
 class ThreeClassOpinionEvaluator(BaseEvaluator):
@@ -49,7 +49,7 @@ class ThreeClassOpinionEvaluator(BaseEvaluator):
                                                                   is_label_supported=is_label_supported)
 
     def _create_eval_result(self):
-        return ThreeClassEvalResult(label1=self.__label1,
-                                    label2=self.__label2,
-                                    no_label=self.__no_label,
-                                    get_item_label_func=lambda opinion: opinion.Sentiment)
+        return ThreeClassPrecRecallF1EvalResult(label1=self.__label1,
+                                                label2=self.__label2,
+                                                no_label=self.__no_label,
+                                                get_item_label_func=lambda opinion: opinion.Sentiment)

@@ -1,6 +1,6 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
-from arekit.common.evaluation.results.base import BaseEvalResult
-from arekit.common.evaluation.utils import OpinionCollectionsToCompareUtils
+from arekit.common.evaluation.result import BaseEvalResult
+from arekit.common.evaluation.utils import DataPairsIteratorFactory
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.api.ops_opin import OpinionOperations
@@ -44,7 +44,7 @@ class EvalIterationHandler(ExperimentIterationHandler):
         cmp_doc_ids_set = set(cmp_doc_ids_iter)
 
         # Compose cmp pairs iterator.
-        cmp_pairs_iter = OpinionCollectionsToCompareUtils.iter_comparable_collections(
+        cmp_pairs_iter = DataPairsIteratorFactory.iter_func_based_collections(
             doc_ids=[doc_id for doc_id in doc_ids_iter if doc_id in cmp_doc_ids_set],
             read_etalon_collection_func=lambda doc_id: self.__opin_ops.get_etalon_opinion_collection(
                 doc_id=doc_id),
