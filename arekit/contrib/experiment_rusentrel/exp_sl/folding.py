@@ -35,7 +35,7 @@ def create_rusentrel_experiment_data_folding(folding_type, version):
             for doc_id in doc_ids:
                 doc_to_dtype[doc_id] = dtype
 
-        return FixedFolding(doc_to_dtype_func=lambda doc_id: doc_to_dtype[doc_id],
+        return FixedFolding(doc_to_datatypes_func=lambda doc_id: doc_to_dtype[doc_id],
                             doc_ids_to_fold=all_doc_ids,
                             supported_data_types=supported_data_types)
 
