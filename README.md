@@ -22,6 +22,7 @@ Using AREkit you may focus on preparation and experiments with your ML-models by
 In order to do so, we provide:
 * :file_folder: API for external collection binding (native support of [BRAT](https://brat.nlplab.org/)-based exported annotations) 
 * ➿ pipelines and iterators for handling large-scale collections serialization without out-of-memory issues.
+* evaluators which allows you to assess your trained model.
 
 AREkit complements the [OpenNRE](https://github.com/thunlp/OpenNRE) functionality since *document-level RE setting is not widely explored* (2.4 [[paper]](https://aclanthology.org/D19-3029.pdf)).
 The core functionality includes 
