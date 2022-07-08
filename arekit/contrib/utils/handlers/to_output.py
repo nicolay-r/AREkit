@@ -52,6 +52,7 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
                 doc_id=doc_id,
                 opinions_view=self.__exp_io.create_opinions_view(self._data_type)),
             doc_ids_set=cmp_doc_ids_set,
+            # TODO: #320 related. Create a separate parameter.
             create_opinion_collection_func=self.__opin_ops.create_opinion_collection,
             labels_scaler=self.__label_scaler,
             label_calc_mode=LabelCalculationMode.AVERAGE)

@@ -1,5 +1,6 @@
 class OpinionOperations(object):
     """
+    TODO. #320 related. Move this into `rusentrel_experiment` project.
     Provides operations with opinions and related collections
     """
 

@@ -10,10 +10,18 @@ from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
 
 
 class EvalIterationHandler(ExperimentIterationHandler):
+    """ TODO: #355 affected.
+        Этот класс устарел ввиду зависимостей на Opinion, в то время как
+        нас в оценке результатов могут, например, интересовать TextOpinion.
+        Поэтому здесь нужно избавиться от opin_ops, а также возможно что
+        от класса в целом, так как предполагаются отдельные реализации
+        различных оценок в виде отдельных функций.
+    """
 
     def __init__(self, data_type, doc_ops, opin_ops, epoch_indices, evaluator):
         assert(isinstance(data_type, DataType))
         assert(isinstance(doc_ops, DocumentOperations))
+        # TODO. #355 related. OpinionOperations limit this onto `Opinion` type only.
         assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(epoch_indices, list))
         assert(isinstance(evaluator, BaseEvaluator))
@@ -46,8 +54,10 @@ class EvalIterationHandler(ExperimentIterationHandler):
         # Compose cmp pairs iterator.
         cmp_pairs_iter = DataPairsIterators.iter_func_based_collections(
             doc_ids=[doc_id for doc_id in doc_ids_iter if doc_id in cmp_doc_ids_set],
+            # TODO. #355 related. OpinionOperations limit this onto `Opinion` type only.
             read_etalon_collection_func=lambda doc_id: self.__opin_ops.get_etalon_opinion_collection(
                 doc_id=doc_id),
+            # TODO. #355 related. OpinionOperations limit this onto `Opinion` type only.
             read_test_collection_func=lambda doc_id: self.__opin_ops.get_result_opinion_collection(
                 data_type=data_type,
                 doc_id=doc_id,
