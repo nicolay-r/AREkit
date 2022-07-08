@@ -1,6 +1,7 @@
 from os.path import join
 
 from arekit.common.folding.base import BaseDataFolding
+from arekit.contrib.utils.cv.two_class import TwoClassCVFolding
 
 
 def join_dir_with_subfolder_name(subfolder_name, dir):
@@ -15,4 +16,9 @@ def join_dir_with_subfolder_name(subfolder_name, dir):
 
 def experiment_iter_index(folding):
     assert(isinstance(folding, BaseDataFolding))
-    return str(folding.StateIndex)
+
+    if isinstance(folding, TwoClassCVFolding):
+        return folding.StateIndex
+
+    # In other cases we consider that there is only a single state.
+    return 0
