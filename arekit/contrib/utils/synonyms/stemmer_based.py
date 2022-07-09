@@ -1,4 +1,4 @@
-from arekit.common.synonyms import SynonymsCollection
+from arekit.common.synonyms.base import SynonymsCollection
 from arekit.common.text.stemmer import Stemmer
 
 

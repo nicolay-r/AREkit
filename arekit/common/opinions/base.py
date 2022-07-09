@@ -1,6 +1,6 @@
 from arekit.common.labels.base import Label
 from arekit.common.opinions.enums import OpinionEndTypes
-from arekit.common.synonyms import SynonymsCollection
+from arekit.common.synonyms.base import SynonymsCollection
 
 
 class Opinion(object):

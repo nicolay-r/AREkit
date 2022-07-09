@@ -1,6 +1,6 @@
 from arekit.common.news.parser import NewsParser
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.synonyms import SynonymsCollection
+from arekit.common.synonyms.base import SynonymsCollection
 from arekit.common.text.parser import BaseTextParser
 
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions

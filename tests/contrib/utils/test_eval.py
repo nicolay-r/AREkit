@@ -10,7 +10,7 @@ from arekit.common.evaluation.comparators.opinions import OpinionBasedComparator
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.synonyms import SynonymsCollection
+from arekit.common.synonyms.base import SynonymsCollection
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider

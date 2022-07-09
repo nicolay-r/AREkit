@@ -1,5 +1,5 @@
 from arekit.common.entities.collection import EntityCollection
-from arekit.common.synonyms import SynonymsCollection
+from arekit.common.synonyms.base import SynonymsCollection
 from arekit.contrib.source.brat.annot import BratAnnotationParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
 

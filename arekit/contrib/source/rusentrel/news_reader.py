@@ -1,5 +1,5 @@
 from arekit.common.news.base import News
-from arekit.common.synonyms import SynonymsCollection
+from arekit.common.synonyms.base import SynonymsCollection
 from arekit.contrib.source.brat.news_reader import BratDocumentSentencesReader
 from arekit.contrib.source.rusentrel.entities import RuSentRelDocumentEntityCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
