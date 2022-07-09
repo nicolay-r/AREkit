@@ -1,4 +1,4 @@
-from arekit.common.opinions.annot.default import DefaultOpinionAnnotator
+from arekit.common.opinions.annot.algo_based import AlgorithmBasedOpinionAnnotator
 from arekit.contrib.experiment_rusentrel.annot.two_scale import TwoScaleTaskOpinionAnnotator
 
 
@@ -13,6 +13,6 @@ class ExperimentAnnotatorFactory:
             return TwoScaleTaskOpinionAnnotator(create_empty_collection_func=create_empty_collection_func,
                                                 get_doc_etalon_opins_func=get_doc_etalon_opins_func)
         else:
-            return DefaultOpinionAnnotator(create_algo(),
-                                           create_empty_collection_func=create_empty_collection_func,
-                                           get_doc_etalon_opins_func=get_doc_etalon_opins_func)
+            return AlgorithmBasedOpinionAnnotator(annot_algo=create_algo(),
+                                                  create_empty_collection_func=create_empty_collection_func,
+                                                  get_doc_etalon_opins_func=get_doc_etalon_opins_func)

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class DefaultOpinionAnnotator(BaseOpinionAnnotator):
+class AlgorithmBasedOpinionAnnotator(BaseOpinionAnnotator):
     """ Algorithm-based annotator
     """
 
@@ -23,7 +23,7 @@ class DefaultOpinionAnnotator(BaseOpinionAnnotator):
         """
         assert(isinstance(annot_algo, BaseOpinionAnnotationAlgorithm))
         assert(callable(get_doc_etalon_opins_func))
-        super(DefaultOpinionAnnotator, self).__init__()
+        super(AlgorithmBasedOpinionAnnotator, self).__init__()
 
         self.__annot_algo = annot_algo
         self.__get_doc_etalon_opins_func = get_doc_etalon_opins_func
