@@ -17,13 +17,13 @@ def ppl_text_ids_to_parsed_news(parse_news_func):
     ]
 
 
-def ppl_parsed_to_annotation(annotator, data_type):
+def ppl_parsed_to_annotation(annotator):
     assert(isinstance(annotator, BaseOpinionAnnotator))
 
     return [
         # (id, parsed_news) -> (id, opinions)
         MapPipelineItem(map_func=lambda data: (
-            data[1], annotator.annotate_collection(data_type=data_type, parsed_news=data[1])))
+            data[1], annotator.annotate_collection(parsed_news=data[1])))
     ]
 
 

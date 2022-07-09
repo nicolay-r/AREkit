@@ -6,8 +6,8 @@ from arekit.contrib.utils.pipelines.annot.opinion_annotation import ppl_text_ids
     ppl_parsed_to_annotation, ppl_parsed_news_to_opinion_linkages
 
 
-def attitude_extraction_default_pipeline(annotator, data_type, get_doc_func, text_parser,
-                                         value_to_group_id_func, entity_index_func, terms_per_context):
+def attitude_extraction_default_pipeline(annotator, get_doc_func, text_parser, value_to_group_id_func,
+                                         entity_index_func, terms_per_context):
     """ This is a default pipeline which found its application in Sentiment Attitude Extraction task [1].
         In a nutshell, the sequence of processing operations is as follows:
 
@@ -34,7 +34,7 @@ def attitude_extraction_default_pipeline(annotator, data_type, get_doc_func, tex
                 news=get_doc_func(doc_id),
                 text_parser=text_parser))
         +
-        ppl_parsed_to_annotation(annotator=annotator, data_type=data_type)
+        ppl_parsed_to_annotation(annotator=annotator)
         +
         ppl_parsed_news_to_opinion_linkages(value_to_group_id_func=value_to_group_id_func,
                                             terms_per_context=terms_per_context,
