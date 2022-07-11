@@ -1,7 +1,6 @@
 import logging
 from os.path import join, exists
 
-from arekit.common.data import const
 from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
@@ -9,8 +8,6 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.bert.output.eval_helper import EvalHelper
-from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
 from arekit.contrib.utils.model_io.utils import experiment_iter_index, join_dir_with_subfolder_name
 
 logger = logging.getLogger(__name__)
@@ -36,33 +33,6 @@ class DefaultBertIOUtils(BaseIOUtils):
 
     def create_docs_stat_target(self):
         return join(self.__get_target_dir(), "docs_stat.txt")
-
-    def get_output_storage(self, epoch_index, iter_index, eval_helper):
-        assert(isinstance(eval_helper, EvalHelper))
-
-        # NOTE: we wrap original dir using eval_helper implementation.
-        # The latter allows us support a custom dir modifications while all the
-        # required data stays unchanged in terms of paths.
-        original_target_dir = self.__get_target_dir()
-        target_dir = eval_helper.get_results_dir(original_target_dir)
-
-        result_filename = eval_helper.get_results_target(
-            iter_index=iter_index,
-            epoch_index=epoch_index)
-
-        result_filepath = join(target_dir, result_filename)
-
-        if not exists(result_filepath):
-            logger.info("Result filepath was not found: {}".format(result_filepath))
-            return None
-
-        # Initialize storage.
-        output_storage = GoogleBertOutputStorage.from_tsv(filepath=result_filepath, header=None)
-        output_storage.apply_samples_view(
-            row_ids=output_storage.iter_column_values(column_name=const.ID, dtype=str),
-            doc_ids=output_storage.iter_column_values(column_name=const.DOC_ID, dtype=str))
-
-        return output_storage
 
     def try_prepare(self):
         model_dir = self.__get_target_dir()

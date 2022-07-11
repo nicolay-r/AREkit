@@ -3,7 +3,7 @@ import unittest
 
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.contrib.bert.output.google_bert_provider import GoogleBertOutputStorage
+from arekit.contrib.experiment_rusentrel.bert.output_provider import GoogleBertOutputStorage
 
 
 class TestOutputFormatters(unittest.TestCase):
