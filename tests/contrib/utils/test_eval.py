@@ -11,17 +11,19 @@ from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.modes import EvaluationModes
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.base import SynonymsCollection
+from arekit.common.text.stemmer import Stemmer
 from arekit.common.utils import progress_bar_iter
-from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
-from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.const import POS_LABEL_STR, NEG_LABEL_STR
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
+from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.contrib.utils.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
 from arekit.contrib.utils.evaluation.results.two_class_prf import TwoClassEvalPrecRecallF1Result
+from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
@@ -87,6 +89,18 @@ class ZippedResultsIOUtils(ZipArchiveUtils):
             version=result_version)
 
 
+class RuSentRelSynonymsCollectionProvider(object):
+
+    @staticmethod
+    def load_collection(stemmer, is_read_only=True, debug=False, version=RuSentRelVersions.V11):
+        assert(isinstance(stemmer, Stemmer))
+        return StemmerBasedSynonymCollection(
+            iter_group_values_lists=RuSentRelSynonymsCollectionHelper.iter_groups(version),
+            debug=debug,
+            stemmer=stemmer,
+            is_read_only=is_read_only)
+
+
 class TestEvaluation(unittest.TestCase):
     """ Based on the RuSentRel collection
     """
@@ -121,7 +135,7 @@ class TestEvaluation(unittest.TestCase):
             actual_synonyms = synonyms
 
         # Setup an experiment labels formatter.
-        labels_formatter = RuSentRelExperimentLabelsFormatter()
+        labels_formatter = RuSentRelLabelsFormatter()
 
         # Iter cmp opinions.
         cmp_pairs_iter = DataPairsIterators.iter_func_based_collections(
