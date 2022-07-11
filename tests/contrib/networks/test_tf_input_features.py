@@ -12,6 +12,7 @@ from tests.contrib.networks.text.news import init_rusentrel_doc
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.text.utils import terms_to_str
 
+from arekit.common.text.stemmer import Stemmer
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
 from arekit.common.entities.base import Entity
@@ -19,11 +20,13 @@ from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.text.parser import BaseTextParser
 
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
+from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.utils.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 
 from arekit.processing.lemmatization.mystem import MystemWrapper
@@ -31,6 +34,18 @@ from arekit.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
+
+
+class RuSentRelSynonymsCollectionProvider(object):
+
+    @staticmethod
+    def load_collection(stemmer, is_read_only=True, debug=False, version=RuSentRelVersions.V11):
+        assert(isinstance(stemmer, Stemmer))
+        return StemmerBasedSynonymCollection(
+            iter_group_values_lists=RuSentRelSynonymsCollectionHelper.iter_groups(version),
+            debug=debug,
+            stemmer=stemmer,
+            is_read_only=is_read_only)
 
 
 class TestTfInputFeatures(unittest.TestCase):
@@ -76,7 +91,7 @@ class TestTfInputFeatures(unittest.TestCase):
 
             # Initialize service providers.
             pairs_provider = TextOpinionPairsProvider(value_to_group_id_func=self.synonyms.get_synonym_group_index)
-            entity_service = EntityServiceProvider()
+            entity_service = EntityServiceProvider(entity_index_func=lambda brat_entity: brat_entity.ID)
 
             # Setup parsed news.
             pairs_provider.init_parsed_news(parsed_news)
