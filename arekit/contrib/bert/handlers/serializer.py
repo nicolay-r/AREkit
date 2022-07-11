@@ -45,11 +45,13 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
         InputDataSerializationHelper.serialize(
             pipeline=pipeline,
-            exp_io=self.__exp_io,
-            iter_doc_ids_func=lambda dtype: self.__doc_ops.iter_doc_ids(dtype),
-            keep_labels_func=lambda dtype: self.__save_labels_func(data_type),
-            balance_func=lambda dtype: self.__balance_func(data_type),
-            data_type=data_type,
+            doc_ids_iter=self.__doc_ops.iter_doc_ids(data_type),
+            keep_labels=self.__save_labels_func(data_type),
+            do_balance=self.__balance_func(data_type),
+            opinions_writer=self.__exp_io.create_opinions_writer(),
+            samples_writer=self.__exp_io.create_samples_writer(),
+            samples_target=self.__exp_io.create_samples_writer_target(data_type),
+            opinions_target=self.__exp_io.create_opinions_writer_target(data_type),
             sample_rows_provider=self.__sample_rows_provider)
 
     # endregion

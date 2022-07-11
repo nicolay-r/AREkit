@@ -1,3 +1,4 @@
+import collections
 import logging
 
 from arekit.common.data.input.providers.columns.opinion import OpinionColumnsProvider
@@ -16,23 +17,17 @@ logging.basicConfig(level=logging.INFO)
 class InputDataSerializationHelper(object):
 
     @staticmethod
-    def serialize(pipeline, exp_io, iter_doc_ids_func, keep_labels_func,
-                  balance_func, data_type, sample_rows_provider):
+    def serialize(pipeline, doc_ids_iter, keep_labels, do_balance, sample_rows_provider,
+                  samples_writer, samples_target, opinions_writer, opinions_target):
         """ pipeline:
                 note, it is important to provide a pipeline which results in linked opinions iteration
                 for a particular document.
                     document (id, instance) -> ... -> linked opinion list
-            keep_labels_func: function
-                data_type -> bool
-            balance_func: function
-                data_type -> bool
-            iter_doc_ids:
-                func(data_type)
         """
         assert(isinstance(pipeline, BasePipeline))
-        assert(callable(iter_doc_ids_func))
-        assert(callable(keep_labels_func))
-        assert(callable(balance_func))
+        assert(isinstance(doc_ids_iter, collections.Iterable))
+        assert(isinstance(keep_labels, bool))
+        assert(isinstance(do_balance, bool))
 
         opinions_repo = BaseInputOpinionsRepository(
             columns_provider=OpinionColumnsProvider(),
@@ -40,27 +35,26 @@ class InputDataSerializationHelper(object):
             storage=BaseRowsStorage())
 
         samples_repo = BaseInputSamplesRepository(
-            columns_provider=SampleColumnsProvider(store_labels=keep_labels_func(data_type)),
+            columns_provider=SampleColumnsProvider(store_labels=keep_labels),
             rows_provider=sample_rows_provider,
             storage=BaseRowsStorage())
 
         opinion_provider = InputTextOpinionProvider(pipeline)
 
+        doc_ids = list(doc_ids_iter)
+
         # Populate repositories
         opinions_repo.populate(opinion_provider=opinion_provider,
-                               doc_ids=list(iter_doc_ids_func(data_type)),
+                               doc_ids=doc_ids,
                                desc="opinion")
 
         samples_repo.populate(opinion_provider=opinion_provider,
-                              doc_ids=list(iter_doc_ids_func(data_type)),
+                              doc_ids=doc_ids,
                               desc="sample")
 
-        if balance_func(data_type):
+        if do_balance:
             samples_repo.balance()
 
         # Write repositories
-        samples_repo.write(writer=exp_io.create_samples_writer(),
-                           target=exp_io.create_samples_writer_target(data_type=data_type))
-
-        opinions_repo.write(writer=exp_io.create_opinions_writer(),
-                            target=exp_io.create_opinions_writer_target(data_type=data_type))
+        samples_repo.write(writer=samples_writer, target=samples_target())
+        opinions_repo.write(writer=opinions_writer, target=opinions_target())
