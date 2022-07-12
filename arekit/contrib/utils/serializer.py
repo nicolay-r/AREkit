@@ -56,5 +56,5 @@ class InputDataSerializationHelper(object):
             samples_repo.balance()
 
         # Write repositories
-        samples_repo.write(writer=samples_writer, target=samples_target())
-        opinions_repo.write(writer=opinions_writer, target=opinions_target())
+        samples_repo.write(writer=samples_writer, target=samples_target)
+        opinions_repo.write(writer=opinions_writer, target=opinions_target)
