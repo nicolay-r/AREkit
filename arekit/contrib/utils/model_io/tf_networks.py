@@ -92,6 +92,7 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         model_io = self._exp_ctx.ModelIO
         return self.__model_is_pretrained_state_provided(model_io)
 
+    # TODO. #320. related. Move outside from here.
     def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
         assert(isinstance(epoch_index, int))
         model_eval_root = self.__get_eval_root_filepath(data_type=data_type, epoch_index=epoch_index)

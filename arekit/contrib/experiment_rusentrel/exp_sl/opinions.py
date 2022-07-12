@@ -83,6 +83,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         assert(isinstance(self.__exp_io, BaseIOUtils))
 
         return self.__exp_io.read_opinion_collection(
+            # TODO. Use static method for this. #320
             target=self.__exp_io.create_result_opinion_collection_target(
                 doc_id=doc_id,
                 data_type=data_type,
