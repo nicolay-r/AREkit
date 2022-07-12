@@ -17,6 +17,7 @@ class EvalIterationHandler(ExperimentIterationHandler):
         различных оценок в виде отдельных функций.
     """
 
+    # TODO. #366 add cmp_doc_ops.
     def __init__(self, data_type, doc_ops, epoch_indices, evaluator,
                  get_test_doc_collection_func, get_etalon_doc_collection_func):
         """ get_doc_collection_func: func
@@ -31,6 +32,7 @@ class EvalIterationHandler(ExperimentIterationHandler):
 
         self.__data_type = data_type
         self.__doc_ops = doc_ops
+        # TODO. #366 add cmp_doc_ops.
         self.__epoch_indices = epoch_indices
         self.__evaluator = evaluator
         self.__get_test_doc_collection_func = get_test_doc_collection_func
@@ -51,6 +53,7 @@ class EvalIterationHandler(ExperimentIterationHandler):
         assert(isinstance(epoch_index, int))
 
         # Extracting all docs to cmp and those that is related to data_type.
+        # TODO. #366. use iter_doc_ids. 2) rename __doc_ops to __cmp_doc_ops.
         cmp_doc_ids_iter = self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare)
         doc_ids_iter = self.__doc_ops.iter_doc_ids(data_type=data_type)
         cmp_doc_ids_set = set(cmp_doc_ids_iter)

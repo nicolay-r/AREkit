@@ -15,6 +15,7 @@ class DocumentOperations(object):
     def get_doc(self, doc_id):
         raise NotImplementedError()
 
+    # TODO. #366. remove this.
     def iter_tagget_doc_ids(self, tag):
         """ Document identifiers which are grouped by a particular tag.
         """
