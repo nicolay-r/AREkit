@@ -20,7 +20,8 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
     def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
-                 str_entity_fmt, exp_ctx, exp_io, doc_ops, balance_func, save_embedding):
+                 str_entity_fmt, exp_ctx, exp_io, doc_ops, balance_func, save_embedding,
+                 keep_opinions_repos=False):
         """ This hanlder allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -74,6 +75,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         self.__str_entity_fmt = str_entity_fmt
         self.__save_labels_func = save_labels_func
         self.__balance_func = balance_func
+        self.__keep_opinions_repo = keep_opinions_repos
 
     # region protected methods
 
@@ -87,17 +89,33 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         assert(isinstance(data_type, DataType))
         assert(isinstance(pipeline, BasePipeline))
 
-        # Perform data serialization.
-        InputDataSerializationHelper.serialize(
-            pipeline=pipeline,
-            doc_ids_iter=self.__doc_ops.iter_doc_ids(data_type),
-            keep_labels=self.__save_labels_func(data_type),
-            do_balance=self.__balance_func(data_type),
-            opinions_writer=self.__exp_io.create_opinions_writer(),
-            samples_writer=self.__exp_io.create_samples_writer(),
-            samples_target=self.__exp_io.create_samples_writer_target(data_type),
-            opinions_target=self.__exp_io.create_opinions_writer_target(data_type),
-            sample_rows_provider=rows_provider)
+        repos = {
+            "sample": InputDataSerializationHelper.create_samples_repo(
+                keep_labels=self.__save_labels_func(data_type),
+                rows_provider=rows_provider),
+            "opinion": InputDataSerializationHelper.create_opinion_repo()
+        }
+
+        writer_and_targets = {
+            "sample": (self.__exp_io.create_samples_writer(),
+                       self.__exp_io.create_samples_writer_target(data_type)),
+            "opinion": (self.__exp_io.create_opinions_writer(),
+                        self.__exp_io.create_opinions_writer_target(data_type))
+        }
+
+        for description, repo in repos.items():
+
+            if description == "opinion" and not self.__keep_opinions_repo:
+                continue
+
+            InputDataSerializationHelper.fill_and_write(
+                repo=repo,
+                pipeline=pipeline,
+                doc_ids_iter=self.__doc_ops.iter_doc_ids(data_type),
+                do_balance=self.__balance_func(data_type),
+                desc=description,
+                writer=writer_and_targets[description][0],
+                target=writer_and_targets[description][1])
 
     # endregion
 

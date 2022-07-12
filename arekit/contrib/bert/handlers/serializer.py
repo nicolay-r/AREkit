@@ -8,7 +8,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
     def __init__(self, data_type_pipelines, sample_rows_provider, exp_io,
-                 exp_ctx, doc_ops, save_labels_func, balance_func):
+                 exp_ctx, doc_ops, save_labels_func, balance_func, keep_opinions_repo=False):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -37,22 +37,40 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         self.__doc_ops = doc_ops
         self.__data_type_pipelines = data_type_pipelines
         self.__save_labels_func = save_labels_func
+        self.__keep_opinions_repo = keep_opinions_repo
 
     # region private methods
 
     def __handle_iteration(self, data_type, pipeline):
         assert(isinstance(data_type, DataType))
 
-        InputDataSerializationHelper.serialize(
-            pipeline=pipeline,
-            doc_ids_iter=self.__doc_ops.iter_doc_ids(data_type),
-            keep_labels=self.__save_labels_func(data_type),
-            do_balance=self.__balance_func(data_type),
-            opinions_writer=self.__exp_io.create_opinions_writer(),
-            samples_writer=self.__exp_io.create_samples_writer(),
-            samples_target=self.__exp_io.create_samples_writer_target(data_type),
-            opinions_target=self.__exp_io.create_opinions_writer_target(data_type),
-            sample_rows_provider=self.__sample_rows_provider)
+        repos = {
+            "sample": InputDataSerializationHelper.create_samples_repo(
+                keep_labels=self.__save_labels_func(data_type),
+                rows_provider=self.__sample_rows_provider),
+            "opinion": InputDataSerializationHelper.create_opinion_repo()
+        }
+
+        writer_and_targets = {
+            "sample": (self.__exp_io.create_samples_writer(),
+                       self.__exp_io.create_samples_writer_target(data_type)),
+            "opinion": (self.__exp_io.create_opinions_writer(),
+                        self.__exp_io.create_opinions_writer_target(data_type))
+        }
+
+        for description, repo in repos.items():
+
+            if description == "opinion" and not self.__keep_opinions_repo:
+                continue
+
+            InputDataSerializationHelper.fill_and_write(
+                repo=repo,
+                pipeline=pipeline,
+                doc_ids_iter=self.__doc_ops.iter_doc_ids(data_type),
+                do_balance=self.__balance_func(data_type),
+                desc=description,
+                writer=writer_and_targets[description][0],
+                target=writer_and_targets[description][1])
 
     # endregion
 
