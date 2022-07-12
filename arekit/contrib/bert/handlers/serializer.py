@@ -8,7 +8,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
     def __init__(self, data_type_pipelines, sample_rows_provider, exp_io,
-                 exp_ctx, doc_ops, save_labels_func, balance_func, keep_opinions_repo=False):
+                 doc_ops, save_labels_func, balance_func, keep_opinions_repo=False):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -33,7 +33,6 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         self.__sample_rows_provider = sample_rows_provider
         self.__balance_func = balance_func
         self.__exp_io = exp_io
-        self.__exp_ctx = exp_ctx
         self.__doc_ops = doc_ops
         self.__data_type_pipelines = data_type_pipelines
         self.__save_labels_func = save_labels_func
