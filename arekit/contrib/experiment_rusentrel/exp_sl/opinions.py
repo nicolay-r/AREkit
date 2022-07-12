@@ -2,11 +2,11 @@ import logging
 
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
-from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiment_rusentrel.labels.formatters.neut_label import ExperimentNeutralLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
+from arekit.contrib.experiment_rusentrel.ops_opin import OpinionOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 

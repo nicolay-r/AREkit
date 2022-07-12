@@ -32,7 +32,7 @@ class ExperimentSerializationContext(ExperimentContext):
     def Annotator(self):
         """ Provides an instance of annotator that might be utilized
             for attitudes labeling within a specific set of documents,
-            declared in a particular experiment (see OpinionOperations).
+            declared in a particular experiment.
         """
         return self.__annot
 

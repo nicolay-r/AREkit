@@ -1,9 +1,9 @@
 import logging
 
-from arekit.common.experiment.api.base import BaseExperiment
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.types import FoldingType
 from arekit.contrib.experiment_rusentrel import common
+from arekit.contrib.experiment_rusentrel.base import CustomExperiment
 from arekit.contrib.experiment_rusentrel.exp_sl.documents import RuSentrelDocumentOperations
 from arekit.contrib.experiment_rusentrel.exp_sl.opinions import RuSentrelOpinionOperations
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
@@ -37,7 +37,7 @@ def create_rusentrel_experiment(exp_ctx, exp_io, version, folding_type):
                                           version=version,
                                           get_synonyms_func=synonyms_provider.get_or_load_synonyms_collection)
 
-    return BaseExperiment(exp_ctx=exp_ctx, exp_io=exp_io, doc_ops=doc_ops, opin_ops=opin_ops)
+    return CustomExperiment(exp_ctx=exp_ctx, exp_io=exp_io, doc_ops=doc_ops, opin_ops=opin_ops)
 
 
 class OptionalSynonymsProvider(object):

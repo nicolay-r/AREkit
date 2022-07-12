@@ -3,7 +3,6 @@ from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
-from arekit.common.experiment.api.ops_opin import OpinionOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.labels.scaler.base import BaseLabelScaler
@@ -16,21 +15,25 @@ from arekit.contrib.utils.pipelines.opinion_collections import output_to_opinion
 
 class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, exp_io, doc_ops, opin_ops, data_type, label_scaler, labels_formatter):
+    def __init__(self, exp_io, doc_ops, create_opinion_collection_func,
+                 data_type, label_scaler, labels_formatter):
+        """ create_opinion_collection_func: func
+                func () -> OpinionCollection (empty)
+        """
         assert(isinstance(exp_io, DefaultBertIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
-        assert(isinstance(opin_ops, OpinionOperations))
         assert(isinstance(data_type, DataType))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(callable(create_opinion_collection_func))
         super(BaseOutputConverterIterationHandler, self).__init__(exp_io=exp_io)
         self._data_type = data_type
 
         self.__exp_io = exp_io
         self.__doc_ops = doc_ops
-        self.__opin_ops = opin_ops
         self.__labels_formatter = labels_formatter
         self.__label_scaler = label_scaler
+        self.__create_opinion_collection_func = create_opinion_collection_func
 
     def __convert(self, output_storage, target_func):
         """ From `output_storage` to `target` conversion.
@@ -52,8 +55,7 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
                 doc_id=doc_id,
                 opinions_view=self.__exp_io.create_opinions_view(self._data_type)),
             doc_ids_set=cmp_doc_ids_set,
-            # TODO: #320 related. Create a separate parameter.
-            create_opinion_collection_func=self.__opin_ops.create_opinion_collection,
+            create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,
             label_calc_mode=LabelCalculationMode.AVERAGE)
 
