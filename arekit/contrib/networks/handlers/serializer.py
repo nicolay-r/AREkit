@@ -101,9 +101,11 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
         writer_and_targets = {
             "sample": (self.__exp_io.create_samples_writer(),
-                       self.__exp_io.create_samples_writer_target(data_type)),
+                       self.__exp_io.create_samples_writer_target(
+                           data_type=data_type, data_folding=self.__data_folding)),
             "opinion": (self.__exp_io.create_opinions_writer(),
-                        self.__exp_io.create_opinions_writer_target(data_type))
+                        self.__exp_io.create_opinions_writer_target(
+                            data_type=data_type, data_folding=self.__data_folding))
         }
 
         for description, repo in repos.items():
@@ -158,8 +160,8 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
 
         # Save embedding matrix
-        self.__exp_io.save_embedding(data=embedding_matrix)
-        self.__exp_io.save_vocab(data=vocab)
+        self.__exp_io.save_embedding(data=embedding_matrix, data_folding=self.__data_folding)
+        self.__exp_io.save_vocab(data=vocab, data_folding=self.__data_folding)
 
         del embedding_matrix
 

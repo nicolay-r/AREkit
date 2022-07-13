@@ -1,22 +1,13 @@
 from arekit.common.experiment.name_provider import ExperimentNameProvider
-from arekit.common.folding.base import BaseDataFolding
 from arekit.common.model.model_io import BaseModelIO
 
 
 class ExperimentContext(object):
 
-    def __init__(self, name_provider, data_folding):
-        assert(isinstance(data_folding, BaseDataFolding))
+    def __init__(self, name_provider):
         assert(isinstance(name_provider, ExperimentNameProvider))
         self.__model_io = None
-        self.__data_folding = data_folding
         self.__name_provider = name_provider
-
-    @property
-    def DataFolding(self):
-        # TODO. THIS METHOD IS ABSOLETE AND WILL BE REMOVED.
-        #  CONSIDERING NOT TO USE IT.
-        return self.__data_folding
 
     @property
     def ModelIO(self):
@@ -33,12 +24,6 @@ class ExperimentContext(object):
     @property
     def LabelsCount(self):
         raise NotImplementedError()
-
-    def set_data_folding(self, data_folding):
-        # TODO. THIS METHOD IS ABSOLETE AND WILL BE REMOVED.
-        #  CONSIDERING NOT TO USE IT.
-        assert(isinstance(data_folding, BaseDataFolding))
-        self.__data_folding = data_folding
 
     def set_model_io(self, model_io):
         """ Providing model_io in experiment data.

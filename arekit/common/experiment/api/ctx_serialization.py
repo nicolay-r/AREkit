@@ -7,11 +7,10 @@ class ExperimentSerializationContext(ExperimentContext):
     """ Data, that is necessary for models training stage.
     """
 
-    def __init__(self, label_scaler, annot, name_provider, data_folding):
+    def __init__(self, label_scaler, annot, name_provider):
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(annot, BaseOpinionAnnotator) or annot is None)
-        super(ExperimentSerializationContext, self).__init__(name_provider=name_provider,
-                                                             data_folding=data_folding)
+        super(ExperimentSerializationContext, self).__init__(name_provider=name_provider)
 
         self.__label_scaler = label_scaler
 

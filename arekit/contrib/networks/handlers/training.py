@@ -73,23 +73,25 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
         assert(isinstance(it_index, int))
 
         targets_existed = self.__exp_io.check_targets_existed(
-            data_types_iter=self.__data_folding.iter_supported_data_types())
+            data_types_iter=self.__data_folding.iter_supported_data_types(),
+            data_folding=self.__data_folding)
 
         if not targets_existed:
             raise Exception("Data has not been initialized/serialized!")
 
         # Reading embedding.
-        embedding_data = self.__exp_io.load_embedding()
+        embedding_data = self.__exp_io.load_embedding(self.__data_folding)
         self.__config.set_term_embedding(embedding_data)
 
         # Performing samples reading process.
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
             dtypes=self.__data_folding.iter_supported_data_types(),
-            create_samples_view_func=lambda data_type: self.__exp_io.create_samples_view(data_type),
+            create_samples_view_func=lambda data_type: self.__exp_io.create_samples_view(
+                data_type=data_type, data_folding=self.__data_folding),
             has_model_predefined_state=self.__exp_io.has_model_predefined_state(),
             labels_count=self.__exp_ctx.LabelsCount,
-            vocab=self.__exp_io.load_vocab(),
+            vocab=self.__exp_io.load_vocab(self.__data_folding),
             bags_collection_type=self.__bags_collection_type,
             input_shapes=NetworkInputShapes(iter_pairs=[
                 (NetworkInputShapes.FRAMES_PER_CONTEXT, self.__config.FramesPerContext),

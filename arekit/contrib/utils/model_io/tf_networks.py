@@ -9,6 +9,7 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
+from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.rusentrel.opinions.writer import RuSentRelOpinionCollectionWriter
@@ -66,20 +67,22 @@ class DefaultNetworkIOUtils(BaseIOUtils):
     def create_samples_writer_target(self, data_type, data_folding):
         return self.__get_input_sample_target(data_type, data_folding=data_folding)
 
-    def save_vocab(self, data):
-        target = self.__get_default_vocab_filepath()
+    def save_vocab(self, data, data_folding):
+        assert(isinstance(data_folding, BaseDataFolding))
+        target = self.__get_default_vocab_filepath(data_folding)
         return NpzEmbeddingHelper.save_vocab(data=data, target=target)
 
-    def load_vocab(self):
-        source = self.___get_vocab_source()
+    def load_vocab(self, data_folding):
+        source = self.___get_vocab_source(data_folding)
         return NpzEmbeddingHelper.load_vocab(source)
 
-    def save_embedding(self, data):
-        target = self.__get_default_embedding_filepath()
+    def save_embedding(self, data, data_folding):
+        assert(isinstance(data_folding, BaseDataFolding))
+        target = self.__get_default_embedding_filepath(data_folding)
         NpzEmbeddingHelper.save_embedding(data=data, target=target)
 
-    def load_embedding(self):
-        source = self.__get_term_embedding_source()
+    def load_embedding(self, data_folding):
+        source = self.__get_term_embedding_source(data_folding)
         return NpzEmbeddingHelper.load_embedding(source)
 
     def has_model_predefined_state(self):
@@ -92,8 +95,8 @@ class DefaultNetworkIOUtils(BaseIOUtils):
             filepaths = [
                 self.__get_input_sample_target(data_type=data_type, data_folding=data_folding),
                 self.__get_input_opinions_target(data_type=data_type, data_folding=data_folding),
-                self.__get_default_vocab_filepath(),
-                self.__get_term_embedding_target()
+                self.__get_default_vocab_filepath(data_folding=data_folding),
+                self.__get_term_embedding_target(data_folding=data_folding)
             ]
 
             if not self.__check_targets_existence(targets=filepaths, logger=logger):
@@ -126,26 +129,26 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         template = filename_template(data_type=data_type, data_folding=data_folding)
         return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="sample")
 
-    def __get_term_embedding_target(self):
-        return self.__get_default_embedding_filepath()
+    def __get_term_embedding_target(self, data_folding):
+        return self.__get_default_embedding_filepath(data_folding)
 
     @staticmethod
     def __model_is_pretrained_state_provided(model_io):
         assert(isinstance(model_io, NeuralNetworkModelIO))
         return model_io.IsPretrainedStateProvided
 
-    def ___get_vocab_source(self):
+    def ___get_vocab_source(self, data_folding):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
-        return self.__get_model_parameter(default_value=self.__get_default_vocab_filepath(),
+        return self.__get_model_parameter(default_value=self.__get_default_vocab_filepath(data_folding),
                                           get_value_func=lambda model_io: model_io.get_model_vocab_filepath())
 
-    def __get_term_embedding_source(self):
+    def __get_term_embedding_source(self, data_folding):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
-        return self.__get_model_parameter(default_value=self.__get_default_embedding_filepath(),
+        return self.__get_model_parameter(default_value=self.__get_default_embedding_filepath(data_folding),
                                           get_value_func=lambda model_io: model_io.get_model_embedding_filepath())
 
     def __get_experiment_folder_name(self):
@@ -171,15 +174,15 @@ class DefaultNetworkIOUtils(BaseIOUtils):
 
         return result
 
-    def __get_default_vocab_filepath(self):
+    def __get_default_vocab_filepath(self, data_folding):
         return join(self._get_target_dir(),
                     self.VOCABULARY_FILENAME_TEMPLATE.format(
-                        cv_index=experiment_iter_index(self._exp_ctx.DataFolding)) + '.npz')
+                        cv_index=experiment_iter_index(data_folding)) + '.npz')
 
-    def __get_default_embedding_filepath(self):
+    def __get_default_embedding_filepath(self, data_folding):
         return join(self._get_target_dir(),
                     self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                        cv_index=experiment_iter_index(self._exp_ctx.DataFolding)) + '.npz')
+                        cv_index=experiment_iter_index(data_folding)) + '.npz')
 
     def __get_model_dir(self):
         # Perform access to the model, since all the IO information
