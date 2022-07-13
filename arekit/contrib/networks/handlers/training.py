@@ -4,6 +4,7 @@ import os
 
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.handler import ExperimentIterationHandler
+from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
@@ -22,7 +23,7 @@ from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
 
 class NetworksTrainingIterationHandler(ExperimentIterationHandler):
 
-    def __init__(self, bags_collection_type, exp_ctx, exp_io,
+    def __init__(self, bags_collection_type, exp_ctx, exp_io, data_folding,
                  load_model, config, create_network_func, training_epochs,
                  network_callbacks, prepare_model_root=True, seed=None):
         assert(callable(create_network_func))
@@ -33,6 +34,7 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
         assert(isinstance(load_model, bool))
         assert(isinstance(seed, int) or seed is None)
         assert(isinstance(training_epochs, int))
+        assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(network_callbacks, list))
 
         super(NetworksTrainingIterationHandler, self).__init__()
@@ -47,6 +49,7 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
         self.__network_callbacks = network_callbacks
         self.__load_model = load_model
         self.__training_epochs = training_epochs
+        self.__data_folding = data_folding
         self.__seed = seed
 
     def __get_model_dir(self):
@@ -70,7 +73,7 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
         assert(isinstance(it_index, int))
 
         targets_existed = self.__exp_io.check_targets_existed(
-            data_types_iter=self.__exp_ctx.DataFolding.iter_supported_data_types())
+            data_types_iter=self.__data_folding.iter_supported_data_types())
 
         if not targets_existed:
             raise Exception("Data has not been initialized/serialized!")
@@ -82,7 +85,7 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
         # Performing samples reading process.
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
-            dtypes=self.__exp_ctx.DataFolding.iter_supported_data_types(),
+            dtypes=self.__data_folding.iter_supported_data_types(),
             create_samples_view_func=lambda data_type: self.__exp_io.create_samples_view(data_type),
             has_model_predefined_state=self.__exp_io.has_model_predefined_state(),
             labels_count=self.__exp_ctx.LabelsCount,
