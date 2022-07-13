@@ -35,6 +35,8 @@ class ExperimentContext(object):
         raise NotImplementedError()
 
     def set_data_folding(self, data_folding):
+        # TODO. THIS METHOD IS ABSOLETE AND WILL BE REMOVED.
+        #  CONSIDERING NOT TO USE IT.
         assert(isinstance(data_folding, BaseDataFolding))
         self.__data_folding = data_folding
 

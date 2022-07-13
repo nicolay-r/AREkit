@@ -21,10 +21,10 @@ class BaseIOUtils(object):
     def create_docs_stat_target(self):
         raise NotImplementedError()
 
-    def create_samples_view(self, data_type):
+    def create_samples_view(self, data_type, data_folding):
         raise NotImplementedError()
 
-    def create_opinions_view(self, data_type):
+    def create_opinions_view(self, data_type, data_folding):
         raise NotImplementedError()
 
     def create_samples_writer(self):
@@ -33,10 +33,10 @@ class BaseIOUtils(object):
     def create_opinions_writer(self):
         raise NotImplementedError()
 
-    def create_samples_writer_target(self, data_type):
+    def create_samples_writer_target(self, data_type, data_folding):
         raise NotImplementedError()
 
-    def create_opinions_writer_target(self, data_type):
+    def create_opinions_writer_target(self, data_type, data_folding):
         raise NotImplementedError()
 
     def _create_annotated_collection_target(self, doc_id, data_type, check_existance):

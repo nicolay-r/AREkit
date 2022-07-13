@@ -8,7 +8,7 @@ from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.utils.model_io.utils import experiment_iter_index, join_dir_with_subfolder_name
+from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, filename_template
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -75,23 +75,24 @@ class DefaultBertIOUtils(BaseIOUtils):
 
     # region public methods
 
-    def create_samples_view(self, data_type):
+    def create_samples_view(self, data_type, data_folding):
         return BaseSampleStorageView(
-            storage=BaseRowsStorage.from_tsv(filepath=self.__get_input_sample_filepath(data_type)),
+            storage=BaseRowsStorage.from_tsv(filepath=self.__get_input_sample_filepath(
+                data_type=data_type, data_folding=data_folding)),
             row_ids_provider=MultipleIDProvider())
 
-    def create_opinions_view(self, data_type):
+    def create_opinions_view(self, data_type, data_folding):
         storage = BaseRowsStorage.from_tsv(
-            filepath=self.__get_input_opinions_filepath(data_type),
+            filepath=self.__get_input_opinions_filepath(data_type, data_folding=data_folding),
             compression='infer')
 
         return BaseOpinionStorageView(storage=storage)
 
-    def create_opinions_writer_target(self, data_type):
-        return self.__get_input_opinions_filepath(data_type)
+    def create_opinions_writer_target(self, data_type, data_folding):
+        return self.__get_input_opinions_filepath(data_type, data_folding=data_folding)
 
-    def create_samples_writer_target(self, data_type):
-        return self.__get_input_sample_filepath(data_type)
+    def create_samples_writer_target(self, data_type, data_folding):
+        return self.__get_input_sample_filepath(data_type, data_folding=data_folding)
 
     def create_samples_writer(self):
         return TsvWriter(write_header=True)
@@ -103,12 +104,12 @@ class DefaultBertIOUtils(BaseIOUtils):
 
     # region private methods (filepaths)
 
-    def __get_input_opinions_filepath(self, data_type):
-        template = self.__filename_template(data_type=data_type)
+    def __get_input_opinions_filepath(self, data_type, data_folding):
+        template = filename_template(data_type=data_type, data_folding=data_folding)
         return self.__get_filepath(out_dir=self.__get_target_dir(), template=template, prefix="opinion")
 
-    def __get_input_sample_filepath(self, data_type):
-        template = self.__filename_template(data_type=data_type)
+    def __get_input_sample_filepath(self, data_type, data_folding):
+        template = filename_template(data_type=data_type, data_folding=data_folding)
         return self.__get_filepath(out_dir=self.__get_target_dir(), template=template, prefix="sample")
 
     @staticmethod
@@ -124,11 +125,6 @@ class DefaultBertIOUtils(BaseIOUtils):
     def __get_annotator_dir(self):
         return join_dir_with_subfolder_name(dir=self.__get_target_dir(),
                                             subfolder_name=self.__get_annotator_name())
-
-    def __filename_template(self, data_type):
-        assert(isinstance(data_type, DataType))
-        return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
-                                                 iter_index=experiment_iter_index(self._exp_ctx.DataFolding))
 
     def __get_annotator_name(self):
         """ We use custom implementation as it allows to

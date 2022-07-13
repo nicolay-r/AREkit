@@ -12,7 +12,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.rusentrel.opinions.writer import RuSentRelOpinionCollectionWriter
-from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index
+from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index, filename_template
 from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
 
 logger = logging.getLogger(__name__)
@@ -41,23 +41,17 @@ class DefaultNetworkIOUtils(BaseIOUtils):
     def get_experiment_folder_name(self):
         return self.__get_experiment_folder_name()
 
-    def get_output_model_results_filepath(self, data_type, epoch_index):
-        f_name_template = self._filename_template(data_type=data_type)
-        return self._get_filepath(out_dir=self.__get_model_dir(),
-                                  template="".join([f_name_template, '-e{e_index}'.format(e_index=epoch_index)]),
-                                  prefix="result")
-
-    def create_samples_view(self, data_type):
+    def create_samples_view(self, data_type, data_folding):
         assert(isinstance(data_type, DataType))
         storage = BaseRowsStorage.from_tsv(
-            filepath=self.__get_input_sample_target(data_type=data_type))
+            filepath=self.__get_input_sample_target(data_type=data_type, data_folding=data_folding))
         return BaseSampleStorageView(storage=storage,
                                      row_ids_provider=MultipleIDProvider())
 
-    def create_opinions_view(self, data_type):
+    def create_opinions_view(self, data_type, data_folding):
         assert(isinstance(data_type, DataType))
         storage = BaseRowsStorage.from_tsv(
-            filepath=self.__get_input_opinions_target(data_type=data_type))
+            filepath=self.__get_input_opinions_target(data_type=data_type, data_folding=data_folding))
         return BaseOpinionStorageView(storage)
 
     def create_opinions_writer(self):
@@ -66,11 +60,11 @@ class DefaultNetworkIOUtils(BaseIOUtils):
     def create_samples_writer(self):
         return TsvWriter(write_header=True)
 
-    def create_opinions_writer_target(self, data_type):
-        return self.__get_input_opinions_target(data_type)
+    def create_opinions_writer_target(self, data_type, data_folding):
+        return self.__get_input_opinions_target(data_type, data_folding=data_folding)
 
-    def create_samples_writer_target(self, data_type):
-        return self.__get_input_sample_target(data_type)
+    def create_samples_writer_target(self, data_type, data_folding):
+        return self.__get_input_sample_target(data_type, data_folding=data_folding)
 
     def save_vocab(self, data):
         target = self.__get_default_vocab_filepath()
@@ -92,12 +86,12 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         model_io = self._exp_ctx.ModelIO
         return self.__model_is_pretrained_state_provided(model_io)
 
-    def check_targets_existed(self, data_types_iter):
+    def check_targets_existed(self, data_types_iter, data_folding):
         for data_type in data_types_iter:
 
             filepaths = [
-                self.__get_input_sample_target(data_type=data_type),
-                self.__get_input_opinions_target(data_type=data_type),
+                self.__get_input_sample_target(data_type=data_type, data_folding=data_folding),
+                self.__get_input_opinions_target(data_type=data_type, data_folding=data_folding),
                 self.__get_default_vocab_filepath(),
                 self.__get_term_embedding_target()
             ]
@@ -124,12 +118,12 @@ class DefaultNetworkIOUtils(BaseIOUtils):
 
         return default_value if predefined_value is None else predefined_value
 
-    def __get_input_opinions_target(self, data_type):
-        template = self._filename_template(data_type=data_type)
+    def __get_input_opinions_target(self, data_type, data_folding):
+        template = filename_template(data_type=data_type, data_folding=data_folding)
         return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="opinion")
 
-    def __get_input_sample_target(self, data_type):
-        template = self._filename_template(data_type=data_type)
+    def __get_input_sample_target(self, data_type, data_folding):
+        template = filename_template(data_type=data_type, data_folding=data_folding)
         return self._get_filepath(out_dir=self._get_target_dir(), template=template, prefix="sample")
 
     def __get_term_embedding_target(self):
@@ -223,11 +217,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         assert(isinstance(template, str))
         assert(isinstance(prefix, str))
         return join(out_dir, DefaultNetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
-
-    def _filename_template(self, data_type):
-        assert(isinstance(data_type, DataType))
-        return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
-                                                 iter_index=experiment_iter_index(self._exp_ctx.DataFolding))
 
     def _get_annotator_name(self):
         """ We use custom implementation as it allows to

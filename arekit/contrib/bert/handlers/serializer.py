@@ -55,9 +55,11 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
         writer_and_targets = {
             "sample": (self.__exp_io.create_samples_writer(),
-                       self.__exp_io.create_samples_writer_target(data_type)),
+                       self.__exp_io.create_samples_writer_target(
+                           data_type=data_type, data_folding=self.__data_folding)),
             "opinion": (self.__exp_io.create_opinions_writer(),
-                        self.__exp_io.create_opinions_writer_target(data_type))
+                        self.__exp_io.create_opinions_writer_target(
+                            data_type=data_type, data_folding=self.__data_folding))
         }
 
         for description, repo in repos.items():
