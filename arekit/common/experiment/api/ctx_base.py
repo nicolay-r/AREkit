@@ -14,6 +14,8 @@ class ExperimentContext(object):
 
     @property
     def DataFolding(self):
+        # TODO. THIS METHOD IS ABSOLETE AND WILL BE REMOVED.
+        #  CONSIDERING NOT TO USE IT.
         return self.__data_folding
 
     @property

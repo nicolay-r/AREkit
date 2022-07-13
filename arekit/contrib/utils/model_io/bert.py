@@ -99,31 +99,9 @@ class DefaultBertIOUtils(BaseIOUtils):
     def create_opinions_writer(self):
         return TsvWriter(write_header=False)
 
-    # TODO. #320. move.
-    def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
-        """ Utilized for results evaluation.
-        """
-        assert(isinstance(epoch_index, int))
-        model_eval_root = self.__get_eval_root_filepath(data_type=data_type, epoch_index=epoch_index)
-        filepath = join(model_eval_root, "{}.opin.txt".format(doc_id))
-        return filepath
-
     # endregion
 
     # region private methods (filepaths)
-
-    def __get_eval_root_filepath(self, data_type, epoch_index):
-        assert(isinstance(data_type, DataType))
-        assert(isinstance(epoch_index, int))
-
-        result_dir = join(
-            self.__get_target_dir(),
-            join("eval/{data_type}/{iter_index}/{epoch_index}".format(
-                data_type=data_type.name,
-                iter_index=experiment_iter_index(self._exp_ctx.DataFolding),
-                epoch_index=str(epoch_index))))
-
-        return result_dir
 
     def __get_input_opinions_filepath(self, data_type):
         template = self.__filename_template(data_type=data_type)

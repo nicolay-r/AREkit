@@ -92,12 +92,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         model_io = self._exp_ctx.ModelIO
         return self.__model_is_pretrained_state_provided(model_io)
 
-    # TODO. #320. related. Move outside from here.
-    def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
-        assert(isinstance(epoch_index, int))
-        model_eval_root = self.__get_eval_root_filepath(data_type=data_type, epoch_index=epoch_index)
-        return join(model_eval_root, "{}.opin.txt".format(doc_id))
-
     def check_targets_existed(self, data_types_iter):
         for data_type in data_types_iter:
 
@@ -199,19 +193,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         model_io = self._exp_ctx.ModelIO
         assert(isinstance(model_io, NeuralNetworkModelIO))
         return model_io.get_model_dir()
-
-    def __get_eval_root_filepath(self, data_type, epoch_index):
-        assert(isinstance(data_type, DataType))
-        assert(isinstance(epoch_index, int))
-
-        result_dir = join(
-            self.__get_model_dir(),
-            join("eval/{data_type}/{iter_index}/{epoch_index}".format(
-                data_type=data_type.name,
-                iter_index=experiment_iter_index(self._exp_ctx.DataFolding),
-                epoch_index=str(epoch_index))))
-
-        return result_dir
 
     def __get_annotator_dir(self):
         return join_dir_with_subfolder_name(dir=self._get_target_dir(),

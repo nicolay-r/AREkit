@@ -1,15 +1,15 @@
 import logging
 
-from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
+from arekit.common.folding.base import BaseDataFolding
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiment_rusentrel.labels.formatters.neut_label import ExperimentNeutralLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.experiment_rusentrel.ops_opin import OpinionOperations
+from arekit.contrib.experiment_rusentrel.utils import create_result_opinion_collection_target, experiment_iter_index
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
-
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -17,16 +17,21 @@ logging.basicConfig(level=logging.INFO)
 
 class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, exp_ctx, exp_io, get_synonyms_func, version):
-        assert(isinstance(exp_ctx, ExperimentContext))
+    def __init__(self, data_folding, exp_io, get_synonyms_func, result_target_dir, version):
+        assert(isinstance(data_folding, BaseDataFolding))
+        assert(isinstance(exp_io, BaseIOUtils))
+        assert(callable(get_synonyms_func))
+        assert(isinstance(result_target_dir, str))
         assert(isinstance(version, RuSentRelVersions))
         super(RuSentrelOpinionOperations, self).__init__()
 
-        self.__get_synonyms_func = get_synonyms_func
-        self.__version = version
-        self.__exp_io = exp_io
+        self.__data_folding = BaseDataFolding
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
+        self.__exp_io = exp_io
+        self.__get_synonyms_func = get_synonyms_func
+        self.__result_target_dir = result_target_dir
+        self.__version = version
 
     @property
     def LabelsFormatter(self):
@@ -83,11 +88,10 @@ class RuSentrelOpinionOperations(OpinionOperations):
         assert(isinstance(self.__exp_io, BaseIOUtils))
 
         return self.__exp_io.read_opinion_collection(
-            # TODO. Use static method for this. #320
-            target=self.__exp_io.create_result_opinion_collection_target(
-                doc_id=doc_id,
-                data_type=data_type,
-                epoch_index=epoch_index),
+            target=create_result_opinion_collection_target(
+                target_dir=self.__result_target_dir,
+                doc_id=doc_id, data_type=data_type, epoch_index=epoch_index,
+                iteration_index=experiment_iter_index(self.__data_folding)),     # There should be dynamic index.
             labels_formatter=self.__result_labels_fmt,
             create_collection_func=lambda opinions: self.__create_collection(opinions))
 

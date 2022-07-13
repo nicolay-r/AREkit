@@ -39,10 +39,6 @@ class BaseIOUtils(object):
     def create_opinions_writer_target(self, data_type):
         raise NotImplementedError()
 
-    # TODO. #320. Remove (inherited classes provides the same implemenations)
-    def create_result_opinion_collection_target(self, doc_id, data_type, epoch_index):
-        raise NotImplementedError()
-
     def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
         raise NotImplementedError()
 
