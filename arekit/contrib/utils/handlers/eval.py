@@ -1,6 +1,5 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.result import BaseEvalResult
-from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
@@ -17,14 +16,14 @@ class EvalIterationHandler(ExperimentIterationHandler):
         различных оценок в виде отдельных функций.
     """
 
-    # TODO. #366 add cmp_doc_ops.
-    def __init__(self, data_type, doc_ops, epoch_indices, evaluator,
+    def __init__(self, data_type, doc_ops, cmp_doc_ops, epoch_indices, evaluator,
                  get_test_doc_collection_func, get_etalon_doc_collection_func):
         """ get_doc_collection_func: func
                 (doc_id) -> collection (Any type)
         """
         assert(isinstance(data_type, DataType))
         assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(cmp_doc_ops, DocumentOperations))
         assert(isinstance(epoch_indices, list))
         assert(isinstance(evaluator, BaseEvaluator))
         assert(callable(get_test_doc_collection_func))
@@ -32,7 +31,7 @@ class EvalIterationHandler(ExperimentIterationHandler):
 
         self.__data_type = data_type
         self.__doc_ops = doc_ops
-        # TODO. #366 add cmp_doc_ops.
+        self.__cmp_doc_ops = cmp_doc_ops
         self.__epoch_indices = epoch_indices
         self.__evaluator = evaluator
         self.__get_test_doc_collection_func = get_test_doc_collection_func
@@ -53,10 +52,8 @@ class EvalIterationHandler(ExperimentIterationHandler):
         assert(isinstance(epoch_index, int))
 
         # Extracting all docs to cmp and those that is related to data_type.
-        # TODO. #366. use iter_doc_ids. 2) rename __doc_ops to __cmp_doc_ops.
-        cmp_doc_ids_iter = self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare)
         doc_ids_iter = self.__doc_ops.iter_doc_ids(data_type=data_type)
-        cmp_doc_ids_set = set(cmp_doc_ids_iter)
+        cmp_doc_ids_set = set(self.__cmp_doc_ops.iter_doc_ids(data_type=DataType))
 
         # Compose cmp pairs iterator.
         cmp_pairs_iter = DataPairsIterators.iter_func_based_collections(

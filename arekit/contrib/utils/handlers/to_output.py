@@ -1,7 +1,6 @@
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
-from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
@@ -43,8 +42,6 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
         assert(isinstance(output_storage, BaseRowsStorage))
         assert(callable(target_func))
 
-        cmp_doc_ids_set = set(self.__doc_ops.iter_tagget_doc_ids(BaseDocumentTag.Compare))
-
         # We utilize google bert format, where every row
         # consist of label probabilities per every class
         linkages_view = MultilableOpinionLinkagesView(labels_scaler=self.__label_scaler,
@@ -54,7 +51,7 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
                 doc_id=doc_id,
                 opinions_view=self.__exp_io.create_opinions_view(self._data_type)),
-            doc_ids_set=cmp_doc_ids_set,
+            doc_ids_set=set(self.__doc_ops.iter_doc_ids(self._data_type)),
             create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,
             label_calc_mode=LabelCalculationMode.AVERAGE)

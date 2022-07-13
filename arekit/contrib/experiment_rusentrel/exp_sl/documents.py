@@ -1,4 +1,3 @@
-from arekit.common.experiment.api.enums import BaseDocumentTag
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
@@ -17,18 +16,9 @@ class RuSentrelDocumentOperations(DocumentOperations):
         self.__version = version
         self.__get_synonyms_func = get_synonyms_func
 
-    # region DocumentOperations
-
-    def iter_tagget_doc_ids(self, tag):
-        assert(isinstance(tag, BaseDocumentTag))
-        assert(tag == BaseDocumentTag.Compare or tag == BaseDocumentTag.Annotate)
-        return self._exp_ctx.DataFolding.iter_doc_ids()
-
     def get_doc(self, doc_id):
         assert(isinstance(doc_id, int))
         synonyms = self.__get_synonyms_func()
         return RuSentRelNewsReader.read_document(doc_id=doc_id,
                                                  synonyms=synonyms,
                                                  version=self.__version)
-
-    # endregion
