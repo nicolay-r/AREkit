@@ -4,6 +4,7 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
+from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
@@ -21,7 +22,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
     def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
                  str_entity_fmt, exp_ctx, exp_io, doc_ops, balance_func, save_embedding,
-                 keep_opinions_repos=False):
+                 data_folding, keep_opinions_repos=False):
         """ This hanlder allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -62,6 +63,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
         assert(isinstance(vectorizers, dict))
         assert(isinstance(save_embedding, bool))
+        assert(isinstance(data_folding, BaseDataFolding))
         assert(callable(save_labels_func))
         assert(callable(balance_func))
         super(NetworksInputSerializerExperimentIteration, self).__init__()
@@ -75,6 +77,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         self.__str_entity_fmt = str_entity_fmt
         self.__save_labels_func = save_labels_func
         self.__balance_func = balance_func
+        self.__data_folding = data_folding
         self.__keep_opinions_repo = keep_opinions_repos
 
     # region protected methods
@@ -111,7 +114,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,
                 pipeline=pipeline,
-                doc_ids_iter=self.__doc_ops.iter_doc_ids(data_type),
+                doc_ids_iter=self.__data_folding.fold_doc_ids_set()[data_type],
                 do_balance=self.__balance_func(data_type),
                 desc=description,
                 writer=writer_and_targets[description][0],

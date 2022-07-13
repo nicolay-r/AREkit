@@ -10,14 +10,14 @@ from arekit.contrib.utils.handlers.to_output import BaseOutputConverterIteration
 
 class ModelEvaluationIterationHandler(BaseOutputConverterIterationHandler):
 
-    def __init__(self, exp_io, doc_ops, data_type, eval_helper, create_opinion_collection_func,
+    def __init__(self, exp_io, data_folding, data_type, eval_helper, create_opinion_collection_func,
                  original_target_dir, output_target_dir, max_epochs_count, label_scaler, labels_formatter,
                  iteration_index):
         assert(isinstance(output_target_dir, str))
         assert(isinstance(iteration_index, int))
 
         super(ModelEvaluationIterationHandler, self).__init__(
-            exp_io=exp_io, doc_ops=doc_ops, data_type=data_type,
+            exp_io=exp_io, data_folding=data_folding, data_type=data_type,
             create_opinion_collection_func=create_opinion_collection_func,
             label_scaler=label_scaler, labels_formatter=labels_formatter)
 

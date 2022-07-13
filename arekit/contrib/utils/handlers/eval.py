@@ -1,8 +1,8 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.result import BaseEvalResult
-from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
+from arekit.common.folding.nofold import NoFolding
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
 
@@ -16,22 +16,20 @@ class EvalIterationHandler(ExperimentIterationHandler):
         различных оценок в виде отдельных функций.
     """
 
-    def __init__(self, data_type, doc_ops, cmp_doc_ops, epoch_indices, evaluator,
+    def __init__(self, data_type, cmp_data_folding, epoch_indices, evaluator,
                  get_test_doc_collection_func, get_etalon_doc_collection_func):
         """ get_doc_collection_func: func
                 (doc_id) -> collection (Any type)
         """
         assert(isinstance(data_type, DataType))
-        assert(isinstance(doc_ops, DocumentOperations))
-        assert(isinstance(cmp_doc_ops, DocumentOperations))
+        assert(isinstance(cmp_data_folding, NoFolding))
         assert(isinstance(epoch_indices, list))
         assert(isinstance(evaluator, BaseEvaluator))
         assert(callable(get_test_doc_collection_func))
         assert(callable(get_etalon_doc_collection_func))
 
         self.__data_type = data_type
-        self.__doc_ops = doc_ops
-        self.__cmp_doc_ops = cmp_doc_ops
+        self.__cmp_data_folding = cmp_data_folding
         self.__epoch_indices = epoch_indices
         self.__evaluator = evaluator
         self.__get_test_doc_collection_func = get_test_doc_collection_func
@@ -51,13 +49,11 @@ class EvalIterationHandler(ExperimentIterationHandler):
         assert(isinstance(data_type, DataType))
         assert(isinstance(epoch_index, int))
 
-        # Extracting all docs to cmp and those that is related to data_type.
-        doc_ids_iter = self.__doc_ops.iter_doc_ids(data_type=data_type)
-        cmp_doc_ids_set = set(self.__cmp_doc_ops.iter_doc_ids(data_type=DataType))
+        _, cmp_doc_ids = next(iter(self.__cmp_data_folding.fold_doc_ids_set()))
 
         # Compose cmp pairs iterator.
         cmp_pairs_iter = DataPairsIterators.iter_func_based_collections(
-            doc_ids=[doc_id for doc_id in doc_ids_iter if doc_id in cmp_doc_ids_set],
+            doc_ids=cmp_doc_ids,
             read_etalon_collection_func=lambda doc_id: self.__get_test_doc_collection_func(doc_id),
             read_test_collection_func=lambda doc_id: self.__get_etalon_doc_collection_func(doc_id))
 

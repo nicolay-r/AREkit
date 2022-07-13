@@ -2,13 +2,14 @@ from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
+from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
 class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
     def __init__(self, data_type_pipelines, sample_rows_provider, exp_io,
-                 doc_ops, save_labels_func, balance_func, keep_opinions_repo=False):
+                 data_folding, doc_ops, save_labels_func, balance_func, keep_opinions_repo=False):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -28,6 +29,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         """
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(data_folding, BaseDataFolding))
         super(BertExperimentInputSerializerIterationHandler, self).__init__()
 
         self.__sample_rows_provider = sample_rows_provider
@@ -37,6 +39,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         self.__data_type_pipelines = data_type_pipelines
         self.__save_labels_func = save_labels_func
         self.__keep_opinions_repo = keep_opinions_repo
+        self.__data_folding = data_folding
 
     # region private methods
 
@@ -65,7 +68,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,
                 pipeline=pipeline,
-                doc_ids_iter=self.__doc_ops.iter_doc_ids(data_type),
+                doc_ids_iter=self.__data_folding.fold_doc_ids_set()[data_type],
                 do_balance=self.__balance_func(data_type),
                 desc=description,
                 writer=writer_and_targets[description][0],
