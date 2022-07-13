@@ -2,6 +2,7 @@ from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.experiment.api.enums import BaseDocumentTag
+from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
@@ -9,7 +10,6 @@ from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
-from arekit.contrib.utils.model_io.bert import DefaultBertIOUtils
 from arekit.contrib.utils.pipelines.opinion_collections import output_to_opinion_collections_pipeline
 
 
@@ -20,13 +20,13 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
         """ create_opinion_collection_func: func
                 func () -> OpinionCollection (empty)
         """
-        assert(isinstance(exp_io, DefaultBertIOUtils))
+        assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(data_type, DataType))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(callable(create_opinion_collection_func))
-        super(BaseOutputConverterIterationHandler, self).__init__(exp_io=exp_io)
+        super(BaseOutputConverterIterationHandler, self).__init__()
         self._data_type = data_type
 
         self.__exp_io = exp_io
