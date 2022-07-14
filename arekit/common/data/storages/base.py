@@ -120,9 +120,10 @@ class BaseRowsStorage(object):
         assert(callable(iter_rows_func))
         assert(isinstance(columns_provider, BaseColumnsProvider))
 
-        logged_rows_it = progress_bar_iter(iterable=iter_rows_func(True),
-                                           desc="Calculating rows count",
-                                           unit="rows")
+        logged_rows_it = progress_bar_iter(
+            iterable=iter_rows_func(True),
+            desc="Calculating rows count ({reason})".format(reason=desc),
+            unit="rows")
         rows_count = sum(1 for _ in logged_rows_it)
 
         logger.info("Filling with blank rows: {}".format(rows_count))

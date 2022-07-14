@@ -132,7 +132,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
                 pipeline=pipeline,
                 doc_ids_iter=data_folding.fold_doc_ids_set()[data_type],
                 do_balance=self.__balance_func(data_type),
-                desc=description,
+                desc="{desc} [{data_type}]".format(desc=description, data_type=data_type),
                 writer=writer_and_targets[description][0],
                 target=writer_and_targets[description][1])
 
