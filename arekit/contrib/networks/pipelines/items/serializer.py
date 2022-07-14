@@ -2,9 +2,9 @@ import collections
 
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.base import BasePipeline
+from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
 from arekit.contrib.networks.core.input.embedding.offsets import TermsEmbeddingOffsets
@@ -17,7 +17,7 @@ from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
-class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
+class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
     def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
                  str_entity_fmt, exp_ctx, exp_io, balance_func, save_embedding,
@@ -64,7 +64,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         assert(isinstance(data_folding, BaseDataFolding))
         assert(callable(save_labels_func))
         assert(callable(balance_func))
-        super(NetworksInputSerializerExperimentIteration, self).__init__()
+        super(NetworksInputSerializerPipelineItem, self).__init__()
 
         self.__data_type_pipelines = data_type_pipelines
         self.__exp_ctx = exp_ctx
@@ -121,7 +121,7 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
     # endregion
 
-    def on_iteration(self, iter_index):
+    def apply_core(self, input_data, pipeline_ctx=None):
         """ Performing data serialization for a particular iteration
         """
 

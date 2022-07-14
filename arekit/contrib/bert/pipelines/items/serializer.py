@@ -75,12 +75,8 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
 
     # endregion
 
-    # region protected methods
-
-    def apply(self, input_data, pipeline_ctx=None):
+    def apply_core(self, input_data, pipeline_ctx=None):
         """ Performing data serialization for a particular iteration
         """
         for data_type, pipeline in self.__data_type_pipelines.items():
             self.__handle_iteration(data_type=data_type, pipeline=pipeline)
-
-    # endregion

@@ -3,8 +3,8 @@ import logging
 import os
 
 from arekit.common.experiment.api.ctx_base import ExperimentContext
-from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.folding.base import BaseDataFolding
+from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
@@ -21,7 +21,7 @@ from arekit.contrib.networks.utils import rm_dir_contents
 from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
 
 
-class NetworksTrainingIterationHandler(ExperimentIterationHandler):
+class NetworksTrainingPipelineItem(BasePipelineItem):
 
     def __init__(self, bags_collection_type, exp_ctx, exp_io, data_folding,
                  load_model, config, create_network_func, training_epochs,
@@ -37,7 +37,7 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
         assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(network_callbacks, list))
 
-        super(NetworksTrainingIterationHandler, self).__init__()
+        super(NetworksTrainingPipelineItem, self).__init__()
 
         self.__logger = self.__create_logger()
         self.__exp_io = exp_io
@@ -65,12 +65,22 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
         logger.addHandler(stream_handler)
         return logger
 
-    # region protected methods
+    def __prepare_model(self):
+        # Clear model root before training optionally
+        if self.__clear_model_root_before_experiment:
+            rm_dir_contents(dir_path=self.__get_model_dir(),
+                            logger=self.__logger)
 
-    def on_iteration(self, it_index):
-        """ Run single CV-index experiment.
-        """
-        assert(isinstance(it_index, int))
+        # Disable tensorflow logging
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+        # Notify other subscribers that initialization process has been completed.
+        self.__config.init_initializers()
+
+    def apply_core(self, input_data, pipeline_ctx):
+
+        # Prepare all the required data.
+        self.__prepare_model()
 
         targets_existed = self.__exp_io.check_targets_existed(
             data_types_iter=self.__data_folding.iter_supported_data_types(),
@@ -137,18 +147,3 @@ class NetworksTrainingIterationHandler(ExperimentIterationHandler):
         del model
 
         gc.collect()
-
-    def on_before_iteration(self):
-
-        # Clear model root before training optionally
-        if self.__clear_model_root_before_experiment:
-            rm_dir_contents(dir_path=self.__get_model_dir(),
-                            logger=self.__logger)
-
-        # Disable tensorflow logging
-        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-
-        # Notify other subscribers that initialization process has been completed.
-        self.__config.init_initializers()
-
-    # endregion
