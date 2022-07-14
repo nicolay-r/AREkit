@@ -3,6 +3,7 @@ import logging
 import os
 
 from arekit.common.experiment.api.ctx_base import ExperimentContext
+from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
@@ -77,8 +78,9 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         # Notify other subscribers that initialization process has been completed.
         self.__config.init_initializers()
 
-    def __handle_iteration(self, data_folding):
+    def __handle_iteration(self, data_folding, data_type):
         assert(isinstance(data_folding, BaseDataFolding))
+        assert(isinstance(data_type, DataType))
 
         targets_existed = self.__exp_io.check_targets_existed(
             data_types_iter=data_folding.iter_supported_data_types(),
@@ -138,8 +140,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         # Initialize model params instance.
         model_params = NeuralNetworkModelParams(epochs_count=self.__training_epochs)
 
-        model.fit(model_params=model_params,
-                  seed=self.__seed)
+        model.fit(model_params=model_params, seed=self.__seed, data_type=data_type)
 
         del network
         del model
@@ -153,5 +154,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         # Prepare all the required data.
         self.__prepare_model()
         data_folding = pipeline_ctx.provide("data_folding")
+        data_type = pipeline_ctx.provide_or_none("data_type")
         for _ in folding_iter_states(data_folding):
-            self.__handle_iteration(data_folding)
+            self.__handle_iteration(data_folding=data_folding,
+                                    data_type=data_type if data_type is not None else DataType.Train)

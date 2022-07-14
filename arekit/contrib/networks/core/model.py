@@ -94,12 +94,13 @@ class BaseTensorflowModel(BaseModel):
             self.__states_provider.load_model(sess=self.__context.Session,
                                               path_tf_prefix=self.__context.IO.get_model_source_path_tf_prefix())
 
-    def __fit(self, epochs_count):
+    def __fit(self, epochs_count, data_type):
         assert(isinstance(epochs_count, int))
+        assert(isinstance(data_type, DataType))
         assert(self.__context.Session is not None)
 
         operation_cancel = OperationCancellation()
-        bags_collection = self.__context.get_bags_collection(DataType.Train)
+        bags_collection = self.__context.get_bags_collection(data_type)
 
         self.__callback_do(lambda callback: callback.on_fit_started(operation_cancel))
 
@@ -111,8 +112,8 @@ class BaseTensorflowModel(BaseModel):
             bags_collection.shuffle()
 
             self.__run_epoch_pipeline(pipeline_items=self.__fit_pipeline,
-                                      data_type=DataType.Train,
-                                      prefix="Training")
+                                      data_type=data_type,
+                                      prefix="Training [{data_type}]".format(data_type=data_type))
 
             self.__callback_do(lambda callback: callback.on_epoch_finished(
                 pipeline=self.__fit_pipeline,
@@ -124,13 +125,13 @@ class BaseTensorflowModel(BaseModel):
 
     # endregion
 
-    def fit(self, model_params, seed):
+    def fit(self, model_params, seed, data_type=DataType.Train):
         assert(isinstance(model_params, NeuralNetworkModelParams))
         self.__context.Network.compile(self.__context.Config, reset_graph=True, graph_seed=seed)
         self.__context.set_optimiser()
         self.__context.initialize_session()
         self.__try_load_state()
-        self.__fit(epochs_count=model_params.EpochsCount)
+        self.__fit(epochs_count=model_params.EpochsCount, data_type=data_type)
 
         self.__context.dispose_session()
 
