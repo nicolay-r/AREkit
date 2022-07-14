@@ -4,6 +4,7 @@ from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.base import BasePipeline
+from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.core.input.embedding.matrix import create_term_embedding_matrix
@@ -20,9 +21,8 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
-                 str_entity_fmt, exp_ctx, exp_io, balance_func, save_embedding,
-                 data_folding, keep_opinions_repos=False):
+    def __init__(self, vectorizers, save_labels_func, str_entity_fmt, exp_ctx,
+                 exp_io, balance_func, save_embedding, keep_opinions_repos=False):
         """ This pipeline item allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -44,31 +44,17 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
             save_labels_func: function
                 data_type -> bool
 
-            data_type_pipelines: dict of, for example:
-                {
-                    DataType.Train: BasePipeline,
-                    DataType.Test: BasePipeline
-                }
-
-                pipeline: doc_id -> parsed_news -> annot -> opinion linkages
-                    for example, function: sentiment_attitude_extraction_default_pipeline
-
             save_embedding: bool
                 save embedding and all the related information to it.
         """
-        assert(isinstance(data_type_pipelines, dict))
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(exp_io, DefaultNetworkIOUtils))
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
         assert(isinstance(vectorizers, dict))
         assert(isinstance(save_embedding, bool))
-        assert(isinstance(data_folding, BaseDataFolding))
         assert(callable(save_labels_func))
         assert(callable(balance_func))
         super(NetworksInputSerializerPipelineItem, self).__init__()
-
-        self.__data_type_pipelines = data_type_pipelines
-        self.__data_folding = data_folding
 
         self.__exp_io = exp_io
         self.__save_embedding = save_embedding
@@ -139,6 +125,8 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
     def __handle_iteration(self, data_type_pipelines, data_folding):
         """ Performing data serialization for a particular iteration
         """
+        assert(isinstance(data_type_pipelines, dict))
+        assert(isinstance(data_folding, BaseDataFolding))
 
         # Prepare for the present iteration.
         self.__term_embedding_pairs.clear()
@@ -165,7 +153,22 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
     # endregion
 
-    def apply_core(self, input_data, pipeline_ctx=None):
-        for _ in folding_iter_states(self.__data_folding):
-            self.__handle_iteration(data_type_pipelines=self.__data_type_pipelines,
-                                    data_folding=self.__data_folding)
+    def apply_core(self, input_data, pipeline_ctx):
+        """
+            data_type_pipelines: dict of, for example:
+                {
+                    DataType.Train: BasePipeline,
+                    DataType.Test: BasePipeline
+                }
+
+                pipeline: doc_id -> parsed_news -> annot -> opinion linkages
+                    for example, function: sentiment_attitude_extraction_default_pipeline
+        """
+        assert(isinstance(pipeline_ctx, PipelineContext))
+        assert("data_type_pipelines" in pipeline_ctx)
+        assert("data_folding" in pipeline_ctx)
+
+        data_folding = pipeline_ctx.provide("data_folding")
+        for _ in folding_iter_states(data_folding):
+            self.__handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
+                                    data_folding=data_folding)

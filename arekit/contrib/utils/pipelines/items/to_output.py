@@ -7,6 +7,7 @@ from arekit.common.folding.base import BaseDataFolding
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
+from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
 from arekit.contrib.utils.utils_folding import folding_iter_states, experiment_iter_index
@@ -15,13 +16,12 @@ from arekit.contrib.utils.pipelines.opinion_collections import text_opinion_link
 
 class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
 
-    def __init__(self, exp_io, data_folding, create_opinion_collection_func,
+    def __init__(self, exp_io, create_opinion_collection_func,
                  data_type, label_scaler, labels_formatter):
         """ create_opinion_collection_func: func
                 func () -> OpinionCollection (empty)
         """
         assert(isinstance(exp_io, BaseIOUtils))
-        assert(isinstance(data_folding, BaseDataFolding))
         assert(callable(create_opinion_collection_func))
         assert(isinstance(data_type, DataType))
         assert(isinstance(label_scaler, BaseLabelScaler))
@@ -30,16 +30,16 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         self._data_type = data_type
 
         self.__exp_io = exp_io
-        self.__data_folding = data_folding
         self.__labels_formatter = labels_formatter
         self.__label_scaler = label_scaler
         self.__create_opinion_collection_func = create_opinion_collection_func
 
-    def __convert(self, output_storage, target_func):
+    def __convert(self, data_folding, output_storage, target_func):
         """ From `output_storage` to `target` conversion.
             output_storage: BaseRowsStorage
             target_func: func(doc_id) -- consdiered to provide a target for the particular document.
         """
+        assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(output_storage, BaseRowsStorage))
         assert(callable(target_func))
 
@@ -52,8 +52,8 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
                 doc_id=doc_id,
                 opinions_view=self.__exp_io.create_opinions_view(data_type=self._data_type,
-                                                                 data_folding=self.__data_folding)),
-            doc_ids_set=set(self.__data_folding.fold_doc_ids_set()[self._data_type]),
+                                                                 data_folding=data_folding)),
+            doc_ids_set=set(data_folding.fold_doc_ids_set()[self._data_type]),
             create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,
             label_calc_mode=LabelCalculationMode.AVERAGE)
@@ -78,7 +78,12 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         raise NotImplementedError()
 
     def apply_core(self, input_data, pipeline_ctx):
-        for _ in folding_iter_states(self.__data_folding):
-            iter_index = experiment_iter_index(folding=self.__data_folding)
+        assert(isinstance(pipeline_ctx, PipelineContext))
+        assert("data_folding" in pipeline_ctx)
+
+        data_folding = pipeline_ctx.provide("data_folding")
+        for _ in folding_iter_states(data_folding):
+            iter_index = experiment_iter_index(data_folding)
             for output_storage, target in self._iter_output_and_target_pairs(iter_index):
-                self.__convert(output_storage=output_storage, target_func=target)
+                self.__convert(output_storage=output_storage, target_func=target,
+                               data_folding=data_folding)

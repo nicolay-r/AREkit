@@ -4,6 +4,7 @@ import os
 
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.folding.base import BaseDataFolding
+from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.core.ctx_inference import InferenceContext
@@ -24,7 +25,7 @@ from arekit.contrib.utils.utils_folding import folding_iter_states
 
 class NetworksTrainingPipelineItem(BasePipelineItem):
 
-    def __init__(self, bags_collection_type, exp_ctx, exp_io, data_folding,
+    def __init__(self, bags_collection_type, exp_ctx, exp_io,
                  load_model, config, create_network_func, training_epochs,
                  network_callbacks, prepare_model_root=True, seed=None):
         assert(callable(create_network_func))
@@ -35,7 +36,6 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         assert(isinstance(load_model, bool))
         assert(isinstance(seed, int) or seed is None)
         assert(isinstance(training_epochs, int))
-        assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(network_callbacks, list))
 
         super(NetworksTrainingPipelineItem, self).__init__()
@@ -51,8 +51,6 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         self.__load_model = load_model
         self.__training_epochs = training_epochs
         self.__seed = seed
-
-        self.__data_folding = data_folding
 
     def __get_model_dir(self):
         return self.__exp_ctx.ModelIO.get_model_dir()
@@ -80,6 +78,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         self.__config.init_initializers()
 
     def __handle_iteration(self, data_folding):
+        assert(isinstance(data_folding, BaseDataFolding))
 
         targets_existed = self.__exp_io.check_targets_existed(
             data_types_iter=data_folding.iter_supported_data_types(),
@@ -148,9 +147,11 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         gc.collect()
 
     def apply_core(self, input_data, pipeline_ctx):
+        assert(isinstance(pipeline_ctx, PipelineContext))
+        assert("data_folding" in pipeline_ctx)
 
         # Prepare all the required data.
         self.__prepare_model()
-
-        for _ in folding_iter_states(self.__data_folding):
-            self.__handle_iteration(data_folding=self.__data_folding)
+        data_folding = pipeline_ctx.provide("data_folding")
+        for _ in folding_iter_states(data_folding):
+            self.__handle_iteration(data_folding)
