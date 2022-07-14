@@ -2,7 +2,6 @@ import collections
 
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.result import BaseEvalResult
-from arekit.common.folding.nofold import NoFolding
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.utils import progress_bar_iter
