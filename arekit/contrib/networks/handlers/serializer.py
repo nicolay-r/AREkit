@@ -1,7 +1,6 @@
 import collections
 
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
-from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
 from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.folding.base import BaseDataFolding
@@ -21,7 +20,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
 
     def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
-                 str_entity_fmt, exp_ctx, exp_io, doc_ops, balance_func, save_embedding,
+                 str_entity_fmt, exp_ctx, exp_io, balance_func, save_embedding,
                  data_folding, keep_opinions_repos=False):
         """ This hanlder allows to perform a data preparation for neural network models.
 
@@ -59,7 +58,6 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         assert(isinstance(data_type_pipelines, dict))
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(exp_io, DefaultNetworkIOUtils))
-        assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
         assert(isinstance(vectorizers, dict))
         assert(isinstance(save_embedding, bool))
@@ -71,7 +69,6 @@ class NetworksInputSerializerExperimentIteration(ExperimentIterationHandler):
         self.__data_type_pipelines = data_type_pipelines
         self.__exp_ctx = exp_ctx
         self.__exp_io = exp_io
-        self.__doc_ops = doc_ops
         self.__vectorizers = vectorizers
         self.__save_embedding = save_embedding
         self.__str_entity_fmt = str_entity_fmt
