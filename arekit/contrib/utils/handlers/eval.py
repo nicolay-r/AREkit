@@ -8,13 +8,6 @@ from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
 
 
 class EvalIterationHandler(ExperimentIterationHandler):
-    """ TODO: #355 affected.
-        Этот класс устарел ввиду зависимостей на Opinion, в то время как
-        нас в оценке результатов могут, например, интересовать TextOpinion.
-        Поэтому здесь нужно избавиться от opin_ops, а также возможно что
-        от класса в целом, так как предполагаются отдельные реализации
-        различных оценок в виде отдельных функций.
-    """
 
     def __init__(self, data_type, cmp_data_folding, epoch_indices, evaluator,
                  get_test_doc_collection_func, get_etalon_doc_collection_func):
