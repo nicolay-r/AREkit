@@ -23,7 +23,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
     def __init__(self, data_type_pipelines, vectorizers, save_labels_func,
                  str_entity_fmt, exp_ctx, exp_io, balance_func, save_embedding,
                  data_folding, keep_opinions_repos=False):
-        """ This hanlder allows to perform a data preparation for neural network models.
+        """ This pipeline item allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
             which are supported and required in a hadler. It is necessary to know
