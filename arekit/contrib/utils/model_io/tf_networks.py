@@ -95,7 +95,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
 
             filepaths = [
                 self.__get_input_sample_target(data_type=data_type, data_folding=data_folding),
-                self.__get_input_opinions_target(data_type=data_type, data_folding=data_folding),
                 self.__get_default_vocab_filepath(data_folding=data_folding),
                 self.__get_term_embedding_target(data_folding=data_folding)
             ]
