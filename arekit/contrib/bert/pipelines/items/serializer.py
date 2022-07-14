@@ -1,12 +1,12 @@
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.folding.base import BaseDataFolding
+from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
-class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
+class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
 
     def __init__(self, data_type_pipelines, sample_rows_provider, exp_io,
                  data_folding, doc_ops, save_labels_func, balance_func, keep_opinions_repo=False):
@@ -30,7 +30,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
         assert(isinstance(exp_io, BaseIOUtils))
         assert(isinstance(doc_ops, DocumentOperations))
         assert(isinstance(data_folding, BaseDataFolding))
-        super(BertExperimentInputSerializerIterationHandler, self).__init__()
+        super(BertExperimentInputSerializerPipelineItem, self).__init__()
 
         self.__sample_rows_provider = sample_rows_provider
         self.__balance_func = balance_func
@@ -80,7 +80,7 @@ class BertExperimentInputSerializerIterationHandler(ExperimentIterationHandler):
 
     # region protected methods
 
-    def on_iteration(self, iter_index):
+    def apply(self, input_data, pipeline_ctx=None):
         """ Performing data serialization for a particular iteration
         """
         for data_type, pipeline in self.__data_type_pipelines.items():
