@@ -2,6 +2,7 @@ from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.items.base import BasePipelineItem
+from arekit.contrib.utils.utils_folding import folding_iter_states
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
@@ -40,7 +41,7 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
 
     # region private methods
 
-    def __handle_iteration(self, data_type, pipeline):
+    def __serialize_iteration(self, data_type, pipeline, data_folding):
         assert(isinstance(data_type, DataType))
 
         repos = {
@@ -53,10 +54,10 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
         writer_and_targets = {
             "sample": (self.__exp_io.create_samples_writer(),
                        self.__exp_io.create_samples_writer_target(
-                           data_type=data_type, data_folding=self.__data_folding)),
+                           data_type=data_type, data_folding=data_folding)),
             "opinion": (self.__exp_io.create_opinions_writer(),
                         self.__exp_io.create_opinions_writer_target(
-                            data_type=data_type, data_folding=self.__data_folding))
+                            data_type=data_type, data_folding=data_folding))
         }
 
         for description, repo in repos.items():
@@ -67,16 +68,21 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,
                 pipeline=pipeline,
-                doc_ids_iter=self.__data_folding.fold_doc_ids_set()[data_type],
+                doc_ids_iter=data_folding.fold_doc_ids_set()[data_type],
                 do_balance=self.__balance_func(data_type),
                 desc=description,
                 writer=writer_and_targets[description][0],
                 target=writer_and_targets[description][1])
 
+    def __handle_iteration(self, data_type_pipelines, data_folding):
+        """ Performing data serialization for a particular iteration
+        """
+        for data_type, pipeline in data_type_pipelines.items():
+            self.__serialize_iteration(data_type=data_type, pipeline=pipeline, data_folding=data_folding)
+
     # endregion
 
     def apply_core(self, input_data, pipeline_ctx=None):
-        """ Performing data serialization for a particular iteration
-        """
-        for data_type, pipeline in self.__data_type_pipelines.items():
-            self.__handle_iteration(data_type=data_type, pipeline=pipeline)
+        for _ in folding_iter_states(self.__data_folding):
+            self.__handle_iteration(data_type_pipelines=self.__data_type_pipelines,
+                                    data_folding=self.__data_folding)

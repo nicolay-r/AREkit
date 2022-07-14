@@ -9,7 +9,7 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
-from arekit.contrib.utils.model_io.utils import experiment_iter_index, folding_iter_states
+from arekit.contrib.utils.utils_folding import folding_iter_states, experiment_iter_index
 from arekit.contrib.utils.pipelines.opinion_collections import text_opinion_linkages_to_opinion_collections_pipeline
 
 

@@ -19,6 +19,7 @@ from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.utils import rm_dir_contents
 
 from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
+from arekit.contrib.utils.utils_folding import folding_iter_states
 
 
 class NetworksTrainingPipelineItem(BasePipelineItem):
@@ -49,8 +50,9 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         self.__network_callbacks = network_callbacks
         self.__load_model = load_model
         self.__training_epochs = training_epochs
-        self.__data_folding = data_folding
         self.__seed = seed
+
+        self.__data_folding = data_folding
 
     def __get_model_dir(self):
         return self.__exp_ctx.ModelIO.get_model_dir()
@@ -77,31 +79,28 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         # Notify other subscribers that initialization process has been completed.
         self.__config.init_initializers()
 
-    def apply_core(self, input_data, pipeline_ctx):
-
-        # Prepare all the required data.
-        self.__prepare_model()
+    def __handle_iteration(self, data_folding):
 
         targets_existed = self.__exp_io.check_targets_existed(
-            data_types_iter=self.__data_folding.iter_supported_data_types(),
-            data_folding=self.__data_folding)
+            data_types_iter=data_folding.iter_supported_data_types(),
+            data_folding=data_folding)
 
         if not targets_existed:
             raise Exception("Data has not been initialized/serialized!")
 
         # Reading embedding.
-        embedding_data = self.__exp_io.load_embedding(self.__data_folding)
+        embedding_data = self.__exp_io.load_embedding(data_folding)
         self.__config.set_term_embedding(embedding_data)
 
         # Performing samples reading process.
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
-            dtypes=self.__data_folding.iter_supported_data_types(),
+            dtypes=data_folding.iter_supported_data_types(),
             create_samples_view_func=lambda data_type: self.__exp_io.create_samples_view(
-                data_type=data_type, data_folding=self.__data_folding),
+                data_type=data_type, data_folding=data_folding),
             has_model_predefined_state=self.__exp_io.has_model_predefined_state(),
             labels_count=self.__exp_ctx.LabelsCount,
-            vocab=self.__exp_io.load_vocab(self.__data_folding),
+            vocab=self.__exp_io.load_vocab(data_folding),
             bags_collection_type=self.__bags_collection_type,
             input_shapes=NetworkInputShapes(iter_pairs=[
                 (NetworkInputShapes.FRAMES_PER_CONTEXT, self.__config.FramesPerContext),
@@ -147,3 +146,11 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         del model
 
         gc.collect()
+
+    def apply_core(self, input_data, pipeline_ctx):
+
+        # Prepare all the required data.
+        self.__prepare_model()
+
+        for _ in folding_iter_states(self.__data_folding):
+            self.__handle_iteration(data_folding=self.__data_folding)

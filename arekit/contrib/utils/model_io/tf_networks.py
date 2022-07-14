@@ -13,7 +13,8 @@ from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.source.rusentrel.opinions.writer import RuSentRelOpinionCollectionWriter
-from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, experiment_iter_index, filename_template
+from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, filename_template
+from arekit.contrib.utils.utils_folding import experiment_iter_index
 from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
 
 logger = logging.getLogger(__name__)

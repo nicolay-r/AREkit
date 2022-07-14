@@ -14,6 +14,7 @@ from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextP
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embedding import Embedding
 from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
+from arekit.contrib.utils.utils_folding import folding_iter_states
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
@@ -67,17 +68,33 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         super(NetworksInputSerializerPipelineItem, self).__init__()
 
         self.__data_type_pipelines = data_type_pipelines
-        self.__exp_ctx = exp_ctx
+        self.__data_folding = data_folding
+
         self.__exp_io = exp_io
-        self.__vectorizers = vectorizers
         self.__save_embedding = save_embedding
-        self.__str_entity_fmt = str_entity_fmt
         self.__save_labels_func = save_labels_func
         self.__balance_func = balance_func
-        self.__data_folding = data_folding
         self.__keep_opinions_repo = keep_opinions_repos
 
-    # region protected methods
+        self.__term_embedding_pairs = collections.OrderedDict()
+
+        text_terms_mapper = StringWithEmbeddingNetworkTermMapping(
+            vectorizers=vectorizers,
+            string_entities_formatter=str_entity_fmt)
+
+        text_provider = NetworkSingleTextProvider(
+            text_terms_mapper=text_terms_mapper,
+            pair_handling_func=lambda pair: self.__add_term_embedding(
+                dict_data=self.__term_embedding_pairs,
+                term=pair[0],
+                emb_vector=pair[1]))
+
+        self.__rows_provider = NetworkSampleRowProvider(
+            label_provider=exp_ctx.LabelProvider,
+            text_provider=text_provider,
+            frames_connotation_provider=exp_ctx.FramesConnotationProvider,
+            frame_role_label_scaler=exp_ctx.FrameRolesLabelScaler,
+            pos_terms_mapper=PosTermsMapper(exp_ctx.PosTagger))
 
     @staticmethod
     def __add_term_embedding(dict_data, term, emb_vector):
@@ -85,7 +102,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
             return
         dict_data[term] = emb_vector
 
-    def __handle_iteration(self, data_type, pipeline, rows_provider):
+    def __serialize_iteration(self, data_type, pipeline, rows_provider, data_folding):
         assert(isinstance(data_type, DataType))
         assert(isinstance(pipeline, BasePipeline))
 
@@ -99,10 +116,10 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         writer_and_targets = {
             "sample": (self.__exp_io.create_samples_writer(),
                        self.__exp_io.create_samples_writer_target(
-                           data_type=data_type, data_folding=self.__data_folding)),
+                           data_type=data_type, data_folding=data_folding)),
             "opinion": (self.__exp_io.create_opinions_writer(),
                         self.__exp_io.create_opinions_writer_target(
-                            data_type=data_type, data_folding=self.__data_folding))
+                            data_type=data_type, data_folding=data_folding))
         }
 
         for description, repo in repos.items():
@@ -113,53 +130,42 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,
                 pipeline=pipeline,
-                doc_ids_iter=self.__data_folding.fold_doc_ids_set()[data_type],
+                doc_ids_iter=data_folding.fold_doc_ids_set()[data_type],
                 do_balance=self.__balance_func(data_type),
                 desc=description,
                 writer=writer_and_targets[description][0],
                 target=writer_and_targets[description][1])
 
-    # endregion
-
-    def apply_core(self, input_data, pipeline_ctx=None):
+    def __handle_iteration(self, data_type_pipelines, data_folding):
         """ Performing data serialization for a particular iteration
         """
 
-        term_embedding_pairs = collections.OrderedDict()
+        # Prepare for the present iteration.
+        self.__term_embedding_pairs.clear()
 
-        text_terms_mapper = StringWithEmbeddingNetworkTermMapping(
-            vectorizers=self.__vectorizers,
-            string_entities_formatter=self.__str_entity_fmt)
-
-        text_provider = NetworkSingleTextProvider(
-            text_terms_mapper=text_terms_mapper,
-            pair_handling_func=lambda pair: self.__add_term_embedding(
-                dict_data=term_embedding_pairs,
-                term=pair[0],
-                emb_vector=pair[1]))
-
-        rows_provider = NetworkSampleRowProvider(
-            label_provider=self.__exp_ctx.LabelProvider,
-            text_provider=text_provider,
-            frames_connotation_provider=self.__exp_ctx.FramesConnotationProvider,
-            frame_role_label_scaler=self.__exp_ctx.FrameRolesLabelScaler,
-            pos_terms_mapper=PosTermsMapper(self.__exp_ctx.PosTagger))
-
-        for data_type, pipeline in self.__data_type_pipelines.items():
-            self.__handle_iteration(pipeline=pipeline, data_type=data_type, rows_provider=rows_provider)
+        for data_type, pipeline in data_type_pipelines.items():
+            self.__serialize_iteration(pipeline=pipeline,
+                                       data_type=data_type,
+                                       rows_provider=self.__rows_provider,
+                                       data_folding=data_folding)
 
         if not self.__save_embedding:
             return
 
         # Save embedding information additionally.
-        term_embedding = Embedding.from_word_embedding_pairs_iter(iter(term_embedding_pairs.items()))
+        term_embedding = Embedding.from_word_embedding_pairs_iter(iter(self.__term_embedding_pairs.items()))
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
 
         # Save embedding matrix
-        self.__exp_io.save_embedding(data=embedding_matrix, data_folding=self.__data_folding)
-        self.__exp_io.save_vocab(data=vocab, data_folding=self.__data_folding)
+        self.__exp_io.save_embedding(data=embedding_matrix, data_folding=data_folding)
+        self.__exp_io.save_vocab(data=vocab, data_folding=data_folding)
 
         del embedding_matrix
 
     # endregion
+
+    def apply_core(self, input_data, pipeline_ctx=None):
+        for _ in folding_iter_states(self.__data_folding):
+            self.__handle_iteration(data_type_pipelines=self.__data_type_pipelines,
+                                    data_folding=self.__data_folding)

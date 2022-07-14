@@ -5,7 +5,7 @@ from arekit.common.folding.nofold import NoFolding
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
-from arekit.contrib.utils.model_io.utils import folding_iter_states
+from arekit.contrib.utils.utils_folding import folding_iter_states
 
 
 class EvaluationPipelineItem(BasePipelineItem):
