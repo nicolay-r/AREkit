@@ -10,38 +10,34 @@ from arekit.contrib.utils.model_io.utils import folding_iter_states
 
 class EvaluationPipelineItem(BasePipelineItem):
 
-    def __init__(self, data_type, cmp_data_folding, epoch_indices, evaluator,
+    def __init__(self, data_type, cmp_data_folding, evaluator,
                  get_test_doc_collection_func, get_etalon_doc_collection_func):
         """ get_doc_collection_func: func
                 (doc_id) -> collection (Any type)
         """
         assert(isinstance(data_type, DataType))
         assert(isinstance(cmp_data_folding, NoFolding))
-        assert(isinstance(epoch_indices, list))
         assert(isinstance(evaluator, BaseEvaluator))
         assert(callable(get_test_doc_collection_func))
         assert(callable(get_etalon_doc_collection_func))
 
         self.__data_type = data_type
         self.__cmp_data_folding = cmp_data_folding
-        self.__epoch_indices = epoch_indices
         self.__evaluator = evaluator
         self.__get_test_doc_collection_func = get_test_doc_collection_func
         self.__get_etalon_doc_collection_func = get_etalon_doc_collection_func
 
-    def __evaluate(self, data_type, epoch_index):
+    def __evaluate(self, data_type):
         """
         Perform experiment evaluation (related model) of a certain
         `data_type` at certain `epoch_index`
 
         data_type: DataType
             used as data source (for document ids)
-        epoch_index: int or None
 
         NOTE: assumes that results already written and converted in doc-level opinions.
         """
         assert(isinstance(data_type, DataType))
-        assert(isinstance(epoch_index, int))
 
         _, cmp_doc_ids = next(iter(self.__cmp_data_folding.fold_doc_ids_set()))
 
@@ -67,8 +63,6 @@ class EvaluationPipelineItem(BasePipelineItem):
         results = []
 
         for _ in folding_iter_states(self.__cmp_data_folding):
-            for epoch in self.__epoch_indices:
-                result = self.__evaluate(data_type=self.__data_type, epoch_index=epoch)
-                results.append(result)
+            results.append(self.__evaluate(data_type=self.__data_type))
 
         return results
