@@ -30,3 +30,10 @@ def experiment_iter_index(folding):
 
     # In other cases we consider that there is only a single state.
     return 0
+
+
+def folding_iter_states(folding):
+    if isinstance(folding, TwoClassCVFolding):
+        for state in folding.iter_states():
+            yield state
+    yield 0

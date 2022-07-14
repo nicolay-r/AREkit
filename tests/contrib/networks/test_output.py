@@ -9,7 +9,7 @@ from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.utils.pipelines.opinion_collections import output_to_opinion_collections_pipeline
+from arekit.contrib.utils.pipelines.opinion_collections import text_opinion_linkages_to_opinion_collections_pipeline
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
@@ -34,7 +34,7 @@ class TestOutputFormatters(unittest.TestCase):
         opinion_storage = BaseRowsStorage.from_tsv(filepath=self.__input_opinions_filepath)
         opinion_view = BaseOpinionStorageView(opinion_storage)
 
-        ppl = output_to_opinion_collections_pipeline(
+        ppl = text_opinion_linkages_to_opinion_collections_pipeline(
             create_opinion_collection_func=lambda: OpinionCollection(opinions=[],
                                                                      synonyms=synonyms,
                                                                      error_on_duplicates=True,

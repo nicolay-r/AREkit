@@ -1,13 +1,14 @@
 from arekit.common.evaluation.evaluators.base import BaseEvaluator
 from arekit.common.evaluation.result import BaseEvalResult
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.folding.nofold import NoFolding
+from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.utils import progress_bar_iter
 from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
+from arekit.contrib.utils.model_io.utils import folding_iter_states
 
 
-class EvalIterationHandler(ExperimentIterationHandler):
+class EvaluationPipelineItem(BasePipelineItem):
 
     def __init__(self, data_type, cmp_data_folding, epoch_indices, evaluator,
                  get_test_doc_collection_func, get_etalon_doc_collection_func):
@@ -60,6 +61,14 @@ class EvalIterationHandler(ExperimentIterationHandler):
 
         return result
 
-    def on_iteration(self, iter_index):
-        for epoch in self.__epoch_indices:
-            self.__evaluate(data_type=self.__data_type, epoch_index=epoch)
+    def apply_core(self, input_data, pipeline_ctx):
+        """ Provide results per every iteration state of the cmp_data_folding
+        """
+        results = []
+
+        for _ in folding_iter_states(self.__cmp_data_folding):
+            for epoch in self.__epoch_indices:
+                result = self.__evaluate(data_type=self.__data_type, epoch_index=epoch)
+                results.append(result)
+
+        return results

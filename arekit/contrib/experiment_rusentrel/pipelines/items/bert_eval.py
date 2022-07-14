@@ -3,12 +3,12 @@ from os.path import join, exists
 from arekit.common.data import const
 from arekit.common.log_utils import logger
 from arekit.contrib.experiment_rusentrel.bert.output_provider import GoogleBertOutputStorage
-from arekit.contrib.experiment_rusentrel.handlers.eval_helper import EvalHelper
+from arekit.contrib.experiment_rusentrel.eval_helper import EvalHelper
 from arekit.contrib.experiment_rusentrel.utils import create_result_opinion_collection_target
-from arekit.contrib.utils.handlers.to_output import BaseOutputConverterIterationHandler
+from arekit.contrib.utils.handlers.to_output import BaseOutputConverterPipelineItem
 
 
-class ModelEvaluationIterationHandler(BaseOutputConverterIterationHandler):
+class ModelEvaluationIterationHandler(BaseOutputConverterPipelineItem):
 
     def __init__(self, exp_io, data_folding, data_type, eval_helper, create_opinion_collection_func,
                  original_target_dir, output_target_dir, max_epochs_count, label_scaler, labels_formatter,
@@ -37,15 +37,15 @@ class ModelEvaluationIterationHandler(BaseOutputConverterIterationHandler):
 
     def _iter_output_and_target_pairs(self, iter_index):
         for epoch_index in reversed(list(range(self.__max_epochs_count))):
-            output = self.get_output_storage(epoch_index=epoch_index,
-                                             iter_index=iter_index,
-                                             eval_helper=self.__eval_helper,
-                                             original_target_dir=self.__original_target_dir)
+            output = self.__get_output_storage(epoch_index=epoch_index,
+                                               iter_index=iter_index,
+                                               eval_helper=self.__eval_helper,
+                                               original_target_dir=self.__original_target_dir)
             target_func = lambda doc_id: self.__create_target(doc_id=doc_id, epoch_index=epoch_index)
             return output, target_func
 
     @staticmethod
-    def get_output_storage(epoch_index, iter_index, eval_helper, original_target_dir):
+    def __get_output_storage(epoch_index, iter_index, eval_helper, original_target_dir):
         assert(isinstance(eval_helper, EvalHelper))
 
         # NOTE: we wrap original dir using eval_helper implementation.
@@ -71,7 +71,10 @@ class ModelEvaluationIterationHandler(BaseOutputConverterIterationHandler):
 
         return output_storage
 
-    def on_iteration(self, iter_index):
+    def apply_core(self, input_data, pipeline_ctx):
+
         if not self.__exp_io.try_prepare():
             return
-        super(ModelEvaluationIterationHandler, self).on_iteration(iter_index)
+
+        super(ModelEvaluationIterationHandler, self).apply_core(
+            input_data=input_data, pipeline_ctx=pipeline_ctx)

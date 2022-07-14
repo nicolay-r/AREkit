@@ -3,16 +3,17 @@ from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
-from arekit.common.experiment.handler import ExperimentIterationHandler
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
+from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
-from arekit.contrib.utils.pipelines.opinion_collections import output_to_opinion_collections_pipeline
+from arekit.contrib.utils.model_io.utils import experiment_iter_index, folding_iter_states
+from arekit.contrib.utils.pipelines.opinion_collections import text_opinion_linkages_to_opinion_collections_pipeline
 
 
-class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
+class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
 
     def __init__(self, exp_io, data_folding, create_opinion_collection_func,
                  data_type, label_scaler, labels_formatter):
@@ -25,7 +26,7 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
         assert(isinstance(data_type, DataType))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
-        super(BaseOutputConverterIterationHandler, self).__init__()
+        super(TextOpinionLinkagesToOpinionConverterPipelineItem, self).__init__()
         self._data_type = data_type
 
         self.__exp_io = exp_io
@@ -47,10 +48,11 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
         linkages_view = MultilableOpinionLinkagesView(labels_scaler=self.__label_scaler,
                                                       storage=output_storage)
 
-        ppl = output_to_opinion_collections_pipeline(
+        ppl = text_opinion_linkages_to_opinion_collections_pipeline(
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
                 doc_id=doc_id,
-                opinions_view=self.__exp_io.create_opinions_view(self._data_type)),
+                opinions_view=self.__exp_io.create_opinions_view(data_type=self._data_type,
+                                                                 data_folding=self.__data_folding)),
             doc_ids_set=set(self.__data_folding.fold_doc_ids_set()[self._data_type]),
             create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,
@@ -75,6 +77,8 @@ class BaseOutputConverterIterationHandler(ExperimentIterationHandler):
     def _iter_output_and_target_pairs(self, iter_index):
         raise NotImplementedError()
 
-    def on_iteration(self, iter_index):
-        for output_storage, target in self._iter_output_and_target_pairs(iter_index):
-            self.__convert(output_storage=output_storage, target_func=target)
+    def apply_core(self, input_data, pipeline_ctx):
+        for _ in folding_iter_states(self.__data_folding):
+            iter_index = experiment_iter_index(folding=self.__data_folding)
+            for output_storage, target in self._iter_output_and_target_pairs(iter_index):
+                self.__convert(output_storage=output_storage, target_func=target)

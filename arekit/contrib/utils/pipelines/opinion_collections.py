@@ -8,10 +8,10 @@ from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.item_map import MapPipelineItem
+from arekit.common.pipeline.items.iter import FilterPipelineItem
 
 
 # region private functions
-from arekit.common.pipeline.items.iter import FilterPipelineItem
 
 
 def __create_labeled_opinion(item, label):
@@ -56,10 +56,9 @@ def __fill_opinion_collection(opinions_iter, collection, supported_labels):
 # endregion
 
 
-def output_to_opinion_collections_pipeline(doc_ids_set, labels_scaler,
-                                           iter_opinion_linkages_func,
-                                           create_opinion_collection_func,
-                                           label_calc_mode):
+def text_opinion_linkages_to_opinion_collections_pipeline(
+        doc_ids_set, labels_scaler, iter_opinion_linkages_func,
+        create_opinion_collection_func, label_calc_mode):
     """ Opinion collection generation pipeline.
     """
     assert(isinstance(labels_scaler, BaseLabelScaler))
