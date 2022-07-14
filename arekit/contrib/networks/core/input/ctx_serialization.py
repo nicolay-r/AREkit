@@ -18,9 +18,5 @@ class NetworkSerializationContext(ExperimentSerializationContext):
         raise NotImplementedError()
 
     @property
-    def WordEmbedding(self):
-        raise NotImplementedError()
-
-    @property
     def PosTagger(self):
         raise NotImplementedError()
