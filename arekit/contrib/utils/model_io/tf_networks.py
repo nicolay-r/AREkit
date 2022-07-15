@@ -202,9 +202,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         return join_dir_with_subfolder_name(subfolder_name=self.__get_experiment_folder_name(),
                                             dir=self._get_experiment_sources_dir())
 
-    def _create_opinion_collection_writer(self):
-        return RuSentRelOpinionCollectionWriter()
-
     @staticmethod
     def _get_filepath(out_dir, template, prefix):
         assert(isinstance(template, str))

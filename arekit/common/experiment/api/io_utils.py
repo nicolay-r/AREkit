@@ -10,7 +10,6 @@ class BaseIOUtils(object):
     def __init__(self, exp_ctx):
         assert(isinstance(exp_ctx, ExperimentContext))
         self._exp_ctx = exp_ctx
-        self.__opinion_collection_writer = self._create_opinion_collection_writer()
 
     # region abstract methods
 
@@ -37,21 +36,5 @@ class BaseIOUtils(object):
 
     def create_opinions_writer_target(self, data_type, data_folding):
         raise NotImplementedError()
-
-    def _create_opinion_collection_writer(self):
-        raise NotImplementedError()
-
-    # endregion
-
-    # region public methods
-
-    def write_opinion_collection(self, collection, labels_formatter, target):
-        assert(target is not None)
-
-        self.__opinion_collection_writer.serialize(
-            target=target,
-            collection=collection,
-            encoding='utf-8',
-            labels_formatter=labels_formatter)
 
     # endregion

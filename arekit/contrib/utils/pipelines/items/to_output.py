@@ -7,17 +7,19 @@ from arekit.common.folding.base import BaseDataFolding
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.model.labeling.modes import LabelCalculationMode
+from arekit.common.opinions.writer import OpinionCollectionWriter
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
 from arekit.contrib.utils.utils_folding import folding_iter_states, experiment_iter_index
-from arekit.contrib.utils.pipelines.opinion_collections import text_opinion_linkages_to_opinion_collections_pipeline_part
+from arekit.contrib.utils.pipelines.opinion_collections import \
+    text_opinion_linkages_to_opinion_collections_pipeline_part
 
 
 class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
 
-    def __init__(self, exp_io, create_opinion_collection_func,
+    def __init__(self, exp_io, create_opinion_collection_func, opinion_collection_writer,
                  data_type, label_scaler, labels_formatter):
         """ create_opinion_collection_func: func
                 func () -> OpinionCollection (empty)
@@ -27,6 +29,7 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         assert(isinstance(data_type, DataType))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
+        assert(isinstance(opinion_collection_writer, OpinionCollectionWriter))
         super(TextOpinionLinkagesToOpinionConverterPipelineItem, self).__init__()
         self._data_type = data_type
 
@@ -34,6 +37,7 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         self.__labels_formatter = labels_formatter
         self.__label_scaler = label_scaler
         self.__create_opinion_collection_func = create_opinion_collection_func
+        self.__opinion_collection_writer = opinion_collection_writer
 
     def __convert(self, data_folding, output_storage, target_func):
         """ From `output_storage` to `target` conversion.
@@ -62,8 +66,12 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
 
         pipeline = BasePipeline(
             converter_part +
-            [HandleIterPipelineItem(lambda data: self.__exp_io.write_opinion_collection(
-                collection=data[1], labels_formatter=self.__labels_formatter, target=target_func(data[0])))])
+            [HandleIterPipelineItem(lambda data: self.__opinion_collection_writer.serialize(
+                collection=data[1],
+                encoding='utf-8',
+                labels_formatter=self.__labels_formatter,
+                error_on_non_supported=True,
+                target=target_func(data[0])))])
 
         input_data = set(output_storage.iter_column_values(column_name=const.DOC_ID))
 

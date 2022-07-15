@@ -24,9 +24,6 @@ class DefaultBertIOUtils(BaseIOUtils):
         """
         raise NotImplementedError()
 
-    def _create_opinion_collection_writer(self):
-        pass
-
     def try_prepare(self):
         model_dir = self.__get_target_dir()
         if not exists(model_dir):
