@@ -34,8 +34,7 @@ def create_rusentrel_experiment(exp_ctx, data_folding, exp_io, version, result_t
                                           get_synonyms_func=synonyms_provider.get_or_load_synonyms_collection,
                                           result_target_dir=result_target_dir)
 
-    doc_ops = RuSentrelDocumentOperations(exp_ctx=exp_ctx,
-                                          version=version,
+    doc_ops = RuSentrelDocumentOperations(version=version,
                                           get_synonyms_func=synonyms_provider.get_or_load_synonyms_collection)
 
     return CustomExperiment(exp_ctx=exp_ctx, exp_io=exp_io, doc_ops=doc_ops, opin_ops=opin_ops)
