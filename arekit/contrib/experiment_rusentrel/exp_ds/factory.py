@@ -24,8 +24,7 @@ def create_ruattitudes_experiment(exp_ctx, exp_io, version, load_docs, ra_doc_id
                                               keep_doc_ids_only=not load_docs)
 
     logger.info("Create document operations ...")
-    doc_ops = RuAttitudesDocumentOperations(exp_ctx=exp_ctx,
-                                            ru_attitudes=ru_attitudes)
+    doc_ops = RuAttitudesDocumentOperations(ru_attitudes=ru_attitudes)
 
     logger.info("Create opinion operations ...")
     opin_ops = RuAttitudesOpinionOperations(ru_attitudes=ru_attitudes)
