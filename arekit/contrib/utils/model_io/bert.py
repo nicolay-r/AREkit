@@ -24,7 +24,7 @@ class DefaultBertIOUtils(BaseIOUtils):
         """
         raise NotImplementedError()
 
-    def try_prepare(self):
+    def check_targets_existed(self):
         model_dir = self.__get_target_dir()
         if not exists(model_dir):
             logger.info("Model dir does not exist. Skipping")

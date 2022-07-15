@@ -13,9 +13,6 @@ class BaseIOUtils(object):
 
     # region abstract methods
 
-    def try_prepare(self):
-        raise NotImplementedError()
-
     def get_target_dir(self):
         raise NotImplementedError()
 
