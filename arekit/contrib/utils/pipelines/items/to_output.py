@@ -19,19 +19,17 @@ from arekit.contrib.utils.pipelines.opinion_collections import \
 
 class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
 
-    def __init__(self, exp_io, create_opinion_collection_func, opinion_collection_writer,
-                 data_type, label_scaler, labels_formatter):
+    def __init__(self, exp_io, create_opinion_collection_func,
+                 opinion_collection_writer, label_scaler, labels_formatter):
         """ create_opinion_collection_func: func
                 func () -> OpinionCollection (empty)
         """
         assert(isinstance(exp_io, BaseIOUtils))
         assert(callable(create_opinion_collection_func))
-        assert(isinstance(data_type, DataType))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(opinion_collection_writer, OpinionCollectionWriter))
         super(TextOpinionLinkagesToOpinionConverterPipelineItem, self).__init__()
-        self._data_type = data_type
 
         self.__exp_io = exp_io
         self.__labels_formatter = labels_formatter
@@ -39,13 +37,14 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         self.__create_opinion_collection_func = create_opinion_collection_func
         self.__opinion_collection_writer = opinion_collection_writer
 
-    def __convert(self, data_folding, output_storage, target_func):
+    def __convert(self, data_folding, output_storage, target_func, data_type):
         """ From `output_storage` to `target` conversion.
             output_storage: BaseRowsStorage
             target_func: func(doc_id) -- consdiered to provide a target for the particular document.
         """
         assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(output_storage, BaseRowsStorage))
+        assert(isinstance(data_type, DataType))
         assert(callable(target_func))
 
         # We utilize google bert format, where every row
@@ -53,13 +52,13 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         linkages_view = MultilableOpinionLinkagesView(labels_scaler=self.__label_scaler,
                                                       storage=output_storage)
 
-        target = self.__exp_io.create_opinions_writer_target(data_type=self._data_type,
+        target = self.__exp_io.create_opinions_writer_target(data_type=data_type,
                                                              data_folding=data_folding)
 
         converter_part = text_opinion_linkages_to_opinion_collections_pipeline_part(
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
                 doc_id=doc_id, opinions_view=self.__exp_io.create_opinions_view(target)),
-            doc_ids_set=set(data_folding.fold_doc_ids_set()[self._data_type]),
+            doc_ids_set=set(data_folding.fold_doc_ids_set()[data_type]),
             create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,
             label_calc_mode=LabelCalculationMode.AVERAGE)
@@ -71,7 +70,8 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
                 encoding='utf-8',
                 labels_formatter=self.__labels_formatter,
                 error_on_non_supported=True,
-                target=target_func(data[0])))])
+                target=target_func(data[0])))
+             ])
 
         input_data = set(output_storage.iter_column_values(column_name=const.DOC_ID))
 
@@ -79,16 +79,22 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         for _ in pipeline.run(input_data):
             pass
 
-    def _iter_output_and_target_pairs(self, iter_index):
+    def _iter_output_and_target_pairs(self, iter_index, data_type):
         raise NotImplementedError()
 
     def apply_core(self, input_data, pipeline_ctx):
         assert(isinstance(pipeline_ctx, PipelineContext))
         assert("data_folding" in pipeline_ctx)
+        assert("data_type" in pipeline_ctx)
 
         data_folding = pipeline_ctx.provide("data_folding")
+        data_type = pipeline_ctx.provide("data_type")
+
         for _ in folding_iter_states(data_folding):
             iter_index = experiment_iter_index(data_folding)
-            for output_storage, target in self._iter_output_and_target_pairs(iter_index):
-                self.__convert(output_storage=output_storage, target_func=target,
+            pairs_it = self._iter_output_and_target_pairs(iter_index=iter_index, data_type=data_type)
+            for output_storage, target in pairs_it:
+                self.__convert(output_storage=output_storage,
+                               target_func=target,
+                               data_type=data_type,
                                data_folding=data_folding)
