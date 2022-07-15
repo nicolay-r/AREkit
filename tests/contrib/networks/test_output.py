@@ -7,9 +7,10 @@ from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkag
 from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.experiment_rusentrel.labels.scalers.three import ThreeLabelScaler
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
-from arekit.contrib.utils.pipelines.opinion_collections import text_opinion_linkages_to_opinion_collections_pipeline
+from arekit.contrib.utils.pipelines.opinion_collections import text_opinion_linkages_to_opinion_collections_pipeline_part
 from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
@@ -34,7 +35,7 @@ class TestOutputFormatters(unittest.TestCase):
         opinion_storage = BaseRowsStorage.from_tsv(filepath=self.__input_opinions_filepath)
         opinion_view = BaseOpinionStorageView(opinion_storage)
 
-        ppl = text_opinion_linkages_to_opinion_collections_pipeline(
+        converter_part = text_opinion_linkages_to_opinion_collections_pipeline_part(
             create_opinion_collection_func=lambda: OpinionCollection(opinions=[],
                                                                      synonyms=synonyms,
                                                                      error_on_duplicates=True,
@@ -46,10 +47,12 @@ class TestOutputFormatters(unittest.TestCase):
                 opinions_view=opinion_view),
             label_calc_mode=LabelCalculationMode.AVERAGE)
 
+        pipeline = BasePipeline(converter_part)
+
         doc_ids = set(opinion_storage.iter_column_values(column_name=const.DOC_ID, dtype=int))
 
         # Iterate over the result.
-        for doc_id, collection in ppl.run(doc_ids):
+        for doc_id, collection in pipeline.run(doc_ids):
             print("d:{}, ct:{}, count:{}".format(doc_id, type(collection), len(collection)))
 
 

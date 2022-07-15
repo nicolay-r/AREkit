@@ -56,7 +56,7 @@ def __fill_opinion_collection(opinions_iter, collection, supported_labels):
 # endregion
 
 
-def text_opinion_linkages_to_opinion_collections_pipeline(
+def text_opinion_linkages_to_opinion_collections_pipeline_part(
         doc_ids_set, labels_scaler, iter_opinion_linkages_func,
         create_opinion_collection_func, label_calc_mode):
     """ Opinion collection generation pipeline.
@@ -66,7 +66,7 @@ def text_opinion_linkages_to_opinion_collections_pipeline(
     assert(callable(iter_opinion_linkages_func))
     assert(callable(create_opinion_collection_func))
 
-    return BasePipeline([
+    return [
         # Filter doc-ids.
         FilterPipelineItem(filter_func=lambda doc_id: doc_id in doc_ids_set),
 
@@ -86,4 +86,4 @@ def text_opinion_linkages_to_opinion_collections_pipeline(
                              opinions_iter=data[1],
                              collection=create_opinion_collection_func(),
                              supported_labels=None))),
-    ])
+    ]
