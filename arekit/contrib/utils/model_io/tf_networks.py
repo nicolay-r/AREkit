@@ -52,10 +52,8 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         return BaseSampleStorageView(storage=storage,
                                      row_ids_provider=MultipleIDProvider())
 
-    def create_opinions_view(self, data_type, data_folding):
-        assert(isinstance(data_type, DataType))
-        storage = BaseRowsStorage.from_tsv(
-            filepath=self.__get_input_opinions_target(data_type=data_type, data_folding=data_folding))
+    def create_opinions_view(self, target):
+        storage = BaseRowsStorage.from_tsv(filepath=target)
         return BaseOpinionStorageView(storage)
 
     def create_opinions_writer(self):

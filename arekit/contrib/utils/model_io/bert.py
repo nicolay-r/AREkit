@@ -80,11 +80,8 @@ class DefaultBertIOUtils(BaseIOUtils):
                 data_type=data_type, data_folding=data_folding)),
             row_ids_provider=MultipleIDProvider())
 
-    def create_opinions_view(self, data_type, data_folding):
-        storage = BaseRowsStorage.from_tsv(
-            filepath=self.__get_input_opinions_filepath(data_type, data_folding=data_folding),
-            compression='infer')
-
+    def create_opinions_view(self, target):
+        storage = BaseRowsStorage.from_tsv(filepath=target, compression='infer')
         return BaseOpinionStorageView(storage=storage)
 
     def create_opinions_writer_target(self, data_type, data_folding):

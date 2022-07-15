@@ -26,7 +26,7 @@ class BaseIOUtils(object):
     def create_samples_view(self, data_type, data_folding):
         raise NotImplementedError()
 
-    def create_opinions_view(self, data_type, data_folding):
+    def create_opinions_view(self, target):
         raise NotImplementedError()
 
     def create_samples_writer(self):

@@ -48,11 +48,12 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         linkages_view = MultilableOpinionLinkagesView(labels_scaler=self.__label_scaler,
                                                       storage=output_storage)
 
+        target = self.__exp_io.create_opinions_writer_target(data_type=self._data_type,
+                                                             data_folding=data_folding)
+
         ppl = text_opinion_linkages_to_opinion_collections_pipeline(
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
-                doc_id=doc_id,
-                opinions_view=self.__exp_io.create_opinions_view(data_type=self._data_type,
-                                                                 data_folding=data_folding)),
+                doc_id=doc_id, opinions_view=self.__exp_io.create_opinions_view(target)),
             doc_ids_set=set(data_folding.fold_doc_ids_set()[self._data_type]),
             create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,
