@@ -6,7 +6,6 @@ from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.model.labeling.single import SingleLabelsHelper
 from arekit.common.opinions.base import Opinion
 from arekit.common.opinions.collection import OpinionCollection
-from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.item_map import MapPipelineItem
 from arekit.common.pipeline.items.iter import FilterPipelineItem
 
