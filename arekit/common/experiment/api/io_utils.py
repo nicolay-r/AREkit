@@ -10,13 +10,15 @@ class BaseIOUtils(object):
     def __init__(self, exp_ctx):
         assert(isinstance(exp_ctx, ExperimentContext))
         self._exp_ctx = exp_ctx
-        self.__opinion_collection_provider = self._create_opinion_collection_provider()
         self.__opinion_collection_writer = self._create_opinion_collection_writer()
+
+    # region abstract methods
 
     def try_prepare(self):
         raise NotImplementedError()
 
-    # region abstract methods
+    def get_target_dir(self):
+        raise NotImplementedError()
 
     def create_docs_stat_target(self):
         raise NotImplementedError()
@@ -39,24 +41,12 @@ class BaseIOUtils(object):
     def create_opinions_writer_target(self, data_type, data_folding):
         raise NotImplementedError()
 
-    def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
-        raise NotImplementedError()
-
-    def _create_opinion_collection_provider(self):
-        raise NotImplementedError()
-
     def _create_opinion_collection_writer(self):
         raise NotImplementedError()
 
     # endregion
 
     # region public methods
-
-    def create_opinion_collection_target(self, doc_id, data_type, check_existance=False):
-        return self._create_annotated_collection_target(
-            doc_id=doc_id,
-            data_type=data_type,
-            check_existance=check_existance)
 
     def write_opinion_collection(self, collection, labels_formatter, target):
         assert(target is not None)
@@ -66,20 +56,5 @@ class BaseIOUtils(object):
             collection=collection,
             encoding='utf-8',
             labels_formatter=labels_formatter)
-
-    def read_opinion_collection(self, target, labels_formatter, create_collection_func,
-                                error_on_non_supported=False):
-
-        # Check existence of the target.
-        if target is None:
-            return None
-
-        opinions = self.__opinion_collection_provider.iter_opinions(
-            source=target,
-            encoding='utf-8',
-            labels_formatter=labels_formatter,
-            error_on_non_supported=error_on_non_supported)
-
-        return create_collection_func(opinions)
 
     # endregion

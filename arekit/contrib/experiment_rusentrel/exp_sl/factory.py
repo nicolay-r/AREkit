@@ -1,5 +1,6 @@
 import logging
 
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.experiment_rusentrel import common
@@ -21,6 +22,7 @@ def create_rusentrel_experiment(exp_ctx, data_folding, exp_io, version, result_t
         https://link.springer.com/chapter/10.1007/978-3-030-23584-0_10
         https://wwww.easychair.org/publications/download/pQrC
     """
+    assert(isinstance(exp_ctx, ExperimentContext))
     assert(isinstance(data_folding, BaseDataFolding))
     assert(isinstance(exp_io, BaseIOUtils))
     assert(isinstance(version, RuSentRelVersions))
@@ -31,6 +33,7 @@ def create_rusentrel_experiment(exp_ctx, data_folding, exp_io, version, result_t
     opin_ops = RuSentrelOpinionOperations(data_folding=data_folding,
                                           version=version,
                                           exp_io=exp_io,
+                                          labels_count=exp_ctx.LabelsCount,
                                           get_synonyms_func=synonyms_provider.get_or_load_synonyms_collection,
                                           result_target_dir=result_target_dir)
 

@@ -7,7 +7,11 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.contrib.experiment_rusentrel.labels.formatters.neut_label import ExperimentNeutralLabelsFormatter
 from arekit.contrib.experiment_rusentrel.labels.formatters.rusentrel import RuSentRelExperimentLabelsFormatter
 from arekit.contrib.experiment_rusentrel.ops_opin import OpinionOperations
-from arekit.contrib.experiment_rusentrel.utils import create_result_opinion_collection_target, experiment_iter_index
+from arekit.contrib.experiment_rusentrel.utils import \
+    create_result_opinion_collection_target, \
+    experiment_iter_index, \
+    create_opinion_collection_target, \
+    read_opinion_collection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
 
@@ -17,7 +21,7 @@ logging.basicConfig(level=logging.INFO)
 
 class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, data_folding, exp_io, get_synonyms_func, result_target_dir, version):
+    def __init__(self, data_folding, exp_io, get_synonyms_func, result_target_dir, labels_count, version):
         assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(exp_io, BaseIOUtils))
         assert(callable(get_synonyms_func))
@@ -32,6 +36,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__get_synonyms_func = get_synonyms_func
         self.__result_target_dir = result_target_dir
         self.__version = version
+        self.__labels_count = labels_count
 
     @property
     def LabelsFormatter(self):
@@ -44,10 +49,12 @@ class RuSentrelOpinionOperations(OpinionOperations):
         collections = []
 
         # Picking an annotated collection.
-        target = self.__exp_io.create_opinion_collection_target(doc_id=doc_id, data_type=data_type)
+        target = create_opinion_collection_target(doc_id=doc_id, data_type=data_type,
+                                                  labels_count=self.__labels_count,
+                                                  target_dir=self.__exp_io.get_target_dir())
 
         # Reading automatically annotated collection of neutral opinions.
-        auto_neutral = self.__exp_io.read_opinion_collection(
+        auto_neutral = read_opinion_collection(
             target=target,
             labels_formatter=self.__neutral_labels_fmt,
             create_collection_func=self.__create_collection)
@@ -87,7 +94,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         """
         assert(isinstance(self.__exp_io, BaseIOUtils))
 
-        return self.__exp_io.read_opinion_collection(
+        return read_opinion_collection(
             target=create_result_opinion_collection_target(
                 target_dir=self.__result_target_dir,
                 doc_id=doc_id, data_type=data_type, epoch_index=epoch_index,

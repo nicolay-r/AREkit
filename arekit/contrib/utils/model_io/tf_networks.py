@@ -37,6 +37,9 @@ class DefaultNetworkIOUtils(BaseIOUtils):
 
     # region public methods
 
+    def get_target_dir(self):
+        return self._get_target_dir()
+
     def create_docs_stat_target(self):
         return join(self._get_target_dir(), "docs_stat.txt")
 
@@ -191,10 +194,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         assert(isinstance(model_io, NeuralNetworkModelIO))
         return model_io.get_model_dir()
 
-    def __get_annotator_dir(self):
-        return join_dir_with_subfolder_name(dir=self._get_target_dir(),
-                                            subfolder_name=self._get_annotator_name())
-
     # endregion
 
     # region protected methods
@@ -209,9 +208,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         return join_dir_with_subfolder_name(subfolder_name=self.__get_experiment_folder_name(),
                                             dir=self._get_experiment_sources_dir())
 
-    def _create_opinion_collection_provider(self):
-        return RuSentRelOpinionCollectionProvider()
-
     def _create_opinion_collection_writer(self):
         return RuSentRelOpinionCollectionWriter()
 
@@ -220,32 +216,5 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         assert(isinstance(template, str))
         assert(isinstance(prefix, str))
         return join(out_dir, DefaultNetworkIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
-
-    def _get_annotator_name(self):
-        """ We use custom implementation as it allows to
-            be independent of NeutralAnnotator instance.
-        """
-        return "annot_{labels_count}l".format(labels_count=self._exp_ctx.LabelsCount)
-
-    def _create_annotated_collection_target(self, doc_id, data_type, check_existance):
-        assert(isinstance(doc_id, int))
-        assert(isinstance(data_type, DataType))
-        assert(isinstance(check_existance, bool))
-
-        annot_dir = self.__get_annotator_dir()
-
-        if annot_dir is None:
-            raise NotImplementedError("Neutral root was not provided!")
-
-        # TODO. This should not depends on the neut.
-        filename = "art{doc_id}.neut.{d_type}.txt".format(doc_id=doc_id,
-                                                          d_type=data_type.name)
-
-        target = join(annot_dir, filename)
-
-        if check_existance and not exists(target):
-            return None
-
-        return target
 
     # endregion
