@@ -20,9 +20,6 @@ class BaseIOUtils(object):
     def get_target_dir(self):
         raise NotImplementedError()
 
-    def create_docs_stat_target(self):
-        raise NotImplementedError()
-
     def create_samples_view(self, data_type, data_folding):
         raise NotImplementedError()
 

@@ -27,9 +27,6 @@ class DefaultBertIOUtils(BaseIOUtils):
     def _create_opinion_collection_writer(self):
         pass
 
-    def create_docs_stat_target(self):
-        return join(self.__get_target_dir(), "docs_stat.txt")
-
     def try_prepare(self):
         model_dir = self.__get_target_dir()
         if not exists(model_dir):

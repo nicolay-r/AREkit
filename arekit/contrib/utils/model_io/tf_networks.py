@@ -39,9 +39,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
     def get_target_dir(self):
         return self._get_target_dir()
 
-    def create_docs_stat_target(self):
-        return join(self._get_target_dir(), "docs_stat.txt")
-
     def get_experiment_folder_name(self):
         return self.__get_experiment_folder_name()
 

@@ -43,10 +43,6 @@ def create_rusentrel_experiment_data_folding(folding_type, version):
         """ CV-based separation
         """
 
-        # We utilize sentence-based cv-splitter.
-        # splitter = StatBasedCrossValidataionSplitter(
-        #     docs_stat=SentenceBasedDocumentStatGenerator(docs_reader_func),
-        #     docs_stat_filepath_func=lambda: experiment_io.create_docs_stat_target())
         splitter = SimpleCrossValidataionSplitter()
 
         return TwoClassCVFolding(doc_ids_to_fold=all_doc_ids,
