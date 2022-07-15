@@ -9,7 +9,6 @@ class ExperimentSerializationContext(ExperimentContext):
     def __init__(self, label_scaler, name_provider):
         assert(isinstance(label_scaler, BaseLabelScaler))
         super(ExperimentSerializationContext, self).__init__(name_provider=name_provider)
-
         self.__label_scaler = label_scaler
 
     @property
@@ -22,14 +21,6 @@ class ExperimentSerializationContext(ExperimentContext):
     @property
     def LabelsCount(self):
         return self.__label_scaler.LabelsCount
-
-    @property
-    def FramesConnotationProvider(self):
-        raise NotImplementedError()
-
-    @property
-    def FrameVariantCollection(self):
-        raise NotImplementedError()
 
     @property
     def TermsPerContext(self):

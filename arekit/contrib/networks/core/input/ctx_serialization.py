@@ -18,5 +18,9 @@ class NetworkSerializationContext(ExperimentSerializationContext):
         raise NotImplementedError()
 
     @property
+    def FramesConnotationProvider(self):
+        raise NotImplementedError()
+
+    @property
     def PosTagger(self):
         raise NotImplementedError()
