@@ -3,10 +3,8 @@ import pandas as pd
 
 from arekit.common.data import const
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
-import arekit.common.data.views.linkages.utils as utils
-from arekit.common.data.views.linkages.base import BaseOpinionLinkagesView
-from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.labels.scaler.base import BaseLabelScaler
+from arekit.contrib.utils.data.views.linkages.base import BaseOpinionLinkagesView
 
 
 class MultilableOpinionLinkagesView(BaseOpinionLinkagesView):

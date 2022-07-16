@@ -1,7 +1,7 @@
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
-from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.opinions.base import Opinion
+from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 
 
 def compose_opinion_by_opinion_id(ids_provider, sample_id, opinions_view, calc_label_func):

@@ -4,9 +4,9 @@ from os.path import join, exists
 from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
+from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, filename_template
 
 logger = logging.getLogger(__name__)

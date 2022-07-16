@@ -2,11 +2,11 @@ import pandas as pd
 
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
-from arekit.common.data.views.linkages import utils
-from arekit.common.data.views.linkages.base import BaseOpinionLinkagesView
-from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.contrib.bert.input.providers.row_ids_binary import BinaryIDProvider
+from arekit.contrib.utils.data.views.linkages import utils
+from arekit.contrib.utils.data.views.linkages.base import BaseOpinionLinkagesView
+from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 
 
 class BertBinaryOpinionLinkagesView(BaseOpinionLinkagesView):

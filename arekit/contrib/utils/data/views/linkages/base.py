@@ -1,12 +1,11 @@
 import pandas as pd
 
-import arekit.common.data.views.linkages.utils as utils
-
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.linkage.opinions import OpinionsLinkage
+from arekit.contrib.utils.data.views.linkages import utils
+from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 
 
 class BaseOpinionLinkagesView(object):

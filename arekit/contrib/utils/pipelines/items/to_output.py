@@ -1,6 +1,5 @@
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
@@ -12,6 +11,7 @@ from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
+from arekit.contrib.utils.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.contrib.utils.utils_folding import folding_iter_states, experiment_iter_index
 from arekit.contrib.utils.pipelines.opinion_collections import \
     text_opinion_linkages_to_opinion_collections_pipeline_part

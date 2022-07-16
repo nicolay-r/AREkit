@@ -5,12 +5,12 @@ from os.path import join, exists
 from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.networks.core.model_io import NeuralNetworkModelIO
+from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, filename_template
 from arekit.contrib.utils.utils_folding import experiment_iter_index
 from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper

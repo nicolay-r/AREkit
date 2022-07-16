@@ -3,11 +3,11 @@ from os.path import join, dirname
 
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.data.views.linkages.multilabel import MultilableOpinionLinkagesView
-from arekit.common.data.views.opinions import BaseOpinionStorageView
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.base import BasePipeline
+from arekit.contrib.utils.data.views.linkages.multilabel import MultilableOpinionLinkagesView
+from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.pipelines.opinion_collections import \
     text_opinion_linkages_to_opinion_collections_pipeline_part
 from arekit.processing.lemmatization.mystem import MystemWrapper
