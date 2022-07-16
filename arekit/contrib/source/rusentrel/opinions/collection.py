@@ -14,11 +14,10 @@ class RuSentRelOpinionCollection:
     def iter_opinions_from_doc(doc_id,
                                labels_fmt=RuSentRelLabelsFormatter(),
                                version=RuSentRelVersions.V11):
-        """
-        doc_id:
-        synonyms: None or SynonymsCollection
-            None corresponds to the related synonym collection from RuSentRel collection.
-        version:
+        """ doc_id:
+            synonyms: None or SynonymsCollection
+                None corresponds to the related synonym collection from RuSentRel collection.
+            version: RuSentrelVersions enum
         """
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(labels_fmt, StringLabelsFormatter))
@@ -26,7 +25,7 @@ class RuSentRelOpinionCollection:
         assert(labels_fmt.supports_value(NEG_LABEL_STR))
 
         return RuSentRelIOUtils.iter_from_zip(
-            inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(doc_id),
+            inner_path=RuSentRelIOUtils.get_sentiment_opin_filepath(index=doc_id, version=version),
             process_func=lambda input_file: RuSentRelOpinionCollectionProvider._iter_opinions_from_file(
                 input_file=input_file,
                 labels_formatter=labels_fmt,

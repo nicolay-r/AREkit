@@ -21,6 +21,8 @@ class TestRuSentRel(unittest.TestCase):
 
     def test_iter_test_indices(self):
         test_indices = list(RuSentRelIOUtils.iter_test_indices(self.rsr_version))
+        for i in test_indices:
+            print(i, end=' ')
 
         for i in range(46, 76):
             if i in [70]:

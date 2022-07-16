@@ -45,6 +45,6 @@ class RuSentRelNewsReader(object):
             version=version)
 
         return RuSentRelIOUtils.read_from_zip(
-            inner_path=RuSentRelIOUtils.get_news_innerpath(doc_id),
+            inner_path=RuSentRelIOUtils.get_news_innerpath(index=doc_id, version=version),
             process_func=file_to_doc,
             version=version)

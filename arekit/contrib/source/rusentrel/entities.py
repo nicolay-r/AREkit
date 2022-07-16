@@ -19,7 +19,7 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
         assert (isinstance(doc_id, int))
 
         return RuSentRelIOUtils.read_from_zip(
-            inner_path=RuSentRelIOUtils.get_entity_innerpath(doc_id),
+            inner_path=RuSentRelIOUtils.get_entity_innerpath(index=doc_id, version=version),
             process_func=lambda input_file: cls(
                 entities=BratAnnotationParser.parse_annotations(input_file)["entities"],
                 value_to_group_id_func=synonyms.get_synonym_group_index),
