@@ -4,26 +4,25 @@ from arekit.common.data.storages.base import BaseRowsStorage
 
 
 class BaseSampleStorageView(object):
-    """
-    Pandas-based input samples proovider
-    """
 
     def __init__(self, storage, row_ids_provider):
         assert(isinstance(row_ids_provider, BaseIDProvider))
         assert(isinstance(storage, BaseRowsStorage))
+        # TODO. #269 make this provider as a part of the LinkedBasedStorageView (nested class from this)
+        # TODO. #269. removed this parameter from here.
         self.__row_ids_provider = row_ids_provider
         self._storage = storage
 
     # TODO. #269 This is just a particular wrapper over storage.
-    def iter_rows(self, handle_rows):
-        assert(callable(handle_rows) or handle_rows is None)
+    def iter_rows(self, row_handle_func):
+        assert(callable(row_handle_func) or row_handle_func is None)
 
         for row_index, row in self._storage:
 
-            if handle_rows is None:
+            if row_handle_func is None:
                 yield row_index, row
             else:
-                yield handle_rows(row)
+                yield row_handle_func(row)
 
     # TODO. #269 This is just a particular wrapper over storage.
     def iter_rows_linked_by_text_opinions(self):

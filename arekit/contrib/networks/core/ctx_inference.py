@@ -122,7 +122,7 @@ class InferenceContext(object):
 
     @staticmethod
     def __get_labeled_sample_row_ids(samples_view):
-        rows_it = samples_view.iter_rows(handle_rows=lambda row: InferenceContext.__extract_labeled_rows(row))
+        rows_it = samples_view.iter_rows(row_handle_func=lambda row: InferenceContext.__extract_labeled_rows(row))
         return list(rows_it)
 
     @staticmethod
