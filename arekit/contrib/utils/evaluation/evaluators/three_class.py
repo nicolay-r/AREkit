@@ -14,10 +14,11 @@ class ThreeClassEvaluator(BaseEvaluator):
 
         self.__label1 = label1
         self.__label2 = label2
+        self.__label3 = label3
         self.__get_item_label_func = get_item_label_func
 
     def _create_eval_result(self):
         return ThreeClassPrecRecallF1EvalResult(label1=self.__label1,
                                                 label2=self.__label2,
-                                                label3=self.__label2,
+                                                label3=self.__label3,
                                                 get_item_label_func=self.__get_item_label_func)
