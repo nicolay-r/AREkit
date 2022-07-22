@@ -3,14 +3,14 @@ from arekit.common.labels.base import Label
 from arekit.contrib.utils.evaluation.results.three_class_prf import ThreeClassPrecRecallF1EvalResult
 
 
-class TwoClassEvaluator(BaseEvaluator):
+class ThreeClassEvaluator(BaseEvaluator):
 
     def __init__(self, comparator, label1, label2, label3, get_item_label_func):
         assert(isinstance(label1, Label))
         assert(isinstance(label2, Label))
         assert(isinstance(label3, Label))
         assert(callable(get_item_label_func))
-        super(TwoClassEvaluator, self).__init__(comparator)
+        super(ThreeClassEvaluator, self).__init__(comparator)
 
         self.__label1 = label1
         self.__label2 = label2
