@@ -26,15 +26,15 @@ class ThreeClassPrecRecallF1EvalResult(BaseEvalResult):
     C_F1_NEU = 'f1_neu'
     C_F1_MICRO = 'f1_micro'
 
-    def __init__(self, label1, label2, no_label, get_item_label_func):
+    def __init__(self, label1, label2, label3, get_item_label_func):
         assert(isinstance(label1, Label))
         assert(isinstance(label2, Label))
-        assert(isinstance(no_label, Label))
+        assert(isinstance(label3, Label))
         assert(callable(get_item_label_func))
 
         self.__pos_label = label1
         self.__neg_label = label2
-        self.__neu_label = no_label
+        self.__neu_label = label3
         self.__get_item_label_func = get_item_label_func
 
         super(ThreeClassPrecRecallF1EvalResult, self).__init__(
