@@ -55,8 +55,8 @@ class RuSentRelIOUtils(ZipArchiveUtils):
         assert(RuSentRelIOUtils.__is_supported(version))
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(doc_id, int))
-        other_dir = RuSentRelIOUtils.ETALON_FOLDER if keep_etalon else RuSentRelIOUtils.TRAIN_FOLDER
-        test_indices = set(RuSentRelIOUtils.__iter_indicies_from_dataset(version, RuSentRelIOUtils.TRAIN_FOLDER))
+        other_dir = RuSentRelIOUtils.ETALON_FOLDER if keep_etalon else RuSentRelIOUtils.TEST_FOLDER
+        test_indices = set(RuSentRelIOUtils.__iter_indicies_from_dataset(version, RuSentRelIOUtils.TEST_FOLDER))
         return other_dir if doc_id in test_indices else RuSentRelIOUtils.TRAIN_FOLDER
 
     @staticmethod
