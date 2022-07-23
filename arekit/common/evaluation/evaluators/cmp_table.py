@@ -7,6 +7,7 @@ from arekit.common.labels.base import Label
 class DocumentCompareTable:
 
     C_ID = 'id'
+    C_ID_ORIG = 'id_orig'
     C_WHO = 'who'
     C_TO = 'to'
     C_ORIG = 'how_orig'
@@ -32,6 +33,7 @@ class DocumentCompareTable:
         """ Increasing performance by filling dataframe with blank rows.
         """
         df = pd.DataFrame(columns=[DocumentCompareTable.C_ID,
+                                   DocumentCompareTable.C_ID_ORIG,
                                    DocumentCompareTable.C_WHO,
                                    DocumentCompareTable.C_TO,
                                    DocumentCompareTable.C_ORIG,
