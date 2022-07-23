@@ -1,8 +1,4 @@
-# Neural Network classifiers
-
-<p align="center">
-    <img src="logo.png"/>
-</p>
+# Network contrib
 
 This contributional part provides a 
 [Tensorflow-based](https://www.tensorflow.org/)
