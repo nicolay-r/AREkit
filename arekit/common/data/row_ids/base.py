@@ -8,6 +8,16 @@ class BaseIDProvider(object):
 
     o1 -- first_text_opinion
     i -- index in lined (for example: i=3 => 03)
+
+    # TODO. #376. This should be definitely refactored. This implementation
+      TODO. combines opinion-based and sample-based data sources, which allows
+      TODO. us to bypass such connection via external foreign keys.
+
+      Since we are head to remove opinions, there is a need to refactor so in a
+      way of an additional column that provides such information for further connection
+      between rows of different storages.
+
+      #
     """
 
     SEPARATOR = '_'
