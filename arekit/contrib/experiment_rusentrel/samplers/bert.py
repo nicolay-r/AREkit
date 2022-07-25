@@ -1,11 +1,11 @@
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.bert.samplers.base import create_simple_sample_provider
-from arekit.contrib.bert.samplers.nli_b import NliBinarySampleProvider
 from arekit.contrib.bert.samplers.nli_m import NliMultipleSampleProvider
-from arekit.contrib.bert.samplers.qa_b import QaBinarySampleProvider
 from arekit.contrib.bert.samplers.qa_m import QaMultipleSampleProvider
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
+from arekit.contrib.experiment_rusentrel.bert.nli_b import NliBinarySampleProvider
+from arekit.contrib.experiment_rusentrel.bert.qa_b import QaBinarySampleProvider
 from arekit.contrib.experiment_rusentrel.samplers.types import BertSampleProviderTypes
 
 

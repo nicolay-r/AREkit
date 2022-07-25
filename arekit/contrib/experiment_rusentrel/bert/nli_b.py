@@ -1,16 +1,16 @@
+from arekit.common.data.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.labels.str_fmt import StringLabelsFormatter
-from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
 
 
-class QaBinarySampleProvider(BaseSampleRowProvider):
+class NliBinarySampleProvider(BaseSampleRowProvider):
     """
     Default, based on COLA, but includes an extra text_b.
-        text_b: Question w/o S.P (S.P -- sentiment polarity)
+        text_b: Pseudo-sentence w/o S.P (S.P -- sentiment polarity)
 
-    Multilabel variant
+    Binary variant
 
     Notation were taken from paper:
     https://www.aclweb.org/anthology/N19-1035.pdf
@@ -20,8 +20,8 @@ class QaBinarySampleProvider(BaseSampleRowProvider):
         assert(isinstance(text_b_labels_fmt, StringLabelsFormatter))
         assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
-        text_b_template = 'Отношение {subject} к {object} в контексте << {context} >> -- {label} ?'
-        super(QaBinarySampleProvider, self).__init__(
+        text_b_template = '{subject} к {object} в контексте << {context} >> -- {label}'
+        super(NliBinarySampleProvider, self).__init__(
             text_provider=PairTextProvider(
                 text_b_template=text_b_template,
                 text_b_labels_fmt=text_b_labels_fmt,

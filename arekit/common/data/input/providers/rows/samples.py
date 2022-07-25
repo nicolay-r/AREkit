@@ -4,9 +4,11 @@ from arekit.common.data import const
 from arekit.common.data.input.providers.instances.multiple import MultipleLinkedTextOpinionsInstancesProvider
 from arekit.common.data.input.providers.instances.single import SingleInstanceTextOpinionsLinkageProvider
 from arekit.common.data.input.providers.label.base import LabelProvider
+from arekit.common.data.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
+from arekit.common.data.row_ids.binary import BinaryIDProvider
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.entities.base import Entity
 from arekit.common.labels.base import Label
@@ -16,8 +18,6 @@ from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.entity_service import EntityEndType, EntityServiceProvider
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
-from arekit.contrib.bert.input.providers.label_binary import BinaryLabelProvider
-from arekit.contrib.bert.input.providers.row_ids_binary import BinaryIDProvider
 
 
 class BaseSampleRowProvider(BaseRowProvider):
@@ -119,6 +119,8 @@ class BaseSampleRowProvider(BaseRowProvider):
 
     @staticmethod
     def __create_row_ids_provider(label_provider):
+        # TODO. #376 related. This should be removed after refactoring, because
+        # TODO. we consider an ordinary IDs, that not based on the other data.
         if isinstance(label_provider, BinaryLabelProvider):
             return BinaryIDProvider()
         if isinstance(label_provider, MultipleLabelProvider):

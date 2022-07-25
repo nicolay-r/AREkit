@@ -21,6 +21,7 @@ class QaMultipleSampleProvider(BaseSampleRowProvider):
         assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
         text_b_template = 'Что вы думаете по поводу отношения {subject} к {object} в контексте : << {context} >> ?'
+        label_scaler
         super(QaMultipleSampleProvider, self).__init__(
             text_provider=PairTextProvider(
                 text_b_template=text_b_template,

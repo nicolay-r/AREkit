@@ -4,11 +4,13 @@ import pandas as pd
 from arekit.common.data import const
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.labels.scaler.base import BaseLabelScaler
+from arekit.contrib.utils.data.views.linkages import utils
 from arekit.contrib.utils.data.views.linkages.base import BaseOpinionLinkagesView
+from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 
 
 class MultilableOpinionLinkagesView(BaseOpinionLinkagesView):
-    """ View onto sorce, where each row, related to opinion, has multiple labels.
+    """ View onto source, where each row, related to opinion, has multiple labels.
     """
 
     def __init__(self, labels_scaler, storage):
