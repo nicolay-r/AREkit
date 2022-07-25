@@ -16,8 +16,6 @@ class BaseIDProvider(object):
       Since we are head to remove opinions, there is a need to refactor so in a
       way of an additional column that provides such information for further connection
       between rows of different storages.
-
-      #
     """
 
     SEPARATOR = '_'

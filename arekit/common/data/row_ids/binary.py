@@ -6,6 +6,8 @@ from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 class BinaryIDProvider(BaseIDProvider):
     """
     Considered that label of opinion IS A PART OF id.
+    # TODO. #376 related. This should be removed after refactoring, because
+    # TODO. we consider an ordinary IDs, that not based on the other data.
     """
 
     LABEL = 'l{}' + BaseIDProvider.SEPARATOR

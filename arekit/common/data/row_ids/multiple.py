@@ -4,6 +4,8 @@ from arekit.common.data.row_ids.base import BaseIDProvider
 class MultipleIDProvider(BaseIDProvider):
     """
     Considered that label of opinion is not a part of id.
+    # TODO. #376 related. This should be removed after refactoring, because
+    # TODO. we consider an ordinary IDs, that not based on the other data.
     """
 
     @staticmethod
