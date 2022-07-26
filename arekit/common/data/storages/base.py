@@ -97,8 +97,8 @@ class BaseRowsStorage(object):
 
     def find_first_by_value(self, column_name, value):
         # TODO. Return new storage. (Encapsulation)
-        row = self.__filter(column_name=column_name, value=value)
-        return row.iloc[0]
+        rows = self.__filter(column_name=column_name, value=value)
+        return rows.iloc[0]
 
     def iter_column_values(self, column_name, dtype=None):
         values = self._df[column_name]
