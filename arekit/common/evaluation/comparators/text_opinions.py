@@ -97,7 +97,7 @@ class TextOpinionBasedComparator(BaseComparator):
             check_is_supported(label=etalon_label, is_label_supported=is_label_supported)
             check_is_supported(label=result_label, is_label_supported=is_label_supported)
 
-            row = [text_opinion.TextOpinionID,
+            row = [self.context_opinion_to_id(text_opinion),
                    "source",
                    "target",
                    None if etalon_label is None else label_to_str(etalon_label),

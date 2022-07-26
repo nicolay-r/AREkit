@@ -10,6 +10,7 @@ class ContextOpinion(object):
         self.__target_id = target_id
         self.__label = label
         self.__context_id = context_id
+        self.__tag = None
 
     @property
     def DocId(self):
@@ -30,3 +31,13 @@ class ContextOpinion(object):
     @property
     def Sentiment(self):
         return self.__label
+
+    @property
+    def Tag(self):
+        return self.__tag
+
+    def set_tag(self, tag):
+        self.__tag = tag
+
+    def set_label(self, label):
+        self.__label = label
