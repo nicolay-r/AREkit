@@ -32,21 +32,22 @@ class TextOpinionBasedComparator(BaseComparator):
             index[id_func(o_etalon)] = o_etalon
         return index
 
-    def __iter_diff_core(self, etalon_context_opinions, test_context_opinions):
+    def __iter_diff_core(self, etalon_context_opinions, test_context_opinions, id_func):
         """ Perform the comparison by the exact
         """
         assert(isinstance(etalon_context_opinions, list))
         assert(isinstance(test_context_opinions, list))
+        assert(callable(id_func))
 
         test_by_id = TextOpinionBasedComparator.__create_index_by_id(
-            test_context_opinions, id_func=self.context_opinion_to_id)
+            test_context_opinions, id_func=id_func)
 
         etalon_by_id = TextOpinionBasedComparator.__create_index_by_id(
-            etalon_context_opinions, id_func=self.context_opinion_to_id)
+            etalon_context_opinions, id_func=id_func)
 
         for o_etalon in etalon_context_opinions:
             assert(isinstance(o_etalon, ContextOpinion))
-            o_id = self.context_opinion_to_id(o_etalon)
+            o_id = id_func(o_etalon)
             o_test = test_by_id[o_id] if o_id in test_by_id else None
             has_opinion = o_test is not None
 
@@ -64,7 +65,7 @@ class TextOpinionBasedComparator(BaseComparator):
 
         for o_test in test_context_opinions:
             assert(isinstance(o_test, ContextOpinion))
-            o_id = self.context_opinion_to_id(o_test)
+            o_id = id_func(o_test)
             has_opinion = etalon_by_id[o_id] if o_id in etalon_by_id else None
 
             if has_opinion:
@@ -87,7 +88,9 @@ class TextOpinionBasedComparator(BaseComparator):
         assert(isinstance(test, list))
         assert(callable(is_label_supported))
 
-        it = self.__iter_diff_core(etalon_context_opinions=etalon, test_context_opinions=test)
+        it = self.__iter_diff_core(etalon_context_opinions=etalon,
+                                   test_context_opinions=test,
+                                   id_func=self.context_opinion_to_id)
 
         # Cache all rows into `rows` array
         rows = []
