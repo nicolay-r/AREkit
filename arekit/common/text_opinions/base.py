@@ -7,16 +7,21 @@ class TextOpinion(object):
     and composed between two named entities
         (it was found especially by Opinion with predefined label)
         allows to modify label using set_label
+
+    NOTE: it is important to keep document level IDs. (designed for that)
     """
 
     # region constructors
 
     def __init__(self, doc_id, text_opinion_id, source_id, target_id, label):
+        """ source_id: document level object id
+            target_id: document level object id
+        """
         assert(isinstance(doc_id, int))
 
+        self.__doc_id = doc_id
         self.__source_id = source_id
         self.__target_id = target_id
-        self.__doc_id = doc_id
         self.__text_opinion_id = text_opinion_id
         self.__modifiable_label = label
 
