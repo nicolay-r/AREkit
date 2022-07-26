@@ -19,8 +19,8 @@ class TextOpinionBasedComparator(BaseComparator):
         """
         assert(isinstance(context_opinion, ContextOpinion))
         return "{doc_id}_{ctx_id}_{src_id}_{tgt_id}".format(
-            doc_id=context_opinion.DocID,
-            ctx_id=context_opinion.ContextID,
+            doc_id=context_opinion.DocId,
+            ctx_id=context_opinion.ContextId,
             src_id=context_opinion.SourceId,
             tgt_id=context_opinion.TargetId)
 
