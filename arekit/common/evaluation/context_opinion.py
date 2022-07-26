@@ -2,7 +2,7 @@ class ContextOpinion(object):
     """ This is a text opnion that is a part of a text piece, dubbed as context.
     """
 
-    def __int__(self, doc_id, source_id, target_id, label, context_id):
+    def __init__(self, doc_id, source_id, target_id, label, context_id):
         """ context_id: it might be sentence index or a combination of them in case of a complex cases.
         """
         self.__doc_id = doc_id
