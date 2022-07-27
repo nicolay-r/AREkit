@@ -41,7 +41,7 @@ def calc_precision_micro(get_result_by_label_func, labels):
     results = [get_result_by_label_func(label) for label in labels]
     tp_sum = sum([len(res.filter_comparison_true()) for res in results])
     tp_fn_sum = sum([len(res) for res in results])
-    return (1.0 * tp_sum) / tp_fn_sum
+    return (1.0 * tp_sum) / (tp_fn_sum if tp_fn_sum != 0 else 1e-5)
 
 
 def calc_recall_micro(get_origin_answers_by_label_func,
@@ -52,7 +52,7 @@ def calc_recall_micro(get_origin_answers_by_label_func,
     results = [get_result_answers_by_label_func(label) for label in labels]
     tp_sum = sum([len(res.filter_comparison_true()) for res in results])
     tp_fp_sum = sum([len(get_origin_answers_by_label_func(label)) for label in labels])
-    return (1.0 * tp_sum) / tp_fp_sum
+    return (1.0 * tp_sum) / (tp_fp_sum if tp_fp_sum != 0 else 1e-5)
 
 
 def calc_prec_and_recall(cmp_table,
