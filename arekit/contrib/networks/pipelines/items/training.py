@@ -2,7 +2,6 @@ import gc
 import logging
 import os
 
-from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.context import PipelineContext
@@ -26,11 +25,10 @@ from arekit.contrib.utils.utils_folding import folding_iter_states
 
 class NetworksTrainingPipelineItem(BasePipelineItem):
 
-    def __init__(self, bags_collection_type, exp_ctx, exp_io,
+    def __init__(self, bags_collection_type, model_io, exp_io,
                  load_model, config, create_network_func, training_epochs,
                  labels_count, network_callbacks, prepare_model_root=True, seed=None):
         assert(callable(create_network_func))
-        assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(exp_io, DefaultNetworkIOUtils))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(issubclass(bags_collection_type, BagsCollection))
@@ -44,7 +42,6 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
 
         self.__logger = self.__create_logger()
         self.__exp_io = exp_io
-        self.__exp_ctx = exp_ctx
         self.__clear_model_root_before_experiment = prepare_model_root
         self.__config = config
         self.__create_network_func = create_network_func
@@ -53,10 +50,11 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         self.__load_model = load_model
         self.__training_epochs = training_epochs
         self.__labels_count = labels_count
+        self.__model_io = model_io
         self.__seed = seed
 
     def __get_model_dir(self):
-        return self.__exp_ctx.ModelIO.get_model_dir()
+        return self.__model_io.get_model_dir()
 
     @staticmethod
     def __create_logger():
@@ -127,7 +125,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
                 config=self.__config,
                 inference_ctx=inference_ctx,
                 bags_collection_type=self.__bags_collection_type,
-                nn_io=self.__exp_ctx.ModelIO),
+                nn_io=self.__model_io),
             callbacks=self.__network_callbacks,
             predict_pipeline=[
                 EpochLabelsPredictorPipelineItem(),
