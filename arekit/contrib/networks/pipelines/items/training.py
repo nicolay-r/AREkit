@@ -28,7 +28,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
 
     def __init__(self, bags_collection_type, exp_ctx, exp_io,
                  load_model, config, create_network_func, training_epochs,
-                 network_callbacks, prepare_model_root=True, seed=None):
+                 labels_count, network_callbacks, prepare_model_root=True, seed=None):
         assert(callable(create_network_func))
         assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(exp_io, DefaultNetworkIOUtils))
@@ -38,6 +38,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         assert(isinstance(seed, int) or seed is None)
         assert(isinstance(training_epochs, int))
         assert(isinstance(network_callbacks, list))
+        assert(isinstance(labels_count, int))
 
         super(NetworksTrainingPipelineItem, self).__init__()
 
@@ -51,6 +52,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         self.__network_callbacks = network_callbacks
         self.__load_model = load_model
         self.__training_epochs = training_epochs
+        self.__labels_count = labels_count
         self.__seed = seed
 
     def __get_model_dir(self):
@@ -100,7 +102,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
             create_samples_view_func=lambda data_type: self.__exp_io.create_samples_view(
                 data_type=data_type, data_folding=data_folding),
             has_model_predefined_state=self.__exp_io.has_model_predefined_state(),
-            labels_count=self.__exp_ctx.LabelsCount,
+            labels_count=self.__labels_count,
             vocab=self.__exp_io.load_vocab(data_folding),
             bags_collection_type=self.__bags_collection_type,
             input_shapes=NetworkInputShapes(iter_pairs=[
@@ -111,7 +113,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
             bag_size=self.__config.BagSize)
 
         if inference_ctx.HasNormalizedWeights:
-            weights = inference_ctx.calc_normalized_weigts(labels_count=self.__exp_ctx.LabelsCount)
+            weights = inference_ctx.calc_normalized_weigts(labels_count=self.__labels_count)
             self.__config.set_class_weights(weights)
 
         # Update parameters after iteration preparation has been completed.
