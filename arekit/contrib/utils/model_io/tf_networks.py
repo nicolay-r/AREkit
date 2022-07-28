@@ -180,13 +180,6 @@ class DefaultNetworkIOUtils(BaseIOUtils):
                     self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
                         cv_index=experiment_iter_index(data_folding)) + '.npz')
 
-    def __get_model_dir(self):
-        # Perform access to the model, since all the IO information
-        # that is related to the model, assumes to be stored in ModelIO.
-        model_io = self._exp_ctx.ModelIO
-        assert(isinstance(model_io, NeuralNetworkModelIO))
-        return model_io.get_model_dir()
-
     # endregion
 
     # region protected methods
