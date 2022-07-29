@@ -84,6 +84,9 @@ class DefaultBertIOUtils(BaseIOUtils):
     def create_samples_writer_target(self, data_type, data_folding):
         return self.__get_input_sample_filepath(data_type, data_folding=data_folding)
 
+    def create_target_extension(self):
+        return ".tsv.gz"
+
     def create_samples_writer(self):
         return TsvWriter(write_header=True)
 
@@ -96,20 +99,20 @@ class DefaultBertIOUtils(BaseIOUtils):
 
     def __get_input_opinions_filepath(self, data_type, data_folding):
         template = filename_template(data_type=data_type, data_folding=data_folding)
-        return self.__get_filepath(out_dir=self.__get_target_dir(), template=template, prefix="opinion")
+        return self.__get_filepath(out_dir=self.__get_target_dir(),
+                                   template=template, prefix="opinion", extension=self.create_target_extension())
 
     def __get_input_sample_filepath(self, data_type, data_folding):
         template = filename_template(data_type=data_type, data_folding=data_folding)
-        return self.__get_filepath(out_dir=self.__get_target_dir(), template=template, prefix="sample")
+        return self.__get_filepath(out_dir=self.__get_target_dir(),
+                                   template=template, prefix="sample", extension=self.create_target_extension())
 
     @staticmethod
-    def __get_filepath(out_dir, template, prefix):
+    def __get_filepath(out_dir, template, prefix, extension):
         assert(isinstance(template, str))
         assert(isinstance(prefix, str))
-        return join(out_dir, DefaultBertIOUtils.__generate_tsv_archive_filename(template=template, prefix=prefix))
-
-    @staticmethod
-    def __generate_tsv_archive_filename(template, prefix):
-        return "{prefix}-{template}.tsv.gz".format(prefix=prefix, template=template)
+        assert(isinstance(extension, str))
+        return join(out_dir, "{prefix}-{template}{extension}".format(
+            prefix=prefix, template=template, extension=extension))
 
     # endregion
