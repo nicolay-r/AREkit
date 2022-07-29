@@ -157,8 +157,7 @@ class DefaultNetworkIOUtils(BaseIOUtils):
                                           get_value_func=lambda model_io: model_io.get_model_embedding_filepath())
 
     def __get_experiment_folder_name(self):
-        return "{name}_{scale}l".format(name=self._exp_ctx.Name,
-                                        scale=str(self._exp_ctx.LabelsCount))
+        return "{name}".format(name=self._exp_ctx.Name)
 
     @staticmethod
     def __check_targets_existence(targets, logger):

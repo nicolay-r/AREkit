@@ -61,8 +61,7 @@ class DefaultBertIOUtils(BaseIOUtils):
         return join(default_dir, self._exp_ctx.ModelIO.get_model_name())
 
     def __get_experiment_folder_name(self):
-        return "{name}_{scale}l".format(name=self._exp_ctx.Name,
-                                        scale=str(self._exp_ctx.LabelsCount))
+        return "{name}".format(name=self._exp_ctx.Name)
 
     # endregion
 
