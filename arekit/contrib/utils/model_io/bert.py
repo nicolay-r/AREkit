@@ -5,6 +5,7 @@ from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, filename_template
@@ -18,6 +19,10 @@ class DefaultBertIOUtils(BaseIOUtils):
         which describes file-paths towards the resources, required
         for BERT-related data preparation.
     """
+
+    def __init__(self, exp_ctx):
+        assert(isinstance(exp_ctx, ExperimentContext))
+        self.__exp_ctx = exp_ctx
 
     def _get_experiment_sources_dir(self):
         """ Provides directory for samples.
@@ -58,10 +63,10 @@ class DefaultBertIOUtils(BaseIOUtils):
             subfolder_name=self.__get_experiment_folder_name(),
             dir=self._get_experiment_sources_dir())
 
-        return join(default_dir, self._exp_ctx.ModelIO.get_model_name())
+        return join(default_dir, self.__exp_ctx.ModelIO.get_model_name())
 
     def __get_experiment_folder_name(self):
-        return "{name}".format(name=self._exp_ctx.Name)
+        return "{name}".format(name=self.__exp_ctx.Name)
 
     # endregion
 

@@ -39,10 +39,6 @@ def create_annotated_collection_target(doc_id, data_type, target_dir, labels_cou
     return target
 
 
-def __get_experiment_folder_name(self):
-    return "{name}_{scale}l".format(name=self._exp_ctx.Name, scale=str(self._exp_ctx.LabelsCount))
-
-
 def __get_annotator_dir(target_dir, labels_count):
     return join_dir_with_subfolder_name(dir=target_dir, subfolder_name=__get_annotator_name(labels_count))
 

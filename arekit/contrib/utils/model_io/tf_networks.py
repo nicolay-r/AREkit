@@ -6,6 +6,7 @@ from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
@@ -32,6 +33,10 @@ class DefaultNetworkIOUtils(BaseIOUtils):
 
     TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding-{cv_index}'
     VOCABULARY_FILENAME_TEMPLATE = "vocab-{cv_index}.txt"
+
+    def __init__(self, exp_ctx):
+        assert(isinstance(exp_ctx, ExperimentContext))
+        self.__exp_ctx = exp_ctx
 
     # region public methods
 
@@ -86,7 +91,7 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         return NpzEmbeddingHelper.load_embedding(source)
 
     def has_model_predefined_state(self):
-        model_io = self._exp_ctx.ModelIO
+        model_io = self.__exp_ctx.ModelIO
         return self.__model_is_pretrained_state_provided(model_io)
 
     def check_targets_existed(self, data_types_iter, data_folding):
@@ -110,7 +115,7 @@ class DefaultNetworkIOUtils(BaseIOUtils):
         assert(default_value is not None)
         assert(callable(get_value_func))
 
-        model_io = self._exp_ctx.ModelIO
+        model_io = self.__exp_ctx.ModelIO
 
         if model_io is None:
             return default_value
@@ -157,7 +162,7 @@ class DefaultNetworkIOUtils(BaseIOUtils):
                                           get_value_func=lambda model_io: model_io.get_model_embedding_filepath())
 
     def __get_experiment_folder_name(self):
-        return "{name}".format(name=self._exp_ctx.Name)
+        return "{name}".format(name=self.__exp_ctx.Name)
 
     @staticmethod
     def __check_targets_existence(targets, logger):
