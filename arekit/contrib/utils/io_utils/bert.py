@@ -9,7 +9,7 @@ from arekit.common.data.views.samples import BaseSampleStorageView
 from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
-from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name, filename_template
+from arekit.contrib.utils.io_utils.utils import join_dir_with_subfolder_name, filename_template
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

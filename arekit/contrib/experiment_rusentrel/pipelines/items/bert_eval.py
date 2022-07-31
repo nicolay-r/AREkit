@@ -6,7 +6,7 @@ from arekit.common.log_utils import logger
 from arekit.contrib.experiment_rusentrel.bert.output_provider import GoogleBertOutputStorage
 from arekit.contrib.experiment_rusentrel.eval_helper import EvalHelper
 from arekit.contrib.experiment_rusentrel.utils import create_result_opinion_collection_target
-from arekit.contrib.utils.model_io.bert import DefaultBertIOUtils
+from arekit.contrib.utils.io_utils.bert import DefaultBertIOUtils
 from arekit.contrib.utils.pipelines.items.to_output import TextOpinionLinkagesToOpinionConverterPipelineItem
 
 

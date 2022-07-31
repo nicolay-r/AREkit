@@ -14,7 +14,7 @@ from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRow
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embedding import Embedding
-from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
+from arekit.contrib.utils.io_utils.tf_networks import DefaultNetworkIOUtils
 from arekit.contrib.utils.utils_folding import folding_iter_states
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
@@ -26,7 +26,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         """ This pipeline item allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
-            which are supported and required in a hadler. It is necessary to know
+            which are supported and required in a handler. It is necessary to know
             data_types in advance as it allows to create a complete vocabulary of input terms,
             with the related embeddings.
 

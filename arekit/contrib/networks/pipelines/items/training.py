@@ -18,8 +18,7 @@ from arekit.contrib.networks.core.pipeline.item_predict import EpochLabelsPredic
 from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.utils import rm_dir_contents
-
-from arekit.contrib.utils.model_io.tf_networks import DefaultNetworkIOUtils
+from arekit.contrib.utils.io_utils.tf_networks import DefaultNetworkIOUtils
 from arekit.contrib.utils.utils_folding import folding_iter_states
 
 

@@ -5,7 +5,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 from arekit.contrib.utils.cv.two_class import TwoClassCVFolding
-from arekit.contrib.utils.model_io.utils import join_dir_with_subfolder_name
+from arekit.contrib.utils.io_utils.utils import join_dir_with_subfolder_name
 
 
 def experiment_iter_index(folding):
