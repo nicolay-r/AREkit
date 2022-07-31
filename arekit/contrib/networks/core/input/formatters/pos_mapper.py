@@ -1,6 +1,6 @@
 from arekit.common.context.terms_mapper import TextTermsMapper
-from arekit.processing.languages.pos import PartOfSpeechType
-from arekit.processing.pos.base import POSTagger
+from arekit.contrib.utils.processing.languages.pos import PartOfSpeechType
+from arekit.contrib.utils.processing.pos.base import POSTagger
 
 
 class PosTermsMapper(TextTermsMapper):

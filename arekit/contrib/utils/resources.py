@@ -1,6 +1,6 @@
 from arekit.contrib.utils.download import get_resource_path, NEWS_MYSTEM_SKIPGRAM_1000_20_2015
 from arekit.contrib.utils.embeddings.rusvectores import RusvectoresEmbedding
-from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 
 
 def load_embedding_news_mystem_skipgram_1000_20_2015():

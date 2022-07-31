@@ -1,4 +1,4 @@
-from arekit.processing.pos.base import POSTagger
+from arekit.contrib.utils.processing.pos.base import POSTagger
 
 
 class RussianPOSTagger(POSTagger):

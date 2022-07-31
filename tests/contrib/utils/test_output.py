@@ -10,9 +10,9 @@ from arekit.contrib.utils.data.views.linkages.multilabel import MultilableOpinio
 from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.pipelines.opinion_collections import \
     text_opinion_linkages_to_opinion_collections_pipeline_part
-from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
+from tests.contrib.networks.test_tf_input_features import RuSentRelSynonymsCollectionProvider
 from tests.contrib.networks.labels import TestThreeLabelScaler
-from tests.contrib.utils.test_eval import RuSentRelSynonymsCollectionProvider
 
 
 class TestOutputFormatters(unittest.TestCase):

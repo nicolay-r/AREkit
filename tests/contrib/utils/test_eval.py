@@ -23,8 +23,8 @@ from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.contrib.utils.evaluation.evaluators.two_class import TwoClassEvaluator
 from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
 from arekit.contrib.utils.evaluation.results.two_class_prf import TwoClassEvalPrecRecallF1Result
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
-from arekit.processing.lemmatization.mystem import MystemWrapper
 
 
 class ResultVersions(Enum):

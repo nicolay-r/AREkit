@@ -28,12 +28,11 @@ from arekit.contrib.networks.features.term_indices import IndicesFeature
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.utils.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
-
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
-from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
-from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
-from arekit.processing.text.pipeline_frames_negation import FrameVariantsSentimentNegation
+from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVariantsSentimentNegation
+from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
+from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
 
 
 class RuSentRelSynonymsCollectionProvider(object):

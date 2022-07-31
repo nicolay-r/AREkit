@@ -1,5 +1,6 @@
 import unittest
 
+from arekit.common.context.token import Token
 from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parser import NewsParser
@@ -13,9 +14,8 @@ from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
-from arekit.processing.text.token import Token
+from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 
 
 class TestPartOfSpeech(unittest.TestCase):

@@ -4,7 +4,7 @@ from pymystem3 import Mystem
 
 sys.path.append('../../')
 
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
+from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
 
 
 class TestPartOfSpeech(unittest.TestCase):

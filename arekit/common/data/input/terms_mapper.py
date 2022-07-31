@@ -1,9 +1,9 @@
 from arekit.common.context.terms_mapper import TextTermsMapper
+from arekit.common.context.token import Token
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import OpinionEntityType
 from arekit.common.frames.text_variant import TextFrameVariant
-from arekit.processing.text.token import Token
 
 
 class OpinionContainingTextTermsMapper(TextTermsMapper):

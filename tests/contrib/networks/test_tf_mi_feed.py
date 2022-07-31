@@ -2,15 +2,13 @@ import logging
 import sys
 import unittest
 
-
 sys.path.append('../../../')
 
-from tests.contrib.networks.labels import TestThreeLabelScaler
 from tests.contrib.networks.test_tf_ctx_feed import TestContextNetworkFeeding
 from tests.contrib.networks.tf_networks.supported import get_supported
+from tests.contrib.networks.labels import TestThreeLabelScaler
 
 from arekit.common.labels.scaler.base import BaseLabelScaler
-
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.multi.configurations.att_self import AttSelfOverSentencesConfig
 from arekit.contrib.networks.multi.architectures.att_self import AttSelfOverSentences

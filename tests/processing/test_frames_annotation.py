@@ -4,8 +4,8 @@ from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 
 
 class TestFramesAnnotation(unittest.TestCase):

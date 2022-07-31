@@ -2,7 +2,7 @@ from arekit.common.experiment.api.ctx_serialization import ExperimentSerializati
 from arekit.common.news.entities_grouping import EntitiesGroupingPipelineItem
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.text.parser import BaseTextParser
-from arekit.processing.lemmatization.mystem import MystemWrapper
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 
 
 def create_text_parser(exp_ctx, entities_parser, value_to_group_id_func, ppl_items):
@@ -17,7 +17,7 @@ def create_text_parser(exp_ctx, entities_parser, value_to_group_id_func, ppl_ite
     assert(isinstance(ppl_items, list) or ppl_items is None)
 
     if not isinstance(exp_ctx, ExperimentSerializationContext):
-        # We do not utlize text_parser in such case.
+        # We do not utilize text_parser in such case.
         return None
 
     ppl_entities_grouping = EntitiesGroupingPipelineItem(

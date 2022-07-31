@@ -3,10 +3,7 @@ import logging
 import unittest
 from pymystem3 import Mystem
 
-from tests.text.utils import terms_to_str
-from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
-
-from tests.contrib.source.text.news import init_rusentrel_doc
+from arekit.common.context.token import Token
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
@@ -24,11 +21,14 @@ from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.entities.base import Entity
 from arekit.common.entities.types import OpinionEntityType
 from arekit.common.text.parser import BaseTextParser
-from arekit.processing.pos.mystem_wrap import POSMystemWrapper
-from arekit.processing.lemmatization.mystem import MystemWrapper
-from arekit.processing.text.token import Token
-from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
-from arekit.processing.text.pipeline_frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
+from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
+from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
+
+from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
+from tests.contrib.source.text.news import init_rusentrel_doc
+from tests.text.utils import terms_to_str
 
 
 class TestRuSentRelOpinionsIter(unittest.TestCase):

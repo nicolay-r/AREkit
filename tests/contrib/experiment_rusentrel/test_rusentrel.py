@@ -3,7 +3,6 @@ import logging
 import unittest
 
 
-from arekit.processing.lemmatization.mystem import MystemWrapper
 from arekit.common.labels.base import Label
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.bound import Bound
@@ -20,6 +19,7 @@ from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 
 
 class TestRuSentRel(unittest.TestCase):

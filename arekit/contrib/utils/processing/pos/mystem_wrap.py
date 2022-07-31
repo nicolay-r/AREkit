@@ -1,10 +1,10 @@
 from pymystem3 import Mystem
 
-from arekit.processing.languages.pos import PartOfSpeechType
-from arekit.processing.languages.ru.cases import RussianCases, RussianCasesService
-from arekit.processing.languages.ru.number import RussianNumberType, RussianNumberTypeService
-from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
-from arekit.processing.pos.russian import RussianPOSTagger
+from arekit.contrib.utils.processing.languages.pos import PartOfSpeechType
+from arekit.contrib.utils.processing.languages.ru.cases import RussianCases, RussianCasesService
+from arekit.contrib.utils.processing.languages.ru.number import RussianNumberType, RussianNumberTypeService
+from arekit.contrib.utils.processing.languages.ru.pos_service import PartOfSpeechTypesService
+from arekit.contrib.utils.processing.pos.russian import RussianPOSTagger
 
 
 class POSMystemWrapper(RussianPOSTagger):

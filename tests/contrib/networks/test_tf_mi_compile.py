@@ -3,7 +3,6 @@ import logging
 import sys
 import unittest
 
-
 sys.path.append('../../../')
 
 from tests.contrib.networks.tf_networks.utils import init_config
@@ -11,7 +10,7 @@ from tests.contrib.networks.tf_networks.supported import get_supported
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
 from arekit.contrib.networks.multi.architectures.max_pooling import MaxPoolingOverSentences
 from arekit.contrib.networks.multi.configurations.base import BaseMultiInstanceConfig
-from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
+from arekit.contrib.utils.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 
 class TestMultiInstanceCompile(unittest.TestCase):

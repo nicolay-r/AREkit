@@ -4,7 +4,6 @@ import unittest
 import tensorflow as tf
 import logging
 
-
 sys.path.append('../../../')
 
 from tests.contrib.networks.labels import TestThreeLabelScaler
@@ -19,8 +18,7 @@ from arekit.contrib.networks.sample import InputSample
 from arekit.contrib.networks.core.feeding.bags.bag import Bag
 from arekit.contrib.networks.core.feeding.batch.base import MiniBatch
 from arekit.contrib.networks.core.nn import NeuralNetwork
-
-from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
+from arekit.contrib.utils.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 
 class TestContextNetworkFeeding(unittest.TestCase):

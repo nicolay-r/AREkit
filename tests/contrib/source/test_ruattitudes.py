@@ -10,7 +10,9 @@ from arekit.common.entities.base import Entity
 from arekit.common.utils import progress_bar_iter
 from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
+from arekit.common.context.token import Token
 
+from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.source.ruattitudes.opinions.utils import RuAttitudesSentenceOpinionUtils
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.text_object import TextObject
@@ -20,9 +22,6 @@ from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScal
 from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
-
-from arekit.processing.text.token import Token
-from arekit.processing.text.pipeline_tokenizer import DefaultTextTokenizer
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)

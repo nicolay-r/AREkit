@@ -2,13 +2,12 @@ import logging
 import sys
 import unittest
 
-
 sys.path.append('../../../')
 
 from tests.contrib.networks.tf_networks.supported import get_supported
 from tests.contrib.networks.tf_networks.utils import init_config
 from arekit.contrib.networks.context.configurations.base.base import DefaultNetworkConfig
-from arekit.processing.languages.ru.pos_service import PartOfSpeechTypesService
+from arekit.contrib.utils.processing.languages.ru.pos_service import PartOfSpeechTypesService
 
 
 class TestContextNetworkCompilation(unittest.TestCase):
