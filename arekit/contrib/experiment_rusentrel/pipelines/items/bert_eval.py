@@ -6,21 +6,21 @@ from arekit.common.log_utils import logger
 from arekit.contrib.experiment_rusentrel.bert.output_provider import GoogleBertOutputStorage
 from arekit.contrib.experiment_rusentrel.eval_helper import EvalHelper
 from arekit.contrib.experiment_rusentrel.utils import create_result_opinion_collection_target
-from arekit.contrib.utils.io_utils.bert import DefaultBertIOUtils
+from arekit.contrib.utils.io_utils.samples import SamplesIOUtils
 from arekit.contrib.utils.pipelines.items.to_output import TextOpinionLinkagesToOpinionConverterPipelineItem
 
 
 class ModelEvaluationPipelineItem(TextOpinionLinkagesToOpinionConverterPipelineItem):
 
-    def __init__(self, exp_io, eval_helper, create_opinion_collection_func,
+    def __init__(self, samples_io, eval_helper, create_opinion_collection_func,
                  original_target_dir, output_target_dir, max_epochs_count, label_scaler,
                  labels_formatter, iteration_index, opinion_collection_writer):
-        assert(isinstance(exp_io, DefaultBertIOUtils))
+        assert(isinstance(samples_io, SamplesIOUtils))
         assert(isinstance(output_target_dir, str))
         assert(isinstance(iteration_index, int))
 
         super(ModelEvaluationPipelineItem, self).__init__(
-            exp_io=exp_io, create_opinion_collection_func=create_opinion_collection_func,
+            opinion_samples_io=samples_io, create_opinion_collection_func=create_opinion_collection_func,
             opinion_collection_writer=opinion_collection_writer,
             label_scaler=label_scaler, labels_formatter=labels_formatter)
 
@@ -80,7 +80,7 @@ class ModelEvaluationPipelineItem(TextOpinionLinkagesToOpinionConverterPipelineI
 
     def apply_core(self, input_data, pipeline_ctx):
 
-        if not self.__exp_io.check_targets_existed():
+        if not self.__opinion_samples_io.check_targets_existed():
             return
 
         super(ModelEvaluationPipelineItem, self).apply_core(

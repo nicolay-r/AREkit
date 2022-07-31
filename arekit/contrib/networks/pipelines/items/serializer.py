@@ -14,7 +14,9 @@ from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRow
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embedding import Embedding
-from arekit.contrib.utils.io_utils.tf_networks import DefaultNetworkIOUtils
+from arekit.contrib.utils.io_utils.embedding import NpzEmbeddingIOUtils
+
+from arekit.contrib.utils.io_utils.samples import SamplesIOUtils
 from arekit.contrib.utils.utils_folding import folding_iter_states
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
@@ -22,7 +24,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
     def __init__(self, vectorizers, save_labels_func, str_entity_fmt, exp_ctx,
-                 exp_io, balance_func, save_embedding, keep_opinions_repos=False):
+                 samples_io, emb_io, balance_func, save_embedding, keep_opinions_repos=False):
         """ This pipeline item allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -48,7 +50,8 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
                 save embedding and all the related information to it.
         """
         assert(isinstance(exp_ctx, NetworkSerializationContext))
-        assert(isinstance(exp_io, DefaultNetworkIOUtils))
+        assert(isinstance(samples_io, SamplesIOUtils))
+        assert(isinstance(emb_io, NpzEmbeddingIOUtils))
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
         assert(isinstance(vectorizers, dict))
         assert(isinstance(save_embedding, bool))
@@ -56,7 +59,8 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         assert(callable(balance_func))
         super(NetworksInputSerializerPipelineItem, self).__init__()
 
-        self.__exp_io = exp_io
+        self.__emb_io = emb_io
+        self.__samples_io = samples_io
         self.__save_embedding = save_embedding
         self.__save_labels_func = save_labels_func
         self.__balance_func = balance_func
@@ -100,11 +104,11 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         }
 
         writer_and_targets = {
-            "sample": (self.__exp_io.create_samples_writer(),
-                       self.__exp_io.create_samples_writer_target(
+            "sample": (self.__samples_io.create_samples_writer(),
+                       self.__samples_io.create_samples_writer_target(
                            data_type=data_type, data_folding=data_folding)),
-            "opinion": (self.__exp_io.create_opinions_writer(),
-                        self.__exp_io.create_opinions_writer_target(
+            "opinion": (self.__samples_io.create_opinions_writer(),
+                        self.__samples_io.create_opinions_writer_target(
                             data_type=data_type, data_folding=data_folding))
         }
 
@@ -146,8 +150,8 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
 
         # Save embedding matrix
-        self.__exp_io.save_embedding(data=embedding_matrix, data_folding=data_folding)
-        self.__exp_io.save_vocab(data=vocab, data_folding=data_folding)
+        self.__emb_io.save_embedding(data=embedding_matrix, data_folding=data_folding)
+        self.__emb_io.save_vocab(data=vocab, data_folding=data_folding)
 
         del embedding_matrix
 
