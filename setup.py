@@ -32,6 +32,6 @@ setup(
     packages=find_packages(),
     install_requires=get_requirements([
         'dependencies.txt',
-        'arekit/processing/dependencies.txt',
+        'arekit/contrib/utils/dependencies.txt',
         'arekit/contrib/networks/dependencies.txt']),
 )
