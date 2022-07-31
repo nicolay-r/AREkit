@@ -1,13 +1,13 @@
 from os.path import join
 
-from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.base import BaseDataFolding
+from arekit.contrib.networks.core.embedding_io import BaseEmbeddingIOUtils
 from arekit.contrib.utils.io_utils.utils import check_targets_existence
 from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
 from arekit.contrib.utils.utils_folding import experiment_iter_index
 
 
-class NpzEmbeddingIOUtils(BaseIOUtils):
+class NpzEmbeddingIOUtils(BaseEmbeddingIOUtils):
     """ Npz-based IO utils for vocabulary and embedding.
         This format represents a archived version of the numpy math data, i.e. vectors, numbers, etc.
 

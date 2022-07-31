@@ -1,6 +1,5 @@
 import logging
 
-from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.opinions.collection import OpinionCollection
@@ -21,9 +20,8 @@ logging.basicConfig(level=logging.INFO)
 
 class RuSentrelOpinionOperations(OpinionOperations):
 
-    def __init__(self, data_folding, exp_io, get_synonyms_func, result_target_dir, labels_count, version):
+    def __init__(self, data_folding, target_dir, get_synonyms_func, result_target_dir, labels_count, version):
         assert(isinstance(data_folding, BaseDataFolding))
-        assert(isinstance(exp_io, BaseIOUtils))
         assert(callable(get_synonyms_func))
         assert(isinstance(result_target_dir, str))
         assert(isinstance(version, RuSentRelVersions))
@@ -32,7 +30,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         self.__data_folding = BaseDataFolding
         self.__result_labels_fmt = RuSentRelExperimentLabelsFormatter()
         self.__neutral_labels_fmt = ExperimentNeutralLabelsFormatter()
-        self.__exp_io = exp_io
+        self.__target_dir = target_dir
         self.__get_synonyms_func = get_synonyms_func
         self.__result_target_dir = result_target_dir
         self.__version = version
@@ -51,7 +49,7 @@ class RuSentrelOpinionOperations(OpinionOperations):
         # Picking an annotated collection.
         target = create_opinion_collection_target(doc_id=doc_id, data_type=data_type,
                                                   labels_count=self.__labels_count,
-                                                  target_dir=self.__exp_io.get_target_dir())
+                                                  target_dir=self.__target_dir)
 
         # Reading automatically annotated collection of neutral opinions.
         auto_neutral = read_opinion_collection(
@@ -92,8 +90,6 @@ class RuSentrelOpinionOperations(OpinionOperations):
             we need to guarantee the presence of a function that returns filepath
             by using isinstance command.
         """
-        assert(isinstance(self.__exp_io, BaseIOUtils))
-
         return read_opinion_collection(
             target=create_result_opinion_collection_target(
                 target_dir=self.__result_target_dir,

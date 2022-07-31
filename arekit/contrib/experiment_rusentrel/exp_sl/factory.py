@@ -1,7 +1,6 @@
 import logging
 
 from arekit.common.experiment.api.ctx_base import ExperimentContext
-from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.experiment_rusentrel import common
 from arekit.contrib.experiment_rusentrel.base import BaseExperiment
@@ -14,7 +13,7 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-def create_rusentrel_experiment(exp_ctx, data_folding, exp_io, version, result_target_dir):
+def create_rusentrel_experiment(exp_ctx, data_folding, version, target_dir, result_target_dir):
     """
     Represents a cv-based experiment over RuSentRel collection,
     which supports train/test separation.
@@ -24,7 +23,6 @@ def create_rusentrel_experiment(exp_ctx, data_folding, exp_io, version, result_t
     """
     assert(isinstance(exp_ctx, ExperimentContext))
     assert(isinstance(data_folding, BaseDataFolding))
-    assert(isinstance(exp_io, BaseIOUtils))
     assert(isinstance(version, RuSentRelVersions))
 
     synonyms_provider = OptionalSynonymsProvider(version)
@@ -32,7 +30,7 @@ def create_rusentrel_experiment(exp_ctx, data_folding, exp_io, version, result_t
     logger.info("Create opinion operations ... ")
     opin_ops = RuSentrelOpinionOperations(data_folding=data_folding,
                                           version=version,
-                                          exp_io=exp_io,
+                                          target_dir=target_dir,
                                           labels_count=exp_ctx.LabelsCount,
                                           get_synonyms_func=synonyms_provider.get_or_load_synonyms_collection,
                                           result_target_dir=result_target_dir)
@@ -40,7 +38,7 @@ def create_rusentrel_experiment(exp_ctx, data_folding, exp_io, version, result_t
     doc_ops = RuSentrelDocumentOperations(version=version,
                                           get_synonyms_func=synonyms_provider.get_or_load_synonyms_collection)
 
-    return BaseExperiment(exp_ctx=exp_ctx, exp_io=exp_io, doc_ops=doc_ops, opin_ops=opin_ops)
+    return BaseExperiment(exp_ctx=exp_ctx, doc_ops=doc_ops, opin_ops=opin_ops)
 
 
 class OptionalSynonymsProvider(object):
