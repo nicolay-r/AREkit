@@ -93,7 +93,7 @@ class TestRuSentRelOpinionsIter(unittest.TestCase):
 
         # Initialize providers.
         pairs_provider = TextOpinionPairsProvider(value_to_group_id_func=self.synonyms.get_synonym_group_index)
-        entity_service = EntityServiceProvider()
+        entity_service = EntityServiceProvider(entity_index_func=None)
 
         pairs_provider.init_parsed_news(parsed_news)
         entity_service.init_parsed_news(parsed_news)
