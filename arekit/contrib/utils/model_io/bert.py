@@ -1,6 +1,7 @@
 import logging
 from os.path import join, exists
 
+from arekit.common.data.input.writers.base import BaseWriter
 from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
@@ -20,9 +21,14 @@ class DefaultBertIOUtils(BaseIOUtils):
         for BERT-related data preparation.
     """
 
-    def __init__(self, exp_ctx):
+    def __init__(self, exp_ctx,
+                 samples_writer=TsvWriter(write_header=True),
+                 target_extension=".tsv.gz"):
         assert(isinstance(exp_ctx, ExperimentContext))
+        assert(isinstance(samples_writer, BaseWriter))
         self.__exp_ctx = exp_ctx
+        self.__samples_writer = samples_writer
+        self.__target_extension = target_extension
 
     def _get_experiment_sources_dir(self):
         """ Provides directory for samples.
@@ -89,13 +95,13 @@ class DefaultBertIOUtils(BaseIOUtils):
         return self.__get_input_sample_filepath(data_type, data_folding=data_folding)
 
     def create_target_extension(self):
-        return ".tsv.gz"
+        return self.__target_extension
 
     def create_samples_writer(self):
-        return TsvWriter(write_header=True)
+        return self.__samples_writer
 
     def create_opinions_writer(self):
-        return TsvWriter(write_header=False)
+        return self.__samples_writer
 
     # endregion
 
