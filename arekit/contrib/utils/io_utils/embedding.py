@@ -2,7 +2,7 @@ from os.path import join
 
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.folding.base import BaseDataFolding
-from arekit.contrib.utils.io_utils.utils import join_dir_with_subfolder_name, check_targets_existence
+from arekit.contrib.utils.io_utils.utils import check_targets_existence
 from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
 from arekit.contrib.utils.utils_folding import experiment_iter_index
 
@@ -19,7 +19,9 @@ class NpzEmbeddingIOUtils(BaseIOUtils):
     TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding-{cv_index}'
     VOCABULARY_FILENAME_TEMPLATE = "vocab-{cv_index}.txt"
 
-    def __init__(self, exp_ctx):
+    def __init__(self, target_dir, exp_ctx):
+        assert(isinstance(target_dir, str))
+        self.__target_dir = target_dir
         self.__exp_ctx = exp_ctx
 
     # region Embedding-related data
@@ -43,28 +45,18 @@ class NpzEmbeddingIOUtils(BaseIOUtils):
         return NpzEmbeddingHelper.load_embedding(source)
 
     def check_targets_existed(self, data_folding):
-        filepaths = [
+        targets = [
             self.__get_default_vocab_filepath(data_folding=data_folding),
             self.__get_term_embedding_target(data_folding=data_folding)
         ]
-        return check_targets_existence(targets=filepaths)
+        return check_targets_existence(targets=targets)
 
     # endregion
 
     # region embedding-related data
 
-    def _get_experiment_sources_dir(self):
-        raise NotImplementedError()
-
-    def _get_target_dir(self):
-        """ Represents an experiment dir of specific label scale format,
-            defined by labels scaler.
-        """
-        return join_dir_with_subfolder_name(subfolder_name=self.__exp_ctx.Name,
-                                            dir=self._get_experiment_sources_dir())
-
     def __get_default_embedding_filepath(self, data_folding):
-        return join(self._get_target_dir(),
+        return join(self.__target_dir,
                     self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
                         cv_index=experiment_iter_index(data_folding)) + '.npz')
 
@@ -99,7 +91,7 @@ class NpzEmbeddingIOUtils(BaseIOUtils):
         return default_value if predefined_value is None else predefined_value
 
     def __get_default_vocab_filepath(self, data_folding):
-        return join(self._get_target_dir(),
+        return join(self.__target_dir,
                     self.VOCABULARY_FILENAME_TEMPLATE.format(
                         cv_index=experiment_iter_index(data_folding)) + '.npz')
 

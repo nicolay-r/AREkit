@@ -6,11 +6,10 @@ from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
-from arekit.common.experiment.api.ctx_base import ExperimentContext
 from arekit.common.experiment.api.io_utils import BaseIOUtils
 from arekit.common.experiment.data_type import DataType
 from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
-from arekit.contrib.utils.io_utils.utils import join_dir_with_subfolder_name, filename_template, check_targets_existence
+from arekit.contrib.utils.io_utils.utils import filename_template, check_targets_existence
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -23,19 +22,15 @@ class SamplesIOUtils(BaseIOUtils):
             Samples required for machine learning training/inferring.
     """
 
-    def __init__(self, exp_ctx,
+    def __init__(self, target_dir,
                  samples_writer=TsvWriter(write_header=True),
                  target_extension=".tsv.gz"):
-        assert(isinstance(exp_ctx, ExperimentContext))
         assert(isinstance(samples_writer, BaseWriter))
-        self.__exp_ctx = exp_ctx
+        self.__target_dir = target_dir
         self.__samples_writer = samples_writer
         self.__target_extension = target_extension
 
     # region public methods
-
-    def get_target_dir(self):
-        return self._get_target_dir()
 
     def create_samples_view(self, data_type, data_folding):
         assert(isinstance(data_type, DataType))
@@ -79,14 +74,14 @@ class SamplesIOUtils(BaseIOUtils):
 
     def __get_input_opinions_target(self, data_type, data_folding):
         template = filename_template(data_type=data_type, data_folding=data_folding)
-        return self.__get_filepath(out_dir=self._get_target_dir(),
+        return self.__get_filepath(out_dir=self.__target_dir,
                                    template=template,
                                    prefix="opinion",
                                    extension=self.create_target_extension())
 
     def __get_input_sample_target(self, data_type, data_folding):
         template = filename_template(data_type=data_type, data_folding=data_folding)
-        return self.__get_filepath(out_dir=self._get_target_dir(),
+        return self.__get_filepath(out_dir=self.__target_dir,
                                    template=template,
                                    prefix="sample",
                                    extension=self.create_target_extension())
@@ -94,18 +89,6 @@ class SamplesIOUtils(BaseIOUtils):
     # endregion
 
     # region protected methods
-
-    def _get_experiment_sources_dir(self):
-        """ Provides directory for samples.
-        """
-        raise NotImplementedError()
-
-    def _get_target_dir(self):
-        """ Represents an experiment dir of specific label scale format,
-            defined by labels scaler.
-        """
-        return join_dir_with_subfolder_name(subfolder_name=self.__exp_ctx.Name,
-                                            dir=self._get_experiment_sources_dir())
 
     @staticmethod
     def __get_filepath(out_dir, template, prefix, extension):
