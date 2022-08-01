@@ -96,9 +96,8 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(data_type, DataType))
 
-        targets_existed = self.__samples_io.check_targets_existed(
-            data_types_iter=data_folding.iter_supported_data_types(),
-            data_folding=data_folding)
+        targets_existed = self.__check_targets_existed(data_types_iter=data_folding.iter_supported_data_types(),
+                                                       data_folding=data_folding)
 
         if not targets_existed:
             raise Exception("Data has not been initialized/serialized!")
