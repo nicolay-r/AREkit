@@ -1,28 +1,30 @@
 from os.path import join
 
 from arekit.common.data.storages.base import BaseRowsStorage
+from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.io_utils.utils import filename_template
 
 
-class OpinionsIOUtils(object):
+class OpinionsIO(BaseSamplesIO):
 
-    def __init__(self, target_dir, target_extension=".tsv.gz"):
+    def __init__(self, target_dir, prefix="opinion", target_extension=".tsv.gz"):
         self.__target_dir = target_dir
+        self.__prefix = prefix
         self.__target_extension = target_extension
 
     def create_view(self, target):
         storage = BaseRowsStorage.from_tsv(filepath=target)
         return BaseOpinionStorageView(storage)
 
-    def create_writer_target(self, data_type, data_folding):
+    def create_target(self, data_type, data_folding):
         return self.__get_input_opinions_target(data_type, data_folding=data_folding)
 
     def __get_input_opinions_target(self, data_type, data_folding):
         template = filename_template(data_type=data_type, data_folding=data_folding)
         return self.__get_filepath(out_dir=self.__target_dir,
                                    template=template,
-                                   prefix="opinion",
+                                   prefix=self.__prefix,
                                    extension=self.__target_extension)
 
     @staticmethod

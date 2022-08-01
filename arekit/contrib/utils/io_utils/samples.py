@@ -6,13 +6,14 @@ from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import BaseSampleStorageView
+from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.io_utils.utils import filename_template, check_targets_existence
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
-class SamplesIOUtils(BaseSamplesIO):
+class SamplesIO(BaseSamplesIO):
     """ Samples default IO utils for samples.
             Sample is a text part which include pair of attitude participants.
             This class allows to provide saver and loader for such entries, bubbed as samples.
@@ -20,12 +21,12 @@ class SamplesIOUtils(BaseSamplesIO):
     """
 
     def __init__(self, target_dir,
-                 samples_writer=TsvWriter(write_header=True),
+                 writer=TsvWriter(write_header=True),
                  prefix="sample",
                  target_extension=".tsv.gz"):
-        assert(isinstance(samples_writer, BaseWriter))
+        assert(isinstance(writer, BaseWriter))
         self.__target_dir = target_dir
-        self.__samples_writer = samples_writer
+        self.__writer = writer
         self.__target_extension = target_extension
         self.__prefix = prefix
 
@@ -36,7 +37,7 @@ class SamplesIOUtils(BaseSamplesIO):
                                      row_ids_provider=MultipleIDProvider())
 
     def create_writer(self):
-        return self.__samples_writer
+        return self.__writer
 
     def create_target(self, data_type, data_folding):
         return self.__get_input_sample_target(data_type, data_folding=data_folding)

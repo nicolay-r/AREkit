@@ -11,7 +11,7 @@ from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
 from arekit.contrib.utils.data.views.linkages.multilabel import MultilableOpinionLinkagesView
-from arekit.contrib.utils.io_utils.opinions import OpinionsIOUtils
+from arekit.contrib.utils.io_utils.opinions import OpinionsIO
 from arekit.contrib.utils.utils_folding import folding_iter_states, experiment_iter_index
 from arekit.contrib.utils.pipelines.opinion_collections import \
     text_opinion_linkages_to_opinion_collections_pipeline_part
@@ -19,19 +19,19 @@ from arekit.contrib.utils.pipelines.opinion_collections import \
 
 class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
 
-    def __init__(self, opinion_samples_io, create_opinion_collection_func,
+    def __init__(self, opinions_io, create_opinion_collection_func,
                  opinion_collection_writer, label_scaler, labels_formatter):
         """ create_opinion_collection_func: func
                 func () -> OpinionCollection (empty)
         """
-        assert(isinstance(opinion_samples_io, OpinionsIOUtils))
+        assert(isinstance(opinions_io, OpinionsIO))
         assert(callable(create_opinion_collection_func))
         assert(isinstance(label_scaler, BaseLabelScaler))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
         assert(isinstance(opinion_collection_writer, OpinionCollectionWriter))
         super(TextOpinionLinkagesToOpinionConverterPipelineItem, self).__init__()
 
-        self.__opinion_samples_io = opinion_samples_io
+        self.__opinions_io = opinions_io
         self.__labels_formatter = labels_formatter
         self.__label_scaler = label_scaler
         self.__create_opinion_collection_func = create_opinion_collection_func
@@ -52,12 +52,12 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         linkages_view = MultilableOpinionLinkagesView(labels_scaler=self.__label_scaler,
                                                       storage=output_storage)
 
-        target = self.__opinion_samples_io.create_writer_target(data_type=data_type,
-                                                                data_folding=data_folding)
+        target = self.__opinions_io.create_target(data_type=data_type,
+                                                  data_folding=data_folding)
 
         converter_part = text_opinion_linkages_to_opinion_collections_pipeline_part(
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
-                doc_id=doc_id, opinions_view=self.__opinion_samples_io.create_view(target)),
+                doc_id=doc_id, opinions_view=self.__opinions_io.create_view(target)),
             doc_ids_set=set(data_folding.fold_doc_ids_set()[data_type]),
             create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,

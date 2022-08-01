@@ -16,7 +16,7 @@ from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbedding
 from arekit.contrib.networks.embedding import Embedding
 from arekit.contrib.utils.io_utils.embedding import NpzEmbeddingIOUtils
 
-from arekit.contrib.utils.io_utils.samples import SamplesIOUtils
+from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.utils_folding import folding_iter_states
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
@@ -50,7 +50,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
                 save embedding and all the related information to it.
         """
         assert(isinstance(exp_ctx, NetworkSerializationContext))
-        assert(isinstance(samples_io, SamplesIOUtils))
+        assert(isinstance(samples_io, SamplesIO))
         assert(isinstance(emb_io, NpzEmbeddingIOUtils))
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
         assert(isinstance(vectorizers, dict))
