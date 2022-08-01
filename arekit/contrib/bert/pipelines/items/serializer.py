@@ -1,4 +1,4 @@
-from arekit.common.experiment.api.io_utils import BaseIOUtils
+from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.context import PipelineContext
@@ -9,8 +9,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, sample_rows_provider, exp_io, save_labels_func,
-                 balance_func, keep_opinions_repo=False):
+    def __init__(self, sample_rows_provider, samples_io, save_labels_func, balance_func):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -19,14 +18,13 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
             save_labels_func: function
                 data_type -> bool
         """
-        assert(isinstance(exp_io, BaseIOUtils))
+        assert(isinstance(samples_io, BaseSamplesIO))
         super(BertExperimentInputSerializerPipelineItem, self).__init__()
 
         self.__sample_rows_provider = sample_rows_provider
         self.__balance_func = balance_func
-        self.__exp_io = exp_io
+        self.__samples_io = samples_io
         self.__save_labels_func = save_labels_func
-        self.__keep_opinions_repo = keep_opinions_repo
 
     # region private methods
 
@@ -37,22 +35,15 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
             "sample": InputDataSerializationHelper.create_samples_repo(
                 keep_labels=self.__save_labels_func(data_type),
                 rows_provider=self.__sample_rows_provider),
-            "opinion": InputDataSerializationHelper.create_opinion_repo()
         }
 
         writer_and_targets = {
-            "sample": (self.__exp_io.create_samples_writer(),
-                       self.__exp_io.create_samples_writer_target(
+            "sample": (self.__samples_io.create_writer(),
+                       self.__samples_io.create_target(
                            data_type=data_type, data_folding=data_folding)),
-            "opinion": (self.__exp_io.create_opinions_writer(),
-                        self.__exp_io.create_opinions_writer_target(
-                            data_type=data_type, data_folding=data_folding))
         }
 
         for description, repo in repos.items():
-
-            if description == "opinion" and not self.__keep_opinions_repo:
-                continue
 
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,

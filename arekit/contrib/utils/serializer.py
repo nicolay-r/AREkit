@@ -1,13 +1,10 @@
 import collections
 import logging
 
-from arekit.common.data.input.providers.columns.opinion import OpinionColumnsProvider
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
-from arekit.common.data.input.providers.rows.opinions import BaseOpinionsRowProvider
 from arekit.common.data.input.repositories.base import BaseInputRepository
-from arekit.common.data.input.repositories.opinions import BaseInputOpinionsRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.pipeline.base import BasePipeline
@@ -25,13 +22,6 @@ class InputDataSerializationHelper(object):
         return BaseInputSamplesRepository(
             columns_provider=SampleColumnsProvider(store_labels=keep_labels),
             rows_provider=rows_provider,
-            storage=BaseRowsStorage())
-
-    @staticmethod
-    def create_opinion_repo():
-        return BaseInputOpinionsRepository(
-            columns_provider=OpinionColumnsProvider(),
-            rows_provider=BaseOpinionsRowProvider(),
             storage=BaseRowsStorage())
 
     @staticmethod

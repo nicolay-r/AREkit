@@ -1,4 +1,4 @@
-class BaseEmbeddingIOUtils(object):
+class BaseEmbeddingIO(object):
     """ API for loading and saving embedding and vocabulary related data.
     """
 

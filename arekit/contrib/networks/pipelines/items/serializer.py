@@ -24,7 +24,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
     def __init__(self, vectorizers, save_labels_func, str_entity_fmt, exp_ctx,
-                 samples_io, emb_io, balance_func, save_embedding, keep_opinions_repos=False):
+                 samples_io, emb_io, balance_func, save_embedding):
         """ This pipeline item allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -64,7 +64,6 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         self.__save_embedding = save_embedding
         self.__save_labels_func = save_labels_func
         self.__balance_func = balance_func
-        self.__keep_opinions_repo = keep_opinions_repos
 
         self.__term_embedding_pairs = collections.OrderedDict()
 
@@ -100,23 +99,15 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
             "sample": InputDataSerializationHelper.create_samples_repo(
                 keep_labels=self.__save_labels_func(data_type),
                 rows_provider=rows_provider),
-            "opinion": InputDataSerializationHelper.create_opinion_repo()
         }
 
         writer_and_targets = {
-            "sample": (self.__samples_io.create_samples_writer(),
-                       self.__samples_io.create_samples_writer_target(
+            "sample": (self.__samples_io.create_writer(),
+                       self.__samples_io.create_target(
                            data_type=data_type, data_folding=data_folding)),
-            "opinion": (self.__samples_io.create_opinions_writer(),
-                        self.__samples_io.create_opinions_writer_target(
-                            data_type=data_type, data_folding=data_folding))
         }
 
         for description, repo in repos.items():
-
-            if description == "opinion" and not self.__keep_opinions_repo:
-                continue
-
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,
                 pipeline=pipeline,
