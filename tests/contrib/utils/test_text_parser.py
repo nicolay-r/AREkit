@@ -18,8 +18,8 @@ from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVaria
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 
-from tests.processing.text.debug_text import debug_show_news_terms
 from tests.contrib.utils.test_eval import RuSentRelSynonymsCollectionProvider
+from tests.contrib.utils.text.debug_text import debug_show_news_terms
 
 
 class TestTextParser(unittest.TestCase):
