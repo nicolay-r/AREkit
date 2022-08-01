@@ -8,7 +8,6 @@ from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
 
-from arekit.contrib.experiment_rusentrel.synonyms.provider import RuSentRelSynonymsCollectionProvider
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
@@ -17,9 +16,10 @@ from arekit.contrib.utils.pipelines.items.text.frames import FrameVariantsParser
 from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVariantsSentimentNegation
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
-
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
+
 from tests.processing.text.debug_text import debug_show_news_terms
+from tests.contrib.utils.test_eval import RuSentRelSynonymsCollectionProvider
 
 
 class TestTextParser(unittest.TestCase):
