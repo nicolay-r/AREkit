@@ -1,12 +1,11 @@
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
-from arekit.common.experiment.api.ctx_serialization import ExperimentSerializationContext
+from arekit.common.experiment.api.ctx_base import ExperimentContext
 
 
-class NetworkSerializationContext(ExperimentSerializationContext):
+class NetworkSerializationContext(ExperimentContext):
 
-    def __init__(self, labels_scaler, name_provider):
-        super(NetworkSerializationContext, self).__init__(
-            label_scaler=labels_scaler, name_provider=name_provider)
+    def __init__(self, labels_scaler):
+        super(NetworkSerializationContext, self).__init__()
         self.__label_provider = MultipleLabelProvider(labels_scaler)
 
     @property
