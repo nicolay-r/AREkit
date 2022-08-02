@@ -14,10 +14,6 @@ class ExperimentContext(object):
         """
         return self.__model_io
 
-    @property
-    def LabelsCount(self):
-        raise NotImplementedError()
-
     def set_model_io(self, model_io):
         """ Providing model_io in experiment data.
         """
