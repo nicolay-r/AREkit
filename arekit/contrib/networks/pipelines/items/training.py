@@ -18,7 +18,7 @@ from arekit.contrib.networks.core.pipeline.item_predict import EpochLabelsPredic
 from arekit.contrib.networks.core.pipeline.item_predict_labeling import EpochLabelsCollectorPipelineItem
 from arekit.contrib.networks.shapes import NetworkInputShapes
 from arekit.contrib.networks.utils import rm_dir_contents
-from arekit.contrib.utils.io_utils.embedding import NpzEmbeddingIOUtils
+from arekit.contrib.utils.io_utils.embedding import NpzEmbeddingIO
 from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.utils_folding import folding_iter_states
 
@@ -30,7 +30,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
                  labels_count, network_callbacks, prepare_model_root=True, seed=None):
         assert(callable(create_network_func))
         assert(isinstance(samples_io, SamplesIO))
-        assert(isinstance(emb_io, NpzEmbeddingIOUtils))
+        assert(isinstance(emb_io, NpzEmbeddingIO))
         assert(isinstance(config, DefaultNetworkConfig))
         assert(issubclass(bags_collection_type, BagsCollection))
         assert(isinstance(load_model, bool))

@@ -1,17 +1,11 @@
 from os.path import join
 
-from arekit.common.model.model_io import BaseModelIO
 
-
-class NeuralNetworkModelIO(BaseModelIO):
+class NeuralNetworkModelIO(object):
     """ Provides an API for saving model states
     """
 
-    def __init__(self, full_model_name, model_name_tag,
-                 target_dir=None,
-                 source_dir=None,
-                 embedding_filepath=None,
-                 vocab_filepath=None):
+    def __init__(self, full_model_name, model_name_tag, target_dir=None, source_dir=None):
         assert(isinstance(full_model_name, str))
         assert(isinstance(model_name_tag, str))
         assert(isinstance(target_dir, str) or target_dir is None)
@@ -25,8 +19,6 @@ class NeuralNetworkModelIO(BaseModelIO):
         # model and provide all the related information for further
         # fine-tuning operation.
         self.__source_dir = source_dir
-        self.__embedding_filepath = embedding_filepath
-        self.__vocab_filepath = vocab_filepath
 
     @property
     def IsPretrainedStateProvided(self):
@@ -50,17 +42,8 @@ class NeuralNetworkModelIO(BaseModelIO):
 
     # endregion
 
-    def get_model_name(self):
-        return self.__compose_suffixed_full_model_name()
-
     def get_model_dir(self):
         return self.__get_target_subdir()
-
-    def get_model_embedding_filepath(self):
-        return self.__embedding_filepath
-
-    def get_model_vocab_filepath(self):
-        return self.__vocab_filepath
 
     def get_model_source_path_tf_prefix(self):
         """ Provides a filepath to the state that should be utilized as original.

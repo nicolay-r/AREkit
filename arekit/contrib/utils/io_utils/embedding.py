@@ -7,7 +7,7 @@ from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
 from arekit.contrib.utils.utils_folding import experiment_iter_index
 
 
-class NpzEmbeddingIOUtils(BaseEmbeddingIO):
+class NpzEmbeddingIO(BaseEmbeddingIO):
     """ Npz-based IO utils for vocabulary and embedding.
         This format represents a archived version of the numpy math data, i.e. vectors, numbers, etc.
 
@@ -19,10 +19,9 @@ class NpzEmbeddingIOUtils(BaseEmbeddingIO):
     TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding-{cv_index}'
     VOCABULARY_FILENAME_TEMPLATE = "vocab-{cv_index}.txt"
 
-    def __init__(self, target_dir, exp_ctx):
+    def __init__(self, target_dir):
         assert(isinstance(target_dir, str))
         self.__target_dir = target_dir
-        self.__exp_ctx = exp_ctx
 
     # region Embedding-related data
 
@@ -55,44 +54,26 @@ class NpzEmbeddingIOUtils(BaseEmbeddingIO):
 
     # region embedding-related data
 
-    def __get_default_embedding_filepath(self, data_folding):
-        return join(self.__target_dir,
-                    self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                        cv_index=experiment_iter_index(data_folding)) + '.npz')
-
-    def __get_term_embedding_target(self, data_folding):
-        return self.__get_default_embedding_filepath(data_folding)
-
     def ___get_vocab_source(self, data_folding):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
-        return self.__get_model_parameter(default_value=self.__get_default_vocab_filepath(data_folding),
-                                          get_value_func=lambda model_io: model_io.get_model_vocab_filepath())
+        return self.__get_default_vocab_filepath(data_folding)
+
+    def __get_term_embedding_target(self, data_folding):
+        return self.__get_default_embedding_filepath(data_folding)
 
     def __get_term_embedding_source(self, data_folding):
-        """ It is possible to load a predefined embedding from another experiment
-            using the related filepath provided by model_io.
-        """
-        return self.__get_model_parameter(default_value=self.__get_default_embedding_filepath(data_folding),
-                                          get_value_func=lambda model_io: model_io.get_model_embedding_filepath())
-
-    def __get_model_parameter(self, default_value, get_value_func):
-        assert(default_value is not None)
-        assert(callable(get_value_func))
-
-        model_io = self.__exp_ctx.ModelIO
-
-        if model_io is None:
-            return default_value
-
-        predefined_value = get_value_func(model_io) if model_io.IsPretrainedStateProvided else None
-
-        return default_value if predefined_value is None else predefined_value
+        return self.__get_default_embedding_filepath(data_folding)
 
     def __get_default_vocab_filepath(self, data_folding):
         return join(self.__target_dir,
                     self.VOCABULARY_FILENAME_TEMPLATE.format(
+                        cv_index=experiment_iter_index(data_folding)) + '.npz')
+
+    def __get_default_embedding_filepath(self, data_folding):
+        return join(self.__target_dir,
+                    self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
                         cv_index=experiment_iter_index(data_folding)) + '.npz')
 
     # endregion
