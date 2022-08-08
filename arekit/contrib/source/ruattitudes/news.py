@@ -1,3 +1,4 @@
+from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.source.brat.news import BratNews
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
@@ -28,7 +29,11 @@ class RuAttitudesNews(BratNews):
             assert(isinstance(sentence, RuAttitudesSentence))
             for sentence_opinion in sentence.iter_sentence_opins():
                 assert(isinstance(sentence_opinion, SentenceOpinion))
-                yield sentence_opinion
+                yield TextOpinion(doc_id=self.ID,
+                                  text_opinion_id=sentence_opinion.ID,
+                                  source_id=sentence.get_doc_level_text_object_id(sentence_opinion.SourceID),
+                                  target_id=sentence.get_doc_level_text_object_id(sentence_opinion.TargetID),
+                                  label=sentence_opinion.Label)
 
     # endregion
 
