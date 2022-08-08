@@ -1,15 +1,19 @@
-from arekit.common.news.base import News
+from arekit.contrib.source.brat.news import BratNews
+from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 
 
-class RuAttitudesNews(News):
+class RuAttitudesNews(BratNews):
 
     def __init__(self, sentences, news_index):
         assert(len(sentences) > 0)
 
-        super(RuAttitudesNews, self).__init__(doc_id=news_index, sentences=sentences)
+        super(RuAttitudesNews, self).__init__(doc_id=news_index,
+                                              sentences=sentences,
+                                              text_opinions=None)
 
         self.__set_owners()
+        self.__sentences = sentences
         self.__objects_before_sentence = self.__cache_objects_declared_before()
 
     # region properties
@@ -17,6 +21,14 @@ class RuAttitudesNews(News):
     @property
     def Title(self):
         return self._sentences[0]
+
+    @property
+    def TextOpinions(self):
+        for sentence in self.__sentences:
+            assert(isinstance(sentence, RuAttitudesSentence))
+            for sentence_opinion in sentence.iter_sentence_opins():
+                assert(isinstance(sentence_opinion, SentenceOpinion))
+                yield sentence_opinion
 
     # endregion
 

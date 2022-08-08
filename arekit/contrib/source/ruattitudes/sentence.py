@@ -1,9 +1,8 @@
-from arekit.common.news.sentence import BaseNewsSentence
-from arekit.common.utils import split_by_whitespaces
+from arekit.contrib.source.brat.sentence import BratSentence
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 
 
-class RuAttitudesSentence(BaseNewsSentence):
+class RuAttitudesSentence(BratSentence):
 
     def __init__(self, is_title, text, sentence_opins, objects_list, sentence_index):
         assert(isinstance(is_title, bool))
@@ -11,7 +10,9 @@ class RuAttitudesSentence(BaseNewsSentence):
         assert(isinstance(objects_list, list))
         assert(isinstance(sentence_index, int))
 
-        super(RuAttitudesSentence, self).__init__(text=split_by_whitespaces(text))
+        super(RuAttitudesSentence, self).__init__(text=text,
+                                                  char_ind_begin=0,
+                                                  char_ind_end=0)
 
         self.__is_title = is_title
         self.__sentence_opins = sentence_opins

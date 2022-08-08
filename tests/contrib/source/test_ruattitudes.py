@@ -22,6 +22,7 @@ from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScal
 from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
+from arekit.contrib.source.brat.entities.entity import BratEntity
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -48,7 +49,7 @@ class TestRuAttitudes(unittest.TestCase):
             for s_obj in sentence.iter_objects():
                 assert (isinstance(s_obj, TextObject))
                 entity = s_obj.to_entity(lambda in_id: in_id)
-                assert (isinstance(entity, Entity))
+                assert (isinstance(entity, BratEntity))
                 self.assertTrue(entity.GroupIndex is not None,
                                 "Group index [{doc_id}] is None!".format(doc_id=news.ID))
 

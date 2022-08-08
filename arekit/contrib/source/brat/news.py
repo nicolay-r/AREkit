@@ -6,7 +6,7 @@ from arekit.contrib.source.brat.sentence import BratSentence
 class BratNews(News):
 
     def __init__(self, doc_id, sentences, text_opinions):
-        assert(isinstance(text_opinions, list))
+        assert(isinstance(text_opinions, list) or text_opinions is None)
         super(BratNews, self).__init__(doc_id=doc_id, sentences=sentences)
         self.__text_opinions = text_opinions
         self.__entity_by_id = {}

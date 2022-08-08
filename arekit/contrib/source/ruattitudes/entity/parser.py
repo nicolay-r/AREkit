@@ -1,6 +1,7 @@
 from arekit.common.news.objects_parser import SentenceObjectsParserPipelineItem
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.partitioning.terms import TermsPartitioning
+from arekit.common.utils import split_by_whitespaces
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 
@@ -16,7 +17,7 @@ class RuAttitudesTextEntitiesParser(SentenceObjectsParserPipelineItem):
 
     def _get_text(self, pipeline_ctx):
         sentence = self.__get_sentence(pipeline_ctx)
-        return sentence.Text
+        return split_by_whitespaces(sentence.Text)
 
     def _get_parts_provider_func(self, input_data, pipeline_ctx):
         sentence = self.__get_sentence(pipeline_ctx)
