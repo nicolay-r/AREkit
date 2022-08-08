@@ -1,5 +1,5 @@
 from arekit.common.bound import Bound
-from arekit.common.entities.base import Entity
+from arekit.contrib.source.brat.entities.entity import BratEntity
 
 
 class TextObject(object):
@@ -25,9 +25,11 @@ class TextObject(object):
 
     def to_entity(self, to_doc_id_func):
         assert(callable(to_doc_id_func))
-        return Entity(value=self.__value if len(self.__value) > 0 else '[empty]',
-                      e_type=self.__type,
-                      group_index=self.__syn_group_index)
+        return BratEntity(id_in_doc=to_doc_id_func(self.__id_in_sentence),
+                          value=self.__value if len(self.__value) > 0 else '[empty]',
+                          e_type=self.__type,
+                          char_index_begin=-1,
+                          char_index_end=-1)
 
     # region properties
 
