@@ -1,66 +1,59 @@
-from arekit.common.text_opinions.base import TextOpinion
-from arekit.contrib.source.brat.news import BratNews
-from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 
 
-class RuAttitudesNews(BratNews):
+class RuAttitudesNews(object):
 
     def __init__(self, sentences, news_index):
         assert(len(sentences) > 0)
 
-        super(RuAttitudesNews, self).__init__(doc_id=news_index,
-                                              sentences=sentences,
-                                              text_opinions=None)
+        self.__sentences = sentences
+        self.__objects_before_sentence = self.__cache_objects_declared_before()
+        self.__news_index = news_index
 
         self.__set_owners()
         self.__setup_brat_entities()
-        self.__sentences = sentences
-        self.__objects_before_sentence = self.__cache_objects_declared_before()
 
     # region properties
 
     @property
-    def Title(self):
-        return self._sentences[0]
+    def ID(self):
+        return self.__news_index
 
     @property
-    def TextOpinions(self):
-        for sentence in self.__sentences:
-            assert(isinstance(sentence, RuAttitudesSentence))
-            for sentence_opinion in sentence.iter_sentence_opins():
-                assert(isinstance(sentence_opinion, SentenceOpinion))
-                yield TextOpinion(doc_id=self.ID,
-                                  text_opinion_id=sentence_opinion.ID,
-                                  source_id=sentence.get_doc_level_text_object_id(sentence_opinion.SourceID),
-                                  target_id=sentence.get_doc_level_text_object_id(sentence_opinion.TargetID),
-                                  label=sentence_opinion.Label)
+    def Title(self):
+        return self.__sentences[0]
 
     # endregion
 
     # region private methods
 
     def __set_owners(self):
-        for sentence in self._sentences:
+        for sentence in self.__sentences:
             assert(isinstance(sentence, RuAttitudesSentence))
             sentence.set_owner(self)
+
+    def __setup_brat_entities(self):
+        """ This could be called once the owner will be initialized.
+        """
+        for sentence in self.__sentences:
+            assert(isinstance(sentence, RuAttitudesSentence))
+            sentence.setup_brat_entities()
 
     def __cache_objects_declared_before(self):
         d = {}
         before = 0
-        for s in self._sentences:
+        for s in self.__sentences:
             assert(isinstance(s, RuAttitudesSentence))
             d[s.SentenceIndex] = before
             before += s.ObjectsCount
 
         return d
 
-    def __setup_brat_entities(self):
-        for sentence in self.__sentences:
-            assert(isinstance(sentence, RuAttitudesSentence))
-            sentence.setup_brat_entities()
-
     # endregion
 
     def get_objects_declared_before(self, sentence_index):
         return self.__objects_before_sentence[sentence_index]
+
+    def iter_sentences(self):
+        for sentence in self.__sentences:
+            yield sentence
