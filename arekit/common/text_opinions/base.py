@@ -23,7 +23,8 @@ class TextOpinion(object):
         self.__source_id = source_id
         self.__target_id = target_id
         self.__text_opinion_id = text_opinion_id
-        self.__modifiable_label = label
+        self.__modifiable_label = None
+        self.__set_label_core(label)
 
     @classmethod
     def create_copy(cls, other, keep_text_opinion_id=True):
@@ -64,6 +65,10 @@ class TextOpinion(object):
                            target_id=target_id,
                            label=other.Sentiment)
 
+    def __set_label_core(self, label):
+        assert(isinstance(label, Label))
+        self.__modifiable_label = label
+
     # endregion
 
     # region properties
@@ -97,7 +102,6 @@ class TextOpinion(object):
         self.__text_opinion_id = text_opinion_id
 
     def set_label(self, label):
-        assert(isinstance(label, Label))
-        self.__modifiable_label = label
+        self.__set_label_core(label)
 
     # endregion
