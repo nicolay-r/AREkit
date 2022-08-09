@@ -10,9 +10,7 @@ class RuAttitudesSentence(BratSentence):
         assert(isinstance(objects_list, list))
         assert(isinstance(sentence_index, int))
 
-        super(RuAttitudesSentence, self).__init__(text=text,
-                                                  char_ind_begin=0,
-                                                  char_ind_end=0)
+        super(RuAttitudesSentence, self).__init__(text=text, char_ind_begin=0, char_ind_end=0)
 
         self.__is_title = is_title
         self.__sentence_opins = sentence_opins
@@ -41,6 +39,13 @@ class RuAttitudesSentence(BratSentence):
     # endregion
 
     # region public methods
+
+    def setup_brat_entities(self):
+        """ This could be utilized once the owner will be initialized.
+        """
+        for obj in self.__objects:
+            entity = obj.to_entity(self.get_doc_level_text_object_id)
+            self.add_local_entity(entity)
 
     def set_owner(self, owner):
         if self.__owner is not None:

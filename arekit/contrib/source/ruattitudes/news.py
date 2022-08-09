@@ -14,6 +14,7 @@ class RuAttitudesNews(BratNews):
                                               text_opinions=None)
 
         self.__set_owners()
+        self.__setup_brat_entities()
         self.__sentences = sentences
         self.__objects_before_sentence = self.__cache_objects_declared_before()
 
@@ -53,6 +54,11 @@ class RuAttitudesNews(BratNews):
             before += s.ObjectsCount
 
         return d
+
+    def __setup_brat_entities(self):
+        for sentence in self.__sentences:
+            assert(isinstance(sentence, RuAttitudesSentence))
+            sentence.setup_brat_entities()
 
     # endregion
 
