@@ -1,6 +1,5 @@
 from arekit.common.bound import Bound
 from arekit.common.news.sentence import BaseNewsSentence
-from arekit.contrib.source.brat.entities.entity import BratEntity
 
 
 class BratSentence(BaseNewsSentence):
@@ -9,21 +8,18 @@ class BratSentence(BaseNewsSentence):
         Provides API to store entities.
     """
 
-    def __init__(self, text, char_ind_begin, char_ind_end):
+    def __init__(self, text, char_ind_begin, char_ind_end, entities):
+        """ entities: list of BratEntities
+        """
         assert(isinstance(text, str) and len(text) > 0)
         assert(isinstance(char_ind_begin, int))
         assert(isinstance(char_ind_end, int))
+        assert(isinstance(entities, list))
 
         super(BratSentence, self).__init__(text=text)
         self.__begin = char_ind_begin
         self.__end = char_ind_end
-        self.__entities = []
-
-    # region public methods
-
-    def add_local_entity(self, entity):
-        assert(isinstance(entity, BratEntity))
-        self.__entities.append(entity)
+        self.__entities = entities
 
     def iter_entity_with_local_bounds(self, avoid_intersection=True):
         last_position = -1
@@ -38,25 +34,3 @@ class BratSentence(BaseNewsSentence):
 
             yield entity, Bound(pos=start, length=end - start)
             last_position = end
-
-    def is_entity_goes_after(self, entity):
-        assert(isinstance(entity, BratEntity))
-        return entity.CharIndexBegin > self.__end
-
-    @property
-    def BeginBound(self):
-        return self.__begin
-
-    @property
-    def EndBound(self):
-        return self.__end
-
-    # endregion
-
-    # region overriden methods
-
-    def __contains__(self, entity):
-        assert(isinstance(entity, BratEntity))
-        return entity.CharIndexBegin >= self.__begin and entity.CharIndexEnd <= self.__end
-
-    # endregion

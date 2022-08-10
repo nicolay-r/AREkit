@@ -1,5 +1,6 @@
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.contrib.source.brat.news import BratNews
+from arekit.contrib.source.brat.sentence import BratSentence
 from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.opinions.converter import RuAttitudesSentenceOpinionConverter
@@ -16,9 +17,21 @@ class RuAttitudesNewsConverter(object):
         assert(isinstance(news, RuAttitudesNews))
         assert(isinstance(label_scaler, BaseLabelScaler))
         text_opinions = RuAttitudesNewsConverter.__iter_text_opinions(news=news, label_scaler=label_scaler)
+        brat_sentences = RuAttitudesNewsConverter.__to_brat_sentences(news.iter_sentences())
         return BratNews(doc_id=news.ID,
-                        sentences=list(news.iter_sentences()),
+                        sentences=brat_sentences,
                         text_opinions=list(text_opinions))
+
+    @staticmethod
+    def __to_brat_sentences(sentences_iter):
+        sentences = []
+        for s in sentences_iter:
+            assert(isinstance(s, RuAttitudesSentence))
+            assert(s.Owner is not None)
+            brat_entities = [obj.to_entity(s.get_doc_level_text_object_id) for obj in s.iter_objects()]
+            brat_sentence = BratSentence(text=s.Text, char_ind_begin=0, char_ind_end=0, entities=brat_entities)
+            sentences.append(brat_sentence)
+        return sentences
 
     @staticmethod
     def __iter_text_opinions(news, label_scaler):

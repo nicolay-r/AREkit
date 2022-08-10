@@ -7,27 +7,65 @@ class BratDocumentSentencesReader(object):
 
     @staticmethod
     def from_file(input_file, entities, line_handler=None, skip_entity_func=None):
-        assert (isinstance(entities, EntityCollection))
-        assert (callable(skip_entity_func) or skip_entity_func is None)
+        assert(isinstance(entities, EntityCollection))
+        assert(callable(skip_entity_func) or skip_entity_func is None)
 
-        sentences = BratDocumentSentencesReader.__parse_sentences(input_file=input_file,
-                                                                  line_handler=line_handler)
+        sentences_data = BratDocumentSentencesReader.__parse_sentences(
+            input_file=input_file, line_handler=line_handler)
+
+        sentence_entities = BratDocumentSentencesReader.__parse_entities(
+            sentences_data=sentences_data,
+            entities=entities,
+            skip_entity_func=skip_entity_func)
+
+        # Convert all the content to brat sentences.
+        brat_sentences = []
+        for s_ind, s_dict in enumerate(sentences_data):
+            brat_sentence = BratSentence(text=s_dict["text"],
+                                         char_ind_begin=s_dict["ind_begin"],
+                                         char_ind_end=s_dict["ind_end"],
+                                         entities=sentence_entities[s_ind])
+            brat_sentences.append(brat_sentence)
+
+        return brat_sentences
+
+    # endregion
+
+    # region private methods
+
+    @staticmethod
+    def __is_sentence_contains(sentence_data, entity):
+        assert(isinstance(sentence_data, dict))
+        assert(isinstance(entity, BratEntity))
+        return entity.CharIndexBegin >= sentence_data["ind_begin"] and \
+               entity.CharIndexEnd <= sentence_data["ind_end"]
+
+    @staticmethod
+    def __parse_entities(sentences_data, entities, skip_entity_func):
+        """ Sentences is a list of json-like data (dictionaries).
+        """
+        assert(isinstance(sentences_data, list))
+        assert(isinstance(entities, EntityCollection))
+
+        sentence_entities = [[] for _ in range(len(sentences_data))]
 
         s_ind = 0
         e_ind = 0
 
-        while s_ind < len(sentences) and e_ind < len(entities):
+        while s_ind < len(sentences_data) and e_ind < len(entities):
             e = entities.get_entity_by_index(e_ind)
             assert (isinstance(e, BratEntity))
 
-            s = sentences[s_ind]
+            s = sentences_data[s_ind]
+            entities = sentence_entities[s_ind]
 
-            if s.is_entity_goes_after(e):
+            # If entity goes after the current sentence.
+            if e.CharIndexBegin > s["ind_end"]:
                 s_ind += 1
                 continue
 
-            if e in s:
-                s.add_local_entity(entity=e)
+            if BratDocumentSentencesReader.__is_sentence_contains(sentence_data=s, entity=e):
+                entities.append(e)
                 e_ind += 1
                 continue
 
@@ -35,12 +73,12 @@ class BratDocumentSentencesReader(object):
                 e_ind += 1
                 continue
 
-            if e.CharIndexEnd > s.EndBound:
+            if e.CharIndexEnd > s["ind_end"]:
                 # Intersects with the right border of sentence
                 s_ind += 1
                 continue
 
-            if e.CharIndexBegin < s.BeginBound:
+            if e.CharIndexBegin < s["ind_begin"]:
                 # Intersects with the left border of sentence
                 e_ind += 1
                 continue
@@ -49,13 +87,9 @@ class BratDocumentSentencesReader(object):
                 e_ind,
                 e.Value, e.CharIndexBegin, e.CharIndexEnd,
                 s_ind,
-                s.BeginBound, s.EndBound))
+                s["ind_begin"], s["ind_end"]))
 
-        return sentences
-
-    # endregion
-
-    # region private methods
+        return sentence_entities
 
     @staticmethod
     def __parse_sentences(input_file, line_handler):
@@ -73,10 +107,7 @@ class BratDocumentSentencesReader(object):
             line_end = line_start + len(handled_line) - 1
 
             if handled_line != str('\r\n'):
-                s = BratSentence(text=handled_line,
-                                 char_ind_begin=line_start,
-                                 char_ind_end=line_end)
-                sentences.append(s)
+                sentences.append({"text": handled_line, "ind_begin": line_start, "ind_end": line_end})
 
             line_start = line_end + 1
 
