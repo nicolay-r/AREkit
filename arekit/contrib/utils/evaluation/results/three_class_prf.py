@@ -3,6 +3,7 @@ from collections import OrderedDict
 
 from arekit.common.evaluation.result import BaseEvalResult
 from arekit.common.labels.base import Label
+from arekit.contrib.utils.evaluation.results.metrics_acc import calc_acc
 from arekit.contrib.utils.evaluation.results.metrics_f1 import calc_f1_3c_macro, calc_f1_single_class
 from arekit.contrib.utils.evaluation.results.metrics_pr import calc_precision_micro, calc_recall_micro, \
     calc_prec_and_recall
@@ -25,6 +26,7 @@ class ThreeClassPrecRecallF1EvalResult(BaseEvalResult):
     C_F1_NEG = 'f1_neg'
     C_F1_NEU = 'f1_neu'
     C_F1_MICRO = 'f1_micro'
+    C_ACC = "acc"
 
     def __init__(self, label1, label2, label3, get_item_label_func):
         assert(isinstance(label1, Label))
@@ -101,6 +103,7 @@ class ThreeClassPrecRecallF1EvalResult(BaseEvalResult):
             get_origin_answers_by_label_func=cmp_table.filter_original_column_by_label,
             get_result_answers_by_label_func=cmp_table.filter_result_column_by_label,
             labels=[self.__pos_label, self.__neg_label, self.__neu_label])
+        self.__doc_results[doc_id][self.C_ACC] = calc_acc(cmp_table)
 
     def calculate(self):
         pos_prec_macro = 0.0
@@ -111,6 +114,7 @@ class ThreeClassPrecRecallF1EvalResult(BaseEvalResult):
         neu_recall_macro = 0.0
         prec_micro_macro = 0.0
         recall_micro_macro = 0.0
+        acc = 0.0
 
         for info in self.__doc_results.values():
             pos_prec_macro += info[self.C_POS_PREC]
@@ -121,6 +125,7 @@ class ThreeClassPrecRecallF1EvalResult(BaseEvalResult):
             neu_recall_macro += info[self.C_NEU_RECALL]
             prec_micro_macro += info[self.C_PREC_MICRO]
             recall_micro_macro += info[self.C_RECALL_MICRO]
+            acc += info[self.C_ACC]
 
         if len(self.__doc_results) > 0:
             pos_prec_macro /= len(self.__doc_results)
@@ -131,6 +136,7 @@ class ThreeClassPrecRecallF1EvalResult(BaseEvalResult):
             neu_recall_macro /= len(self.__doc_results)
             prec_micro_macro /= len(self.__doc_results)
             recall_micro_macro /= len(self.__doc_results)
+            acc /= len(self.__doc_results)
 
         f1 = calc_f1_3c_macro(pos_prec=pos_prec_macro, neg_prec=neg_prec_macro, neu_prec=neu_prec_macro,
                               pos_recall=pos_recall_macro, neg_recall=neg_recall_macro, neu_recall=neu_recall_macro)
@@ -149,6 +155,7 @@ class ThreeClassPrecRecallF1EvalResult(BaseEvalResult):
         self._total_result[self.C_PREC_MICRO] = prec_micro_macro
         self._total_result[self.C_RECALL_MICRO] = recall_micro_macro
         self._total_result[self.C_F1_MICRO] = calc_f1_single_class(prec=prec_micro_macro, recall=recall_micro_macro)
+        self._total_result[self.C_ACC] = acc
 
     def iter_document_results(self):
         return iter(self.__doc_results.items())
