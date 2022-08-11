@@ -23,12 +23,12 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         assert(isinstance(dist_in_terms_bound, int) or dist_in_terms_bound is None)
         assert(isinstance(label_provider, BasePairLabelProvider))
         assert(isinstance(dist_in_sents, int))
-        assert(callable(is_entity_ignored_func))
+        assert(callable(is_entity_ignored_func) or is_entity_ignored_func is None)
 
         self.__label_provider = label_provider
         self.__dist_in_terms_bound = dist_in_terms_bound
         self.__dist_in_sents = dist_in_sents
-        self.__is_entity_ignored_func = is_entity_ignored_func
+        self.__is_entity_ignored_func = lambda _: False if is_entity_ignored_func is None else is_entity_ignored_func
 
     # region private methods
 
