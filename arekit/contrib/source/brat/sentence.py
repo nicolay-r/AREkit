@@ -8,25 +8,25 @@ class BratSentence(BaseNewsSentence):
         Provides API to store entities.
     """
 
-    def __init__(self, text, char_ind_begin, char_ind_end, entities):
+    def __init__(self, text, index_begin, entities):
         """ entities: list of BratEntities
+            index_begin: int
+                - char index (in case of string type of `text`)
+                - term index (in case of list type of `text`)
         """
-        assert(isinstance(text, str) and len(text) > 0)
-        assert(isinstance(char_ind_begin, int))
-        assert(isinstance(char_ind_end, int))
+        assert(isinstance(text, str) or isinstance(text, list))
+        assert(isinstance(index_begin, int))
         assert(isinstance(entities, list))
-
         super(BratSentence, self).__init__(text=text)
-        self.__begin = char_ind_begin
-        self.__end = char_ind_end
+        self.__index_begin = index_begin
         self.__entities = entities
 
     def iter_entity_with_local_bounds(self, avoid_intersection=True):
         last_position = -1
 
         for entity in self.__entities:
-            start = entity.CharIndexBegin - self.__begin
-            end = entity.CharIndexEnd - self.__begin
+            start = entity.IndexBegin - self.__index_begin
+            end = entity.IndexEnd - self.__index_begin
 
             if start <= last_position and avoid_intersection:
                 # intersected with the previous one.

@@ -22,8 +22,7 @@ class BratDocumentSentencesReader(object):
         brat_sentences = []
         for s_ind, s_dict in enumerate(sentences_data):
             brat_sentence = BratSentence(text=s_dict["text"],
-                                         char_ind_begin=s_dict["ind_begin"],
-                                         char_ind_end=s_dict["ind_end"],
+                                         index_begin=s_dict["ind_begin"],
                                          entities=sentence_entities[s_ind])
             brat_sentences.append(brat_sentence)
 
@@ -37,8 +36,8 @@ class BratDocumentSentencesReader(object):
     def __is_sentence_contains(sentence_data, entity):
         assert(isinstance(sentence_data, dict))
         assert(isinstance(entity, BratEntity))
-        return entity.CharIndexBegin >= sentence_data["ind_begin"] and \
-               entity.CharIndexEnd <= sentence_data["ind_end"]
+        return entity.IndexBegin >= sentence_data["ind_begin"] and \
+               entity.IndexEnd <= sentence_data["ind_end"]
 
     @staticmethod
     def __parse_entities(sentences_data, entities, skip_entity_func):
@@ -60,7 +59,7 @@ class BratDocumentSentencesReader(object):
             entities = sentence_entities[s_ind]
 
             # If entity goes after the current sentence.
-            if e.CharIndexBegin > s["ind_end"]:
+            if e.IndexBegin > s["ind_end"]:
                 s_ind += 1
                 continue
 
@@ -73,19 +72,19 @@ class BratDocumentSentencesReader(object):
                 e_ind += 1
                 continue
 
-            if e.CharIndexEnd > s["ind_end"]:
+            if e.IndexEnd > s["ind_end"]:
                 # Intersects with the right border of sentence
                 s_ind += 1
                 continue
 
-            if e.CharIndexBegin < s["ind_begin"]:
+            if e.IndexBegin < s["ind_begin"]:
                 # Intersects with the left border of sentence
                 e_ind += 1
                 continue
 
             raise Exception("e_i:{} e:('{}',{},{}), s_i:{}, s_b: [{} {}]".format(
                 e_ind,
-                e.Value, e.CharIndexBegin, e.CharIndexEnd,
+                e.Value, e.IndexBegin, e.IndexEnd,
                 s_ind,
                 s["ind_begin"], s["ind_end"]))
 

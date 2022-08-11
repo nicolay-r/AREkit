@@ -23,8 +23,8 @@ class BratAnnotationParser:
 
         return BratEntity(id_in_doc=e_id,
                           e_type=e_str_type,
-                          char_index_begin=e_begin,
-                          char_index_end=e_end,
+                          index_begin=e_begin,
+                          index_end=e_end,
                           value=e_value)
 
     @staticmethod

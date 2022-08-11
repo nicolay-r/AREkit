@@ -11,7 +11,7 @@ class RuSentRelDocumentEntityCollection(EntityCollection):
             entities=entities,
             value_to_group_id_func=value_to_group_id_func)
 
-        self._sort_entities(key=lambda entity: entity.CharIndexBegin)
+        self._sort_entities(key=lambda entity: entity.IndexBegin)
 
     @classmethod
     def read_collection(cls, doc_id, synonyms, version=RuSentRelVersions.V11):

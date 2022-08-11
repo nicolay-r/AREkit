@@ -28,8 +28,8 @@ class TextObject(object):
         return BratEntity(id_in_doc=to_doc_id_func(self.__id_in_sentence),
                           value=self.__value if len(self.__value) > 0 else '[empty]',
                           e_type=self.__type,
-                          char_index_begin=self.__bound.Position,
-                          char_index_end=self.__bound.Position + self.__bound.Length,
+                          index_begin=self.__bound.Position,
+                          index_end=self.__bound.Position + self.__bound.Length,
                           group_index=self.__syn_group_index)
 
     # region properties
