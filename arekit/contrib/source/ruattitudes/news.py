@@ -11,7 +11,6 @@ class RuAttitudesNews(object):
         self.__news_index = news_index
 
         self.__set_owners()
-        self.__setup_brat_entities()
 
     # region properties
 
@@ -31,13 +30,6 @@ class RuAttitudesNews(object):
         for sentence in self.__sentences:
             assert(isinstance(sentence, RuAttitudesSentence))
             sentence.set_owner(self)
-
-    def __setup_brat_entities(self):
-        """ This could be called once the owner will be initialized.
-        """
-        for sentence in self.__sentences:
-            assert(isinstance(sentence, RuAttitudesSentence))
-            sentence.setup_brat_entities()
 
     def __cache_objects_declared_before(self):
         d = {}
