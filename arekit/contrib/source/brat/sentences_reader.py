@@ -63,12 +63,12 @@ class BratDocumentSentencesReader(object):
                 s_ind += 1
                 continue
 
-            if BratDocumentSentencesReader.__is_sentence_contains(sentence_data=s, entity=e):
-                entities_in_sentence.append(e)
+            if skip_entity_func is not None and skip_entity_func(e):
                 e_ind += 1
                 continue
 
-            if skip_entity_func is not None and skip_entity_func(e):
+            if BratDocumentSentencesReader.__is_sentence_contains(sentence_data=s, entity=e):
+                entities_in_sentence.append(e)
                 e_ind += 1
                 continue
 
