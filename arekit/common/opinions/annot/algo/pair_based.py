@@ -28,7 +28,7 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         self.__label_provider = label_provider
         self.__dist_in_terms_bound = dist_in_terms_bound
         self.__dist_in_sents = dist_in_sents
-        self.__is_entity_ignored_func = lambda _: False if is_entity_ignored_func is None else is_entity_ignored_func
+        self.__is_entity_ignored_func = is_entity_ignored_func
 
     # region private methods
 
@@ -46,10 +46,11 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         if e1.IdInDocument == e2.IdInDocument:
             return
 
-        if self.__is_entity_ignored_func(e1, OpinionEntityType.Subject):
-            return
-        if self.__is_entity_ignored_func(e2, OpinionEntityType.Object):
-            return
+        if self.__is_entity_ignored_func is not None:
+            if self.__is_entity_ignored_func(e1, OpinionEntityType.Subject):
+                return
+            if self.__is_entity_ignored_func(e2, OpinionEntityType.Object):
+                return
 
         s_dist = entity_service.calc_dist_between_entities(e1=e1, e2=e2, distance_type=DistanceType.InSentences)
 
