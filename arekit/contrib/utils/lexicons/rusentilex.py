@@ -3,8 +3,8 @@ from os import path
 
 import pandas as pd
 
-from arekit.contrib.source.lexicons.lexicon import Lexicon
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
+from arekit.contrib.utils.lexicons.lexicon import Lexicon
 
 
 class RuSentiLexLexicon(Lexicon):
