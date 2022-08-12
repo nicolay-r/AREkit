@@ -46,7 +46,7 @@ class BratDocumentSentencesReader(object):
         assert(isinstance(sentences_data, list))
         assert(isinstance(entities, EntityCollection))
 
-        sentence_entities = [[] for _ in range(len(sentences_data))]
+        entities_in_sentences = [[] for _ in range(len(sentences_data))]
 
         s_ind = 0
         e_ind = 0
@@ -56,7 +56,7 @@ class BratDocumentSentencesReader(object):
             assert (isinstance(e, BratEntity))
 
             s = sentences_data[s_ind]
-            entities = sentence_entities[s_ind]
+            entities_in_sentence = entities_in_sentences[s_ind]
 
             # If entity goes after the current sentence.
             if e.IndexBegin > s["ind_end"]:
@@ -64,7 +64,7 @@ class BratDocumentSentencesReader(object):
                 continue
 
             if BratDocumentSentencesReader.__is_sentence_contains(sentence_data=s, entity=e):
-                entities.append(e)
+                entities_in_sentence.append(e)
                 e_ind += 1
                 continue
 
@@ -88,7 +88,7 @@ class BratDocumentSentencesReader(object):
                 s_ind,
                 s["ind_begin"], s["ind_end"]))
 
-        return sentence_entities
+        return entities_in_sentences
 
     @staticmethod
     def __parse_sentences(input_file, line_handler):
