@@ -33,7 +33,7 @@ class RuSentRelNewsReader(object):
             sentences = BratDocumentSentencesReader.from_file(
                 input_file=input_file,
                 entities=entities,
-                line_handler=lambda line: RuSentRelNewsReader.hide_first_entry(line, entry="Unknown}"),
+                line_handler=lambda line: RuSentRelNewsReader.hide_first_entry(line, entry="{Author, Unknown}"),
                 skip_entity_func=lambda entity: entity.Value in ['author', 'unknown'])
 
             return News(doc_id=target_doc_id if target_doc_id is not None else doc_id,
