@@ -9,5 +9,5 @@ class NpzRepositoryUtils(object):
 
     @staticmethod
     def load(source):
-        npz_vocab_data = np.load(source)
-        return npz_vocab_data['arr_0']
+        data = np.load(source)
+        return data['arr_0']
