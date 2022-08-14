@@ -9,7 +9,8 @@ class Embedding(object):
 
     def __init__(self, matrix, words):
         assert(isinstance(matrix, np.ndarray) and len(matrix.shape) == 2)
-        assert(isinstance(words, list) and len(words) == matrix.shape[0])
+        assert(isinstance(words, np.ndarray))
+        assert(len(words) == matrix.shape[0])
         self._matrix = matrix
         self.__words = words
         self.__index_by_word = self.__create_index(words)

@@ -1,4 +1,4 @@
-from arekit.contrib.utils.download import get_resource_path, NEWS_MYSTEM_SKIPGRAM_1000_20_2015
+from arekit.contrib.utils.download import NEWS_MYSTEM_SKIPGRAM_1000_20_2015, load_embedding_and_vocab
 from arekit.contrib.utils.embeddings.rusvectores import RusvectoresEmbedding
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 
@@ -13,7 +13,7 @@ def load_embedding_news_mystem_skipgram_1000_20_2015():
         Algorithm:          Continuous Skip-Gram
         Vector size:        1000
     """
-    filepath = get_resource_path(local_name=NEWS_MYSTEM_SKIPGRAM_1000_20_2015, check_existance=True)
-    embedding = RusvectoresEmbedding.from_word2vec_format(filepath=filepath, binary=True)
+    embedding, vocab = load_embedding_and_vocab(local_name=NEWS_MYSTEM_SKIPGRAM_1000_20_2015, check_existance=True)
+    embedding = RusvectoresEmbedding(matrix=embedding, words=vocab)
     embedding.set_stemmer(MystemWrapper())
     return embedding

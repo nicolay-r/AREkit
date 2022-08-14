@@ -1,12 +1,15 @@
+import os
+import tarfile
 from os.path import join, exists
 
 from arekit.common import utils
+from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
+from arekit.contrib.utils.np_utils.vocab import VocabRepositoryUtils
+
+NEWS_MYSTEM_SKIPGRAM_1000_20_2015 = "news_mystem_skipgram_1000_20_2015.tar.gz"
 
 
-NEWS_MYSTEM_SKIPGRAM_1000_20_2015 = "news_mystem_skipgram_1000_20_2015.bin.gz"
-
-
-def get_resource_path(local_name, check_existance=False):
+def __get_resource(local_name, check_existance=False):
     assert(isinstance(local_name, str))
     filepath = join(utils.get_default_download_dir(), local_name)
 
@@ -16,15 +19,36 @@ def get_resource_path(local_name, check_existance=False):
     return filepath
 
 
+def __get_embedding_dir(filepath):
+    return filepath.replace(".tar.gz", "")
+
+
+def load_embedding_and_vocab(local_name, check_existance=False):
+    tar_gz_archive = __get_resource(local_name, check_existance)
+    target_dir = __get_embedding_dir(tar_gz_archive)
+    embedding = NpzEmbeddingHelper.load_embedding(os.path.join(target_dir, "embedding.npz"))
+    vocab = VocabRepositoryUtils.load(os.path.join(target_dir, "vocab.txt"))
+    return embedding, vocab
+
+
 def download():
 
     data = {
-        # Embedding.
-        NEWS_MYSTEM_SKIPGRAM_1000_20_2015:
-            "http://rusvectores.org/static/models/rusvectores2/{}".format(NEWS_MYSTEM_SKIPGRAM_1000_20_2015),
+        NEWS_MYSTEM_SKIPGRAM_1000_20_2015: "https://www.dropbox.com/s/0omnlgzgnjhxlmf/{filename}?dl=1".format(
+            filename=NEWS_MYSTEM_SKIPGRAM_1000_20_2015),
     }
 
     # Perform downloading ...
     for local_name, url_link in data.items():
-        utils.download(dest_file_path=get_resource_path(local_name),
+        utils.download(dest_file_path=__get_resource(local_name),
                        source_url=url_link)
+
+    # Untar files ...
+    for local_name in data.keys():
+
+        if ".tar.gz" not in local_name:
+            continue
+
+        target_filepath = __get_resource(local_name)
+        with tarfile.open(target_filepath) as file:
+            file.extractall(__get_embedding_dir(target_filepath))

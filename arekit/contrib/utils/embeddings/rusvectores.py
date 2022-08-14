@@ -1,7 +1,4 @@
-import numpy as np
 from arekit.common.text.stemmer import Stemmer
-from gensim.models import KeyedVectors
-
 from arekit.contrib.networks.embedding import Embedding
 
 
@@ -17,16 +14,6 @@ class RusvectoresEmbedding(Embedding):
         self.__index_without_pos = self.__create_terms_without_pos()
         self.__stemmer = None
         self.__lemmatize_by_default = True
-
-    @classmethod
-    def from_word2vec_format(cls, filepath, binary):
-        assert(isinstance(binary, bool))
-
-        w2v_model = KeyedVectors.load_word2vec_format(filepath, binary=binary)
-        words_count = len(w2v_model.wv.vocab)
-
-        return cls(matrix=np.array([vector for vector in w2v_model.syn0]),
-                   words=[w2v_model.wv.index2word[index] for index in range(words_count)])
 
     def set_stemmer(self, stemmer):
         assert(isinstance(stemmer, Stemmer))
