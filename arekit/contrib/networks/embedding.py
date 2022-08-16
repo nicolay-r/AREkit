@@ -47,7 +47,7 @@ class Embedding(object):
             words.append(word)
 
         return cls(matrix=np.array(matrix) if len(matrix) > 0 else np.empty(shape=(0, 0)),
-                   words=words)
+                   words=np.array(words))
 
     @classmethod
     def from_list_with_embedding_func(cls, words_iter, embedding_func):
