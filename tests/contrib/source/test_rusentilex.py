@@ -1,8 +1,8 @@
 import sys
 
-sys.path.append('../../../../')
+from arekit.contrib.utils.lexicons.rusentilex import RuSentiLexLexicon
 
-from arekit.contrib.source.lexicons.rusentilex import RuSentiLexLexicon
+sys.path.append('../../../../')
 
 lexicon = RuSentiLexLexicon.from_zip()
 for term in lexicon:
