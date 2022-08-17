@@ -5,7 +5,7 @@ from arekit.common.data.input.writers.base import BaseWriter
 from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.data.views.samples import BaseSampleStorageView
+from arekit.common.data.views.samples import LinkedSamplesStorageView
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.io_utils.utils import filename_template, check_targets_existence
 
@@ -33,8 +33,8 @@ class SamplesIO(BaseSamplesIO):
     # region public methods
 
     def create_view(self, target):
-        return BaseSampleStorageView(storage=BaseRowsStorage.from_tsv(filepath=target),
-                                     row_ids_provider=MultipleIDProvider())
+        return LinkedSamplesStorageView(storage=BaseRowsStorage.from_tsv(filepath=target),
+                                        row_ids_provider=MultipleIDProvider())
 
     def create_writer(self):
         return self.__writer

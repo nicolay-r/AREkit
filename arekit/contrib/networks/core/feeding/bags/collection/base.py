@@ -20,13 +20,13 @@ class BagsCollection(object):
 
     @classmethod
     def from_formatted_samples(cls,
-                               formatted_samples_iter,
+                               linked_samples_iter,
                                bag_size,
                                create_sample_func,
                                create_empty_sample_func,
                                shuffle,
                                desc=None):
-        assert(isinstance(formatted_samples_iter, collections.Iterable))
+        assert(isinstance(linked_samples_iter, collections.Iterable))
         assert(isinstance(bag_size, int) and bag_size > 0)
         assert(callable(create_sample_func))
         assert(callable(create_empty_sample_func))
@@ -34,7 +34,7 @@ class BagsCollection(object):
 
         bags = []
 
-        linked_rows_iter = progress_bar_iter(iterable=formatted_samples_iter, desc=desc)
+        linked_rows_iter = progress_bar_iter(iterable=linked_samples_iter, desc=desc)
 
         for linked_rows in linked_rows_iter:
             assert(len(linked_rows) > 0)

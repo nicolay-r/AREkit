@@ -1,7 +1,7 @@
 import collections
 import logging
 
-from arekit.common.data.views.samples import BaseSampleStorageView
+from arekit.common.data.views.samples import LinkedSamplesStorageView
 from arekit.common.experiment.data_type import DataType
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
 from arekit.contrib.networks.core.feeding.bags.collection.base import BagsCollection
@@ -61,7 +61,7 @@ class InferenceContext(object):
 
             # Extracting such information from serialized files.
             bags_collection = self.__read_for_data_type(
-                samples_view=samples_view,
+                linked_samples_view=samples_view,
                 is_external_vocab=has_model_predefined_state,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
@@ -93,14 +93,14 @@ class InferenceContext(object):
     # region private methods
 
     @staticmethod
-    def __read_for_data_type(samples_view, is_external_vocab,
+    def __read_for_data_type(linked_samples_view, is_external_vocab,
                              bags_collection_type, vocab,
                              bag_size, input_shapes, desc=""):
         assert(issubclass(bags_collection_type, BagsCollection))
-        assert(isinstance(samples_view, BaseSampleStorageView))
+        assert(isinstance(linked_samples_view, LinkedSamplesStorageView))
 
         return bags_collection_type.from_formatted_samples(
-            formatted_samples_iter=samples_view.iter_rows_linked_by_text_opinions(),
+            linked_samples_iter=linked_samples_view,
             desc=desc,
             bag_size=bag_size,
             shuffle=True,
@@ -122,8 +122,11 @@ class InferenceContext(object):
 
     @staticmethod
     def __get_labeled_sample_row_ids(samples_view):
-        rows_it = samples_view.iter_rows(row_handle_func=lambda row: InferenceContext.__extract_labeled_rows(row))
-        return list(rows_it)
+        rows_list = []
+        for _, row in samples_view._storage:
+            labeled_row = InferenceContext.__extract_labeled_rows(row)
+            rows_list.append(labeled_row)
+        return rows_list
 
     @staticmethod
     def __extract_labeled_rows(row):
