@@ -6,7 +6,6 @@ class LinkedSamplesStorageView(object):
 
     def __init__(self, storage, row_ids_provider):
         assert(isinstance(row_ids_provider, BaseIDProvider))
-        super(LinkedSamplesStorageView, self).__init__(storage)
         self._storage = storage
         self.__row_ids_provider = row_ids_provider
 
