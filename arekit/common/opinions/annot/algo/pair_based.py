@@ -9,8 +9,11 @@ from arekit.common.opinions.base import Opinion
 
 
 class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
-    """ Is a pair-based annotation algorithm which
-        assumes to compose source-target entity pairs
+    """ Is a pair-based annotation algorithm which assumes to compose source-target entity pairs
+        This is a default annotator which found its application in Sentiment Attitude Extraction task [1].
+
+        References:
+            [1] Extracting Sentiment Attitudes from Analytical Texts https://arxiv.org/pdf/1808.08932.pdf
     """
 
     def __init__(self, dist_in_terms_bound, label_provider, dist_in_sents=0, is_entity_ignored_func=None):
