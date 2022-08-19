@@ -1,17 +1,8 @@
-import logging
-
-logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
-
-
 class BaseOpinionAnnotator(object):
     """
     Performs annotation for a particular data_type
     using OpinOps and DocOps API.
     """
-
-    def __init__(self):
-        logger.info("Init annotator: [{}]".format(self.__class__))
 
     def _annot_collection_core(self, parsed_news):
         raise NotImplementedError
