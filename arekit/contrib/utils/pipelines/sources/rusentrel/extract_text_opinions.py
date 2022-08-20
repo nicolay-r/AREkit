@@ -4,7 +4,7 @@ from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotat
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
-from arekit.contrib.utils.pipelines.source.rusentrel.doc_ops import RuSentrelDocumentOperations
+from arekit.contrib.utils.pipelines.sources.rusentrel.doc_ops import RuSentrelDocumentOperations
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
