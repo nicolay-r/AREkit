@@ -1,7 +1,9 @@
 import logging
 import sys
 import unittest
+from collections import OrderedDict
 from tqdm import tqdm
+
 
 sys.path.append('../../../../')
 
@@ -11,25 +13,55 @@ from arekit.common.utils import progress_bar_iter
 from arekit.common.news.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
 from arekit.common.context.token import Token
+from arekit.common.labels.base import NoLabel
+from arekit.common.labels.scaler.base import BaseLabelScaler
 
+from arekit.contrib.source.common.labels import PositiveLabel, NegativeLabel
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
-from arekit.contrib.source.ruattitudes.opinions.utils import RuAttitudesSentenceOpinionUtils
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
-from arekit.contrib.source.ruattitudes.labels_scaler import RuAttitudesLabelScaler
 from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.brat.entities.entity import BratEntity
+from arekit.contrib.source.ruattitudes.news_brat import RuAttitudesNewsConverter
+
+from tests.contrib.source.utils import RuAttitudesSentenceOpinionUtils
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 
-class RuAttitudesNewsUtils(object):
-    pass
+class RuAttitudesLabelScaler(BaseLabelScaler):
+
+    def __init__(self):
+
+        self.__int_to_label_dict = OrderedDict([
+            (self._neutral_label_instance(), 0),
+            (self._positive_label_instance(), 1),
+            (self._negative_label_instance(), -1)])
+
+        self.__uint_to_label_dict = OrderedDict([
+            (self._neutral_label_instance(), 0),
+            (self._positive_label_instance(), 1),
+            (self._negative_label_instance(), 2)])
+
+        super(RuAttitudesLabelScaler, self).__init__(int_dict=self.__int_to_label_dict,
+                                                     uint_dict=self.__uint_to_label_dict)
+
+    @classmethod
+    def _neutral_label_instance(cls):
+        return NoLabel()
+
+    @classmethod
+    def _positive_label_instance(cls):
+        return PositiveLabel()
+
+    @classmethod
+    def _negative_label_instance(cls):
+        return NegativeLabel()
 
 
 class TestRuAttitudes(unittest.TestCase):
@@ -81,7 +113,8 @@ class TestRuAttitudes(unittest.TestCase):
         for news in tqdm(news_it):
 
             # parse news
-            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
+            brat_news = RuAttitudesNewsConverter.to_brat_news(news)
+            parsed_news = NewsParser.parse(news=brat_news, text_parser=text_parser)
             terms = parsed_news.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 

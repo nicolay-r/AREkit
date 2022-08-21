@@ -1,4 +1,3 @@
-from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.contrib.source.brat.news import BratNews
 from arekit.contrib.source.brat.sentence import BratSentence
 from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
@@ -14,14 +13,13 @@ class RuAttitudesNewsConverter(object):
     """
 
     @staticmethod
-    def to_brat_news(news, label_scaler):
+    def to_brat_news(news):
         assert(isinstance(news, RuAttitudesNews))
-        assert(isinstance(label_scaler, BaseLabelScaler))
-        text_opinions = RuAttitudesNewsConverter.__iter_text_opinions(news=news, label_scaler=label_scaler)
+        text_opinions = RuAttitudesNewsConverter.__iter_text_opinions(news=news)
         brat_sentences = RuAttitudesNewsConverter.__to_brat_sentences(news.iter_sentences())
         return BratNews(doc_id=news.ID,
                         sentences=brat_sentences,
-                        text_opinions=list(text_opinions))
+                        text_relations=list(text_opinions))
 
     @staticmethod
     def __to_brat_sentences(sentences_iter):
@@ -35,15 +33,12 @@ class RuAttitudesNewsConverter(object):
         return sentences
 
     @staticmethod
-    def __iter_text_opinions(news, label_scaler):
+    def __iter_text_opinions(news):
         assert(isinstance(news, RuAttitudesNews))
         for sentence in news.iter_sentences():
             assert(isinstance(sentence, RuAttitudesSentence))
             for sentence_opinion in sentence.iter_sentence_opins():
                 assert(isinstance(sentence_opinion, SentenceOpinion))
-                yield RuAttitudesSentenceOpinionConverter.to_text_opinion(
-                    doc_id=news.ID,
+                yield RuAttitudesSentenceOpinionConverter.to_brat_relation(
                     sentence_opinion=sentence_opinion,
-                    end_to_doc_id_func=sentence.get_doc_level_text_object_id,
-                    text_opinion_id=sentence_opinion.ID,
-                    label_scaler=label_scaler)
+                    end_to_doc_id_func=sentence.get_doc_level_text_object_id)

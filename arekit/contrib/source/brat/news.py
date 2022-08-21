@@ -5,10 +5,10 @@ from arekit.contrib.source.brat.sentence import BratSentence
 
 class BratNews(News):
 
-    def __init__(self, doc_id, sentences, text_opinions):
-        assert(isinstance(text_opinions, list) or text_opinions is None)
+    def __init__(self, doc_id, sentences, text_relations):
+        assert(isinstance(text_relations, list) or text_relations is None)
         super(BratNews, self).__init__(doc_id=doc_id, sentences=sentences)
-        self.__text_opinions = text_opinions
+        self.__text_relations = text_relations
         self.__entity_by_id = {}
         for sentence in sentences:
             assert(isinstance(sentence, BratSentence))
@@ -17,9 +17,9 @@ class BratNews(News):
                 self.__entity_by_id[brat_entity.ID] = brat_entity
 
     @property
-    def TextOpinions(self):
-        for text_opinion in self.__text_opinions:
-            yield text_opinion
+    def Relations(self):
+        for brat_relation in self.__text_relations:
+            yield brat_relation
 
     def contains_entity(self, entity_id):
         return entity_id in self.__entity_by_id

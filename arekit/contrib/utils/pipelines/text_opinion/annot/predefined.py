@@ -1,9 +1,11 @@
 from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.news.parsed.base import ParsedNews
 from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.news.parsed.service import ParsedNewsService
 from arekit.common.opinions.annot.base import BaseOpinionAnnotator
+from arekit.contrib.source.brat.converter import BratRelationConverter
 from arekit.contrib.source.brat.news import BratNews
 
 
@@ -12,20 +14,24 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
         It converts the pre-annotated Relations from BRAT-documents to TextOpinions
     """
 
-    def __init__(self, doc_ops, entity_index_func=None):
+    def __init__(self, doc_ops, label_formatter, entity_index_func=None):
         """
             get_doc_func:
                 func(doc_id)
 
+            label_formatter: String Labels Formatter
+                required for conversion.
+
             entity_index_func: is a way of how we provide an external entity ID
                 fund(entity) -> ID
         """
-
         assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(label_formatter, StringLabelsFormatter))
         assert(callable(entity_index_func) or entity_index_func is None)
         super(PredefinedTextOpinionAnnotator, self).__init__()
 
         self.__doc_ops = doc_ops
+        self.__label_formatter = label_formatter
         self.__entity_index_func = lambda brat_entity: brat_entity.ID if \
             entity_index_func is None else entity_index_func
 
@@ -57,7 +63,12 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
         esp = pns.get_provider(EntityServiceProvider.NAME)
         news = self.__doc_ops.get_doc(parsed_news.RelatedDocID)
 
-        for text_opinion in news.TextOpinions:
+        for brat_relation in news.Relations:
+
+            text_opinion = BratRelationConverter.to_text_opinion(
+                brat_relation=brat_relation,
+                doc_id=parsed_news.RelatedDocID,
+                label_formatter=self.__label_formatter)
 
             internal_opinion = text_opinion.try_convert(
                 other=text_opinion,
