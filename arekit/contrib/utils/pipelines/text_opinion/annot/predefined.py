@@ -5,8 +5,8 @@ from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvid
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.news.parsed.service import ParsedNewsService
 from arekit.common.opinions.annot.base import BaseOpinionAnnotator
-from arekit.contrib.source.brat.converter import BratRelationConverter
 from arekit.contrib.source.brat.news import BratNews
+from arekit.contrib.source.brat.opinions.converter import BratRelationConverter
 
 
 class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
