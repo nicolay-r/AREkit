@@ -16,6 +16,7 @@ from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymColle
 
 def create_text_opinion_extraction_pipeline(rusentrel_version,
                                             text_parser,
+                                            label_formatter,
                                             entity_filter=None,
                                             terms_per_context=50,
                                             dist_in_sentences=0):
@@ -55,7 +56,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
 
     pipeline = text_opinion_extraction_pipeline(
         annotators=[
-            PredefinedTextOpinionAnnotator(doc_ops),
+            PredefinedTextOpinionAnnotator(doc_ops=doc_ops, label_formatter=label_formatter),
             algo_based_annotator
         ],
         text_opinion_filters=[

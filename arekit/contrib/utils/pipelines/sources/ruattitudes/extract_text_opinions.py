@@ -1,5 +1,6 @@
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
+from arekit.contrib.source.ruattitudes.labels_fmt import RuAttitudesLabelFormatter
 from arekit.contrib.utils.pipelines.sources.ruattitudes.entity_filter import RuAttitudesEntityFilter
 from arekit.contrib.utils.pipelines.sources.ruattitudes.utils import read_ruattitudes_to_brat_in_memory, \
     DictionaryBasedDocumentOperations
@@ -50,7 +51,7 @@ def create_text_opinion_extraction_pipeline(text_parser,
 
     pipeline = text_opinion_extraction_pipeline(
         annotators=[
-            PredefinedTextOpinionAnnotator(doc_ops)
+            PredefinedTextOpinionAnnotator(doc_ops=doc_ops, label_formatter=RuAttitudesLabelFormatter(label_scaler))
         ],
         text_opinion_filters=[
             EntityBasedTextOpinionFilter(entity_filter=entity_filter),
