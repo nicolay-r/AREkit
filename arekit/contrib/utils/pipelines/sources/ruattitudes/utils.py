@@ -39,7 +39,7 @@ def read_ruattitudes_to_brat_in_memory(version, keep_doc_ids_only, doc_id_func, 
     docs_read = 0
     for doc_id, news in it_formatted_and_logged:
         assert(isinstance(news, RuAttitudesNews))
-        d[doc_id] = RuAttitudesNewsConverter.to_brat_news(news, label_scaler=label_scaler)
+        d[doc_id] = RuAttitudesNewsConverter.to_brat_news(news)
         docs_read += 1
         if limit is not None and docs_read >= limit:
             break
