@@ -24,6 +24,7 @@ from arekit.contrib.utils.evaluation.iterators import DataPairsIterators
 from arekit.contrib.utils.evaluation.results.two_class_prf import TwoClassEvalPrecRecallF1Result
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
+from tests.contrib.utils.labels import PositiveLabel, NegativeLabel
 
 
 class ResultVersions(Enum):
@@ -134,7 +135,7 @@ class TestEvaluation(unittest.TestCase):
             actual_synonyms = synonyms
 
         # Setup an experiment labels formatter.
-        labels_formatter = RuSentRelLabelsFormatter()
+        labels_formatter = RuSentRelLabelsFormatter(pos_label_type=PositiveLabel, neg_label_type=NegativeLabel)
 
         # Iter cmp opinions.
         cmp_pairs_iter = DataPairsIterators.iter_func_based_collections(

@@ -1,19 +1,27 @@
 import sys
 import unittest
 
-
 sys.path.append('../../../../')
 
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLabelsFormatter, \
+    RuSentiFramesLabelsFormatter
+
+from tests.contrib.source.labels import PositiveLabel, NegativeLabel
 
 
 class TestRuSentiFrameVariants(unittest.TestCase):
 
     @staticmethod
     def __iter_frame_variants():
-        frames_collection = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
+        frames_collection = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V20,
+            labels_fmt=RuSentiFramesLabelsFormatter(
+                neg_label_type=NegativeLabel, pos_label_type=PositiveLabel),
+            effect_labels_fmt=RuSentiFramesEffectLabelsFormatter(
+                neg_label_type=NegativeLabel, pos_label_type=PositiveLabel))
 
         frame_variants = FrameVariantsCollection()
         frame_variants.fill_from_iterable(variants_with_id=frames_collection.iter_frame_id_and_variants(),

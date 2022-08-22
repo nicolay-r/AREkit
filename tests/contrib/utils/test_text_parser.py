@@ -6,6 +6,8 @@ from arekit.common.news.base import News
 from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLabelsFormatter, \
+    RuSentiFramesLabelsFormatter
 from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
 
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
@@ -17,6 +19,7 @@ from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBa
 from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVariantsSentimentNegation
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
+from tests.contrib.utils.labels import NegativeLabel, PositiveLabel
 
 from tests.contrib.utils.test_eval import RuSentRelSynonymsCollectionProvider
 from tests.contrib.utils.text.debug_text import debug_show_news_terms
@@ -38,7 +41,13 @@ class TestTextParser(unittest.TestCase):
         stemmer = MystemWrapper()
 
         # frame and variants.
-        frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
+        frames = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V20,
+            labels_fmt=RuSentiFramesLabelsFormatter(
+                neg_label_type=NegativeLabel, pos_label_type=PositiveLabel),
+            effect_labels_fmt=RuSentiFramesEffectLabelsFormatter(
+                neg_label_type=NegativeLabel, pos_label_type=PositiveLabel))
+
         frame_variants = FrameVariantsCollection()
         frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants(),
                                           overwrite_existed_variant=True,
@@ -64,7 +73,13 @@ class TestTextParser(unittest.TestCase):
         stemmer = MystemWrapper()
 
         # frame and variants.
-        frames = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V20)
+        frames = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V20,
+            labels_fmt=RuSentiFramesLabelsFormatter(
+                neg_label_type=NegativeLabel, pos_label_type=PositiveLabel),
+            effect_labels_fmt=RuSentiFramesEffectLabelsFormatter(
+                neg_label_type=NegativeLabel, pos_label_type=PositiveLabel))
+
         frame_variants = FrameVariantsCollection()
         frame_variants.fill_from_iterable(variants_with_id=frames.iter_frame_id_and_variants(),
                                           overwrite_existed_variant=True,

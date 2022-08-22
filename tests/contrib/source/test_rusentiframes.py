@@ -2,13 +2,16 @@ import logging
 import sys
 import unittest
 
-
 sys.path.append('../../../../')
 
 from arekit.common.frames.variants.base import FrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
+from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
+    RuSentiFramesEffectLabelsFormatter
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+
+from tests.contrib.source.labels import PositiveLabel, NegativeLabel
 
 
 class TestRuSentiFrames(unittest.TestCase):
@@ -20,7 +23,12 @@ class TestRuSentiFrames(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        frames = RuSentiFramesCollection.read_collection(RuSentiFramesVersions.V20)
+        frames = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V20,
+            labels_fmt=RuSentiFramesLabelsFormatter(
+                neg_label_type=NegativeLabel, pos_label_type=PositiveLabel),
+            effect_labels_fmt=RuSentiFramesEffectLabelsFormatter(
+                neg_label_type=NegativeLabel, pos_label_type=PositiveLabel))
 
         for frame_id in frames.iter_frames_ids():
             # id

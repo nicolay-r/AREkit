@@ -8,7 +8,6 @@ from pymystem3 import Mystem
 
 sys.path.append('../../../')
 
-from tests.contrib.networks.text.news import init_rusentrel_doc
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.text.utils import terms_to_str
 
@@ -19,6 +18,8 @@ from arekit.common.entities.base import Entity
 from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
+    RuSentiFramesEffectLabelsFormatter
 
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
@@ -33,6 +34,9 @@ from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVaria
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
+
+from tests.contrib.networks.labels import TestPositiveLabel, TestNegativeLabel
+from tests.contrib.networks.news import init_rusentrel_doc
 
 
 class RuSentRelSynonymsCollectionProvider(object):
@@ -57,7 +61,12 @@ class TestTfInputFeatures(unittest.TestCase):
         cls.entities_formatter = RussianEntitiesCasedFormatter(
             pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
         cls.synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=cls.stemmer)
-        cls.frames_collection = RuSentiFramesCollection.read_collection(version=RuSentiFramesVersions.V10)
+        cls.frames_collection = RuSentiFramesCollection.read_collection(
+            version=RuSentiFramesVersions.V10,
+            labels_fmt=RuSentiFramesLabelsFormatter(pos_label_type=TestPositiveLabel,
+                                                    neg_label_type=TestNegativeLabel),
+            effect_labels_fmt=RuSentiFramesEffectLabelsFormatter(pos_label_type=TestPositiveLabel,
+                                                                 neg_label_type=TestNegativeLabel))
 
         cls.unique_frame_variants = FrameVariantsCollection()
         cls.unique_frame_variants.fill_from_iterable(
@@ -84,9 +93,7 @@ class TestTfInputFeatures(unittest.TestCase):
             logger.info("NewsID: {}".format(doc_id))
 
             news, parsed_news, opinions = init_rusentrel_doc(
-                doc_id=doc_id,
-                text_parser=text_parser,
-                synonyms=self.synonyms)
+                doc_id=doc_id, text_parser=text_parser, synonyms=self.synonyms)
 
             # Initialize service providers.
             pairs_provider = TextOpinionPairsProvider(value_to_group_id_func=self.synonyms.get_synonym_group_index)

@@ -4,6 +4,8 @@ from arekit.common.frames.variants.base import FrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
+from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
+    RuSentiFramesEffectLabelsFormatter
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions, RuSentiFramesVersionsService
 from arekit.contrib.source.rusentiframes.polarity import RuSentiFramesFramePolarity
 from arekit.contrib.source.rusentiframes.effect import FrameEffect
@@ -159,7 +161,13 @@ def __about(frames_collection, pos_tagger):
 def about_version(version=RuSentiFramesVersions.V20):
     stemmer = MystemWrapper()
     pos_tagger = POSMystemWrapper(stemmer.MystemInstance)
-    frames_collection = RuSentiFramesCollection.read_collection(version=version)
+    frames_collection = RuSentiFramesCollection.read_collection(
+        version=version,
+        labels_fmt=RuSentiFramesLabelsFormatter(neg_label_type=NegativeLabel,
+                                                pos_label_type=PositiveLabel),
+        effect_labels_fmt=RuSentiFramesEffectLabelsFormatter(neg_label_type=NegativeLabel,
+                                                             pos_label_type=PositiveLabel))
+
     print("Lexicon version:", version)
     return __about(frames_collection=frames_collection, pos_tagger=pos_tagger)
 

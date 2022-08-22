@@ -1,4 +1,3 @@
-from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.contrib.source.rusentrel.const import POS_LABEL_STR, NEG_LABEL_STR
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
@@ -11,16 +10,14 @@ class RuSentRelOpinionCollection:
     """
 
     @staticmethod
-    def iter_opinions_from_doc(doc_id,
-                               labels_fmt=RuSentRelLabelsFormatter(),
-                               version=RuSentRelVersions.V11):
+    def iter_opinions_from_doc(doc_id, labels_fmt, version=RuSentRelVersions.V11):
         """ doc_id:
             synonyms: None or SynonymsCollection
                 None corresponds to the related synonym collection from RuSentRel collection.
             version: RuSentrelVersions enum
         """
         assert(isinstance(version, RuSentRelVersions))
-        assert(isinstance(labels_fmt, StringLabelsFormatter))
+        assert(isinstance(labels_fmt, RuSentRelLabelsFormatter))
         assert(labels_fmt.supports_value(POS_LABEL_STR))
         assert(labels_fmt.supports_value(NEG_LABEL_STR))
 
