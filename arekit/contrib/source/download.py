@@ -23,7 +23,9 @@ def download():
         "ruattitudes-v2_0_base_neut.zip": "https://www.dropbox.com/s/3xh7gd004oyuwx5/ruattitudes_20_base_neut.zip?dl=1",
         # RuAttitudes-v2.0 Large
         "ruattitudes-v2_0_large.zip": "https://www.dropbox.com/s/43iqoxlyh38qk8u/ruattitudes_20_large.zip?dl=1",
-        "ruattitudes-v2_0_large_neut.zip": "https://www.dropbox.com/s/6edqsxehtus4c61/ruattitudes_20_large_neut.zip?dl=1"
+        "ruattitudes-v2_0_large_neut.zip": "https://www.dropbox.com/s/6edqsxehtus4c61/ruattitudes_20_large_neut.zip?dl=1",
+        # SentiNEREL-v1.0
+        "sentinerel-v1_0.zip": "https://www.dropbox.com/s/<HIDDEN>/sentinerel-v1_0.zip?dl=1"
     }
 
     # Perform downloading ...

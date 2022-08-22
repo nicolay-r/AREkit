@@ -7,3 +7,4 @@ Provides a readers for datasets and additional components, applied in AREkit pro
 * RuAttitudes [[github-repo]](https://github.com/nicolay-r/RuAttitudes);
 * RuSentiFrames [[github-repo]](https://github.com/nicolay-r/RuSentiFrames);
 * RuSentRel [[github-repo]](https://github.com/nicolay-r/RuSentRel);
+* SentiNEREL.
