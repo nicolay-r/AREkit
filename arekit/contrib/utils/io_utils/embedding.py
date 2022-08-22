@@ -70,7 +70,7 @@ class NpzEmbeddingIO(BaseEmbeddingIO):
     def __get_default_vocab_filepath(self, data_folding):
         return join(self.__target_dir,
                     self.VOCABULARY_FILENAME_TEMPLATE.format(
-                        cv_index=experiment_iter_index(data_folding)) + '.npz')
+                        cv_index=experiment_iter_index(data_folding)))
 
     def __get_default_embedding_filepath(self, data_folding):
         return join(self.__target_dir,
