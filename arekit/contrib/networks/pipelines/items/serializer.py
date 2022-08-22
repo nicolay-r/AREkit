@@ -14,7 +14,7 @@ from arekit.contrib.networks.core.input.providers.sample import NetworkSampleRow
 from arekit.contrib.networks.core.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.core.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embedding import Embedding
-from arekit.contrib.utils.io_utils.embedding import NpzEmbeddingIO
+from arekit.contrib.utils.io_utils.embedding import NpEmbeddingIO
 from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.utils_folding import folding_iter_states
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
@@ -50,7 +50,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         """
         assert(isinstance(exp_ctx, NetworkSerializationContext))
         assert(isinstance(samples_io, SamplesIO))
-        assert(isinstance(emb_io, NpzEmbeddingIO))
+        assert(isinstance(emb_io, NpEmbeddingIO))
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
         assert(isinstance(vectorizers, dict))
         assert(isinstance(save_embedding, bool))

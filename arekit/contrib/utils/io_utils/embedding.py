@@ -8,8 +8,8 @@ from arekit.contrib.utils.np_utils.vocab import VocabRepositoryUtils
 from arekit.contrib.utils.utils_folding import experiment_iter_index
 
 
-class NpzEmbeddingIO(BaseEmbeddingIO):
-    """ Npz-based IO utils for vocabulary and embedding.
+class NpEmbeddingIO(BaseEmbeddingIO):
+    """ Npz-based IO utils for embedding and text-based for vocabulary.
         This format represents a archived version of the numpy math data, i.e. vectors, numbers, etc.
 
         Provides additional Input/Output paths generation functions for:
