@@ -1,10 +1,9 @@
 import unittest
+from enum import Enum
 import pandas as pd
 
 from os import path
 from os.path import dirname
-
-from enum import Enum
 
 from arekit.common.evaluation.comparators.opinions import OpinionBasedComparator
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable

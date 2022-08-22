@@ -3,8 +3,9 @@ import unittest
 
 sys.path.append('../../../../')
 
-from arekit.contrib.source.run_rusentiframes_stat import about_version
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+
+from tests.contrib.source.test_rusentiframes_stat import about_version
 
 
 class TestFramesStat(unittest.TestCase):

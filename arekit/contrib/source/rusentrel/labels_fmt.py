@@ -1,7 +1,6 @@
 from arekit.common.labels.str_fmt import StringLabelsFormatter
-from arekit.contrib.source.rusentrel.const import \
-    NEG_LABEL_STR, POS_LABEL_STR, \
-    RUSENTREL_NEG_LABEL_TYPE, RUSENTREL_POS_LABEL_TYPE
+from arekit.contrib.source.rusentrel.const import NEG_LABEL_STR, POS_LABEL_STR
+from arekit.contrib.source.rusentrel.labels import PositiveLabel, NegativeLabel
 
 
 class RuSentRelLabelsFormatter(StringLabelsFormatter):
@@ -15,8 +14,8 @@ class RuSentRelLabelsFormatter(StringLabelsFormatter):
 
     @classmethod
     def _positive_label_type(cls):
-        return RUSENTREL_POS_LABEL_TYPE
+        return PositiveLabel()
 
     @classmethod
     def _negative_label_type(cls):
-        return RUSENTREL_NEG_LABEL_TYPE
+        return NegativeLabel()

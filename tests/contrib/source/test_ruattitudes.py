@@ -4,7 +4,6 @@ import unittest
 from collections import OrderedDict
 from tqdm import tqdm
 
-
 sys.path.append('../../../../')
 
 from arekit.common.opinions.base import Opinion
@@ -16,7 +15,6 @@ from arekit.common.context.token import Token
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.scaler.base import BaseLabelScaler
 
-from arekit.contrib.source.common.labels import PositiveLabel, NegativeLabel
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntitiesParser
 from arekit.contrib.source.ruattitudes.text_object import TextObject
@@ -29,6 +27,7 @@ from arekit.contrib.source.brat.entities.entity import BratEntity
 from arekit.contrib.source.ruattitudes.news_brat import RuAttitudesNewsConverter
 
 from tests.contrib.source.utils import RuAttitudesSentenceOpinionUtils
+from tests.contrib.source.labels import PositiveLabel, NegativeLabel
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)

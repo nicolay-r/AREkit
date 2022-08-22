@@ -3,13 +3,13 @@ import argparse
 from arekit.common.frames.variants.base import FrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label
-from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions, RuSentiFramesVersionsService
 from arekit.contrib.source.rusentiframes.polarity import RuSentiFramesFramePolarity
 from arekit.contrib.source.rusentiframes.effect import FrameEffect
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
+from tests.contrib.source.labels import PositiveLabel, NegativeLabel
 
 
 def __iter_unique_frame_variants(frames_collection, frame_ids):

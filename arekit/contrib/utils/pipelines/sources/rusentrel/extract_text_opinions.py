@@ -6,7 +6,6 @@ from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProv
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.utils.pipelines.sources.rusentrel.doc_ops import RuSentrelDocumentOperations
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
-from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
 from arekit.contrib.utils.pipelines.text_opinion.filters.entity_based import EntityBasedTextOpinionFilter

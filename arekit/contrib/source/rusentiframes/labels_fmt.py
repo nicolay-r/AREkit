@@ -1,5 +1,5 @@
-from arekit.contrib.source.common.labels import NegativeLabel, PositiveLabel
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.contrib.source.rusentiframes.labels import PositiveLabel, NegativeLabel
 
 
 class RuSentiFramesLabelsFormatter(StringLabelsFormatter):
