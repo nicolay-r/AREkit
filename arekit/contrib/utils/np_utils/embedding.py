@@ -1,7 +1,5 @@
 import logging
 
-import numpy as np
-
 from arekit.contrib.utils.np_utils.npz_utils import NpzRepositoryUtils
 
 logger = logging.getLogger(__name__)
@@ -17,21 +15,8 @@ class NpzEmbeddingHelper:
                                                                          filepath=target))
 
     @staticmethod
-    def save_vocab(data, target):
-        logger.info("Saving vocabulary [size={size}]: {filepath}".format(size=len(data),
-                                                                         filepath=target))
-        np.savez(target, data)
-
-    @staticmethod
     def load_embedding(source):
         embedding = NpzRepositoryUtils.load(source)
         logger.info("Embedding read [size={size}]: {filepath}".format(size=embedding.shape,
                                                                       filepath=source))
         return embedding
-
-    @staticmethod
-    def load_vocab(source):
-        vocab = dict(NpzRepositoryUtils.load(source))
-        logger.info("Vocabulary read [size={size}]: {filepath}".format(size=len(vocab),
-                                                                       filepath=source))
-        return vocab

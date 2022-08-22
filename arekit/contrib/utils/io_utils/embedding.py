@@ -4,6 +4,7 @@ from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.networks.core.embedding_io import BaseEmbeddingIO
 from arekit.contrib.utils.io_utils.utils import check_targets_existence
 from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
+from arekit.contrib.utils.np_utils.vocab import VocabRepositoryUtils
 from arekit.contrib.utils.utils_folding import experiment_iter_index
 
 
@@ -28,11 +29,11 @@ class NpzEmbeddingIO(BaseEmbeddingIO):
     def save_vocab(self, data, data_folding):
         assert(isinstance(data_folding, BaseDataFolding))
         target = self.__get_default_vocab_filepath(data_folding)
-        return NpzEmbeddingHelper.save_vocab(data=data, target=target)
+        return VocabRepositoryUtils.save(data=data, target=target)
 
     def load_vocab(self, data_folding):
         source = self.___get_vocab_source(data_folding)
-        return NpzEmbeddingHelper.load_vocab(source)
+        return dict(VocabRepositoryUtils.load(source))
 
     def save_embedding(self, data, data_folding):
         assert(isinstance(data_folding, BaseDataFolding))
