@@ -3,21 +3,19 @@ from arekit.contrib.networks.embedding import Embedding
 
 
 class RusvectoresEmbedding(Embedding):
-    """ Wrapper over models from
+    """ Wrapper over models from the following resource.
         https://rusvectores.org/ru/models/
+
+        NOTE: Usually these are embeddings for texts written in Russian.
+        for the better performance it is expected that we adopt stemmer.
     """
 
-    def __init__(self, matrix, words):
-        super(RusvectoresEmbedding, self).__init__(matrix=matrix,
-                                                   words=words)
-
+    def __init__(self, matrix, words, stemmer):
+        assert(isinstance(stemmer, Stemmer) or stemmer is None)
+        super(RusvectoresEmbedding, self).__init__(matrix=matrix, words=words)
         self.__index_without_pos = self.__create_terms_without_pos()
-        self.__stemmer = None
-        self.__lemmatize_by_default = True
-
-    def set_stemmer(self, stemmer):
-        assert(isinstance(stemmer, Stemmer))
         self.__stemmer = stemmer
+        self.__lemmatize_by_default = stemmer is not None
 
     def try_find_index_by_plain_word(self, word):
         assert(isinstance(word, str))
