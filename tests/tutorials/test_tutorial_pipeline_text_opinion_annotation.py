@@ -92,8 +92,8 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             target = esp.extract_entity_value(linked.First, EntityEndType.Target)
 
             print("`{}`->`{}`, {} [{}]".format(source, target,
-                                                str(linked.First.Sentiment.__class__.__name__),
-                                                len(linked)))
+                                               str(linked.First.Sentiment.__class__.__name__),
+                                               len(linked)))
 
 
 if __name__ == '__main__':
