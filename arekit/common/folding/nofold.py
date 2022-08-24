@@ -12,10 +12,6 @@ class NoFolding(BaseDataFolding):
         super(NoFolding, self).__init__(doc_ids_to_fold=doc_ids_to_fold,
                                         supported_data_types=supported_data_types)
 
-    @property
-    def Name(self):
-        return "na"
-
     def fold_doc_ids_set(self):
         return {
             self._supported_data_types[0]: list(self._doc_ids_to_fold_set)

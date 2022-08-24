@@ -11,10 +11,6 @@ class FixedFolding(BaseDataFolding):
 
         self.__doc_to_datatypes_func = doc_to_datatypes_func
 
-    @property
-    def Name(self):
-        return "fixed"
-
     @classmethod
     def from_parts(cls, parts):
         """ parts: dict

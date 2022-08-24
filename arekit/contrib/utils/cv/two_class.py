@@ -31,10 +31,6 @@ class TwoClassCVFolding(BaseDataFolding):
     def CVCount(self):
         return self.__cv_count
 
-    @property
-    def Name(self):
-        return "cv{0}".format(self.__cv_count)
-
     # endregion
 
     def __assign_index(self, i):

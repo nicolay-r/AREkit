@@ -10,10 +10,6 @@ class UnitedFolding(BaseDataFolding):
             doc_ids_to_fold=UnitedFolding.__iter_all_doc_ids(foldings),
             supported_data_types=list(set(UnitedFolding.__iter_all_data_types(foldings))))
 
-    @property
-    def Name(self):
-        return "united"
-
     @staticmethod
     def __iter_all_doc_ids(foldings):
         for folding in foldings:
