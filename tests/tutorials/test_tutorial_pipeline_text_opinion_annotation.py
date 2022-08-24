@@ -4,6 +4,9 @@ from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
+from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, EntityEndType
+from arekit.common.news.parsed.service import ParsedNewsService
 from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotationAlgorithm
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
@@ -59,7 +62,7 @@ class TestTextOpinionAnnotation(unittest.TestCase):
                 opinions=[], synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
             get_doc_existed_opinions_func=lambda _: None,
             value_to_group_id_func=lambda value:
-            SynonymsCollectionValuesGroupingProviders.provide_existed_value(
+            SynonymsCollectionValuesGroupingProviders.provide_existed_or_register_missed_value(
                 synonyms=synonyms, value=value))
 
         text_parser = BaseTextParser([
@@ -78,8 +81,19 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             get_doc_func=lambda doc_id: doc_ops.get_doc(doc_id),
             text_parser=text_parser)
 
+        # Running the pipeline.
+        for linked in pipeline.run(input_data=[0], params_dict={}):
+            assert(isinstance(linked, TextOpinionsLinkage))
 
-        # TODO. Run the pipeline in order to iterate text opinions.
+            pns = linked.Tag
+            assert(isinstance(pns, ParsedNewsService))
+            esp = pns.get_provider(EntityServiceProvider.NAME)
+            source = esp.extract_entity_value(linked.First, EntityEndType.Source)
+            target = esp.extract_entity_value(linked.First, EntityEndType.Target)
+
+            print("`{}`->`{}`, {} [{}]".format(source, target,
+                                                str(linked.First.Sentiment.__class__.__name__),
+                                                len(linked)))
 
 
 if __name__ == '__main__':
