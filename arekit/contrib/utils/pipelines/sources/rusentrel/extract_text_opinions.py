@@ -20,6 +20,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
                                             text_parser,
                                             labels_fmt,
                                             entity_filter=None,
+                                            no_label=NoLabel(),
                                             terms_per_context=50,
                                             dist_in_sentences=0):
     """ Processing pipeline for RuSentRel, which combines:
@@ -45,29 +46,11 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
 
     doc_ops = RuSentrelDocumentOperations(version=rusentrel_version, synonyms=synonyms)
 
-    predefined_annotator = AlgorithmBasedTextOpinionAnnotator(
-        annot_algo=PredefinedOpinionAnnotationAlgorithm(
-            lambda doc_id: __get_document_opinions(doc_id=doc_id, synonyms=synonyms, labels_fmt=labels_fmt)),
-        create_empty_collection_func=lambda: OpinionCollection(
-            opinions=[], synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
-        get_doc_existed_opinions_func=lambda _: None,
-        value_to_group_id_func=lambda value:
-            SynonymsCollectionValuesGroupingProviders.provide_existed_value(synonyms=synonyms, value=value))
-
-    nolabel_annotator = AlgorithmBasedTextOpinionAnnotator(
-        annot_algo=PairBasedOpinionAnnotationAlgorithm(dist_in_sents=dist_in_sentences,
-                                                       dist_in_terms_bound=terms_per_context,
-                                                       label_provider=ConstantLabelProvider(NoLabel())),
-        create_empty_collection_func=lambda: OpinionCollection(
-            opinions=[], synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
-        get_doc_existed_opinions_func=lambda _: None,
-        value_to_group_id_func=lambda value:
-            SynonymsCollectionValuesGroupingProviders.provide_existed_value(synonyms=synonyms, value=value))
-
     pipeline = text_opinion_extraction_pipeline(
         annotators=[
-            predefined_annotator,
-            nolabel_annotator
+            predefined_annotator(synonyms=synonyms, labels_fmt=labels_fmt),
+            nolabel_annotator(synonyms=synonyms, terms_per_context=terms_per_context,
+                              dist_in_sentences=dist_in_sentences, no_label=no_label)
         ],
         text_opinion_filters=[
             EntityBasedTextOpinionFilter(entity_filter=entity_filter),
@@ -77,6 +60,35 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
         text_parser=text_parser)
 
     return pipeline
+
+
+def nolabel_annotator(synonyms, terms_per_context, dist_in_sentences=0, no_label=NoLabel()):
+    """ This is a default annotator, utilized to annotate `neutral`-like attitudes.
+        Neutral means that we adopt no-label parameter, and this label might be customized
+        to the one required in your studies.
+    """
+    return AlgorithmBasedTextOpinionAnnotator(
+        annot_algo=PairBasedOpinionAnnotationAlgorithm(dist_in_sents=dist_in_sentences,
+                                                       dist_in_terms_bound=terms_per_context,
+                                                       label_provider=ConstantLabelProvider(no_label)),
+        create_empty_collection_func=lambda: OpinionCollection(
+            opinions=[], synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
+        get_doc_existed_opinions_func=lambda _: None,
+        value_to_group_id_func=lambda value:
+        SynonymsCollectionValuesGroupingProviders.provide_existed_value(synonyms=synonyms, value=value))
+
+
+def predefined_annotator(synonyms, labels_fmt):
+    """ This is a annotator-converter of the predefined Document-Level opinions onto text-level one
+    """
+    return AlgorithmBasedTextOpinionAnnotator(
+        annot_algo=PredefinedOpinionAnnotationAlgorithm(
+            lambda doc_id: __get_document_opinions(doc_id=doc_id, synonyms=synonyms, labels_fmt=labels_fmt)),
+        create_empty_collection_func=lambda: OpinionCollection(
+            opinions=[], synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
+        get_doc_existed_opinions_func=lambda _: None,
+        value_to_group_id_func=lambda value:
+        SynonymsCollectionValuesGroupingProviders.provide_existed_value(synonyms=synonyms, value=value))
 
 
 def __get_document_opinions(doc_id, synonyms, labels_fmt):
