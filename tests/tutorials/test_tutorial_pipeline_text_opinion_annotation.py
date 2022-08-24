@@ -7,6 +7,9 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotationAlgorithm
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
+from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
+from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
@@ -59,7 +62,10 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             SynonymsCollectionValuesGroupingProviders.provide_existed_value(
                 synonyms=synonyms, value=value))
 
-        text_parser = None
+        text_parser = BaseTextParser([
+            BratTextEntitiesParser(partitioning="string"),
+            DefaultTextTokenizer(keep_tokens=True),
+        ])
 
         pipeline = text_opinion_extraction_pipeline(
             annotators=[
@@ -71,6 +77,9 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             ],
             get_doc_func=lambda doc_id: doc_ops.get_doc(doc_id),
             text_parser=text_parser)
+
+
+        # TODO. Run the pipeline in order to iterate text opinions.
 
 
 if __name__ == '__main__':
