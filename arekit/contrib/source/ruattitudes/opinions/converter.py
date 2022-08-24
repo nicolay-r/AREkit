@@ -12,7 +12,7 @@ class RuAttitudesSentenceOpinionConverter:
             NOTE: for rel_type we just call str() over int-based value.
         """
         assert(isinstance(sentence_opinion, SentenceOpinion))
-        return BratRelation(id_in_doc="",
+        return BratRelation(id_in_doc="0",
                             source_id=end_to_doc_id_func(sentence_opinion.SourceID),
                             target_id=end_to_doc_id_func(sentence_opinion.TargetID),
                             rel_type=str(sentence_opinion.Label))

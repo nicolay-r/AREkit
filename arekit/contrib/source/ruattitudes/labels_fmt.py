@@ -7,6 +7,6 @@ class RuAttitudesLabelFormatter(StringLabelsFormatter):
     def __init__(self, label_scaler):
         assert(isinstance(label_scaler, BaseLabelScaler))
         stol = {}
-        for uint_label in [0, 1, 2]:
-            stol[str(uint_label)] = type(label_scaler.uint_to_label(uint_label))
+        for int_label in [-1, 0, 1]:
+            stol[str(int_label)] = type(label_scaler.int_to_label(int_label))
         super(RuAttitudesLabelFormatter, self).__init__(stol=stol)
