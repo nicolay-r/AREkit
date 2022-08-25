@@ -29,7 +29,9 @@ class BaseInputRepository(object):
 
     # endregion
 
+    # TODO. Generailze, TextOpinion -> Any provider.
     def populate(self, opinion_provider, doc_ids, desc=""):
+        # TODO. Generailze, TextOpinion -> Any provider.
         assert(isinstance(opinion_provider, InputTextOpinionProvider))
         assert(isinstance(self._storage, BaseRowsStorage))
         assert(isinstance(doc_ids, list))

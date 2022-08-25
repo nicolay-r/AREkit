@@ -15,11 +15,15 @@ class BaseRowProvider(object):
 
     # region protected methods
 
+    # TODO. This might be also generalized.
+    # TODO. Idle-mode is also a implementation and task specific parameter, i.e. might be removed from here.
     def _provide_rows(self, parsed_news, entity_service, text_opinion_linkage, idle_mode):
         raise NotImplementedError()
 
     # endregion
 
+    # TODO. Limitation, this is now focused on linked text opinions only!
+    # TODO. In general, this might be any provider, not only opinion-related.
     def iter_by_rows(self, opinion_provider, doc_ids_iter, idle_mode):
         assert(isinstance(opinion_provider, InputTextOpinionProvider))
         assert(isinstance(doc_ids_iter, collections.Iterable))

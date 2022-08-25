@@ -20,6 +20,9 @@ from arekit.common.news.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
 
 
+# TODO. This is actually a text-opinion related sampler.
+# TODO. Here we may expose all the text-opinion related params.
+# TODO. With more generalized API in base class.
 class BaseSampleRowProvider(BaseRowProvider):
     """ Rows provider for samples storage.
     """
@@ -53,6 +56,8 @@ class BaseSampleRowProvider(BaseRowProvider):
     def _provide_sentence_terms(parsed_news, sentence_ind):
         return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
 
+    # TODO. This is a very task-specific description, too many data provided.
+    # TODO. Switch this API to dict of params
     def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
         assert(isinstance(self.__store_labels, bool))

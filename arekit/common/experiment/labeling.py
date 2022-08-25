@@ -4,6 +4,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+# TODO. Move this into network utils.
 class LabeledCollection:
 
     def __init__(self, uint_labeled_ids):

@@ -3,6 +3,8 @@ from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text_opinions.base import TextOpinion
 
 
+# TODO. Add base class. This should be nested from the ContentsProvider.
+# TODO. InputTextOpinionProvider -> ContentsProvider. (Add the latter)
 class InputTextOpinionProvider(object):
 
     def __init__(self, pipeline):
@@ -25,6 +27,7 @@ class InputTextOpinionProvider(object):
             text_opinion.set_text_opinion_id(self.__current_id)
             self.__current_id += 1
 
+    # TODO. rename.
     def iter_linked_opinions(self, doc_ids):
         self.__current_id = 0
         for linkage in self.__pipeline.run(doc_ids):
