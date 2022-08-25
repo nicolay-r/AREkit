@@ -40,7 +40,7 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
     def __convert(self, data_folding, output_storage, target_func, data_type):
         """ From `output_storage` to `target` conversion.
             output_storage: BaseRowsStorage
-            target_func: func(doc_id) -- consdiered to provide a target for the particular document.
+            target_func: func(doc_id) -- considered to provide a target for the particular document.
         """
         assert(isinstance(data_folding, BaseDataFolding))
         assert(isinstance(output_storage, BaseRowsStorage))
