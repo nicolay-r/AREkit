@@ -4,15 +4,14 @@ from arekit.contrib.utils.cv.doc_stat.base import BaseDocumentStatGenerator
 from arekit.contrib.utils.cv.splitters.base import CrossValidationSplitter
 
 
-class StatBasedCrossValidataionSplitter(CrossValidationSplitter):
+class StatBasedCrossValidationSplitter(CrossValidationSplitter):
     """ Sentence-based splitter.
     """
 
     def __init__(self, docs_stat, docs_stat_filepath_func):
         assert(isinstance(docs_stat, BaseDocumentStatGenerator))
         assert(callable(docs_stat_filepath_func))
-        super(StatBasedCrossValidataionSplitter, self).__init__()
-
+        super(StatBasedCrossValidationSplitter, self).__init__()
         self.__docs_stat = docs_stat
         self.__docs_stat_filepath_func = docs_stat_filepath_func
 
@@ -21,11 +20,9 @@ class StatBasedCrossValidataionSplitter(CrossValidationSplitter):
     @staticmethod
     def __select_group(cv_group_size, item):
         deltas = []
-        for i in range(len(cv_group_size)):
-            delta = StatBasedCrossValidataionSplitter.__calc_cv_group_delta(
-                cv_group_size=cv_group_size,
-                item=item,
-                g_index_to_add=i)
+        for group_index in range(len(cv_group_size)):
+            delta = StatBasedCrossValidationSplitter.__calc_cv_group_delta(
+                cv_group_size=cv_group_size, item=item, g_index_to_add=group_index)
             deltas.append(delta)
 
         return int(np.argmin(deltas))
@@ -62,11 +59,9 @@ class StatBasedCrossValidataionSplitter(CrossValidationSplitter):
         cv_group_sizes = [[] for _ in range(cv_count)]
 
         for doc_id, s_count in sorted_stat:
-            g_i = self.__select_group(cv_group_size=cv_group_sizes,
-                                      item=s_count)
-
-            cv_group_docs[g_i].append(doc_id)
-            cv_group_sizes[g_i].append(s_count)
+            group_index = self.__select_group(cv_group_size=cv_group_sizes, item=s_count)
+            cv_group_docs[group_index].append(doc_id)
+            cv_group_sizes[group_index].append(s_count)
 
         for g_index in range(len(cv_group_docs)):
             small = cv_group_docs[g_index]

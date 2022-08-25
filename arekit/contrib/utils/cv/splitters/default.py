@@ -3,7 +3,7 @@ import random
 from arekit.contrib.utils.cv.splitters.base import CrossValidationSplitter
 
 
-class SimpleCrossValidataionSplitter(CrossValidationSplitter):
+class SimpleCrossValidationSplitter(CrossValidationSplitter):
     """ This splitter assumes to performs folding
         without extra additional statistics of the related documents.
     """
