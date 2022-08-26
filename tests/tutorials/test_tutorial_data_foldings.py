@@ -51,12 +51,13 @@ class DataFolding(unittest.TestCase):
         cv_folding = TwoClassCVFolding(
             supported_data_types=[DataType.Train, DataType.Test],
             doc_ids_to_fold=list(range(10)),
-            cv_count=3,
-            splitter=splitter_simple)
+            cv_count=2,
+            splitter=splitter_statistical)
 
         for state_index, _ in enumerate(cv_folding.iter_states()):
             print("State: ", state_index)
             self.show_folding(cv_folding)
+
 
 if __name__ == '__main__':
     unittest.main()
