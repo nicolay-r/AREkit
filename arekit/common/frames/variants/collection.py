@@ -8,10 +8,6 @@ class FrameVariantsCollection(object):
         self.__variants = {}
         self.__frames_list = []
 
-    @property
-    def Variants(self):
-        return self.__variants
-
     # region private methods
 
     @staticmethod
