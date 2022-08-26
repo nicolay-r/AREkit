@@ -22,7 +22,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, vectorizers, save_labels_func, str_entity_fmt, exp_ctx,
+    def __init__(self, vectorizers, save_labels_func, str_entity_fmt, ctx,
                  samples_io, emb_io, balance_func, save_embedding):
         """ This pipeline item allows to perform a data preparation for neural network models.
 
@@ -48,7 +48,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
             save_embedding: bool
                 save embedding and all the related information to it.
         """
-        assert(isinstance(exp_ctx, NetworkSerializationContext))
+        assert(isinstance(ctx, NetworkSerializationContext))
         assert(isinstance(samples_io, SamplesIO))
         assert(isinstance(emb_io, NpEmbeddingIO))
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
@@ -78,11 +78,11 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
                 emb_vector=pair[1]))
 
         self.__rows_provider = NetworkSampleRowProvider(
-            label_provider=exp_ctx.LabelProvider,
+            label_provider=ctx.LabelProvider,
             text_provider=text_provider,
-            frames_connotation_provider=exp_ctx.FramesConnotationProvider,
-            frame_role_label_scaler=exp_ctx.FrameRolesLabelScaler,
-            pos_terms_mapper=PosTermsMapper(exp_ctx.PosTagger))
+            frames_connotation_provider=ctx.FramesConnotationProvider,
+            frame_role_label_scaler=ctx.FrameRolesLabelScaler,
+            pos_terms_mapper=PosTermsMapper(ctx.PosTagger))
 
     @staticmethod
     def __add_term_embedding(dict_data, term, emb_vector):
