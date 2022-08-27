@@ -14,6 +14,7 @@ from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollecti
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
     RuSentiFramesEffectLabelsFormatter
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
+from arekit.contrib.utils.pipelines.items.text.entities_default import TextEntitiesParser
 from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVariantsSentimentNegation
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
@@ -36,7 +37,7 @@ class NegativeTo(Label):
 class TestTestParser(unittest.TestCase):
 
     def test(self):
-        text = "А контроль над этими провинциями — [США], которая не пытается ввести санкции против."
+        text = "А контроль над этими провинциями — [США] , которая не пытается ввести санкции против."
 
         frames_collection = RuSentiFramesCollection.read_collection(
             version=RuSentiFramesVersions.V20,
@@ -52,6 +53,7 @@ class TestTestParser(unittest.TestCase):
             raise_error_on_existed_variant=False)
 
         text_parser = BaseTextParser(pipeline=[
+            TextEntitiesParser(),
             DefaultTextTokenizer(keep_tokens=True),
             LemmasBasedFrameVariantsParser(frame_variants=frame_variant_collection,
                                            stemmer=MystemWrapper()),
