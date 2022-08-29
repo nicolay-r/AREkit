@@ -1,30 +1,23 @@
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.entities.types import OpinionEntityType
 from arekit.common.labels.base import Label
-from arekit.common.labels.str_fmt import StringLabelsFormatter
 
 
 class PairTextProvider(BaseSingleTextProvider):
-    """
-    Provides additionally text_b parameter
-
-    Considered to utilize an inner part in context, between opinion participants.
+    """ Provides additionally text_b parameter
+        Considered to utilize an inner part in context, between opinion participants.
     """
 
     TEXT_B = "text_b"
 
-    def __init__(self, text_b_template, text_b_labels_fmt, text_terms_mapper):
-        """
-        text_b_template: unicode
-            assumes to include {subject}, {object}, and {context} in related template,
-            and {label} (optional)
-        labels_formatter: StringLabelsFormatter
+    def __init__(self, text_b_template, text_terms_mapper):
+        """ text_b_template: unicode
+                assumes to include {subject}, {object}, and {context} in related template
+            labels_formatter: StringLabelsFormatter
         """
         assert(isinstance(text_b_template, str))
-        assert(isinstance(text_b_labels_fmt, StringLabelsFormatter))
         super(PairTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
         self.__text_b_template = text_b_template
-        self.__text_b_labels_fmt = text_b_labels_fmt
 
     def get_text_template(self):
         raise NotImplementedError()
@@ -61,7 +54,6 @@ class PairTextProvider(BaseSingleTextProvider):
                 original_value=sentence_terms[first], entity_type=OpinionEntityType.Subject),
             object=self._mapper.StringEntitiesFormatter.to_string(
                 original_value=sentence_terms[last], entity_type=OpinionEntityType.Object),
-            context=self._process_text(inner_context),
-            label=self.__text_b_labels_fmt.label_to_str(expected_label))
+            context=self._process_text(inner_context))
 
         set_text_func(column=self.TEXT_B, value=value)
