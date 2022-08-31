@@ -4,6 +4,7 @@ from collections import OrderedDict
 from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
+from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
 from arekit.common.pipeline.base import BasePipeline
@@ -20,6 +21,7 @@ from arekit.contrib.utils.entities.formatters.str_simple_uppercase_fmt import Si
 from arekit.contrib.utils.io_utils.embedding import NpEmbeddingIO
 from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.pipelines.items.sampling.networks import NetworksInputSerializerPipelineItem
+from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
@@ -46,6 +48,10 @@ class CustomSentimentLabelScaler(SentimentLabelScaler):
         uint_to_label = OrderedDict([(NoLabel(), 0), (Positive(), 1), (Negative(), 2)])
         super(SentimentLabelScaler, self).__init__(int_dict=int_to_label, uint_dict=uint_to_label)
 
+    def invert_label(self, label):
+        int_label = self.label_to_int(label)
+        return self.int_to_label(-int_label)
+
 
 class TestSamplingNetwork(unittest.TestCase):
 
@@ -58,6 +64,12 @@ class TestSamplingNetwork(unittest.TestCase):
             version=RuSentiFramesVersions.V20,
             labels_fmt=RuSentiFramesLabelsFormatter(pos_label_type=Positive, neg_label_type=Negative),
             effect_labels_fmt=RuSentiFramesEffectLabelsFormatter(pos_label_type=Positive, neg_label_type=Negative))
+
+        frame_variant_collection = FrameVariantsCollection()
+        frame_variant_collection.fill_from_iterable(
+            variants_with_id=frames_collection.iter_frame_id_and_variants(),
+            overwrite_existed_variant=True,
+            raise_error_on_existed_variant=False)
 
         ctx = NetworkSerializationContext(
             labels_scaler=CustomSentimentLabelScaler(),
@@ -99,8 +111,10 @@ class TestSamplingNetwork(unittest.TestCase):
         #####
         no_folding = NoFolding(doc_ids=[0, 1], supported_data_type=DataType.Train)
         doc_ops = FooDocumentOperations()
-        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(),
-                                               DefaultTextTokenizer(keep_tokens=True)])
+        text_parser = BaseTextParser(pipeline=[
+            BratTextEntitiesParser(),
+            DefaultTextTokenizer(keep_tokens=True),
+            LemmasBasedFrameVariantsParser(frame_variants=frame_variant_collection, stemmer=stemmer)])
         train_pipeline = text_opinion_extraction_pipeline(
             annotators=[
                 PredefinedTextOpinionAnnotator(
