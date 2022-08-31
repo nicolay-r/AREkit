@@ -1,5 +1,9 @@
 ## Tutorials
 
+<p align="center">
+    <img src="logo.png"/>
+</p>
+
 1. [Binding a custom annotated collection for Relation Extraction
 ](https://nicolay-r.github.io/blog/articles/2022-08/arekit-collection-bind)
 2. [Compose your text-processing pipeline!](https://nicolay-r.github.io/blog/articles/2022-08/arekit-text-parsing-pipeline)
