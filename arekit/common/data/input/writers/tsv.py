@@ -36,5 +36,5 @@ class TsvWriter(BaseWriter):
                   float_format="%.0f",
                   compression='gzip',
                   header=self.__write_header)
+
         logger.info("Saving completed!")
-        logger.info(df.info())
