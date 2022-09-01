@@ -2,7 +2,7 @@ import logging
 from os.path import join
 
 from arekit.common.data.input.writers.base import BaseWriter
-from arekit.common.data.input.writers.tsv import TsvWriter
+from arekit.common.data.input.writers.factory import create_writer_extension
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import LinkedSamplesStorageView
@@ -20,15 +20,15 @@ class SamplesIO(BaseSamplesIO):
             Samples required for machine learning training/inferring.
     """
 
-    def __init__(self, target_dir,
-                 writer=TsvWriter(write_header=True),
-                 prefix="sample",
-                 target_extension=".tsv.gz"):
+    def __init__(self, target_dir, writer, prefix="sample", target_extension=None):
+        assert(isinstance(target_dir, str))
         assert(isinstance(writer, BaseWriter))
+        assert(isinstance(prefix, str))
+        assert(isinstance(target_extension, str) or target_extension is None)
         self.__target_dir = target_dir
         self.__writer = writer
-        self.__target_extension = target_extension
         self.__prefix = prefix
+        self.__target_extension = create_writer_extension(writer) if target_extension is None else target_extension
 
     # region public methods
 
