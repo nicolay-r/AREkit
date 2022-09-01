@@ -1,6 +1,6 @@
 from arekit.common.data.input.writers.opennre_json import OpenNREJsonWriter
 from arekit.common.data.input.writers.tsv import TsvWriter
-from arekit.contrib.networks.core.base_writer import BaseWriter
+from arekit.common.data.input.writers.base import BaseWriter
 
 
 def create_writer_extension(writer):
