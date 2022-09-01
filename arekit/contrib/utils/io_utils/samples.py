@@ -2,7 +2,7 @@ import logging
 from os.path import join
 
 from arekit.common.data.input.writers.base import BaseWriter
-from arekit.common.data.input.writers.factory import create_writer_extension
+from arekit.common.data.input.writers.extensions import create_writer_extension
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import LinkedSamplesStorageView
