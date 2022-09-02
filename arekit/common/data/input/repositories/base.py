@@ -49,7 +49,7 @@ class BaseInputRepository(object):
                            desc=desc)
 
     def write(self, writer, target, free_storage=True):
-        writer.save(self._storage, target)
+        writer.write(self._storage, target)
 
         # After writing we free the contents of the storage.
         if free_storage:

@@ -16,7 +16,7 @@ class TsvWriter(BaseWriter):
         super(TsvWriter, self).__init__()
         self.__write_header = write_header
 
-    def save(self, storage, target):
+    def write(self, storage, target):
         assert(isinstance(storage, BaseRowsStorage))
         assert(isinstance(target, str))
 
