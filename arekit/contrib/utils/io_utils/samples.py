@@ -1,9 +1,10 @@
 import logging
 from os.path import join
 
+from arekit.common.data.input.readers.base import BaseReader
+from arekit.common.data.input.readers.tsv import TsvReader
 from arekit.common.data.input.writers.base import BaseWriter
 from arekit.common.data.input.writers.extensions import create_writer_extension
-from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.io_utils.utils import filename_template, check_targets_existence
 
@@ -18,27 +19,27 @@ class SamplesIO(BaseSamplesIO):
             Samples required for machine learning training/inferring.
     """
 
-    def __init__(self, target_dir, writer,
-                 reader_func=lambda target: BaseRowsStorage.from_tsv(filepath=target),
-                 prefix="sample",
-                 target_extension=None):
+    def __init__(self, target_dir, writer, reader=TsvReader(), prefix="sample", target_extension=None):
         assert(isinstance(target_dir, str))
-        assert(isinstance(writer, BaseWriter))
-        assert(callable(reader_func))
         assert(isinstance(prefix, str))
+        assert(isinstance(writer, BaseWriter) or writer is None)
+        assert(isinstance(reader, BaseReader) or reader is None)
         assert(isinstance(target_extension, str) or target_extension is None)
         self.__target_dir = target_dir
         self.__prefix = prefix
         self.__writer = writer
-        self.__reader_func = reader_func
-        self.__target_extension = create_writer_extension(writer) if target_extension is None else target_extension
+        self.__reader = reader
+        self.__target_extension = create_writer_extension(writer) \
+            if target_extension is None else target_extension
 
     # region public methods
 
-    def read(self, target):
-        return self.__reader_func(target)
+    @property
+    def Reader(self):
+        return self.__reader
 
-    def create_writer(self):
+    @property
+    def Writer(self):
         return self.__writer
 
     def create_target(self, data_type, data_folding):

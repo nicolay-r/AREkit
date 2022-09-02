@@ -107,14 +107,15 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         # Reading embedding.
         embedding_data = self.__emb_io.load_embedding(data_folding)
         self.__config.set_term_embedding(embedding_data)
+        self.__samples_io.create_target(data_type=data_type, data_folding=data_folding)
 
         # Performing samples reading process.
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
             dtypes=data_folding.iter_supported_data_types(),
+            load_target_func=lambda dtype: self.__samples_io.create_target(data_type=dtype, data_folding=data_folding),
             samples_view=LinkedSamplesStorageView(row_ids_provider=MultipleIDProvider()),
-            load_storage_func=self.__samples_io.read(
-                self.__samples_io.create_target(data_type=data_type, data_folding=data_folding)),
+            samples_reader=self.__samples_io.Reader,
             has_model_predefined_state=self.__model_io.IsPretrainedStateProvided,
             labels_count=self.__labels_count,
             vocab=self.__emb_io.load_vocab(data_folding),

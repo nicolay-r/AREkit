@@ -1,23 +1,23 @@
 from os.path import join
 
-from arekit.common.data.storages.base import BaseRowsStorage
+from arekit.common.data.input.readers.base import BaseReader
+from arekit.common.data.input.readers.tsv import TsvReader
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.io_utils.utils import filename_template
 
 
 class OpinionsIO(BaseSamplesIO):
 
-    def __init__(self, target_dir,
-                 prefix="opinion",
-                 reader_func=lambda target: BaseRowsStorage.from_tsv(filepath=target),
-                 target_extension=".tsv.gz"):
+    def __init__(self, target_dir, prefix="opinion", reader=TsvReader(), target_extension=".tsv.gz"):
+        assert(isinstance(reader, BaseReader))
         self.__target_dir = target_dir
         self.__prefix = prefix
-        self.__reader_func = reader_func
+        self.__reader = reader
         self.__target_extension = target_extension
 
-    def read(self, target):
-        return self.__reader_func(target)
+    @property
+    def Reader(self):
+        return self.__reader
 
     def create_target(self, data_type, data_folding):
         return self.__get_input_opinions_target(data_type, data_folding=data_folding)

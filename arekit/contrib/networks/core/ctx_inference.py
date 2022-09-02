@@ -1,6 +1,7 @@
 import collections
 import logging
 
+from arekit.common.data.input.readers.base import BaseReader
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import LinkedSamplesStorageView
 from arekit.common.experiment.data_type import DataType
@@ -43,7 +44,7 @@ class InferenceContext(object):
     def create_empty(cls):
         return cls(sample_label_pairs_dict={}, bags_collections_dict={})
 
-    def initialize(self, dtypes, samples_view, load_storage_func, has_model_predefined_state,
+    def initialize(self, dtypes, load_target_func, samples_view, samples_reader, has_model_predefined_state,
                    vocab, labels_count, bags_collection_type, bag_size, input_shapes):
         """
         Perform reading information from the serialized experiment inputs.
@@ -53,13 +54,14 @@ class InferenceContext(object):
         assert(isinstance(has_model_predefined_state, bool))
         assert(isinstance(labels_count, int) and labels_count > 0)
         assert(isinstance(samples_view, LinkedSamplesStorageView))
-        assert(callable(load_storage_func))
+        assert(isinstance(samples_reader, BaseReader))
+        assert(callable(load_target_func))
 
         # Reading from serialized information
         for data_type in dtypes:
 
             # Load Samples Storage.
-            storage = load_storage_func(data_type)
+            storage = samples_reader.read(load_target_func(data_type))
 
             # Extracting such information from serialized files.
             bags_collection = self.__read_for_data_type(

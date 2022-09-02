@@ -101,7 +101,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         }
 
         writer_and_targets = {
-            "sample": (self.__samples_io.create_writer(),
+            "sample": (self.__samples_io.Writer,
                        self.__samples_io.create_target(
                            data_type=data_type, data_folding=data_folding)),
         }

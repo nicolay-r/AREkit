@@ -4,10 +4,12 @@ class BaseSamplesIO(object):
         results -- evaluation of experiments.
     """
 
-    def read(self, target):
+    @property
+    def Reader(self):
         raise NotImplementedError()
 
-    def create_writer(self):
+    @property
+    def Writer(self):
         """ For serialization
         """
         raise NotImplementedError()

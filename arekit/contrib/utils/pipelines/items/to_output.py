@@ -53,7 +53,7 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         linkages_view = MultilableOpinionLinkagesView(labels_scaler=self.__label_scaler,
                                                       storage=output_storage)
         target = self.__opinions_io.create_target(data_type=data_type, data_folding=data_folding)
-        storage = self.__opinions_io.read(target)
+        storage = self.__opinions_io.Reader.read(target)
 
         converter_part = text_opinion_linkages_to_opinion_collections_pipeline_part(
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
