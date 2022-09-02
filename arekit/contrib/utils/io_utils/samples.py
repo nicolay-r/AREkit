@@ -3,9 +3,7 @@ from os.path import join
 
 from arekit.common.data.input.writers.base import BaseWriter
 from arekit.common.data.input.writers.extensions import create_writer_extension
-from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.data.views.samples import LinkedSamplesStorageView
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.io_utils.utils import filename_template, check_targets_existence
 
@@ -20,21 +18,25 @@ class SamplesIO(BaseSamplesIO):
             Samples required for machine learning training/inferring.
     """
 
-    def __init__(self, target_dir, writer, prefix="sample", target_extension=None):
+    def __init__(self, target_dir, writer,
+                 reader_func=lambda target: BaseRowsStorage.from_tsv(filepath=target),
+                 prefix="sample",
+                 target_extension=None):
         assert(isinstance(target_dir, str))
         assert(isinstance(writer, BaseWriter))
+        assert(callable(reader_func))
         assert(isinstance(prefix, str))
         assert(isinstance(target_extension, str) or target_extension is None)
         self.__target_dir = target_dir
-        self.__writer = writer
         self.__prefix = prefix
+        self.__writer = writer
+        self.__reader_func = reader_func
         self.__target_extension = create_writer_extension(writer) if target_extension is None else target_extension
 
     # region public methods
 
-    def create_view(self, target):
-        return LinkedSamplesStorageView(storage=BaseRowsStorage.from_tsv(filepath=target),
-                                        row_ids_provider=MultipleIDProvider())
+    def read(self, target):
+        return self.__reader_func(target)
 
     def create_writer(self):
         return self.__writer
@@ -62,10 +64,6 @@ class SamplesIO(BaseSamplesIO):
                                    prefix=self.__prefix,
                                    extension=self.__target_extension)
 
-    # endregion
-
-    # region protected methods
-
     @staticmethod
     def __get_filepath(out_dir, template, prefix, extension):
         assert(isinstance(template, str))
@@ -73,5 +71,3 @@ class SamplesIO(BaseSamplesIO):
         assert(isinstance(extension, str))
         return join(out_dir, "{prefix}-{template}{extension}".format(
             prefix=prefix, template=template, extension=extension))
-
-    # endregion

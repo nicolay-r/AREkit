@@ -4,9 +4,7 @@ class BaseSamplesIO(object):
         results -- evaluation of experiments.
     """
 
-    def create_view(self, target):
-        """ For viewing/reading
-        """
+    def read(self, target):
         raise NotImplementedError()
 
     def create_writer(self):

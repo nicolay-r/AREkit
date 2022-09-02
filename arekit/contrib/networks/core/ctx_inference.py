@@ -1,6 +1,7 @@
 import collections
 import logging
 
+from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.data.views.samples import LinkedSamplesStorageView
 from arekit.common.experiment.data_type import DataType
 from arekit.common.model.labeling.stat import calculate_labels_distribution_stat
@@ -42,26 +43,27 @@ class InferenceContext(object):
     def create_empty(cls):
         return cls(sample_label_pairs_dict={}, bags_collections_dict={})
 
-    def initialize(self, dtypes, create_samples_view_func, has_model_predefined_state,
+    def initialize(self, dtypes, samples_view, load_storage_func, has_model_predefined_state,
                    vocab, labels_count, bags_collection_type, bag_size, input_shapes):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
         """
         assert(isinstance(dtypes, collections.Iterable))
-        assert(callable(create_samples_view_func))
         assert(isinstance(has_model_predefined_state, bool))
         assert(isinstance(labels_count, int) and labels_count > 0)
+        assert(isinstance(samples_view, LinkedSamplesStorageView))
+        assert(callable(load_storage_func))
 
         # Reading from serialized information
         for data_type in dtypes:
 
-            # Create samples reader.
-            samples_view = create_samples_view_func(data_type)
+            # Load Samples Storage.
+            storage = load_storage_func(data_type)
 
             # Extracting such information from serialized files.
             bags_collection = self.__read_for_data_type(
-                linked_samples_view=samples_view,
+                linked_samples_iter=samples_view.iter_from_storage(storage),
                 is_external_vocab=has_model_predefined_state,
                 bags_collection_type=bags_collection_type,
                 vocab=vocab,
@@ -69,7 +71,7 @@ class InferenceContext(object):
                 input_shapes=input_shapes,
                 desc="Filling bags collection [{}]".format(data_type))
 
-            uint_labeled_sample_row_ids = self.__get_labeled_sample_row_ids(samples_view)
+            uint_labeled_sample_row_ids = self.__get_labeled_sample_row_ids(storage)
 
             # Saving into dictionaries.
             self.__bags_collections_dict[data_type] = bags_collection
@@ -93,14 +95,13 @@ class InferenceContext(object):
     # region private methods
 
     @staticmethod
-    def __read_for_data_type(linked_samples_view, is_external_vocab,
+    def __read_for_data_type(linked_samples_iter, is_external_vocab,
                              bags_collection_type, vocab,
                              bag_size, input_shapes, desc=""):
         assert(issubclass(bags_collection_type, BagsCollection))
-        assert(isinstance(linked_samples_view, LinkedSamplesStorageView))
 
         return bags_collection_type.from_formatted_samples(
-            linked_samples_iter=linked_samples_view,
+            linked_samples_iter=linked_samples_iter,
             desc=desc,
             bag_size=bag_size,
             shuffle=True,
@@ -121,9 +122,10 @@ class InferenceContext(object):
                 pos_tags=row.PartOfSpeechTags))
 
     @staticmethod
-    def __get_labeled_sample_row_ids(samples_view):
+    def __get_labeled_sample_row_ids(storage):
+        assert(isinstance(storage, BaseRowsStorage))
         rows_list = []
-        for _, row in samples_view._storage:
+        for _, row in storage:
             labeled_row = InferenceContext.__extract_labeled_rows(row)
             rows_list.append(labeled_row)
         return rows_list

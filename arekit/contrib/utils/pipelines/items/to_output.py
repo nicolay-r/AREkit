@@ -11,6 +11,7 @@ from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.common.pipeline.items.handle import HandleIterPipelineItem
 from arekit.contrib.utils.data.views.linkages.multilabel import MultilableOpinionLinkagesView
+from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.io_utils.opinions import OpinionsIO
 from arekit.contrib.utils.utils_folding import folding_iter_states, experiment_iter_index
 from arekit.contrib.utils.pipelines.opinion_collections import \
@@ -51,13 +52,12 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         # consist of label probabilities per every class
         linkages_view = MultilableOpinionLinkagesView(labels_scaler=self.__label_scaler,
                                                       storage=output_storage)
-
-        target = self.__opinions_io.create_target(data_type=data_type,
-                                                  data_folding=data_folding)
+        target = self.__opinions_io.create_target(data_type=data_type, data_folding=data_folding)
+        storage = self.__opinions_io.read(target)
 
         converter_part = text_opinion_linkages_to_opinion_collections_pipeline_part(
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
-                doc_id=doc_id, opinions_view=self.__opinions_io.create_view(target)),
+                doc_id=doc_id, opinions_view=BaseOpinionStorageView(storage)),
             doc_ids_set=set(data_folding.fold_doc_ids_set()[data_type]),
             create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,

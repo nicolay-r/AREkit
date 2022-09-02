@@ -2,6 +2,8 @@ import gc
 import logging
 import os
 
+from arekit.common.data.row_ids.multiple import MultipleIDProvider
+from arekit.common.data.views.samples import LinkedSamplesStorageView
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.context import PipelineContext
@@ -110,7 +112,8 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         inference_ctx = InferenceContext.create_empty()
         inference_ctx.initialize(
             dtypes=data_folding.iter_supported_data_types(),
-            create_samples_view_func=lambda data_type: self.__samples_io.create_view(
+            samples_view=LinkedSamplesStorageView(row_ids_provider=MultipleIDProvider()),
+            load_storage_func=self.__samples_io.read(
                 self.__samples_io.create_target(data_type=data_type, data_folding=data_folding)),
             has_model_predefined_state=self.__model_io.IsPretrainedStateProvided,
             labels_count=self.__labels_count,
