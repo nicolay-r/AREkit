@@ -1,19 +1,20 @@
 from os.path import join
 
 from arekit.common.data.input.readers.base import BaseReader
-from arekit.common.data.input.readers.tsv import TsvReader
+from arekit.common.data.input.readers.extensions import create_reader_extension
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.io_utils.utils import filename_template
 
 
 class OpinionsIO(BaseSamplesIO):
 
-    def __init__(self, target_dir, prefix="opinion", reader=TsvReader(), target_extension=".tsv.gz"):
+    def __init__(self, target_dir, reader=None, prefix="opinion", target_extension=".tsv.gz"):
         assert(isinstance(reader, BaseReader))
         self.__target_dir = target_dir
         self.__prefix = prefix
         self.__reader = reader
-        self.__target_extension = target_extension
+        self.__target_extension = create_reader_extension(reader) \
+            if target_extension is None else target_extension
 
     @property
     def Reader(self):

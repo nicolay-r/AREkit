@@ -2,7 +2,7 @@ import logging
 from os.path import join
 
 from arekit.common.data.input.readers.base import BaseReader
-from arekit.common.data.input.readers.tsv import TsvReader
+from arekit.common.data.input.readers.extensions import create_reader_extension
 from arekit.common.data.input.writers.base import BaseWriter
 from arekit.common.data.input.writers.extensions import create_writer_extension
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
@@ -19,7 +19,7 @@ class SamplesIO(BaseSamplesIO):
             Samples required for machine learning training/inferring.
     """
 
-    def __init__(self, target_dir, writer, reader=TsvReader(), prefix="sample", target_extension=None):
+    def __init__(self, target_dir, writer=None, reader=None, prefix="sample", target_extension=None):
         assert(isinstance(target_dir, str))
         assert(isinstance(prefix, str))
         assert(isinstance(writer, BaseWriter) or writer is None)
@@ -29,8 +29,13 @@ class SamplesIO(BaseSamplesIO):
         self.__prefix = prefix
         self.__writer = writer
         self.__reader = reader
-        self.__target_extension = create_writer_extension(writer) \
-            if target_extension is None else target_extension
+        self.__target_extension = target_extension
+
+        if target_extension is None:
+            if writer is not None:
+                self.__target_extension = create_writer_extension(writer)
+            elif reader is not None:
+                self.__target_extension = create_reader_extension(reader)
 
     # region public methods
 
