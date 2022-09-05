@@ -7,6 +7,7 @@ from arekit.common.folding.nofold import NoFolding
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
+from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
@@ -31,7 +32,7 @@ from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
 from arekit.contrib.utils.resources import load_embedding_news_mystem_skipgram_1000_20_2015
 from arekit.contrib.utils.vectorizers.bpe import BPEVectorizer
 from arekit.contrib.utils.vectorizers.random_norm import RandomNormalVectorizer
-from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentOperations, CustomLabelsFormatter
+from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentOperations
 
 
 class Positive(Label):
@@ -51,6 +52,12 @@ class CustomSentimentLabelScaler(SentimentLabelScaler):
     def invert_label(self, label):
         int_label = self.label_to_int(label)
         return self.int_to_label(-int_label)
+
+
+class CustomLabelsFormatter(StringLabelsFormatter):
+    def __init__(self, pos_label_type, neg_label_type):
+        stol = {"POSITIVE_TO": neg_label_type, "NEGATIVE_TO": pos_label_type}
+        super(CustomLabelsFormatter, self).__init__(stol=stol)
 
 
 class TestSamplingNetwork(unittest.TestCase):
@@ -114,7 +121,8 @@ class TestSamplingNetwork(unittest.TestCase):
         text_parser = BaseTextParser(pipeline=[
             BratTextEntitiesParser(),
             DefaultTextTokenizer(keep_tokens=True),
-            LemmasBasedFrameVariantsParser(frame_variants=frame_variant_collection, stemmer=stemmer)])
+            LemmasBasedFrameVariantsParser(frame_variants=frame_variant_collection, stemmer=stemmer)
+        ])
         train_pipeline = text_opinion_extraction_pipeline(
             annotators=[
                 PredefinedTextOpinionAnnotator(
