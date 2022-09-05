@@ -38,7 +38,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
     def map_token(self, t_ind, token):
         """ It assumes to be composed for all the supported types.
         """
-        return self.__vectorizers[TermTypes.TOKEN].create_term_embedding(term=token)
+        return self.__vectorizers[TermTypes.TOKEN].create_term_embedding(term=token.get_token_value())
 
     def map_entity(self, e_ind, entity):
         assert(isinstance(entity, Entity))
