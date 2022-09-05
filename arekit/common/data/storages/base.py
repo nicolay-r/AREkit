@@ -59,9 +59,6 @@ class BaseRowsStorage(object):
     def __set_value(self, row_ind, column, value):
         self._df.at[row_ind, column] = value
 
-    def __log_info(self):
-        logger.info(self._df.info())
-
     def __filter(self, column_name, value):
         return self._df[self._df[column_name] == value]
 
@@ -140,8 +137,6 @@ class BaseRowsStorage(object):
                 self.__set_value(row_ind=row_index,
                                  column=column,
                                  value=value)
-
-        self.__log_info()
 
     def free(self):
         del self._df
