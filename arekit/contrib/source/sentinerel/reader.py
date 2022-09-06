@@ -19,7 +19,7 @@ class SentiNerelDocReader(object):
             version=version)
 
     @staticmethod
-    def read_document(filename, doc_id):
+    def read_document(filename, doc_id, entities_to_ignore=None):
         assert(isinstance(filename, str))
         assert(isinstance(doc_id, int))
 
@@ -27,7 +27,14 @@ class SentiNerelDocReader(object):
             sentences = BratDocumentSentencesReader.from_file(input_file=input_file, entities=entities)
             return BratNews(doc_id=doc_id, sentences=sentences, text_relations=text_relations)
 
-        entities = SentiNerelEntityCollection.read_collection(filename=filename, version=SentiNerelVersions.V1)
+        # TODO. #398 issue -- in some cases entities might be nested. Therefore we limit the set
+        # TODO. of the potential named entities.
+        eti = ["EFFECT_NEG", "EFFECT_POS", "ARGUMENT_NEG", "ARGUMENT_POS", "EVENT"] \
+            if entities_to_ignore is None else entities_to_ignore
+
+        entities = SentiNerelEntityCollection.read_collection(
+            filename=filename, version=SentiNerelVersions.V1,
+            entities_to_ignore=eti)
         text_relations = SentiNerelDocReader.read_text_relations(filename=filename, version=SentiNerelVersions.V1)
 
         return SentiNerelIOUtils.read_from_zip(

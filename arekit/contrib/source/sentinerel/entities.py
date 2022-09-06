@@ -35,10 +35,6 @@ class SentiNerelEntityCollection(EntityCollection):
 
     @classmethod
     def read_collection(cls, filename, version, entities_to_ignore=None):
-        """ You may adopt the following list of entities to ignore by default.
-                entities_to_ignore = ["EFFECT_NEG", "EFFECT_POS", "ARGUMENT_NEG", "ARGUMENT_POS", "EVENT"]
-            We setup the latter as a part of the side-project and the related experiments.
-        """
         assert(isinstance(filename, str))
 
         # Since this dataset does not provide the synonyms collection by default,
