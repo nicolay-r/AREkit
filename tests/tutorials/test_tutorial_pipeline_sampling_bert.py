@@ -1,9 +1,11 @@
 import unittest
 from collections import OrderedDict
+from os.path import join, dirname
 
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
+from arekit.common.data.input.readers.tsv import TsvReader
 from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
@@ -68,6 +70,8 @@ class CustomEntitiesFormatter(StringEntitiesFormatter):
 
 class TestBertSerialization(unittest.TestCase):
 
+    __output_dir = join(dirname(__file__), "out")
+
     def test(self):
         text_b_template = '{subject} к {object} в контексте : << {context} >>'
 
@@ -83,7 +87,7 @@ class TestBertSerialization(unittest.TestCase):
             text_provider=text_provider)
 
         writer = TsvWriter(write_header=True)
-        samples_io = SamplesIO("out/", writer, target_extension=".tsv.gz")
+        samples_io = SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz")
 
         pipeline_item = BertExperimentInputSerializerPipelineItem(
             sample_rows_provider=sample_rows_provider,
@@ -120,3 +124,8 @@ class TestBertSerialization(unittest.TestCase):
                          "data_folding": no_folding,
                          "data_type_pipelines": {DataType.Train: train_pipeline}
                      })
+
+        reader = TsvReader()
+        source = join(self.__output_dir, "sample-train-0.tsv.gz")
+        storage = reader.read(source)
+        self.assertEqual(26, len(storage), "Amount of rows is non equal!")

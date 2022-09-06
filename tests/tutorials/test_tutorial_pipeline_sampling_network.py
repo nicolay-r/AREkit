@@ -1,6 +1,8 @@
 import unittest
 from collections import OrderedDict
+from os.path import dirname, join
 
+from arekit.common.data.input.readers.tsv import TsvReader
 from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
@@ -62,6 +64,8 @@ class CustomLabelsFormatter(StringLabelsFormatter):
 
 class TestSamplingNetwork(unittest.TestCase):
 
+    __output_dir = join(dirname(__file__), "out")
+
     def test(self):
 
         stemmer = MystemWrapper()
@@ -85,9 +89,9 @@ class TestSamplingNetwork(unittest.TestCase):
             frames_connotation_provider=RuSentiFramesConnotationProvider(frames_collection))
 
         writer = TsvWriter(write_header=True)
-        samples_io = SamplesIO("out/", writer, target_extension=".tsv.gz")
+        samples_io = SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz")
 
-        embedding_io = NpEmbeddingIO(target_dir="out/")
+        embedding_io = NpEmbeddingIO(target_dir=self.__output_dir)
 
         bpe_vectorizer = BPEVectorizer(embedding=embedding, max_part_size=3)
         norm_vectorizer = RandomNormalVectorizer(vector_size=embedding.VectorSize,
@@ -141,3 +145,8 @@ class TestSamplingNetwork(unittest.TestCase):
                          "data_folding": no_folding,
                          "data_type_pipelines": {DataType.Train: train_pipeline}
                      })
+
+        reader = TsvReader()
+        source = join(self.__output_dir, "sample-train-0.tsv.gz")
+        storage = reader.read(source)
+        self.assertEqual(26, len(storage), "Amount of rows is non equal!")

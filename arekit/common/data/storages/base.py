@@ -158,4 +158,7 @@ class BaseRowsStorage(object):
     def __iter__(self):
         return self.__iter_core(self._df)
 
+    def __len__(self):
+        return len(self._df)
+
     # endregion
