@@ -4,6 +4,9 @@ from arekit.contrib.source.brat.relation import BratRelation
 
 class BratAnnotationParser:
 
+    ENTITIES = "entities"
+    RELATIONS = "relations"
+
     @staticmethod
     def __non_prefixed_id(value):
         assert (isinstance(value, str))
@@ -65,6 +68,6 @@ class BratAnnotationParser:
                 relations.append(BratAnnotationParser.handle_relation(args))
 
         return {
-            "entities": entities,
-            "relations": relations
+            BratAnnotationParser.ENTITIES: entities,
+            BratAnnotationParser.RELATIONS: relations
         }
