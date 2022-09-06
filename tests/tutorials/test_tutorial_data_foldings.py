@@ -1,4 +1,5 @@
 import unittest
+from os.path import dirname, join
 
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
@@ -45,7 +46,7 @@ class DataFolding(unittest.TestCase):
         splitter_statistical = StatBasedCrossValidationSplitter(
             docs_stat=SentenceBasedDocumentStatGenerator(
                 lambda doc_id: doc_ops.get_doc(doc_id)),
-            docs_stat_filepath_func=lambda: "data/stat.txt"
+            docs_stat_filepath_func=lambda: join(dirname(__file__), "data/stat.txt")
         )
 
         cv_folding = TwoClassCVFolding(

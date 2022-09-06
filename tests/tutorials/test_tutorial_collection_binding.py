@@ -1,6 +1,6 @@
 import unittest
 from enum import Enum
-from os.path import basename
+from os.path import basename, join, dirname
 
 from arekit.common.entities.collection import EntityCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
@@ -18,7 +18,7 @@ class FooVersions(Enum):
 
 class FooIOUtils(ZipArchiveUtils):
 
-    archive_path = "data/foo.zip"
+    archive_path = join(dirname(__file__), "data/foo.zip")
 
     @staticmethod
     def get_archive_filepath(version):
