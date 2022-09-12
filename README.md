@@ -1,4 +1,4 @@
-# AREkit 0.22.1
+# AREkit 0.23.0
 
 ![](https://img.shields.io/badge/Python-3.6-brightgreen.svg)
 
@@ -36,7 +36,7 @@ It providers contrib modules of
 ## Installation 
 
 ```
-pip install git+https://github.com/nicolay-r/AREkit.git@0.22.1-rc
+pip install git+https://github.com/nicolay-r/AREkit.git@0.23.0-rc
 ```
 
 ## Download Resources
