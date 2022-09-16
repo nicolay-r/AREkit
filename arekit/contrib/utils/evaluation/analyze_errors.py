@@ -12,7 +12,26 @@ from arekit.common.labels.base import NoLabel
 from arekit.common.utils import progress_bar_defined
 
 
-def __post_text_processing(sample_row, source_ind, target_ind, window_crop=10):
+def __get_entity_inds(sample_row):
+    return [int(v) for v in sample_row[ENTITIES].split(',')]
+
+
+def __format_entity(text_terms, index, entity_types, entity_inds):
+    """ поднять регистр для пары.
+    """
+    assert(isinstance(text_terms, list))
+    return text_terms[index].upper() + "-[{}]".format(
+        entity_types[entity_inds.index(index)].replace(' ', '-'))
+
+
+def __get_text_terms(sample_row, do_lowercase=False):
+    text = sample_row[BaseSingleTextProvider.TEXT_A]
+    if do_lowercase:
+        text = text.lower()
+    return text.split(' ')
+
+
+def __post_text_processing(sample_row, source_ind, target_ind):
     """ Пост-обработка текста для лучшего понимания возможных возникаюцих проблем в
         анализе текста.
     """
@@ -21,9 +40,8 @@ def __post_text_processing(sample_row, source_ind, target_ind, window_crop=10):
     assert(ENTITY_VALUES in sample_row)
     assert(ENTITY_TYPES in sample_row)
 
-    text_terms = sample_row[BaseSingleTextProvider.TEXT_A].lower().split(' ')
-
-    entity_inds = [int(v) for v in sample_row[ENTITIES].split(',')]
+    text_terms = __get_text_terms(sample_row, do_lowercase=True)
+    entity_inds = __get_entity_inds(sample_row)
     entity_values = sample_row[ENTITY_VALUES].split(',')
     entity_types = sample_row[ENTITY_TYPES].split(',')
 
@@ -31,13 +49,15 @@ def __post_text_processing(sample_row, source_ind, target_ind, window_crop=10):
     for i, e_ind in enumerate(entity_inds):
         text_terms[e_ind] = entity_values[i].replace(' ', '-')
 
-    # поднять регистр для пары.
-    text_terms[source_ind] = text_terms[source_ind].upper() + "-[{}]".format(
-        entity_types[entity_inds.index(source_ind)].replace(' ', '-'))
-    text_terms[target_ind] = text_terms[target_ind].upper() + "-[{}]".format(
-        entity_types[entity_inds.index(target_ind)].replace(' ', '-'))
+    text_terms[source_ind] = __format_entity(text_terms, index=source_ind, entity_types=entity_types, entity_inds=entity_inds)
+    text_terms[target_ind] = __format_entity(text_terms, index=target_ind, entity_types=entity_types, entity_inds=entity_inds)
 
-    # усечение по границам для более удобного просмотра области.
+    return text_terms
+
+
+def __crop_text_terms(source_ind, target_ind, text_terms, window_crop=10):
+    """ усечение по границам для более удобного просмотра области.
+    """
     left_participant = min(source_ind, target_ind)
     right_participant = max(source_ind, target_ind)
     crop_left = max(0, left_participant - window_crop)
@@ -111,7 +131,14 @@ def extract_errors(eval_result, test_samples_filepath, etalon_samples_filepath, 
         for sample_col in columns_to_copy:
             eval_errors_df.at[row_id, sample_col] = sample_row[sample_col]
 
-        eval_errors_df.at[row_id, BaseSingleTextProvider.TEXT_A] = __post_text_processing(
-            sample_row=sample_row, source_ind=source_ind, target_ind=target_ind)
+        text_terms =__post_text_processing(sample_row=sample_row, source_ind=source_ind, target_ind=target_ind)
+        cropped_text = __crop_text_terms(source_ind=source_ind, target_ind=target_ind, text_terms=text_terms)
+
+        eval_errors_df.at[row_id, BaseSingleTextProvider.TEXT_A] = cropped_text
+
+        # Replace with the values instead of indices.
+        entity_inds = __get_entity_inds(sample_row)
+        eval_errors_df.at[row_id, const.S_IND] = text_terms[source_ind]
+        eval_errors_df.at[row_id, const.T_IND] = text_terms[target_ind]
 
     return eval_errors_df
