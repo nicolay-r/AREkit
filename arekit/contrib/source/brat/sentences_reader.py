@@ -10,10 +10,10 @@ class BratDocumentSentencesReader(object):
         assert(isinstance(entities, EntityCollection))
         assert(callable(skip_entity_func) or skip_entity_func is None)
 
-        sentences_data = BratDocumentSentencesReader.__parse_sentences(
+        sentences_data = BratDocumentSentencesReader._parse_sentences(
             input_file=input_file, line_handler=line_handler)
 
-        sentence_entities = BratDocumentSentencesReader.__parse_entities(
+        sentence_entities = BratDocumentSentencesReader._parse_entities(
             sentences_data=sentences_data,
             entities=entities,
             skip_entity_func=skip_entity_func)
@@ -28,9 +28,24 @@ class BratDocumentSentencesReader(object):
 
         return brat_sentences
 
-    # endregion
+    @staticmethod
+    def from_sentences_data(entities, sentences_data, skip_entity_func=None):
+        assert(isinstance(entities, EntityCollection))
 
-    # region private methods
+        sentence_entities = BratDocumentSentencesReader._parse_entities(
+            sentences_data=sentences_data,
+            entities=entities,
+            skip_entity_func=skip_entity_func)
+
+        # Convert all the content to brat sentences.
+        brat_sentences = []
+        for s_ind, s_dict in enumerate(sentences_data):
+            brat_sentence = BratSentence(text=s_dict["text"],
+                                         index_begin=s_dict["ind_begin"],
+                                         entities=sentence_entities[s_ind])
+            brat_sentences.append(brat_sentence)
+
+        return brat_sentences
 
     @staticmethod
     def __is_sentence_contains(sentence_data, entity):
@@ -40,7 +55,7 @@ class BratDocumentSentencesReader(object):
                entity.IndexEnd <= sentence_data["ind_end"]
 
     @staticmethod
-    def __parse_entities(sentences_data, entities, skip_entity_func):
+    def _parse_entities(sentences_data, entities, skip_entity_func):
         """ Sentences is a list of json-like data (dictionaries).
         """
         assert(isinstance(sentences_data, list))
@@ -91,7 +106,7 @@ class BratDocumentSentencesReader(object):
         return entities_in_sentences
 
     @staticmethod
-    def __parse_sentences(input_file, line_handler):
+    def _parse_sentences(input_file, line_handler):
         assert(callable(line_handler) or line_handler is None)
         sentences = []
         line_start = 0
