@@ -15,6 +15,9 @@ class BratAnnotationParser:
     @staticmethod
     def handle_entity(args):
 
+        if len(args) < 4:
+            return None
+
         if not str.isdigit(args[2]) or not str.isdigit(args[3]):
             return None
 
