@@ -5,6 +5,7 @@ from os.path import basename, join, dirname
 from arekit.common.entities.collection import EntityCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.contrib.source.brat.annot import BratAnnotationParser
+from arekit.contrib.source.brat.entities.compound import BratCompoundEntity
 from arekit.contrib.source.brat.news import BratNews
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
@@ -96,9 +97,16 @@ class TestFooCollection(unittest.TestCase):
         for sentence in news.iter_sentences():
             print(sentence.Text.strip())
             for entity, bound in sentence.iter_entity_with_local_bounds():
-                print("{}: ['{}',{}, {}]".format(
+                print("{}: ['{}',{}, {}] {}".format(
                     entity.ID, entity.Value, entity.Type,
-                    "-".join([str(bound.Position), str(bound.Position + bound.Length)])))
+                    "-".join([str(bound.Position), str(bound.Position + bound.Length)]),
+                    "[COMPOUND]" if isinstance(entity, BratCompoundEntity) else ""))
+
+                if not isinstance(entity, BratCompoundEntity):
+                    continue
+
+                for child in entity.iter_childs():
+                    print("\t{}: ['{}',{}]".format(child.ID, child.Value, child.Type))
 
         for brat_relation in news.Relations:
             print(brat_relation.SourceID, brat_relation.TargetID, brat_relation.Type)

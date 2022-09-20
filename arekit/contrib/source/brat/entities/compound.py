@@ -16,6 +16,13 @@ class BratCompoundEntity(BratEntity):
         self.__entities = entities
         self.__root = root
 
+    @classmethod
+    def from_list(cls, root, childs):
+        assert(isinstance(root, BratEntity))
+        assert(isinstance(childs, list) and len(childs) > 0)
+        return cls(id_in_doc=root.ID, value=root.Value, e_type=root.Type, root=None,
+                   entities=childs, index_begin=root.IndexBegin, index_end=root.IndexEnd)
+
     @property
     def Root(self):
         return self.__root
