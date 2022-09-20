@@ -2,7 +2,7 @@ from arekit.contrib.source.brat.annot import BratAnnotationParser
 from arekit.contrib.source.brat.news import BratNews
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.sentinerel.entities import SentiNerelEntityCollection
-from arekit.contrib.source.sentinerel.io_utils import SentiNerelIOUtils, SentiNerelVersions
+from arekit.contrib.source.sentinerel.io_utils import SentiNerelIOUtils, DEFAULT_VERSION
 
 
 class SentiNerelDocReader(object):
@@ -19,7 +19,7 @@ class SentiNerelDocReader(object):
             version=version)
 
     @staticmethod
-    def read_document(filename, doc_id, entities_to_ignore=None):
+    def read_document(filename, doc_id, version=DEFAULT_VERSION, entities_to_ignore=None):
         assert(isinstance(filename, str))
         assert(isinstance(doc_id, int))
 
@@ -33,11 +33,10 @@ class SentiNerelDocReader(object):
             if entities_to_ignore is None else entities_to_ignore
 
         entities = SentiNerelEntityCollection.read_collection(
-            filename=filename, version=SentiNerelVersions.V1,
-            entities_to_ignore=eti)
-        text_relations = SentiNerelDocReader.read_text_relations(filename=filename, version=SentiNerelVersions.V1)
+            filename=filename, version=version, entities_to_ignore=eti)
+        text_relations = SentiNerelDocReader.read_text_relations(filename=filename, version=version)
 
         return SentiNerelIOUtils.read_from_zip(
             inner_path=SentiNerelIOUtils.get_news_innerpath(filename=filename),
             process_func=file_to_doc,
-            version=SentiNerelVersions.V1)
+            version=version)

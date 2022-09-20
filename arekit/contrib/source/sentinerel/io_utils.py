@@ -2,6 +2,8 @@ from enum import Enum
 from os import path
 from os.path import basename
 
+import enum
+
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 
 
@@ -10,6 +12,10 @@ class SentiNerelVersions(Enum):
     """
 
     V1 = "v1_0"
+    V2 = "v2_0"
+
+
+DEFAULT_VERSION = SentiNerelVersions.V2
 
 
 class SentiNerelIOUtils(ZipArchiveUtils):
@@ -31,10 +37,11 @@ class SentiNerelIOUtils(ZipArchiveUtils):
         return path.join(SentiNerelIOUtils.inner_root, "{}.txt".format(filename))
 
     @staticmethod
-    def __iter_filenames_from_dataset(folder_name):
+    def __iter_filenames_from_dataset(folder_name, version):
+        assert(isinstance(version, enum.Enum))
         assert(isinstance(folder_name, str))
 
-        for filename in SentiNerelIOUtils.iter_filenames_from_zip(SentiNerelVersions.V1):
+        for filename in SentiNerelIOUtils.iter_filenames_from_zip(version):
 
             extension = filename[-4:]
 
@@ -52,9 +59,9 @@ class SentiNerelIOUtils(ZipArchiveUtils):
     # region public methods
 
     @staticmethod
-    def iter_collection_filenames():
+    def iter_collection_filenames(version=DEFAULT_VERSION):
         filenames_it = SentiNerelIOUtils.__iter_filenames_from_dataset(
-            folder_name=SentiNerelIOUtils.inner_root)
+            folder_name=SentiNerelIOUtils.inner_root, version=version)
 
         for doc_id, filename in enumerate(filenames_it):
             yield doc_id, filename
