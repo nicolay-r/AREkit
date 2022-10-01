@@ -24,7 +24,12 @@ In order to do so, we provide:
 * ➿ pipelines and iterators for handling large-scale collections serialization without out-of-memory issues.
 * evaluators which allows you to assess your trained model.
 
-AREkit complements the [OpenNRE](https://github.com/thunlp/OpenNRE) functionality since *document-level RE setting is not widely explored* (2.4 [[paper]](https://aclanthology.org/D19-3029.pdf)).
+AREkit is a very close to opensource framework [SeqIO](https://github.com/google/seqio) proposed by [Google](https://github.com/google) 
+for data-preprocessing, evaluation, for sequence models.
+While SeqIO dedicated for conversion/pre-processing of datasets of any type, 
+this project proposes pipelines creation from the very raw or preannotated (BRAT-based) texts, including the solutions for problems mentioned above.
+
+AREkit also complements the [OpenNRE](https://github.com/thunlp/OpenNRE) functionality since *document-level RE setting is not widely explored* (2.4 [[paper]](https://aclanthology.org/D19-3029.pdf)).
 The core functionality includes 
 (1) API for document presentation with EL (Entity Linking, i.e. Object Synonymy) support 
 for sentence level relations preparation (dubbed as contexts)
@@ -60,6 +65,7 @@ download_data()
 
 ## Related Frameworks
 
+*  **SeqIO** [[github]](https://github.com/google/seqio)
 *  **OpenNRE** [[github]](https://github.com/thunlp/OpenNRE) [[paper]](https://aclanthology.org/D19-3029.pdf)
 *  **DeRE** [[github]](https://github.com/ims-tcl/DeRE) [[paper]](https://aclanthology.org/D18-2008/)
 *  **CREST** [[github]](https://github.com/phosseini/CREST) [[paper]](https://arxiv.org/abs/2103.13606)
