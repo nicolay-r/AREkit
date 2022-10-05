@@ -50,7 +50,7 @@ class ProfessionAsCharacteristicSentimentTextOpinionFilter(TextOpinionFilter):
 
         # We pick up the next term within the parsed sentece.
         next_term = sentence.get_term(target_term_ind + 1, term_format=TermFormat.Raw) \
-            if len(sentence) < target_term_ind + 1 else None
+            if len(sentence) > target_term_ind + 1 else None
 
         if next_term is None:
             # This is not our case.
