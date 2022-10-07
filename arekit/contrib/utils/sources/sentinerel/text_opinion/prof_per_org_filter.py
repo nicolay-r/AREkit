@@ -21,7 +21,7 @@ class ProfessionAsCharacteristicSentimentTextOpinionFilter(TextOpinionFilter):
 
     def __init__(self, char_type="PROFESSION"):
         self.__char_type = char_type
-        self.__next_entity_types = ["PERSON", "ORGANIZATION"]
+        self.__next_entity_types = ["PERSON"]
 
     def filter(self, text_opinion, parsed_news, entity_service_provider):
         assert(isinstance(text_opinion, TextOpinion))
