@@ -11,11 +11,15 @@ class SentiNerelVersions(Enum):
     """ List of the supported version of this collection
     """
 
+    # Initial version.
     V1 = "v1_0"
+    # Updated annotation within the second half of the texts. (September 2022)
     V2 = "v2_0"
+    # Updated annotation within the first half of the texts.  (October 2022)
+    V21 = "v2_1"
 
 
-DEFAULT_VERSION = SentiNerelVersions.V2
+DEFAULT_VERSION = SentiNerelVersions.V21
 
 
 class SentiNerelIOUtils(ZipArchiveUtils):
