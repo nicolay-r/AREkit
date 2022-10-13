@@ -57,9 +57,6 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
         self.__model_io = model_io
         self.__seed = seed
 
-    def __get_model_dir(self):
-        return self.__model_io.get_model_dir()
-
     @staticmethod
     def __create_logger():
         stream_handler = logging.StreamHandler()
@@ -73,7 +70,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
     def __prepare_model(self):
         # Clear model root before training optionally
         if self.__clear_model_root_before_experiment:
-            rm_dir_contents(dir_path=self.__get_model_dir(),
+            rm_dir_contents(dir_path=self.__model_io.get_model_saving_dir(),
                             logger=self.__logger)
 
         # Disable tensorflow logging
