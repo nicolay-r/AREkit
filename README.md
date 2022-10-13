@@ -21,7 +21,9 @@ This toolkit aims to solve data preparation problems in Relation Extraction rela
 Using AREkit you may focus on preparation and experiments with your ML-models by shift all the data-preparation part  onto toolset of this project ([tutorial](https://nicolay-r.github.io/blog/articles/2022-05/process-mass-media-relations-with-arekit)).
 In order to do so, we provide:
 * :file_folder: API for external collection binding (native support of [BRAT](https://brat.nlplab.org/)-based exported annotations) 
+[[more]](https://nicolay-r.github.io/blog/articles/2022-08/arekit-collection-bind)
 * ➿ pipelines and iterators for handling large-scale collections serialization without out-of-memory issues.
+[[more]](https://nicolay-r.github.io/blog/articles/2022-08/arekit-text-opinion-annotation-pipeline)
 * evaluators which allows you to assess your trained model.
 
 AREkit is a very close to opensource framework [SeqIO](https://github.com/google/seqio) proposed by [Google](https://github.com/google) 
@@ -40,22 +42,27 @@ It providers contrib modules of
 
 ## Installation 
 
+1. Install required dependencies
 ```
 pip install git+https://github.com/nicolay-r/AREkit.git@0.23.0-rc
 ```
 
-## Download Resources
+2. Download Resources
 ```python
 from arekit.data import download_data
 download_data()
 ```
+
+## Tutorials
+Please follows th
+[tutorials list](https://github.com/nicolay-r/AREkit/tree/master/tests/tutorials).
 
 ## Applications
 
 * **ARElight** [[site]](https://nicolay-r.github.io/arelight-page/) [[github]](https://github.com/nicolay-r/ARElight)
     * **Infer attitudes** from large Mass-media documents or **sample texts** for your Machine Learning models applications
 
-#### Papers
+## Papers
 * Frame-Based attitude extraction workflow for news processing [[code]](https://github.com/nicolay-r/frame-based-attitude-extraction-workflow)
     * Represents an attitude annotation workflow based on [RuSentiFrames](https://github.com/nicolay-r/RuSentiFrames) lexicon which is utilized for news processing;
 * Neural Networks Applications in Sentiment Attitude Extraction [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction)
