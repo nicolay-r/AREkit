@@ -3,7 +3,7 @@ import logging
 import os
 
 from arekit.common.data import const
-from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
+from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.contrib.utils.data.writers.base import BaseWriter
 
 logger = logging.getLogger(__name__)
@@ -36,18 +36,10 @@ class OpenNREJsonWriter(BaseWriter):
         json_file.write("\n")
 
     def save(self, storage, target):
-        assert(isinstance(storage, PandasBasedRowsStorage))
+        assert(isinstance(storage, BaseRowsStorage))
         assert(isinstance(target, str))
 
-        ######################################################
-        # TODO. #407 Just delete the related depencies below.
-        # TODO. #407 finally switch to BaseRowsStorage.
-        ######################################################
-        df = storage.DataFrame
-        df.sort_values(by=[const.ID], ascending=True)
-        ######################################################
-        logger.info("Saving... {shape}: {filepath}".format(shape=df.shape,  # self._df.shape,
-                                                           filepath=target))
+        logger.info("Saving... {rows}: {filepath}".format(rows=(len(storage)), filepath=target))
 
         os.makedirs(os.path.dirname(target), exist_ok=True)
         with open(target, "w", encoding=self.__encoding) as json_file:
