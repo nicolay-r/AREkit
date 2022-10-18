@@ -1,7 +1,7 @@
 from os.path import join
 
-from arekit.common.data.input.readers.base import BaseReader
-from arekit.common.data.input.readers.extensions import create_reader_extension
+from arekit.contrib.utils.data.ext import create_reader_extension
+from arekit.contrib.utils.data.readers.base import BaseReader
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.io_utils.utils import filename_template
 

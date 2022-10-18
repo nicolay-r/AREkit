@@ -1,11 +1,10 @@
 import logging
 from os.path import join
 
-from arekit.common.data.input.readers.base import BaseReader
-from arekit.common.data.input.readers.extensions import create_reader_extension
-from arekit.common.data.input.writers.base import BaseWriter
-from arekit.common.data.input.writers.extensions import create_writer_extension
+from arekit.contrib.utils.data.ext import create_writer_extension, create_reader_extension
+from arekit.contrib.utils.data.readers.base import BaseReader
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
+from arekit.contrib.utils.data.writers.base import BaseWriter
 from arekit.contrib.utils.io_utils.utils import filename_template, check_targets_existence
 
 logger = logging.getLogger(__name__)

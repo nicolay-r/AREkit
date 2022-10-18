@@ -5,8 +5,6 @@ from os.path import join, dirname
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.data.input.readers.tsv import TsvReader
-from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import OpinionEntityType
@@ -20,6 +18,8 @@ from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
+from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
+from arekit.contrib.utils.data.writers.csv_pd import PandasCsvWriter
 from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.pipelines.items.sampling.bert import BertExperimentInputSerializerPipelineItem
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
@@ -86,7 +86,7 @@ class TestBertSerialization(unittest.TestCase):
             label_provider=MultipleLabelProvider(SentimentLabelScaler()),
             text_provider=text_provider)
 
-        writer = TsvWriter(write_header=True)
+        writer = PandasCsvWriter(write_header=True)
         samples_io = SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz")
 
         pipeline_item = BertExperimentInputSerializerPipelineItem(
@@ -125,7 +125,7 @@ class TestBertSerialization(unittest.TestCase):
                          "data_type_pipelines": {DataType.Train: train_pipeline}
                      })
 
-        reader = TsvReader()
+        reader = PandasCsvReader()
         source = join(self.__output_dir, "sample-train-0.tsv.gz")
         storage = reader.read(source)
         self.assertEqual(26, len(storage), "Amount of rows is non equal!")

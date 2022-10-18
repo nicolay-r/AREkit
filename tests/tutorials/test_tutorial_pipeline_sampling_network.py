@@ -2,8 +2,6 @@ import unittest
 from collections import OrderedDict
 from os.path import dirname, join
 
-from arekit.common.data.input.readers.tsv import TsvReader
-from arekit.common.data.input.writers.tsv import TsvWriter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.nofold import NoFolding
 from arekit.common.frames.variants.collection import FrameVariantsCollection
@@ -20,6 +18,8 @@ from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLa
     RuSentiFramesLabelsFormatter
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.utils.connotations.rusentiframes_sentiment import RuSentiFramesConnotationProvider
+from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
+from arekit.contrib.utils.data.writers.csv_pd import PandasCsvWriter
 from arekit.contrib.utils.entities.formatters.str_simple_uppercase_fmt import SimpleUppercasedEntityFormatter
 from arekit.contrib.utils.io_utils.embedding import NpEmbeddingIO
 from arekit.contrib.utils.io_utils.samples import SamplesIO
@@ -88,7 +88,7 @@ class TestSamplingNetwork(unittest.TestCase):
             frame_roles_label_scaler=CustomSentimentLabelScaler(),
             frames_connotation_provider=RuSentiFramesConnotationProvider(frames_collection))
 
-        writer = TsvWriter(write_header=True)
+        writer = PandasCsvWriter(write_header=True)
         samples_io = SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz")
 
         embedding_io = NpEmbeddingIO(target_dir=self.__output_dir)
@@ -146,7 +146,7 @@ class TestSamplingNetwork(unittest.TestCase):
                          "data_type_pipelines": {DataType.Train: train_pipeline}
                      })
 
-        reader = TsvReader()
+        reader = PandasCsvReader()
         source = join(self.__output_dir, "sample-train-0.tsv.gz")
         storage = reader.read(source)
         self.assertEqual(26, len(storage), "Amount of rows is non equal!")

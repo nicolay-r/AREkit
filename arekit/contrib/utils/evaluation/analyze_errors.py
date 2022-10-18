@@ -3,13 +3,13 @@ import pandas as pd
 from arekit.common.data import const
 from arekit.common.data.const import ENTITY_VALUES, ENTITY_TYPES, ENTITIES
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.data.input.readers.tsv import TsvReader
-from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.evaluation.evaluators.cmp_table import DocumentCompareTable
 from arekit.common.evaluation.evaluators.utils import label_to_str
 from arekit.common.evaluation.result import BaseEvalResult
 from arekit.common.labels.base import NoLabel
 from arekit.common.utils import progress_bar_defined
+from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
+from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 
 
 def __get_entity_inds(sample_row):
@@ -67,7 +67,7 @@ def __crop_text_terms(source_ind, target_ind, text_terms, window_crop=10):
 
 
 def extract_df(storage, doc_id, ctx_id, source_ind, target_ind):
-    assert(isinstance(storage, BaseRowsStorage))
+    assert(isinstance(storage, PandasBasedRowsStorage))
     df = storage.DataFrame
     return df[(df[const.DOC_ID] == doc_id) &
               (df[const.SENT_IND] == ctx_id) &
@@ -104,7 +104,7 @@ def extract_errors(eval_result, test_samples_filepath, etalon_samples_filepath, 
         eval_errors_df.insert(last_column_index, sample_col, [""] * len(eval_errors_df), allow_duplicates=True)
 
     # Дополняем содержимым из samples строки с неверно размеченными оценками.
-    reader = TsvReader()
+    reader = PandasCsvReader()
     etalon_samples = reader.read(target=etalon_samples_filepath)
     test_samples = reader.read(target=test_samples_filepath)
 

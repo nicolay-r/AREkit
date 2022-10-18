@@ -2,10 +2,10 @@ import unittest
 from os.path import join, dirname
 
 from arekit.common.data import const
-from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.base import BasePipeline
+from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
 from arekit.contrib.utils.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.pipelines.opinion_collections import \
@@ -29,11 +29,12 @@ class TestOutputFormatters(unittest.TestCase):
 
         label_scaler = TestThreeLabelScaler()
 
-        # sample_storage = BaseRowsStorage.from_tsv(filepath=self.__input_samples_filepath)
-        output_storage = BaseRowsStorage.from_tsv(filepath=self.__output_filepath)
+        reader = PandasCsvReader()
+
+        output_storage = reader.read(target=self.__output_filepath)
         linkages_view = MultilableOpinionLinkagesView(labels_scaler=label_scaler, storage=output_storage)
 
-        opinion_storage = BaseRowsStorage.from_tsv(filepath=self.__input_opinions_filepath)
+        opinion_storage = reader.read(target=self.__input_opinions_filepath)
         opinion_view = BaseOpinionStorageView(opinion_storage)
 
         converter_part = text_opinion_linkages_to_opinion_collections_pipeline_part(
