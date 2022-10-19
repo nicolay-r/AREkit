@@ -11,6 +11,10 @@ This page lists all the tutorials.
 
 ![](https://img.shields.io/badge/AREkit-0.22.1-orange.svg)
 
+<p align="center">
+    <img src="arekit-sources-sampling-pipeline.png"/>
+</p>
+
 1. [Binding a custom annotated collection for Relation Extraction
 ](https://nicolay-r.github.io/blog/articles/2022-08/arekit-collection-bind)
 2. [Compose your text-processing pipeline!](https://nicolay-r.github.io/blog/articles/2022-08/arekit-text-parsing-pipeline)
