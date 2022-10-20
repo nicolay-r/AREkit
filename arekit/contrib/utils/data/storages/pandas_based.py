@@ -2,7 +2,10 @@ import gc
 
 import numpy as np
 import pandas as pd
-from arekit.common.data.storages.base import BaseRowsStorage
+
+from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
+from arekit.common.data.storages.base import BaseRowsStorage, logger
+from arekit.common.utils import progress_bar_iter
 
 
 class PandasBasedRowsStorage(BaseRowsStorage):
@@ -36,13 +39,13 @@ class PandasBasedRowsStorage(BaseRowsStorage):
         for row_index, row in df.iterrows():
             yield row_index, row
 
-    # region protected methods
-
-    def _fill_with_blank_rows(self, row_id_column_name, rows_count):
+    def __fill_with_blank_rows(self, row_id_column_name, rows_count):
         assert(isinstance(row_id_column_name, str))
         assert(isinstance(rows_count, int))
         self._df[row_id_column_name] = list(range(rows_count))
         self._df.set_index(row_id_column_name, inplace=True)
+
+    # region protected methods
 
     def _set_value(self, row_ind, column, value):
         self._df.at[row_ind, column] = value
@@ -78,6 +81,33 @@ class PandasBasedRowsStorage(BaseRowsStorage):
     # endregion
 
     # region public methods
+
+    def fill(self, iter_rows_func, columns_provider, rows_count=None, desc=""):
+        """ NOTE: We provide the rows counting which is required
+            in order to know an expected amount of rows in advace
+            due to the specifics of the pandas memory allocation
+            for the DataFrames.
+            The latter allows us avoid rows appending, which
+            may significantly affects on performance once the size
+            of DataFrame becomes relatively large.
+        """
+        assert(isinstance(columns_provider, BaseColumnsProvider))
+
+        logger.ino("Rows calculation process started. [Required by Pandas-Baased storage kernel]")
+        logged_rows_it = progress_bar_iter(
+            iterable=iter_rows_func(True),
+            desc="Calculating rows count ({reason})".format(reason=desc),
+            unit="rows")
+        rows_count = sum(1 for _ in logged_rows_it)
+
+        logger.info("Filling with blank rows: {}".format(rows_count))
+        self.__fill_with_blank_rows(row_id_column_name=columns_provider.ROW_ID,
+                                    rows_count=rows_count)
+        logger.info("Completed!")
+
+        super(PandasBasedRowsStorage, self).fill(iter_rows_func=iter_rows_func,
+                                                 columns_provider=columns_provider,
+                                                 rows_count=rows_count)
 
     def get_row(self, row_index):
         return self._df.iloc[row_index]

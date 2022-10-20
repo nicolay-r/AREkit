@@ -2,7 +2,7 @@ import gc
 import logging
 
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
-from arekit.common.utils import progress_bar_defined, progress_bar_iter
+from arekit.common.utils import progress_bar_defined
 
 logger = logging.getLogger(__name__)
 
@@ -10,9 +10,6 @@ logger = logging.getLogger(__name__)
 class BaseRowsStorage(object):
 
     # region abstract methods
-
-    def _fill_with_blank_rows(self, row_id_column_name, rows_count):
-        raise NotImplemented()
 
     def _set_value(self, row_ind, column, value):
         raise NotImplemented()
@@ -49,20 +46,9 @@ class BaseRowsStorage(object):
     def _balance(self, column_name):
         raise NotImplemented()
 
-    def fill(self, iter_rows_func, columns_provider, desc=""):
+    def fill(self, iter_rows_func, columns_provider, rows_count=None, desc=""):
         assert(callable(iter_rows_func))
         assert(isinstance(columns_provider, BaseColumnsProvider))
-
-        logged_rows_it = progress_bar_iter(
-            iterable=iter_rows_func(True),
-            desc="Calculating rows count ({reason})".format(reason=desc),
-            unit="rows")
-        rows_count = sum(1 for _ in logged_rows_it)
-
-        logger.info("Filling with blank rows: {}".format(rows_count))
-        self._fill_with_blank_rows(row_id_column_name=columns_provider.ROW_ID,
-                                   rows_count=rows_count)
-        logger.info("Completed!")
 
         it = progress_bar_defined(iterable=iter_rows_func(False),
                                   desc="{fmt}".format(fmt=desc),
