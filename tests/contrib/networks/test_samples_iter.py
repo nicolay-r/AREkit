@@ -26,11 +26,11 @@ class TestSamplesIteration(unittest.TestCase):
     def test_check_all_samples(self):
         vocab_filepath = self.__get_local_dir("test_data/vocab.txt.gz")
         samples_filepath = self.__get_local_dir("test_data/sample-train.tsv.gz")
-        words_vocab = self.__read_vocab(vocab_filepath)
+        terms_vocab = self.__read_vocab(vocab_filepath)
         config = DefaultNetworkConfig()
         config.modify_terms_per_context(50)
 
-        self.__test_core(words_vocab=words_vocab,
+        self.__test_core(terms_vocab=terms_vocab,
                          config=config,
                          samples_filepath=samples_filepath)
 
@@ -77,7 +77,7 @@ class TestSamplesIteration(unittest.TestCase):
             words.append(value)
         return " ".join(words)
 
-    def __test_core(self, words_vocab, config, samples_filepath):
+    def __test_core(self, terms_vocab, config, samples_filepath):
         assert(isinstance(config, DefaultNetworkConfig))
         assert(isinstance(samples_filepath, str))
 
@@ -100,7 +100,7 @@ class TestSamplesIteration(unittest.TestCase):
                 entity_inds=row.EntityInds,
                 subj_ind=int(row.SubjectIndex),
                 obj_ind=int(row.ObjectIndex),
-                words_vocab=words_vocab,
+                terms_vocab=terms_vocab,
                 is_external_vocab=True,
                 input_shapes=input_shapes,
                 frame_inds=row.TextFrameVariantIndices,

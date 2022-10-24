@@ -115,7 +115,7 @@ class NetworksTrainingPipelineItem(BasePipelineItem):
             samples_reader=self.__samples_io.Reader,
             has_model_predefined_state=self.__model_io.IsPretrainedStateProvided,
             labels_count=self.__labels_count,
-            vocab=self.__emb_io.load_vocab(data_folding),
+            terms_vocab=self.__emb_io.load_vocab(data_folding),
             bags_collection_type=self.__bags_collection_type,
             input_shapes=NetworkInputShapes(iter_pairs=[
                 (NetworkInputShapes.FRAMES_PER_CONTEXT, self.__config.FramesPerContext),

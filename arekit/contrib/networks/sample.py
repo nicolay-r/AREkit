@@ -144,26 +144,26 @@ class InputSample(InputSampleBase):
                    input_sample_id="1")
 
     @classmethod
-    def __get_index_by_term(cls, term, word_vocab, is_external_vocab):
+    def __get_index_by_term(cls, term, terms_vocab, is_external_vocab):
 
         if not is_external_vocab:
-            # Since we consider that all the existed words presented in vocabulary
+            # Since we consider that all the existed terms presented in vocabulary
             # we obtain the related index without any additional checks
-            return word_vocab[term]
+            return terms_vocab[term]
 
         # In case of non-native vocabulary, we consider an additional
         # placeholed when the related term has not been found in vocabulary.
-        return word_vocab[term] if term in word_vocab else cls.TERM_VALUE_MISSING
+        return terms_vocab[term] if term in terms_vocab else cls.TERM_VALUE_MISSING
 
     @classmethod
     def create_from_parameters(cls,
                                input_sample_id,  # row_id
-                               terms,  # list of terms, that might be found in words_vocab
+                               terms,  # list of terms, that might be found in terms_vocab
                                entity_inds,
                                is_external_vocab,
                                subj_ind,
                                obj_ind,
-                               words_vocab,  # for indexing input (all the vocabulary, obtained from offsets.py)
+                               terms_vocab,  # for indexing input (all the vocabulary, obtained from offsets.py)
                                input_shapes,
                                syn_subj_inds,
                                syn_obj_inds,
@@ -178,7 +178,7 @@ class InputSample(InputSampleBase):
         assert(isinstance(entity_inds, list))
         assert(isinstance(frame_inds, list))
         assert(isinstance(frame_sent_roles, list))
-        assert(isinstance(words_vocab, dict))
+        assert(isinstance(terms_vocab, dict))
         assert(isinstance(subj_ind, int) and 0 <= subj_ind < len(terms))
         assert(isinstance(obj_ind, int) and 0 <= obj_ind < len(terms))
         assert(isinstance(input_shapes, NetworkInputShapes))
@@ -200,7 +200,7 @@ class InputSample(InputSampleBase):
         entities_set = set(entity_inds)
 
         # Composing vectors
-        x_indices = np.array([cls.__get_index_by_term(term, words_vocab, is_external_vocab) for term in terms])
+        x_indices = np.array([cls.__get_index_by_term(term, terms_vocab, is_external_vocab) for term in terms])
 
         terms_per_context = input_shapes.get_shape(input_shapes.TERMS_PER_CONTEXT)
         synonyms_per_context = input_shapes.get_shape(input_shapes.SYNONYMS_PER_CONTEXT)

@@ -45,7 +45,7 @@ class InferenceContext(object):
         return cls(sample_label_pairs_dict={}, bags_collections_dict={})
 
     def initialize(self, dtypes, load_target_func, samples_view, samples_reader, has_model_predefined_state,
-                   vocab, labels_count, bags_collection_type, bag_size, input_shapes):
+                   terms_vocab, labels_count, bags_collection_type, bag_size, input_shapes):
         """
         Perform reading information from the serialized experiment inputs.
         Initializing core configuration.
@@ -68,7 +68,7 @@ class InferenceContext(object):
                 linked_samples_iter=samples_view.iter_from_storage(storage),
                 is_external_vocab=has_model_predefined_state,
                 bags_collection_type=bags_collection_type,
-                vocab=vocab,
+                terms_vocab=terms_vocab,
                 bag_size=bag_size,
                 input_shapes=input_shapes,
                 desc="Filling bags collection [{}]".format(data_type))
@@ -98,7 +98,7 @@ class InferenceContext(object):
 
     @staticmethod
     def __read_for_data_type(linked_samples_iter, is_external_vocab,
-                             bags_collection_type, vocab,
+                             bags_collection_type, terms_vocab,
                              bag_size, input_shapes, desc=""):
         assert(issubclass(bags_collection_type, BagsCollection))
 
@@ -115,7 +115,7 @@ class InferenceContext(object):
                 is_external_vocab=is_external_vocab,
                 subj_ind=row.SubjectIndex,
                 obj_ind=row.ObjectIndex,
-                words_vocab=vocab,
+                terms_vocab=terms_vocab,
                 frame_inds=row.TextFrameVariantIndices,
                 frame_sent_roles=row.TextFrameConnotations,
                 syn_obj_inds=row.SynonymObjectInds,
