@@ -1,6 +1,5 @@
 import logging
 
-from arekit.common.data import const
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
 from arekit.common.utils import create_dir_if_not_exists
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
@@ -25,9 +24,7 @@ class PandasCsvWriter(BaseWriter):
         # Temporary hack, remove it in future.
         df = storage.DataFrame
 
-        logger.info("Saving... {shape}: {filepath}".format(shape=df.shape,  # self._df.shape,
-                                                           filepath=target))
-        df.sort_values(by=[const.ID], ascending=True)
+        logger.info("Saving... {length}: {filepath}".format(length=len(storage), filepath=target))
         df.to_csv(target,
                   sep='\t',
                   encoding='utf-8',
