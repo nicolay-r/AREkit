@@ -1,4 +1,5 @@
 import pandas as pd
+from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
 
 
 class Lexicon(object):
@@ -12,12 +13,13 @@ class Lexicon(object):
         return 'term'
 
     def __init__(self, dataframe):
+        assert(isinstance(dataframe, pd.DataFrame))
         self.__lexicon_df = dataframe
 
     @classmethod
-    def from_csv(cls, filepath, separator=','):
-        df = pd.read_csv(filepath, sep=separator)
-        return cls(df)
+    def load(cls, filepath, separator=','):
+        reader = PandasCsvReader(compression=None, sep=separator)
+        return cls(reader.read(filepath))
 
     def get_score(self, lemma):
         assert(type(lemma) == str)

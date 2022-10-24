@@ -7,21 +7,25 @@ class PandasCsvReader(BaseReader):
     """ Represents a CSV-based reader, implmented via pandas API.
     """
 
-    @staticmethod
-    def __from_csv(filepath, sep='\t', compression='gzip',
-                   encoding='utf-8', header="infer", col_types=None):
+    def __init__(self, sep='\t', header='infer', compression='gzip', encoding='utf-8', col_types=None):
+        self.__sep = sep
+        self.__compression = compression
+        self.__encoding = encoding
+        self.__header = header
 
         # Speciall assignation of types for certain columns.
-        if col_types is None:
-            col_types = dict()
+        self.__col_types = col_types
+        if self.__col_types is None:
+            self.__col_types = dict()
 
+    def __from_csv(self, filepath):
         return pd.read_csv(filepath,
-                           sep=sep,
-                           encoding=encoding,
-                           compression=compression,
-                           dtype=col_types,
-                           header=header)
+                           sep=self.__sep,
+                           encoding=self.__encoding,
+                           compression=self.__compression,
+                           dtype=self.__col_types,
+                           header=self.__header)
 
     def read(self, target):
-        df = PandasCsvReader.__from_csv(filepath=target)
+        df = self.__from_csv(filepath=target)
         return PandasBasedRowsStorage(df)

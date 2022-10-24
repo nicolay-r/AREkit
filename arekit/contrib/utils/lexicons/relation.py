@@ -1,17 +1,19 @@
 import pandas as pd
 
+from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
+
 
 class RelationLexicon(object):
 
-    def __init__(self, df):
-        assert(isinstance(df, pd.DataFrame))
-        self.__check(df)
-        self.__lexicon = df
+    def __init__(self, dataframe):
+        assert(isinstance(dataframe, pd.DataFrame))
+        self.__check(dataframe)
+        self.__lexicon = dataframe
 
     @classmethod
-    def from_csv(cls, filepath, separator=','):
-        df = pd.read_csv(filepath, sep=separator)
-        return cls(df)
+    def load(cls, filepath, separator=','):
+        reader = PandasCsvReader(compression=None, sep=separator)
+        return cls(reader.read(filepath))
 
     @staticmethod
     def __check(df):
