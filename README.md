@@ -43,14 +43,13 @@ It providers contrib modules of
 ## Installation 
 
 1. Install required dependencies
-```
+```bash
 pip install git+https://github.com/nicolay-r/AREkit.git@0.23.0-rc
 ```
 
 2. Download Resources
-```python
-from arekit.data import download_data
-download_data()
+```bash
+python -m arekit.download_data
 ```
 
 ## Tutorials
