@@ -17,14 +17,29 @@ class RuSentiFramesCollection(object):
     __polarity_key = "polarity"
     __state_key = "state"
     __effect_key = "effect"
+    __variants_key = "variants"
 
-    def __init__(self, data, labels_fmt, effect_labels_fmt):
+    def __init__(self, data, labels_fmt, effect_labels_fmt, lowercase_variants=True):
+        """ data: dict
+                Has the following structure of the frame contents:
+                {
+                    "frame_id": [ ... variants string list ... ]
+                    ...
+                }
+            lowercase_variants: bool
+                If 'True', forcely treat frame-variants as case-insensitive (lowercased)
+                or avoiding lowercasing operation in case of 'False'.
+        """
         assert(isinstance(data, dict))
         assert(isinstance(labels_fmt, StringLabelsFormatter))
         assert(isinstance(effect_labels_fmt, StringLabelsFormatter))
         self.__labels_fmt = labels_fmt
         self.__effect_labels_fmt = effect_labels_fmt
         self.__data = data
+
+        if lowercase_variants:
+            for frame_id, frame in self.__data.items():
+                frame[self.__variants_key] = [variant.lower() for variant in frame[self.__variants_key]]
 
     # region classmethods
 
@@ -97,7 +112,7 @@ class RuSentiFramesCollection(object):
         return self.__data[frame_id]["title"]
 
     def get_frame_variants(self, frame_id):
-        return self.__data[frame_id]["variants"]
+        return self.__data[frame_id][self.__variants_key]
 
     def get_frame_values(self, frame_id):
         assert(isinstance(frame_id, str))
@@ -123,7 +138,7 @@ class RuSentiFramesCollection(object):
 
     def iter_frame_id_and_variants(self):
         for id, frame in self.__data.items():
-            for variant in frame["variants"]:
+            for variant in frame[self.__variants_key]:
                 yield id, variant
 
     # endregion

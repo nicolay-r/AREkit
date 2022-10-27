@@ -39,7 +39,7 @@ class FrameVariantsCollection(object):
                 if not overwrite_existed_variant:
                     continue
 
-            self.__variants[variant] = FrameVariant(variant, frame_id)
+            self.__variants[variant] = FrameVariant(terms=variant.split(), frame_id=frame_id)
 
     def get_frame_by_index(self, index):
         return self.__frames_list[index]

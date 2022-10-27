@@ -1,9 +1,9 @@
 class FrameVariant(object):
 
-    def __init__(self, text, frame_id):
-        assert(isinstance(text, str))
+    def __init__(self, terms, frame_id):
+        assert(isinstance(terms, list))
         assert(isinstance(frame_id, str))
-        self.__terms = text.lower().split()
+        self.__terms = terms
         self.__frame_id = frame_id
 
     @property
