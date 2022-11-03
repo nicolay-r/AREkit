@@ -43,9 +43,6 @@ class BaseRowsStorage(object):
 
     # endregion
 
-    def _balance(self, column_name):
-        raise NotImplemented()
-
     def fill(self, iter_rows_func, columns_provider, rows_count=None, desc=""):
         assert(callable(iter_rows_func))
         assert(isinstance(columns_provider, BaseColumnsProvider))

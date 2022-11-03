@@ -1,6 +1,5 @@
 import logging
 
-from arekit.common.data import const
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.data.input.repositories.base import BaseInputRepository
 
@@ -21,8 +20,3 @@ class BaseInputSamplesRepository(BaseInputRepository):
         """
         text_column_names = list(self._rows_provider.TextProvider.iter_columns())
         self._columns_provider.set_text_column_names(text_column_names)
-
-    def balance(self):
-        logger.info("Start balancing...")
-        self._storage._balance(const.LABEL)
-        logger.info("Balancing completed!")

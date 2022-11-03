@@ -1,5 +1,3 @@
-import gc
-
 import numpy as np
 import pandas as pd
 
@@ -57,27 +55,6 @@ class PandasBasedRowsStorage(BaseRowsStorage):
     def _get_rows_count(self):
         return len(self._df)
 
-    ###################################################
-    # TODO. #380 -- make this as a separate operation.
-    ###################################################
-    def _balance(self, column_name):
-        """ Performs oversampled balancing.
-        """
-        assert (isinstance(self._df, pd.DataFrame))
-
-        max_size = self._df[column_name].value_counts().max()
-
-        dframes = [self._df]
-        for class_index, group in self._df.groupby(column_name):
-            dframes.append(group.sample(max_size - len(group), replace=True))
-
-        # Clear resources
-        self._df = pd.concat(dframes)
-        for df in dframes:
-            del df
-
-        gc.collect()
-
     # endregion
 
     # region public methods
@@ -93,7 +70,7 @@ class PandasBasedRowsStorage(BaseRowsStorage):
         """
         assert(isinstance(columns_provider, BaseColumnsProvider))
 
-        logger.ino("Rows calculation process started. [Required by Pandas-Baased storage kernel]")
+        logger.info("Rows calculation process started. [Required by Pandas-Baased storage kernel]")
         logged_rows_it = progress_bar_iter(
             iterable=iter_rows_func(True),
             desc="Calculating rows count ({reason})".format(reason=desc),

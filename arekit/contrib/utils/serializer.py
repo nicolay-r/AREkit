@@ -1,12 +1,15 @@
 import collections
 import logging
 
+from arekit.common.data import const
+
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.repositories.base import BaseInputRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.pipeline.base import BasePipeline
+from arekit.contrib.utils.data.service.balance import StorageBalancing
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 
 logger = logging.getLogger(__name__)
@@ -36,8 +39,12 @@ class InputDataSerializationHelper(object):
                       doc_ids=doc_ids,
                       desc=desc)
 
-        # hack related to a particular type check.
-        if do_balance and isinstance(repo, BaseInputSamplesRepository):
-            repo.balance()
+        if do_balance:
+            balanced_storage = StorageBalancing.create_balanced_from(
+                storage=repo._storage, column_name=const.LABEL, free_origin=True)
+            # Initializing the new repository instance.
+            repo = BaseInputSamplesRepository(columns_provider=repo._columns_provider,
+                                              rows_provider=repo._rows_provider,
+                                              storage=balanced_storage)
 
         repo.write(writer=writer, target=target)
