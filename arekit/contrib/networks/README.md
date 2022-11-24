@@ -1,14 +1,23 @@
 # Network contrib
 
+![](https://img.shields.io/badge/Python-3.6-brightgreen.svg)
+
 This contributional part provides a 
 [Tensorflow-based](https://www.tensorflow.org/)
 Neural Networks implementation
 for (sentiment) relation extraction task.
 Input embedding enlarged with the task specific features.
 
+## Installation
+
+```bash
+pip install -r dependencies.txt
+```
+
 ## Contents
 * [List of features](#list-of-features)
 * [Models List](#models-list)
+* [Test details](#test-details)
 
 ## List of features
 
@@ -74,3 +83,11 @@ Input embedding enlarged with the task specific features.
         [[paper]](https://pdfs.semanticscholar.org/8731/369a707046f3f8dd463d1fd107de31d40a24.pdf);
     - Single MLP
         [[code]](networks/multi/architectures/base/base_single_mlp.py);
+
+# Test Details
+
+This project has been tested under the following setup:
+* NVidia GTX-1060/1080 TI
+* Python 3.6.9
+* [Pip freeze package list](docs/pip-freeze-list.txt)
+* Cuda compilation tools, release 10.0, V10.0.130
