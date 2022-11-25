@@ -25,6 +25,11 @@ class TextAndEntitiesGoogleTranslator(BasePipelineItem):
         assert(isinstance(pipeline_ctx, PipelineContext))
         assert(isinstance(input_data, list))
 
+        def __optionally_register(prts_to_join):
+            if len(prts_to_join) > 0:
+                content.append(" ".join(prts_to_join))
+            parts_to_join.clear()
+
         content = []
         origin_entities = []
         origin_entity_ind = []
@@ -35,15 +40,13 @@ class TextAndEntitiesGoogleTranslator(BasePipelineItem):
                 parts_to_join.append(part)
             elif isinstance(part, Entity):
                 # Register first the prior parts were merged.
-                content.append(" ".join(parts_to_join))
-                parts_to_join.clear()
+                __optionally_register(parts_to_join)
                 # Register entities information for further restoration.
                 origin_entity_ind.append(len(content))
                 origin_entities.append(part)
                 content.append(part.Value)
 
-        if len(parts_to_join) > 0:
-            content.append(" ".join(parts_to_join))
+        __optionally_register(parts_to_join)
 
         # Compose text parts.
         translated_parts = [part.text for part in
