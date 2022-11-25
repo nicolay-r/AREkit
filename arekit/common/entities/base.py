@@ -7,7 +7,7 @@ class Entity(object):
         self.__value = value.lower()
         self.__type = e_type
         self.__group_index = group_index
-        self.__caption = None
+        self.__display_value = None
 
     @property
     def GroupIndex(self):
@@ -15,21 +15,25 @@ class Entity(object):
 
     @property
     def Value(self):
+        return self.__value
+
+    @property
+    def DisplayValue(self):
         """ Now, we consider the default value in case
-            of the undefined caption, and caption otherwise.
+            of the undefined caption, and display_value otherwise.
         """
-        return self.__value if self.__caption is None else self.__caption
+        return self.__value if self.__display_value is None else self.__display_value
 
     @property
     def Type(self):
         return self.__type
 
-    def set_caption(self, caption):
+    def set_display_value(self, caption):
         """ Caption allows to customize the original value.
             Required for optional value modification.
         """
         assert(isinstance(caption, str))
-        self.__caption = caption
+        self.__display_value = caption
 
     def set_group_index(self, value):
         assert(isinstance(value, int) and value >= -1)

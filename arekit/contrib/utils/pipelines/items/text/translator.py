@@ -54,7 +54,7 @@ class TextAndEntitiesGoogleTranslator(BasePipelineItem):
 
         for entity_ind, entity_part_ind in enumerate(origin_entity_ind):
             entity = origin_entities[entity_ind]
-            entity.set_caption(translated_parts[entity_part_ind])
+            entity.set_display_value(translated_parts[entity_part_ind])
             translated_parts[entity_part_ind] = entity
 
         return translated_parts
