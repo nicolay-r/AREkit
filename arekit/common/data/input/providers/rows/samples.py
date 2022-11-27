@@ -52,9 +52,9 @@ class BaseSampleRowProvider(BaseRowProvider):
 
     # region protected methods
 
-    @staticmethod
-    def _provide_sentence_terms(parsed_news, sentence_ind):
-        return parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
+    def _provide_sentence_terms(self, parsed_news, sentence_ind, s_ind, t_ind):
+        terms_iter = parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
+        return terms_iter, s_ind, t_ind
 
     # TODO. This is a very task-specific description, too many data provided.
     # TODO. Switch this API to dict of params
@@ -81,13 +81,14 @@ class BaseSampleRowProvider(BaseRowProvider):
                 expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
                 etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
 
-        sentence_terms = list(self._provide_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind))
+        sentence_terms, actual_s_ind, actual_t_ind = self._provide_sentence_terms(
+            parsed_news=parsed_news, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
 
         self.__text_provider.add_text_in_row(
             set_text_func=lambda column, value: __assign_value(column, value),
             sentence_terms=sentence_terms,
-            s_ind=s_ind,
-            t_ind=t_ind,
+            s_ind=actual_s_ind,
+            t_ind=actual_t_ind,
             expected_label=expected_label)
 
         # Entity indicies from the related context.

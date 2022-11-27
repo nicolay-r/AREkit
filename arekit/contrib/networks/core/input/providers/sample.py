@@ -43,7 +43,9 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
             s_ind=s_ind, t_ind=t_ind)
 
         # Extracting list of terms, utilized in further.
-        terms = list(self._provide_sentence_terms(parsed_news=parsed_news, sentence_ind=sentence_ind))
+        terms_iter, actual_s_ind, actual_t_ind = self._provide_sentence_terms(
+            parsed_news=parsed_news, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
+        terms = list(terms_iter)
 
         # Compose frame indices.
         uint_frame_inds = list(self.__iter_indices(terms=terms, filter=lambda t: isinstance(t, TextFrameVariant)))
@@ -57,10 +59,10 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                 [terms[frame_ind] for frame_ind in uint_frame_inds]))
 
         # Synonyms for source.
-        uint_syn_s_inds = self.__create_synonyms_set(terms=terms, term_ind=row[const_data.S_IND])
+        uint_syn_s_inds = self.__create_synonyms_set(terms=terms, term_ind=actual_s_ind)
 
         # Synonyms for target.
-        uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=row[const_data.T_IND])
+        uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=actual_t_ind)
 
         # Part of speech tags
         pos_int_tags = [int(pos_tag) for pos_tag in self.__pos_terms_mapper.iter_mapped(terms)]
