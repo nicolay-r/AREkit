@@ -4,9 +4,10 @@ from arekit.common.entities.base import Entity
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
 from arekit.common.news.parsed.base import ParsedNews
-from arekit.contrib.networks.core.input import const
 from arekit.contrib.networks.core.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.features.term_connotation import FrameConnotationFeatures
+from arekit.contrib.networks.core.input import const
+from arekit.common.data import const as const_data
 
 
 class NetworkSampleRowProvider(BaseSampleRowProvider):
@@ -56,10 +57,10 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                 [terms[frame_ind] for frame_ind in uint_frame_inds]))
 
         # Synonyms for source.
-        uint_syn_s_inds = self.__create_synonyms_set(terms=terms, term_ind=s_ind)
+        uint_syn_s_inds = self.__create_synonyms_set(terms=terms, term_ind=row[const_data.S_IND])
 
         # Synonyms for target.
-        uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=t_ind)
+        uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=row[const_data.T_IND])
 
         # Part of speech tags
         pos_int_tags = [int(pos_tag) for pos_tag in self.__pos_terms_mapper.iter_mapped(terms)]
