@@ -10,6 +10,7 @@ class TextAndEntitiesGoogleTranslator(BasePipelineItem):
 
         NOTE: Considered to be adopted right-after entities parsed
         but before the input tokenization into list of terms.
+        For entities we update and assign its DisplayValue.
 
         NOTE#2: Move this pipeline item as a separated github project.
     """
