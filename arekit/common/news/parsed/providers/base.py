@@ -30,6 +30,7 @@ class BaseParsedNewsServiceProvider(object):
             doc_entity = DocumentEntity(id_in_doc=index,
                                         value=entity.Value,
                                         e_type=entity.Type,
+                                        display_value=entity.DisplayValue,
                                         group_index=entity.GroupIndex)
 
             self._doc_entities.append(doc_entity)

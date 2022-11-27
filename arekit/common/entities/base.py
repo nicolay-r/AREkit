@@ -1,13 +1,14 @@
 class Entity(object):
 
-    def __init__(self, value, e_type, group_index=None):
+    def __init__(self, value, e_type, display_value=None, group_index=None):
         assert(isinstance(value, str) and len(value) > 0)
         assert(isinstance(e_type, str) or e_type is None)
+        assert(isinstance(display_value, str) or display_value is None)
         assert(isinstance(group_index, int) or group_index is None)
         self.__value = value.lower()
         self.__type = e_type
+        self.__display_value = display_value
         self.__group_index = group_index
-        self.__display_value = None
 
     @property
     def GroupIndex(self):
