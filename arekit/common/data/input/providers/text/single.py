@@ -27,6 +27,8 @@ class BaseSingleTextProvider(object):
         pass
 
     def _handle_terms_and_compose_text(self, sentence_terms):
+        assert(isinstance(sentence_terms, list))
+
         str_terms = []
 
         for m_data in self._mapper.iter_mapped(sentence_terms):
@@ -37,6 +39,7 @@ class BaseSingleTextProvider(object):
 
     def add_text_in_row(self, set_text_func, sentence_terms, s_ind, t_ind, expected_label):
         assert(callable(set_text_func))
+        assert(isinstance(sentence_terms, list))
         assert(isinstance(expected_label, Label))
 
         self._mapper.set_s_ind(s_ind)

@@ -54,7 +54,7 @@ class BaseSampleRowProvider(BaseRowProvider):
 
     def _provide_sentence_terms(self, parsed_news, sentence_ind, s_ind, t_ind):
         terms_iter = parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
-        return terms_iter, s_ind, t_ind
+        return list(terms_iter), s_ind, t_ind
 
     # TODO. This is a very task-specific description, too many data provided.
     # TODO. Switch this API to dict of params
