@@ -1,4 +1,3 @@
-
 class BaseVectorizer(object):
     """ Custom API for vectorization
     """

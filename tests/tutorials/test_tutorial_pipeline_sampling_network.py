@@ -10,8 +10,8 @@ from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.networks.core.input.ctx_serialization import NetworkSerializationContext
-from arekit.contrib.networks.core.input.term_types import TermTypes
+from arekit.contrib.networks.input.ctx_serialization import NetworkSerializationContext
+from arekit.contrib.networks.input.term_types import TermTypes
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLabelsFormatter, \

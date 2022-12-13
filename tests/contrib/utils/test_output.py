@@ -5,14 +5,65 @@ from arekit.common.data import const
 from arekit.common.model.labeling.modes import LabelCalculationMode
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.base import BasePipeline
+from arekit.common.text.stemmer import Stemmer
+from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
+from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
 from arekit.contrib.utils.data.views.linkages.multilabel import MultilableOpinionLinkagesView
 from arekit.contrib.utils.data.views.opinions import BaseOpinionStorageView
 from arekit.contrib.utils.pipelines.opinion_collections import \
     text_opinion_linkages_to_opinion_collections_pipeline_part
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
-from tests.contrib.networks.test_tf_input_features import RuSentRelSynonymsCollectionProvider
-from tests.contrib.networks.labels import TestThreeLabelScaler
+
+from collections import OrderedDict
+
+from arekit.common.labels.base import NoLabel, Label
+from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
+from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
+
+
+class TestNeutralLabel(NoLabel):
+    pass
+
+
+class TestPositiveLabel(Label):
+    pass
+
+
+class TestNegativeLabel(Label):
+    pass
+
+
+class TestThreeLabelScaler(SentimentLabelScaler):
+
+    def __init__(self):
+
+        uint_labels = [(TestNeutralLabel(), 0),
+                       (TestPositiveLabel(), 1),
+                       (TestNegativeLabel(), 2)]
+
+        int_labels = [(TestNeutralLabel(), 0),
+                      (TestPositiveLabel(), 1),
+                      (TestNegativeLabel(), -1)]
+
+        super(TestThreeLabelScaler, self).__init__(uint_dict=OrderedDict(uint_labels),
+                                                   int_dict=OrderedDict(int_labels))
+
+    def invert_label(self, label):
+        int_label = self.label_to_int(label)
+        return self.int_to_label(-int_label)
+
+
+class RuSentRelSynonymsCollectionProvider(object):
+
+    @staticmethod
+    def load_collection(stemmer, is_read_only=True, debug=False, version=RuSentRelVersions.V11):
+        assert(isinstance(stemmer, Stemmer))
+        return StemmerBasedSynonymCollection(
+            iter_group_values_lists=RuSentRelSynonymsCollectionHelper.iter_groups(version),
+            debug=debug,
+            stemmer=stemmer,
+            is_read_only=is_read_only)
 
 
 class TestOutputFormatters(unittest.TestCase):

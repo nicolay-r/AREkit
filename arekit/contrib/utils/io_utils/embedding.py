@@ -1,7 +1,7 @@
 from os.path import join
 
 from arekit.common.folding.base import BaseDataFolding
-from arekit.contrib.networks.core.embedding_io import BaseEmbeddingIO
+from arekit.contrib.networks.embedding_io import BaseEmbeddingIO
 from arekit.contrib.utils.io_utils.utils import check_targets_existence
 from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
 from arekit.contrib.utils.np_utils.vocab import VocabRepositoryUtils
