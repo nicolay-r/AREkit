@@ -42,7 +42,8 @@ class SentimentLabelScaler(BaseLabelScaler):
     def __init__(self):
         int_to_label = OrderedDict([(NoLabel(), 0), (Positive(), 1), (Negative(), -1)])
         uint_to_label = OrderedDict([(NoLabel(), 0), (Positive(), 1), (Negative(), 2)])
-        super(SentimentLabelScaler, self).__init__(int_to_label, uint_to_label)
+        super(SentimentLabelScaler, self).__init__(int_dict=int_to_label,
+                                                   uint_dict=uint_to_label)
 
 
 class CustomLabelsFormatter(StringLabelsFormatter):
