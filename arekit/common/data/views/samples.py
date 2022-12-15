@@ -1,6 +1,6 @@
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
-from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
+from arekit.common.data.storages.base import BaseRowsStorage
 
 
 class LinkedSamplesStorageView(object):
@@ -10,7 +10,7 @@ class LinkedSamplesStorageView(object):
         self.__row_ids_provider = row_ids_provider
 
     def iter_from_storage(self, storage):
-        assert(isinstance(storage, PandasBasedRowsStorage))
+        assert(isinstance(storage, BaseRowsStorage))
         undefined = -1
 
         linked = []
