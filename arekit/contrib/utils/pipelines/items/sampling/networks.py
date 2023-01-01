@@ -1,5 +1,7 @@
 import collections
 
+from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
+from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
@@ -52,7 +54,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         assert(isinstance(samples_io, SamplesIO))
         assert(isinstance(emb_io, NpEmbeddingIO))
         assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
-        assert(isinstance(vectorizers, dict))
+        assert(isinstance(vectorizers, dict) or vectorizers is None)
         assert(isinstance(save_embedding, bool))
         assert(callable(save_labels_func))
         assert(callable(balance_func))
@@ -60,22 +62,25 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
         self.__emb_io = emb_io
         self.__samples_io = samples_io
-        self.__save_embedding = save_embedding
+        self.__save_embedding = save_embedding and vectorizers is not None
         self.__save_labels_func = save_labels_func
         self.__balance_func = balance_func
 
         self.__term_embedding_pairs = collections.OrderedDict()
 
-        text_terms_mapper = StringWithEmbeddingNetworkTermMapping(
-            vectorizers=vectorizers,
-            string_entities_formatter=str_entity_fmt)
-
-        text_provider = NetworkSingleTextProvider(
-            text_terms_mapper=text_terms_mapper,
-            pair_handling_func=lambda pair: self.__add_term_embedding(
-                dict_data=self.__term_embedding_pairs,
-                term=pair[0],
-                emb_vector=pair[1]))
+        if vectorizers is not None:
+            text_provider = NetworkSingleTextProvider(
+                text_terms_mapper=StringWithEmbeddingNetworkTermMapping(
+                    vectorizers=vectorizers,
+                    string_entities_formatter=str_entity_fmt),
+                pair_handling_func=lambda pair: self.__add_term_embedding(
+                    dict_data=self.__term_embedding_pairs,
+                    term=pair[0],
+                    emb_vector=pair[1]))
+        else:
+            # Create text provider which without vectorizers.
+            text_provider = BaseSingleTextProvider(
+                text_terms_mapper=OpinionContainingTextTermsMapper(str_entity_fmt))
 
         self.__rows_provider = NetworkSampleRowProvider(
             label_provider=ctx.LabelProvider,
