@@ -70,7 +70,7 @@ class PandasBasedRowsStorage(BaseRowsStorage):
         """
         assert(isinstance(columns_provider, BaseColumnsProvider))
 
-        logger.info("Rows calculation process started. [Required by Pandas-Baased storage kernel]")
+        logger.info("Rows calculation process started. [Required by Pandas-Based storage kernel]")
         logged_rows_it = progress_bar_iter(
             iterable=iter_rows_func(True),
             desc="Calculating rows count ({reason})".format(reason=desc),
