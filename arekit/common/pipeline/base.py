@@ -8,10 +8,11 @@ class BasePipeline(object):
         assert(isinstance(pipeline, list))
         self.__pipeline = pipeline
 
-    def run(self, input_data, params_dict=None):
+    def run(self, input_data, params_dict=None, parent_ctx=None):
         assert(isinstance(params_dict, dict) or params_dict is None)
 
-        pipeline_ctx = PipelineContext(params_dict if params_dict is not None else dict())
+        pipeline_ctx = PipelineContext(d=params_dict if params_dict is not None else dict(),
+                                       parent_ctx=parent_ctx)
 
         for item in filter(lambda itm: itm is not None, self.__pipeline):
             assert(isinstance(item, BasePipelineItem))

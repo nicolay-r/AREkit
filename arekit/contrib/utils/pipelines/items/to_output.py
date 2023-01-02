@@ -38,7 +38,7 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         self.__create_opinion_collection_func = create_opinion_collection_func
         self.__opinion_collection_writer = opinion_collection_writer
 
-    def __convert(self, data_folding, output_storage, target_func, data_type):
+    def __convert(self, data_folding, output_storage, target_func, data_type, pipeline_ctx):
         """ From `output_storage` to `target` conversion.
             output_storage: BaseRowsStorage
             target_func: func(doc_id) -- considered to provide a target for the particular document.
@@ -76,7 +76,7 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         input_data = set(output_storage.iter_column_values(column_name=const.DOC_ID))
 
         # iterate over the result.
-        for _ in pipeline.run(input_data):
+        for _ in pipeline.run(input_data, parent_ctx=pipeline_ctx):
             pass
 
     def _iter_output_and_target_pairs(self, iter_index, data_type):
@@ -97,4 +97,5 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
                 self.__convert(output_storage=output_storage,
                                target_func=target,
                                data_type=data_type,
-                               data_folding=data_folding)
+                               data_folding=data_folding,
+                               pipeline_ctx=pipeline_ctx)

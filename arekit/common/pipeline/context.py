@@ -1,9 +1,14 @@
+from arekit.common.pipeline.conts import PARENT_CTX
+
+
 class PipelineContext(object):
     """ Context of parameters utilized in pipeline
     """
 
-    def __init__(self, d):
+    def __init__(self, d, parent_ctx=None):
         assert(isinstance(d, dict))
+        assert(isinstance(parent_ctx, PipelineContext) or parent_ctx is None)
+        assert(PARENT_CTX not in d)
         self._d = d
 
     def __provide(self, param):
