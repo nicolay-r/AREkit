@@ -1,3 +1,4 @@
+from arekit.common.data.input.providers.const import IDLE_MODE
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text_opinions.base import TextOpinion
@@ -28,9 +29,9 @@ class InputTextOpinionProvider(object):
             self.__current_id += 1
 
     # TODO. rename.
-    def iter_linked_opinions(self, doc_ids):
+    def iter_linked_opinions(self, doc_ids, idle_mode=False):
         self.__current_id = 0
-        for linkage in self.__pipeline.run(doc_ids):
+        for linkage in self.__pipeline.run(doc_ids, params_dict={IDLE_MODE: idle_mode}):
             assert(isinstance(linkage, TextOpinionsLinkage))
             self.__assign_ids(linkage)
             yield linkage

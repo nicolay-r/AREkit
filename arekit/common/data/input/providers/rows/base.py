@@ -28,7 +28,7 @@ class BaseRowProvider(object):
         assert(isinstance(opinion_provider, InputTextOpinionProvider))
         assert(isinstance(doc_ids_iter, collections.Iterable))
 
-        for linkage in opinion_provider.iter_linked_opinions(doc_ids_iter):
+        for linkage in opinion_provider.iter_linked_opinions(doc_ids=doc_ids_iter, idle_mode=idle_mode):
             assert(isinstance(linkage, TextOpinionsLinkage))
             assert(isinstance(linkage.Tag, ParsedNewsService))
 
