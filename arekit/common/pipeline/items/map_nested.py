@@ -1,4 +1,4 @@
-from arekit.common.pipeline.item_map import MapPipelineItem
+from arekit.common.pipeline.items.map import MapPipelineItem
 
 
 class MapNestedPipelineItem(MapPipelineItem):

@@ -4,9 +4,9 @@ from arekit.common.news.parsed.providers.entity_service import EntityServiceProv
 from arekit.common.news.parsed.service import ParsedNewsService
 from arekit.common.news.parser import NewsParser
 from arekit.common.pipeline.base import BasePipeline
-from arekit.common.pipeline.item_map import MapPipelineItem
-from arekit.common.pipeline.item_map_nested import MapNestedPipelineItem
 from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
+from arekit.common.pipeline.items.map import MapPipelineItem
+from arekit.common.pipeline.items.map_nested import MapNestedPipelineItem
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinionFilter
 from arekit.contrib.utils.pipelines.text_opinion.filters.limitation import FrameworkLimitationsTextOpinionFilter
