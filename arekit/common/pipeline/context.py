@@ -10,6 +10,7 @@ class PipelineContext(object):
         assert(isinstance(parent_ctx, PipelineContext) or parent_ctx is None)
         assert(PARENT_CTX not in d)
         self._d = d
+        self._d[PARENT_CTX] = parent_ctx
 
     def __provide(self, param):
         return self._d[param]
