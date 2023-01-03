@@ -11,6 +11,7 @@ class BaseLabelScaler(object):
     def __init__(self, uint_dict, int_dict):
         assert(isinstance(uint_dict, OrderedDict))
         assert(isinstance(int_dict, OrderedDict))
+        assert(len(uint_dict) == len(int_dict))
 
         self.__uint_dict = uint_dict
         self.__int_dict = int_dict
