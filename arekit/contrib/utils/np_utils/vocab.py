@@ -15,6 +15,6 @@ class VocabRepositoryUtils(object):
 
     @staticmethod
     def load(source):
-        vocab = np.loadtxt(source, dtype=str)
+        vocab = np.loadtxt(source, dtype=str, comments=None)
         logger.info("Loading vocabulary [size={size}]: {filepath}".format(size=len(vocab), filepath=source))
         return vocab
