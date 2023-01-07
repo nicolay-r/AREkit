@@ -55,6 +55,8 @@ Please follows th
 
 ## Applications
 
+* **AREnets** [[github]](https://github.com/nicolay-r/AREnets)
+  * is an OpenNRE like project, but the kernel based on tensorflow library, with implementation of neural networks on top of it, designed for Attitude 
 * **ARElight** [[site]](https://nicolay-r.github.io/arelight-page/) [[github]](https://github.com/nicolay-r/ARElight)
     * **Infer attitudes** from large Mass-media documents or **sample texts** for your Machine Learning models applications
 
