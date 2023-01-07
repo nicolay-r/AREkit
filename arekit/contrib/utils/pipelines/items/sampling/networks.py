@@ -87,7 +87,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
             text_provider=text_provider,
             frames_connotation_provider=ctx.FramesConnotationProvider,
             frame_role_label_scaler=ctx.FrameRolesLabelScaler,
-            pos_terms_mapper=PosTermsMapper(ctx.PosTagger))
+            pos_terms_mapper=PosTermsMapper(ctx.PosTagger) if ctx.PosTagger is not None else None)
 
     @staticmethod
     def __add_term_embedding(dict_data, term, emb_vector):

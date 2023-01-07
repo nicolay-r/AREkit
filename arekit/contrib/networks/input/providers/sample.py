@@ -16,10 +16,10 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                  text_provider,
                  frames_connotation_provider,
                  frame_role_label_scaler,
-                 pos_terms_mapper):
+                 pos_terms_mapper=None):
         assert(isinstance(label_provider, LabelProvider))
-        assert(isinstance(pos_terms_mapper, PosTermsMapper))
         assert(isinstance(frame_role_label_scaler, SentimentLabelScaler))
+        assert(isinstance(pos_terms_mapper, PosTermsMapper) or pos_terms_mapper is None)
 
         super(NetworkSampleRowProvider, self).__init__(label_provider=label_provider,
                                                        text_provider=text_provider)
@@ -64,14 +64,16 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=actual_t_ind)
 
         # Part of speech tags
-        pos_int_tags = [int(pos_tag) for pos_tag in self.__pos_terms_mapper.iter_mapped(terms)]
+        pos_int_tags = None if self.__pos_terms_mapper is None \
+            else [int(pos_tag) for pos_tag in self.__pos_terms_mapper.iter_mapped(terms)]
 
         # Saving.
         row[const.FrameVariantIndices] = self.__to_arg(uint_frame_inds)
         row[const.FrameConnotations] = self.__to_arg(uint_frame_connotations)
         row[const.SynonymSubject] = self.__to_arg(uint_syn_s_inds)
         row[const.SynonymObject] = self.__to_arg(uint_syn_t_inds)
-        row[const.PosTags] = self.__to_arg(pos_int_tags)
+        if pos_int_tags is not None:
+            row[const.PosTags] = self.__to_arg(pos_int_tags)
 
     # region private methods
 
