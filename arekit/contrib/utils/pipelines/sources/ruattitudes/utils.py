@@ -18,7 +18,7 @@ class DictionaryBasedDocumentOperations(DocumentOperations):
         return self.__ru_attitudes[doc_id]
 
 
-def read_ruattitudes_to_brat_in_memory(version, keep_doc_ids_only, doc_id_func, label_scaler, limit=None):
+def read_ruattitudes_to_brat_in_memory(version, keep_doc_ids_only, doc_id_func, limit=None):
     """ Performs reading of RuAttitude formatted documents and
         selection according to 'doc_ids_set' parameter.
     """
