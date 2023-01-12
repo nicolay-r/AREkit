@@ -131,13 +131,12 @@ def extract_errors(eval_result, test_samples_filepath, etalon_samples_filepath, 
         for sample_col in columns_to_copy:
             eval_errors_df.at[row_id, sample_col] = sample_row[sample_col]
 
-        text_terms =__post_text_processing(sample_row=sample_row, source_ind=source_ind, target_ind=target_ind)
+        text_terms = __post_text_processing(sample_row=sample_row, source_ind=source_ind, target_ind=target_ind)
         cropped_text = __crop_text_terms(source_ind=source_ind, target_ind=target_ind, text_terms=text_terms)
 
         eval_errors_df.at[row_id, BaseSingleTextProvider.TEXT_A] = cropped_text
 
-        # Replace with the values instead of indices.
-        entity_inds = __get_entity_inds(sample_row)
+        # Replace source and target the values instead of indices.
         eval_errors_df.at[row_id, const.S_IND] = text_terms[source_ind]
         eval_errors_df.at[row_id, const.T_IND] = text_terms[target_ind]
 
