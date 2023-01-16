@@ -14,33 +14,40 @@ class BratAnnotationParser:
 
     @staticmethod
     def handle_entity(args):
-
-        if len(args) < 4:
-            return None
-
-        if not str.isdigit(args[2]) or not str.isdigit(args[3]):
-            return None
+        """ T2	Location 10 23	South America
+            T1	Location 0 5;16 23	North America
+        """
+        assert(len(args) == 3)
 
         e_id = int(BratAnnotationParser.__non_prefixed_id(args[0]))
-        e_str_type = args[1]
-        e_begin = int(args[2])
-        e_end = int(args[3])
-        e_value = " ".join([arg.strip().replace(',', '') for arg in args[4:]])
+        entity_params = args[1].split()
+
+        if len(entity_params) > 3:
+            # We do not support the case of a non-continuous entity mentions.
+            return None
+
+        e_str_type, e_begin, e_end = entity_params
 
         return BratEntity(id_in_doc=e_id,
                           e_type=e_str_type,
-                          index_begin=e_begin,
-                          index_end=e_end,
-                          value=e_value)
+                          index_begin=int(e_begin),
+                          index_end=int(e_end),
+                          value=args[2].strip())
 
     @staticmethod
     def handle_relation(args):
+        """ Example:
+            R1	Origin Arg1:T3 Arg2:T4
+        """
 
+        # Parse identifier index.
         e_id = args[0][1:]
 
-        rel_type = args[1]
-        source_id = args[2].split(':')[1]
-        target_id = args[3].split(':')[1]
+        # Parse relation arguments.
+        rel_type, source, target = args[1].split()
+
+        source_id = source.split(':')[1]
+        target_id = target.split(':')[1]
 
         return BratRelation(id_in_doc=e_id,
                             source_id=int(BratAnnotationParser.__non_prefixed_id(source_id)),
@@ -57,7 +64,7 @@ class BratAnnotationParser:
         for line in input_file.readlines():
             line = line.decode(encoding)
 
-            args = line.split()
+            args = line.split('\t')
 
             record_type = args[0][0]
 
