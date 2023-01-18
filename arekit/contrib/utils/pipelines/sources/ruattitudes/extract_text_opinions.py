@@ -44,7 +44,6 @@ def create_text_opinion_extraction_pipeline(text_parser,
         version=version,
         doc_id_func=lambda doc_id: doc_id,
         keep_doc_ids_only=False,
-        label_scaler=label_scaler,
         limit=limit)
 
     doc_ops = DictionaryBasedDocumentOperations(ru_attitudes)
