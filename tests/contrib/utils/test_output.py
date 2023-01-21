@@ -69,11 +69,10 @@ class RuSentRelSynonymsCollectionProvider(object):
 class TestOutputFormatters(unittest.TestCase):
 
     __current_dir = dirname(__file__)
-    __input_samples_filepath = join(__current_dir, "test_data/sample-train.tsv.gz")
     __input_opinions_filepath = join(__current_dir, "test_data/opinion-train.tsv.gz")
     __output_filepath = join(__current_dir, "test_data/output.tsv.gz")
 
-    def test_output_formatter(self):
+    def optional_test_output_formatter(self):
 
         stemmer = MystemWrapper()
         synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=stemmer)

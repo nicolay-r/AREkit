@@ -1,5 +1,6 @@
 import numpy as np
-import utils
+
+from tests.contrib.networks import utils
 
 
 class IndicesFeature:
