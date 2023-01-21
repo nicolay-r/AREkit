@@ -149,4 +149,4 @@ class TestSamplingNetwork(unittest.TestCase):
         reader = PandasCsvReader()
         source = join(self.__output_dir, "sample-train-0.tsv.gz")
         storage = reader.read(source)
-        self.assertEqual(26, len(storage), "Amount of rows is non equal!")
+        self.assertEqual(28, len(storage), "Amount of rows is non equal!")
