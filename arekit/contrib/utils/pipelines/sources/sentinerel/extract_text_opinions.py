@@ -1,0 +1,190 @@
+from os.path import join, dirname
+
+from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.data_type import DataType
+from arekit.common.labels.base import NoLabel
+from arekit.common.labels.provider.constant import ConstantLabelProvider
+from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotationAlgorithm
+from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.synonyms.base import SynonymsCollection
+from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
+from arekit.common.text.parser import BaseTextParser
+from arekit.contrib.source.sentinerel.io_utils import SentiNerelVersions
+from arekit.contrib.utils.pipelines.sources.sentinerel.doc_ops import SentiNERELDocOperation
+from arekit.contrib.utils.pipelines.sources.sentinerel.folding.factory import SentiNERELFoldingFactory
+from arekit.contrib.utils.pipelines.sources.sentinerel.labels_fmt import SentiNERELSentimentLabelFormatter
+from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
+from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
+from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
+from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
+from arekit.contrib.utils.pipelines.text_opinion.filters.entity_based import EntityBasedTextOpinionFilter
+from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
+from arekit.contrib.utils.sources.sentinerel.text_opinion.prof_per_org_filter import \
+    ProfessionAsCharacteristicSentimentTextOpinionFilter
+from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
+
+
+def create_text_opinion_extraction_pipeline(sentinerel_version,
+                                            text_parser,
+                                            label_formatter=SentiNERELSentimentLabelFormatter(),
+                                            terms_per_context=50,
+                                            doc_ops=None,
+                                            dist_in_sentences=0,
+                                            docs_limit=None,
+                                            entity_filter=None):
+    """ This is a main pipeline which generates the samples for a SentiNEREL documents.
+        SentiNEREL is a collection that becomes a part of the:
+            1. Attitude extraction studies (AREkit focused studies):
+                https://github.com/nicolay-r/SentiNEREL-attitude-extraction
+            2. RuSentNE-2023 competitions under CODALAB platform (github page):
+                https://github.com/dialogue-evaluation/RuSentNE-evaluation
+
+        Parameters:
+            sentinerel_version: enum
+                Version of the SentiNEREl collection.
+            text_parser: Is the way of how do we process the text.
+            doc_ops: DocumentOperations or None
+                In case of None we consider the default initialization.
+            label_formatter:
+                Formatter for labels which allows to: limit set of labels, and perform its conversion from
+                string to actual python type.
+            terms_per_context: int
+                Amount of terms that we consider in between the Object and Subject.
+
+        Returns: dict
+            pipelines per every type.
+    """
+    assert(isinstance(sentinerel_version, SentiNerelVersions))
+    assert(isinstance(doc_ops, DocumentOperations) or doc_ops is None)
+
+    if doc_ops is None:
+        # Default Initialization.
+        filenames_by_ids, data_folding = SentiNERELFoldingFactory.create_fixed_folding(
+            # This is a temporary solution with the "split_filepath.txt"
+            # TODO. This going to be fixed by mentioning this split into archive or so.
+            fixed_split_filepath=join(dirname(__file__), 'split_fixed.txt'),
+            limit=docs_limit)
+        doc_ops = SentiNERELDocOperation(filename_by_id=filenames_by_ids,
+                                         version=sentinerel_version)
+
+    train_neut_annot = create_nolabel_text_opinion_annotator(terms_per_context=terms_per_context,
+                                                             dist_in_sents=dist_in_sentences)
+    test_neut_annot = create_nolabel_text_opinion_annotator(terms_per_context=terms_per_context,
+                                                            dist_in_sents=dist_in_sentences)
+
+    text_opinion_filters = [
+        EntityBasedTextOpinionFilter(entity_filter=entity_filter),
+        ProfessionAsCharacteristicSentimentTextOpinionFilter(),
+        DistanceLimitedTextOpinionFilter(terms_per_context)
+    ]
+
+    predefined_annot = PredefinedTextOpinionAnnotator(doc_ops, label_formatter)
+
+    return {
+        DataType.Train: create_train_pipeline(text_parser=text_parser,
+                                              doc_ops=doc_ops,
+                                              annotators=[
+                                                  predefined_annot,
+                                                  train_neut_annot
+                                              ],
+                                              text_opinion_filters=text_opinion_filters),
+        DataType.Test: create_test_pipeline(text_parser=text_parser,
+                                            doc_ops=doc_ops,
+                                            annotators=[
+                                                test_neut_annot
+                                            ],
+                                            text_opinion_filters=text_opinion_filters),
+        DataType.Etalon: create_etalon_pipeline(text_parser=text_parser,
+                                                doc_ops=doc_ops,
+                                                predefined_annot=predefined_annot,
+                                                text_opinion_filters=text_opinion_filters),
+        DataType.Dev: create_etalon_with_no_label_pipeline(text_parser=text_parser,
+                                                           doc_ops=doc_ops,
+                                                           annotators=[
+                                                               predefined_annot,
+                                                               train_neut_annot
+                                                           ],
+                                                           text_opinion_filters=text_opinion_filters)
+    }
+
+
+def create_nolabel_text_opinion_annotator(terms_per_context, dist_in_sents=0, synonyms=None):
+    """ This is a core annotator, which provides all entity pairs.
+        Could be revealed from the document.
+
+        Parameters:
+            terms_per_context: int
+                Amount of terms that we consider in between the Object and Subject.
+            dist_in_sents: int
+                Distance in sentences in between the objects.
+    """
+    assert(isinstance(terms_per_context, int))
+    assert(isinstance(synonyms, SynonymsCollection) or synonyms is None)
+    assert(isinstance(dist_in_sents, int))
+
+    if synonyms is None:
+        synonyms = StemmerBasedSynonymCollection(iter_group_values_lists=[],
+                                                 stemmer=MystemWrapper(),
+                                                 is_read_only=False,
+                                                 debug=False)
+
+    return AlgorithmBasedTextOpinionAnnotator(
+        value_to_group_id_func=lambda value:
+        SynonymsCollectionValuesGroupingProviders.provide_existed_or_register_missed_value(
+            synonyms=synonyms, value=value),
+        annot_algo=PairBasedOpinionAnnotationAlgorithm(
+            dist_in_sents=dist_in_sents,
+            dist_in_terms_bound=terms_per_context,
+            label_provider=ConstantLabelProvider(NoLabel())),
+        create_empty_collection_func=lambda: OpinionCollection(
+            opinions=[],
+            synonyms=synonyms,
+            error_on_duplicates=True,
+            error_on_synonym_end_missed=False),
+        get_doc_existed_opinions_func=lambda _: None)
+
+
+def create_train_pipeline(text_parser, doc_ops, annotators, text_opinion_filters):
+    """ Train pipeline is based on the predefined annotations and
+        automatic annotations of other pairs with a NoLabel.
+    """
+    return text_opinion_extraction_pipeline(
+        get_doc_func=lambda doc_id: doc_ops.get_doc(doc_id),
+        text_parser=text_parser,
+        annotators=annotators,
+        text_opinion_filters=text_opinion_filters)
+
+
+def create_test_pipeline(text_parser, doc_ops, annotators, text_opinion_filters):
+    """ This is a pipeline for TEST data annotation.
+        We perform annotation of the attitudes.
+    """
+    assert(isinstance(text_parser, BaseTextParser))
+    assert(isinstance(annotators, list))
+    assert(isinstance(doc_ops, DocumentOperations))
+
+    return text_opinion_extraction_pipeline(
+        annotators=annotators,
+        text_parser=text_parser,
+        get_doc_func=lambda doc_id: doc_ops.get_doc(doc_id),
+        text_opinion_filters=text_opinion_filters)
+
+
+def create_etalon_pipeline(text_parser, doc_ops, predefined_annot, text_opinion_filters):
+    """ We adopt exact the same pipeline as for training data,
+        but we do not perform "NoLabel" annotation.
+        (we are interested only in sentiment attitudes).
+    """
+    return create_train_pipeline(text_parser=text_parser,
+                                 doc_ops=doc_ops,
+                                 annotators=[predefined_annot],
+                                 text_opinion_filters=text_opinion_filters)
+
+
+def create_etalon_with_no_label_pipeline(annotators, text_parser, doc_ops, text_opinion_filters):
+    """ We adopt exact the same pipeline as for training data.
+    """
+    return create_train_pipeline(text_parser=text_parser,
+                                 doc_ops=doc_ops,
+                                 annotators=annotators,
+                                 text_opinion_filters=text_opinion_filters)

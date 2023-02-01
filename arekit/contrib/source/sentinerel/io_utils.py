@@ -16,6 +16,8 @@ class SentiNerelVersions(Enum):
     # Updated annotation within the second half of the texts. (September 2022)
     V2 = "v2_0"
     # Updated annotation within the first half of the texts.  (October 2022)
+    # Become a source of the RuSentNE-2023 competition.
+    # https://github.com/dialogue-evaluation/RuSentNE-evaluation
     V21 = "v2_1"
 
 
