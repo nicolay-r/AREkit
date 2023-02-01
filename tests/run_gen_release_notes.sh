@@ -3,4 +3,4 @@ docker run -it --rm -v "$(pwd)":/usr/local/src/your-app/ githubchangeloggenerato
 	-u nicolay-r \
 	-p AREkit \
 	--token <GITHUB_TOKEN> \
-	--since-tag v0.21.0-rc
+	--since-tag v0.23.0-rc
