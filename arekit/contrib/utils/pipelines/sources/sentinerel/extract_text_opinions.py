@@ -51,11 +51,13 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
             terms_per_context: int
                 Amount of terms that we consider in between the Object and Subject.
 
-        Returns: dict
+        Returns: dict, (data_folding) optional
             pipelines per every type.
     """
     assert(isinstance(sentinerel_version, SentiNerelVersions))
     assert(isinstance(doc_ops, DocumentOperations) or doc_ops is None)
+
+    data_folding = None
 
     if doc_ops is None:
         # Default Initialization.
@@ -80,7 +82,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
 
     predefined_annot = PredefinedTextOpinionAnnotator(doc_ops, label_formatter)
 
-    return {
+    pipelines = {
         DataType.Train: create_train_pipeline(text_parser=text_parser,
                                               doc_ops=doc_ops,
                                               annotators=[
@@ -104,8 +106,15 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
                                                                predefined_annot,
                                                                train_neut_annot
                                                            ],
-                                                           text_opinion_filters=text_opinion_filters)
+                                                           text_opinion_filters=text_opinion_filters),
     }
+
+    # In the case when we setup a default data-folding.
+    # There is a need to provide it, due to the needs in further.
+    if data_folding is not None:
+        return pipelines, data_folding
+
+    return pipelines
 
 
 def create_nolabel_text_opinion_annotator(terms_per_context, dist_in_sents=0, synonyms=None):
