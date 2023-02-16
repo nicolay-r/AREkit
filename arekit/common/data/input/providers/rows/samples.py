@@ -98,8 +98,8 @@ class BaseSampleRowProvider(BaseRowProvider):
         row[const.ENTITY_TYPES] = ",".join([e.Type.replace(',', '') for e in entities])
         row[const.ENTITIES] = ",".join(entity_inds)
 
-        row[const.S_IND] = s_ind
-        row[const.T_IND] = t_ind
+        row[const.S_IND] = actual_s_ind
+        row[const.T_IND] = actual_t_ind
 
     def _provide_rows(self, parsed_news, entity_service, text_opinion_linkage, idle_mode):
         assert(isinstance(idle_mode, bool))
