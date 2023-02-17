@@ -22,7 +22,7 @@ class BratAnnotationParser:
         e_id = int(BratAnnotationParser.__non_prefixed_id(args[0]))
         entity_params = args[1].split()
 
-        if len(entity_params) > 3:
+        if len(entity_params) != 3:
             # We do not support the case of a non-continuous entity mentions.
             return None
 
