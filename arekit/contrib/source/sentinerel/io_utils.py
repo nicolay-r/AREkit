@@ -79,7 +79,7 @@ class SentiNerelIOUtils(ZipArchiveUtils):
             `test` and `training` part:
             https://github.com/nicolay-r/SentiNEREL-attitude-extraction
         """
-        return ZipArchiveUtils.read_from_zip(
+        return SentiNerelIOUtils.read_from_zip(
             inner_path=join(SentiNerelIOUtils.inner_root, "split_fixed.txt"),
             process_func=lambda f: SentiNERELFoldingFactory.create_fixed_folding(file=f, limit=docs_limit),
             version=version)

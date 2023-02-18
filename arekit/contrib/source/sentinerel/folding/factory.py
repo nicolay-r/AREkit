@@ -26,5 +26,7 @@ class SentiNERELFoldingFactory:
     def _read_train_test(f):
         parts = []
         for line in f.readlines():
+            if isinstance(line, bytes):
+                line = line.decode('utf-8')
             parts.append(line.strip().split(','))
         return parts[0], parts[1]
