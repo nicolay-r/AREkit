@@ -9,9 +9,8 @@ from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.base import SynonymsCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.common.text.parser import BaseTextParser
-from arekit.contrib.source.sentinerel.io_utils import SentiNerelVersions
+from arekit.contrib.source.sentinerel.io_utils import SentiNerelVersions, SentiNerelIOUtils
 from arekit.contrib.utils.pipelines.sources.sentinerel.doc_ops import SentiNERELDocOperation
-from arekit.contrib.utils.pipelines.sources.sentinerel.folding.factory import SentiNERELFoldingFactory
 from arekit.contrib.utils.pipelines.sources.sentinerel.labels_fmt import SentiNERELSentimentLabelFormatter
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
@@ -61,11 +60,8 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
 
     if doc_ops is None:
         # Default Initialization.
-        filenames_by_ids, data_folding = SentiNERELFoldingFactory.create_fixed_folding(
-            # This is a temporary solution with the "split_filepath.txt"
-            # TODO. This going to be fixed by mentioning this split into archive or so.
-            fixed_split_filepath=join(dirname(__file__), 'split_fixed.txt'),
-            limit=docs_limit)
+        filenames_by_ids, data_folding = SentiNerelIOUtils.read_dataset_split(version=sentinerel_version,
+                                                                              docs_limit=docs_limit)
         doc_ops = SentiNERELDocOperation(filename_by_id=filenames_by_ids,
                                          version=sentinerel_version)
 

@@ -1,9 +1,10 @@
 from enum import Enum
 from os import path
-from os.path import basename
+from os.path import basename, join, dirname
 
 import enum
 
+from arekit.contrib.source.sentinerel.folding.factory import SentiNERELFoldingFactory
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 
 
@@ -71,5 +72,16 @@ class SentiNerelIOUtils(ZipArchiveUtils):
 
         for doc_id, filename in enumerate(filenames_it):
             yield doc_id, filename
+
+    @staticmethod
+    def read_dataset_split(version=DEFAULT_VERSION, docs_limit=None):
+        """ Provides a fixed split of the dataset onto
+            `test` and `training` part:
+            https://github.com/nicolay-r/SentiNEREL-attitude-extraction
+        """
+        return ZipArchiveUtils.read_from_zip(
+            inner_path=join(SentiNerelIOUtils.inner_root, "split_fixed.txt"),
+            process_func=lambda f: SentiNERELFoldingFactory.create_fixed_folding(file=f, limit=docs_limit),
+            version=version)
 
     # endregion
