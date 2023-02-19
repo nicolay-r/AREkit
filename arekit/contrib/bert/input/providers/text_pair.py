@@ -6,6 +6,9 @@ from arekit.common.labels.base import Label
 class PairTextProvider(BaseSingleTextProvider):
     """ Provides additionally text_b parameter
         Considered to utilize an inner part in context, between opinion participants.
+
+        Prompting for BERT, originally proposed in paper:
+            https://www.aclweb.org/anthology/N19-1035.pdf
     """
 
     TEXT_B = "text_b"
