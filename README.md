@@ -18,12 +18,14 @@ This toolkit aims to solve data preparation problems in Relation Extraction rela
 * 📑 relations annotations and filtering rules,
 * *️⃣ entities formatting or masking, and more.
 
-Using AREkit you may focus on preparation and experiments with your ML-models by shift all the data-preparation part  onto toolset of this project ([tutorial](https://nicolay-r.github.io/blog/articles/2022-05/process-mass-media-relations-with-arekit)).
+Using AREkit you may focus on preparation and experiments with your ML-models by shift all the data-preparation part onto toolset of this project for:
+[neural-networks](https://github.com/nicolay-r/AREkit/wiki/Sampling-for-Neural-Network), 
+[language-models](https://github.com/nicolay-r/AREkit/wiki/Sampling-for-BERT), 
+[ChatGPT](https://github.com/nicolay-r/AREkit/wiki/Sampling-for-ChatGPT).
+
 In order to do so, we provide:
-* :file_folder: API for external collection binding (native support of [BRAT](https://brat.nlplab.org/)-based exported annotations) 
-[[more]](https://nicolay-r.github.io/blog/articles/2022-08/arekit-collection-bind)
-* ➿ pipelines and iterators for handling large-scale collections serialization without out-of-memory issues.
-[[more]](https://nicolay-r.github.io/blog/articles/2022-08/arekit-text-opinion-annotation-pipeline)
+* :file_folder: API for external [collection binding](https://github.com/nicolay-r/AREkit/wiki/Binding-a-Custom-Source) (native support of [BRAT](https://brat.nlplab.org/)-based exported annotations)
+* ➿ [pipelines](https://github.com/nicolay-r/AREkit/wiki/Pipelines:-Text-Opinion-Annotation) and iterators for handling large-scale collections serialization without out-of-memory issues.
 * evaluators which allows you to assess your trained model.
 
 AREkit is a very close to opensource framework [SeqIO](https://github.com/google/seqio) proposed by [Google](https://github.com/google) 
