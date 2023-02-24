@@ -52,8 +52,8 @@ python -m arekit.download_data
 ```
 
 ## Tutorials
-Please follows th
-[tutorials list](https://github.com/nicolay-r/AREkit/tree/master/tests/tutorials).
+Please follow the wiki page
+[Tutorials List](https://github.com/nicolay-r/AREkit/tree/master/tests/tutorials).
 
 ## Applications
 
