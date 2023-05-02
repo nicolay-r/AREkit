@@ -9,15 +9,17 @@ from arekit.common.synonyms.base import SynonymsCollection
 
 class OpinionCollection(object):
     """
-    Document-level Collection of sentiment opinions between entities
+    Document-level Collection of labeled opinions
     """
 
-    def __init__(self, opinions, synonyms,
-                 error_on_duplicates,
-                 error_on_synonym_end_missed):
+    def __init__(self, synonyms,
+                 opinions=None,
+                 error_on_duplicates=True,
+                 error_on_synonym_end_missed=True):
         """
-        opinions:
-        synonyms:
+        opinions: list
+            list of opinions
+        synonyms: SynonymsCollection
         raise_exception_on_duplicates: bool
             denotes whether there is a need to fire exception for duplicates in opinions list.
         """
@@ -29,6 +31,8 @@ class OpinionCollection(object):
         self.__by_synonyms = {}
         self.__ordered_opinion_keys = []
         self.__synonyms = synonyms
+        self.__error_on_duplicates = error_on_duplicates
+        self.__error_on_synonym_end_missed = error_on_synonym_end_missed
 
         if opinions is None:
             return
@@ -39,49 +43,27 @@ class OpinionCollection(object):
                 error_on_existence=error_on_duplicates,
                 error_on_synonym_end_missed=error_on_synonym_end_missed)
 
-        self.__error_on_duplicates = error_on_duplicates
-        self.__error_on_synonym_end_missed = error_on_synonym_end_missed
-
-    def copy(self, filter_opinion_func=None):
-        assert(callable(filter_opinion_func) or filter_opinion_func is None)
-
-        predicate = lambda _: True if filter_opinion_func is None else filter_opinion_func
-
-        return OpinionCollection(opinions=[opinion for _, opinion in self.__by_synonyms.items()
-                                           if predicate(opinion)],
-                                 synonyms=self.__synonyms,
-                                 error_on_duplicates=self.__error_on_duplicates,
-                                 error_on_synonym_end_missed=self.__error_on_synonym_end_missed)
-
     # region public methods
 
-    def try_get_synonyms_opinion(self, opinion, sentiment=None):
-        return self.__try_get_synonyms_opinion(opinion=opinion, sentiment=sentiment)
+    def try_get_synonyms_opinion(self, opinion, label=None):
+        return self.__try_get_synonyms_opinion(opinion=opinion, label=label)
 
-    def has_synonymous_opinion(self, opinion, sentiment=None):
-        return self.__try_get_synonyms_opinion(opinion=opinion, sentiment=sentiment) is not None
+    def has_synonymous_opinion(self, opinion, label=None):
+        return self.__try_get_synonyms_opinion(opinion=opinion, label=label) is not None
 
     def add_opinion(self, opinion):
         assert(isinstance(opinion, Opinion))
-
         self.__register_opinion(opinion=opinion,
                                 error_on_existence=True,
                                 error_on_synonym_end_missed=True)
-
-    def iter_sentiment(self, sentiment):
-        assert(isinstance(sentiment, Label))
-        for key in self.__ordered_opinion_keys:
-            opinion = self.__by_synonyms[key]
-            if opinion.sentiment == sentiment:
-                yield opinion
 
     # endregion
 
     # region private methods
 
-    def __try_get_synonyms_opinion(self, opinion, sentiment=None):
+    def __try_get_synonyms_opinion(self, opinion, label=None):
         assert(isinstance(opinion, Opinion))
-        assert(sentiment is None or isinstance(sentiment, Label))
+        assert(label is None or isinstance(label, Label))
 
         for end_type in OpinionEndTypes:
             if not opinion.has_synonym_for_end(synonyms=self.__synonyms, end_type=end_type):
@@ -92,9 +74,9 @@ class OpinionCollection(object):
             return None
 
         f_o = self.__by_synonyms[s_id]
-        if sentiment is None:
+        if label is None:
             return f_o
-        elif f_o.sentiment == sentiment:
+        elif f_o.sentiment == label:
             return f_o
         else:
             return None
