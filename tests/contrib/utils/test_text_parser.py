@@ -6,6 +6,7 @@ from arekit.common.news.base import News
 from arekit.common.news.parser import NewsParser
 from arekit.common.news.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
+from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLabelsFormatter, \
     RuSentiFramesLabelsFormatter
 from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
@@ -14,15 +15,28 @@ from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelIOUtils, RuSentRelVersions
+from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.utils.pipelines.items.text.frames import FrameVariantsParser
 from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVariantsSentimentNegation
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
+from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
 from tests.contrib.utils.labels import NegativeLabel, PositiveLabel
 
-from tests.contrib.utils.test_eval import RuSentRelSynonymsCollectionProvider
 from tests.contrib.utils.text.debug_text import debug_show_news_terms
+
+
+class RuSentRelSynonymsCollectionProvider(object):
+
+    @staticmethod
+    def load_collection(stemmer, is_read_only=True, debug=False, version=RuSentRelVersions.V11):
+        assert(isinstance(stemmer, Stemmer))
+        return StemmerBasedSynonymCollection(
+            iter_group_values_lists=RuSentRelSynonymsCollectionHelper.iter_groups(version),
+            debug=debug,
+            stemmer=stemmer,
+            is_read_only=is_read_only)
 
 
 class TestTextParser(unittest.TestCase):
