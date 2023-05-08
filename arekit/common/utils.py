@@ -28,6 +28,13 @@ def split_by_whitespaces(text):
     return text.split()
 
 
+def progress_bar(iterable, total, desc="", unit="it"):
+    if total is not None:
+        return progress_bar_defined(iterable=iterable, total=total, desc=desc, unit=unit)
+    else:
+        return progress_bar_iter(iterable=iterable, desc=desc, unit=unit)
+
+
 def progress_bar_defined(iterable, total, desc="", unit="it"):
     return tqdm(iterable=iterable,
                 total=total,

@@ -19,6 +19,7 @@ from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLa
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.utils.connotations.rusentiframes_sentiment import RuSentiFramesConnotationProvider
 from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
+from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 from arekit.contrib.utils.data.writers.csv_pd import PandasCsvWriter
 from arekit.contrib.utils.entities.formatters.str_simple_uppercase_fmt import SimpleUppercasedEntityFormatter
 from arekit.contrib.utils.io_utils.embedding import NpEmbeddingIO
@@ -111,7 +112,8 @@ class TestSamplingNetwork(unittest.TestCase):
             str_entity_fmt=SimpleUppercasedEntityFormatter(),
             balance_func=lambda data_type: data_type == DataType.Train,
             save_labels_func=lambda data_type: data_type != DataType.Test,
-            save_embedding=True)
+            save_embedding=True,
+            storage=PandasBasedRowsStorage())
 
         pipeline = BasePipeline([
             pipeline_item

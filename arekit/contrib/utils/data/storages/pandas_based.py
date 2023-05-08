@@ -45,7 +45,10 @@ class PandasBasedRowsStorage(BaseRowsStorage):
 
     # region protected methods
 
-    def _set_value(self, row_ind, column, value):
+    def iter_column_names(self):
+        return iter(self._df.columns)
+
+    def _set_row_value(self, row_ind, column, value):
         self._df.at[row_ind, column] = value
 
     def _iter_rows(self):
@@ -59,7 +62,7 @@ class PandasBasedRowsStorage(BaseRowsStorage):
 
     # region public methods
 
-    def fill(self, iter_rows_func, columns_provider, rows_count=None, desc=""):
+    def fill(self, iter_rows_func, columns_provider, row_handler=None, rows_count=None, desc=""):
         """ NOTE: We provide the rows counting which is required
             in order to know an expected amount of rows in advace
             due to the specifics of the pandas memory allocation
@@ -83,6 +86,7 @@ class PandasBasedRowsStorage(BaseRowsStorage):
         logger.info("Completed!")
 
         super(PandasBasedRowsStorage, self).fill(iter_rows_func=iter_rows_func,
+                                                 row_handler=row_handler,
                                                  columns_provider=columns_provider,
                                                  rows_count=rows_count)
 

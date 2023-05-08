@@ -8,6 +8,7 @@ from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.repositories.base import BaseInputRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
+from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.utils.data.service.balance import StorageBalancing
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
@@ -19,13 +20,14 @@ logging.basicConfig(level=logging.INFO)
 class InputDataSerializationHelper(object):
 
     @staticmethod
-    def create_samples_repo(keep_labels, rows_provider):
+    def create_samples_repo(keep_labels, rows_provider, storage):
         assert(isinstance(rows_provider, BaseRowProvider))
         assert(isinstance(keep_labels, bool))
+        assert(isinstance(storage, BaseRowsStorage))
         return BaseInputSamplesRepository(
             columns_provider=SampleColumnsProvider(store_labels=keep_labels),
             rows_provider=rows_provider,
-            storage=PandasBasedRowsStorage())
+            storage=storage)
 
     @staticmethod
     def fill_and_write(pipeline, repo, target, writer, doc_ids_iter, desc="", do_balance=False):
@@ -35,9 +37,12 @@ class InputDataSerializationHelper(object):
         assert(isinstance(do_balance, bool))
 
         doc_ids = list(doc_ids_iter)
+
         repo.populate(opinion_provider=InputTextOpinionProvider(pipeline),
                       doc_ids=doc_ids,
-                      desc=desc)
+                      desc=desc,
+                      writer=writer,
+                      target=target)
 
         if do_balance:
             balanced_storage = StorageBalancing.create_balanced_from(
@@ -47,4 +52,4 @@ class InputDataSerializationHelper(object):
                                               rows_provider=repo._rows_provider,
                                               storage=balanced_storage)
 
-        repo.write(writer=writer, target=target)
+        repo.push(writer=writer, target=target)

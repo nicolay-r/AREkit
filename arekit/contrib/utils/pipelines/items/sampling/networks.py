@@ -25,7 +25,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
     def __init__(self, vectorizers, save_labels_func, str_entity_fmt, ctx,
-                 samples_io, emb_io, balance_func, save_embedding):
+                 samples_io, emb_io, balance_func, save_embedding, storage):
         """ This pipeline item allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -65,6 +65,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         self.__save_embedding = save_embedding and vectorizers is not None
         self.__save_labels_func = save_labels_func
         self.__balance_func = balance_func
+        self.__storage = storage
 
         self.__term_embedding_pairs = collections.OrderedDict()
 
@@ -102,7 +103,8 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         repos = {
             "sample": InputDataSerializationHelper.create_samples_repo(
                 keep_labels=self.__save_labels_func(data_type),
-                rows_provider=rows_provider),
+                rows_provider=rows_provider,
+                storage=self.__storage),
         }
 
         writer_and_targets = {

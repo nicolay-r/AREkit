@@ -35,7 +35,7 @@ class OpenNREJsonWriter(BaseWriter):
         json.dump(bag, json_file, separators=(",", ":"), ensure_ascii=False)
         json_file.write("\n")
 
-    def write(self, storage, target):
+    def write_all(self, storage, target):
         assert(isinstance(storage, BaseRowsStorage))
         assert(isinstance(target, str))
 

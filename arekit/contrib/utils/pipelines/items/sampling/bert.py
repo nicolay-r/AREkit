@@ -9,7 +9,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, sample_rows_provider, samples_io, save_labels_func, balance_func):
+    def __init__(self, sample_rows_provider, samples_io, save_labels_func, balance_func, storage):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -25,6 +25,7 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
         self.__balance_func = balance_func
         self.__samples_io = samples_io
         self.__save_labels_func = save_labels_func
+        self.__storage = storage
 
     # region private methods
 
@@ -34,7 +35,8 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
         repos = {
             "sample": InputDataSerializationHelper.create_samples_repo(
                 keep_labels=self.__save_labels_func(data_type),
-                rows_provider=self.__sample_rows_provider),
+                rows_provider=self.__sample_rows_provider,
+                storage=self.__storage),
         }
 
         writer_and_targets = {

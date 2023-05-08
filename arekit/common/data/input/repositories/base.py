@@ -2,6 +2,8 @@ from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
 from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.storages.base import BaseRowsStorage
+from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
+from arekit.contrib.utils.data.writers.base import BaseWriter
 
 
 class BaseInputRepository(object):
@@ -30,11 +32,13 @@ class BaseInputRepository(object):
     # endregion
 
     # TODO. Generailze, TextOpinion -> Any provider.
-    def populate(self, opinion_provider, doc_ids, desc=""):
+    def populate(self, opinion_provider, doc_ids, desc="", writer=None, target=None):
         # TODO. Generailze, TextOpinion -> Any provider.
         assert(isinstance(opinion_provider, InputTextOpinionProvider))
         assert(isinstance(self._storage, BaseRowsStorage))
         assert(isinstance(doc_ids, list))
+        assert(isinstance(writer, BaseWriter) or writer is None)
+        assert(isinstance(target, str) or target is None)
 
         def iter_rows(idle_mode):
             return self._rows_provider.iter_by_rows(
@@ -44,12 +48,22 @@ class BaseInputRepository(object):
 
         self._storage.init_empty(columns_provider=self._columns_provider)
 
+        is_async_write_mode_on = writer is not None and target is not None
+
+        if is_async_write_mode_on:
+            writer.open_target(target)
+
         self._storage.fill(lambda idle_mode: iter_rows(idle_mode),
                            columns_provider=self._columns_provider,
+                           row_handler=lambda: writer.commit_line(self._storage) if is_async_write_mode_on else None,
                            desc=desc)
 
-    def write(self, writer, target, free_storage=True):
-        writer.write(self._storage, target)
+        if is_async_write_mode_on:
+            writer.close_target()
+
+    def push(self, writer, target, free_storage=True):
+        if not isinstance(self._storage, RowCacheStorage):
+            writer.write_all(self._storage, target)
 
         # After writing we free the contents of the storage.
         if free_storage:

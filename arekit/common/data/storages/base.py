@@ -2,19 +2,29 @@ import gc
 import logging
 
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
-from arekit.common.utils import progress_bar_defined
+from arekit.common.utils import progress_bar
 
 logger = logging.getLogger(__name__)
 
 
 class BaseRowsStorage(object):
 
+    # region protected methods
+
+    def _begin_filling_row(self, row_ind):
+        pass
+
+    # endregion
+
     # region abstract methods
 
-    def _set_value(self, row_ind, column, value):
+    def _set_row_value(self, row_ind, column, value):
         raise NotImplemented()
 
     def _iter_rows(self):
+        """ returns: tuple(int, list)
+                provides the index (int) and the related content of the row (list)
+        """
         raise NotImplemented()
 
     def _get_rows_count(self):
@@ -41,21 +51,31 @@ class BaseRowsStorage(object):
     def iter_shuffled(self):
         raise NotImplemented()
 
+    def iter_column_names(self):
+        raise NotImplemented()
+
     # endregion
 
-    def fill(self, iter_rows_func, columns_provider, rows_count=None, desc=""):
+    def fill(self, iter_rows_func, columns_provider, row_handler=None, rows_count=None, desc=""):
         assert(callable(iter_rows_func))
         assert(isinstance(columns_provider, BaseColumnsProvider))
+        assert(callable(row_handler) or row_handler is None)
 
-        it = progress_bar_defined(iterable=iter_rows_func(False),
-                                  desc="{fmt}".format(fmt=desc),
-                                  total=rows_count)
+        it = progress_bar(iterable=iter_rows_func(False),
+                          desc="{fmt}".format(fmt=desc),
+                          total=rows_count)
 
         for row_index, row in enumerate(it):
+
+            self._begin_filling_row(row_index)
+
             for column, value in row.items():
-                self._set_value(row_ind=row_index,
-                                column=column,
-                                value=value)
+                self._set_row_value(row_ind=row_index,
+                                    column=column,
+                                    value=value)
+
+            if row_handler is not None:
+                row_handler()
 
     def free(self):
         gc.collect()
