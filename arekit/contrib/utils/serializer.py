@@ -45,6 +45,11 @@ class InputDataSerializationHelper(object):
                       target=target)
 
         if do_balance:
+
+            # TODO. read everything we made from target!
+            # and initialize a pandas storage for this.
+            # use new instance for such storage.
+
             balanced_storage = StorageBalancing.create_balanced_from(
                 storage=repo._storage, column_name=const.LABEL, free_origin=True)
             # Initializing the new repository instance.
