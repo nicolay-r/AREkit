@@ -61,18 +61,29 @@ class BaseRowsStorage(object):
         assert(isinstance(columns_provider, BaseColumnsProvider))
         assert(callable(row_handler) or row_handler is None)
 
-        it = progress_bar(iterable=iter_rows_func(False),
-                          desc="{fmt}".format(fmt=desc),
-                          total=rows_count)
+        pbar_it = progress_bar(iterable=iter_rows_func(False),
+                               desc="{fmt}".format(fmt=desc),
+                               total=rows_count)
 
-        for row_index, row in enumerate(it):
+        doc_ids_seen = set()
+
+        for row_index, row in enumerate(pbar_it):
+
+            doc_id, row_values = row
 
             self._begin_filling_row(row_index)
 
-            for column, value in row.items():
+            for column, value in row_values.items():
                 self._set_row_value(row_ind=row_index,
                                     column=column,
                                     value=value)
+
+            # Provide information about amount of processed documents.
+            doc_ids_seen.add(doc_id)
+            pbar_it.set_postfix({
+                "docs_seen": len(doc_ids_seen),
+                "doc_now": doc_id,
+            })
 
             if row_handler is not None:
                 row_handler()

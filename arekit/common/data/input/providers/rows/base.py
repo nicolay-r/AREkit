@@ -40,4 +40,4 @@ class BaseRowProvider(object):
                                          idle_mode=idle_mode)
 
             for row in rows_it:
-                yield row
+                yield linkage.RelatedDocID, row
