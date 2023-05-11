@@ -34,6 +34,8 @@ class AlgorithmBasedOpinionAnnotator(BaseOpinionAnnotator):
         assert(isinstance(parsed_news, ParsedNews))
 
         opinions = self.__get_existed_opinions_func(parsed_news.RelatedDocID)
+        assert(isinstance(opinions, OpinionCollection))
+        
         annotated_opinions_it = self.__annot_algo.iter_opinions(
             parsed_news=parsed_news, existed_opinions=opinions)
 
