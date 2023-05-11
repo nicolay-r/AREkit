@@ -25,7 +25,6 @@ class ParsedNews(object):
         parsed_sentences: iterable of ParsedSentence type
             NOTE: Considered sentences with labeled Entities in it!
         """
-        assert(isinstance(doc_id, int))
         assert(isinstance(parsed_sentences, collections.Iterable))
 
         self.__doc_id = doc_id

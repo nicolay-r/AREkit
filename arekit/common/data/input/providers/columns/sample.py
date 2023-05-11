@@ -33,7 +33,7 @@ class SampleColumnsProvider(BaseColumnsProvider):
         dtypes_list = super(SampleColumnsProvider, self).get_columns_list_with_types()
 
         dtypes_list.append((const.ID, str))
-        dtypes_list.append((const.DOC_ID, 'int32'))
+        dtypes_list.append((const.DOC_ID, str))
 
         # insert labels
         if self.__store_labels:

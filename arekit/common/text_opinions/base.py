@@ -17,8 +17,6 @@ class TextOpinion(object):
         """ source_id: document level object id
             target_id: document level object id
         """
-        assert(isinstance(doc_id, int))
-
         self.__doc_id = doc_id
         self.__source_id = source_id
         self.__target_id = target_id

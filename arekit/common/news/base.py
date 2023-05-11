@@ -1,9 +1,7 @@
 class News(object):
 
     def __init__(self, doc_id, sentences):
-        assert(isinstance(doc_id, int))
         assert(isinstance(sentences, list))
-
         self.__id = doc_id
         self._sentences = sentences
 
