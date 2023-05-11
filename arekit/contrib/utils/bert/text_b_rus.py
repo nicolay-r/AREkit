@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class BertTextBTemplates(Enum):
+class BertTextBRussianPrompts(Enum):
     """
     Default, based on COLA, but includes an extra text_b.
         text_b: Pseudo-sentence w/o S.P (S.P -- sentiment polarity)

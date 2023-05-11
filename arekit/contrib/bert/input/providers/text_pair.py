@@ -13,14 +13,14 @@ class PairTextProvider(BaseSingleTextProvider):
 
     TEXT_B = "text_b"
 
-    def __init__(self, text_b_template, text_terms_mapper):
+    def __init__(self, text_b_prompt, text_terms_mapper):
         """ text_b_template: unicode
-                assumes to include {subject}, {object}, and {context} in related template
+                assumes to include {subject}, {object}, and {context} in the related template
             labels_formatter: StringLabelsFormatter
         """
-        assert(isinstance(text_b_template, str))
+        assert(isinstance(text_b_prompt, str))
         super(PairTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
-        self.__text_b_template = text_b_template
+        self.__text_b_template = text_b_prompt
 
     def get_text_template(self):
         raise NotImplementedError()
