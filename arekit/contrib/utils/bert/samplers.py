@@ -5,13 +5,12 @@ from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapp
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
 
 
-def create_sample_provider(label_scaler, text_b_template, text_terms_mapper, text_b_labels_fmt=None):
+def create_sample_provider(label_scaler, text_terms_mapper, text_b_template=None):
     assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
     text_provider = BaseSingleTextProvider(text_terms_mapper=text_terms_mapper) \
-        if text_b_labels_fmt is None else PairTextProvider(text_b_template=text_b_template,
-                                                           text_b_labels_fmt=text_b_labels_fmt,
-                                                           text_terms_mapper=text_terms_mapper)
+        if text_b_template is None else PairTextProvider(text_b_template=text_b_template,
+                                                         text_terms_mapper=text_terms_mapper)
 
     label_provider = MultipleLabelProvider(label_scaler=label_scaler)
 
