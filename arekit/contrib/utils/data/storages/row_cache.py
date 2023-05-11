@@ -38,4 +38,4 @@ class RowCacheStorage(BaseRowsStorage):
         self.__row_cache[column] = value
 
     def _begin_filling_row(self, row_ind):
-        self.__row_cache.clear(
+        self.__row_cache.clear()
