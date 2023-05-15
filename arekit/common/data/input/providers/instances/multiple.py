@@ -24,4 +24,4 @@ class MultipleLinkedTextOpinionsInstancesProvider(BaseTextOpinionsLinkageInstanc
         text_opinion_copy.set_label(label=label)
         linkage[0] = text_opinion_copy
 
-        return TextOpinionsLinkage(text_opinions_it=linkage)
+        return TextOpinionsLinkage(linked_data=linkage)
