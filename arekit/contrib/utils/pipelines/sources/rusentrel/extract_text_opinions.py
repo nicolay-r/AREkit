@@ -25,7 +25,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
                                             dist_in_sentences=0):
     """ Processing pipeline for RuSentRel, which combines:
             - predefined document-level annotation (sentiment labels)
-            - automatic annotation of optinions between mentioned named entities (no-label)
+            - automatic annotation of opinions between mentioned named entities (no-label)
 
         Original collection paper: arxiv.org/abs/1808.08932
 

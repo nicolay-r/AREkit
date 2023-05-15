@@ -1,8 +1,8 @@
 import collections
 import logging
 
-from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
-from arekit.common.linkage.text_opinions import TextOpinionsLinkage
+from arekit.common.data.input.providers.contents import ContentsProvider
+from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.news.parsed.service import ParsedNewsService
 
@@ -22,22 +22,20 @@ class BaseRowProvider(object):
 
     # endregion
 
-    # TODO. Limitation, this is now focused on linked text opinions only!
-    # TODO. In general, this might be any provider, not only opinion-related.
-    def iter_by_rows(self, opinion_provider, doc_ids_iter, idle_mode):
-        assert(isinstance(opinion_provider, InputTextOpinionProvider))
+    def iter_by_rows(self, contents_provider, doc_ids_iter, idle_mode):
+        assert(isinstance(contents_provider, ContentsProvider))
         assert(isinstance(doc_ids_iter, collections.Iterable))
 
-        for linkage in opinion_provider.iter_linked_opinions(doc_ids=doc_ids_iter, idle_mode=idle_mode):
-            assert(isinstance(linkage, TextOpinionsLinkage))
-            assert(isinstance(linkage.Tag, ParsedNewsService))
+        for linked_data in contents_provider.from_doc_ids(doc_ids=doc_ids_iter, idle_mode=idle_mode):
+            assert(isinstance(linked_data, LinkedDataWrapper))
+            assert(isinstance(linked_data.Tag, ParsedNewsService))
 
-            parsed_news_service = linkage.Tag
+            parsed_news_service = linked_data.Tag
 
             rows_it = self._provide_rows(parsed_news=parsed_news_service.ParsedNews,
                                          entity_service=parsed_news_service.get_provider(EntityServiceProvider.NAME),
-                                         text_opinion_linkage=linkage,
+                                         text_opinion_linkage=linked_data,
                                          idle_mode=idle_mode)
 
             for row in rows_it:
-                yield linkage.RelatedDocID, row
+                yield linked_data.RelatedDocID, row

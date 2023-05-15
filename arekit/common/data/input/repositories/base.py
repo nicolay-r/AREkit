@@ -1,5 +1,5 @@
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
-from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
+from arekit.common.data.input.providers.contents import ContentsProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
@@ -31,10 +31,8 @@ class BaseInputRepository(object):
 
     # endregion
 
-    # TODO. Generailze, TextOpinion -> Any provider.
-    def populate(self, opinion_provider, doc_ids, desc="", writer=None, target=None):
-        # TODO. Generailze, TextOpinion -> Any provider.
-        assert(isinstance(opinion_provider, InputTextOpinionProvider))
+    def populate(self, contents_provider, doc_ids, desc="", writer=None, target=None):
+        assert(isinstance(contents_provider, ContentsProvider))
         assert(isinstance(self._storage, BaseRowsStorage))
         assert(isinstance(doc_ids, list))
         assert(isinstance(writer, BaseWriter) or writer is None)
@@ -42,7 +40,7 @@ class BaseInputRepository(object):
 
         def iter_rows(idle_mode):
             return self._rows_provider.iter_by_rows(
-                opinion_provider=opinion_provider,
+                contents_provider=contents_provider,
                 doc_ids_iter=doc_ids,
                 idle_mode=idle_mode)
 

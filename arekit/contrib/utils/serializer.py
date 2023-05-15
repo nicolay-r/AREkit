@@ -4,14 +4,13 @@ import logging
 from arekit.common.data import const
 
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
-from arekit.common.data.input.providers.opinions import InputTextOpinionProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.repositories.base import BaseInputRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.pipeline.base import BasePipeline
+from arekit.contrib.utils.data.contents.opinions import InputTextOpinionProvider
 from arekit.contrib.utils.data.service.balance import StorageBalancing
-from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -38,7 +37,7 @@ class InputDataSerializationHelper(object):
 
         doc_ids = list(doc_ids_iter)
 
-        repo.populate(opinion_provider=InputTextOpinionProvider(pipeline),
+        repo.populate(contents_provider=InputTextOpinionProvider(pipeline),
                       doc_ids=doc_ids,
                       desc=desc,
                       writer=writer,
