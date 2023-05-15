@@ -4,7 +4,7 @@ import pandas as pd
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 
 
-class StorageBalancing(object):
+class PandasBasedStorageBalancing(object):
 
     @staticmethod
     def create_balanced_from(storage, column_name, free_origin=True):

@@ -10,7 +10,8 @@ from arekit.common.data.input.repositories.sample import BaseInputSamplesReposit
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.utils.data.contents.opinions import InputTextOpinionProvider
-from arekit.contrib.utils.data.service.balance import StorageBalancing
+from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
+from arekit.contrib.utils.data.service.balance import PandasBasedStorageBalancing
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -45,12 +46,11 @@ class InputDataSerializationHelper(object):
 
         if do_balance:
 
-            # TODO. read everything we made from target!
-            # and initialize a pandas storage for this.
-            # use new instance for such storage.
+            # We perform a complete and clean data reading from scratch.
+            reader = PandasCsvReader(compression="infer")
+            balanced_storage = PandasBasedStorageBalancing.create_balanced_from(
+                storage=reader.read(target=target), column_name=const.LABEL, free_origin=True)
 
-            balanced_storage = StorageBalancing.create_balanced_from(
-                storage=repo._storage, column_name=const.LABEL, free_origin=True)
             # Initializing the new repository instance.
             repo = BaseInputSamplesRepository(columns_provider=repo._columns_provider,
                                               rows_provider=repo._rows_provider,
