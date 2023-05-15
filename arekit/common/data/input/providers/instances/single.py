@@ -1,8 +1,8 @@
-from arekit.common.data.input.providers.instances.base import BaseTextOpinionsLinkageInstancesProvider
+from arekit.common.data.input.providers.instances.base import BaseLinkedDataInstancesProvider
 
 
-class SingleInstanceTextOpinionsLinkageProvider(BaseTextOpinionsLinkageInstancesProvider):
+class SingleInstanceLinkedDataProvider(BaseLinkedDataInstancesProvider):
 
-    def iter_instances(self, text_opinions_linkage):
-        yield text_opinions_linkage
+    def iter_instances(self, linked_data):
+        yield linked_data
         return

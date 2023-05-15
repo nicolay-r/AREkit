@@ -1,8 +1,14 @@
-class BaseTextOpinionsLinkageInstancesProvider(object):
+from arekit.common.linkage.base import LinkedDataWrapper
 
-    def iter_instances(self, text_opinion_linkage):
+
+class BaseLinkedDataInstancesProvider(object):
+
+    def iter_instances(self, linked_data):
         raise NotImplementedError()
 
     @staticmethod
-    def provide_label(text_opinion_linkage):
-        return text_opinion_linkage.First.Sentiment
+    def provide_label(linked_data):
+        """ Implementation based on the first element of the linkage.
+        """
+        assert(isinstance(linked_data, LinkedDataWrapper))
+        return linked_data.First.Sentiment

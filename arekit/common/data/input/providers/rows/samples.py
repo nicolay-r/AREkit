@@ -1,8 +1,8 @@
 from collections import OrderedDict
 
 from arekit.common.data import const
-from arekit.common.data.input.providers.instances.multiple import MultipleLinkedTextOpinionsInstancesProvider
-from arekit.common.data.input.providers.instances.single import SingleInstanceTextOpinionsLinkageProvider
+from arekit.common.data.input.providers.instances.multiple import MultipleInstancesLinkedTextOpinionsProvider
+from arekit.common.data.input.providers.instances.single import SingleInstanceLinkedDataProvider
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
@@ -134,10 +134,11 @@ class BaseSampleRowProvider(BaseRowProvider):
 
     @staticmethod
     def __create_instances_provider(label_provider):
+        # TODO. #473 related: thiese label providers are based on text opinion extraction task!
         if isinstance(label_provider, BinaryLabelProvider):
-            return MultipleLinkedTextOpinionsInstancesProvider(label_provider.SupportedLabels)
+            return MultipleInstancesLinkedTextOpinionsProvider(label_provider.SupportedLabels)
         if isinstance(label_provider, MultipleLabelProvider):
-            return SingleInstanceTextOpinionsLinkageProvider()
+            return SingleInstanceLinkedDataProvider()
 
     def __provide_rows(self, row_dict, parsed_news, entity_service,
                        text_opinion_linkage, index_in_linked, idle_mode):
