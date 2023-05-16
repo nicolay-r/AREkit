@@ -11,6 +11,7 @@ from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProv
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.sentinerel.io_utils import SentiNerelVersions, SentiNerelIOUtils
 from arekit.contrib.utils.pipelines.sources.sentinerel.doc_ops import SentiNERELDocOperation
+from arekit.contrib.utils.pipelines.sources.sentinerel.entity_filter import SentiNerelEntityFilter
 from arekit.contrib.utils.pipelines.sources.sentinerel.labels_fmt import SentiNERELSentimentLabelFormatter
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
@@ -30,7 +31,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
                                             doc_ops=None,
                                             dist_in_sentences=0,
                                             docs_limit=None,
-                                            entity_filter=None):
+                                            entity_filter=SentiNerelEntityFilter()):
     """ This is a main pipeline which generates the samples for a SentiNEREL documents.
         SentiNEREL is a collection that becomes a part of the:
             1. Attitude extraction studies (AREkit focused studies):
