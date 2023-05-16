@@ -14,5 +14,5 @@ class CroppedBertSampleRowProvider(CroppedSampleRowProvider):
 
         super(CroppedBertSampleRowProvider, self).__init__(
             crop_window_size=crop_window_size,
-            label_scaler=MultipleLabelProvider(label_scaler),
+            label_scaler=label_scaler,
             text_provider=text_provider)
