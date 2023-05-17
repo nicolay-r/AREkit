@@ -1,6 +1,6 @@
 from enum import Enum
 from os import path
-from os.path import basename, join, dirname
+from os.path import basename, join
 
 import enum
 
