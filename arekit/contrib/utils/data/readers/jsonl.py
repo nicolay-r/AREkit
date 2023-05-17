@@ -10,6 +10,3 @@ class JsonlReader(BaseReader):
             for line in f.readlines():
                 rows.append(line)
         return JsonlBasedRowsStorage(rows)
-
-    def target_extension(self):
-        return ".jsonl"
