@@ -14,6 +14,7 @@ from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
 from arekit.contrib.utils.data.writers.csv_native import NativeCsvWriter
+from arekit.contrib.utils.data.writers.json_opennre import OpenNREJsonWriter
 from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.pipelines.items.sampling.bert import BertExperimentInputSerializerPipelineItem
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
@@ -26,11 +27,13 @@ from tests.tutorials.test_tutorial_pipeline_sampling_bert import CustomEntitiesF
 from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentOperations
 
 
-class TestCsvNativeWriter(unittest.TestCase):
+class TestStreamWriters(unittest.TestCase):
 
     __output_dir = join(dirname(__file__), "out")
 
-    def test(self):
+    def __launch(self, writer, target_extention):
+        assert(isinstance(target_extention, str))
+
         text_b_template = '{subject} к {object} в контексте : << {context} >>'
 
         if not os.path.exists(self.__output_dir):
@@ -47,8 +50,7 @@ class TestCsvNativeWriter(unittest.TestCase):
             label_provider=MultipleLabelProvider(SentimentLabelScaler()),
             text_provider=text_provider)
 
-        writer = NativeCsvWriter()
-        samples_io = SamplesIO(self.__output_dir, writer, target_extension=".csv")
+        samples_io = SamplesIO(self.__output_dir, writer, target_extension=target_extention)
 
         pipeline_item = BertExperimentInputSerializerPipelineItem(
             sample_rows_provider=sample_rows_provider,
@@ -86,3 +88,14 @@ class TestCsvNativeWriter(unittest.TestCase):
                          "data_folding": no_folding,
                          "data_type_pipelines": {DataType.Train: train_pipeline}
                      })
+
+    def test_csv_native(self):
+        """ Testing writing into CSV format
+        """
+        return self.__launch(writer=NativeCsvWriter(), target_extention=".csv")
+
+    def test_json_native(self):
+        """ Testing writing into CSV format
+        """
+        return self.__launch(writer=OpenNREJsonWriter(text_columns=[BaseSingleTextProvider.TEXT_A]),
+                             target_extention=".jsonl")
