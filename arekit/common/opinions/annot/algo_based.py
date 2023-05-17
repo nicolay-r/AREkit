@@ -26,7 +26,7 @@ class AlgorithmBasedOpinionAnnotator(BaseOpinionAnnotator):
 
         self.__annot_algo = annot_algo
         self.__create_empty_collection_func = create_empty_collection_func
-        self.__get_existed_opinions_func = lambda _: None \
+        self.__get_existed_opinions_func = (lambda _: None) \
             if get_doc_existed_opinions_func is None else get_doc_existed_opinions_func
 
     # region private methods
