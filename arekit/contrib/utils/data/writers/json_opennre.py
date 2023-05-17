@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from os.path import dirname
 
 from arekit.common.data import const
 from arekit.common.data.storages.base import BaseRowsStorage
@@ -58,6 +59,7 @@ class OpenNREJsonWriter(BaseWriter):
         }
 
     def open_target(self, target):
+        os.makedirs(dirname(target), exist_ok=True)
         self.__target_f = open(target, "w")
         pass
 

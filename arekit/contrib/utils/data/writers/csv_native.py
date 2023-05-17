@@ -1,4 +1,7 @@
 import csv
+import os
+from os.path import dirname
+
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
 from arekit.contrib.utils.data.writers.base import BaseWriter
@@ -13,6 +16,7 @@ class NativeCsvWriter(BaseWriter):
             f, delimiter=delimiter, quotechar=quotechar, quoting=quoting)
 
     def open_target(self, target):
+        os.makedirs(dirname(target), exist_ok=True)
         self.__target_f = open(target, "w")
         self.__writer = self.__create_writer_func(self.__target_f)
         pass
