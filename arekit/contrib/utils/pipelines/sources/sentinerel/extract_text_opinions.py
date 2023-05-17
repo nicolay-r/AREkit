@@ -143,8 +143,7 @@ def create_nolabel_text_opinion_annotator(terms_per_context, dist_in_sents=0, sy
             opinions=[],
             synonyms=synonyms,
             error_on_duplicates=True,
-            error_on_synonym_end_missed=False),
-        get_doc_existed_opinions_func=lambda _: None)
+            error_on_synonym_end_missed=False))
 
 
 def create_train_pipeline(text_parser, doc_ops, annotators, text_opinion_filters):

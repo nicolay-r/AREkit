@@ -13,20 +13,21 @@ class AlgorithmBasedOpinionAnnotator(BaseOpinionAnnotator):
     """ Algorithm-based annotator
     """
 
-    def __init__(self, annot_algo, create_empty_collection_func, get_doc_existed_opinions_func):
-        """
-        create_empty_collection_func:
-            function that creates an empty opinion collection
-        get_doc_existed_opinions_func:
-            function that provides existed opinions for a document
+    def __init__(self, annot_algo, create_empty_collection_func, get_doc_existed_opinions_func=None):
+        """ create_empty_collection_func: func
+                function that creates an empty OpinionCollection
+            get_doc_existed_opinions_func: func or None
+                function that provides existed opinions for a document;
+                if None, then we consider an absence of the existed document-level opinions.
         """
         assert(isinstance(annot_algo, BaseOpinionAnnotationAlgorithm))
-        assert(callable(get_doc_existed_opinions_func))
+        assert(callable(get_doc_existed_opinions_func) or get_doc_existed_opinions_func is None)
         super(AlgorithmBasedOpinionAnnotator, self).__init__()
 
         self.__annot_algo = annot_algo
-        self.__get_existed_opinions_func = get_doc_existed_opinions_func
         self.__create_empty_collection_func = create_empty_collection_func
+        self.__get_existed_opinions_func = lambda _: None \
+            if get_doc_existed_opinions_func is None else get_doc_existed_opinions_func
 
     # region private methods
 

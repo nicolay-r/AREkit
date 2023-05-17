@@ -4,10 +4,16 @@ from arekit.common.opinions.annot.algo_based import AlgorithmBasedOpinionAnnotat
 
 
 class AlgorithmBasedTextOpinionAnnotator(AlgorithmBasedOpinionAnnotator):
-    """ Wrap over OpinionAnnotator that allows to perform a conversion into TextOpinions
+    """ This class represent a wrap over TextOpinionAnnotator
+        and allows to perform a conversion into TextOpinions
     """
 
-    def __init__(self, value_to_group_id_func, annot_algo, get_doc_existed_opinions_func, create_empty_collection_func):
+    def __init__(self, value_to_group_id_func, annot_algo, create_empty_collection_func,
+                 get_doc_existed_opinions_func=None):
+        """ get_doc_existed_opinions_func: func or None
+                function that provides existed opinions for a document;
+                if None, then we consider an absence of the existed document-level opinions.
+        """
         assert(callable(value_to_group_id_func))
         super(AlgorithmBasedTextOpinionAnnotator, self).__init__(
             annot_algo=annot_algo,

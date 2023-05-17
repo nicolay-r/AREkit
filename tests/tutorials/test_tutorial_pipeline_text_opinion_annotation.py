@@ -60,7 +60,6 @@ class TestTextOpinionAnnotation(unittest.TestCase):
                 label_provider=ConstantLabelProvider(NoLabel())),
             create_empty_collection_func=lambda: OpinionCollection(
                 opinions=[], synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
-            get_doc_existed_opinions_func=lambda _: None,
             value_to_group_id_func=lambda value:
             SynonymsCollectionValuesGroupingProviders.provide_existed_or_register_missed_value(
                 synonyms=synonyms, value=value))

@@ -73,7 +73,6 @@ def nolabel_annotator(synonyms, terms_per_context, dist_in_sentences=0, no_label
                                                        label_provider=ConstantLabelProvider(no_label)),
         create_empty_collection_func=lambda: OpinionCollection(
             opinions=[], synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
-        get_doc_existed_opinions_func=lambda _: None,
         value_to_group_id_func=lambda value:
         SynonymsCollectionValuesGroupingProviders.provide_existed_value(synonyms=synonyms, value=value))
 
@@ -86,7 +85,6 @@ def predefined_annotator(synonyms, labels_fmt):
             lambda doc_id: __get_document_opinions(doc_id=doc_id, synonyms=synonyms, labels_fmt=labels_fmt)),
         create_empty_collection_func=lambda: OpinionCollection(
             opinions=[], synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
-        get_doc_existed_opinions_func=lambda _: None,
         value_to_group_id_func=lambda value:
         SynonymsCollectionValuesGroupingProviders.provide_existed_value(synonyms=synonyms, value=value))
 
