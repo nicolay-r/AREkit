@@ -39,9 +39,7 @@ class SentiNerelEntityCollection(EntityCollection):
 
         # Since this dataset does not provide the synonyms collection by default,
         # it is necessary to declare an empty collection to populate so in further.
-        synonyms = StemmerBasedSynonymCollection(stemmer=MystemWrapper(),
-                                                 is_read_only=False,
-                                                 debug=False)
+        synonyms = StemmerBasedSynonymCollection(stemmer=MystemWrapper(), is_read_only=False)
 
         return SentiNerelIOUtils.read_from_zip(
             inner_path=SentiNerelIOUtils.get_annotation_innerpath(filename),

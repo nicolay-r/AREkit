@@ -41,8 +41,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
     synonyms = StemmerBasedSynonymCollection(
         iter_group_values_lists=RuSentRelSynonymsCollectionHelper.iter_groups(rusentrel_version),
         stemmer=MystemWrapper(),
-        is_read_only=False,
-        debug=False)
+        is_read_only=False)
 
     doc_ops = RuSentrelDocumentOperations(version=rusentrel_version, synonyms=synonyms)
 

@@ -7,7 +7,7 @@ class StemmerBasedSynonymCollection(SynonymsCollection):
         in which grouping function is based on the stemmed entity values.
     """
 
-    def __init__(self, stemmer, iter_group_values_lists=None, is_read_only=True, debug=False):
+    def __init__(self, stemmer, iter_group_values_lists=None, is_read_only=True):
         """ iter_group_values_lists: iterable or None
                 describes the original set of values for initialization;
                 If None, then collection is considered as empty.
@@ -16,7 +16,7 @@ class StemmerBasedSynonymCollection(SynonymsCollection):
         self.__stemmer = stemmer
         super(StemmerBasedSynonymCollection, self).__init__(iter_group_values_lists=iter_group_values_lists,
                                                             is_read_only=is_read_only,
-                                                            debug=debug)
+                                                            debug=False)
 
     # region private methods
 
