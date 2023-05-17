@@ -23,7 +23,7 @@ class TestRuSentiFrames(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        frames = RuSentiFramesCollection.read_collection(
+        frames = RuSentiFramesCollection.read(
             version=RuSentiFramesVersions.V20,
             labels_fmt=RuSentiFramesLabelsFormatter(
                 neg_label_type=NegativeLabel, pos_label_type=PositiveLabel),

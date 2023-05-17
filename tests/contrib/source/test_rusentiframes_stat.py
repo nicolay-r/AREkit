@@ -161,7 +161,7 @@ def __about(frames_collection, pos_tagger):
 def about_version(version=RuSentiFramesVersions.V20):
     stemmer = MystemWrapper()
     pos_tagger = POSMystemWrapper(stemmer.MystemInstance)
-    frames_collection = RuSentiFramesCollection.read_collection(
+    frames_collection = RuSentiFramesCollection.read(
         version=version,
         labels_fmt=RuSentiFramesLabelsFormatter(neg_label_type=NegativeLabel,
                                                 pos_label_type=PositiveLabel),

@@ -39,7 +39,7 @@ class TestTestParser(unittest.TestCase):
     def test(self):
         text = "А контроль над этими провинциями — [США] , которая не пытается ввести санкции против."
 
-        frames_collection = RuSentiFramesCollection.read_collection(
+        frames_collection = RuSentiFramesCollection.read(
             version=RuSentiFramesVersions.V20,
             labels_fmt=RuSentiFramesLabelsFormatter(
                 pos_label_type=PositiveTo, neg_label_type=NegativeTo),

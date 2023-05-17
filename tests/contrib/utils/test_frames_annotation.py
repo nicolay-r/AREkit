@@ -16,7 +16,7 @@ class TestFramesAnnotation(unittest.TestCase):
 
     @staticmethod
     def __create_frames_variants_collection():
-        frames = RuSentiFramesCollection.read_collection(
+        frames = RuSentiFramesCollection.read(
             version=RuSentiFramesVersions.V20,
             labels_fmt=RuSentiFramesLabelsFormatter(
                 neg_label_type=NegativeLabel, pos_label_type=PositiveLabel),

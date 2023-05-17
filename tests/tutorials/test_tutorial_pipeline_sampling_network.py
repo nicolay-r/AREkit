@@ -72,7 +72,7 @@ class TestSamplingNetwork(unittest.TestCase):
         stemmer = MystemWrapper()
         embedding = load_embedding_news_mystem_skipgram_1000_20_2015(stemmer)
 
-        frames_collection = RuSentiFramesCollection.read_collection(
+        frames_collection = RuSentiFramesCollection.read(
             version=RuSentiFramesVersions.V20,
             labels_fmt=RuSentiFramesLabelsFormatter(pos_label_type=Positive, neg_label_type=Negative),
             effect_labels_fmt=RuSentiFramesEffectLabelsFormatter(pos_label_type=Positive, neg_label_type=Negative))

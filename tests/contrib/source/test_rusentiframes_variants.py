@@ -16,7 +16,7 @@ class TestRuSentiFrameVariants(unittest.TestCase):
 
     @staticmethod
     def __iter_frame_variants():
-        frames_collection = RuSentiFramesCollection.read_collection(
+        frames_collection = RuSentiFramesCollection.read(
             version=RuSentiFramesVersions.V20,
             labels_fmt=RuSentiFramesLabelsFormatter(
                 neg_label_type=NegativeLabel, pos_label_type=PositiveLabel),

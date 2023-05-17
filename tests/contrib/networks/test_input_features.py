@@ -58,7 +58,7 @@ class TestTfInputFeatures(unittest.TestCase):
         cls.entities_formatter = RussianEntitiesCasedFormatter(
             pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
         cls.synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=cls.stemmer)
-        cls.frames_collection = RuSentiFramesCollection.read_collection(
+        cls.frames_collection = RuSentiFramesCollection.read(
             version=RuSentiFramesVersions.V10,
             labels_fmt=RuSentiFramesLabelsFormatter(pos_label_type=TestPositiveLabel,
                                                     neg_label_type=TestNegativeLabel),

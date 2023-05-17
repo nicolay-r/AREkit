@@ -44,7 +44,7 @@ class RuSentiFramesCollection(object):
     # region classmethods
 
     @classmethod
-    def read_collection(cls, version, labels_fmt, effect_labels_fmt):
+    def read(cls, version, labels_fmt, effect_labels_fmt):
         assert(isinstance(version, RuSentiFramesVersions))
         assert(isinstance(labels_fmt, RuSentiFramesLabelsFormatter))
         assert(isinstance(effect_labels_fmt, RuSentiFramesEffectLabelsFormatter))
