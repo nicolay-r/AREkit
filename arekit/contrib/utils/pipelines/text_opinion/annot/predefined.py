@@ -37,7 +37,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
         self.__doc_ops = doc_ops
         self.__label_formatter = label_formatter
         self.__keep_any_type = keep_any_type
-        self.__entity_index_func = lambda brat_entity: brat_entity.ID if \
+        self.__entity_index_func = (lambda brat_entity: brat_entity.ID) if \
             entity_index_func is None else entity_index_func
 
     @staticmethod
