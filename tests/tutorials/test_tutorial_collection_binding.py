@@ -53,8 +53,7 @@ class FooEntityCollection(EntityCollection):
 
     @classmethod
     def read_collection(cls, filename, version):
-        synonyms = StemmerBasedSynonymCollection(
-            iter_group_values_lists=[], stemmer=MystemWrapper(), is_read_only=False, debug=False)
+        synonyms = StemmerBasedSynonymCollection(stemmer=MystemWrapper(), is_read_only=False, debug=False)
         return FooIOUtils.read_from_zip(
             inner_path=FooIOUtils.get_annotation_innerpath(filename),
             process_func=lambda input_file: cls(

@@ -25,8 +25,7 @@ class TestCompoundEntites(unittest.TestCase):
             {"text": self.text, "ind_begin": 0, "ind_end": len(self.text)}
         ]
 
-        synonyms = StemmerBasedSynonymCollection(
-            iter_group_values_lists=[], stemmer=MystemWrapper(), is_read_only=False, debug=False)
+        synonyms = StemmerBasedSynonymCollection(stemmer=MystemWrapper(), is_read_only=False, debug=False)
 
         collection = EntityCollection(
             self.entities,

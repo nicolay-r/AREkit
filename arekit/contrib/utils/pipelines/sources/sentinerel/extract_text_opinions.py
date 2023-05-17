@@ -126,8 +126,7 @@ def create_nolabel_text_opinion_annotator(terms_per_context, dist_in_sents=0, sy
     assert(isinstance(dist_in_sents, int))
 
     if synonyms is None:
-        synonyms = StemmerBasedSynonymCollection(iter_group_values_lists=[],
-                                                 stemmer=MystemWrapper(),
+        synonyms = StemmerBasedSynonymCollection(stemmer=MystemWrapper(),
                                                  is_read_only=False,
                                                  debug=False)
 

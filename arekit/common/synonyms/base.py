@@ -5,8 +5,14 @@ from arekit.common import log_utils
 
 class SynonymsCollection(object):
 
-    def __init__(self, iter_group_values_lists, is_read_only, debug):
-        assert(isinstance(iter_group_values_lists, collections.Iterable))
+    def __init__(self, iter_group_values_lists=None, is_read_only=True, debug=False):
+        """ iter_group_values_lists: iterable or None
+            is_read_only: bool
+                whether the relation collection could be expanded or not
+            debug: bool
+                utilized for logging the salient information during usage.
+        """
+        assert(isinstance(iter_group_values_lists, collections.Iterable) or iter_group_values_lists is None)
         assert(isinstance(is_read_only, bool))
         assert(isinstance(debug, bool))
 
@@ -16,7 +22,7 @@ class SynonymsCollection(object):
 
         self.__is_read_only = is_read_only
         self.__debug = debug
-        self.__fill(iter_grop_values_lists=iter_group_values_lists)
+        self.__fill(iter_group_values_lists=[] if iter_group_values_lists is None else iter_group_values_lists)
 
     # region properties
 
@@ -102,8 +108,8 @@ class SynonymsCollection(object):
 
     # region private methods
 
-    def __fill(self, iter_grop_values_lists):
-        for group in iter_grop_values_lists:
+    def __fill(self, iter_group_values_lists):
+        for group in iter_group_values_lists:
             self.__process_group(group)
 
     def __process_group(self, group_values_list):

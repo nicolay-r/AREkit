@@ -50,8 +50,7 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             label_formatter=CustomLabelsFormatter(pos_label_type=PositiveLabel,
                                                   neg_label_type=NegativeLabel))
 
-        synonyms = StemmerBasedSynonymCollection(
-            iter_group_values_lists=[], stemmer=MystemWrapper(), is_read_only=False, debug=False)
+        synonyms = StemmerBasedSynonymCollection(stemmer=MystemWrapper(), is_read_only=False, debug=False)
 
         nolabel_annotator = AlgorithmBasedTextOpinionAnnotator(
             annot_algo=PairBasedOpinionAnnotationAlgorithm(
