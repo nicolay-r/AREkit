@@ -77,7 +77,7 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             text_opinion_filters=[
                 DistanceLimitedTextOpinionFilter(terms_per_context=50)
             ],
-            get_doc_func=lambda doc_id: doc_ops.get_doc(doc_id),
+            get_doc_by_id_func=doc_ops.get_doc,
             text_parser=text_parser)
 
         # Running the pipeline.

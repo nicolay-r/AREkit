@@ -51,15 +51,15 @@ def __iter_text_opinion_linkages(parsed_news, annotators, text_opinion_filters):
             yield text_opinion_linkage
 
 
-def text_opinion_extraction_pipeline(text_parser, get_doc_func, annotators, text_opinion_filters):
-    assert(callable(get_doc_func))
+def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators, text_opinion_filters):
+    assert(callable(get_doc_by_id_func))
     assert(isinstance(text_opinion_filters, list))
 
     text_opinion_filters = [FrameworkLimitationsTextOpinionFilter()] + text_opinion_filters
 
     return BasePipeline([
         # (doc_id) -> (news)
-        MapPipelineItem(map_func=lambda doc_id: get_doc_func(doc_id)),
+        MapPipelineItem(map_func=lambda doc_id: get_doc_by_id_func(doc_id)),
 
         # (news, ppl_ctx) -> (parsed_news)
         MapNestedPipelineItem(map_func=lambda news, ppl_ctx: NewsParser.parse(

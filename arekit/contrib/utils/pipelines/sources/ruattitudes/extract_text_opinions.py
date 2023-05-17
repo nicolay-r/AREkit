@@ -56,7 +56,7 @@ def create_text_opinion_extraction_pipeline(text_parser,
             EntityBasedTextOpinionFilter(entity_filter=entity_filter),
             DistanceLimitedTextOpinionFilter(terms_per_context)
         ],
-        get_doc_func=lambda doc_id: doc_ops.get_doc(doc_id),
+        get_doc_by_id_func=doc_ops.get_doc,
         text_parser=text_parser)
 
     return pipeline, ru_attitudes

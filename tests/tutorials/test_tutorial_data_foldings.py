@@ -45,7 +45,7 @@ class DataFolding(unittest.TestCase):
         doc_ids = list(range(2))
 
         splitter_statistical = StatBasedCrossValidationSplitter(
-            docs_stat=SentenceBasedDocumentStatGenerator(lambda doc_id: doc_ops.get_doc(doc_id)),
+            docs_stat=SentenceBasedDocumentStatGenerator(doc_reader_func=doc_ops.get_doc),
             doc_ids=doc_ids)
 
         cv_folding = TwoClassCVFolding(
