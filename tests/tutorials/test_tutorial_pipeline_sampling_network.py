@@ -11,7 +11,6 @@ from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.networks.input.ctx_serialization import NetworkSerializationContext
-from arekit.contrib.networks.input.term_types import TermTypes
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLabelsFormatter, \
@@ -24,6 +23,7 @@ from arekit.contrib.utils.data.writers.csv_pd import PandasCsvWriter
 from arekit.contrib.utils.entities.formatters.str_simple_uppercase_fmt import SimpleUppercasedEntityFormatter
 from arekit.contrib.utils.io_utils.embedding import NpEmbeddingIO
 from arekit.contrib.utils.io_utils.samples import SamplesIO
+from arekit.contrib.utils.nn.rows import create_rows_provider
 from arekit.contrib.utils.pipelines.items.sampling.networks import NetworksInputSerializerPipelineItem
 from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
@@ -32,9 +32,6 @@ from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
-from arekit.contrib.utils.resources import load_embedding_news_mystem_skipgram_1000_20_2015
-from arekit.contrib.utils.vectorizers.bpe import BPEVectorizer
-from arekit.contrib.utils.vectorizers.random_norm import RandomNormalVectorizer
 from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentOperations
 
 
@@ -70,7 +67,6 @@ class TestSamplingNetwork(unittest.TestCase):
     def test(self):
 
         stemmer = MystemWrapper()
-        embedding = load_embedding_news_mystem_skipgram_1000_20_2015(stemmer)
 
         frames_collection = RuSentiFramesCollection.read(
             version=RuSentiFramesVersions.V20,
@@ -90,29 +86,17 @@ class TestSamplingNetwork(unittest.TestCase):
             frames_connotation_provider=RuSentiFramesConnotationProvider(frames_collection))
 
         writer = PandasCsvWriter(write_header=True)
-        samples_io = SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz")
 
-        embedding_io = NpEmbeddingIO(target_dir=self.__output_dir)
-
-        bpe_vectorizer = BPEVectorizer(embedding=embedding, max_part_size=3)
-        norm_vectorizer = RandomNormalVectorizer(vector_size=embedding.VectorSize,
-                                                 token_offset=12345)
-        vectorizers = {
-            TermTypes.WORD: bpe_vectorizer,
-            TermTypes.ENTITY: bpe_vectorizer,
-            TermTypes.FRAME: bpe_vectorizer,
-            TermTypes.TOKEN: norm_vectorizer
-        }
+        rows_provider = create_rows_provider(
+            str_entity_fmt=SimpleUppercasedEntityFormatter(),
+            ctx=ctx)
 
         pipeline_item = NetworksInputSerializerPipelineItem(
-            vectorizers=vectorizers,
-            samples_io=samples_io,
-            emb_io=embedding_io,
-            ctx=ctx,
-            str_entity_fmt=SimpleUppercasedEntityFormatter(),
+            samples_io=SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz"),
+            emb_io=NpEmbeddingIO(target_dir=self.__output_dir),
+            rows_provider=rows_provider,
             balance_func=lambda data_type: data_type == DataType.Train,
             save_labels_func=lambda data_type: data_type != DataType.Test,
-            save_embedding=True,
             storage=PandasBasedRowsStorage())
 
         pipeline = BasePipeline([

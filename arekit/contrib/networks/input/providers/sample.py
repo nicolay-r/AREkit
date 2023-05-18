@@ -1,3 +1,5 @@
+import collections
+
 from arekit.common.data.input.providers.label.base import LabelProvider
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.entities.base import Entity
@@ -16,10 +18,16 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                  text_provider,
                  frames_connotation_provider,
                  frame_role_label_scaler,
+                 term_embedding_pairs=None,
                  pos_terms_mapper=None):
+        """ term_embedding_pairs: dict or None
+                additional structure, utilized to collect all the embedding pairs during the
+                rows providing stage.
+        """
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(frame_role_label_scaler, SentimentLabelScaler))
         assert(isinstance(pos_terms_mapper, PosTermsMapper) or pos_terms_mapper is None)
+        assert(isinstance(term_embedding_pairs, collections.OrderedDict) or term_embedding_pairs is None)
 
         super(NetworkSampleRowProvider, self).__init__(label_provider=label_provider,
                                                        text_provider=text_provider)
@@ -27,6 +35,26 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         self.__frames_connotation_provider = frames_connotation_provider
         self.__frame_role_label_scaler = frame_role_label_scaler
         self.__pos_terms_mapper = pos_terms_mapper
+        self.__term_embedding_pairs = term_embedding_pairs
+
+    @property
+    def HasEmbeddingPairs(self):
+        return self.__term_embedding_pairs is not None
+
+    def iter_term_embedding_pairs(self):
+        """ Provide the contents of the embedded pairs.
+        """
+        return iter(self.__term_embedding_pairs.items())
+
+    def clear_embedding_pairs(self):
+        """ Release the contents of the collected embedding pairs.
+        """
+
+        # Check whether we actually collect embedding pairs.
+        if self.__term_embedding_pairs is None:
+            return
+
+        self.__term_embedding_pairs.clear()
 
     def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):

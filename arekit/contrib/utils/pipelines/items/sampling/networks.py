@@ -1,21 +1,12 @@
-import collections
-
-from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
-from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
-from arekit.contrib.networks.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.networks.input.embedding.matrix import create_term_embedding_matrix
 from arekit.contrib.networks.input.embedding.offsets import TermsEmbeddingOffsets
-from arekit.contrib.networks.input.formatters.pos_mapper import PosTermsMapper
-from arekit.contrib.networks.input.providers.sample import NetworkSampleRowProvider
-from arekit.contrib.networks.input.providers.text import NetworkSingleTextProvider
-from arekit.contrib.networks.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
 from arekit.contrib.networks.embedding import Embedding
+from arekit.contrib.networks.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.utils.io_utils.embedding import NpEmbeddingIO
 from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.utils_folding import folding_iter_states
@@ -24,8 +15,8 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, vectorizers, save_labels_func, str_entity_fmt, ctx,
-                 samples_io, emb_io, balance_func, save_embedding, storage):
+    def __init__(self, save_labels_func, rows_provider, samples_io,
+                 emb_io, balance_func, storage, save_embedding=True):
         """ This pipeline item allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -36,25 +27,15 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
             balance: bool
                 declares whethere there is a need to balance Train samples
 
-            vectorizers: dict in which for every type there is an assigned Vectorizer
-                vectorization of term types.
-                {
-                    TermType.Word: Vectorizer,
-                    TermType.Entity: Vectorizer,
-                    ...
-                }
-
             save_labels_func: function
                 data_type -> bool
 
             save_embedding: bool
                 save embedding and all the related information to it.
         """
-        assert(isinstance(ctx, NetworkSerializationContext))
         assert(isinstance(samples_io, SamplesIO))
         assert(isinstance(emb_io, NpEmbeddingIO))
-        assert(isinstance(str_entity_fmt, StringEntitiesFormatter))
-        assert(isinstance(vectorizers, dict) or vectorizers is None)
+        assert(isinstance(rows_provider, NetworkSampleRowProvider))
         assert(isinstance(save_embedding, bool))
         assert(callable(save_labels_func))
         assert(callable(balance_func))
@@ -62,39 +43,11 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
 
         self.__emb_io = emb_io
         self.__samples_io = samples_io
-        self.__save_embedding = save_embedding and vectorizers is not None
+        self.__save_embedding = save_embedding
         self.__save_labels_func = save_labels_func
         self.__balance_func = balance_func
         self.__storage = storage
-
-        self.__term_embedding_pairs = collections.OrderedDict()
-
-        if vectorizers is not None:
-            text_provider = NetworkSingleTextProvider(
-                text_terms_mapper=StringWithEmbeddingNetworkTermMapping(
-                    vectorizers=vectorizers,
-                    string_entities_formatter=str_entity_fmt),
-                pair_handling_func=lambda pair: self.__add_term_embedding(
-                    dict_data=self.__term_embedding_pairs,
-                    term=pair[0],
-                    emb_vector=pair[1]))
-        else:
-            # Create text provider which without vectorizers.
-            text_provider = BaseSingleTextProvider(
-                text_terms_mapper=OpinionContainingTextTermsMapper(str_entity_fmt))
-
-        self.__rows_provider = NetworkSampleRowProvider(
-            label_provider=ctx.LabelProvider,
-            text_provider=text_provider,
-            frames_connotation_provider=ctx.FramesConnotationProvider,
-            frame_role_label_scaler=ctx.FrameRolesLabelScaler,
-            pos_terms_mapper=PosTermsMapper(ctx.PosTagger) if ctx.PosTagger is not None else None)
-
-    @staticmethod
-    def __add_term_embedding(dict_data, term, emb_vector):
-        if term in dict_data:
-            return
-        dict_data[term] = emb_vector
+        self.__rows_provider = rows_provider
 
     def __serialize_iteration(self, data_type, pipeline, rows_provider, data_folding):
         assert(isinstance(data_type, DataType))
@@ -130,7 +83,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         assert(isinstance(data_folding, BaseDataFolding))
 
         # Prepare for the present iteration.
-        self.__term_embedding_pairs.clear()
+        self.__rows_provider.clear_embedding_pairs()
 
         for data_type, pipeline in data_type_pipelines.items():
             self.__serialize_iteration(pipeline=pipeline,
@@ -138,11 +91,11 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
                                        rows_provider=self.__rows_provider,
                                        data_folding=data_folding)
 
-        if not self.__save_embedding:
+        if not (self.__save_embedding and self.__rows_provider.HasEmbeddingPairs):
             return
 
         # Save embedding information additionally.
-        term_embedding = Embedding.from_word_embedding_pairs_iter(iter(self.__term_embedding_pairs.items()))
+        term_embedding = Embedding.from_word_embedding_pairs_iter(self.__rows_provider.iter_term_embedding_pairs())
         embedding_matrix = create_term_embedding_matrix(term_embedding=term_embedding)
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
 
