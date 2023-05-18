@@ -1,4 +1,3 @@
-from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.sample.cropped import CroppedSampleRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
