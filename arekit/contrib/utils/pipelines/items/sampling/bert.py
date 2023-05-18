@@ -1,6 +1,7 @@
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
+from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.utils.utils_folding import folding_iter_states
@@ -9,7 +10,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, sample_rows_provider, samples_io, save_labels_func, balance_func, storage):
+    def __init__(self, rows_provider, samples_io, save_labels_func, balance_func, storage):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -21,7 +22,7 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
         assert(isinstance(samples_io, BaseSamplesIO))
         super(BertExperimentInputSerializerPipelineItem, self).__init__()
 
-        self.__sample_rows_provider = sample_rows_provider
+        self.__rows_provider = rows_provider
         self.__balance_func = balance_func
         self.__samples_io = samples_io
         self.__save_labels_func = save_labels_func
@@ -31,11 +32,12 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
 
     def __serialize_iteration(self, data_type, pipeline, data_folding):
         assert(isinstance(data_type, DataType))
+        assert(isinstance(pipeline, BasePipeline))
 
         repos = {
             "sample": InputDataSerializationHelper.create_samples_repo(
                 keep_labels=self.__save_labels_func(data_type),
-                rows_provider=self.__sample_rows_provider,
+                rows_provider=self.__rows_provider,
                 storage=self.__storage),
         }
 
@@ -46,7 +48,6 @@ class BertExperimentInputSerializerPipelineItem(BasePipelineItem):
         }
 
         for description, repo in repos.items():
-
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,
                 pipeline=pipeline,

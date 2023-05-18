@@ -84,7 +84,7 @@ class TestBertSerialization(unittest.TestCase):
             if text_b_template is None else \
             PairTextProvider(text_b_template, terms_mapper)
 
-        sample_rows_provider = BaseSampleRowProvider(
+        rows_provider = BaseSampleRowProvider(
             label_provider=MultipleLabelProvider(SentimentLabelScaler()),
             text_provider=text_provider)
 
@@ -92,7 +92,7 @@ class TestBertSerialization(unittest.TestCase):
         samples_io = SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz")
 
         pipeline_item = BertExperimentInputSerializerPipelineItem(
-            sample_rows_provider=sample_rows_provider,
+            rows_provider=rows_provider,
             samples_io=samples_io,
             save_labels_func=lambda data_type: True,
             balance_func=lambda data_type: data_type == DataType.Train,

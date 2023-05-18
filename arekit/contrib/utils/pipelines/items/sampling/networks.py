@@ -1,3 +1,4 @@
+from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.pipeline.base import BasePipeline
@@ -8,7 +9,6 @@ from arekit.contrib.networks.input.embedding.offsets import TermsEmbeddingOffset
 from arekit.contrib.networks.embedding import Embedding
 from arekit.contrib.networks.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.utils.io_utils.embedding import NpEmbeddingIO
-from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.utils_folding import folding_iter_states
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
@@ -33,7 +33,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
             save_embedding: bool
                 save embedding and all the related information to it.
         """
-        assert(isinstance(samples_io, SamplesIO))
+        assert(isinstance(samples_io, BaseSamplesIO))
         assert(isinstance(emb_io, NpEmbeddingIO))
         assert(isinstance(rows_provider, NetworkSampleRowProvider))
         assert(isinstance(save_embedding, bool))
@@ -49,14 +49,14 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         self.__storage = storage
         self.__rows_provider = rows_provider
 
-    def __serialize_iteration(self, data_type, pipeline, rows_provider, data_folding):
+    def __serialize_iteration(self, data_type, pipeline, data_folding):
         assert(isinstance(data_type, DataType))
         assert(isinstance(pipeline, BasePipeline))
 
         repos = {
             "sample": InputDataSerializationHelper.create_samples_repo(
                 keep_labels=self.__save_labels_func(data_type),
-                rows_provider=rows_provider,
+                rows_provider=self.__rows_provider,
                 storage=self.__storage),
         }
 
@@ -86,10 +86,7 @@ class NetworksInputSerializerPipelineItem(BasePipelineItem):
         self.__rows_provider.clear_embedding_pairs()
 
         for data_type, pipeline in data_type_pipelines.items():
-            self.__serialize_iteration(pipeline=pipeline,
-                                       data_type=data_type,
-                                       rows_provider=self.__rows_provider,
-                                       data_folding=data_folding)
+            self.__serialize_iteration(data_type=data_type, pipeline=pipeline, data_folding=data_folding)
 
         if not (self.__save_embedding and self.__rows_provider.HasEmbeddingPairs):
             return
