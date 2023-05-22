@@ -7,6 +7,7 @@ from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
 from arekit.common.pipeline.items.map import MapPipelineItem
 from arekit.common.pipeline.items.map_nested import MapNestedPipelineItem
+from arekit.common.text.parser import BaseTextParser
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinionFilter
 from arekit.contrib.utils.pipelines.text_opinion.filters.limitation import FrameworkLimitationsTextOpinionFilter
@@ -51,11 +52,14 @@ def __iter_text_opinion_linkages(parsed_news, annotators, text_opinion_filters):
             yield text_opinion_linkage
 
 
-def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators, text_opinion_filters):
+def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators, text_opinion_filters=None):
+    assert(isinstance(text_parser, BaseTextParser))
     assert(callable(get_doc_by_id_func))
-    assert(isinstance(text_opinion_filters, list))
+    assert(isinstance(annotators, list))
+    assert(isinstance(text_opinion_filters, list) or text_opinion_filters is None)
 
-    text_opinion_filters = [FrameworkLimitationsTextOpinionFilter()] + text_opinion_filters
+    extra_filters = [] if text_opinion_filters is None else text_opinion_filters
+    actual_text_opinion_filters = [FrameworkLimitationsTextOpinionFilter()] + extra_filters
 
     return BasePipeline([
         # (doc_id) -> (news)
@@ -67,7 +71,7 @@ def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators
 
         # (parsed_news) -> (text_opinions)
         MapPipelineItem(map_func=lambda parsed_news: __iter_text_opinion_linkages(
-            annotators=annotators, parsed_news=parsed_news, text_opinion_filters=text_opinion_filters)),
+            annotators=annotators, parsed_news=parsed_news, text_opinion_filters=actual_text_opinion_filters)),
 
         # linkages[] -> linkages
         FlattenIterPipelineItem()
