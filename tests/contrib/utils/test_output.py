@@ -87,8 +87,7 @@ class TestOutputFormatters(unittest.TestCase):
         opinion_view = BaseOpinionStorageView(opinion_storage)
 
         converter_part = text_opinion_linkages_to_opinion_collections_pipeline_part(
-            create_opinion_collection_func=lambda: OpinionCollection(opinions=[],
-                                                                     synonyms=synonyms,
+            create_opinion_collection_func=lambda: OpinionCollection(synonyms=synonyms,
                                                                      error_on_duplicates=True,
                                                                      error_on_synonym_end_missed=True),
             doc_ids_set={1},

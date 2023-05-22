@@ -137,7 +137,6 @@ def create_nolabel_text_opinion_annotator(terms_per_context, dist_in_sents=0, sy
             dist_in_terms_bound=terms_per_context,
             label_provider=ConstantLabelProvider(NoLabel())),
         create_empty_collection_func=lambda: OpinionCollection(
-            opinions=[],
             synonyms=synonyms,
             error_on_duplicates=True,
             error_on_synonym_end_missed=False))
