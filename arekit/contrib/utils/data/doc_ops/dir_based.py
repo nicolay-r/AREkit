@@ -41,7 +41,7 @@ class DirectoryFilesDocOperations(DocumentOperations):
         # Parse text.
         return News(doc_id=doc_id, sentences=sentences)
 
-    def get_doc(self, doc_id):
+    def by_id(self, doc_id):
         """ Perform reading operation of the document.
         """
         file_name = self.__file_names[doc_id]

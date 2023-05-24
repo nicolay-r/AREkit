@@ -23,7 +23,7 @@ class SentiNERELDocOperation(DocumentOperations):
         self.__filename_by_id = filename_by_id
         self.__version = version
 
-    def get_doc(self, doc_id):
+    def by_id(self, doc_id):
         return SentiNerelDocReader.read_document(doc_id=doc_id,
                                                  version=self.__version,
                                                  filename=self.__filename_by_id[doc_id])

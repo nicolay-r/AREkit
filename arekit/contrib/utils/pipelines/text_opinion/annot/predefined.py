@@ -66,7 +66,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
             EntityServiceProvider(self.__entity_index_func)
         ])
         esp = pns.get_provider(EntityServiceProvider.NAME)
-        news = self.__doc_ops.get_doc(parsed_news.RelatedDocID)
+        news = self.__doc_ops.by_id(parsed_news.RelatedDocID)
 
         for brat_relation in news.Relations:
 

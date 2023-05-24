@@ -13,7 +13,7 @@ class DictionaryBasedDocumentOperations(DocumentOperations):
         super(DictionaryBasedDocumentOperations, self).__init__()
         self.__ru_attitudes = ru_attitudes
 
-    def get_doc(self, doc_id):
+    def by_id(self, doc_id):
         assert(isinstance(doc_id, int))
         return self.__ru_attitudes[doc_id]
 

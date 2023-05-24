@@ -55,7 +55,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
             EntityBasedTextOpinionFilter(entity_filter=entity_filter),
             DistanceLimitedTextOpinionFilter(terms_per_context)
         ],
-        get_doc_by_id_func=doc_ops.get_doc,
+        get_doc_by_id_func=doc_ops.by_id,
         text_parser=text_parser)
 
     return pipeline

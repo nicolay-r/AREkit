@@ -79,7 +79,7 @@ class TestStreamWriters(unittest.TestCase):
             text_opinion_filters=[
                 DistanceLimitedTextOpinionFilter(terms_per_context=50)
             ],
-            get_doc_by_id_func=doc_ops.get_doc,
+            get_doc_by_id_func=doc_ops.by_id,
             text_parser=text_parser)
         #####
 

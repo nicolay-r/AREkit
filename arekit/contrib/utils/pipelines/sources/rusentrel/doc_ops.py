@@ -15,7 +15,7 @@ class RuSentrelDocumentOperations(DocumentOperations):
         self.__version = version
         self.__synonyms = synonyms
 
-    def get_doc(self, doc_id):
+    def by_id(self, doc_id):
         assert (isinstance(doc_id, int))
         return RuSentRelNewsReader.read_document(doc_id=doc_id, synonyms=self.__synonyms, version=self.__version)
 

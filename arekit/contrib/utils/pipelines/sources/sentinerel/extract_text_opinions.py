@@ -147,7 +147,7 @@ def create_train_pipeline(text_parser, doc_ops, annotators, text_opinion_filters
         automatic annotations of other pairs with a NoLabel.
     """
     return text_opinion_extraction_pipeline(
-        get_doc_by_id_func=doc_ops.get_doc,
+        get_doc_by_id_func=doc_ops.by_id,
         text_parser=text_parser,
         annotators=annotators,
         text_opinion_filters=text_opinion_filters)
@@ -164,7 +164,7 @@ def create_test_pipeline(text_parser, doc_ops, annotators, text_opinion_filters)
     return text_opinion_extraction_pipeline(
         annotators=annotators,
         text_parser=text_parser,
-        get_doc_by_id_func=doc_ops.get_doc,
+        get_doc_by_id_func=doc_ops.by_id,
         text_opinion_filters=text_opinion_filters)
 
 
