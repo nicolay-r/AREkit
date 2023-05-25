@@ -4,7 +4,7 @@ from arekit.common.synonyms.base import SynonymsCollection
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
-from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
+from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinions
 from tests.contrib.networks.labels import TestPositiveLabel, TestNegativeLabel
 
 
@@ -19,7 +19,7 @@ def init_rusentrel_doc(doc_id, text_parser, synonyms):
     parsed_news = NewsParser.parse(news=news,
                                    text_parser=text_parser)
 
-    opinions = RuSentRelOpinionCollection.iter_opinions_from_doc(
+    opinions = RuSentRelOpinions.iter_from_doc(
         doc_id=doc_id,
         labels_fmt=RuSentRelLabelsFormatter(pos_label_type=TestPositiveLabel,
                                             neg_label_type=TestNegativeLabel)

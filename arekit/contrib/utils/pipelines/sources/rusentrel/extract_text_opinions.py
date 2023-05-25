@@ -5,7 +5,7 @@ from arekit.common.opinions.annot.algo.predefined import PredefinedOpinionAnnota
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
-from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinionCollection
+from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
 from arekit.contrib.utils.pipelines.sources.rusentrel.doc_ops import RuSentrelDocumentOperations
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
@@ -93,7 +93,7 @@ def __get_document_opinions(doc_id, synonyms, labels_fmt):
         Within this function we create the related OpinionCollection by a given doc_id.
     """
     return OpinionCollection(
-        opinions=RuSentRelOpinionCollection.iter_opinions_from_doc(
+        opinions=RuSentRelOpinions.iter_from_doc(
             doc_id=doc_id, labels_fmt=labels_fmt),
         synonyms=synonyms,
         error_on_synonym_end_missed=True,

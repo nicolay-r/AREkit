@@ -4,13 +4,13 @@ from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.provider import RuSentRelOpinionCollectionProvider
 
 
-class RuSentRelOpinionCollection:
+class RuSentRelOpinions:
     """
     Collection of sentiment opinions between entities
     """
 
     @staticmethod
-    def iter_opinions_from_doc(doc_id, labels_fmt, version=RuSentRelVersions.V11):
+    def iter_from_doc(doc_id, labels_fmt, version=RuSentRelVersions.V11):
         """ doc_id:
             synonyms: None or SynonymsCollection
                 None corresponds to the related synonym collection from RuSentRel collection.
