@@ -27,14 +27,14 @@ class PromptedSampleRowProvider(CroppedSampleRowProvider):
     def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
 
-        row = super(PromptedSampleRowProvider, self)._fill_row_core(row=row,
-                                                                    text_opinion_linkage=text_opinion_linkage,
-                                                                    index_in_linked=index_in_linked,
-                                                                    etalon_label=etalon_label,
-                                                                    parsed_news=parsed_news,
-                                                                    sentence_ind=sentence_ind,
-                                                                    s_ind=s_ind,
-                                                                    t_ind=t_ind)
+        super(PromptedSampleRowProvider, self)._fill_row_core(row=row,
+                                                              text_opinion_linkage=text_opinion_linkage,
+                                                              index_in_linked=index_in_linked,
+                                                              etalon_label=etalon_label,
+                                                              parsed_news=parsed_news,
+                                                              sentence_ind=sentence_ind,
+                                                              s_ind=s_ind,
+                                                              t_ind=t_ind)
         original_text = row[BaseSingleTextProvider.TEXT_A]
         row[BaseSingleTextProvider.TEXT_A] = self.__prompt.format(
             text=original_text,
