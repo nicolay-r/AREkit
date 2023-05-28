@@ -9,14 +9,14 @@ from arekit.contrib.utils.data.doc_ops.dict_based import DictionaryBasedDocument
 class RuAttitudesDocumentOperations(DictionaryBasedDocumentOperations):
 
     def __init__(self, version, keep_doc_ids_only, doc_id_func, limit):
-        d = self.__read_ruattitudes_to_brat_in_memory(version=version,
-                                                      keep_doc_ids_only=keep_doc_ids_only,
-                                                      doc_id_func=doc_id_func,
-                                                      limit=limit)
+        d = self.read_ruattitudes_to_brat_in_memory(version=version,
+                                                    keep_doc_ids_only=keep_doc_ids_only,
+                                                    doc_id_func=doc_id_func,
+                                                    limit=limit)
         super(RuAttitudesDocumentOperations, self).__init__(d)
 
     @staticmethod
-    def __read_ruattitudes_to_brat_in_memory(version, keep_doc_ids_only, doc_id_func, limit=None):
+    def read_ruattitudes_to_brat_in_memory(version, keep_doc_ids_only, doc_id_func, limit=None):
         """ Performs reading of RuAttitude formatted documents and
             selection according to 'doc_ids_set' parameter.
         """
@@ -37,8 +37,8 @@ class RuAttitudesDocumentOperations(DictionaryBasedDocumentOperations):
         d = {}
         docs_read = 0
         for doc_id, news in it_formatted_and_logged:
-            assert(isinstance(news, RuAttitudesNews))
-            d[doc_id] = RuAttitudesNewsConverter.to_brat_news(news)
+            assert(isinstance(news, RuAttitudesNews) or news is None)
+            d[doc_id] = RuAttitudesNewsConverter.to_brat_news(news) if news is not None else None
             docs_read += 1
             if limit is not None and docs_read >= limit:
                 break
