@@ -1,9 +1,8 @@
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.labels_fmt import RuAttitudesLabelFormatter
+from arekit.contrib.utils.pipelines.sources.ruattitudes.doc_ops import RuAttitudesDocumentOperations
 from arekit.contrib.utils.pipelines.sources.ruattitudes.entity_filter import RuAttitudesEntityFilter
-from arekit.contrib.utils.pipelines.sources.ruattitudes.utils import read_ruattitudes_to_brat_in_memory, \
-    DictionaryBasedDocumentOperations
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
@@ -40,13 +39,10 @@ def create_text_opinion_extraction_pipeline(text_parser,
     assert(version in [RuAttitudesVersions.V20Large, RuAttitudesVersions.V20Base,
                        RuAttitudesVersions.V20BaseNeut, RuAttitudesVersions.V20LargeNeut])
 
-    ru_attitudes = read_ruattitudes_to_brat_in_memory(
-        version=version,
-        doc_id_func=lambda doc_id: doc_id,
-        keep_doc_ids_only=False,
-        limit=limit)
-
-    doc_ops = DictionaryBasedDocumentOperations(ru_attitudes)
+    doc_ops = RuAttitudesDocumentOperations(version=version,
+                                            keep_doc_ids_only=False,
+                                            doc_id_func=lambda doc_id: doc_id,
+                                            limit=limit)
 
     pipeline = text_opinion_extraction_pipeline(
         annotators=[
@@ -59,4 +55,4 @@ def create_text_opinion_extraction_pipeline(text_parser,
         get_doc_by_id_func=doc_ops.by_id,
         text_parser=text_parser)
 
-    return pipeline, ru_attitudes
+    return pipeline
