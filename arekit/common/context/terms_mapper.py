@@ -25,7 +25,7 @@ class TextTermsMapper(object):
             elif isinstance(term, Entity):
                 m_term = self.map_entity(i, term)
             else:
-                raise Exception("Unsuported type {}".format(term))
+                raise Exception("Unsupported type {}".format(term))
 
             if m_term is not None:
                 yield m_term

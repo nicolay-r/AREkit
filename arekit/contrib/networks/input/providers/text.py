@@ -1,5 +1,5 @@
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
-from arekit.contrib.networks.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
+from arekit.contrib.networks.input.terms_mapping import VectorizedNetworkTermMapping
 
 
 class NetworkSingleTextProvider(BaseSingleTextProvider):
@@ -8,7 +8,7 @@ class NetworkSingleTextProvider(BaseSingleTextProvider):
     """
 
     def __init__(self, text_terms_mapper, pair_handling_func):
-        assert(isinstance(text_terms_mapper, StringWithEmbeddingNetworkTermMapping))
+        assert(isinstance(text_terms_mapper, VectorizedNetworkTermMapping))
         assert(callable(pair_handling_func))
         super(NetworkSingleTextProvider, self).__init__(text_terms_mapper=text_terms_mapper)
         self.__write_embedding_pair_func = pair_handling_func

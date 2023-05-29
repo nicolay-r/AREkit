@@ -4,15 +4,14 @@ from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.contrib.networks.input.term_types import TermTypes
 
 
-class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
+class VectorizedNetworkTermMapping(OpinionContainingTextTermsMapper):
     """ For every element returns: (word, embedded vector)
     """
 
     def __init__(self, string_entities_formatter, vectorizers):
-        """
-        string_emb_entity_formatter:
-            Utilized in order to obtain embedding value from predefined_embeding for enties
-        vectorizers:
+        """string_emb_entity_formatter:
+            Utilized in order to obtain embedding value from predefined_embeding for entities
+           vectorizers:
             dict
         """
         assert(isinstance(vectorizers, dict))
@@ -20,7 +19,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
         for term_type in TermTypes.iter_types():
             assert(term_type in vectorizers)
 
-        super(StringWithEmbeddingNetworkTermMapping, self).__init__(
+        super(VectorizedNetworkTermMapping, self).__init__(
             entity_formatter=string_entities_formatter)
 
         self.__vectorizers = vectorizers
@@ -53,7 +52,7 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
         assert(isinstance(entity, Entity))
 
         # Value extraction
-        str_formatted_entity = super(StringWithEmbeddingNetworkTermMapping, self).map_entity(
+        str_formatted_entity = super(VectorizedNetworkTermMapping, self).map_entity(
             e_ind=e_ind,
             entity=entity)
 

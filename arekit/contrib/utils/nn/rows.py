@@ -8,7 +8,7 @@ from arekit.contrib.networks.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.input.providers.sample import NetworkSampleRowProvider
 from arekit.contrib.networks.input.providers.text import NetworkSingleTextProvider
 from arekit.contrib.networks.input.term_types import TermTypes
-from arekit.contrib.networks.input.terms_mapping import StringWithEmbeddingNetworkTermMapping
+from arekit.contrib.networks.input.terms_mapping import VectorizedNetworkTermMapping
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.resources import load_embedding_news_mystem_skipgram_1000_20_2015
 from arekit.contrib.utils.vectorizers.bpe import BPEVectorizer
@@ -62,7 +62,7 @@ def create_rows_provider(str_entity_fmt, ctx, vectorizers="default"):
 
         # Use text provider with vectorizers.
         text_provider = NetworkSingleTextProvider(
-            text_terms_mapper=StringWithEmbeddingNetworkTermMapping(
+            text_terms_mapper=VectorizedNetworkTermMapping(
                 vectorizers=vectorizers,
                 string_entities_formatter=str_entity_fmt),
             pair_handling_func=lambda pair: __add_term_embedding(
