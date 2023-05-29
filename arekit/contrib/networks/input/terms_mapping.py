@@ -25,20 +25,29 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
 
         self.__vectorizers = vectorizers
 
+    def map_term(self, term_type, term):
+        """Universal term mapping method.
+
+        Args:
+            term_type (TermTypes): The type of term to map.
+            term (str): The term to map.
+
+        Returns:
+            The mapped term.
+        """
+        return self.__vectorizers[term_type].create_term_embedding(term=term)
+
     def map_word(self, w_ind, word):
-        value, vector = self.__vectorizers[TermTypes.WORD].create_term_embedding(term=word)
-        return value, vector
+        return self.map_term(TermTypes.WORD, word)
 
     def map_text_frame_variant(self, fv_ind, text_frame_variant):
         assert(isinstance(text_frame_variant, TextFrameVariant))
-        value, vector = self.__vectorizers[TermTypes.FRAME].create_term_embedding(
-            term=text_frame_variant.Variant.get_value())
-        return value, vector
+        return self.map_term(TermTypes.FRAME, text_frame_variant.Variant.get_value())
 
     def map_token(self, t_ind, token):
         """ It assumes to be composed for all the supported types.
         """
-        return self.__vectorizers[TermTypes.TOKEN].create_term_embedding(term=token.get_token_value())
+        return self.map_term(TermTypes.TOKEN, token.get_token_value())
 
     def map_entity(self, e_ind, entity):
         assert(isinstance(entity, Entity))
@@ -49,6 +58,4 @@ class StringWithEmbeddingNetworkTermMapping(OpinionContainingTextTermsMapper):
             entity=entity)
 
         # Vector extraction
-        emb_word, vector = self.__vectorizers[TermTypes.ENTITY].create_term_embedding(term=str_formatted_entity)
-
-        return emb_word, vector
+        return self.map_term(TermTypes.ENTITY, str_formatted_entity)
