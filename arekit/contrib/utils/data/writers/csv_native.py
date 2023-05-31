@@ -9,17 +9,27 @@ from arekit.contrib.utils.data.writers.base import BaseWriter
 
 class NativeCsvWriter(BaseWriter):
 
-    def __init__(self, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL):
+    def __init__(self, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL, header=True):
         self.__target_f = None
         self.__writer = None
         self.__create_writer_func = lambda f: csv.writer(
             f, delimiter=delimiter, quotechar=quotechar, quoting=quoting)
+        self.__header = header
+        self.__header_written = None
+
+    @staticmethod
+    def __iter_storage_column_names(storage):
+        """ Iter only those columns that existed in storage.
+        """
+        for col_name in storage.iter_column_names():
+            if col_name in storage.RowCache:
+                yield col_name
 
     def open_target(self, target):
         os.makedirs(dirname(target), exist_ok=True)
         self.__target_f = open(target, "w")
         self.__writer = self.__create_writer_func(self.__target_f)
-        pass
+        self.__header_written = not self.__header
 
     def close_target(self):
         self.__target_f.close()
@@ -27,8 +37,13 @@ class NativeCsvWriter(BaseWriter):
     def commit_line(self, storage):
         assert(isinstance(storage, RowCacheStorage))
         assert(self.__writer is not None)
-        line_data = [storage.RowCache[col_name] for col_name in storage.iter_column_names()
-                     if col_name in storage.RowCache]
+
+        if not self.__header_written:
+            self.__writer.writerow(list(self.__iter_storage_column_names(storage)))
+            self.__header_written = True
+
+        line_data = list(map(lambda col_name: storage.RowCache[col_name],
+                             self.__iter_storage_column_names(storage)))
         self.__writer.writerow(line_data)
 
     def write_all(self, storage, target):
