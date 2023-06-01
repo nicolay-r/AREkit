@@ -47,7 +47,7 @@ class InputDataSerializationHelper(object):
         if do_balance:
 
             # We perform a complete and clean data reading from scratch.
-            reader = PandasCsvReader(compression="infer")
+            reader = PandasCsvReader()
             balanced_storage = PandasBasedStorageBalancing.create_balanced_from(
                 storage=reader.read(target=target), column_name=const.LABEL, free_origin=True)
 
