@@ -39,14 +39,14 @@ parse_value = {
     const.ENTITY_VALUES: lambda value: __process_values_list(value),
     const.ENTITY_TYPES: lambda value: __process_values_list(value),
     const.ENTITIES: lambda value: __process_indices_list(value),
+    const.TEXT: lambda value: __handle_text(value),
     network_input_const.FrameVariantIndices: lambda value:
         __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.FrameConnotations: lambda value:
         __process_indices_list(value) if isinstance(value, str) else empty_list,
     network_input_const.SynonymObject: lambda value: __process_indices_list(value),
     network_input_const.SynonymSubject: lambda value: __process_indices_list(value),
-    network_input_const.PosTags: lambda value: __process_int_values_list(value),
-    network_input_const.Text: lambda value: __handle_text(value)
+    network_input_const.PosTags: lambda value: __process_int_values_list(value)
 }
 
 
@@ -85,7 +85,7 @@ class ParsedSampleRow(object):
     
     @property
     def Terms(self):
-        return self.__params[network_input_const.Text]
+        return self.__params[const.TEXT]
 
     @property
     def SubjectIndex(self):

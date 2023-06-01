@@ -1,10 +1,11 @@
+from arekit.common.data import const
 from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapper
 from arekit.common.labels.base import Label
 
 
 class BaseSingleTextProvider(object):
 
-    TEXT_A = 'text_a'
+    TEXT_A = const.TEXT
     TERMS_SEPARATOR = " "
 
     def __init__(self, text_terms_mapper):

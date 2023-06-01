@@ -1,5 +1,6 @@
 ID = 'id'
 DOC_ID = 'doc_id'
+TEXT = 'text_a'
 LABEL = 'label'
 
 # Corresponds to fields with attitude ends. (values, STRING)
