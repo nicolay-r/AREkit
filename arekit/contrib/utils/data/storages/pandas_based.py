@@ -53,7 +53,7 @@ class PandasBasedRowsStorage(BaseRowsStorage):
 
     def _iter_rows(self):
         for row_index, row in self.__iter_rows_core(self._df):
-            yield row_index, row
+            yield row_index, row.to_dict()
 
     def _get_rows_count(self):
         return len(self._df)

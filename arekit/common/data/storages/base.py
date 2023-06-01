@@ -23,7 +23,7 @@ class BaseRowsStorage(object):
 
     def _iter_rows(self):
         """ returns: tuple(int, list)
-                provides the index (int) and the related content of the row (list)
+                provides the index (int) and the related content of the row (dict)
         """
         raise NotImplemented()
 
