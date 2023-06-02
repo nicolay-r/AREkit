@@ -9,7 +9,7 @@ from arekit.contrib.utils.data.writers.base import BaseWriter
 
 class NativeCsvWriter(BaseWriter):
 
-    def __init__(self, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL, header=True):
+    def __init__(self, delimiter='\t', quotechar='"', quoting=csv.QUOTE_MINIMAL, header=True):
         self.__target_f = None
         self.__writer = None
         self.__create_writer_func = lambda f: csv.writer(
