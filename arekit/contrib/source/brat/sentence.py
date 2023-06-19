@@ -1,12 +1,12 @@
 from functools import cmp_to_key
 
 from arekit.common.bound import Bound
-from arekit.common.docs.sentence import BaseNewsSentence
+from arekit.common.docs.sentence import BaseDocumentSentence
 from arekit.contrib.source.brat.entities.compound import BratCompoundEntity
 from arekit.contrib.source.brat.entities.entity import BratEntity
 
 
-class BratSentence(BaseNewsSentence):
+class BratSentence(BaseDocumentSentence):
     """ Represent a raw sentence of BRAT.
         Provides text could be used to parse then.
         Provides API to store entities.

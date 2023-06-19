@@ -1,8 +1,8 @@
-from arekit.common.docs.sentence import BaseNewsSentence
+from arekit.common.docs.sentence import BaseDocumentSentence
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 
 
-class RuAttitudesSentence(BaseNewsSentence):
+class RuAttitudesSentence(BaseDocumentSentence):
 
     def __init__(self, is_title, text, sentence_opins, objects_list, sentence_index):
         assert(isinstance(is_title, bool))

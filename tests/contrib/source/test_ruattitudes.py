@@ -24,7 +24,7 @@ from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.brat.entities.entity import BratEntity
-from arekit.contrib.source.ruattitudes.news_brat import RuAttitudesNewsConverter
+from arekit.contrib.source.ruattitudes.news_brat import RuAttitudesDocumentsConverter
 
 from tests.contrib.source.utils import RuAttitudesSentenceOpinionUtils
 from tests.contrib.source.labels import PositiveLabel, NegativeLabel
@@ -112,7 +112,7 @@ class TestRuAttitudes(unittest.TestCase):
         for news in tqdm(news_it):
 
             # parse news
-            brat_news = RuAttitudesNewsConverter.to_brat_news(news)
+            brat_news = RuAttitudesDocumentsConverter.to_brat_news(news)
             parsed_news = DocumentParser.parse(news=brat_news, text_parser=text_parser)
             terms = parsed_news.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
@@ -160,7 +160,7 @@ class TestRuAttitudes(unittest.TestCase):
             if not do_printing:
                 continue
 
-            logger.debug("News: {}".format(news.ID))
+            logger.debug("Document: {}".format(news.ID))
 
             label_scaler = RuAttitudesLabelScaler()
 

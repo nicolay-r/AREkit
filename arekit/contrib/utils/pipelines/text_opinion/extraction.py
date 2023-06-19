@@ -1,7 +1,7 @@
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
-from arekit.common.docs.parsed.service import ParsedNewsService
+from arekit.common.docs.parsed.service import ParsedDocumentService
 from arekit.common.docs.parser import DocumentParser
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
@@ -21,7 +21,7 @@ def __iter_text_opinion_linkages(parsed_news, annotators, text_opinion_filters):
     def __to_id(text_opinion):
         return "{}_{}".format(text_opinion.SourceId, text_opinion.TargetId)
 
-    service = ParsedNewsService(parsed_news=parsed_news, providers=[EntityServiceProvider(None)])
+    service = ParsedDocumentService(parsed_news=parsed_news, providers=[EntityServiceProvider(None)])
     esp = service.get_provider(EntityServiceProvider.NAME)
 
     predefined = set()

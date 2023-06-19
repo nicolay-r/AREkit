@@ -86,7 +86,7 @@ class TestTfInputFeatures(unittest.TestCase):
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():
 
-            logger.info("NewsID: {}".format(doc_id))
+            logger.info("DocumentID: {}".format(doc_id))
 
             news, parsed_news, opinions = init_rusentrel_doc(
                 doc_id=doc_id, text_parser=text_parser, synonyms=self.synonyms)

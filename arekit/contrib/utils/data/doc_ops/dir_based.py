@@ -2,7 +2,7 @@ from os.path import join
 
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.docs.base import Document
-from arekit.common.docs.sentence import BaseNewsSentence
+from arekit.common.docs.sentence import BaseDocumentSentence
 
 
 class DirectoryFilesDocOperations(DocumentOperations):
@@ -36,7 +36,7 @@ class DirectoryFilesDocOperations(DocumentOperations):
         """
         # setup input data.
         sentences = self.__sentence_parser(contents)
-        sentences = list(map(lambda text: BaseNewsSentence(text), sentences))
+        sentences = list(map(lambda text: BaseDocumentSentence(text), sentences))
 
         # Parse text.
         return Document(doc_id=doc_id, sentences=sentences)

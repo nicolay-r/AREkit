@@ -1,8 +1,8 @@
 from arekit.common.labels.provider.base import BasePairLabelProvider
-from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
+from arekit.common.docs.parsed.providers.base import BaseParsedDocumentServiceProvider
 
 
-class BasePairProvider(BaseParsedNewsServiceProvider):
+class BasePairProvider(BaseParsedDocumentServiceProvider):
 
     @property
     def Name(self):

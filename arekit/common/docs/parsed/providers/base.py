@@ -3,7 +3,7 @@ from arekit.common.docs.entity import DocumentEntity
 from arekit.common.docs.parsed.base import ParsedDocument
 
 
-class BaseParsedNewsServiceProvider(object):
+class BaseParsedDocumentServiceProvider(object):
 
     def __init__(self, entity_index_func=None):
         """ Outside enity indexing function

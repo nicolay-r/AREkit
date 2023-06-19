@@ -6,7 +6,7 @@ from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider, EntityEndType
-from arekit.common.docs.parsed.service import ParsedNewsService
+from arekit.common.docs.parsed.service import ParsedDocumentService
 from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotationAlgorithm
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
@@ -84,7 +84,7 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             assert(isinstance(linked, TextOpinionsLinkage))
 
             pns = linked.Tag
-            assert(isinstance(pns, ParsedNewsService))
+            assert(isinstance(pns, ParsedDocumentService))
             esp = pns.get_provider(EntityServiceProvider.NAME)
             source = esp.extract_entity_value(linked.First, EntityEndType.Source)
             target = esp.extract_entity_value(linked.First, EntityEndType.Target)

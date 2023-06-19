@@ -1,5 +1,5 @@
 from arekit.common.docs.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
-from arekit.common.docs.parsed.service import ParsedNewsService
+from arekit.common.docs.parsed.service import ParsedDocumentService
 from arekit.common.opinions.annot.algo_based import AlgorithmBasedOpinionAnnotator
 
 
@@ -22,7 +22,7 @@ class AlgorithmBasedTextOpinionAnnotator(AlgorithmBasedOpinionAnnotator):
         self.__value_to_group_id_func = value_to_group_id_func
 
     def __create_service(self, parsed_news):
-        return ParsedNewsService(parsed_news=parsed_news, providers=[
+        return ParsedDocumentService(parsed_news=parsed_news, providers=[
             TextOpinionPairsProvider(self.__value_to_group_id_func)
         ])
 

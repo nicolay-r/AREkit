@@ -4,7 +4,7 @@ import logging
 from arekit.common.data.input.providers.contents import ContentsProvider
 from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
-from arekit.common.docs.parsed.service import ParsedNewsService
+from arekit.common.docs.parsed.service import ParsedDocumentService
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class BaseRowProvider(object):
 
         for linked_data in contents_provider.from_doc_ids(doc_ids=doc_ids_iter, idle_mode=idle_mode):
             assert(isinstance(linked_data, LinkedDataWrapper))
-            assert(isinstance(linked_data.Tag, ParsedNewsService))
+            assert(isinstance(linked_data.Tag, ParsedDocumentService))
 
             parsed_news_service = linked_data.Tag
 

@@ -1,9 +1,9 @@
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.docs.parsed.base import ParsedDocument
-from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
+from arekit.common.docs.parsed.providers.base import BaseParsedDocumentServiceProvider
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
-from arekit.common.docs.parsed.service import ParsedNewsService
+from arekit.common.docs.parsed.service import ParsedDocumentService
 from arekit.common.opinions.annot.base import BaseOpinionAnnotator
 from arekit.contrib.source.brat.news import BratDocument
 from arekit.contrib.source.brat.opinions.converter import BratRelationConverter
@@ -44,7 +44,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
     def __convert_opinion_id(news, origin_id, esp):
         assert(isinstance(news, BratDocument))
         assert(isinstance(origin_id, int))
-        assert(isinstance(esp, BaseParsedNewsServiceProvider))
+        assert(isinstance(esp, BaseParsedDocumentServiceProvider))
 
         if not news.contains_entity(origin_id):
             # Due to the complexity of entities, some entities might be nested.
@@ -62,7 +62,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
     def _annot_collection_core(self, parsed_news):
         assert(isinstance(parsed_news, ParsedDocument))
 
-        pns = ParsedNewsService(parsed_news=parsed_news, providers=[
+        pns = ParsedDocumentService(parsed_news=parsed_news, providers=[
             EntityServiceProvider(self.__entity_index_func)
         ])
         esp = pns.get_provider(EntityServiceProvider.NAME)

@@ -3,7 +3,7 @@ from enum import Enum
 from arekit.common.entities.base import Entity
 from arekit.common.docs.entity import DocumentEntity
 from arekit.common.docs.parsed.base import ParsedDocument
-from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
+from arekit.common.docs.parsed.providers.base import BaseParsedDocumentServiceProvider
 from arekit.common.docs.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.text_opinions.base import TextOpinion
 
@@ -30,7 +30,7 @@ class DistanceType(Enum):
             return TermPositionTypes.SentenceIndex
 
 
-class EntityServiceProvider(BaseParsedNewsServiceProvider):
+class EntityServiceProvider(BaseParsedDocumentServiceProvider):
     """ This class provides a helper functions for TextOpinions, which become a part of TextOpinionCollection.
         The latter is important because of the dependency from Owner.
         We utilize 'extract' prefix in methods to emphasize that these are methods of helper.

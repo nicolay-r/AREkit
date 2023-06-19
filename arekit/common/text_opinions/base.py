@@ -33,7 +33,7 @@ class TextOpinion(object):
     @staticmethod
     def try_convert(other, convert_func):
         """ Creates a copy of `other` opinion with different id of opinion participants.
-            Use cases: required for BaseParsedNewsServiceProvider, when we decided to bring the outside
+            Use cases: required for BaseParsedDocumentServiceProvider, when we decided to bring the outside
             opinion into one which is based on DocumentEntities.
         """
         assert(isinstance(other, TextOpinion))

@@ -4,12 +4,12 @@ import unittest
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.docs.base import Document
 from arekit.common.docs.parser import DocumentParser
-from arekit.common.docs.sentence import BaseNewsSentence
+from arekit.common.docs.sentence import BaseDocumentSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLabelsFormatter, \
     RuSentiFramesLabelsFormatter
-from arekit.contrib.source.rusentrel.news_reader import RuSentRelNewsReader
+from arekit.contrib.source.rusentrel.news_reader import RuSentRelDocumentsReader
 
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -43,7 +43,7 @@ class TestTextParser(unittest.TestCase):
     def test_parse_single_string(self):
         text = "А контроль над этими провинциями — это господство над без малого половиной сирийской территории."
         parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True)])
-        news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
+        news = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
         parsed_news = DocumentParser.parse(news=news, text_parser=parser)
         debug_show_news_terms(parsed_news=parsed_news)
 
@@ -71,7 +71,7 @@ class TestTextParser(unittest.TestCase):
                                           LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
                                                                          stemmer=stemmer),
                                           FrameVariantsSentimentNegation()])
-        news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
+        news = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
         parsed_news = DocumentParser.parse(news=news, text_parser=parser)
         debug_show_news_terms(parsed_news=parsed_news)
 
@@ -112,9 +112,9 @@ class TestTextParser(unittest.TestCase):
         for doc_id in RuSentRelIOUtils.iter_collection_indices(version):
 
             # Parsing
-            news = RuSentRelNewsReader.read_document(doc_id=doc_id,
-                                                     synonyms=synonyms,
-                                                     version=version)
+            news = RuSentRelDocumentsReader.read_document(doc_id=doc_id,
+                                                          synonyms=synonyms,
+                                                          version=version)
 
             # Perform text parsing.
             parsed_news = DocumentParser.parse(news=news, text_parser=text_parser)

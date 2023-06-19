@@ -1,8 +1,8 @@
 from arekit.common.docs.parsed.base import ParsedDocument
-from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
+from arekit.common.docs.parsed.providers.base import BaseParsedDocumentServiceProvider
 
 
-class ParsedNewsService(object):
+class ParsedDocumentService(object):
     """ Represents a collection of providers, combined with the parsed news.
     """
 
@@ -13,7 +13,7 @@ class ParsedNewsService(object):
         self.__providers = {}
 
         for provider in providers:
-            assert(isinstance(provider, BaseParsedNewsServiceProvider))
+            assert(isinstance(provider, BaseParsedDocumentServiceProvider))
             assert(provider.Name not in self.__providers)
 
             # Link provider with the related name.

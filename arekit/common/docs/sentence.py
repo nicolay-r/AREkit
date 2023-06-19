@@ -1,5 +1,5 @@
 
-class BaseNewsSentence(object):
+class BaseDocumentSentence(object):
 
     def __init__(self, text):
         self.__text = text

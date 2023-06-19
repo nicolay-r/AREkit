@@ -8,7 +8,7 @@ from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label
 from arekit.common.docs.base import Document
 from arekit.common.docs.parser import DocumentParser
-from arekit.common.docs.sentence import BaseNewsSentence
+from arekit.common.docs.sentence import BaseDocumentSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
@@ -60,7 +60,7 @@ class TestTestParser(unittest.TestCase):
             FrameVariantsSentimentNegation()
         ])
 
-        news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
+        news = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
         parsed_news = DocumentParser.parse(news=news, text_parser=text_parser)
         self.debug_show_terms(parsed_news.iter_terms())
 

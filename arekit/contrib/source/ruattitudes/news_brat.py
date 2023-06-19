@@ -7,7 +7,7 @@ from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.common.utils import split_by_whitespaces
 
 
-class RuAttitudesNewsConverter(object):
+class RuAttitudesDocumentsConverter(object):
     """ Performs conversion to a brat-based representation.
         The latter allows then allows to adopt pipelines for TextOpnion extraction.
     """
@@ -15,8 +15,8 @@ class RuAttitudesNewsConverter(object):
     @staticmethod
     def to_brat_news(news):
         assert(isinstance(news, RuAttitudesDocument))
-        text_opinions = RuAttitudesNewsConverter.__iter_text_opinions(news=news)
-        brat_sentences = RuAttitudesNewsConverter.__to_brat_sentences(news.iter_sentences())
+        text_opinions = RuAttitudesDocumentsConverter.__iter_text_opinions(news=news)
+        brat_sentences = RuAttitudesDocumentsConverter.__to_brat_sentences(news.iter_sentences())
         return BratDocument(doc_id=news.ID,
                             sentences=brat_sentences,
                             text_relations=list(text_opinions))

@@ -2,7 +2,7 @@ from arekit.common.utils import progress_bar_iter
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
-from arekit.contrib.source.ruattitudes.news_brat import RuAttitudesNewsConverter
+from arekit.contrib.source.ruattitudes.news_brat import RuAttitudesDocumentsConverter
 from arekit.contrib.utils.data.doc_ops.dict_based import DictionaryBasedDocumentOperations
 
 
@@ -38,7 +38,7 @@ class RuAttitudesDocumentOperations(DictionaryBasedDocumentOperations):
         docs_read = 0
         for doc_id, news in it_formatted_and_logged:
             assert(isinstance(news, RuAttitudesDocument) or news is None)
-            d[doc_id] = RuAttitudesNewsConverter.to_brat_news(news) if news is not None else None
+            d[doc_id] = RuAttitudesDocumentsConverter.to_brat_news(news) if news is not None else None
             docs_read += 1
             if limit is not None and docs_read >= limit:
                 break
