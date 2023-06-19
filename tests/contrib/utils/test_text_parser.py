@@ -3,7 +3,7 @@ import unittest
 
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.docs.base import Document
-from arekit.common.docs.parser import NewsParser
+from arekit.common.docs.parser import DocumentParser
 from arekit.common.docs.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.common.text.stemmer import Stemmer
@@ -44,7 +44,7 @@ class TestTextParser(unittest.TestCase):
         text = "А контроль над этими провинциями — это господство над без малого половиной сирийской территории."
         parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True)])
         news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
-        parsed_news = NewsParser.parse(news=news, text_parser=parser)
+        parsed_news = DocumentParser.parse(news=news, text_parser=parser)
         debug_show_news_terms(parsed_news=parsed_news)
 
     def test_parse_frame_variants(self):
@@ -72,7 +72,7 @@ class TestTextParser(unittest.TestCase):
                                                                          stemmer=stemmer),
                                           FrameVariantsSentimentNegation()])
         news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
-        parsed_news = NewsParser.parse(news=news, text_parser=parser)
+        parsed_news = DocumentParser.parse(news=news, text_parser=parser)
         debug_show_news_terms(parsed_news=parsed_news)
 
     def test_parsing(self):
@@ -117,7 +117,7 @@ class TestTextParser(unittest.TestCase):
                                                      version=version)
 
             # Perform text parsing.
-            parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
+            parsed_news = DocumentParser.parse(news=news, text_parser=text_parser)
             debug_show_news_terms(parsed_news=parsed_news)
 
 

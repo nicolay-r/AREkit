@@ -4,7 +4,7 @@ from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.parser import BaseTextParser
 
 
-class NewsParser(object):
+class DocumentParser(object):
 
     @staticmethod
     def __get_sent(news, sent_ind):
@@ -16,8 +16,8 @@ class NewsParser(object):
         assert(isinstance(text_parser, BaseTextParser))
         assert(isinstance(parent_ppl_ctx, PipelineContext) or parent_ppl_ctx is None)
 
-        parsed_sentences = [text_parser.run(input_data=NewsParser.__get_sent(news, sent_ind).Text,
-                                            params_dict=NewsParser.__create_ppl_params(news=news, sent_ind=sent_ind),
+        parsed_sentences = [text_parser.run(input_data=DocumentParser.__get_sent(news, sent_ind).Text,
+                                            params_dict=DocumentParser.__create_ppl_params(news=news, sent_ind=sent_ind),
                                             parent_ctx=parent_ppl_ctx)
                             for sent_ind in range(news.SentencesCount)]
 
@@ -30,5 +30,5 @@ class NewsParser(object):
         return {
             "s_ind": sent_ind,                                  # sentence index. (as Metadata)
             "doc_id": news.ID,                                  # document index. (as Metadata)
-            "sentence": NewsParser.__get_sent(news, sent_ind),  # Required for special sources.
+            "sentence": DocumentParser.__get_sent(news, sent_ind),  # Required for special sources.
         }

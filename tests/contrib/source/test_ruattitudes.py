@@ -9,7 +9,7 @@ sys.path.append('../../../../')
 from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
 from arekit.common.utils import progress_bar_iter
-from arekit.common.docs.parser import NewsParser
+from arekit.common.docs.parser import DocumentParser
 from arekit.common.text.parser import BaseTextParser
 from arekit.common.context.token import Token
 from arekit.common.labels.base import NoLabel
@@ -113,7 +113,7 @@ class TestRuAttitudes(unittest.TestCase):
 
             # parse news
             brat_news = RuAttitudesNewsConverter.to_brat_news(news)
-            parsed_news = NewsParser.parse(news=brat_news, text_parser=text_parser)
+            parsed_news = DocumentParser.parse(news=brat_news, text_parser=text_parser)
             terms = parsed_news.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 

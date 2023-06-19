@@ -7,7 +7,7 @@ from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label
 from arekit.common.docs.base import Document
-from arekit.common.docs.parser import NewsParser
+from arekit.common.docs.parser import DocumentParser
 from arekit.common.docs.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -61,7 +61,7 @@ class TestTestParser(unittest.TestCase):
         ])
 
         news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
-        parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
+        parsed_news = DocumentParser.parse(news=news, text_parser=text_parser)
         self.debug_show_terms(parsed_news.iter_terms())
 
     @staticmethod

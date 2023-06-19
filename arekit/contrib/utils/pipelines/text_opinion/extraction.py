@@ -2,7 +2,7 @@ from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.docs.parsed.service import ParsedNewsService
-from arekit.common.docs.parser import NewsParser
+from arekit.common.docs.parser import DocumentParser
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
 from arekit.common.pipeline.items.map import MapPipelineItem
@@ -66,7 +66,7 @@ def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators
         MapPipelineItem(map_func=lambda doc_id: get_doc_by_id_func(doc_id)),
 
         # (news, ppl_ctx) -> (parsed_news)
-        MapNestedPipelineItem(map_func=lambda news, ppl_ctx: NewsParser.parse(
+        MapNestedPipelineItem(map_func=lambda news, ppl_ctx: DocumentParser.parse(
             news=news, text_parser=text_parser, parent_ppl_ctx=ppl_ctx)),
 
         # (parsed_news) -> (text_opinions)
