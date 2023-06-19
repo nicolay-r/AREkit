@@ -26,7 +26,7 @@ class RuAttitudesFormatReader(object):
     # region private methods
 
     @staticmethod
-    def iter_news_inds(input_file, get_news_index_func):
+    def iter_docs_inds(input_file, get_news_index_func):
         assert(callable(get_news_index_func))
 
         title = None
@@ -51,7 +51,7 @@ class RuAttitudesFormatReader(object):
                                                               local_index=local_news_ind)
 
     @staticmethod
-    def iter_news(input_file, get_news_index_func):
+    def iter_docs(input_file, get_news_index_func):
         assert(callable(get_news_index_func))
 
         reset = False

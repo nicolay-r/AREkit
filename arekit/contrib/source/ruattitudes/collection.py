@@ -9,14 +9,14 @@ class RuAttitudesCollection(object):
         assert(isinstance(read_inds_only, bool))
 
         if read_inds_only:
-            return RuAttitudesFormatReader.iter_news_inds(input_file=input_file,
+            return RuAttitudesFormatReader.iter_docs_inds(input_file=input_file,
                                                           get_news_index_func=get_news_inds_func)
         else:
-            return RuAttitudesFormatReader.iter_news(input_file=input_file,
+            return RuAttitudesFormatReader.iter_docs(input_file=input_file,
                                                      get_news_index_func=get_news_inds_func)
 
     @staticmethod
-    def iter_news(version, get_news_index_func, return_inds_only):
+    def iter_docs(version, get_news_index_func, return_inds_only):
         """
         RuAttitudes collection reader from zip archive
         """

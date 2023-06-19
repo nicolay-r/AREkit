@@ -24,7 +24,7 @@ class RuAttitudesDocumentOperations(DictionaryBasedDocumentOperations):
         assert (isinstance(keep_doc_ids_only, bool))
         assert (callable(doc_id_func))
 
-        it = RuAttitudesCollection.iter_news(version=version,
+        it = RuAttitudesCollection.iter_docs(version=version,
                                              get_news_index_func=doc_id_func,
                                              return_inds_only=keep_doc_ids_only)
 

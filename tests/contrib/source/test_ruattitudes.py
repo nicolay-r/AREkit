@@ -86,7 +86,7 @@ class TestRuAttitudes(unittest.TestCase):
 
     def __iter_indices(self, ra_version):
         ids = set()
-        for news in tqdm(RuAttitudesCollection.iter_news(version=ra_version,
+        for news in tqdm(RuAttitudesCollection.iter_docs(version=ra_version,
                                                          get_news_index_func=lambda _: len(ids),
                                                          return_inds_only=False)):
             assert(isinstance(news, RuAttitudesDocument))
@@ -105,7 +105,7 @@ class TestRuAttitudes(unittest.TestCase):
         # iterating through collection
         news_read = 0
 
-        news_it = RuAttitudesCollection.iter_news(version=ra_version,
+        news_it = RuAttitudesCollection.iter_docs(version=ra_version,
                                                   get_news_index_func=lambda _: news_read,
                                                   return_inds_only=False)
 
@@ -131,9 +131,9 @@ class TestRuAttitudes(unittest.TestCase):
 
             news_read += 1
 
-    def __test_iter_news_inds(self, ra_version):
+    def __test_iter_doc_inds(self, ra_version):
         # iterating through collection
-        doc_ids_it = RuAttitudesCollection.iter_news(version=ra_version,
+        doc_ids_it = RuAttitudesCollection.iter_docs(version=ra_version,
                                                      get_news_index_func=lambda ind: ind + 1,
                                                      return_inds_only=True)
 
@@ -147,7 +147,7 @@ class TestRuAttitudes(unittest.TestCase):
 
         # iterating through collection
         news_read = 0
-        news_it = RuAttitudesCollection.iter_news(version=ra_version,
+        news_it = RuAttitudesCollection.iter_docs(version=ra_version,
                                                   get_news_index_func=lambda _: news_read,
                                                   return_inds_only=False)
 
@@ -208,8 +208,8 @@ class TestRuAttitudes(unittest.TestCase):
     def test_parsing(self):
         self.__test_parsing(ra_version=self.__ra_versions[2])
 
-    def test_iter_news_inds(self):
-        self.__test_iter_news_inds(ra_version=self.__ra_versions[2])
+    def test_iter_doc_inds(self):
+        self.__test_iter_doc_inds(ra_version=self.__ra_versions[2])
 
     def test_reading(self):
         self.__test_reading(ra_version=self.__ra_versions[2])
