@@ -36,9 +36,9 @@ class TextOpinionPairsProvider(BasePairProvider):
                            label=label,
                            text_opinion_id=None)
 
-    def init_parsed_news(self, parsed_news):
-        super(TextOpinionPairsProvider, self).init_parsed_news(parsed_news)
-        self.__doc_id = parsed_news.RelatedDocID
+    def init_parsed_doc(self, parsed_doc):
+        super(TextOpinionPairsProvider, self).init_parsed_doc(parsed_doc)
+        self.__doc_id = parsed_doc.RelatedDocID
         self.__entities_collection = EntityCollection(
             entities=list(self._doc_entities),
             value_to_group_id_func=self.__value_to_group_id_func)

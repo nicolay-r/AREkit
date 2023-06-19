@@ -19,13 +19,13 @@ class BaseParsedDocumentServiceProvider(object):
     def Name(self):
         raise NotImplementedError()
 
-    def init_parsed_news(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedDocument))
+    def init_parsed_doc(self, parsed_doc):
+        assert(isinstance(parsed_doc, ParsedDocument))
 
         self._doc_entities = []
         self.__entity_map.clear()
 
-        for index, entity in enumerate(parsed_news.iter_entities()):
+        for index, entity in enumerate(parsed_doc.iter_entities()):
 
             doc_entity = DocumentEntity(id_in_doc=index,
                                         value=entity.Value,

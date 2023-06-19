@@ -3,12 +3,12 @@ from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 
 class RuAttitudesDocument(object):
 
-    def __init__(self, sentences, news_index):
+    def __init__(self, sentences, doc_index):
         assert(len(sentences) > 0)
 
         self.__sentences = sentences
         self.__objects_before_sentence = self.__cache_objects_declared_before()
-        self.__news_index = news_index
+        self.__doc_index = doc_index
 
         self.__set_owners()
 
@@ -16,7 +16,7 @@ class RuAttitudesDocument(object):
 
     @property
     def ID(self):
-        return self.__news_index
+        return self.__doc_index
 
     @property
     def Title(self):

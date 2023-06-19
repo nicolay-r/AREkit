@@ -21,14 +21,14 @@ class AlgorithmBasedTextOpinionAnnotator(AlgorithmBasedOpinionAnnotator):
             get_doc_existed_opinions_func=get_doc_existed_opinions_func)
         self.__value_to_group_id_func = value_to_group_id_func
 
-    def __create_service(self, parsed_news):
-        return ParsedDocumentService(parsed_news=parsed_news, providers=[
+    def __create_service(self, parsed_doc):
+        return ParsedDocumentService(parsed_doc=parsed_doc, providers=[
             TextOpinionPairsProvider(self.__value_to_group_id_func)
         ])
 
-    def annotate_collection(self, parsed_news):
-        service = self.__create_service(parsed_news)
+    def annotate_collection(self, parsed_doc):
+        service = self.__create_service(parsed_doc)
         topp = service.get_provider(TextOpinionPairsProvider.NAME)
-        for opinion in super(AlgorithmBasedTextOpinionAnnotator, self).annotate_collection(parsed_news):
+        for opinion in super(AlgorithmBasedTextOpinionAnnotator, self).annotate_collection(parsed_doc):
             for text_opinion in topp.iter_from_opinion(opinion):
                 yield text_opinion

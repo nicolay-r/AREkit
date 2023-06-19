@@ -3,7 +3,7 @@ from arekit.common.labels.base import Label
 
 class TextOpinion(object):
     """
-    Represents a relation which were found in news article
+    Represents a relation which were found in doc article
     and composed between two named entities
         (it was found especially by Opinion with predefined label)
         allows to modify label using set_label

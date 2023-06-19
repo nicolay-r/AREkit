@@ -76,8 +76,8 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
 
     # endregion
 
-    def iter_opinions(self, parsed_news, existed_opinions=None):
-        assert(isinstance(parsed_news, ParsedDocument))
+    def iter_opinions(self, parsed_doc, existed_opinions=None):
+        assert(isinstance(parsed_doc, ParsedDocument))
 
         def __filter_pair_func(e1, e2):
             key = self.__try_create_pair_key(entity_service=entity_service_provider,
@@ -90,8 +90,8 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         # TODO. Provide here service #245 issue.
         opinions_provider = OpinionPairsProvider(entity_index_func=None)
         entity_service_provider = EntityServiceProvider(entity_index_func=None)
-        opinions_provider.init_parsed_news(parsed_news)
-        entity_service_provider.init_parsed_news(parsed_news)
+        opinions_provider.init_parsed_doc(parsed_doc)
+        entity_service_provider.init_parsed_doc(parsed_doc)
 
         return opinions_provider.iter_from_all(label_provider=self.__label_provider,
                                                filter_func=__filter_pair_func)

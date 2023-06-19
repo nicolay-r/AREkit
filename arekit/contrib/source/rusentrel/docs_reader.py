@@ -1,5 +1,5 @@
 from arekit.common.synonyms.base import SynonymsCollection
-from arekit.contrib.source.brat.news import BratDocument
+from arekit.contrib.source.brat.doc import BratDocument
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.rusentrel.entities import RuSentRelDocumentEntityCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
@@ -46,6 +46,6 @@ class RuSentRelDocumentsReader(object):
             version=version)
 
         return RuSentRelIOUtils.read_from_zip(
-            inner_path=RuSentRelIOUtils.get_news_innerpath(index=doc_id, version=version),
+            inner_path=RuSentRelIOUtils.get_doc_innerpath(index=doc_id, version=version),
             process_func=file_to_doc,
             version=version)

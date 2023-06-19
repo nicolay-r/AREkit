@@ -36,7 +36,7 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
         We utilize 'extract' prefix in methods to emphasize that these are methods of helper.
 
         Wrapper over:
-            parsed news, positions, text_opinions
+            parsed doc, positions, text_opinions
     """
 
     NAME = "entity-service-provider"
@@ -52,10 +52,10 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
     def Name(self):
         return self.NAME
 
-    def init_parsed_news(self, parsed_news):
-        super(EntityServiceProvider, self).init_parsed_news(parsed_news)
-        assert(isinstance(parsed_news, ParsedDocument))
-        self.__iter_raw_terms_func = lambda: parsed_news.iter_terms(filter_func=None, term_only=False)
+    def init_parsed_doc(self, parsed_doc):
+        super(EntityServiceProvider, self).init_parsed_doc(parsed_doc)
+        assert(isinstance(parsed_doc, ParsedDocument))
+        self.__iter_raw_terms_func = lambda: parsed_doc.iter_terms(filter_func=None, term_only=False)
         self.__init_entity_positions()
 
     # region public 'extract' methods

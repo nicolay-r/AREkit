@@ -31,7 +31,7 @@ from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVaria
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
-from tests.contrib.networks.news import init_rusentrel_doc
+from tests.contrib.networks.doc import init_rusentrel_doc
 from tests.contrib.networks.indices_feature import IndicesFeature
 from tests.contrib.networks.labels import TestPositiveLabel, TestNegativeLabel
 
@@ -88,16 +88,16 @@ class TestTfInputFeatures(unittest.TestCase):
 
             logger.info("DocumentID: {}".format(doc_id))
 
-            news, parsed_news, opinions = init_rusentrel_doc(
+            doc, parsed_doc, opinions = init_rusentrel_doc(
                 doc_id=doc_id, text_parser=text_parser, synonyms=self.synonyms)
 
             # Initialize service providers.
             pairs_provider = TextOpinionPairsProvider(value_to_group_id_func=self.synonyms.get_synonym_group_index)
             entity_service = EntityServiceProvider(entity_index_func=lambda brat_entity: brat_entity.ID)
 
-            # Setup parsed news.
-            pairs_provider.init_parsed_news(parsed_news)
-            entity_service.init_parsed_news(parsed_news)
+            # Setup parsed doc.
+            pairs_provider.init_parsed_doc(parsed_doc)
+            entity_service.init_parsed_doc(parsed_doc)
 
             text_opinion_iter = iter_same_sentence_linked_text_opinions(pairs_provider=pairs_provider,
                                                                         entity_service=entity_service,
@@ -113,7 +113,7 @@ class TestTfInputFeatures(unittest.TestCase):
                 t_ind = entity_service.get_entity_position(id_in_document=text_opinion.TargetId,
                                                            position_type=TermPositionTypes.IndexInSentence)
 
-                terms = list(parsed_news.iter_sentence_terms(s_index, return_id=False))
+                terms = list(parsed_doc.iter_sentence_terms(s_index, return_id=False))
 
                 x_feature = IndicesFeature.from_vector_to_be_fitted(
                     value_vector=np.array(terms),

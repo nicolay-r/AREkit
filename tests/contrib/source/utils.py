@@ -1,5 +1,5 @@
 from arekit.common.labels.scaler.base import BaseLabelScaler
-from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
+from arekit.contrib.source.ruattitudes.doc import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.opinions.converter import RuAttitudesSentenceOpinionConverter
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
@@ -10,19 +10,19 @@ class RuAttitudesSentenceOpinionUtils(object):
     # region public methods
 
     @staticmethod
-    def iter_opinions_with_related_sentences(news, label_scaler):
+    def iter_opinions_with_related_sentences(doc, label_scaler):
         """ Provides opinions with the related sentences.
         """
-        assert(isinstance(news, RuAttitudesDocument))
+        assert(isinstance(doc, RuAttitudesDocument))
         assert(isinstance(label_scaler, BaseLabelScaler))
 
-        doc_opinions = RuAttitudesSentenceOpinionUtils.__build_opinion_dict(news=news)
+        doc_opinions = RuAttitudesSentenceOpinionUtils.__build_opinion_dict(doc=doc)
         assert(isinstance(doc_opinions, dict))
 
         for sentence_opin_tag, value in doc_opinions.items():
 
             opinion, related_sentences = RuAttitudesSentenceOpinionUtils.__extract_opinion_with_related_sentences(
-                news=news, sentence_opin_tag=sentence_opin_tag, label_scaler=label_scaler)
+                doc=doc, sentence_opin_tag=sentence_opin_tag, label_scaler=label_scaler)
 
             if opinion is None:
                 continue
@@ -34,11 +34,11 @@ class RuAttitudesSentenceOpinionUtils(object):
     # region private methods
 
     @staticmethod
-    def __extract_opinion_with_related_sentences(news, sentence_opin_tag, label_scaler):
+    def __extract_opinion_with_related_sentences(doc, sentence_opin_tag, label_scaler):
         opinion = None
         related_sentences = []
 
-        for sentence in news.iter_sentences():
+        for sentence in doc.iter_sentences():
             assert(isinstance(sentence, RuAttitudesSentence))
 
             sentence_opin = sentence.find_sentence_opin_by_key(sentence_opin_tag)
@@ -63,10 +63,10 @@ class RuAttitudesSentenceOpinionUtils(object):
         return opinion, related_sentences
 
     @staticmethod
-    def __build_opinion_dict(news):
+    def __build_opinion_dict(doc):
         opin_dict = {}
 
-        for s_ind, sentence in enumerate(news.iter_sentences()):
+        for s_ind, sentence in enumerate(doc.iter_sentences()):
             assert(isinstance(sentence, RuAttitudesSentence))
             for sentence_opin in sentence.iter_sentence_opins():
                 assert(isinstance(sentence_opin, SentenceOpinion))

@@ -17,7 +17,7 @@ class BaseRowProvider(object):
 
     # TODO. This might be also generalized.
     # TODO. Idle-mode is also a implementation and task specific parameter, i.e. might be removed from here.
-    def _provide_rows(self, parsed_news, entity_service, text_opinion_linkage, idle_mode):
+    def _provide_rows(self, parsed_doc, entity_service, text_opinion_linkage, idle_mode):
         raise NotImplementedError()
 
     # endregion
@@ -30,10 +30,10 @@ class BaseRowProvider(object):
             assert(isinstance(linked_data, LinkedDataWrapper))
             assert(isinstance(linked_data.Tag, ParsedDocumentService))
 
-            parsed_news_service = linked_data.Tag
+            parsed_doc_service = linked_data.Tag
 
-            rows_it = self._provide_rows(parsed_news=parsed_news_service.ParsedDocument,
-                                         entity_service=parsed_news_service.get_provider(EntityServiceProvider.NAME),
+            rows_it = self._provide_rows(parsed_doc=parsed_doc_service.ParsedDocument,
+                                         entity_service=parsed_doc_service.get_provider(EntityServiceProvider.NAME),
                                          text_opinion_linkage=linked_data,
                                          idle_mode=idle_mode)
 

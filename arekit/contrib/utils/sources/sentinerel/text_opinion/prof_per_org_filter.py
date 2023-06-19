@@ -23,9 +23,9 @@ class ProfessionAsCharacteristicSentimentTextOpinionFilter(TextOpinionFilter):
         self.__char_type = char_type
         self.__next_entity_types = ["PERSON"]
 
-    def filter(self, text_opinion, parsed_news, entity_service_provider):
+    def filter(self, text_opinion, parsed_doc, entity_service_provider):
         assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(parsed_news, ParsedDocument))
+        assert(isinstance(parsed_doc, ParsedDocument))
         assert(isinstance(entity_service_provider, EntityServiceProvider))
 
         # Picking up entity.
@@ -42,7 +42,7 @@ class ProfessionAsCharacteristicSentimentTextOpinionFilter(TextOpinionFilter):
 
         # Picking up the related sentence of target.
         t_sent = target_pos.get_index(TermPositionTypes.SentenceIndex)
-        sentence = parsed_news.get_sentence(t_sent)
+        sentence = parsed_doc.get_sentence(t_sent)
         assert(isinstance(sentence, BaseParsedText))
 
         # Picking up the entity position in sentence.

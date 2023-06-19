@@ -38,7 +38,7 @@ class RuSentRelIOUtils(ZipArchiveUtils):
         return path.join(inner_root, "art{}.ann".format(index))
 
     @staticmethod
-    def get_news_innerpath(index, version):
+    def get_doc_innerpath(index, version):
         assert(isinstance(index, int))
         assert(isinstance(version, RuSentRelVersions))
         inner_root = RuSentRelIOUtils.__get_root_by_index(doc_id=index, version=version)

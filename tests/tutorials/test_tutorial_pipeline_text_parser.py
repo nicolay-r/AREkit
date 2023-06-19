@@ -60,9 +60,9 @@ class TestTestParser(unittest.TestCase):
             FrameVariantsSentimentNegation()
         ])
 
-        news = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
-        parsed_news = DocumentParser.parse(news=news, text_parser=text_parser)
-        self.debug_show_terms(parsed_news.iter_terms())
+        doc = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
+        parsed_doc = DocumentParser.parse(doc=doc, text_parser=text_parser)
+        self.debug_show_terms(parsed_doc.iter_terms())
 
     @staticmethod
     def debug_show_terms(terms):

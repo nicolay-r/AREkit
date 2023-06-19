@@ -13,7 +13,7 @@ class Document(object):
 
     @property
     def SentencesCount(self):
-        """ Provides total amount of sentences within a news
+        """ Provides total amount of sentences within a doc
             At present is useful for:
             -   CV-splitters, which may rely on sentences count.
             -   Text parsing.

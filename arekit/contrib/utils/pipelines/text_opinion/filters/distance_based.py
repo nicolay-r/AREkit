@@ -8,7 +8,7 @@ class DistanceLimitedTextOpinionFilter(TextOpinionFilter):
         super(DistanceLimitedTextOpinionFilter, self).__init__()
         self.__terms_per_context = terms_per_context
 
-    def filter(self, text_opinion, parsed_news, entity_service_provider):
+    def filter(self, text_opinion, parsed_doc, entity_service_provider):
 
         return InputSampleBase.check_ability_to_create_sample(
             entity_service=entity_service_provider,

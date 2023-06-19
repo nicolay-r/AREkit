@@ -13,27 +13,27 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.limitation import FrameworkLimitationsTextOpinionFilter
 
 
-def __iter_text_opinion_linkages(parsed_news, annotators, text_opinion_filters):
+def __iter_text_opinion_linkages(parsed_doc, annotators, text_opinion_filters):
     assert(isinstance(annotators, list))
-    assert(isinstance(parsed_news, ParsedDocument))
+    assert(isinstance(parsed_doc, ParsedDocument))
     assert(isinstance(text_opinion_filters, list))
 
     def __to_id(text_opinion):
         return "{}_{}".format(text_opinion.SourceId, text_opinion.TargetId)
 
-    service = ParsedDocumentService(parsed_news=parsed_news, providers=[EntityServiceProvider(None)])
+    service = ParsedDocumentService(parsed_doc=parsed_doc, providers=[EntityServiceProvider(None)])
     esp = service.get_provider(EntityServiceProvider.NAME)
 
     predefined = set()
 
     for annotator in annotators:
-        for text_opinion in annotator.annotate_collection(parsed_news=parsed_news):
+        for text_opinion in annotator.annotate_collection(parsed_doc=parsed_doc):
             assert(isinstance(text_opinion, TextOpinion))
 
             passed = True
             for f in text_opinion_filters:
                 assert(isinstance(f, TextOpinionFilter))
-                if not f.filter(text_opinion=text_opinion, parsed_news=parsed_news, entity_service_provider=esp):
+                if not f.filter(text_opinion=text_opinion, parsed_doc=parsed_doc, entity_service_provider=esp):
                     passed = False
                     break
 
@@ -62,16 +62,16 @@ def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators
     actual_text_opinion_filters = [FrameworkLimitationsTextOpinionFilter()] + extra_filters
 
     return BasePipeline([
-        # (doc_id) -> (news)
+        # (doc_id) -> (doc)
         MapPipelineItem(map_func=lambda doc_id: get_doc_by_id_func(doc_id)),
 
-        # (news, ppl_ctx) -> (parsed_news)
-        MapNestedPipelineItem(map_func=lambda news, ppl_ctx: DocumentParser.parse(
-            news=news, text_parser=text_parser, parent_ppl_ctx=ppl_ctx)),
+        # (doc, ppl_ctx) -> (parsed_doc)
+        MapNestedPipelineItem(map_func=lambda doc, ppl_ctx: DocumentParser.parse(
+            doc=doc, text_parser=text_parser, parent_ppl_ctx=ppl_ctx)),
 
-        # (parsed_news) -> (text_opinions)
-        MapPipelineItem(map_func=lambda parsed_news: __iter_text_opinion_linkages(
-            annotators=annotators, parsed_news=parsed_news, text_opinion_filters=actual_text_opinion_filters)),
+        # (parsed_doc) -> (text_opinions)
+        MapPipelineItem(map_func=lambda parsed_doc: __iter_text_opinion_linkages(
+            annotators=annotators, parsed_doc=parsed_doc, text_opinion_filters=actual_text_opinion_filters)),
 
         # linkages[] -> linkages
         FlattenIterPipelineItem()

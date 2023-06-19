@@ -7,8 +7,8 @@ from arekit.common.text.parsed import BaseParsedText
 
 class ParsedDocument(object):
     """
-    This class represents an information of the processed news in following directions:
-        - news words
+    This class represents an information of the processed doc in following directions:
+        - doc words
         - tokens
         - entities (positions).
         - frames (FrameVariants)

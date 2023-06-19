@@ -6,17 +6,17 @@ class BaseDocumentStatGenerator(object):
 
     def __init__(self, doc_reader_func):
         """
-        news_parser_func: func -> news
-            assumes to provide a news by a certain doc_id
+        doc_parser_func: func -> doc
+            assumes to provide a doc by a certain doc_id
         """
         assert(callable(doc_reader_func))
         self.__doc_reader_func = doc_reader_func
 
     # region abstract protected methods
 
-    def _calc(self, news):
+    def _calc(self, doc):
         """ Abstract method that provides quantitative statistic
-            for a particular news
+            for a particular doc
         """
         raise NotImplementedError()
 

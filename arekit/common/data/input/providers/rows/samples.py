@@ -52,14 +52,14 @@ class BaseSampleRowProvider(BaseRowProvider):
 
     # region protected methods
 
-    def _provide_sentence_terms(self, parsed_news, sentence_ind, s_ind, t_ind):
-        terms_iter = parsed_news.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
+    def _provide_sentence_terms(self, parsed_doc, sentence_ind, s_ind, t_ind):
+        terms_iter = parsed_doc.iter_sentence_terms(sentence_index=sentence_ind, return_id=False)
         return list(terms_iter), s_ind, t_ind
 
     # TODO. This is a very task-specific description, too many data provided.
     # TODO. Switch this API to dict of params
     def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
-                       parsed_news, sentence_ind, s_ind, t_ind):
+                       parsed_doc, sentence_ind, s_ind, t_ind):
         assert(isinstance(self.__store_labels, bool))
 
         def __assign_value(column, value):
@@ -82,7 +82,7 @@ class BaseSampleRowProvider(BaseRowProvider):
                 etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
 
         sentence_terms, actual_s_ind, actual_t_ind = self._provide_sentence_terms(
-            parsed_news=parsed_news, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
+            parsed_doc=parsed_doc, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
 
         self.__text_provider.add_text_in_row(
             set_text_func=lambda column, value: __assign_value(column, value),
@@ -101,7 +101,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         row[const.S_IND] = actual_s_ind
         row[const.T_IND] = actual_t_ind
 
-    def _provide_rows(self, parsed_news, entity_service, text_opinion_linkage, idle_mode):
+    def _provide_rows(self, parsed_doc, entity_service, text_opinion_linkage, idle_mode):
         assert(isinstance(idle_mode, bool))
 
         row_dict = OrderedDict()
@@ -109,7 +109,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         for index_in_linked in range(len(text_opinion_linkage)):
 
             rows_it = self.__provide_rows(
-                parsed_news=parsed_news,
+                parsed_doc=parsed_doc,
                 entity_service=entity_service,
                 row_dict=row_dict,
                 text_opinion_linkage=text_opinion_linkage,
@@ -140,19 +140,19 @@ class BaseSampleRowProvider(BaseRowProvider):
         if isinstance(label_provider, MultipleLabelProvider):
             return SingleInstanceLinkedDataProvider()
 
-    def __provide_rows(self, row_dict, parsed_news, entity_service,
+    def __provide_rows(self, row_dict, parsed_doc, entity_service,
                        text_opinion_linkage, index_in_linked, idle_mode):
         """
         Providing Rows depending on row_id_formatter type
         """
-        assert(isinstance(parsed_news, ParsedDocument))
+        assert(isinstance(parsed_doc, ParsedDocument))
         assert(isinstance(row_dict, OrderedDict))
         assert(isinstance(text_opinion_linkage, TextOpinionsLinkage))
 
         etalon_label = self.__instances_provider.provide_label(text_opinion_linkage)
         for instance in self.__instances_provider.iter_instances(text_opinion_linkage):
             yield self.__create_row(row=row_dict,
-                                    parsed_news=parsed_news,
+                                    parsed_doc=parsed_doc,
                                     entity_service=entity_service,
                                     text_opinions_linkage=instance,
                                     index_in_linked=index_in_linked,
@@ -160,7 +160,7 @@ class BaseSampleRowProvider(BaseRowProvider):
                                     etalon_label=etalon_label,
                                     idle_mode=idle_mode)
 
-    def __create_row(self, row, parsed_news, entity_service, text_opinions_linkage,
+    def __create_row(self, row, parsed_doc, entity_service, text_opinions_linkage,
                      index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:
@@ -196,7 +196,7 @@ class BaseSampleRowProvider(BaseRowProvider):
             raise Exception("Limitation: Multi-Sentence text_opinions are not supported.")
 
         self._fill_row_core(row=row,
-                            parsed_news=parsed_news,
+                            parsed_doc=parsed_doc,
                             sentence_ind=source_s_ind,
                             text_opinion_linkage=text_opinions_linkage,
                             index_in_linked=index_in_linked,

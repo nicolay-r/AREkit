@@ -11,10 +11,10 @@ logger.setLevel(logging.DEBUG)
 logging.basicConfig(level=logging.DEBUG)
 
 
-def debug_show_news_terms(parsed_news):
-    assert(isinstance(parsed_news, ParsedDocument))
+def debug_show_doc_terms(parsed_doc):
+    assert(isinstance(parsed_doc, ParsedDocument))
     logger.info('------------------------')
-    return debug_show_terms(terms=parsed_news.iter_terms())
+    return debug_show_terms(terms=parsed_doc.iter_terms())
 
 
 def debug_show_terms(terms):

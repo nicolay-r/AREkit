@@ -60,7 +60,7 @@ class DefaultTextTokenizer(BasePipelineItem):
     @staticmethod
     def __split_tokens(term):
         """
-        Splitting off tokens from parsed_news ending, i.e. for example:
+        Splitting off tokens from parsed_doc ending, i.e. for example:
             term: "сказать,-" -> "(term: "сказать", ["COMMA_TOKEN", "DASH_TOKEN"])
         return: (unicode or None, list)
             modified term and list of extracted tokens.

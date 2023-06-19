@@ -76,7 +76,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
                     DataType.Test: BasePipeline
                 }
 
-                pipeline: doc_id -> parsed_news -> annot -> opinion linkages
+                pipeline: doc_id -> parsed_doc -> annot -> opinion linkages
                     for example, function: sentiment_attitude_extraction_default_pipeline
         """
         assert (isinstance(pipeline_ctx, PipelineContext))

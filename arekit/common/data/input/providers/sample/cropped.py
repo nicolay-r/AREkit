@@ -34,9 +34,9 @@ class CroppedSampleRowProvider(BaseSampleRowProvider):
 
         return _from, _to
 
-    def _provide_sentence_terms(self, parsed_news, sentence_ind, s_ind, t_ind):
+    def _provide_sentence_terms(self, parsed_doc, sentence_ind, s_ind, t_ind):
         terms_iter, src_ind, tgt_ind = super(CroppedSampleRowProvider, self)._provide_sentence_terms(
-            parsed_news=parsed_news, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
+            parsed_doc=parsed_doc, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
         terms = list(terms_iter)
         _from, _to = self.__calc_window_bounds(window_size=self.__crop_window_size,
                                                s_ind=s_ind, t_ind=t_ind, input_length=len(terms))

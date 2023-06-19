@@ -6,7 +6,7 @@ from arekit.common.entities.collection import EntityCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.contrib.source.brat.annot import BratAnnotationParser
 from arekit.contrib.source.brat.entities.compound import BratCompoundEntity
-from arekit.contrib.source.brat.news import BratDocument
+from arekit.contrib.source.brat.doc import BratDocument
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
@@ -30,7 +30,7 @@ class FooIOUtils(ZipArchiveUtils):
         return "{}.ann".format(filename)
 
     @staticmethod
-    def get_news_innerpath(filename):
+    def get_doc_innerpath(filename):
         return "{}.txt".format(filename)
 
     @staticmethod
@@ -84,7 +84,7 @@ class FooDocReader(object):
         text_relations = FooDocReader.read_text_relations(filename, version)
 
         return FooIOUtils.read_from_zip(
-            inner_path=FooIOUtils.get_news_innerpath(filename),
+            inner_path=FooIOUtils.get_doc_innerpath(filename),
             process_func=file_to_doc,
             version=version)
 
@@ -92,8 +92,8 @@ class FooDocReader(object):
 class TestFooCollection(unittest.TestCase):
 
     def test_reading(self):
-        news = FooDocReader.read_document("0", doc_id=0)
-        for sentence in news.iter_sentences():
+        doc = FooDocReader.read_document("0", doc_id=0)
+        for sentence in doc.iter_sentences():
             print(sentence.Text.strip())
             for entity, bound in sentence.iter_entity_with_local_bounds():
                 print("{}: ['{}',{}, {}] {}".format(
@@ -107,7 +107,7 @@ class TestFooCollection(unittest.TestCase):
                 for child in entity.iter_childs():
                     print("\t{}: ['{}',{}]".format(child.ID, child.Value, child.Type))
 
-        for brat_relation in news.Relations:
+        for brat_relation in doc.Relations:
             print(brat_relation.SourceID, brat_relation.TargetID, brat_relation.Type)
 
 

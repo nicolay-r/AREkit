@@ -9,7 +9,7 @@ from arekit.common.text.parser import BaseTextParser
 from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLabelsFormatter, \
     RuSentiFramesLabelsFormatter
-from arekit.contrib.source.rusentrel.news_reader import RuSentRelDocumentsReader
+from arekit.contrib.source.rusentrel.docs_reader import RuSentRelDocumentsReader
 
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -24,7 +24,7 @@ from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
 from tests.contrib.utils.labels import NegativeLabel, PositiveLabel
 
-from tests.contrib.utils.text.debug_text import debug_show_news_terms
+from tests.contrib.utils.text.debug_text import debug_show_doc_terms
 
 
 class RuSentRelSynonymsCollectionProvider(object):
@@ -43,9 +43,9 @@ class TestTextParser(unittest.TestCase):
     def test_parse_single_string(self):
         text = "А контроль над этими провинциями — это господство над без малого половиной сирийской территории."
         parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True)])
-        news = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
-        parsed_news = DocumentParser.parse(news=news, text_parser=parser)
-        debug_show_news_terms(parsed_news=parsed_news)
+        doc = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
+        parsed_doc = DocumentParser.parse(doc=doc, text_parser=parser)
+        debug_show_doc_terms(parsed_doc=parsed_doc)
 
     def test_parse_frame_variants(self):
         text = "США не пытается ввести санкции против Роccии"
@@ -71,9 +71,9 @@ class TestTextParser(unittest.TestCase):
                                           LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
                                                                          stemmer=stemmer),
                                           FrameVariantsSentimentNegation()])
-        news = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
-        parsed_news = DocumentParser.parse(news=news, text_parser=parser)
-        debug_show_news_terms(parsed_news=parsed_news)
+        doc = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
+        parsed_doc = DocumentParser.parse(doc=doc, text_parser=parser)
+        debug_show_doc_terms(parsed_doc=parsed_doc)
 
     def test_parsing(self):
 
@@ -112,13 +112,13 @@ class TestTextParser(unittest.TestCase):
         for doc_id in RuSentRelIOUtils.iter_collection_indices(version):
 
             # Parsing
-            news = RuSentRelDocumentsReader.read_document(doc_id=doc_id,
-                                                          synonyms=synonyms,
-                                                          version=version)
+            doc = RuSentRelDocumentsReader.read_document(doc_id=doc_id,
+                                                         synonyms=synonyms,
+                                                         version=version)
 
             # Perform text parsing.
-            parsed_news = DocumentParser.parse(news=news, text_parser=text_parser)
-            debug_show_news_terms(parsed_news=parsed_news)
+            parsed_doc = DocumentParser.parse(doc=doc, text_parser=text_parser)
+            debug_show_doc_terms(parsed_doc=parsed_doc)
 
 
 if __name__ == '__main__':

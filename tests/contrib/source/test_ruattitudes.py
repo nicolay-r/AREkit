@@ -20,11 +20,11 @@ from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntit
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
-from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
+from arekit.contrib.source.ruattitudes.doc import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.brat.entities.entity import BratEntity
-from arekit.contrib.source.ruattitudes.news_brat import RuAttitudesDocumentsConverter
+from arekit.contrib.source.ruattitudes.doc_brat import RuAttitudesDocumentsConverter
 
 from tests.contrib.source.utils import RuAttitudesSentenceOpinionUtils
 from tests.contrib.source.labels import PositiveLabel, NegativeLabel
@@ -74,28 +74,28 @@ class TestRuAttitudes(unittest.TestCase):
 
     # region private methods
 
-    def __check_entities(self, news):
-        for sentence in news.iter_sentences():
+    def __check_entities(self, doc):
+        for sentence in doc.iter_sentences():
             assert (isinstance(sentence, RuAttitudesSentence))
             for s_obj in sentence.iter_objects():
                 assert (isinstance(s_obj, TextObject))
                 entity = s_obj.to_entity(lambda in_id: in_id)
                 assert (isinstance(entity, BratEntity))
                 self.assertTrue(entity.GroupIndex is not None,
-                                "Group index [{doc_id}] is None!".format(doc_id=news.ID))
+                                "Group index [{doc_id}] is None!".format(doc_id=doc.ID))
 
     def __iter_indices(self, ra_version):
         ids = set()
-        for news in tqdm(RuAttitudesCollection.iter_docs(version=ra_version,
-                                                         get_news_index_func=lambda _: len(ids),
-                                                         return_inds_only=False)):
-            assert(isinstance(news, RuAttitudesDocument))
-            assert(news.ID not in ids)
+        for doc in tqdm(RuAttitudesCollection.iter_docs(version=ra_version,
+                                                        get_doc_index_func=lambda _: len(ids),
+                                                        return_inds_only=False)):
+            assert(isinstance(doc, RuAttitudesDocument))
+            assert(doc.ID not in ids)
 
             # Perform check for every entity.
-            self.__check_entities(news)
+            self.__check_entities(doc)
 
-            ids.add(news.ID)
+            ids.add(doc.ID)
 
     def __test_parsing(self, ra_version):
         # Initialize text parser pipeline.
@@ -103,18 +103,18 @@ class TestRuAttitudes(unittest.TestCase):
                                                DefaultTextTokenizer(keep_tokens=True)])
 
         # iterating through collection
-        news_read = 0
+        doc_read = 0
 
-        news_it = RuAttitudesCollection.iter_docs(version=ra_version,
-                                                  get_news_index_func=lambda _: news_read,
+        doc_it = RuAttitudesCollection.iter_docs(version=ra_version,
+                                                  get_doc_index_func=lambda _: doc_read,
                                                   return_inds_only=False)
 
-        for news in tqdm(news_it):
+        for doc in tqdm(doc_it):
 
-            # parse news
-            brat_news = RuAttitudesDocumentsConverter.to_brat_news(news)
-            parsed_news = DocumentParser.parse(news=brat_news, text_parser=text_parser)
-            terms = parsed_news.iter_sentence_terms(sentence_index=0,
+            # parse doc
+            brat_doc = RuAttitudesDocumentsConverter.to_brat_doc(doc)
+            parsed_doc = DocumentParser.parse(doc=brat_doc, text_parser=text_parser)
+            terms = parsed_doc.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 
             str_terms = []
@@ -129,12 +129,12 @@ class TestRuAttitudes(unittest.TestCase):
             for t in str_terms:
                 self.assertIsInstance(t, str)
 
-            news_read += 1
+            doc_read += 1
 
     def __test_iter_doc_inds(self, ra_version):
         # iterating through collection
         doc_ids_it = RuAttitudesCollection.iter_docs(version=ra_version,
-                                                     get_news_index_func=lambda ind: ind + 1,
+                                                     get_doc_index_func=lambda ind: ind + 1,
                                                      return_inds_only=True)
 
         it = progress_bar_iter(iterable=doc_ids_it,
@@ -146,25 +146,25 @@ class TestRuAttitudes(unittest.TestCase):
     def __test_reading(self, ra_version, do_printing=True):
 
         # iterating through collection
-        news_read = 0
-        news_it = RuAttitudesCollection.iter_docs(version=ra_version,
-                                                  get_news_index_func=lambda _: news_read,
+        doc_read = 0
+        doc_it = RuAttitudesCollection.iter_docs(version=ra_version,
+                                                  get_doc_index_func=lambda _: doc_read,
                                                   return_inds_only=False)
 
         if not do_printing:
-            news_it = tqdm(news_it)
+            doc_it = tqdm(doc_it)
 
-        for news in news_it:
-            assert(isinstance(news, RuAttitudesDocument))
+        for doc in doc_it:
+            assert(isinstance(doc, RuAttitudesDocument))
 
             if not do_printing:
                 continue
 
-            logger.debug("Document: {}".format(news.ID))
+            logger.debug("Document: {}".format(doc.ID))
 
             label_scaler = RuAttitudesLabelScaler()
 
-            for sentence in news.iter_sentences():
+            for sentence in doc.iter_sentences():
                 assert(isinstance(sentence, RuAttitudesSentence))
                 # text
                 logger.debug(sentence.Text)
@@ -189,7 +189,7 @@ class TestRuAttitudes(unittest.TestCase):
                 # Providing aggregated opinions.
                 logger.info("Providing information for opinions with the related sentences:")
                 data_it = RuAttitudesSentenceOpinionUtils.iter_opinions_with_related_sentences(
-                    news=news, label_scaler=label_scaler)
+                    doc=doc, label_scaler=label_scaler)
                 for o, sentences in data_it:
                     assert(isinstance(o, Opinion))
                     assert(isinstance(sentences, list))
@@ -198,7 +198,7 @@ class TestRuAttitudes(unittest.TestCase):
                         target=o.TargetValue,
                         s_count=len(sentences)))
 
-            news_read += 1
+            doc_read += 1
 
     # endregion
 

@@ -11,6 +11,6 @@ class PredefinedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         assert(callable(get_opinions_by_doc_id_func))
         self.__get_opinions_by_doc_id_func = get_opinions_by_doc_id_func
 
-    def iter_opinions(self, parsed_news, existed_opinions=None):
-        assert(isinstance(parsed_news, ParsedDocument))
-        return self.__get_opinions_by_doc_id_func(parsed_news.RelatedDocID)
+    def iter_opinions(self, parsed_doc, existed_opinions=None):
+        assert(isinstance(parsed_doc, ParsedDocument))
+        return self.__get_opinions_by_doc_id_func(parsed_doc.RelatedDocID)

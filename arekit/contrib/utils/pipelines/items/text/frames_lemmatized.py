@@ -24,7 +24,7 @@ class LemmasBasedFrameVariantsParser(FrameVariantsParser):
 
     def __provide_lemmatized_terms(self, terms):
         """
-        Compose a list of lemmatized versions of parsed_news
+        Compose a list of lemmatized versions of parsed_doc
         PS: Might be significantly slow, depending on stemmer were used.
         """
         assert(isinstance(terms, list))

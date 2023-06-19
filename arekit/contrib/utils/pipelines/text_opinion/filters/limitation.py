@@ -10,9 +10,9 @@ class FrameworkLimitationsTextOpinionFilter(TextOpinionFilter):
         It is require to hide and provide known limitations.
     """
 
-    def filter(self, text_opinion, parsed_news, entity_service_provider):
+    def filter(self, text_opinion, parsed_doc, entity_service_provider):
         assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(parsed_news, ParsedDocument))
+        assert(isinstance(parsed_doc, ParsedDocument))
 
         s_ind = entity_service_provider.get_entity_position(
             text_opinion.SourceId, position_type=TermPositionTypes.SentenceIndex)

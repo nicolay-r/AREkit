@@ -25,13 +25,13 @@ class PromptedSampleRowProvider(CroppedSampleRowProvider):
         self.__prompt = prompt
 
     def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
-                       parsed_news, sentence_ind, s_ind, t_ind):
+                       parsed_doc, sentence_ind, s_ind, t_ind):
 
         super(PromptedSampleRowProvider, self)._fill_row_core(row=row,
                                                               text_opinion_linkage=text_opinion_linkage,
                                                               index_in_linked=index_in_linked,
                                                               etalon_label=etalon_label,
-                                                              parsed_news=parsed_news,
+                                                              parsed_doc=parsed_doc,
                                                               sentence_ind=sentence_ind,
                                                               s_ind=s_ind,
                                                               t_ind=t_ind)

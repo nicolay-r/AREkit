@@ -39,7 +39,7 @@ class SentiNerelIOUtils(ZipArchiveUtils):
         return path.join(SentiNerelIOUtils.inner_root, "{}.ann".format(filename))
 
     @staticmethod
-    def get_news_innerpath(filename):
+    def get_doc_innerpath(filename):
         assert(isinstance(filename, str))
         return path.join(SentiNerelIOUtils.inner_root, "{}.txt".format(filename))
 

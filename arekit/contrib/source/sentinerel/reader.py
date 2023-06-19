@@ -1,5 +1,5 @@
 from arekit.contrib.source.brat.annot import BratAnnotationParser
-from arekit.contrib.source.brat.news import BratDocument
+from arekit.contrib.source.brat.doc import BratDocument
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.sentinerel.entities import SentiNerelEntityCollection
 from arekit.contrib.source.sentinerel.io_utils import SentiNerelIOUtils, DEFAULT_VERSION
@@ -37,6 +37,6 @@ class SentiNerelDocReader(object):
         text_relations = SentiNerelDocReader.read_text_relations(filename=filename, version=version)
 
         return SentiNerelIOUtils.read_from_zip(
-            inner_path=SentiNerelIOUtils.get_news_innerpath(filename=filename),
+            inner_path=SentiNerelIOUtils.get_doc_innerpath(filename=filename),
             process_func=file_to_doc,
             version=version)

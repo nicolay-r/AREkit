@@ -1,4 +1,4 @@
 class BaseOpinionAnnotationAlgorithm(object):
 
-    def iter_opinions(self, parsed_news, existed_opinions=None):
+    def iter_opinions(self, parsed_doc, existed_opinions=None):
         pass

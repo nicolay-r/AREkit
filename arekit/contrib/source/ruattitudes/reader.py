@@ -1,5 +1,5 @@
 from arekit.common.utils import split_by_whitespaces
-from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
+from arekit.contrib.source.ruattitudes.doc import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.text_object import TextObject
@@ -26,11 +26,11 @@ class RuAttitudesFormatReader(object):
     # region private methods
 
     @staticmethod
-    def iter_docs_inds(input_file, get_news_index_func):
-        assert(callable(get_news_index_func))
+    def iter_docs_inds(input_file, get_doc_index_func):
+        assert(callable(get_doc_index_func))
 
         title = None
-        local_news_ind = 0
+        local_doc_ind = 0
         has_sentences = False
 
         for line in RuAttitudesFormatReader.__iter_lines(input_file):
@@ -40,19 +40,19 @@ class RuAttitudesFormatReader(object):
                 title = "title"
                 has_sentences = True
 
-            if RuAttitudesFormatReader.__check_is_news_sep(line=line, title=title):
-                yield RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
-                                                                  local_index=local_news_ind)
-                local_news_ind += 1
+            if RuAttitudesFormatReader.__check_is_doc_sep(line=line, title=title):
+                yield RuAttitudesFormatReader.__assign_doc_index(doc_index_func=get_doc_index_func,
+                                                                 local_index=local_doc_ind)
+                local_doc_ind += 1
                 title = None
 
         if has_sentences:
-            yield RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
-                                                              local_index=local_news_ind)
+            yield RuAttitudesFormatReader.__assign_doc_index(doc_index_func=get_doc_index_func,
+                                                             local_index=local_doc_ind)
 
     @staticmethod
-    def iter_docs(input_file, get_news_index_func):
-        assert(callable(get_news_index_func))
+    def iter_docs(input_file, get_doc_index_func):
+        assert(callable(get_doc_index_func))
 
         reset = False
         title = None
@@ -63,7 +63,7 @@ class RuAttitudesFormatReader(object):
         objects_list = []
         s_index = 0
         objects_in_prior_sentences_count = 0
-        local_news_ind = 0
+        local_doc_ind = 0
 
         for line in RuAttitudesFormatReader.__iter_lines(input_file):
 
@@ -111,12 +111,12 @@ class RuAttitudesFormatReader(object):
                 assert(text_terms_count == t_len or text_terms_count is None)
                 reset = True
 
-            if RuAttitudesFormatReader.__check_is_news_sep(line=line, title=title):
-                news_index = RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
-                                                                         local_index=local_news_ind)
+            if RuAttitudesFormatReader.__check_is_doc_sep(line=line, title=title):
+                doc_index = RuAttitudesFormatReader.__assign_doc_index(doc_index_func=get_doc_index_func,
+                                                                       local_index=local_doc_ind)
                 yield RuAttitudesDocument(sentences=sentences,
-                                          news_index=news_index)
-                local_news_ind += 1
+                                          doc_index=doc_index)
+                local_doc_ind += 1
                 sentences = []
                 reset = True
 
@@ -130,21 +130,21 @@ class RuAttitudesFormatReader(object):
                 reset = False
 
         if len(sentences) > 0:
-            news_index = RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
-                                                                     local_index=local_news_ind)
+            doc_index = RuAttitudesFormatReader.__assign_doc_index(doc_index_func=get_doc_index_func,
+                                                                   local_index=local_doc_ind)
             yield RuAttitudesDocument(sentences=sentences,
-                                      news_index=news_index)
+                                      doc_index=doc_index)
             sentences = []
 
         assert(len(sentences) == 0)
 
     @staticmethod
-    def __assign_news_index(news_index_func, local_index):
-        assert(callable(news_index_func))
-        return news_index_func(local_index)
+    def __assign_doc_index(doc_index_func, local_index):
+        assert(callable(doc_index_func))
+        return doc_index_func(local_index)
 
     @staticmethod
-    def __check_is_news_sep(line, title):
+    def __check_is_doc_sep(line, title):
         return RuAttitudesFormatReader.DOC_SEP_KEY in line and title is not None
 
     @staticmethod

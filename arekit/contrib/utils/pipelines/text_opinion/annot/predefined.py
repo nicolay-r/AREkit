@@ -5,7 +5,7 @@ from arekit.common.docs.parsed.providers.base import BaseParsedDocumentServicePr
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.docs.parsed.service import ParsedDocumentService
 from arekit.common.opinions.annot.base import BaseOpinionAnnotator
-from arekit.contrib.source.brat.news import BratDocument
+from arekit.contrib.source.brat.doc import BratDocument
 from arekit.contrib.source.brat.opinions.converter import BratRelationConverter
 
 
@@ -41,17 +41,17 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
             entity_index_func is None else entity_index_func
 
     @staticmethod
-    def __convert_opinion_id(news, origin_id, esp):
-        assert(isinstance(news, BratDocument))
+    def __convert_opinion_id(doc, origin_id, esp):
+        assert(isinstance(doc, BratDocument))
         assert(isinstance(origin_id, int))
         assert(isinstance(esp, BaseParsedDocumentServiceProvider))
 
-        if not news.contains_entity(origin_id):
+        if not doc.contains_entity(origin_id):
             # Due to the complexity of entities, some entities might be nested.
             # Therefore the latter, some entities might be discarded.
             return None
 
-        origin_entity = news.get_entity_by_id(origin_id)
+        origin_entity = doc.get_entity_by_id(origin_id)
 
         if not esp.contains_entity(origin_entity):
             return None
@@ -59,28 +59,28 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
         document_entity = esp.get_document_entity(origin_entity)
         return document_entity.IdInDocument
 
-    def _annot_collection_core(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedDocument))
+    def _annot_collection_core(self, parsed_doc):
+        assert(isinstance(parsed_doc, ParsedDocument))
 
-        pns = ParsedDocumentService(parsed_news=parsed_news, providers=[
+        pns = ParsedDocumentService(parsed_doc=parsed_doc, providers=[
             EntityServiceProvider(self.__entity_index_func)
         ])
         esp = pns.get_provider(EntityServiceProvider.NAME)
-        news = self.__doc_ops.by_id(parsed_news.RelatedDocID)
+        doc = self.__doc_ops.by_id(parsed_doc.RelatedDocID)
 
-        for brat_relation in news.Relations:
+        for brat_relation in doc.Relations:
 
             if self.__label_formatter.supports_value(brat_relation.Type) or self.__keep_any_type:
 
                 text_opinion = BratRelationConverter.to_text_opinion(
                     brat_relation=brat_relation,
-                    doc_id=parsed_news.RelatedDocID,
+                    doc_id=parsed_doc.RelatedDocID,
                     label_formatter=self.__label_formatter)
 
                 internal_opinion = text_opinion.try_convert(
                     other=text_opinion,
                     convert_func=lambda origin_id: PredefinedTextOpinionAnnotator.__convert_opinion_id(
-                        news=news, origin_id=origin_id, esp=esp))
+                        doc=doc, origin_id=origin_id, esp=esp))
 
                 if internal_opinion is None:
                     continue

@@ -1,7 +1,7 @@
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.synonyms.base import SynonymsCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
-from arekit.contrib.source.rusentrel.news_reader import RuSentRelDocumentsReader
+from arekit.contrib.source.rusentrel.docs_reader import RuSentRelDocumentsReader
 
 
 class RuSentrelDocumentOperations(DocumentOperations):

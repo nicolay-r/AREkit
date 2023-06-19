@@ -31,14 +31,14 @@ class AlgorithmBasedOpinionAnnotator(BaseOpinionAnnotator):
 
     # region private methods
 
-    def _annot_collection_core(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedDocument))
+    def _annot_collection_core(self, parsed_doc):
+        assert(isinstance(parsed_doc, ParsedDocument))
 
-        opinions = self.__get_existed_opinions_func(parsed_news.RelatedDocID)
+        opinions = self.__get_existed_opinions_func(parsed_doc.RelatedDocID)
         assert(isinstance(opinions, OpinionCollection) or opinions is None)
         
         annotated_opinions_it = self.__annot_algo.iter_opinions(
-            parsed_news=parsed_news, existed_opinions=opinions)
+            parsed_doc=parsed_doc, existed_opinions=opinions)
 
         collection = self.__create_empty_collection_func()
         assert(isinstance(collection, OpinionCollection))

@@ -57,21 +57,21 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         self.__term_embedding_pairs.clear()
 
     def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
-                       parsed_news, sentence_ind, s_ind, t_ind):
-        assert(isinstance(parsed_news, ParsedDocument))
+                       parsed_doc, sentence_ind, s_ind, t_ind):
+        assert(isinstance(parsed_doc, ParsedDocument))
 
         super(NetworkSampleRowProvider, self)._fill_row_core(
             row=row,
             text_opinion_linkage=text_opinion_linkage,
             index_in_linked=index_in_linked,
             etalon_label=etalon_label,
-            parsed_news=parsed_news,
+            parsed_doc=parsed_doc,
             sentence_ind=sentence_ind,
             s_ind=s_ind, t_ind=t_ind)
 
         # Extracting list of terms, utilized in further.
         terms_iter, actual_s_ind, actual_t_ind = self._provide_sentence_terms(
-            parsed_news=parsed_news, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
+            parsed_doc=parsed_doc, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
         terms = list(terms_iter)
 
         # Compose frame indices.

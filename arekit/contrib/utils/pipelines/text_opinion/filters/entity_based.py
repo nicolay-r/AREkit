@@ -13,9 +13,9 @@ class EntityBasedTextOpinionFilter(TextOpinionFilter):
         assert(isinstance(entity_filter, EntityFilter) or entity_filter is None)
         self.__entity_filter = entity_filter
 
-    def filter(self, text_opinion, parsed_news, entity_service_provider):
+    def filter(self, text_opinion, parsed_doc, entity_service_provider):
         assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(parsed_news, ParsedDocument))
+        assert(isinstance(parsed_doc, ParsedDocument))
 
         if self.__entity_filter is not None:
             e_source = entity_service_provider._doc_entities[text_opinion.SourceId]
