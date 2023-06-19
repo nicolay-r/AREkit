@@ -5,7 +5,7 @@ class Entity(object):
         assert(isinstance(e_type, str) or e_type is None)
         assert(isinstance(display_value, str) or display_value is None)
         assert(isinstance(group_index, int) or group_index is None)
-        self.__value = value.lower()
+        self.__value = value
         self.__type = e_type
         self.__display_value = display_value
         self.__group_index = group_index
