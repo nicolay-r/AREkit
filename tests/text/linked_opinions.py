@@ -24,7 +24,7 @@ def iter_same_sentence_linked_text_opinions(pairs_provider, entity_service, opin
     for opinion in opinions:
 
         text_opinions_linkage = TextOpinionsLinkage(
-            text_opinions_it=pairs_provider.iter_from_opinion(opinion))
+            linked_data=pairs_provider.iter_from_opinion(opinion))
 
         assert(isinstance(text_opinions_linkage, TextOpinionsLinkage))
 
