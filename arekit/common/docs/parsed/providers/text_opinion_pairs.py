@@ -1,8 +1,8 @@
 import logging
 
 from arekit.common.entities.collection import EntityCollection
-from arekit.common.news.entity import DocumentEntity
-from arekit.common.news.parsed.providers.base_pairs import BasePairProvider
+from arekit.common.docs.entity import DocumentEntity
+from arekit.common.docs.parsed.providers.base_pairs import BasePairProvider
 from arekit.common.opinions.base import Opinion
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.common.labels.provider.constant import ConstantLabelProvider

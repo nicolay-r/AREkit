@@ -1,10 +1,10 @@
 from enum import Enum
 
 from arekit.common.entities.base import Entity
-from arekit.common.news.entity import DocumentEntity
-from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
-from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
+from arekit.common.docs.entity import DocumentEntity
+from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
+from arekit.common.docs.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.text_opinions.base import TextOpinion
 
 

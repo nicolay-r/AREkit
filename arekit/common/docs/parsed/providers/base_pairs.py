@@ -1,5 +1,5 @@
 from arekit.common.labels.provider.base import BasePairLabelProvider
-from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
+from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
 
 
 class BasePairProvider(BaseParsedNewsServiceProvider):

@@ -1,9 +1,9 @@
 from arekit.common.entities.types import OpinionEntityType
 from arekit.common.labels.provider.base import BasePairLabelProvider
-from arekit.common.news.entity import DocumentEntity
-from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType
-from arekit.common.news.parsed.providers.opinion_pairs import OpinionPairsProvider
+from arekit.common.docs.entity import DocumentEntity
+from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider, DistanceType
+from arekit.common.docs.parsed.providers.opinion_pairs import OpinionPairsProvider
 from arekit.common.opinions.annot.algo.base import BaseOpinionAnnotationAlgorithm
 from arekit.common.opinions.base import Opinion
 

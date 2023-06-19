@@ -3,8 +3,8 @@ import logging
 
 from arekit.common.data.input.providers.contents import ContentsProvider
 from arekit.common.linkage.base import LinkedDataWrapper
-from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
-from arekit.common.news.parsed.service import ParsedNewsService
+from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
+from arekit.common.docs.parsed.service import ParsedNewsService
 
 logger = logging.getLogger(__name__)
 

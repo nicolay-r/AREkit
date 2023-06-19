@@ -1,7 +1,7 @@
 from arekit.common.entities.base import Entity
-from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
-from arekit.common.news.parsed.term_position import TermPositionTypes, TermPosition
+from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
+from arekit.common.docs.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.text.enums import TermFormat
 from arekit.common.text.parsed import BaseParsedText
 from arekit.common.text_opinions.base import TextOpinion

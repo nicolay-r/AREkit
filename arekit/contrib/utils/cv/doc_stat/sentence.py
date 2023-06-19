@@ -1,4 +1,4 @@
-from arekit.common.news.base import News
+from arekit.common.docs.base import News
 from arekit.contrib.utils.cv.doc_stat.base import BaseDocumentStatGenerator
 
 

@@ -1,7 +1,7 @@
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
-from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
-from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
-from arekit.common.news.parsed.term_position import TermPositionTypes
+from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
+from arekit.common.docs.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
+from arekit.common.docs.parsed.term_position import TermPositionTypes
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.text_opinions.base import TextOpinion
 

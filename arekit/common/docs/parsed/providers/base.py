@@ -1,6 +1,6 @@
 from arekit.common.entities.base import Entity
-from arekit.common.news.entity import DocumentEntity
-from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.docs.entity import DocumentEntity
+from arekit.common.docs.parsed.base import ParsedNews
 
 
 class BaseParsedNewsServiceProvider(object):

@@ -5,8 +5,8 @@ from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
-from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, EntityEndType
-from arekit.common.news.parsed.service import ParsedNewsService
+from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider, EntityEndType
+from arekit.common.docs.parsed.service import ParsedNewsService
 from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotationAlgorithm
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders

@@ -9,7 +9,7 @@ sys.path.append('../../../../')
 from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
 from arekit.common.utils import progress_bar_iter
-from arekit.common.news.parser import NewsParser
+from arekit.common.docs.parser import NewsParser
 from arekit.common.text.parser import BaseTextParser
 from arekit.common.context.token import Token
 from arekit.common.labels.base import NoLabel

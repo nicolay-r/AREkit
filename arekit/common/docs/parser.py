@@ -1,5 +1,5 @@
-from arekit.common.news.base import News
-from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.docs.base import News
+from arekit.common.docs.parsed.base import ParsedNews
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.parser import BaseTextParser
 

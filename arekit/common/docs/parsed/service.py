@@ -1,5 +1,5 @@
-from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.news.parsed.providers.base import BaseParsedNewsServiceProvider
+from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
 
 
 class ParsedNewsService(object):

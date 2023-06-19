@@ -5,7 +5,7 @@ from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvide
 from arekit.common.entities.base import Entity
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
-from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedNews
 from arekit.contrib.networks.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.input import const
 from arekit.contrib.networks.input.providers.term_connotation import extract_uint_frame_variant_connotation

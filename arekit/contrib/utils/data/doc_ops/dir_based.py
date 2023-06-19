@@ -1,8 +1,8 @@
 from os.path import join
 
 from arekit.common.experiment.api.ops_doc import DocumentOperations
-from arekit.common.news.base import News
-from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.docs.base import News
+from arekit.common.docs.sentence import BaseNewsSentence
 
 
 class DirectoryFilesDocOperations(DocumentOperations):

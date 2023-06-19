@@ -14,9 +14,9 @@ from arekit.common.entities.base import Entity
 from arekit.common.labels.base import Label
 
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
-from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.news.parsed.providers.entity_service import EntityEndType, EntityServiceProvider
-from arekit.common.news.parsed.term_position import TermPositionTypes
+from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.providers.entity_service import EntityEndType, EntityServiceProvider
+from arekit.common.docs.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
 
 

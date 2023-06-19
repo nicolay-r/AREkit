@@ -1,6 +1,6 @@
 import logging
 
-from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedNews
 from arekit.common.opinions.annot.algo.base import BaseOpinionAnnotationAlgorithm
 from arekit.common.opinions.annot.base import BaseOpinionAnnotator
 from arekit.common.opinions.collection import OpinionCollection

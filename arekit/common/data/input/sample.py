@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider, DistanceType
+from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider, DistanceType
 from arekit.common.text_opinions.base import TextOpinion
 
 

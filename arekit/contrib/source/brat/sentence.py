@@ -1,7 +1,7 @@
 from functools import cmp_to_key
 
 from arekit.common.bound import Bound
-from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.docs.sentence import BaseNewsSentence
 from arekit.contrib.source.brat.entities.compound import BratCompoundEntity
 from arekit.contrib.source.brat.entities.entity import BratEntity
 

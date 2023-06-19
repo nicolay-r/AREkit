@@ -2,9 +2,9 @@ import logging
 import unittest
 
 from arekit.common.frames.variants.collection import FrameVariantsCollection
-from arekit.common.news.base import News
-from arekit.common.news.parser import NewsParser
-from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.docs.base import News
+from arekit.common.docs.parser import NewsParser
+from arekit.common.docs.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.common.text.stemmer import Stemmer
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesEffectLabelsFormatter, \

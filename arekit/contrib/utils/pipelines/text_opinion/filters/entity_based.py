@@ -1,5 +1,5 @@
 from arekit.common.entities.types import OpinionEntityType
-from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedNews
 from arekit.common.text_opinions.base import TextOpinion
 
 from arekit.contrib.utils.entities.filter import EntityFilter

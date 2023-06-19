@@ -6,9 +6,9 @@ from arekit.common.entities.base import Entity
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label
-from arekit.common.news.base import News
-from arekit.common.news.parser import NewsParser
-from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.docs.base import News
+from arekit.common.docs.parser import NewsParser
+from arekit.common.docs.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \

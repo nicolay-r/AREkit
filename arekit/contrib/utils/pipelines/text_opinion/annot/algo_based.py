@@ -1,5 +1,5 @@
-from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
-from arekit.common.news.parsed.service import ParsedNewsService
+from arekit.common.docs.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
+from arekit.common.docs.parsed.service import ParsedNewsService
 from arekit.common.opinions.annot.algo_based import AlgorithmBasedOpinionAnnotator
 
 

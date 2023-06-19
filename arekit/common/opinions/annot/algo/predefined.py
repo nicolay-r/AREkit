@@ -1,4 +1,4 @@
-from arekit.common.news.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedNews
 from arekit.common.opinions.annot.algo.base import BaseOpinionAnnotationAlgorithm
 
 

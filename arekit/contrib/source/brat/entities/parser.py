@@ -1,4 +1,4 @@
-from arekit.common.news.objects_parser import SentenceObjectsParserPipelineItem
+from arekit.common.docs.objects_parser import SentenceObjectsParserPipelineItem
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.partitioning.str import StringPartitioning
 from arekit.common.text.partitioning.terms import TermsPartitioning

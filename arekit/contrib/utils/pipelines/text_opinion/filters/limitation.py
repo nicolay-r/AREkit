@@ -1,5 +1,5 @@
-from arekit.common.news.parsed.base import ParsedNews
-from arekit.common.news.parsed.term_position import TermPositionTypes
+from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinionFilter
 

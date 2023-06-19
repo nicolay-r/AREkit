@@ -1,4 +1,4 @@
-from arekit.common.news.base import News
+from arekit.common.docs.base import News
 from arekit.contrib.source.brat.entities.entity import BratEntity
 from arekit.contrib.source.brat.sentence import BratSentence
 

@@ -11,10 +11,10 @@ sys.path.append('../')
 from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
 from tests.text.utils import terms_to_str
 from arekit.common.text.stemmer import Stemmer
-from arekit.common.news.parsed.providers.entity_service import EntityServiceProvider
-from arekit.common.news.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
+from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
+from arekit.common.docs.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
 from arekit.common.entities.base import Entity
-from arekit.common.news.parsed.term_position import TermPositionTypes
+from arekit.common.docs.parsed.term_position import TermPositionTypes
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \

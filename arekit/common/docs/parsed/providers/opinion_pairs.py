@@ -1,5 +1,5 @@
 from arekit.common.entities.base import Entity
-from arekit.common.news.parsed.providers.base_pairs import BasePairProvider
+from arekit.common.docs.parsed.providers.base_pairs import BasePairProvider
 from arekit.common.opinions.base import Opinion
 
 

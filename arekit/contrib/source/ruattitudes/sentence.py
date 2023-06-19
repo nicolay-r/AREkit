@@ -1,4 +1,4 @@
-from arekit.common.news.sentence import BaseNewsSentence
+from arekit.common.docs.sentence import BaseNewsSentence
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 
 
