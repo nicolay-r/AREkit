@@ -1,5 +1,5 @@
 from arekit.common.entities.base import Entity
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.docs.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.text.enums import TermFormat
@@ -25,7 +25,7 @@ class ProfessionAsCharacteristicSentimentTextOpinionFilter(TextOpinionFilter):
 
     def filter(self, text_opinion, parsed_news, entity_service_provider):
         assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
         assert(isinstance(entity_service_provider, EntityServiceProvider))
 
         # Picking up entity.

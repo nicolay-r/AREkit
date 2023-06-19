@@ -1,4 +1,4 @@
-from arekit.common.docs.base import News
+from arekit.common.docs.base import Document
 from arekit.contrib.utils.cv.doc_stat.base import BaseDocumentStatGenerator
 
 
@@ -8,5 +8,5 @@ class SentenceBasedDocumentStatGenerator(BaseDocumentStatGenerator):
         super(SentenceBasedDocumentStatGenerator, self).__init__(doc_reader_func)
 
     def _calc(self, news):
-        assert(isinstance(news, News))
+        assert(isinstance(news, Document))
         return news.SentencesCount

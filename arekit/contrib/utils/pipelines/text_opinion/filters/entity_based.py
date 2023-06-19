@@ -1,5 +1,5 @@
 from arekit.common.entities.types import OpinionEntityType
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.text_opinions.base import TextOpinion
 
 from arekit.contrib.utils.entities.filter import EntityFilter
@@ -15,7 +15,7 @@ class EntityBasedTextOpinionFilter(TextOpinionFilter):
 
     def filter(self, text_opinion, parsed_news, entity_service_provider):
         assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
 
         if self.__entity_filter is not None:
             e_source = entity_service_provider._doc_entities[text_opinion.SourceId]

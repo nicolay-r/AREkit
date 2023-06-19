@@ -1,6 +1,6 @@
 from arekit.common.entities.base import Entity
 from arekit.common.docs.entity import DocumentEntity
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 
 
 class BaseParsedNewsServiceProvider(object):
@@ -20,7 +20,7 @@ class BaseParsedNewsServiceProvider(object):
         raise NotImplementedError()
 
     def init_parsed_news(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
 
         self._doc_entities = []
         self.__entity_map.clear()

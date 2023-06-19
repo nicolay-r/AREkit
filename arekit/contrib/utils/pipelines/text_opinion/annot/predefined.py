@@ -1,11 +1,11 @@
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.labels.str_fmt import StringLabelsFormatter
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.docs.parsed.service import ParsedNewsService
 from arekit.common.opinions.annot.base import BaseOpinionAnnotator
-from arekit.contrib.source.brat.news import BratNews
+from arekit.contrib.source.brat.news import BratDocument
 from arekit.contrib.source.brat.opinions.converter import BratRelationConverter
 
 
@@ -42,7 +42,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
 
     @staticmethod
     def __convert_opinion_id(news, origin_id, esp):
-        assert(isinstance(news, BratNews))
+        assert(isinstance(news, BratDocument))
         assert(isinstance(origin_id, int))
         assert(isinstance(esp, BaseParsedNewsServiceProvider))
 
@@ -60,7 +60,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
         return document_entity.IdInDocument
 
     def _annot_collection_core(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
 
         pns = ParsedNewsService(parsed_news=parsed_news, providers=[
             EntityServiceProvider(self.__entity_index_func)

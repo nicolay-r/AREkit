@@ -1,5 +1,5 @@
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.docs.parsed.service import ParsedNewsService
 from arekit.common.docs.parser import NewsParser
@@ -15,7 +15,7 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.limitation import Frame
 
 def __iter_text_opinion_linkages(parsed_news, annotators, text_opinion_filters):
     assert(isinstance(annotators, list))
-    assert(isinstance(parsed_news, ParsedNews))
+    assert(isinstance(parsed_news, ParsedDocument))
     assert(isinstance(text_opinion_filters, list))
 
     def __to_id(text_opinion):

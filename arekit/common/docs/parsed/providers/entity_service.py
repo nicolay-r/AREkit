@@ -2,7 +2,7 @@ from enum import Enum
 
 from arekit.common.entities.base import Entity
 from arekit.common.docs.entity import DocumentEntity
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
 from arekit.common.docs.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.text_opinions.base import TextOpinion
@@ -54,7 +54,7 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
 
     def init_parsed_news(self, parsed_news):
         super(EntityServiceProvider, self).init_parsed_news(parsed_news)
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
         self.__iter_raw_terms_func = lambda: parsed_news.iter_terms(filter_func=None, term_only=False)
         self.__init_entity_positions()
 

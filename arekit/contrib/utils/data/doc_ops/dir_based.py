@@ -1,7 +1,7 @@
 from os.path import join
 
 from arekit.common.experiment.api.ops_doc import DocumentOperations
-from arekit.common.docs.base import News
+from arekit.common.docs.base import Document
 from arekit.common.docs.sentence import BaseNewsSentence
 
 
@@ -39,7 +39,7 @@ class DirectoryFilesDocOperations(DocumentOperations):
         sentences = list(map(lambda text: BaseNewsSentence(text), sentences))
 
         # Parse text.
-        return News(doc_id=doc_id, sentences=sentences)
+        return Document(doc_id=doc_id, sentences=sentences)
 
     def by_id(self, doc_id):
         """ Perform reading operation of the document.

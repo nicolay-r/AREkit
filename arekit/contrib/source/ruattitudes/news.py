@@ -1,7 +1,7 @@
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 
 
-class RuAttitudesNews(object):
+class RuAttitudesDocument(object):
 
     def __init__(self, sentences, news_index):
         assert(len(sentences) > 0)

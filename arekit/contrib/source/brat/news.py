@@ -1,13 +1,13 @@
-from arekit.common.docs.base import News
+from arekit.common.docs.base import Document
 from arekit.contrib.source.brat.entities.entity import BratEntity
 from arekit.contrib.source.brat.sentence import BratSentence
 
 
-class BratNews(News):
+class BratDocument(Document):
 
     def __init__(self, doc_id, sentences, text_relations):
         assert(isinstance(text_relations, list) or text_relations is None)
-        super(BratNews, self).__init__(doc_id=doc_id, sentences=sentences)
+        super(BratDocument, self).__init__(doc_id=doc_id, sentences=sentences)
         self.__text_relations = text_relations
         self.__entity_by_id = {}
         for sentence in sentences:

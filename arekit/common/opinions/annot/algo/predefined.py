@@ -1,4 +1,4 @@
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.opinions.annot.algo.base import BaseOpinionAnnotationAlgorithm
 
 
@@ -12,5 +12,5 @@ class PredefinedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         self.__get_opinions_by_doc_id_func = get_opinions_by_doc_id_func
 
     def iter_opinions(self, parsed_news, existed_opinions=None):
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
         return self.__get_opinions_by_doc_id_func(parsed_news.RelatedDocID)

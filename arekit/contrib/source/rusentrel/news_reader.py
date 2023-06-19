@@ -1,5 +1,5 @@
 from arekit.common.synonyms.base import SynonymsCollection
-from arekit.contrib.source.brat.news import BratNews
+from arekit.contrib.source.brat.news import BratDocument
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.rusentrel.entities import RuSentRelDocumentEntityCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions, RuSentRelIOUtils
@@ -36,9 +36,9 @@ class RuSentRelNewsReader(object):
                 line_handler=lambda line: RuSentRelNewsReader.hide_first_entry(line, entry="{Author, Unknown}"),
                 skip_entity_func=lambda entity: entity.Value in ['author', 'unknown'])
 
-            return BratNews(doc_id=target_doc_id if target_doc_id is not None else doc_id,
-                            sentences=sentences,
-                            text_relations=[])
+            return BratDocument(doc_id=target_doc_id if target_doc_id is not None else doc_id,
+                                sentences=sentences,
+                                text_relations=[])
 
         entities = RuSentRelDocumentEntityCollection.read_collection(
             doc_id=doc_id,

@@ -1,6 +1,6 @@
-from arekit.contrib.source.brat.news import BratNews
+from arekit.contrib.source.brat.news import BratDocument
 from arekit.contrib.source.brat.sentence import BratSentence
-from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.opinions.converter import RuAttitudesSentenceOpinionConverter
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
@@ -14,12 +14,12 @@ class RuAttitudesNewsConverter(object):
 
     @staticmethod
     def to_brat_news(news):
-        assert(isinstance(news, RuAttitudesNews))
+        assert(isinstance(news, RuAttitudesDocument))
         text_opinions = RuAttitudesNewsConverter.__iter_text_opinions(news=news)
         brat_sentences = RuAttitudesNewsConverter.__to_brat_sentences(news.iter_sentences())
-        return BratNews(doc_id=news.ID,
-                        sentences=brat_sentences,
-                        text_relations=list(text_opinions))
+        return BratDocument(doc_id=news.ID,
+                            sentences=brat_sentences,
+                            text_relations=list(text_opinions))
 
     @staticmethod
     def __to_brat_sentences(sentences_iter):
@@ -34,7 +34,7 @@ class RuAttitudesNewsConverter(object):
 
     @staticmethod
     def __iter_text_opinions(news):
-        assert(isinstance(news, RuAttitudesNews))
+        assert(isinstance(news, RuAttitudesDocument))
         for sentence in news.iter_sentences():
             assert(isinstance(sentence, RuAttitudesSentence))
             for sentence_opinion in sentence.iter_sentence_opins():

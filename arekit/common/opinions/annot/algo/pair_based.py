@@ -1,7 +1,7 @@
 from arekit.common.entities.types import OpinionEntityType
 from arekit.common.labels.provider.base import BasePairLabelProvider
 from arekit.common.docs.entity import DocumentEntity
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider, DistanceType
 from arekit.common.docs.parsed.providers.opinion_pairs import OpinionPairsProvider
 from arekit.common.opinions.annot.algo.base import BaseOpinionAnnotationAlgorithm
@@ -77,7 +77,7 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
     # endregion
 
     def iter_opinions(self, parsed_news, existed_opinions=None):
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
 
         def __filter_pair_func(e1, e2):
             key = self.__try_create_pair_key(entity_service=entity_service_provider,

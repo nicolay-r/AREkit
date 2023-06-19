@@ -20,7 +20,7 @@ from arekit.contrib.source.ruattitudes.entity.parser import RuAttitudesTextEntit
 from arekit.contrib.source.ruattitudes.text_object import TextObject
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
-from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.brat.entities.entity import BratEntity
@@ -89,7 +89,7 @@ class TestRuAttitudes(unittest.TestCase):
         for news in tqdm(RuAttitudesCollection.iter_news(version=ra_version,
                                                          get_news_index_func=lambda _: len(ids),
                                                          return_inds_only=False)):
-            assert(isinstance(news, RuAttitudesNews))
+            assert(isinstance(news, RuAttitudesDocument))
             assert(news.ID not in ids)
 
             # Perform check for every entity.
@@ -155,7 +155,7 @@ class TestRuAttitudes(unittest.TestCase):
             news_it = tqdm(news_it)
 
         for news in news_it:
-            assert(isinstance(news, RuAttitudesNews))
+            assert(isinstance(news, RuAttitudesDocument))
 
             if not do_printing:
                 continue

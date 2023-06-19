@@ -2,7 +2,7 @@ import logging
 import unittest
 
 from arekit.common.frames.variants.collection import FrameVariantsCollection
-from arekit.common.docs.base import News
+from arekit.common.docs.base import Document
 from arekit.common.docs.parser import NewsParser
 from arekit.common.docs.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
@@ -43,7 +43,7 @@ class TestTextParser(unittest.TestCase):
     def test_parse_single_string(self):
         text = "А контроль над этими провинциями — это господство над без малого половиной сирийской территории."
         parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True)])
-        news = News(doc_id=0, sentences=[BaseNewsSentence(text.split())])
+        news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
         parsed_news = NewsParser.parse(news=news, text_parser=parser)
         debug_show_news_terms(parsed_news=parsed_news)
 
@@ -71,7 +71,7 @@ class TestTextParser(unittest.TestCase):
                                           LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
                                                                          stemmer=stemmer),
                                           FrameVariantsSentimentNegation()])
-        news = News(doc_id=0, sentences=[BaseNewsSentence(text.split())])
+        news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
         parsed_news = NewsParser.parse(news=news, text_parser=parser)
         debug_show_news_terms(parsed_news=parsed_news)
 

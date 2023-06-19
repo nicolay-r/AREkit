@@ -1,5 +1,5 @@
 from arekit.common.utils import split_by_whitespaces
-from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.ruattitudes.text_object import TextObject
@@ -114,8 +114,8 @@ class RuAttitudesFormatReader(object):
             if RuAttitudesFormatReader.__check_is_news_sep(line=line, title=title):
                 news_index = RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
                                                                          local_index=local_news_ind)
-                yield RuAttitudesNews(sentences=sentences,
-                                      news_index=news_index)
+                yield RuAttitudesDocument(sentences=sentences,
+                                          news_index=news_index)
                 local_news_ind += 1
                 sentences = []
                 reset = True
@@ -132,8 +132,8 @@ class RuAttitudesFormatReader(object):
         if len(sentences) > 0:
             news_index = RuAttitudesFormatReader.__assign_news_index(news_index_func=get_news_index_func,
                                                                      local_index=local_news_ind)
-            yield RuAttitudesNews(sentences=sentences,
-                                  news_index=news_index)
+            yield RuAttitudesDocument(sentences=sentences,
+                                      news_index=news_index)
             sentences = []
 
         assert(len(sentences) == 0)

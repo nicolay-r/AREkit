@@ -32,7 +32,7 @@ class BaseRowProvider(object):
 
             parsed_news_service = linked_data.Tag
 
-            rows_it = self._provide_rows(parsed_news=parsed_news_service.ParsedNews,
+            rows_it = self._provide_rows(parsed_news=parsed_news_service.ParsedDocument,
                                          entity_service=parsed_news_service.get_provider(EntityServiceProvider.NAME),
                                          text_opinion_linkage=linked_data,
                                          idle_mode=idle_mode)

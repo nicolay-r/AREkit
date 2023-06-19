@@ -1,5 +1,5 @@
-from arekit.common.docs.base import News
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.base import Document
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.parser import BaseTextParser
 
@@ -12,7 +12,7 @@ class NewsParser(object):
 
     @staticmethod
     def parse(news, text_parser, parent_ppl_ctx=None):
-        assert(isinstance(news, News))
+        assert(isinstance(news, Document))
         assert(isinstance(text_parser, BaseTextParser))
         assert(isinstance(parent_ppl_ctx, PipelineContext) or parent_ppl_ctx is None)
 
@@ -21,12 +21,12 @@ class NewsParser(object):
                                             parent_ctx=parent_ppl_ctx)
                             for sent_ind in range(news.SentencesCount)]
 
-        return ParsedNews(doc_id=news.ID,
-                          parsed_sentences=parsed_sentences)
+        return ParsedDocument(doc_id=news.ID,
+                              parsed_sentences=parsed_sentences)
 
     @staticmethod
     def __create_ppl_params(news, sent_ind):
-        assert(isinstance(news, News))
+        assert(isinstance(news, Document))
         return {
             "s_ind": sent_ind,                                  # sentence index. (as Metadata)
             "doc_id": news.ID,                                  # document index. (as Metadata)

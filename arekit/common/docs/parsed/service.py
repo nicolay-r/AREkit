@@ -1,4 +1,4 @@
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.base import BaseParsedNewsServiceProvider
 
 
@@ -7,7 +7,7 @@ class ParsedNewsService(object):
     """
 
     def __init__(self, parsed_news, providers):
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
         assert(isinstance(providers, list))
         self.__parsed_news = parsed_news
         self.__providers = {}
@@ -24,7 +24,7 @@ class ParsedNewsService(object):
 
 
     @property
-    def ParsedNews(self):
+    def ParsedDocument(self):
         return self.__parsed_news
 
     def get_provider(self, name):

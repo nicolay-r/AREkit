@@ -5,7 +5,7 @@ from arekit.common.text.enums import TermFormat
 from arekit.common.text.parsed import BaseParsedText
 
 
-class ParsedNews(object):
+class ParsedDocument(object):
     """
     This class represents an information of the processed news in following directions:
         - news words

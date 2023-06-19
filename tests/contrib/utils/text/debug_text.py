@@ -3,7 +3,7 @@ import logging
 from arekit.common.context.token import Token
 from arekit.common.entities.base import Entity
 from arekit.common.frames.text_variant import TextFrameVariant
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 
 
 logger = logging.getLogger(__name__)
@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 def debug_show_news_terms(parsed_news):
-    assert(isinstance(parsed_news, ParsedNews))
+    assert(isinstance(parsed_news, ParsedDocument))
     logger.info('------------------------')
     return debug_show_terms(terms=parsed_news.iter_terms())
 

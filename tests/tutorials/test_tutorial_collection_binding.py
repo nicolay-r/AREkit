@@ -6,7 +6,7 @@ from arekit.common.entities.collection import EntityCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.contrib.source.brat.annot import BratAnnotationParser
 from arekit.contrib.source.brat.entities.compound import BratCompoundEntity
-from arekit.contrib.source.brat.news import BratNews
+from arekit.contrib.source.brat.news import BratDocument
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.zip_utils import ZipArchiveUtils
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
@@ -78,7 +78,7 @@ class FooDocReader(object):
     def read_document(filename, doc_id, version=FooVersions.V1):
         def file_to_doc(input_file):
             sentences = BratDocumentSentencesReader.from_file(input_file, entities)
-            return BratNews(doc_id, sentences, text_relations)
+            return BratDocument(doc_id, sentences, text_relations)
 
         entities = FooEntityCollection.read_collection(filename, version)
         text_relations = FooDocReader.read_text_relations(filename, version)

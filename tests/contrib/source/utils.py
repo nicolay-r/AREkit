@@ -1,5 +1,5 @@
 from arekit.common.labels.scaler.base import BaseLabelScaler
-from arekit.contrib.source.ruattitudes.news import RuAttitudesNews
+from arekit.contrib.source.ruattitudes.news import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.opinions.base import SentenceOpinion
 from arekit.contrib.source.ruattitudes.opinions.converter import RuAttitudesSentenceOpinionConverter
 from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
@@ -13,7 +13,7 @@ class RuAttitudesSentenceOpinionUtils(object):
     def iter_opinions_with_related_sentences(news, label_scaler):
         """ Provides opinions with the related sentences.
         """
-        assert(isinstance(news, RuAttitudesNews))
+        assert(isinstance(news, RuAttitudesDocument))
         assert(isinstance(label_scaler, BaseLabelScaler))
 
         doc_opinions = RuAttitudesSentenceOpinionUtils.__build_opinion_dict(news=news)

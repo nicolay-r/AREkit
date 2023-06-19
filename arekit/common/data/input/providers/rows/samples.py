@@ -14,7 +14,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.labels.base import Label
 
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityEndType, EntityServiceProvider
 from arekit.common.docs.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
@@ -145,7 +145,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         """
         Providing Rows depending on row_id_formatter type
         """
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
         assert(isinstance(row_dict, OrderedDict))
         assert(isinstance(text_opinion_linkage, TextOpinionsLinkage))
 

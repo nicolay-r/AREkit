@@ -1,4 +1,4 @@
-class News(object):
+class Document(object):
 
     def __init__(self, doc_id, sentences):
         assert(isinstance(sentences, list))

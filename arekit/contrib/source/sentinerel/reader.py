@@ -1,5 +1,5 @@
 from arekit.contrib.source.brat.annot import BratAnnotationParser
-from arekit.contrib.source.brat.news import BratNews
+from arekit.contrib.source.brat.news import BratDocument
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.sentinerel.entities import SentiNerelEntityCollection
 from arekit.contrib.source.sentinerel.io_utils import SentiNerelIOUtils, DEFAULT_VERSION
@@ -25,7 +25,7 @@ class SentiNerelDocReader(object):
 
         def file_to_doc(input_file):
             sentences = BratDocumentSentencesReader.from_file(input_file=input_file, entities=entities)
-            return BratNews(doc_id=doc_id, sentences=sentences, text_relations=text_relations)
+            return BratDocument(doc_id=doc_id, sentences=sentences, text_relations=text_relations)
 
         # TODO. #398 issue -- in some cases entities might be nested. Therefore we limit the set
         # TODO. of the potential named entities.

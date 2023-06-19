@@ -5,7 +5,7 @@ from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvide
 from arekit.common.entities.base import Entity
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.contrib.networks.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.input import const
 from arekit.contrib.networks.input.providers.term_connotation import extract_uint_frame_variant_connotation
@@ -58,7 +58,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
 
     def _fill_row_core(self, row, text_opinion_linkage, index_in_linked, etalon_label,
                        parsed_news, sentence_ind, s_ind, t_ind):
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
 
         super(NetworkSampleRowProvider, self)._fill_row_core(
             row=row,

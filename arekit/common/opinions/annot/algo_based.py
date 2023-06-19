@@ -1,6 +1,6 @@
 import logging
 
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.opinions.annot.algo.base import BaseOpinionAnnotationAlgorithm
 from arekit.common.opinions.annot.base import BaseOpinionAnnotator
 from arekit.common.opinions.collection import OpinionCollection
@@ -32,7 +32,7 @@ class AlgorithmBasedOpinionAnnotator(BaseOpinionAnnotator):
     # region private methods
 
     def _annot_collection_core(self, parsed_news):
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
 
         opinions = self.__get_existed_opinions_func(parsed_news.RelatedDocID)
         assert(isinstance(opinions, OpinionCollection) or opinions is None)

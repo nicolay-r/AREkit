@@ -6,7 +6,7 @@ from arekit.common.entities.base import Entity
 from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label
-from arekit.common.docs.base import News
+from arekit.common.docs.base import Document
 from arekit.common.docs.parser import NewsParser
 from arekit.common.docs.sentence import BaseNewsSentence
 from arekit.common.text.parser import BaseTextParser
@@ -60,7 +60,7 @@ class TestTestParser(unittest.TestCase):
             FrameVariantsSentimentNegation()
         ])
 
-        news = News(doc_id=0, sentences=[BaseNewsSentence(text.split())])
+        news = Document(doc_id=0, sentences=[BaseNewsSentence(text.split())])
         parsed_news = NewsParser.parse(news=news, text_parser=text_parser)
         self.debug_show_terms(parsed_news.iter_terms())
 

@@ -1,4 +1,4 @@
-from arekit.common.docs.parsed.base import ParsedNews
+from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.term_position import TermPositionTypes
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinionFilter
@@ -12,7 +12,7 @@ class FrameworkLimitationsTextOpinionFilter(TextOpinionFilter):
 
     def filter(self, text_opinion, parsed_news, entity_service_provider):
         assert(isinstance(text_opinion, TextOpinion))
-        assert(isinstance(parsed_news, ParsedNews))
+        assert(isinstance(parsed_news, ParsedDocument))
 
         s_ind = entity_service_provider.get_entity_position(
             text_opinion.SourceId, position_type=TermPositionTypes.SentenceIndex)
