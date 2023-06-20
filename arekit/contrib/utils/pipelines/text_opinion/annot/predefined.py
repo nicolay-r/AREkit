@@ -1,4 +1,4 @@
-from arekit.common.experiment.api.ops_doc import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProviders
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.base import BaseParsedDocumentServiceProvider

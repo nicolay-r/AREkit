@@ -1,4 +1,4 @@
-from arekit.common.experiment.api.ops_doc import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProviders
 from arekit.common.synonyms.base import SynonymsCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.docs_reader import RuSentRelDocumentsReader

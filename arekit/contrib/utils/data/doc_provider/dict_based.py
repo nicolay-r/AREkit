@@ -1,4 +1,4 @@
-from arekit.common.experiment.api.ops_doc import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProviders
 
 
 class DictionaryBasedDocumentProviders(DocumentProviders):

@@ -3,7 +3,7 @@ from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.doc import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.doc_brat import RuAttitudesDocumentsConverter
-from arekit.contrib.utils.data.doc_ops.dict_based import DictionaryBasedDocumentProviders
+from arekit.contrib.utils.data.doc_provider.dict_based import DictionaryBasedDocumentProviders
 
 
 class RuAttitudesDocumentProviders(DictionaryBasedDocumentProviders):

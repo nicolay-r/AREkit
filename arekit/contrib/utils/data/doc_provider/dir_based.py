@@ -1,6 +1,6 @@
 from os.path import join
 
-from arekit.common.experiment.api.ops_doc import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProviders
 from arekit.common.docs.base import Document
 from arekit.common.docs.sentence import BaseDocumentSentence
 

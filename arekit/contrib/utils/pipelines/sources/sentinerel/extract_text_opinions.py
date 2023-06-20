@@ -1,4 +1,4 @@
-from arekit.common.experiment.api.ops_doc import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProviders
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
@@ -40,7 +40,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
             sentinerel_version: enum
                 Version of the SentiNEREl collection.
             text_parser: Is the way of how do we process the text.
-            doc_ops: DocumentProviders or None
+            doc_ops: DocumentProvider or None
                 In case of None we consider the default initialization.
             label_formatter:
                 Formatter for labels which allows to: limit set of labels, and perform its conversion from

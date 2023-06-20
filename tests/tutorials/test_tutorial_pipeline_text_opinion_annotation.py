@@ -1,6 +1,6 @@
 import unittest
 
-from arekit.common.experiment.api.ops_doc import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProviders
 from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
