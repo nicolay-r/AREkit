@@ -7,7 +7,7 @@ from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProv
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
-from arekit.contrib.utils.pipelines.sources.rusentrel.doc_ops import RuSentrelDocumentProvider
+from arekit.contrib.utils.pipelines.sources.rusentrel.doc_provider import RuSentrelDocumentProvider
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter

@@ -8,7 +8,7 @@ from arekit.common.synonyms.base import SynonymsCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.sentinerel.io_utils import SentiNerelVersions, SentiNerelIOUtils
-from arekit.contrib.utils.pipelines.sources.sentinerel.doc_ops import SentiNERELDocProvider
+from arekit.contrib.utils.pipelines.sources.sentinerel.doc_provider import SentiNERELDocProvider
 from arekit.contrib.utils.pipelines.sources.sentinerel.labels_fmt import SentiNERELSentimentLabelFormatter
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
