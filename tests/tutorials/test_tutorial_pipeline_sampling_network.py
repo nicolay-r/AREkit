@@ -32,7 +32,7 @@ from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
-from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentProviders
+from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentProvider
 
 
 class Positive(Label):
@@ -106,7 +106,7 @@ class TestSamplingNetwork(unittest.TestCase):
         # Declaring pipeline related context parameters.
         #####
         no_folding = NoFolding(doc_ids=[0, 1], supported_data_type=DataType.Train)
-        doc_ops = FooDocumentProviders()
+        doc_ops = FooDocumentProvider()
         text_parser = BaseTextParser(pipeline=[
             BratTextEntitiesParser(),
             DefaultTextTokenizer(keep_tokens=True),

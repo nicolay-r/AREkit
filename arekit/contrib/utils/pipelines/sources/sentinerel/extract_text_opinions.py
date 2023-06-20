@@ -1,4 +1,4 @@
-from arekit.common.data.doc_provider import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProvider
 from arekit.common.experiment.data_type import DataType
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
@@ -8,7 +8,7 @@ from arekit.common.synonyms.base import SynonymsCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.sentinerel.io_utils import SentiNerelVersions, SentiNerelIOUtils
-from arekit.contrib.utils.pipelines.sources.sentinerel.doc_ops import SentiNERELDocProviders
+from arekit.contrib.utils.pipelines.sources.sentinerel.doc_ops import SentiNERELDocProvider
 from arekit.contrib.utils.pipelines.sources.sentinerel.labels_fmt import SentiNERELSentimentLabelFormatter
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
@@ -52,7 +52,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
             pipelines per every type.
     """
     assert(isinstance(sentinerel_version, SentiNerelVersions))
-    assert(isinstance(doc_ops, DocumentProviders) or doc_ops is None)
+    assert(isinstance(doc_ops, DocumentProvider) or doc_ops is None)
 
     data_folding = None
 
@@ -60,8 +60,8 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
         # Default Initialization.
         filenames_by_ids, data_folding = SentiNerelIOUtils.read_dataset_split(version=sentinerel_version,
                                                                               docs_limit=docs_limit)
-        doc_ops = SentiNERELDocProviders(filename_by_id=filenames_by_ids,
-                                         version=sentinerel_version)
+        doc_ops = SentiNERELDocProvider(filename_by_id=filenames_by_ids,
+                                        version=sentinerel_version)
 
     train_neut_annot = create_nolabel_text_opinion_annotator(terms_per_context=terms_per_context,
                                                              dist_in_sents=dist_in_sentences)
@@ -159,7 +159,7 @@ def create_test_pipeline(text_parser, doc_ops, annotators, text_opinion_filters)
     """
     assert(isinstance(text_parser, BaseTextParser))
     assert(isinstance(annotators, list))
-    assert(isinstance(doc_ops, DocumentProviders))
+    assert(isinstance(doc_ops, DocumentProvider))
 
     return text_opinion_extraction_pipeline(
         annotators=annotators,

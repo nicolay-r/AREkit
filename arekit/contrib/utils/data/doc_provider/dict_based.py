@@ -1,11 +1,11 @@
-from arekit.common.data.doc_provider import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProvider
 
 
-class DictionaryBasedDocumentProviders(DocumentProviders):
+class DictionaryBasedDocumentProvider(DocumentProvider):
 
     def __init__(self, d):
         assert(isinstance(d, dict))
-        super(DictionaryBasedDocumentProviders, self).__init__()
+        super(DictionaryBasedDocumentProvider, self).__init__()
         self.__d = d
 
     def by_id(self, doc_id):

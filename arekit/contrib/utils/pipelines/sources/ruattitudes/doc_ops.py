@@ -3,17 +3,17 @@ from arekit.contrib.source.ruattitudes.collection import RuAttitudesCollection
 from arekit.contrib.source.ruattitudes.io_utils import RuAttitudesVersions
 from arekit.contrib.source.ruattitudes.doc import RuAttitudesDocument
 from arekit.contrib.source.ruattitudes.doc_brat import RuAttitudesDocumentsConverter
-from arekit.contrib.utils.data.doc_provider.dict_based import DictionaryBasedDocumentProviders
+from arekit.contrib.utils.data.doc_provider.dict_based import DictionaryBasedDocumentProvider
 
 
-class RuAttitudesDocumentProviders(DictionaryBasedDocumentProviders):
+class RuAttitudesDocumentProvider(DictionaryBasedDocumentProvider):
 
     def __init__(self, version, keep_doc_ids_only, doc_id_func, limit):
         d = self.read_ruattitudes_to_brat_in_memory(version=version,
                                                     keep_doc_ids_only=keep_doc_ids_only,
                                                     doc_id_func=doc_id_func,
                                                     limit=limit)
-        super(RuAttitudesDocumentProviders, self).__init__(d)
+        super(RuAttitudesDocumentProvider, self).__init__(d)
 
     @staticmethod
     def read_ruattitudes_to_brat_in_memory(version, keep_doc_ids_only, doc_id_func, limit=None):
@@ -29,7 +29,7 @@ class RuAttitudesDocumentProviders(DictionaryBasedDocumentProviders):
                                              return_inds_only=keep_doc_ids_only)
 
         it_formatted_and_logged = progress_bar_iter(
-            iterable=RuAttitudesDocumentProviders.__iter_id_with_doc(
+            iterable=RuAttitudesDocumentProvider.__iter_id_with_doc(
                 docs_it=it, keep_doc_ids_only=keep_doc_ids_only),
             desc="Loading RuAttitudes Collection [{}]".format("doc ids only" if keep_doc_ids_only else "fully"),
             unit='docs')

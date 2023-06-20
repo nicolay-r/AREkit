@@ -1,11 +1,11 @@
 from os.path import join
 
-from arekit.common.data.doc_provider import DocumentProviders
+from arekit.common.data.doc_provider import DocumentProvider
 from arekit.common.docs.base import Document
 from arekit.common.docs.sentence import BaseDocumentSentence
 
 
-class DirectoryFilesDocProviders(DocumentProviders):
+class DirectoryFilesDocProvider(DocumentProvider):
     """ Document Providers based on the list of provided file paths
         for the particular directory.
     """

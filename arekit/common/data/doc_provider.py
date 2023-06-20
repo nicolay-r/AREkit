@@ -1,4 +1,4 @@
-class DocumentProviders(object):
+class DocumentProvider(object):
     """ Provides operations with documents
     """
 
