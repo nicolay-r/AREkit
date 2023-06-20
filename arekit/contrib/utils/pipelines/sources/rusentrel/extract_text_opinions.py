@@ -43,7 +43,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
         stemmer=MystemWrapper(),
         is_read_only=False)
 
-    doc_ops = RuSentrelDocumentProvider(version=rusentrel_version, synonyms=synonyms)
+    doc_provider = RuSentrelDocumentProvider(version=rusentrel_version, synonyms=synonyms)
 
     pipeline = text_opinion_extraction_pipeline(
         annotators=[
@@ -55,7 +55,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
             EntityBasedTextOpinionFilter(entity_filter=entity_filter),
             DistanceLimitedTextOpinionFilter(terms_per_context)
         ],
-        get_doc_by_id_func=doc_ops.by_id,
+        get_doc_by_id_func=doc_provider.by_id,
         text_parser=text_parser)
 
     return pipeline

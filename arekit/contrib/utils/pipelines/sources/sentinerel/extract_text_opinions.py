@@ -25,7 +25,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
                                             text_parser,
                                             label_formatter=SentiNERELSentimentLabelFormatter(),
                                             terms_per_context=50,
-                                            doc_ops=None,
+                                            doc_provider=None,
                                             dist_in_sentences=0,
                                             docs_limit=None,
                                             entity_filter=None):
@@ -40,7 +40,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
             sentinerel_version: enum
                 Version of the SentiNEREl collection.
             text_parser: Is the way of how do we process the text.
-            doc_ops: DocumentProvider or None
+            doc_provider: DocumentProvider or None
                 In case of None we consider the default initialization.
             label_formatter:
                 Formatter for labels which allows to: limit set of labels, and perform its conversion from
@@ -52,16 +52,16 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
             pipelines per every type.
     """
     assert(isinstance(sentinerel_version, SentiNerelVersions))
-    assert(isinstance(doc_ops, DocumentProvider) or doc_ops is None)
+    assert(isinstance(doc_provider, DocumentProvider) or doc_provider is None)
 
     data_folding = None
 
-    if doc_ops is None:
+    if doc_provider is None:
         # Default Initialization.
         filenames_by_ids, data_folding = SentiNerelIOUtils.read_dataset_split(version=sentinerel_version,
                                                                               docs_limit=docs_limit)
-        doc_ops = SentiNERELDocProvider(filename_by_id=filenames_by_ids,
-                                        version=sentinerel_version)
+        doc_provider = SentiNERELDocProvider(filename_by_id=filenames_by_ids,
+                                             version=sentinerel_version)
 
     train_neut_annot = create_nolabel_text_opinion_annotator(terms_per_context=terms_per_context,
                                                              dist_in_sents=dist_in_sentences)
@@ -74,28 +74,28 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
         DistanceLimitedTextOpinionFilter(terms_per_context)
     ]
 
-    predefined_annot = PredefinedTextOpinionAnnotator(doc_ops, label_formatter)
+    predefined_annot = PredefinedTextOpinionAnnotator(doc_provider, label_formatter)
 
     pipelines = {
         DataType.Train: create_train_pipeline(text_parser=text_parser,
-                                              doc_ops=doc_ops,
+                                              doc_provider=doc_provider,
                                               annotators=[
                                                   predefined_annot,
                                                   train_neut_annot
                                               ],
                                               text_opinion_filters=text_opinion_filters),
         DataType.Test: create_test_pipeline(text_parser=text_parser,
-                                            doc_ops=doc_ops,
+                                            doc_provider=doc_provider,
                                             annotators=[
                                                 test_neut_annot
                                             ],
                                             text_opinion_filters=text_opinion_filters),
         DataType.Etalon: create_etalon_pipeline(text_parser=text_parser,
-                                                doc_ops=doc_ops,
+                                                doc_provider=doc_provider,
                                                 predefined_annot=predefined_annot,
                                                 text_opinion_filters=text_opinion_filters),
         DataType.Dev: create_etalon_with_no_label_pipeline(text_parser=text_parser,
-                                                           doc_ops=doc_ops,
+                                                           doc_provider=doc_provider,
                                                            annotators=[
                                                                predefined_annot,
                                                                train_neut_annot
@@ -142,47 +142,47 @@ def create_nolabel_text_opinion_annotator(terms_per_context, dist_in_sents=0, sy
             error_on_synonym_end_missed=False))
 
 
-def create_train_pipeline(text_parser, doc_ops, annotators, text_opinion_filters):
+def create_train_pipeline(text_parser, doc_provider, annotators, text_opinion_filters):
     """ Train pipeline is based on the predefined annotations and
         automatic annotations of other pairs with a NoLabel.
     """
     return text_opinion_extraction_pipeline(
-        get_doc_by_id_func=doc_ops.by_id,
+        get_doc_by_id_func=doc_provider.by_id,
         text_parser=text_parser,
         annotators=annotators,
         text_opinion_filters=text_opinion_filters)
 
 
-def create_test_pipeline(text_parser, doc_ops, annotators, text_opinion_filters):
+def create_test_pipeline(text_parser, doc_provider, annotators, text_opinion_filters):
     """ This is a pipeline for TEST data annotation.
         We perform annotation of the attitudes.
     """
     assert(isinstance(text_parser, BaseTextParser))
     assert(isinstance(annotators, list))
-    assert(isinstance(doc_ops, DocumentProvider))
+    assert(isinstance(doc_provider, DocumentProvider))
 
     return text_opinion_extraction_pipeline(
         annotators=annotators,
         text_parser=text_parser,
-        get_doc_by_id_func=doc_ops.by_id,
+        get_doc_by_id_func=doc_provider.by_id,
         text_opinion_filters=text_opinion_filters)
 
 
-def create_etalon_pipeline(text_parser, doc_ops, predefined_annot, text_opinion_filters):
+def create_etalon_pipeline(text_parser, doc_provider, predefined_annot, text_opinion_filters):
     """ We adopt exact the same pipeline as for training data,
         but we do not perform "NoLabel" annotation.
         (we are interested only in sentiment attitudes).
     """
     return create_train_pipeline(text_parser=text_parser,
-                                 doc_ops=doc_ops,
+                                 doc_provider=doc_provider,
                                  annotators=[predefined_annot],
                                  text_opinion_filters=text_opinion_filters)
 
 
-def create_etalon_with_no_label_pipeline(annotators, text_parser, doc_ops, text_opinion_filters):
+def create_etalon_with_no_label_pipeline(annotators, text_parser, doc_provider, text_opinion_filters):
     """ We adopt exact the same pipeline as for training data.
     """
     return create_train_pipeline(text_parser=text_parser,
-                                 doc_ops=doc_ops,
+                                 doc_provider=doc_provider,
                                  annotators=annotators,
                                  text_opinion_filters=text_opinion_filters)

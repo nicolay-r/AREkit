@@ -14,7 +14,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
         It converts the pre-annotated Relations from BRAT-documents to TextOpinions
     """
 
-    def __init__(self, doc_ops, label_formatter, keep_any_type=False, entity_index_func=None):
+    def __init__(self, doc_provider, label_formatter, keep_any_type=False, entity_index_func=None):
         """
             get_doc_func:
                 func(doc_id)
@@ -29,12 +29,12 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
             entity_index_func: is a way of how we provide an external entity ID
                 fund(entity) -> ID
         """
-        assert(isinstance(doc_ops, DocumentProvider))
+        assert(isinstance(doc_provider, DocumentProvider))
         assert(isinstance(label_formatter, StringLabelsFormatter))
         assert(callable(entity_index_func) or entity_index_func is None)
         super(PredefinedTextOpinionAnnotator, self).__init__()
 
-        self.__doc_ops = doc_ops
+        self.__doc_provider = doc_provider
         self.__label_formatter = label_formatter
         self.__keep_any_type = keep_any_type
         self.__entity_index_func = (lambda brat_entity: brat_entity.ID) if \
@@ -66,7 +66,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
             EntityServiceProvider(self.__entity_index_func)
         ])
         esp = pns.get_provider(EntityServiceProvider.NAME)
-        doc = self.__doc_ops.by_id(parsed_doc.RelatedDocID)
+        doc = self.__doc_provider.by_id(parsed_doc.RelatedDocID)
 
         for brat_relation in doc.Relations:
 

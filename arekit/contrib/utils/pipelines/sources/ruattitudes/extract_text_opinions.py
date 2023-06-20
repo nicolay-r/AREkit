@@ -39,20 +39,21 @@ def create_text_opinion_extraction_pipeline(text_parser,
     assert(version in [RuAttitudesVersions.V20Large, RuAttitudesVersions.V20Base,
                        RuAttitudesVersions.V20BaseNeut, RuAttitudesVersions.V20LargeNeut])
 
-    doc_ops = RuAttitudesDocumentProvider(version=version,
-                                          keep_doc_ids_only=False,
-                                          doc_id_func=lambda doc_id: doc_id,
-                                          limit=limit)
+    doc_provider = RuAttitudesDocumentProvider(version=version,
+                                               keep_doc_ids_only=False,
+                                               doc_id_func=lambda doc_id: doc_id,
+                                               limit=limit)
 
     pipeline = text_opinion_extraction_pipeline(
         annotators=[
-            PredefinedTextOpinionAnnotator(doc_ops=doc_ops, label_formatter=RuAttitudesLabelFormatter(label_scaler))
+            PredefinedTextOpinionAnnotator(doc_provider=doc_provider,
+                                           label_formatter=RuAttitudesLabelFormatter(label_scaler))
         ],
         text_opinion_filters=[
             EntityBasedTextOpinionFilter(entity_filter=entity_filter),
             DistanceLimitedTextOpinionFilter(terms_per_context)
         ],
-        get_doc_by_id_func=doc_ops.by_id,
+        get_doc_by_id_func=doc_provider.by_id,
         text_parser=text_parser)
 
     return pipeline

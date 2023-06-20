@@ -44,9 +44,9 @@ class CustomLabelsFormatter(StringLabelsFormatter):
 class TestTextOpinionAnnotation(unittest.TestCase):
 
     def test(self):
-        doc_ops = FooDocumentProvider()
+        doc_provider = FooDocumentProvider()
         predefined_annotator = PredefinedTextOpinionAnnotator(
-            doc_ops=doc_ops,
+            doc_provider=doc_provider,
             label_formatter=CustomLabelsFormatter(pos_label_type=PositiveLabel,
                                                   neg_label_type=NegativeLabel))
 
@@ -76,7 +76,7 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             text_opinion_filters=[
                 DistanceLimitedTextOpinionFilter(terms_per_context=50)
             ],
-            get_doc_by_id_func=doc_ops.by_id,
+            get_doc_by_id_func=doc_provider.by_id,
             text_parser=text_parser)
 
         # Running the pipeline.

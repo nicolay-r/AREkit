@@ -105,19 +105,19 @@ class TestBertSerialization(unittest.TestCase):
         # Declaring pipeline related context parameters.
         #####
         no_folding = NoFolding(doc_ids=[0, 1], supported_data_type=DataType.Train)
-        doc_ops = FooDocumentProvider()
+        doc_provider = FooDocumentProvider()
         text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(), DefaultTextTokenizer(keep_tokens=True)])
         train_pipeline = text_opinion_extraction_pipeline(
             annotators=[
                 PredefinedTextOpinionAnnotator(
-                    doc_ops,
+                    doc_provider,
                     label_formatter=CustomLabelsFormatter(pos_label_type=Positive,
                                                           neg_label_type=Negative))
             ],
             text_opinion_filters=[
                 DistanceLimitedTextOpinionFilter(terms_per_context=50)
             ],
-            get_doc_by_id_func=doc_ops.by_id,
+            get_doc_by_id_func=doc_provider.by_id,
             text_parser=text_parser)
         #####
 

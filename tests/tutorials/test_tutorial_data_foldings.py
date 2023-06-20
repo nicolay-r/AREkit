@@ -41,11 +41,11 @@ class DataFolding(unittest.TestCase):
 
         splitter_simple = SimpleCrossValidationSplitter(shuffle=True, seed=1)
 
-        doc_ops = FooDocumentProvider()
+        doc_provider = FooDocumentProvider()
         doc_ids = list(range(2))
 
         splitter_statistical = StatBasedCrossValidationSplitter(
-            docs_stat=SentenceBasedDocumentStatGenerator(doc_reader_func=doc_ops.by_id),
+            docs_stat=SentenceBasedDocumentStatGenerator(doc_reader_func=doc_provider.by_id),
             doc_ids=doc_ids)
 
         cv_folding = TwoClassCVFolding(
