@@ -12,7 +12,7 @@ from arekit.contrib.utils.utils_folding import folding_iter_states
 
 class BaseSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, rows_provider, samples_io, save_labels_func, balance_func, storage):
+    def __init__(self, rows_provider, samples_io, save_labels_func, storage):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -24,11 +24,9 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         assert(isinstance(rows_provider, BaseSampleRowProvider))
         assert(isinstance(samples_io, BaseSamplesIO))
         assert(callable(save_labels_func))
-        assert(callable(balance_func))
         assert(isinstance(storage, BaseRowsStorage))
 
         self._rows_provider = rows_provider
-        self._balance_func = balance_func
         self._samples_io = samples_io
         self._save_labels_func = save_labels_func
         self._storage = storage
@@ -55,7 +53,6 @@ class BaseSerializerPipelineItem(BasePipelineItem):
                 repo=repo,
                 pipeline=pipeline,
                 doc_ids_iter=data_folding.fold_doc_ids_set()[data_type],
-                do_balance=self._balance_func(data_type),
                 desc="{desc} [{data_type}]".format(desc=description, data_type=data_type),
                 writer=writer_and_targets[description][0],
                 target=writer_and_targets[description][1])

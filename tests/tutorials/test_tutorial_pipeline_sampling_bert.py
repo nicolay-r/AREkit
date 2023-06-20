@@ -95,7 +95,6 @@ class TestBertSerialization(unittest.TestCase):
             rows_provider=rows_provider,
             samples_io=samples_io,
             save_labels_func=lambda data_type: True,
-            balance_func=lambda data_type: data_type == DataType.Train,
             storage=PandasBasedRowsStorage())
 
         pipeline = BasePipeline([

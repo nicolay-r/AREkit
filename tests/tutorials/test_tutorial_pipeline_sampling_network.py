@@ -95,7 +95,6 @@ class TestSamplingNetwork(unittest.TestCase):
             samples_io=SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz"),
             emb_io=NpEmbeddingIO(target_dir=self.__output_dir),
             rows_provider=rows_provider,
-            balance_func=lambda data_type: data_type == DataType.Train,
             save_labels_func=lambda data_type: data_type != DataType.Test,
             storage=PandasBasedRowsStorage())
 

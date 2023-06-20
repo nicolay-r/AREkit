@@ -9,8 +9,7 @@ from arekit.contrib.utils.pipelines.items.sampling.base import BaseSerializerPip
 
 class NetworksInputSerializerPipelineItem(BaseSerializerPipelineItem):
 
-    def __init__(self, save_labels_func, rows_provider, samples_io,
-                 emb_io, balance_func, storage, save_embedding=True):
+    def __init__(self, save_labels_func, rows_provider, samples_io, emb_io, storage, save_embedding=True):
         """ This pipeline item allows to perform a data preparation for neural network models.
 
             considering a list of the whole data_types with the related pipelines,
@@ -25,7 +24,6 @@ class NetworksInputSerializerPipelineItem(BaseSerializerPipelineItem):
             rows_provider=rows_provider,
             samples_io=samples_io,
             save_labels_func=save_labels_func,
-            balance_func=balance_func,
             storage=storage)
 
         self.__emb_io = emb_io
