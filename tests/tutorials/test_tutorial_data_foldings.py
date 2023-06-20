@@ -9,7 +9,7 @@ from arekit.contrib.utils.cv.doc_stat.sentence import SentenceBasedDocumentStatG
 from arekit.contrib.utils.cv.splitters.default import SimpleCrossValidationSplitter
 from arekit.contrib.utils.cv.splitters.statistical import StatBasedCrossValidationSplitter
 from arekit.contrib.utils.cv.two_class import TwoClassCVFolding
-from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentOperations
+from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentProviders
 
 
 class DataFolding(unittest.TestCase):
@@ -41,7 +41,7 @@ class DataFolding(unittest.TestCase):
 
         splitter_simple = SimpleCrossValidationSplitter(shuffle=True, seed=1)
 
-        doc_ops = FooDocumentOperations()
+        doc_ops = FooDocumentProviders()
         doc_ids = list(range(2))
 
         splitter_statistical = StatBasedCrossValidationSplitter(

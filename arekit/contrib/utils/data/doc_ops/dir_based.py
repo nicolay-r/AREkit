@@ -1,12 +1,12 @@
 from os.path import join
 
-from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_doc import DocumentProviders
 from arekit.common.docs.base import Document
 from arekit.common.docs.sentence import BaseDocumentSentence
 
 
-class DirectoryFilesDocOperations(DocumentOperations):
-    """ Document Operations based on the list of provided file paths
+class DirectoryFilesDocProviders(DocumentProviders):
+    """ Document Providers based on the list of provided file paths
         for the particular directory.
     """
 

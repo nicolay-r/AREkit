@@ -27,7 +27,7 @@ from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextToken
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
-from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentOperations
+from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentProviders
 
 
 class Positive(Label):
@@ -105,7 +105,7 @@ class TestBertSerialization(unittest.TestCase):
         # Declaring pipeline related context parameters.
         #####
         no_folding = NoFolding(doc_ids=[0, 1], supported_data_type=DataType.Train)
-        doc_ops = FooDocumentOperations()
+        doc_ops = FooDocumentProviders()
         text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(), DefaultTextTokenizer(keep_tokens=True)])
         train_pipeline = text_opinion_extraction_pipeline(
             annotators=[

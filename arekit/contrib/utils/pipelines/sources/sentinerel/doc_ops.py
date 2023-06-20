@@ -1,9 +1,9 @@
-from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_doc import DocumentProviders
 from arekit.contrib.source.sentinerel.io_utils import SentiNerelVersions
 from arekit.contrib.source.sentinerel.reader import SentiNerelDocReader
 
 
-class SentiNERELDocOperation(DocumentOperations):
+class SentiNERELDocProviders(DocumentProviders):
     """ Document reader for the collection of the RuSentNE competition 2023.
         For more details please follow the following repository:
         github: https://github.com/dialogue-evaluation/RuSentNE-evaluation
@@ -19,7 +19,7 @@ class SentiNERELDocOperation(DocumentOperations):
         """
         assert(isinstance(filename_by_id, dict))
         assert(isinstance(version, SentiNerelVersions))
-        super(SentiNERELDocOperation, self).__init__()
+        super(SentiNERELDocProviders, self).__init__()
         self.__filename_by_id = filename_by_id
         self.__version = version
 

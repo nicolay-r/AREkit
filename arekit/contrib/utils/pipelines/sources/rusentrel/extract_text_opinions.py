@@ -7,7 +7,7 @@ from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProv
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinions
 from arekit.contrib.source.rusentrel.synonyms import RuSentRelSynonymsCollectionHelper
-from arekit.contrib.utils.pipelines.sources.rusentrel.doc_ops import RuSentrelDocumentOperations
+from arekit.contrib.utils.pipelines.sources.rusentrel.doc_ops import RuSentrelDocumentProviders
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
@@ -43,7 +43,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
         stemmer=MystemWrapper(),
         is_read_only=False)
 
-    doc_ops = RuSentrelDocumentOperations(version=rusentrel_version, synonyms=synonyms)
+    doc_ops = RuSentrelDocumentProviders(version=rusentrel_version, synonyms=synonyms)
 
     pipeline = text_opinion_extraction_pipeline(
         annotators=[

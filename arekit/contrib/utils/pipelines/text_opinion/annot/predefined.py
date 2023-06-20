@@ -1,4 +1,4 @@
-from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_doc import DocumentProviders
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.base import BaseParsedDocumentServiceProvider
@@ -29,7 +29,7 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
             entity_index_func: is a way of how we provide an external entity ID
                 fund(entity) -> ID
         """
-        assert(isinstance(doc_ops, DocumentOperations))
+        assert(isinstance(doc_ops, DocumentProviders))
         assert(isinstance(label_formatter, StringLabelsFormatter))
         assert(callable(entity_index_func) or entity_index_func is None)
         super(PredefinedTextOpinionAnnotator, self).__init__()

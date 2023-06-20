@@ -1,6 +1,6 @@
 import unittest
 
-from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_doc import DocumentProviders
 from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
@@ -30,7 +30,7 @@ class NegativeLabel(Label):
     pass
 
 
-class FooDocumentOperations(DocumentOperations):
+class FooDocumentProviders(DocumentProviders):
     def by_id(self, doc_id):
         return FooDocReader.read_document(str(doc_id), doc_id=doc_id)
 
@@ -44,7 +44,7 @@ class CustomLabelsFormatter(StringLabelsFormatter):
 class TestTextOpinionAnnotation(unittest.TestCase):
 
     def test(self):
-        doc_ops = FooDocumentOperations()
+        doc_ops = FooDocumentProviders()
         predefined_annotator = PredefinedTextOpinionAnnotator(
             doc_ops=doc_ops,
             label_formatter=CustomLabelsFormatter(pos_label_type=PositiveLabel,

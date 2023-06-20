@@ -1,17 +1,17 @@
-from arekit.common.experiment.api.ops_doc import DocumentOperations
+from arekit.common.experiment.api.ops_doc import DocumentProviders
 from arekit.common.synonyms.base import SynonymsCollection
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.docs_reader import RuSentRelDocumentsReader
 
 
-class RuSentrelDocumentOperations(DocumentOperations):
+class RuSentrelDocumentProviders(DocumentProviders):
     """ Limitations: Supported only train/test collections format
     """
 
     def __init__(self, version, synonyms):
         assert(isinstance(version, RuSentRelVersions))
         assert(isinstance(synonyms, SynonymsCollection))
-        super(RuSentrelDocumentOperations, self).__init__()
+        super(RuSentrelDocumentProviders, self).__init__()
         self.__version = version
         self.__synonyms = synonyms
 

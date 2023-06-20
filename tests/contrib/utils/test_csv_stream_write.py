@@ -24,7 +24,7 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import D
 
 from tests.tutorials.test_tutorial_pipeline_sampling_bert import CustomEntitiesFormatter, SentimentLabelScaler, \
     CustomLabelsFormatter, Positive, Negative
-from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentOperations
+from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentProviders
 
 
 class TestStreamWriters(unittest.TestCase):
@@ -66,7 +66,7 @@ class TestStreamWriters(unittest.TestCase):
         # Declaring pipeline related context parameters.
         #####
         no_folding = NoFolding(doc_ids=[0, 1], supported_data_type=DataType.Train)
-        doc_ops = FooDocumentOperations()
+        doc_ops = FooDocumentProviders()
         text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(), DefaultTextTokenizer(keep_tokens=True)])
         train_pipeline = text_opinion_extraction_pipeline(
             annotators=[
