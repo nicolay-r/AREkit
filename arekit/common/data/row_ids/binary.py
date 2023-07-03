@@ -25,14 +25,3 @@ class BinaryIDProvider(BaseIDProvider):
 
         return template.format(o_id,
                                label_scaler.label_to_uint(linked_opinions.get_linked_label()))
-
-    @staticmethod
-    def parse_label_in_sample_id(sample_id):
-        assert(isinstance(sample_id, str))
-        return BinaryIDProvider._parse(row_id=sample_id, pattern=BinaryIDProvider.LABEL)
-
-    @staticmethod
-    def parse_index_in_sample_id(sample_id):
-        assert(isinstance(sample_id, str))
-        return BinaryIDProvider._parse(row_id=sample_id, pattern=BinaryIDProvider.INDEX)
-
