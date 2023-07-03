@@ -3,6 +3,7 @@ from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
+from arekit.common.folding.nofold import NoFolding
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
@@ -79,10 +80,11 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         """
         assert (isinstance(pipeline_ctx, PipelineContext))
         assert ("data_type_pipelines" in pipeline_ctx)
-        assert ("data_folding" in pipeline_ctx)
         assert ("doc_ids" in pipeline_ctx)
 
-        data_folding = pipeline_ctx.provide("data_folding")
+        data_folding = pipeline_ctx.provide_or_none("data_folding")
+        data_folding = NoFolding() if data_folding is None else data_folding
+
         for _ in folding_iter_states(data_folding):
             self._handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
                                    doc_ids=pipeline_ctx.provide("doc_ids"),
