@@ -26,13 +26,11 @@ class DataFolding(unittest.TestCase):
             DataType.Test: [4, 5, 6, 7]
         }
 
-        fixed_folding = FixedFolding()
         print("Fixed folding:")
-        self.show_folding(fixed_folding, doc_ids=parts)
+        self.show_folding(FixedFolding(), doc_ids=parts)
 
-        no_folding = NoFolding(data_type=DataType.Train)
         print("No folding:")
-        self.show_folding(no_folding, doc_ids=parts[DataType.Train])
+        self.show_folding(NoFolding(), doc_ids={DataType.Train: parts[DataType.Train]})
 
         splitter_simple = SimpleCrossValidationSplitter(shuffle=True, seed=1)
 

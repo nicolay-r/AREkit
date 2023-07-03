@@ -8,13 +8,15 @@ class TwoClassCVFolding(BaseDataFolding):
     """
 
     def __init__(self, supported_data_types, cv_count, splitter):
+        assert(isinstance(supported_data_types, list))
         assert(isinstance(splitter, CrossValidationSplitter))
         assert(isinstance(cv_count, int) and cv_count > 0)
 
         if len(supported_data_types) > 2:
             raise NotImplementedError("Experiments with such amount of data-types are not supported!")
 
-        super(TwoClassCVFolding, self).__init__(supported_data_types=supported_data_types)
+        super(TwoClassCVFolding, self).__init__()
+        self._supported_data_types = supported_data_types
 
         self.__cv_count = cv_count
         self.__splitter = splitter
@@ -59,7 +61,7 @@ class TwoClassCVFolding(BaseDataFolding):
             }
 
         if self.__splitter is None:
-            raise NotImplementedError("Splitter has not been intialized!")
+            raise NotImplementedError("Splitter has not been initialized!")
 
         it = self.__splitter.items_to_cv_pairs(doc_ids=set(doc_ids),
                                                cv_count=self.__cv_count)

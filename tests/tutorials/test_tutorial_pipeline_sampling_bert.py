@@ -104,7 +104,6 @@ class TestBertSerialization(unittest.TestCase):
         #####
         # Declaring pipeline related context parameters.
         #####
-        no_folding = NoFolding(data_type=DataType.Train)
         doc_provider = FooDocumentProvider()
         text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(), DefaultTextTokenizer(keep_tokens=True)])
         train_pipeline = text_opinion_extraction_pipeline(
@@ -123,9 +122,9 @@ class TestBertSerialization(unittest.TestCase):
 
         pipeline.run(input_data=None,
                      params_dict={
-                         "data_folding": no_folding,
+                         "data_folding": NoFolding(),
                          "data_type_pipelines": {DataType.Train: train_pipeline},
-                         "doc_ids": [0, 1]
+                         "doc_ids": {DataType.Train: [0, 1]}
                      })
 
         reader = PandasCsvReader()
