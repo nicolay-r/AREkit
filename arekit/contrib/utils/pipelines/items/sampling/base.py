@@ -31,7 +31,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         self._save_labels_func = save_labels_func
         self._storage = storage
 
-    def _serialize_iteration(self, data_type, pipeline, data_folding):
+    def _serialize_iteration(self, data_type, pipeline, data_folding, doc_ids):
         assert (isinstance(data_type, DataType))
         assert (isinstance(pipeline, BasePipeline))
 
@@ -52,18 +52,19 @@ class BaseSerializerPipelineItem(BasePipelineItem):
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,
                 pipeline=pipeline,
-                doc_ids_iter=data_folding.fold_doc_ids_set()[data_type],
+                doc_ids_iter=data_folding.fold_doc_ids_set(doc_ids=doc_ids)[data_type],
                 desc="{desc} [{data_type}]".format(desc=description, data_type=data_type),
                 writer=writer_and_targets[description][0],
                 target=writer_and_targets[description][1])
 
-    def _handle_iteration(self, data_type_pipelines, data_folding):
+    def _handle_iteration(self, data_type_pipelines, data_folding, doc_ids):
         """ Performing data serialization for a particular iteration
         """
         assert(isinstance(data_type_pipelines, dict))
         assert(isinstance(data_folding, BaseDataFolding))
         for data_type, pipeline in data_type_pipelines.items():
-            self._serialize_iteration(data_type=data_type, pipeline=pipeline, data_folding=data_folding)
+            self._serialize_iteration(data_type=data_type, pipeline=pipeline, data_folding=data_folding,
+                                      doc_ids=doc_ids)
 
     def apply_core(self, input_data, pipeline_ctx):
         """
@@ -79,8 +80,10 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         assert (isinstance(pipeline_ctx, PipelineContext))
         assert ("data_type_pipelines" in pipeline_ctx)
         assert ("data_folding" in pipeline_ctx)
+        assert ("doc_ids" in pipeline_ctx)
 
         data_folding = pipeline_ctx.provide("data_folding")
         for _ in folding_iter_states(data_folding):
             self._handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
+                                   doc_ids=pipeline_ctx.provide("doc_ids"),
                                    data_folding=data_folding)

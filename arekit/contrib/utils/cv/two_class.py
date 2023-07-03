@@ -7,15 +7,14 @@ class TwoClassCVFolding(BaseDataFolding):
         i.e. two-class cv-folding algorithm
     """
 
-    def __init__(self, supported_data_types, doc_ids_to_fold, cv_count, splitter):
+    def __init__(self, supported_data_types, cv_count, splitter):
         assert(isinstance(splitter, CrossValidationSplitter))
         assert(isinstance(cv_count, int) and cv_count > 0)
 
         if len(supported_data_types) > 2:
             raise NotImplementedError("Experiments with such amount of data-types are not supported!")
 
-        super(TwoClassCVFolding, self).__init__(doc_ids_to_fold=doc_ids_to_fold,
-                                                supported_data_types=supported_data_types)
+        super(TwoClassCVFolding, self).__init__(supported_data_types=supported_data_types)
 
         self.__cv_count = cv_count
         self.__splitter = splitter
@@ -47,11 +46,10 @@ class TwoClassCVFolding(BaseDataFolding):
             self.__assign_index(state_index)
             yield None
 
-    def fold_doc_ids_set(self):
+    def fold_doc_ids_set(self, doc_ids):
 
         # Access to protected fields
         data_types = self._supported_data_types
-        doc_ids = self._doc_ids_to_fold_set
 
         if len(data_types) == 1:
             # By default we provide the same output since

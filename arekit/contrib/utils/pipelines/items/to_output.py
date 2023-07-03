@@ -38,7 +38,7 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         self.__create_opinion_collection_func = create_opinion_collection_func
         self.__opinion_collection_writer = opinion_collection_writer
 
-    def __convert(self, data_folding, output_storage, target_func, data_type, pipeline_ctx):
+    def __convert(self, data_folding, doc_ids, output_storage, target_func, data_type, pipeline_ctx):
         """ From `output_storage` to `target` conversion.
             output_storage: BaseRowsStorage
             target_func: func(doc_id) -- considered to provide a target for the particular document.
@@ -58,7 +58,7 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         converter_part = text_opinion_linkages_to_opinion_collections_pipeline_part(
             iter_opinion_linkages_func=lambda doc_id: linkages_view.iter_opinion_linkages(
                 doc_id=doc_id, opinions_view=BaseOpinionStorageView(storage)),
-            doc_ids_set=set(data_folding.fold_doc_ids_set()[data_type]),
+            doc_ids_set=set(data_folding.fold_doc_ids_set(doc_ids=doc_ids)[data_type]),
             create_opinion_collection_func=self.__create_opinion_collection_func,
             labels_scaler=self.__label_scaler,
             label_calc_mode=LabelCalculationMode.AVERAGE)
@@ -86,9 +86,11 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
         assert(isinstance(pipeline_ctx, PipelineContext))
         assert("data_folding" in pipeline_ctx)
         assert("data_type" in pipeline_ctx)
+        assert("doc_ids" in pipeline_ctx)
 
         data_folding = pipeline_ctx.provide("data_folding")
         data_type = pipeline_ctx.provide("data_type")
+        doc_ids = pipeline_ctx.provide("doc_ids")
 
         for _ in folding_iter_states(data_folding):
             iter_index = experiment_iter_index(data_folding)
@@ -98,4 +100,5 @@ class TextOpinionLinkagesToOpinionConverterPipelineItem(BasePipelineItem):
                                target_func=target,
                                data_type=data_type,
                                data_folding=data_folding,
+                               doc_ids=doc_ids,
                                pipeline_ctx=pipeline_ctx)

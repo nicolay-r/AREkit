@@ -4,7 +4,6 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.base import BaseDataFolding
 from arekit.common.folding.fixed import FixedFolding
 from arekit.common.folding.nofold import NoFolding
-from arekit.common.folding.united import UnitedFolding
 from arekit.contrib.utils.cv.doc_stat.sentence import SentenceBasedDocumentStatGenerator
 from arekit.contrib.utils.cv.splitters.default import SimpleCrossValidationSplitter
 from arekit.contrib.utils.cv.splitters.statistical import StatBasedCrossValidationSplitter
@@ -14,9 +13,9 @@ from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDo
 
 class DataFolding(unittest.TestCase):
 
-    def show_folding(self, folding):
+    def show_folding(self, folding, doc_ids):
         assert(isinstance(folding, BaseDataFolding))
-        split_dict = folding.fold_doc_ids_set()
+        split_dict = folding.fold_doc_ids_set(doc_ids=doc_ids)
         for data_type, doc_ids in split_dict.items():
             print(data_type, doc_ids)
 
@@ -27,17 +26,13 @@ class DataFolding(unittest.TestCase):
             DataType.Test: [4, 5, 6, 7]
         }
 
-        fixed_folding = FixedFolding.from_parts(parts)
+        fixed_folding = FixedFolding()
         print("Fixed folding:")
-        self.show_folding(fixed_folding)
+        self.show_folding(fixed_folding, doc_ids=parts)
 
-        no_folding = NoFolding(doc_ids=[10, 15, 20], supported_data_type=DataType.Dev)
+        no_folding = NoFolding(data_type=DataType.Train)
         print("No folding:")
-        self.show_folding(no_folding)
-
-        united_folding = UnitedFolding([fixed_folding, no_folding])
-        print("United folding:")
-        self.show_folding(united_folding)
+        self.show_folding(no_folding, doc_ids=parts[DataType.Train])
 
         splitter_simple = SimpleCrossValidationSplitter(shuffle=True, seed=1)
 
@@ -50,13 +45,12 @@ class DataFolding(unittest.TestCase):
 
         cv_folding = TwoClassCVFolding(
             supported_data_types=[DataType.Train, DataType.Test],
-            doc_ids_to_fold=doc_ids,
             cv_count=2,
             splitter=splitter_statistical)
 
         for state_index, _ in enumerate(cv_folding.iter_states()):
             print("State: ", state_index)
-            self.show_folding(cv_folding)
+            self.show_folding(cv_folding, doc_ids=doc_ids)
 
 
 if __name__ == '__main__':

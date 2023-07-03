@@ -4,14 +4,14 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.fixed import FixedFolding
 
 
-def create_fixed_folding(train_filenames, test_filenames):
+def create_fixed_folding_doc_ids(train_filenames, test_filenames):
     """ Create fixed data-folding based on the predefined list of filenames,
         written in file.
     """
     assert(isinstance(train_filenames, list))
     assert(isinstance(test_filenames, list))
 
-    filenames_by_ids = create_filenames_by_ids(filenames=train_filenames + test_filenames)
+    filenames_by_ids = __create_filenames_by_ids(filenames=train_filenames + test_filenames)
 
     ids_by_filenames = {}
     for doc_id, filename in filenames_by_ids.items():
@@ -20,17 +20,15 @@ def create_fixed_folding(train_filenames, test_filenames):
     train_doc_ids = [ids_by_filenames[filename] for filename in train_filenames]
     test_doc_ids = [ids_by_filenames[filename] for filename in test_filenames]
 
-    fixed_folding = FixedFolding.from_parts({
+    return {
         DataType.Train: train_doc_ids,
         DataType.Test: test_doc_ids,
         DataType.Etalon: test_doc_ids,
         DataType.Dev: test_doc_ids
-    })
-
-    return filenames_by_ids, fixed_folding
+    }
 
 
-def create_filenames_by_ids(filenames):
+def __create_filenames_by_ids(filenames):
     """ Indexing filenames
     """
 
@@ -45,7 +43,7 @@ def create_filenames_by_ids(filenames):
     filenames_by_ids = OrderedDict()
     for fname in filenames:
 
-        doc_id = number_from_string(fname)
+        doc_id = __number_from_string(fname)
 
         if doc_id is None:
             doc_id = __create_new_id(default_id)
@@ -56,7 +54,7 @@ def create_filenames_by_ids(filenames):
     return filenames_by_ids
 
 
-def number_from_string(s):
+def __number_from_string(s):
     assert(isinstance(s, str))
 
     digit_chars_prefix = []

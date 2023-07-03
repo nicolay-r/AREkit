@@ -105,7 +105,7 @@ class TestSamplingNetwork(unittest.TestCase):
         #####
         # Declaring pipeline related context parameters.
         #####
-        no_folding = NoFolding(doc_ids=[0, 1], supported_data_type=DataType.Train)
+        no_folding = NoFolding(data_type=DataType.Train)
         doc_provider = FooDocumentProvider()
         text_parser = BaseTextParser(pipeline=[
             BratTextEntitiesParser(),
@@ -128,7 +128,8 @@ class TestSamplingNetwork(unittest.TestCase):
         pipeline.run(input_data=None,
                      params_dict={
                          "data_folding": no_folding,
-                         "data_type_pipelines": {DataType.Train: train_pipeline}
+                         "data_type_pipelines": {DataType.Train: train_pipeline},
+                         "doc_ids": [0, 1]
                      })
 
         reader = PandasCsvReader()

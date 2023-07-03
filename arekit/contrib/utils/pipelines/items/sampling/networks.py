@@ -29,7 +29,7 @@ class NetworksInputSerializerPipelineItem(BaseSerializerPipelineItem):
         self.__emb_io = emb_io
         self.__save_embedding = save_embedding
 
-    def _handle_iteration(self, data_type_pipelines, data_folding):
+    def _handle_iteration(self, data_type_pipelines, data_folding, doc_ids):
         """ Performing data serialization for a particular iteration
         """
         assert(isinstance(data_type_pipelines, dict))
@@ -39,7 +39,7 @@ class NetworksInputSerializerPipelineItem(BaseSerializerPipelineItem):
         self._rows_provider.clear_embedding_pairs()
 
         super(NetworksInputSerializerPipelineItem, self)._handle_iteration(
-            data_type_pipelines=data_type_pipelines, data_folding=data_folding)
+            data_type_pipelines=data_type_pipelines, data_folding=data_folding, doc_ids=doc_ids)
 
         if not (self.__save_embedding and self._rows_provider.HasEmbeddingPairs):
             return
