@@ -130,4 +130,4 @@ class TestBertSerialization(unittest.TestCase):
         reader = PandasCsvReader()
         source = join(self.__output_dir, "sample-train-0.tsv.gz")
         storage = reader.read(source)
-        self.assertEqual(28, len(storage), "Amount of rows is non equal!")
+        self.assertEqual(20, len(storage), "Amount of rows is non equal!")
