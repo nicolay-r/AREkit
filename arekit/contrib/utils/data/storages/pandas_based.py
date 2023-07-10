@@ -105,11 +105,6 @@ class PandasBasedRowsStorage(BaseRowsStorage):
     def find_by_value(self, column_name, value):
         return self.__filter(column_name=column_name, value=value)
 
-    def find_first_by_value(self, column_name, value):
-        # TODO. Return new storage. (Encapsulation)
-        rows = self.__filter(column_name=column_name, value=value)
-        return rows.iloc[0]
-
     def init_empty(self, columns_provider):
         cols_with_types = columns_provider.get_columns_list_with_types()
         self._df = self.__create_empty(cols_with_types)

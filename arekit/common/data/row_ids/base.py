@@ -42,15 +42,4 @@ class BaseIDProvider(object):
     def create_sample_id(linked_opinions, index_in_linked, label_scaler):
         raise NotImplementedError()
 
-    @staticmethod
-    def create_pattern(id_value, p_type):
-        assert(isinstance(id_value, int))
-        assert(isinstance(p_type, str))
-        return p_type.format(id_value)
-
     # endregion
-
-    @staticmethod
-    def convert_sample_id_to_opinion_id(sample_id):
-        assert(isinstance(sample_id, str))
-        return sample_id[:sample_id.index(BaseIDProvider.INDEX[0])] + BaseIDProvider.INDEX.format(0)
