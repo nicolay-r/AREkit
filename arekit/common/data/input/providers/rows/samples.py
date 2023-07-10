@@ -70,6 +70,10 @@ class BaseSampleRowProvider(BaseRowProvider):
             index_in_linked=index_in_linked,
             label_scaler=self._label_provider.LabelScaler)
 
+        row[const.OPINION_ID] = text_opinion_linkage.First.TextOpinionID
+
+        row[const.OPINION_LINKAGE_ID] = index_in_linked
+
         row[const.DOC_ID] = text_opinion_linkage.First.DocID
 
         row[const.SENT_IND] = sentence_ind

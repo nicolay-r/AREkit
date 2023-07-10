@@ -36,6 +36,8 @@ parse_value = {
     const.S_IND: lambda value: int(value),
     const.T_IND: lambda value: int(value),
     const.SENT_IND: lambda value: int(value),
+    const.OPINION_ID: lambda value: int(value),
+    const.OPINION_LINKAGE_ID: lambda value: int(value),
     const.ENTITY_VALUES: lambda value: __process_values_list(value),
     const.ENTITY_TYPES: lambda value: __process_values_list(value),
     const.ENTITIES: lambda value: __process_indices_list(value),
@@ -82,7 +84,15 @@ class ParsedSampleRow(object):
     @property
     def SampleID(self):
         return self.__params[const.ID]
-    
+
+    @property
+    def OpinionID(self):
+        return self.__params[const.OPINION_ID]
+
+    @property
+    def OpinionLinkageID(self):
+        return self.__params[const.OPINION_LINKAGE_ID]
+
     @property
     def Terms(self):
         return self.__params[const.TEXT]

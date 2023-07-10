@@ -3,6 +3,10 @@ DOC_ID = 'doc_id'
 TEXT = 'text_a'
 LABEL = 'label'
 
+# Global identifier of the opinion in the sampled data.
+OPINION_ID = "opinion_id"
+OPINION_LINKAGE_ID = "linkage_id"
+
 # Corresponds to fields with attitude ends. (values, STRING)
 SOURCE = 'source'
 TARGET = 'target'

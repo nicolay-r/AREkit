@@ -20,10 +20,6 @@ class BaseOpinionLinkagesView(object):
 
     # region private methods
 
-    def __iter_doc_opinion_ids(self, row_ids):
-        for row_id in row_ids:
-            yield self._ids_provider.parse_opinion_in_opinion_id(row_id)
-
     def __iter_opinions_by_linkages(self, linkages_df, opinions_view):
         for df_linkage in linkages_df:
             assert (isinstance(df_linkage, pd.DataFrame))
@@ -42,9 +38,8 @@ class BaseOpinionLinkagesView(object):
 
     def iter_opinion_linkages(self, doc_id, opinions_view):
         assert(isinstance(opinions_view, BaseOpinionStorageView))
-        doc_df = self._storage.find_by_value(column_name=const.DOC_ID, value=doc_id)
-        row_ids = [row_id for row_id in doc_df[const.ID]]  # TODO. Adopt storage.
-        doc_opin_ids = self.__iter_doc_opinion_ids(row_ids=row_ids)
+        doc_df = self._storage.find_by_value(column_name=const.OPINION_ID, value=doc_id)
+        doc_opin_ids = [opinion_id for opinion_id in doc_df[const.OPINION_ID]]
 
         doc_opin_id_patterns = map(
             lambda opinion_id: self._ids_provider.create_pattern(id_value=opinion_id, p_type=BaseIDProvider.OPINION),

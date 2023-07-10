@@ -54,26 +54,3 @@ class BaseIDProvider(object):
     def convert_sample_id_to_opinion_id(sample_id):
         assert(isinstance(sample_id, str))
         return sample_id[:sample_id.index(BaseIDProvider.INDEX[0])] + BaseIDProvider.INDEX.format(0)
-
-    # region 'parse' methods
-
-    @staticmethod
-    def _parse(row_id, pattern):
-        assert(isinstance(pattern, str))
-
-        _from = row_id.index(pattern[0]) + 1
-        _to = row_id.index(BaseIDProvider.SEPARATOR, _from, len(row_id))
-
-        return int(row_id[_from:_to])
-
-    @staticmethod
-    def parse_opinion_in_opinion_id(opinion_id):
-        assert(isinstance(opinion_id, str))
-        return BaseIDProvider._parse(opinion_id, BaseIDProvider.OPINION)
-
-    @staticmethod
-    def parse_opinion_in_sample_id(sample_id):
-        assert(isinstance(sample_id, str))
-        return BaseIDProvider._parse(sample_id, BaseIDProvider.OPINION)
-
-    # endregion
