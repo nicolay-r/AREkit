@@ -13,6 +13,9 @@ class BaseRowProvider(object):
     """ Base provider for rows that suppose to be filled into BaseRowsStorage.
     """
 
+    def __init__(self):
+        self.__rows_counter = None
+
     # region protected methods
 
     # TODO. This might be also generalized.
@@ -20,11 +23,18 @@ class BaseRowProvider(object):
     def _provide_rows(self, parsed_doc, entity_service, text_opinion_linkage, idle_mode):
         raise NotImplementedError()
 
+    def _count_row(self):
+        index = self.__rows_counter["rows_iterated"]
+        self.__rows_counter["rows_iterated"] += 1
+        return index
+
     # endregion
 
     def iter_by_rows(self, contents_provider, doc_ids_iter, idle_mode):
         assert(isinstance(contents_provider, ContentsProvider))
         assert(isinstance(doc_ids_iter, collections.Iterable))
+
+        self.__rows_counter = collections.Counter()
 
         for linked_data in contents_provider.from_doc_ids(doc_ids=doc_ids_iter, idle_mode=idle_mode):
             assert(isinstance(linked_data, LinkedDataWrapper))
@@ -39,3 +49,5 @@ class BaseRowProvider(object):
 
             for row in rows_it:
                 yield linked_data.RelatedDocID, row
+
+        self.__rows_counter = None

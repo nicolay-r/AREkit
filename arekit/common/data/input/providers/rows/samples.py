@@ -8,8 +8,6 @@ from arekit.common.data.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
-from arekit.common.data.row_ids.binary import BinaryIDProvider
-from arekit.common.data.row_ids.multiple import MultipleIDProvider
 from arekit.common.entities.base import Entity
 from arekit.common.labels.base import Label
 
@@ -34,7 +32,6 @@ class BaseSampleRowProvider(BaseRowProvider):
 
         self._label_provider = label_provider
         self.__text_provider = text_provider
-        self.__row_ids_provider = self.__create_row_ids_provider(label_provider)
         self.__instances_provider = self.__create_instances_provider(label_provider)
         self.__store_labels = None
 
@@ -65,10 +62,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         def __assign_value(column, value):
             row[column] = value
 
-        row[const.ID] = self.__row_ids_provider.create_sample_id(
-            linked_opinions=text_opinion_linkage,
-            index_in_linked=index_in_linked,
-            label_scaler=self._label_provider.LabelScaler)
+        row[const.ID] = self._count_row()
 
         row[const.OPINION_ID] = text_opinion_linkage.First.TextOpinionID
 
@@ -128,17 +122,8 @@ class BaseSampleRowProvider(BaseRowProvider):
     # region private methods
 
     @staticmethod
-    def __create_row_ids_provider(label_provider):
-        # TODO. #376 related. This should be removed after refactoring, because
-        # TODO. we consider an ordinary IDs, that not based on the other data.
-        if isinstance(label_provider, BinaryLabelProvider):
-            return BinaryIDProvider()
-        if isinstance(label_provider, MultipleLabelProvider):
-            return MultipleIDProvider()
-
-    @staticmethod
     def __create_instances_provider(label_provider):
-        # TODO. #473 related: thiese label providers are based on text opinion extraction task!
+        # TODO. #473 related: these label providers are based on text opinion extraction task!
         if isinstance(label_provider, BinaryLabelProvider):
             return MultipleInstancesLinkedTextOpinionsProvider(label_provider.SupportedLabels)
         if isinstance(label_provider, MultipleLabelProvider):
@@ -156,6 +141,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         etalon_label = self.__instances_provider.provide_label(text_opinion_linkage)
         for instance in self.__instances_provider.iter_instances(text_opinion_linkage):
             yield self.__create_row(row=row_dict,
+                                    row_id=0,
                                     parsed_doc=parsed_doc,
                                     entity_service=entity_service,
                                     text_opinions_linkage=instance,
@@ -164,7 +150,7 @@ class BaseSampleRowProvider(BaseRowProvider):
                                     etalon_label=etalon_label,
                                     idle_mode=idle_mode)
 
-    def __create_row(self, row, parsed_doc, entity_service, text_opinions_linkage,
+    def __create_row(self, row, row_id, parsed_doc, entity_service, text_opinions_linkage,
                      index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:

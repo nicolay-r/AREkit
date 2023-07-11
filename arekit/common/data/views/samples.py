@@ -1,13 +1,9 @@
 from arekit.common.data import const
-from arekit.common.data.row_ids.base import BaseIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
 
 
+# TODO. This is a particular type of view, and expected to be off the core.
 class LinkedSamplesStorageView(object):
-
-    def __init__(self, row_ids_provider):
-        assert(isinstance(row_ids_provider, BaseIDProvider))
-        self.__row_ids_provider = row_ids_provider
 
     def iter_from_storage(self, storage):
         assert(isinstance(storage, BaseRowsStorage))
