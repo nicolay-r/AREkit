@@ -9,12 +9,17 @@ from arekit.contrib.utils.np_utils.vocab import VocabRepositoryUtils
 NEWS_MYSTEM_SKIPGRAM_1000_20_2015 = "news_mystem_skipgram_1000_20_2015.tar.gz"
 
 
-def __get_resource(local_name, check_existance=False):
+def __get_resource(local_name, check_existance=False, download_if_missed=False):
     assert(isinstance(local_name, str))
     filepath = join(utils.get_default_download_dir(), local_name)
 
     if check_existance and not exists(filepath):
-        raise Exception("Resource could not be found: {}".format(filepath))
+        if download_if_missed:
+            download()
+            # We try to ger the resource again but won't attempt to download it again.
+            __get_resource(local_name, check_existance=check_existance, download_if_missed=False)
+        else:
+            raise Exception("Resource could not be found: {}".format(filepath))
 
     return filepath
 
@@ -23,8 +28,9 @@ def __get_embedding_dir(filepath):
     return filepath.replace(".tar.gz", "")
 
 
-def load_embedding_and_vocab(local_name, check_existance=False):
-    tar_gz_archive = __get_resource(local_name, check_existance)
+def load_embedding_and_vocab(local_name, check_existance=False, download_if_missed=False):
+    tar_gz_archive = __get_resource(local_name, check_existance=check_existance,
+                                    download_if_missed=download_if_missed)
     target_dir = __get_embedding_dir(tar_gz_archive)
     embedding = NpzEmbeddingHelper.load_embedding(os.path.join(target_dir, "embedding.npz"))
     vocab = VocabRepositoryUtils.load(os.path.join(target_dir, "vocab.txt"))
@@ -68,6 +74,5 @@ def download():
                         raise Exception("Attempted Path Traversal in Tar File")
             
                 tar.extractall(path, members, numeric_owner=numeric_owner) 
-                
-            
+
             safe_extract(file, __get_embedding_dir(target_filepath))

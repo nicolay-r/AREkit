@@ -46,7 +46,7 @@ def create_rows_provider(str_entity_fmt, ctx, vectorizers="default"):
 
         if vectorizers == "default":
             # initialize default vectorizer for Russian language.
-            embedding = load_embedding_news_mystem_skipgram_1000_20_2015(MystemWrapper())
+            embedding = load_embedding_news_mystem_skipgram_1000_20_2015(stemmer=MystemWrapper(), auto_download=True)
             bpe_vectorizer = BPEVectorizer(embedding=embedding, max_part_size=3)
             norm_vectorizer = RandomNormalVectorizer(vector_size=embedding.VectorSize,
                                                      token_offset=12345)

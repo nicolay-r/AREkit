@@ -3,7 +3,7 @@ from arekit.contrib.utils.download import NEWS_MYSTEM_SKIPGRAM_1000_20_2015, loa
 from arekit.contrib.utils.embeddings.rusvectores import RusvectoresEmbedding
 
 
-def load_embedding_news_mystem_skipgram_1000_20_2015(stemmer):
+def load_embedding_news_mystem_skipgram_1000_20_2015(stemmer, auto_download=False):
     """ Embedding from https://rusvectores.org/ru/models/
         Description:        Russian news, from 2013 till the october 2015
         Corpora size:       2.5 milliard words
@@ -15,8 +15,12 @@ def load_embedding_news_mystem_skipgram_1000_20_2015(stemmer):
 
         stemmer: Stemmer
             It is expected to adopt MystemWrapper.
+        auto_download: bool
+            Whether try to download if the resource was missed.
     """
     assert(isinstance(stemmer, Stemmer) or stemmer is None)
-    embedding, vocab = load_embedding_and_vocab(local_name=NEWS_MYSTEM_SKIPGRAM_1000_20_2015, check_existance=True)
+    embedding, vocab = load_embedding_and_vocab(local_name=NEWS_MYSTEM_SKIPGRAM_1000_20_2015,
+                                                check_existance=True,
+                                                download_if_missed=auto_download)
     embedding = RusvectoresEmbedding(matrix=embedding, words=vocab, stemmer=stemmer)
     return embedding
