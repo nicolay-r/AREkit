@@ -67,7 +67,7 @@ class ParsedSampleRow(object):
 
         for key, value in row.items():
 
-            if key == const.LABEL:
+            if key == const.LABEL_UINT:
                 self.__uint_label = int(value)
                 # TODO: To be adopted in future instead of __uint_label
                 self.__params[key] = value

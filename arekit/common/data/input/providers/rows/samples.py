@@ -75,7 +75,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         expected_label = text_opinion_linkage.get_linked_label()
 
         if self.__store_labels:
-            row[const.LABEL] = self._label_provider.calculate_output_uint_label(
+            row[const.LABEL_UINT] = self._label_provider.calculate_output_uint_label(
                 expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
                 etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
 

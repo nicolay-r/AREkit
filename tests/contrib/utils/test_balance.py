@@ -16,7 +16,7 @@ class TestBalancing(unittest.TestCase):
 
         balanced_storage = PandasBasedStorageBalancing.create_balanced_from(
             storage=reader.read(target=join(self.__output_dir, "sample-train-0.csv")),
-            column_name=const.LABEL,
+            column_name=const.LABEL_UINT,
             free_origin=True)
 
         print(balanced_storage.DataFrame)

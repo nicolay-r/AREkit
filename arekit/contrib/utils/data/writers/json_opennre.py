@@ -55,7 +55,7 @@ class OpenNREJsonWriter(BaseWriter):
             "token": tokens,
             "h": {"pos": [s_ind, s_ind + 1], "id": str(bag_id + "s")},
             "t": {"pos": [t_ind, t_ind + 1], "id": str(bag_id + "t")},
-            "relation": str(int(row[const.LABEL])) if const.LABEL in row else "NA"
+            "relation": str(int(row[const.LABEL_UINT])) if const.LABEL_UINT in row else "NA"
         }
 
     def open_target(self, target):
