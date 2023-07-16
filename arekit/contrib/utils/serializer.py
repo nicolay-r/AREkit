@@ -44,6 +44,8 @@ class InputDataSerializationHelper(object):
                       writer=writer,
                       target=target)
 
+        repo.push(writer=writer, target=target)
+
         if do_balance:
 
             # We perform a complete and clean data reading from scratch.
@@ -56,4 +58,4 @@ class InputDataSerializationHelper(object):
                                               rows_provider=repo._rows_provider,
                                               storage=balanced_storage)
 
-        repo.push(writer=writer, target=target)
+            repo.push(writer=writer, target=target)
