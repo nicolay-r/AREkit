@@ -1,10 +1,10 @@
-import pandas as pd
+import importlib
 from arekit.contrib.utils.data.readers.base import BaseReader
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 
 
 class PandasCsvReader(BaseReader):
-    """ Represents a CSV-based reader, implmented via pandas API.
+    """ Represents a CSV-based reader, implemented via pandas API.
     """
 
     def __init__(self, sep='\t', header='infer', compression='infer', encoding='utf-8', col_types=None):
@@ -19,6 +19,7 @@ class PandasCsvReader(BaseReader):
             self.__col_types = dict()
 
     def __from_csv(self, filepath):
+        pd = importlib.import_module("pandas")
         return pd.read_csv(filepath,
                            sep=self.__sep,
                            encoding=self.__encoding,

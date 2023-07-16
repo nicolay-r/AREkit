@@ -1,5 +1,3 @@
-import pandas as pd
-
 from arekit.common.data import const
 from arekit.common.data.row_ids.base import BaseIDProvider
 from arekit.common.data.storages.base import BaseRowsStorage
@@ -26,7 +24,6 @@ class BaseOpinionLinkagesView(object):
 
     def __iter_opinions_by_linkages(self, linkages_df, opinions_view):
         for df_linkage in linkages_df:
-            assert (isinstance(df_linkage, pd.DataFrame))
             yield self._iter_by_opinions(linked_df=df_linkage, opinions_view=opinions_view)
 
     # endregion

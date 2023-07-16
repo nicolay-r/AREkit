@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 
 from arekit.common.data import const
 from arekit.common.data.row_ids.multiple import MultipleIDProvider
@@ -37,7 +36,6 @@ class MultilableOpinionLinkagesView(BaseOpinionLinkagesView):
     # region protected methods
 
     def _iter_by_opinions(self, linked_df, opinions_view):
-        assert(isinstance(linked_df, pd.DataFrame))
         assert(isinstance(opinions_view, BaseOpinionStorageView))
 
         for _, series in linked_df.iterrows():

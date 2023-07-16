@@ -1,6 +1,6 @@
 import gc
+import importlib
 
-import pandas as pd
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 
 
@@ -34,6 +34,7 @@ class PandasBasedStorageBalancing(object):
             dframes.append(group.sample(max_size - len(group), replace=True))
 
         # Clear resources.
+        pd = importlib.import_module("pandas")
         balanced_df = pd.concat(dframes + [original_df])
 
         # Removing temporary created dataframe.
