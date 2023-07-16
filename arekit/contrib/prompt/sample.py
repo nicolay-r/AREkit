@@ -51,8 +51,8 @@ class PromptedSampleRowProvider(CroppedSampleRowProvider):
             text=original_text,
             s_ind=row[const.S_IND],
             t_ind=row[const.T_IND],
-            s_val=sentence_terms[actual_s_ind].Value,
-            t_val=sentence_terms[actual_t_ind].Value,
+            s_val=sentence_terms[actual_s_ind].DisplayValue,
+            t_val=sentence_terms[actual_t_ind].DisplayValue,
             label_uint=label_uint,
             label_val=label_val)
 
