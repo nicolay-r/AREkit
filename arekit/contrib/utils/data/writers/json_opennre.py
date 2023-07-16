@@ -46,7 +46,8 @@ class OpenNREJsonWriter(BaseWriter):
         # Gather tokens.
         tokens = []
         for text_col in text_columns:
-            tokens.extend(row[text_col].split())
+            if text_col in row:
+                tokens.extend(row[text_col].split())
 
         # Filtering JSON row.
         return {
