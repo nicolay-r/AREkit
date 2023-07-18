@@ -1,4 +1,5 @@
-import pandas as pd
+import importlib
+
 from arekit.contrib.utils.data.readers.base import BaseReader
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 
@@ -13,12 +14,13 @@ class PandasCsvReader(BaseReader):
         self.__encoding = encoding
         self.__header = header
 
-        # Speciall assignation of types for certain columns.
+        # Special assignation of types for certain columns.
         self.__col_types = col_types
         if self.__col_types is None:
             self.__col_types = dict()
 
     def __from_csv(self, filepath):
+        pd = importlib.import_module("pandas")
         return pd.read_csv(filepath,
                            sep=self.__sep,
                            encoding=self.__encoding,

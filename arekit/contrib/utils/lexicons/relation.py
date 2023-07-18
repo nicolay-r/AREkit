@@ -1,12 +1,9 @@
-import pandas as pd
-
 from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
 
 
 class RelationLexicon(object):
 
     def __init__(self, dataframe):
-        assert(isinstance(dataframe, pd.DataFrame))
         self.__check(dataframe)
         self.__lexicon = dataframe
 

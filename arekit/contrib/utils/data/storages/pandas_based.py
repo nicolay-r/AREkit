@@ -1,5 +1,6 @@
+import importlib
+
 import numpy as np
-import pandas as pd
 
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
 from arekit.common.data.storages.base import BaseRowsStorage, logger
@@ -12,7 +13,6 @@ class PandasBasedRowsStorage(BaseRowsStorage):
     """
 
     def __init__(self, df=None):
-        assert(isinstance(df, pd.DataFrame) or df is None)
         self._df = df
 
     @property
@@ -26,6 +26,7 @@ class PandasBasedRowsStorage(BaseRowsStorage):
         """
         assert(isinstance(cols_with_types, list))
         data = np.empty(0, dtype=np.dtype(cols_with_types))
+        pd = importlib.import_module("pandas")
         return pd.DataFrame(data)
 
     def __filter(self, column_name, value):
@@ -33,7 +34,6 @@ class PandasBasedRowsStorage(BaseRowsStorage):
 
     @staticmethod
     def __iter_rows_core(df):
-        assert(isinstance(df, pd.DataFrame))
         for row_index, row in df.iterrows():
             yield row_index, row
 

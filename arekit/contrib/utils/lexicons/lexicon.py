@@ -1,4 +1,3 @@
-import pandas as pd
 from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
 
 
@@ -13,7 +12,6 @@ class Lexicon(object):
         return 'term'
 
     def __init__(self, dataframe):
-        assert(isinstance(dataframe, pd.DataFrame))
         self.__lexicon_df = dataframe
 
     @classmethod
