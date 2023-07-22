@@ -27,10 +27,16 @@ class OpenNREJsonWriter(BaseWriter):
         During the dataset reading stage via OpenNRE, these linkages automaticaly groups into bags.
     """
 
+    EXTRA_KEYS_TEMPLATE = "_{}"
+
     def __init__(self, text_columns, encoding="utf-8"):
+        """ text_columns: list
+                column names that expected to be joined into a single (token) column.
+        """
+        assert(isinstance(text_columns, list))
         assert(isinstance(encoding, str))
-        self.__encoding = encoding
         self.__text_columns = text_columns
+        self.__encoding = encoding
         self.__target_f = None
 
     @staticmethod
@@ -41,7 +47,7 @@ class OpenNREJsonWriter(BaseWriter):
         sample_id = row[const.ID]
         s_ind = int(row[const.S_IND])
         t_ind = int(row[const.T_IND])
-        bag_id = sample_id[0:sample_id.find('_i')]
+        bag_id = str(row[const.OPINION_ID])
 
         # Gather tokens.
         tokens = []
@@ -50,7 +56,7 @@ class OpenNREJsonWriter(BaseWriter):
                 tokens.extend(row[text_col].split())
 
         # Filtering JSON row.
-        return {
+        formatted_data = {
             "id": bag_id,
             "id_orig": sample_id,
             "token": tokens,
@@ -58,6 +64,13 @@ class OpenNREJsonWriter(BaseWriter):
             "t": {"pos": [t_ind, t_ind + 1], "id": str(bag_id + "t")},
             "relation": str(int(row[const.LABEL_UINT])) if const.LABEL_UINT in row else "NA"
         }
+
+        # Register extra fields.
+        for key, value in row.items():
+            if key not in formatted_data and key not in text_columns:
+                formatted_data[OpenNREJsonWriter.EXTRA_KEYS_TEMPLATE.format(key)] = value
+
+        return formatted_data
 
     def open_target(self, target):
         os.makedirs(dirname(target), exist_ok=True)
