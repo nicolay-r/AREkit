@@ -47,6 +47,10 @@ class SampleColumnsProvider(BaseColumnsProvider):
         dtypes_list.append((const.S_IND, 'int32'))
         dtypes_list.append((const.T_IND, 'int32'))
 
+        # opinion-extraction task related fields
+        dtypes_list.append((const.OPINION_ID, 'int32'))
+        dtypes_list.append((const.OPINION_LINKAGE_ID, 'int32'))
+
         return dtypes_list
 
     def set_text_column_names(self, text_column_names):
