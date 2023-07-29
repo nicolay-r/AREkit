@@ -7,19 +7,23 @@ from arekit.contrib.source.nerel.io_utils import NerelIOUtils, DEFAULT_VERSION
 
 class NerelDocReader(object):
 
-    @staticmethod
-    def read_text_relations(folding_type, filename, version):
+    def __init__(self, version=DEFAULT_VERSION):
+        self.__version = version
+        self.__doc_fold = NerelIOUtils.map_doc_to_fold_type(version)
+
+    def read_text_relations(self, filename):
         assert(isinstance(filename, str))
 
         return NerelIOUtils.read_from_zip(
-            inner_path=NerelIOUtils.get_annotation_innerpath(folding_data_type=folding_type, filename=filename),
+            inner_path=NerelIOUtils.get_annotation_innerpath(
+                folding_data_type=self.__doc_fold[filename],
+                filename=filename),
             process_func=lambda input_file: [
                 relation for relation in BratAnnotationParser.parse_annotations(
                     input_file=input_file, encoding='utf-8-sig')["relations"]],
-            version=version)
+            version=self.__version)
 
-    @staticmethod
-    def read_document(filename, doc_id, doc_fold=None, version=DEFAULT_VERSION, entities_to_ignore=None):
+    def read_document(self, filename, doc_id, entities_to_ignore=None):
         assert(isinstance(filename, str))
         assert(isinstance(doc_id, int))
 
@@ -28,14 +32,12 @@ class NerelDocReader(object):
             return BratNews(doc_id=doc_id, sentences=sentences, text_relations=text_relations)
 
         entities = NerelEntityCollection.read_collection(
-            filename=filename, version=version, entities_to_ignore=entities_to_ignore)
+            filename=filename, version=self.__version, entities_to_ignore=entities_to_ignore)
 
-        doc_fold = NerelIOUtils.map_doc_to_fold_type(version) if doc_fold is None else doc_fold
-
-        text_relations = NerelDocReader.read_text_relations(
-            folding_type=doc_fold[filename], filename=filename, version=version)
+        text_relations = self.read_text_relations(filename=filename)
 
         return NerelIOUtils.read_from_zip(
-            inner_path=NerelIOUtils.get_news_innerpath(folding_data_type=doc_fold[filename], filename=filename),
+            inner_path=NerelIOUtils.get_news_innerpath(
+                folding_data_type=self.__doc_fold[filename], filename=filename),
             process_func=file_to_doc,
-            version=version)
+            version=self.__version)

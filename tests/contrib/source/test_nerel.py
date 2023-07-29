@@ -12,7 +12,8 @@ from arekit.contrib.source.nerel.reader import NerelDocReader
 class TestNerelRead(unittest.TestCase):
 
     def test(self):
-        news = NerelDocReader.read_document(filename="109230_text", doc_id=0)
+        doc_reader = NerelDocReader()
+        news = doc_reader.read_document(filename="109230_text", doc_id=0)
         assert(isinstance(news, BratNews))
         print("Sentences Count:", news.SentencesCount)
         for sentence in news.iter_sentences():
@@ -28,6 +29,7 @@ class TestNerelRead(unittest.TestCase):
             print(brat_relation.SourceID, brat_relation.TargetID, brat_relation.Type)
 
     def test_all_documents(self):
+        doc_reader = NerelDocReader()
         filenames_by_ids, folding = NerelIOUtils.read_dataset_split()
         for doc_id in tqdm(folding.iter_doc_ids(), total=len(list(folding.iter_doc_ids()))):
-            NerelDocReader.read_document(filename=filenames_by_ids[doc_id], doc_id=0)
+            doc_reader.read_document(filename=filenames_by_ids[doc_id], doc_id=0)
