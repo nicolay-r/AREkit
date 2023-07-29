@@ -27,7 +27,10 @@ def download():
         # SentiNEREL
         "sentinerel-v1_0.zip": "https://www.dropbox.com/s/<HIDDEN>/sentinerel-v1_0.zip?dl=1",
         "sentinerel-v2_0.zip": "https://www.dropbox.com/s/<HIDDEN>/sentinerel-v2_0.zip?dl=1",
-        "sentinerel-v2_1.zip": "https://www.dropbox.com/s/<HIDDEN>/sentinerel-v2_1.zip?dl=1"
+        "sentinerel-v2_1.zip": "https://www.dropbox.com/s/<HIDDEN>/sentinerel-v2_1.zip?dl=1",
+        # NEREL
+        "nerel-v1_0.zip": "https://www.dropbox.com/scl/fi/vegk0aczjdm9km410loqv/nerel-v1_0.zip?rlkey=wv0ut86n3x5ao6xabsaxd7lh7&dl=1",
+        "nerel-v1_1.zip": "https://www.dropbox.com/scl/fi/oaytj0rvx7vhdxjk98x7g/nerel-v1_1.zip?rlkey=klrq0l5rpn10cf7e2swkay6r4&dl=1"
     }
 
     # Perform downloading ...

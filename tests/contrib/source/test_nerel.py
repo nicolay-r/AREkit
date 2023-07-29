@@ -1,15 +1,18 @@
 import unittest
 
+from tqdm import tqdm
+
 from arekit.contrib.source.brat.news import BratNews
 from arekit.contrib.source.brat.relation import BratRelation
 from arekit.contrib.source.brat.sentence import BratSentence
-from arekit.contrib.source.sentinerel.reader import SentiNerelDocReader
+from arekit.contrib.source.nerel.io_utils import NerelIOUtils
+from arekit.contrib.source.nerel.reader import NerelDocReader
 
 
-class TestSentiNERELRead(unittest.TestCase):
+class TestNerelRead(unittest.TestCase):
 
     def test(self):
-        news = SentiNerelDocReader.read_document(filename="2070_text", doc_id=0)
+        news = NerelDocReader.read_document(filename="109230_text", doc_id=0)
         assert(isinstance(news, BratNews))
         print("Sentences Count:", news.SentencesCount)
         for sentence in news.iter_sentences():
@@ -20,8 +23,11 @@ class TestSentiNERELRead(unittest.TestCase):
                     entity.ID, entity.Value, entity.Type,
                     "-".join([str(bound.Position), str(bound.Position+bound.Length)])))
 
-        print()
-
         for brat_relation in news.Relations:
             assert(isinstance(brat_relation, BratRelation))
             print(brat_relation.SourceID, brat_relation.TargetID, brat_relation.Type)
+
+    def test_all_documents(self):
+        filenames_by_ids, folding = NerelIOUtils.read_dataset_split()
+        for doc_id in tqdm(folding.iter_doc_ids(), total=len(list(folding.iter_doc_ids()))):
+            NerelDocReader.read_document(filename=filenames_by_ids[doc_id], doc_id=0)
