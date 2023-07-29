@@ -88,6 +88,7 @@ class NerelIOUtils(ZipArchiveUtils):
 
         filenames_by_ids, data_folding = create_fixed_folding(train_filenames=f2d[DataType.Train],
                                                               test_filenames=f2d[DataType.Test],
-                                                              dev_filenames=f2d[DataType.Dev])
+                                                              dev_filenames=f2d[DataType.Dev],
+                                                              limit=docs_limit)
 
         return filenames_by_ids, data_folding
