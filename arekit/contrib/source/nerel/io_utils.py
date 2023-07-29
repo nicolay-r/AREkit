@@ -79,7 +79,7 @@ class NerelIOUtils(ZipArchiveUtils):
         return d2f
 
     @staticmethod
-    def read_dataset_split(version=DEFAULT_VERSION):
+    def read_dataset_split(version=DEFAULT_VERSION, docs_limit=None):
         f2d = {}
         for filename, split_type in NerelIOUtils.__iter_filename_and_splittype(version):
             if split_type not in f2d:

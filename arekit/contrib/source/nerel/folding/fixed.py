@@ -4,7 +4,7 @@ from arekit.common.experiment.data_type import DataType
 from arekit.common.folding.fixed import FixedFolding
 
 
-def create_fixed_folding(train_filenames, dev_filenames, test_filenames):
+def create_fixed_folding(train_filenames, dev_filenames, test_filenames, limit=None):
     """ Create fixed data-folding based on the predefined list of filenames,
         written in file.
     """
@@ -17,6 +17,10 @@ def create_fixed_folding(train_filenames, dev_filenames, test_filenames):
     ids_by_filenames = {}
     for doc_id, filename in filenames_by_ids.items():
         ids_by_filenames[filename] = doc_id
+
+    train_filenames = train_filenames if limit is None else train_filenames[:limit]
+    test_filenames = test_filenames if limit is None else test_filenames[:limit]
+    dev_filenames = dev_filenames if limit is None else dev_filenames[:limit]
 
     fixed_folding = FixedFolding.from_parts({
         DataType.Train: [ids_by_filenames[filename] for filename in train_filenames],
