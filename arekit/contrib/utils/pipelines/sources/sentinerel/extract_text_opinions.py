@@ -6,7 +6,6 @@ from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotat
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.synonyms.base import SynonymsCollection
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
-from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.sentinerel.io_utils import SentiNerelVersions, SentiNerelIOUtils
 from arekit.contrib.utils.pipelines.sources.sentinerel.doc_provider import SentiNERELDocProvider
 from arekit.contrib.utils.pipelines.sources.sentinerel.labels_fmt import SentiNERELSentimentLabelFormatter
@@ -24,6 +23,7 @@ from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymColle
 def create_text_opinion_extraction_pipeline(sentinerel_version,
                                             text_parser,
                                             label_formatter=SentiNERELSentimentLabelFormatter(),
+                                            no_label=NoLabel(),
                                             terms_per_context=50,
                                             doc_provider=None,
                                             dist_in_sentences=0,
@@ -38,7 +38,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
 
         Parameters:
             sentinerel_version: enum
-                Version of the SentiNEREl collection.
+                Version of the SentiNEREL collection.
             text_parser: Is the way of how do we process the text.
             doc_provider: DocumentProvider or None
                 In case of None we consider the default initialization.
@@ -64,9 +64,11 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
                                              version=sentinerel_version)
 
     train_neut_annot = create_nolabel_text_opinion_annotator(terms_per_context=terms_per_context,
-                                                             dist_in_sents=dist_in_sentences)
+                                                             dist_in_sents=dist_in_sentences,
+                                                             no_label=no_label)
     test_neut_annot = create_nolabel_text_opinion_annotator(terms_per_context=terms_per_context,
-                                                            dist_in_sents=dist_in_sentences)
+                                                            dist_in_sents=dist_in_sentences,
+                                                            no_label=no_label)
 
     text_opinion_filters = [
         EntityBasedTextOpinionFilter(entity_filter=entity_filter),
@@ -77,14 +79,14 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
     predefined_annot = PredefinedTextOpinionAnnotator(doc_provider, label_formatter)
 
     pipelines = {
-        DataType.Train: create_train_pipeline(text_parser=text_parser,
-                                              doc_provider=doc_provider,
-                                              annotators=[
+        DataType.Train: create_main_pipeline(text_parser=text_parser,
+                                             doc_provider=doc_provider,
+                                             annotators=[
                                                   predefined_annot,
                                                   train_neut_annot
                                               ],
-                                              text_opinion_filters=text_opinion_filters),
-        DataType.Test: create_test_pipeline(text_parser=text_parser,
+                                             text_opinion_filters=text_opinion_filters),
+        DataType.Test: create_main_pipeline(text_parser=text_parser,
                                             doc_provider=doc_provider,
                                             annotators=[
                                                 test_neut_annot
@@ -111,7 +113,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
     return pipelines
 
 
-def create_nolabel_text_opinion_annotator(terms_per_context, dist_in_sents=0, synonyms=None):
+def create_nolabel_text_opinion_annotator(terms_per_context, no_label, dist_in_sents=0, synonyms=None):
     """ This is a core annotator, which provides all entity pairs.
         Could be revealed from the document.
 
@@ -135,14 +137,14 @@ def create_nolabel_text_opinion_annotator(terms_per_context, dist_in_sents=0, sy
         annot_algo=PairBasedOpinionAnnotationAlgorithm(
             dist_in_sents=dist_in_sents,
             dist_in_terms_bound=terms_per_context,
-            label_provider=ConstantLabelProvider(NoLabel())),
+            label_provider=ConstantLabelProvider(no_label)),
         create_empty_collection_func=lambda: OpinionCollection(
             synonyms=synonyms,
             error_on_duplicates=True,
             error_on_synonym_end_missed=False))
 
 
-def create_train_pipeline(text_parser, doc_provider, annotators, text_opinion_filters):
+def create_main_pipeline(text_parser, doc_provider, annotators, text_opinion_filters):
     """ Train pipeline is based on the predefined annotations and
         automatic annotations of other pairs with a NoLabel.
     """
@@ -153,36 +155,21 @@ def create_train_pipeline(text_parser, doc_provider, annotators, text_opinion_fi
         text_opinion_filters=text_opinion_filters)
 
 
-def create_test_pipeline(text_parser, doc_provider, annotators, text_opinion_filters):
-    """ This is a pipeline for TEST data annotation.
-        We perform annotation of the attitudes.
-    """
-    assert(isinstance(text_parser, BaseTextParser))
-    assert(isinstance(annotators, list))
-    assert(isinstance(doc_provider, DocumentProvider))
-
-    return text_opinion_extraction_pipeline(
-        annotators=annotators,
-        text_parser=text_parser,
-        get_doc_by_id_func=doc_provider.by_id,
-        text_opinion_filters=text_opinion_filters)
-
-
 def create_etalon_pipeline(text_parser, doc_provider, predefined_annot, text_opinion_filters):
     """ We adopt exact the same pipeline as for training data,
         but we do not perform "NoLabel" annotation.
         (we are interested only in sentiment attitudes).
     """
-    return create_train_pipeline(text_parser=text_parser,
-                                 doc_provider=doc_provider,
-                                 annotators=[predefined_annot],
-                                 text_opinion_filters=text_opinion_filters)
+    return create_main_pipeline(text_parser=text_parser,
+                                doc_provider=doc_provider,
+                                annotators=[predefined_annot],
+                                text_opinion_filters=text_opinion_filters)
 
 
 def create_etalon_with_no_label_pipeline(annotators, text_parser, doc_provider, text_opinion_filters):
     """ We adopt exact the same pipeline as for training data.
     """
-    return create_train_pipeline(text_parser=text_parser,
-                                 doc_provider=doc_provider,
-                                 annotators=annotators,
-                                 text_opinion_filters=text_opinion_filters)
+    return create_main_pipeline(text_parser=text_parser,
+                                doc_provider=doc_provider,
+                                annotators=annotators,
+                                text_opinion_filters=text_opinion_filters)
