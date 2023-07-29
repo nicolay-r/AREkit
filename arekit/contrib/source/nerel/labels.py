@@ -41,15 +41,7 @@ class PositiveTo(Label):
     pass
 
 
-class ALTERNATIVE_NAME(Label):
-    pass
-
-
 class STATE_BELONGS_TO(Label):
-    pass
-
-
-class ORIGINS_FROM(Label):
     pass
 
 
