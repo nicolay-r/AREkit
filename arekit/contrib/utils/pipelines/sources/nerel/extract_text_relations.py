@@ -1,6 +1,7 @@
 from arekit.common.experiment.api.ops_doc import DocumentOperations
 from arekit.common.experiment.data_type import DataType
-from arekit.contrib.source.nerel.io_utils import NerelIOUtils, NerelVersions
+from arekit.contrib.source.nerel.io_utils import NerelIOUtils
+from arekit.contrib.source.nerel.versions import NerelVersions
 from arekit.contrib.utils.pipelines.sources.nerel.doc_ops import NERELDocOperation
 from arekit.contrib.utils.pipelines.sources.nerel.labels_fmt import NerelAnyLabelFormatter
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator

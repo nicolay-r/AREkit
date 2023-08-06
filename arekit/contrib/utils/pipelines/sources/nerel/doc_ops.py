@@ -1,12 +1,11 @@
 from arekit.common.experiment.api.ops_doc import DocumentOperations
-from arekit.contrib.source.nerel.io_utils import NerelVersions
 from arekit.contrib.source.nerel.reader import NerelDocReader
+from arekit.contrib.source.nerel.versions import NerelVersions
 
 
 class NERELDocOperation(DocumentOperations):
-    """ Document reader for the collection of the RuSentNE competition 2023.
-        For more details please follow the following repository:
-        github: https://github.com/dialogue-evaluation/RuSentNE-evaluation
+    """ A Russian dataset with nested named entities, relations, events and linked entities.
+        https://github.com/nerel-ds/NEREL
     """
 
     def __init__(self, filename_by_id, version):
@@ -14,8 +13,8 @@ class NERELDocOperation(DocumentOperations):
                 Dictionary of {id: filename}, where
                     - id: int
                     - filename: str
-            version: SentiNerelVersions
-                Specify the appropriate version of teh SentiNEREL collection.
+            version: NerelVersions
+                Specify the appropriate version of teh NEREL collection.
         """
         assert(isinstance(filename_by_id, dict))
         assert(isinstance(version, NerelVersions))
