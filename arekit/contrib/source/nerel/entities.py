@@ -12,14 +12,14 @@ class NerelEntityCollection(EntityCollection):
     def __init__(self, contents, value_to_group_id_func, entities_to_ignore=None):
         """
             entities_to_ignore: list or None
-                this parameter is required because of the simplified implmentation of
+                this parameter is required because of the simplified implementation of
                 the nested objects of the BRAT annotation.
         """
         assert(isinstance(contents, dict))
         assert(BratAnnotationParser.ENTITIES in contents)
         assert(isinstance(entities_to_ignore, list) or entities_to_ignore is None)
 
-        self.__dicard_entities = set([] if entities_to_ignore is None else entities_to_ignore)
+        self.__discard_entities = set([] if entities_to_ignore is None else entities_to_ignore)
         contents[BratAnnotationParser.ENTITIES] = [e for e in contents[BratAnnotationParser.ENTITIES]
                                                    if self.__keep_entity(e)]
 
@@ -31,7 +31,7 @@ class NerelEntityCollection(EntityCollection):
 
     def __keep_entity(self, entity):
         assert(isinstance(entity, BratEntity))
-        return entity.Type not in self.__dicard_entities
+        return entity.Type not in self.__discard_entities
 
     @classmethod
     def read_collection(cls, filename, version, entities_to_ignore=None):
