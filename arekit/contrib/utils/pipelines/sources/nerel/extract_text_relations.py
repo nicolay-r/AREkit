@@ -9,24 +9,24 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import D
 from arekit.contrib.utils.pipelines.text_opinion.filters.entity_based import EntityBasedTextOpinionFilter
 
 
-def create_text_relation_extraction_pipeline(sentinerel_version,
+def create_text_relation_extraction_pipeline(nerel_version,
                                              text_parser,
                                              label_formatter=NerelAnyLabelFormatter(),
                                              terms_per_context=50,
                                              doc_ops=None,
                                              docs_limit=None,
                                              entity_filter=None):
-    assert(isinstance(sentinerel_version, NerelVersions))
+    assert(isinstance(nerel_version, NerelVersions))
     assert(isinstance(doc_ops, DocumentOperations) or doc_ops is None)
 
     data_folding = None
 
     if doc_ops is None:
         # Default Initialization.
-        filenames_by_ids, data_folding = NerelIOUtils.read_dataset_split(version=sentinerel_version,
+        filenames_by_ids, data_folding = NerelIOUtils.read_dataset_split(version=nerel_version,
                                                                          docs_limit=docs_limit)
         doc_ops = NERELDocOperation(filename_by_id=filenames_by_ids,
-                                    version=sentinerel_version)
+                                    version=nerel_version)
 
     text_opinion_filters = [
         EntityBasedTextOpinionFilter(entity_filter=entity_filter),
