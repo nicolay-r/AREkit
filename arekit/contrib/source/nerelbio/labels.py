@@ -1,149 +1,265 @@
 from arekit.common.labels.base import Label
 
 
-class ACTIVITY(Label):
+class ABBREVIATION(Label):
     pass
 
 
-class MEDPROC(Label):
+class ALTERNATIVE_NAME(Label):
     pass
 
 
-class MONEY(Label):
+class KNOWS(Label):
     pass
 
 
-class ADMINISTRATION_ROUTE(Label):
+class AGE_IS(Label):
     pass
 
 
-class MENTALPROC(Label):
+class AGE_DIED_AT(Label):
     pass
 
 
-class NATIONALITY(Label):
+class AWARDED_WITH(Label):
     pass
 
 
-class ANATOMY(Label):
+class PLACE_OF_BIRTH(Label):
     pass
 
 
-class PHYS(Label):
+class DATE_DEFUNCT_IN(Label):
     pass
 
 
-class NUMBER(Label):
+class DATE_FOUNDED_IN(Label):
     pass
 
 
-class CHEM(Label):
+class DATE_OF_BIRTH(Label):
     pass
 
 
-class SCIPROC(Label):
+class DATE_OF_CREATION(Label):
     pass
 
 
-class ORDINAL(Label):
+class DATE_OF_DEATH(Label):
     pass
 
 
-class DEVICE(Label):
+class POINT_IN_TIME(Label):
     pass
 
 
-class AGE(Label):
+class PLACE_OF_DEATH(Label):
     pass
 
 
-class ORGANIZATION(Label):
+class FOUNDED_BY(Label):
     pass
 
 
-class DISO(Label):
+class HEADQUARTERED_IN(Label):
     pass
 
 
-class CITY(Label):
+class IDEOLOGY_OF(Label):
     pass
 
 
-class PERCENT(Label):
+class SPOUSE(Label):
     pass
 
 
-class FINDING(Label):
+class MEMBER_OF(Label):
     pass
 
 
-class COUNTRY(Label):
+class ORGANIZES(Label):
     pass
 
 
-class PERSON(Label):
+class OWNER_OF(Label):
     pass
 
 
-class FOOD(Label):
+class PARENT_OF(Label):
     pass
 
 
-class DATE(Label):
+class PARTICIPANT_IN(Label):
     pass
 
 
-class PRODUCT(Label):
+class PLACE_RESIDES_IN(Label):
     pass
 
 
-class GENE(Label):
+class PRICE_OF(Label):
     pass
 
 
-class DISTRICT(Label):
+class PRODUCES(Label):
     pass
 
 
-class PROFESSION(Label):
+class RELATIVE(Label):
     pass
 
 
-class INJURY_POISONING(Label):
+class RELIGION_OF(Label):
     pass
 
 
-class EVENT(Label):
+class SCHOOLS_ATTENDED(Label):
     pass
 
 
-class STATE_OR_PROVINCE(Label):
+class SIBLING(Label):
     pass
 
 
-class HEALTH_CARE_ACTIVITY(Label):
+class SUBEVENT_OF(Label):
     pass
 
 
-class FAMILY(Label):
+class SUBORDINATE_OF(Label):
     pass
 
 
-class TIME(Label):
+class TAKES_PLACE_IN(Label):
     pass
 
 
-class LABPROC(Label):
+class WORKPLACE(Label):
     pass
 
 
-class FACILITY(Label):
+class WORKS_AS(Label):
     pass
 
 
-class LIVB(Label):
+class CONVICTED_OF(Label):
     pass
 
 
-class LOCATION(Label):
+class PENALIZED_AS(Label):
+    pass
+
+
+class START_TIME(Label):
+    pass
+
+
+class END_TIME(Label):
+    pass
+
+
+class EXPENDITURE(Label):
+    pass
+
+
+class AGENT(Label):
+    pass
+
+
+class INANIMATE_INVOLVED(Label):
+    pass
+
+
+class INCOME(Label):
+    pass
+
+
+class SUBCLASS_OF(Label):
+    pass
+
+
+class PART_OF(Label):
+    pass
+
+
+class LOCATED_IN(Label):
+    pass
+
+
+class TREATED_USING(Label):
+    pass
+
+
+class ORIGINS_FROM(Label):
+    pass
+
+
+class TO_DETECT_OR_STUDY(Label):
+    pass
+
+
+class AFFECTS(Label):
+    pass
+
+
+class HAS_CAUSE(Label):
+    pass
+
+
+class APPLIED_TO(Label):
+    pass
+
+
+class USED_IN(Label):
+    pass
+
+
+class ASSOCIATED_WITH(Label):
+    pass
+
+
+class HAS_ADMINISTRATION_ROUTE(Label):
+    pass
+
+
+class HAS_STRENGTH(Label):
+    pass
+
+
+class DURATION_OF(Label):
+    pass
+
+
+class VALUE_IS(Label):
+    pass
+
+
+class PHYSIOLOGY_OF(Label):
+    pass
+
+
+class PROCEDURE_PERFORMED(Label):
+    pass
+
+
+class MENTAL_PROCESS_OF(Label):
+    pass
+
+
+class MEDICAL_CONDITION(Label):
+    pass
+
+
+class DOSE_IS(Label):
+    pass
+
+
+class FINDING_OF(Label):
+    pass
+
+
+class CAUSE_OF_DEATH(Label):
+    pass
+
+
+class CONSUME(Label):
     pass
