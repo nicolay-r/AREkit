@@ -2,20 +2,22 @@ from arekit.contrib.source.brat.annot import BratAnnotationParser
 from arekit.contrib.source.brat.news import BratNews
 from arekit.contrib.source.brat.sentences_reader import BratDocumentSentencesReader
 from arekit.contrib.source.nerel.entities import NerelEntityCollection
-from arekit.contrib.source.nerel.io_utils import NerelIOUtils, DEFAULT_VERSION
+from arekit.contrib.source.nerel.io_utils import NerelIOUtils
 
 
 class NerelDocReader(object):
 
-    def __init__(self, version=DEFAULT_VERSION):
+    def __init__(self, version, io_utils=NerelIOUtils()):
+        assert(isinstance(io_utils, NerelIOUtils))
         self.__version = version
-        self.__doc_fold = NerelIOUtils.map_doc_to_fold_type(version)
+        self.__io_utils = io_utils
+        self.__doc_fold = io_utils.map_doc_to_fold_type(version)
 
     def read_text_relations(self, filename):
         assert(isinstance(filename, str))
 
-        return NerelIOUtils.read_from_zip(
-            inner_path=NerelIOUtils.get_annotation_innerpath(
+        return self.__io_utils.read_from_zip(
+            inner_path=self.__io_utils.get_annotation_innerpath(
                 folding_data_type=self.__doc_fold[filename],
                 filename=filename),
             process_func=lambda input_file: [
@@ -32,12 +34,13 @@ class NerelDocReader(object):
             return BratNews(doc_id=doc_id, sentences=sentences, text_relations=text_relations)
 
         entities = NerelEntityCollection.read_collection(
-            filename=filename, version=self.__version, entities_to_ignore=entities_to_ignore)
+            filename=filename, version=self.__version,
+            entities_to_ignore=entities_to_ignore, io_utils=self.__io_utils)
 
         text_relations = self.read_text_relations(filename=filename)
 
-        return NerelIOUtils.read_from_zip(
-            inner_path=NerelIOUtils.get_news_innerpath(
+        return self.__io_utils.read_from_zip(
+            inner_path=self.__io_utils.get_news_innerpath(
                 folding_data_type=self.__doc_fold[filename], filename=filename),
             process_func=file_to_doc,
             version=self.__version)

@@ -34,17 +34,18 @@ class NerelEntityCollection(EntityCollection):
         return entity.Type not in self.__discard_entities
 
     @classmethod
-    def read_collection(cls, filename, version, entities_to_ignore=None):
+    def read_collection(cls, filename, version, io_utils, entities_to_ignore=None):
+        assert(isinstance(io_utils, NerelIOUtils))
         assert(isinstance(filename, str))
 
         # Since this dataset does not provide the synonyms collection by default,
         # it is necessary to declare an empty collection to populate so in further.
         synonyms = StemmerBasedSynonymCollection(stemmer=MystemWrapper(), is_read_only=False)
 
-        doc_fold = NerelIOUtils.map_doc_to_fold_type(version)
+        doc_fold = io_utils.map_doc_to_fold_type(version)
 
-        return NerelIOUtils.read_from_zip(
-            inner_path=NerelIOUtils.get_annotation_innerpath(folding_data_type=doc_fold[filename], filename=filename),
+        return io_utils.read_from_zip(
+            inner_path=io_utils.get_annotation_innerpath(folding_data_type=doc_fold[filename], filename=filename),
             process_func=lambda input_file: cls(
                 contents=BratAnnotationParser.parse_annotations(input_file=input_file, encoding='utf-8-sig'),
                 entities_to_ignore=entities_to_ignore,

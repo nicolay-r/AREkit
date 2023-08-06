@@ -5,16 +5,16 @@ from tqdm import tqdm
 from arekit.contrib.source.brat.news import BratNews
 from arekit.contrib.source.brat.relation import BratRelation
 from arekit.contrib.source.brat.sentence import BratSentence
-from arekit.contrib.source.nerel.io_utils import NerelIOUtils
-from arekit.contrib.source.nerel.reader import NerelDocReader
-from arekit.contrib.source.nerel.versions import DEFAULT_VERSION
+from arekit.contrib.source.nerelbio.io_utils import NerelBioIOUtils
+from arekit.contrib.source.nerelbio.reader import NerelBioDocReader
+from arekit.contrib.source.nerelbio.versions import DEFAULT_VERSION
 
 
-class TestNerelRead(unittest.TestCase):
+class TestNerelBioRead(unittest.TestCase):
 
     def test(self):
-        doc_reader = NerelDocReader(version=DEFAULT_VERSION)
-        news = doc_reader.read_document(filename="109230_text", doc_id=0)
+        doc_reader = NerelBioDocReader(version=DEFAULT_VERSION)
+        news = doc_reader.read_document(filename="25558104_ru", doc_id=0)
         assert(isinstance(news, BratNews))
         print("Sentences Count:", news.SentencesCount)
         for sentence in news.iter_sentences():
@@ -30,7 +30,7 @@ class TestNerelRead(unittest.TestCase):
             print(brat_relation.SourceID, brat_relation.TargetID, brat_relation.Type)
 
     def test_all_documents(self):
-        doc_reader = NerelDocReader(version=DEFAULT_VERSION)
-        filenames_by_ids, folding = NerelIOUtils.read_dataset_split(version=DEFAULT_VERSION)
+        doc_reader = NerelBioDocReader(version=DEFAULT_VERSION)
+        filenames_by_ids, folding = NerelBioIOUtils.read_dataset_split(version=DEFAULT_VERSION)
         for doc_id in tqdm(folding.iter_doc_ids(), total=len(list(folding.iter_doc_ids()))):
             doc_reader.read_document(filename=filenames_by_ids[doc_id], doc_id=0)
