@@ -51,27 +51,6 @@ pip install git+https://github.com/nicolay-r/AREkit.git@0.23.1-rc
 python -m arekit.download_data
 ```
 
-## Tutorials
+## Usage
 Please follow the wiki page
 [Tutorials List](https://github.com/nicolay-r/AREkit/wiki/Tutorials).
-
-## Applications
-
-* **AREnets** [[github]](https://github.com/nicolay-r/AREnets)
-  * is an OpenNRE like project, but the kernel based on tensorflow library, with implementation of neural networks on top of it, designed for Attitude 
-* **ARElight** [[site]](https://nicolay-r.github.io/arelight-page/) [[github]](https://github.com/nicolay-r/ARElight)
-    * **Infer attitudes** from large Mass-media documents or **sample texts** for your Machine Learning models applications
-
-## Papers
-* Frame-Based attitude extraction workflow for news processing [[code]](https://github.com/nicolay-r/frame-based-attitude-extraction-workflow)
-    * Represents an attitude annotation workflow based on [RuSentiFrames](https://github.com/nicolay-r/RuSentiFrames) lexicon which is utilized for news processing;
-* Neural Networks Applications in Sentiment Attitude Extraction [[code]](https://github.com/nicolay-r/neural-networks-for-attitude-extraction)
-    * Neural Networks application for attitude extraction from analytical articles;
-* BERT-based model utils for Sentiment Attitude Extraction task [[code]](https://github.com/nicolay-r/bert-utils-for-attitude-extraction)
-    * Analytical news formatter for BERT-based models;
-
-## Related Frameworks
-
-*  **SeqIO** [[github]](https://github.com/google/seqio)
-*  **DeRE** [[github]](https://github.com/ims-tcl/DeRE) [[paper]](https://aclanthology.org/D18-2008/)
-*  **CREST** [[github]](https://github.com/phosseini/CREST) [[paper]](https://arxiv.org/abs/2103.13606)
