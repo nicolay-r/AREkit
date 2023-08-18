@@ -1,14 +1,16 @@
 class Entity(object):
 
-    def __init__(self, value, e_type, display_value=None, group_index=None):
+    def __init__(self, value, e_type, childs=None, display_value=None, group_index=None):
         assert(isinstance(value, str) and len(value) > 0)
         assert(isinstance(e_type, str) or e_type is None)
         assert(isinstance(display_value, str) or display_value is None)
         assert(isinstance(group_index, int) or group_index is None)
+        assert(isinstance(childs, list) or childs is None)
         self.__value = value.lower()
         self.__type = e_type
         self.__display_value = display_value
         self.__group_index = group_index
+        self.__childs = childs
 
     @property
     def GroupIndex(self):
@@ -40,3 +42,11 @@ class Entity(object):
         assert(isinstance(value, int) and value >= -1)
         assert(self.__group_index is None)
         self.__group_index = value
+
+    def iter_childs(self):
+        if self.__childs is None:
+            return
+            yield
+        for child in self.__childs:
+            yield child
+

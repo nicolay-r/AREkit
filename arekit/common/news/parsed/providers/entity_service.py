@@ -56,7 +56,7 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
         super(EntityServiceProvider, self).init_parsed_news(parsed_news)
         assert(isinstance(parsed_news, ParsedNews))
         self.__iter_raw_terms_func = lambda: parsed_news.iter_terms(filter_func=None, term_only=False)
-        self.__init_entity_positions()
+        self.__entity_positions = self.__calculate_entity_positions()
 
     # region public 'extract' methods
 
@@ -158,6 +158,15 @@ class EntityServiceProvider(BaseParsedNewsServiceProvider):
         for s_ind, t_ind_in_sent, term in self.__iter_raw_terms_func():
 
             if isinstance(term, Entity):
+
+                # First childs
+                for _ in term.iter_childs():
+                    position = TermPosition(term_ind_in_doc=t_ind_in_doc,
+                                            term_ind_in_sent=t_ind_in_sent,
+                                            s_ind=s_ind)
+                    positions.append(position)
+
+                # Then actual root.
                 position = TermPosition(term_ind_in_doc=t_ind_in_doc,
                                         term_ind_in_sent=t_ind_in_sent,
                                         s_ind=s_ind)

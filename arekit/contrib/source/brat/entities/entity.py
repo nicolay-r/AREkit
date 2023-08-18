@@ -6,7 +6,8 @@ class BratEntity(Entity):
         Provides bounds, i.e. char indices in related sentence.
     """
 
-    def __init__(self, id_in_doc, e_type, index_begin, index_end, value, display_value=None, group_index=None):
+    def __init__(self, id_in_doc, e_type, index_begin, index_end, value,
+                 childs=None, display_value=None, group_index=None):
         """ index_begin: int
                 - char index (in case of string type of `text`)
                 - term index (in case of list type of `text`)
@@ -17,7 +18,7 @@ class BratEntity(Entity):
         assert(isinstance(e_type, str))
         assert(isinstance(index_begin, int))
         assert(isinstance(index_end, int))
-        super(BratEntity, self).__init__(value=value, e_type=e_type,
+        super(BratEntity, self).__init__(value=value, e_type=e_type, childs=childs,
                                          display_value=display_value, group_index=group_index)
 
         self.__e_type = e_type
