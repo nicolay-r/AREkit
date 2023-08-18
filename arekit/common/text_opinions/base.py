@@ -31,28 +31,28 @@ class TextOpinion(object):
         return cls.__try_create_copy_core(other=other, keep_text_opinion_id=keep_text_opinion_id)
 
     @staticmethod
-    def try_convert(other, convert_func):
+    def try_convert(other, convert_entity_id_func):
         """ Creates a copy of `other` opinion with different id of opinion participants.
             Use cases: required for BaseParsedDocumentServiceProvider, when we decided to bring the outside
             opinion into one which is based on DocumentEntities.
         """
         assert(isinstance(other, TextOpinion))
-        assert(callable(convert_func))
+        assert(callable(convert_entity_id_func))
         return TextOpinion.__try_create_copy_core(other=other,
-                                                  convert_id_func=convert_func,
+                                                  convert_entity_id_func=convert_entity_id_func,
                                                   keep_text_opinion_id=False)
 
     @staticmethod
-    def __try_create_copy_core(other, convert_id_func=lambda part_id: part_id, keep_text_opinion_id=True):
+    def __try_create_copy_core(other, convert_entity_id_func=lambda part_id: part_id, keep_text_opinion_id=True):
         """ Tries to compose a copy by considering an optional id conversion,
             and identification keeping.
             convert_id:
                 func(id) -> id
         """
-        assert(callable(convert_id_func))
+        assert(callable(convert_entity_id_func))
 
-        source_id = convert_id_func(other.SourceId)
-        target_id = convert_id_func(other.TargetId)
+        source_id = convert_entity_id_func(other.SourceId)
+        target_id = convert_entity_id_func(other.TargetId)
 
         if source_id is None or target_id is None:
             return None

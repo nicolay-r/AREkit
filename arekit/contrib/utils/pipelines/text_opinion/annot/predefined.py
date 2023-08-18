@@ -41,17 +41,17 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
             entity_index_func is None else entity_index_func
 
     @staticmethod
-    def __convert_opinion_id(doc, origin_id, esp):
+    def __convert_entity_id(doc, origin_entity_id, esp):
         assert(isinstance(doc, BratDocument))
-        assert(isinstance(origin_id, int))
+        assert(isinstance(origin_entity_id, int))
         assert(isinstance(esp, BaseParsedDocumentServiceProvider))
 
-        if not doc.contains_entity(origin_id):
+        if not doc.contains_entity(origin_entity_id):
             # Due to the complexity of entities, some entities might be nested.
             # Therefore the latter, some entities might be discarded.
             return None
 
-        origin_entity = doc.get_entity_by_id(origin_id)
+        origin_entity = doc.get_entity_by_id(origin_entity_id)
 
         if not esp.contains_entity(origin_entity):
             return None
@@ -79,8 +79,8 @@ class PredefinedTextOpinionAnnotator(BaseOpinionAnnotator):
 
                 internal_opinion = text_opinion.try_convert(
                     other=text_opinion,
-                    convert_func=lambda origin_id: PredefinedTextOpinionAnnotator.__convert_opinion_id(
-                        doc=doc, origin_id=origin_id, esp=esp))
+                    convert_entity_id_func=lambda origin_id: PredefinedTextOpinionAnnotator.__convert_entity_id(
+                        doc=doc, origin_entity_id=origin_id, esp=esp))
 
                 if internal_opinion is None:
                     continue
