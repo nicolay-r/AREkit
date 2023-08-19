@@ -32,6 +32,7 @@ class BratAnnotationParser:
                           e_type=e_str_type,
                           index_begin=int(e_begin),
                           index_end=int(e_end),
+                          childs=None,
                           value=args[2].strip())
 
     @staticmethod

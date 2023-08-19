@@ -22,21 +22,41 @@ class BaseParsedDocumentServiceProvider(object):
     def init_parsed_doc(self, parsed_doc):
         assert(isinstance(parsed_doc, ParsedDocument))
 
+        def __iter_childs_and_root_node(entity):
+            """ Note: Entity has childs and we would like to iterate over childs
+                to conider them as well as keep the root Node.
+            """
+            # We first add childs.
+            for child_entity in entity.iter_childs():
+                yield child_entity, True
+
+            # Return Root node.
+            yield entity, False
+
         self._doc_entities = []
         self.__entity_map.clear()
 
-        for index, entity in enumerate(parsed_doc.iter_entities()):
+        current_id = 0
+        for _, entity in enumerate(parsed_doc.iter_entities()):
 
-            doc_entity = DocumentEntity(id_in_doc=index,
-                                        value=entity.Value,
-                                        e_type=entity.Type,
-                                        display_value=entity.DisplayValue,
-                                        group_index=entity.GroupIndex)
+            child_doc_entities = []
+            for tree_entity, is_child in __iter_childs_and_root_node(entity):
 
-            self._doc_entities.append(doc_entity)
+                doc_entity = DocumentEntity(id_in_doc=current_id,
+                                            value=tree_entity.Value,
+                                            e_type=tree_entity.Type,
+                                            display_value=tree_entity.DisplayValue,
+                                            childs=None if is_child else child_doc_entities,
+                                            group_index=tree_entity.GroupIndex)
+                current_id += 1
 
-            if self.__entity_index_func is not None:
-                self.__entity_map[self.__entity_index_func(entity)] = doc_entity
+                if is_child:
+                    child_doc_entities.append(doc_entity)
+
+                self._doc_entities.append(doc_entity)
+
+                if self.__entity_index_func is not None:
+                    self.__entity_map[self.__entity_index_func(tree_entity)] = doc_entity
 
     def get_document_entity(self, entity):
         """ Maps entity to the related one with DocumentEntity type

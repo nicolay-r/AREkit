@@ -57,7 +57,7 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
         super(EntityServiceProvider, self).init_parsed_doc(parsed_doc)
         assert(isinstance(parsed_doc, ParsedDocument))
         self.__iter_raw_terms_func = lambda: parsed_doc.iter_terms(filter_func=None, term_only=False)
-        self.__init_entity_positions()
+        self.__entity_positions = self.__calculate_entity_positions()
 
     # region public 'extract' methods
 
@@ -147,24 +147,28 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
         assert(end_type == EntityEndType.Source or end_type == EntityEndType.Target)
         return text_opinion.SourceId if end_type == EntityEndType.Source else text_opinion.TargetId
 
-    def __init_entity_positions(self):
-        self.__entity_positions = self.__calculate_entity_positions()
-
     def __calculate_entity_positions(self):
         """ Note: here we consider the same order as in self._entities.
         """
-        positions = []
-        t_ind_in_doc = 0
+        t_ind_in_doc = -1
 
+        positions = {}
         for s_ind, t_ind_in_sent, term in self.__iter_raw_terms_func():
 
-            if isinstance(term, Entity):
-                position = TermPosition(term_ind_in_doc=t_ind_in_doc,
-                                        term_ind_in_sent=t_ind_in_sent,
-                                        s_ind=s_ind)
-                positions.append(position)
-
             t_ind_in_doc += 1
+
+            if not isinstance(term, Entity):
+                continue
+
+            # We consider that entities within a single tree has the same positions.
+            for tree_entity in list(term.iter_childs()) + [term]:
+
+                key = self.get_document_entity(tree_entity).IdInDocument
+                assert(key not in positions)
+
+                positions[key] = TermPosition(term_ind_in_doc=t_ind_in_doc,
+                                              term_ind_in_sent=t_ind_in_sent,
+                                              s_ind=s_ind)
 
         return positions
 
