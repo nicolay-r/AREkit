@@ -82,7 +82,7 @@ class BaseRowsStorage(object):
             doc_ids_seen.add(doc_id)
             pbar_it.set_postfix({
                 "docs_seen": len(doc_ids_seen),
-                "doc_now": doc_id,
+                "doc_now": str(doc_id),
             })
 
             if row_handler is not None:
