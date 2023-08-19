@@ -137,7 +137,8 @@ def create_nolabel_text_opinion_annotator(terms_per_context, no_label, dist_in_s
         annot_algo=PairBasedOpinionAnnotationAlgorithm(
             dist_in_sents=dist_in_sents,
             dist_in_terms_bound=terms_per_context,
-            label_provider=ConstantLabelProvider(no_label)),
+            label_provider=ConstantLabelProvider(no_label),
+            entity_index_func=lambda brat_entity: brat_entity.ID),
         create_empty_collection_func=lambda: OpinionCollection(
             synonyms=synonyms,
             error_on_duplicates=True,
@@ -152,6 +153,7 @@ def create_main_pipeline(text_parser, doc_provider, annotators, text_opinion_fil
         get_doc_by_id_func=doc_provider.by_id,
         text_parser=text_parser,
         annotators=annotators,
+        entity_index_func=lambda brat_entity: brat_entity.ID,
         text_opinion_filters=text_opinion_filters)
 
 

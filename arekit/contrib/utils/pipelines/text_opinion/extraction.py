@@ -13,7 +13,7 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.limitation import FrameworkLimitationsTextOpinionFilter
 
 
-def __iter_text_opinion_linkages(parsed_doc, annotators, text_opinion_filters):
+def __iter_text_opinion_linkages(parsed_doc, annotators, entity_index_func, text_opinion_filters):
     assert(isinstance(annotators, list))
     assert(isinstance(parsed_doc, ParsedDocument))
     assert(isinstance(text_opinion_filters, list))
@@ -21,7 +21,7 @@ def __iter_text_opinion_linkages(parsed_doc, annotators, text_opinion_filters):
     def __to_id(text_opinion):
         return "{}_{}".format(text_opinion.SourceId, text_opinion.TargetId)
 
-    service = ParsedDocumentService(parsed_doc=parsed_doc, providers=[EntityServiceProvider(None)])
+    service = ParsedDocumentService(parsed_doc=parsed_doc, providers=[EntityServiceProvider(entity_index_func)])
     esp = service.get_provider(EntityServiceProvider.NAME)
 
     predefined = set()
@@ -52,7 +52,8 @@ def __iter_text_opinion_linkages(parsed_doc, annotators, text_opinion_filters):
             yield text_opinion_linkage
 
 
-def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators, text_opinion_filters=None):
+def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators, entity_index_func,
+                                     text_opinion_filters=None):
     assert(isinstance(text_parser, BaseTextParser))
     assert(callable(get_doc_by_id_func))
     assert(isinstance(annotators, list))
@@ -71,7 +72,8 @@ def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators
 
         # (parsed_doc) -> (text_opinions)
         MapPipelineItem(map_func=lambda parsed_doc: __iter_text_opinion_linkages(
-            annotators=annotators, parsed_doc=parsed_doc, text_opinion_filters=actual_text_opinion_filters)),
+            annotators=annotators, parsed_doc=parsed_doc, entity_index_func=entity_index_func,
+            text_opinion_filters=actual_text_opinion_filters)),
 
         # linkages[] -> linkages
         FlattenIterPipelineItem()

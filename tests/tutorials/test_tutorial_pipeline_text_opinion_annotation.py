@@ -52,11 +52,15 @@ class TestTextOpinionAnnotation(unittest.TestCase):
 
         synonyms = StemmerBasedSynonymCollection(stemmer=MystemWrapper(), is_read_only=False)
 
+        # How we basically index the source entities.
+        entity_index_func = lambda brat_entity: brat_entity.ID
+
         nolabel_annotator = AlgorithmBasedTextOpinionAnnotator(
             annot_algo=PairBasedOpinionAnnotationAlgorithm(
                 dist_in_sents=0,
                 dist_in_terms_bound=50,
-                label_provider=ConstantLabelProvider(NoLabel())),
+                label_provider=ConstantLabelProvider(NoLabel()),
+                entity_index_func=entity_index_func),
             create_empty_collection_func=lambda: OpinionCollection(
                 synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
             value_to_group_id_func=lambda value:
@@ -77,6 +81,7 @@ class TestTextOpinionAnnotation(unittest.TestCase):
                 DistanceLimitedTextOpinionFilter(terms_per_context=50)
             ],
             get_doc_by_id_func=doc_provider.by_id,
+            entity_index_func=entity_index_func,
             text_parser=text_parser)
 
         # Running the pipeline.

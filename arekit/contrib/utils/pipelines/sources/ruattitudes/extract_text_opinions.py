@@ -54,6 +54,7 @@ def create_text_opinion_extraction_pipeline(text_parser,
             DistanceLimitedTextOpinionFilter(terms_per_context)
         ],
         get_doc_by_id_func=doc_provider.by_id,
+        entity_index_func=lambda brat_entity: brat_entity.ID,
         text_parser=text_parser)
 
     return pipeline

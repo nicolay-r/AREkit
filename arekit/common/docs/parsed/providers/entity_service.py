@@ -42,6 +42,7 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
     NAME = "entity-service-provider"
 
     def __init__(self, entity_index_func):
+        assert(callable(entity_index_func))
         super(EntityServiceProvider, self).__init__(entity_index_func=entity_index_func)
         # Initialize API.
         self.__iter_raw_terms_func = None

@@ -77,6 +77,7 @@ class TestStreamWriters(unittest.TestCase):
                 DistanceLimitedTextOpinionFilter(terms_per_context=50)
             ],
             get_doc_by_id_func=doc_provider.by_id,
+            entity_index_func=lambda brat_entity: brat_entity.ID,
             text_parser=text_parser)
         #####
 

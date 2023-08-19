@@ -56,6 +56,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
             DistanceLimitedTextOpinionFilter(terms_per_context)
         ],
         get_doc_by_id_func=doc_provider.by_id,
+        entity_index_func=lambda brat_entity: brat_entity.ID,
         text_parser=text_parser)
 
     return pipeline
@@ -69,7 +70,8 @@ def nolabel_annotator(synonyms, terms_per_context, dist_in_sentences=0, no_label
     return AlgorithmBasedTextOpinionAnnotator(
         annot_algo=PairBasedOpinionAnnotationAlgorithm(dist_in_sents=dist_in_sentences,
                                                        dist_in_terms_bound=terms_per_context,
-                                                       label_provider=ConstantLabelProvider(no_label)),
+                                                       label_provider=ConstantLabelProvider(no_label),
+                                                       entity_index_func=lambda brat_entity: brat_entity.ID),
         create_empty_collection_func=lambda: OpinionCollection(
             synonyms=synonyms, error_on_duplicates=True, error_on_synonym_end_missed=False),
         value_to_group_id_func=lambda value:

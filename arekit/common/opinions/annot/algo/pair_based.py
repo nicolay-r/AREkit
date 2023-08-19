@@ -16,7 +16,8 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
             [1] Extracting Sentiment Attitudes from Analytical Texts https://arxiv.org/pdf/1808.08932.pdf
     """
 
-    def __init__(self, dist_in_terms_bound, label_provider, dist_in_sents=0, is_entity_ignored_func=None):
+    def __init__(self, dist_in_terms_bound, label_provider, entity_index_func, dist_in_sents=0,
+                 is_entity_ignored_func=None):
         """
         dist_in_terms_bound: int
             max allowed distance in term (less than passed value)
@@ -25,6 +26,7 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         """
         assert(isinstance(dist_in_terms_bound, int) or dist_in_terms_bound is None)
         assert(isinstance(label_provider, BasePairLabelProvider))
+        assert(callable(entity_index_func))
         assert(isinstance(dist_in_sents, int))
         assert(callable(is_entity_ignored_func) or is_entity_ignored_func is None)
 
@@ -32,6 +34,7 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         self.__dist_in_terms_bound = dist_in_terms_bound
         self.__dist_in_sents = dist_in_sents
         self.__is_entity_ignored_func = is_entity_ignored_func
+        self.__entity_index_func = entity_index_func
 
     # region private methods
 
@@ -87,9 +90,8 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
             return key is not None
 
         # Initialize providers.
-        # TODO. Provide here service #245 issue.
-        opinions_provider = OpinionPairsProvider(entity_index_func=None)
-        entity_service_provider = EntityServiceProvider(entity_index_func=None)
+        opinions_provider = OpinionPairsProvider(entity_index_func=self.__entity_index_func)
+        entity_service_provider = EntityServiceProvider(entity_index_func=self.__entity_index_func)
         opinions_provider.init_parsed_doc(parsed_doc)
         entity_service_provider.init_parsed_doc(parsed_doc)
 
