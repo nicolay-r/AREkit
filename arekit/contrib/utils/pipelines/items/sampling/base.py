@@ -6,7 +6,6 @@ from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
-from arekit.contrib.utils.utils_folding import folding_iter_states
 
 
 class BaseSerializerPipelineItem(BasePipelineItem):
@@ -96,7 +95,6 @@ class BaseSerializerPipelineItem(BasePipelineItem):
 
         data_folding = pipeline_ctx.provide_or_none("data_folding")
 
-        for _ in folding_iter_states(data_folding):
-            self._handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
-                                   doc_ids=pipeline_ctx.provide_or_none("doc_ids"),
-                                   data_folding=data_folding)
+        self._handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
+                               doc_ids=pipeline_ctx.provide_or_none("doc_ids"),
+                               data_folding=data_folding)

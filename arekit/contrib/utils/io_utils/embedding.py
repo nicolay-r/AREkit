@@ -1,11 +1,9 @@
 from os.path import join
 
-from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.networks.embedding_io import BaseEmbeddingIO
 from arekit.contrib.utils.io_utils.utils import check_targets_existence
 from arekit.contrib.utils.np_utils.embedding import NpzEmbeddingHelper
 from arekit.contrib.utils.np_utils.vocab import VocabRepositoryUtils
-from arekit.contrib.utils.utils_folding import experiment_iter_index
 
 
 class NpEmbeddingIO(BaseEmbeddingIO):
@@ -17,8 +15,8 @@ class NpEmbeddingIO(BaseEmbeddingIO):
             - embedding vocabulary.
     """
 
-    TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding-{cv_index}'
-    VOCABULARY_FILENAME_TEMPLATE = "vocab-{cv_index}.txt"
+    TERM_EMBEDDING_FILENAME_TEMPLATE = 'term_embedding'
+    VOCABULARY_FILENAME_TEMPLATE = "vocab.txt"
 
     def __init__(self, target_dir):
         assert(isinstance(target_dir, str))
@@ -26,28 +24,26 @@ class NpEmbeddingIO(BaseEmbeddingIO):
 
     # region Embedding-related data
 
-    def save_vocab(self, data, data_folding):
-        assert(isinstance(data_folding, BaseDataFolding))
-        target = self.__get_default_vocab_filepath(data_folding)
+    def save_vocab(self, data):
+        target = self.__get_default_vocab_filepath()
         return VocabRepositoryUtils.save(data=data, target=target)
 
-    def load_vocab(self, data_folding):
-        source = self.___get_vocab_source(data_folding)
+    def load_vocab(self):
+        source = self.___get_vocab_source()
         return dict(VocabRepositoryUtils.load(source))
 
-    def save_embedding(self, data, data_folding):
-        assert(isinstance(data_folding, BaseDataFolding))
-        target = self.__get_default_embedding_filepath(data_folding)
+    def save_embedding(self, data):
+        target = self.__get_default_embedding_filepath()
         NpzEmbeddingHelper.save_embedding(data=data, target=target)
 
-    def load_embedding(self, data_folding):
-        source = self.__get_term_embedding_source(data_folding)
+    def load_embedding(self):
+        source = self.__get_term_embedding_source()
         return NpzEmbeddingHelper.load_embedding(source)
 
-    def check_targets_existed(self, data_folding):
+    def check_targets_existed(self):
         targets = [
-            self.__get_default_vocab_filepath(data_folding=data_folding),
-            self.__get_term_embedding_target(data_folding=data_folding)
+            self.__get_default_vocab_filepath(),
+            self.__get_term_embedding_target()
         ]
         return check_targets_existence(targets=targets)
 
@@ -55,26 +51,22 @@ class NpEmbeddingIO(BaseEmbeddingIO):
 
     # region embedding-related data
 
-    def ___get_vocab_source(self, data_folding):
+    def ___get_vocab_source(self):
         """ It is possible to load a predefined embedding from another experiment
             using the related filepath provided by model_io.
         """
-        return self.__get_default_vocab_filepath(data_folding)
+        return self.__get_default_vocab_filepath()
 
-    def __get_term_embedding_target(self, data_folding):
-        return self.__get_default_embedding_filepath(data_folding)
+    def __get_term_embedding_target(self):
+        return self.__get_default_embedding_filepath()
 
-    def __get_term_embedding_source(self, data_folding):
-        return self.__get_default_embedding_filepath(data_folding)
+    def __get_term_embedding_source(self):
+        return self.__get_default_embedding_filepath()
 
-    def __get_default_vocab_filepath(self, data_folding):
-        return join(self.__target_dir,
-                    self.VOCABULARY_FILENAME_TEMPLATE.format(
-                        cv_index=experiment_iter_index(data_folding)))
+    def __get_default_vocab_filepath(self):
+        return join(self.__target_dir, self.VOCABULARY_FILENAME_TEMPLATE)
 
-    def __get_default_embedding_filepath(self, data_folding):
-        return join(self.__target_dir,
-                    self.TERM_EMBEDDING_FILENAME_TEMPLATE.format(
-                        cv_index=experiment_iter_index(data_folding)) + '.npz')
+    def __get_default_embedding_filepath(self):
+        return join(self.__target_dir, self.TERM_EMBEDDING_FILENAME_TEMPLATE)
 
     # endregion

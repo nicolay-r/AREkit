@@ -2,17 +2,17 @@ class BaseEmbeddingIO(object):
     """ API for loading and saving embedding and vocabulary related data.
     """
 
-    def save_vocab(self, data, data_folding):
+    def save_vocab(self, data):
         raise NotImplementedError()
 
-    def load_vocab(self, data_folding):
+    def load_vocab(self,):
         raise NotImplementedError()
 
-    def save_embedding(self, data, data_folding):
+    def save_embedding(self, data):
         raise NotImplementedError()
 
-    def load_embedding(self, data_folding):
+    def load_embedding(self):
         raise NotImplementedError()
 
-    def check_targets_existed(self, data_folding):
+    def check_targets_existed(self):
         raise NotImplementedError()

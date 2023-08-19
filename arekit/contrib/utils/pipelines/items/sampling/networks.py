@@ -1,4 +1,3 @@
-from arekit.common.folding.base import BaseDataFolding
 from arekit.contrib.networks.input.embedding.matrix import create_term_embedding_matrix
 from arekit.contrib.networks.input.embedding.offsets import TermsEmbeddingOffsets
 from arekit.contrib.networks.embedding import Embedding
@@ -49,7 +48,7 @@ class NetworksInputSerializerPipelineItem(BaseSerializerPipelineItem):
         vocab = list(TermsEmbeddingOffsets.extract_vocab(words_embedding=term_embedding))
 
         # Save embedding matrix
-        self.__emb_io.save_embedding(data=embedding_matrix, data_folding=data_folding)
-        self.__emb_io.save_vocab(data=vocab, data_folding=data_folding)
+        self.__emb_io.save_embedding(data=embedding_matrix)
+        self.__emb_io.save_vocab(data=vocab)
 
         del embedding_matrix
