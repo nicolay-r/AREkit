@@ -33,7 +33,6 @@ class NetworksInputSerializerPipelineItem(BaseSerializerPipelineItem):
         """ Performing data serialization for a particular iteration
         """
         assert(isinstance(data_type_pipelines, dict))
-        assert(isinstance(data_folding, BaseDataFolding))
 
         # Prepare for the present iteration.
         self._rows_provider.clear_embedding_pairs()

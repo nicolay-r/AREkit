@@ -6,7 +6,6 @@ from arekit.common.data.input.providers.label.multiple import MultipleLabelProvi
 from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.data_type import DataType
-from arekit.common.folding.nofold import NoFolding
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
@@ -65,7 +64,6 @@ class TestStreamWriters(unittest.TestCase):
         #####
         # Declaring pipeline related context parameters.
         #####
-        no_folding = NoFolding()
         doc_provider = FooDocumentProvider()
         text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(), DefaultTextTokenizer(keep_tokens=True)])
         train_pipeline = text_opinion_extraction_pipeline(
@@ -84,9 +82,8 @@ class TestStreamWriters(unittest.TestCase):
 
         pipeline.run(input_data=None,
                      params_dict={
-                         "data_folding": no_folding,
                          "data_type_pipelines": {DataType.Train: train_pipeline},
-                         "doc_ids": {DataType.Train: [0, 1]}
+                         "data_folding": {DataType.Train: [0, 1]}
                      })
 
     def test_csv_native(self):

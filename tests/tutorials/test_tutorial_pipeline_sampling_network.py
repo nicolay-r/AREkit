@@ -3,7 +3,6 @@ from collections import OrderedDict
 from os.path import dirname, join
 
 from arekit.common.experiment.data_type import DataType
-from arekit.common.folding.nofold import NoFolding
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
@@ -126,9 +125,8 @@ class TestSamplingNetwork(unittest.TestCase):
 
         pipeline.run(input_data=None,
                      params_dict={
-                         "data_folding": NoFolding(),
                          "data_type_pipelines": {DataType.Train: train_pipeline},
-                         "doc_ids": {DataType.Train: [0, 1]}
+                         "data_folding": {DataType.Train: [0, 1]}
                      })
 
         reader = PandasCsvReader()

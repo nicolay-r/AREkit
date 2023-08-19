@@ -3,8 +3,6 @@ import logging
 from os.path import join, exists
 
 from arekit.common.experiment.data_type import DataType
-from arekit.common.folding.base import BaseDataFolding
-from arekit.contrib.utils.utils_folding import experiment_iter_index
 
 
 logger = logging.getLogger(__name__)
@@ -23,9 +21,7 @@ def join_dir_with_subfolder_name(subfolder_name, dir):
 
 def filename_template(data_type, data_folding):
     assert(isinstance(data_type, DataType))
-    assert(isinstance(data_folding, BaseDataFolding))
-    return "{data_type}-{iter_index}".format(data_type=data_type.name.lower(),
-                                             iter_index=experiment_iter_index(data_folding))
+    return "{data_type}-0".format(data_type=data_type.name.lower())
 
 
 def check_targets_existence(targets):

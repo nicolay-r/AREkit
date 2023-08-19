@@ -2,8 +2,6 @@ from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvide
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
-from arekit.common.folding.base import BaseDataFolding
-from arekit.common.folding.nofold import NoFolding
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
@@ -33,8 +31,11 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         self._storage = storage
 
     def _serialize_iteration(self, data_type, pipeline, data_folding, doc_ids):
-        assert (isinstance(data_type, DataType))
-        assert (isinstance(pipeline, BasePipeline))
+        assert(isinstance(data_type, DataType))
+        assert(isinstance(pipeline, BasePipeline))
+        assert(isinstance(data_folding, dict) or data_folding is None)
+        assert(isinstance(doc_ids, list) or doc_ids is None)
+        assert(doc_ids is not None or data_folding is not None)
 
         repos = {
             "sample": InputDataSerializationHelper.create_samples_repo(
@@ -50,10 +51,21 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         }
 
         for description, repo in repos.items():
+
+            if data_folding is None:
+                # Consider only the predefined doc_ids.
+                doc_ids_iter = doc_ids
+            else:
+                # Take particular data_type.
+                doc_ids_iter = data_folding[data_type]
+                # Consider only predefined doc_ids.
+                if doc_ids is not None:
+                    doc_ids_iter = set(doc_ids_iter).intersection(doc_ids)
+
             InputDataSerializationHelper.fill_and_write(
                 repo=repo,
                 pipeline=pipeline,
-                doc_ids_iter=data_folding.fold_doc_ids_set(doc_ids=doc_ids)[data_type],
+                doc_ids_iter=doc_ids_iter,
                 desc="{desc} [{data_type}]".format(desc=description, data_type=data_type),
                 writer=writer_and_targets[description][0],
                 target=writer_and_targets[description][1])
@@ -62,7 +74,6 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         """ Performing data serialization for a particular iteration
         """
         assert(isinstance(data_type_pipelines, dict))
-        assert(isinstance(data_folding, BaseDataFolding))
         for data_type, pipeline in data_type_pipelines.items():
             self._serialize_iteration(data_type=data_type, pipeline=pipeline, data_folding=data_folding,
                                       doc_ids=doc_ids)
@@ -75,17 +86,17 @@ class BaseSerializerPipelineItem(BasePipelineItem):
                     DataType.Test: BasePipeline
                 }
 
-                pipeline: doc_id -> parsed_doc -> annot -> opinion linkages
+                data_type_pipelines: doc_id -> parsed_doc -> annot -> opinion linkages
                     for example, function: sentiment_attitude_extraction_default_pipeline
+                doc_ids: optional
+                    this parameter allows to limit amount of documents considered for sampling
         """
         assert (isinstance(pipeline_ctx, PipelineContext))
         assert ("data_type_pipelines" in pipeline_ctx)
-        assert ("doc_ids" in pipeline_ctx)
 
         data_folding = pipeline_ctx.provide_or_none("data_folding")
-        data_folding = NoFolding() if data_folding is None else data_folding
 
         for _ in folding_iter_states(data_folding):
             self._handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
-                                   doc_ids=pipeline_ctx.provide("doc_ids"),
+                                   doc_ids=pipeline_ctx.provide_or_none("doc_ids"),
                                    data_folding=data_folding)

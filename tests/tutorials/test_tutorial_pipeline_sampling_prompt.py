@@ -7,7 +7,6 @@ from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import OpinionEntityType
 from arekit.common.experiment.data_type import DataType
-from arekit.common.folding.nofold import NoFolding
 from arekit.common.labels.base import NoLabel, Label
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
@@ -123,9 +122,8 @@ class TestPromptSerialization(unittest.TestCase):
 
         pipeline.run(input_data=None,
                      params_dict={
-                         "data_folding": NoFolding(),
                          "data_type_pipelines": {DataType.Train: train_pipeline},
-                         "doc_ids": {DataType.Train: [0, 1]}
+                         "data_folding": {DataType.Train: [0, 1]}
                      })
 
         reader = PandasCsvReader()
