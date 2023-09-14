@@ -24,6 +24,8 @@ class RowCacheStorage(BaseRowsStorage):
 
     def init_empty(self, columns_provider):
         assert (isinstance(columns_provider, BaseColumnsProvider))
+
+        self.__columns.clear()
         for col_name, _ in columns_provider.get_columns_list_with_types():
             self.__columns.append(col_name)
 
