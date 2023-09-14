@@ -38,6 +38,7 @@ class SampleColumnsProvider(BaseColumnsProvider):
         # insert labels
         if self.__store_labels:
             dtypes_list.append((const.LABEL_UINT, 'int32'))
+            dtypes_list.append((const.LABEL_STR, str))
 
         # insert text columns
         for col_name in self.__text_column_names:
