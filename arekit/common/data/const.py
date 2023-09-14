@@ -1,7 +1,8 @@
 ID = 'id'
 DOC_ID = 'doc_id'
 TEXT = 'text_a'
-LABEL_UINT = 'label'
+LABEL_UINT = 'label_uint'
+LABEL_STR = 'label_str'
 
 # Global identifier of the opinion in the sampled data.
 OPINION_ID = "opinion_id"

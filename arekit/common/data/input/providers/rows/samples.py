@@ -75,9 +75,11 @@ class BaseSampleRowProvider(BaseRowProvider):
         expected_label = text_opinion_linkage.get_linked_label()
 
         if self.__store_labels:
-            row[const.LABEL_UINT] = self._label_provider.calculate_output_uint_label(
+            uint_label = self._label_provider.calculate_output_uint_label(
                 expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
                 etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
+            row[const.LABEL_UINT] = uint_label
+            row[const.LABEL_STR] = type(self._label_provider.LabelScaler.uint_to_label(uint_label)).__name__
 
         sentence_terms, actual_s_ind, actual_t_ind = self._provide_sentence_terms(
             parsed_doc=parsed_doc, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
