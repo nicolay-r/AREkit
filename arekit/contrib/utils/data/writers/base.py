@@ -1,5 +1,10 @@
 class BaseWriter(object):
 
+    def extension(self):
+        """ Expected output extension type.
+        """
+        raise NotImplementedError()
+
     def open_target(self, target):
         pass
 

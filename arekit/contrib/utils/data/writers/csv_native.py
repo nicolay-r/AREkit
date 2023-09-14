@@ -17,6 +17,9 @@ class NativeCsvWriter(BaseWriter):
         self.__header = header
         self.__header_written = None
 
+    def extension(self):
+        return ".csv"
+
     @staticmethod
     def __iter_storage_column_names(storage):
         """ Iter only those columns that existed in storage.

@@ -1,7 +1,6 @@
 import logging
 from os.path import join
 
-from arekit.contrib.utils.data.ext import create_writer_extension, create_reader_extension
 from arekit.contrib.utils.data.readers.base import BaseReader
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.data.writers.base import BaseWriter
@@ -32,9 +31,9 @@ class SamplesIO(BaseSamplesIO):
 
         if target_extension is None:
             if writer is not None:
-                self.__target_extension = create_writer_extension(writer)
+                self.__target_extension = writer.extension()
             elif reader is not None:
-                self.__target_extension = create_reader_extension(reader)
+                self.__target_extension = reader.extension()
 
     # region public methods
 

@@ -15,6 +15,9 @@ class PandasCsvWriter(BaseWriter):
         super(PandasCsvWriter, self).__init__()
         self.__write_header = write_header
 
+    def extension(self):
+        return ".tsv.gz"
+
     def write_all(self, storage, target):
         assert(isinstance(storage, PandasBasedRowsStorage))
         assert(isinstance(target, str))

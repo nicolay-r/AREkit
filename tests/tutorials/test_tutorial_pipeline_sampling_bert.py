@@ -88,7 +88,7 @@ class TestBertSerialization(unittest.TestCase):
             text_provider=text_provider)
 
         writer = PandasCsvWriter(write_header=True)
-        samples_io = SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz")
+        samples_io = SamplesIO(self.__output_dir, writer)
 
         pipeline_item = BertExperimentInputSerializerPipelineItem(
             rows_provider=rows_provider,
@@ -127,6 +127,6 @@ class TestBertSerialization(unittest.TestCase):
                      })
 
         reader = PandasCsvReader()
-        source = join(self.__output_dir, "sample-train-0.tsv.gz")
+        source = join(self.__output_dir, "sample-train-0" + writer.extension())
         storage = reader.read(source)
         self.assertEqual(20, len(storage), "Amount of rows is non equal!")

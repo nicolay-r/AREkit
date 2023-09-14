@@ -1,6 +1,5 @@
 from os.path import join
 
-from arekit.contrib.utils.data.ext import create_reader_extension
 from arekit.contrib.utils.data.readers.base import BaseReader
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.io_utils.utils import filename_template
@@ -13,7 +12,7 @@ class OpinionsIO(BaseSamplesIO):
         self.__target_dir = target_dir
         self.__prefix = prefix
         self.__reader = reader
-        self.__target_extension = create_reader_extension(reader) \
+        self.__target_extension = reader.extension() \
             if target_extension is None else target_extension
 
     @property

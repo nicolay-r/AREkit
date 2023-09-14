@@ -91,7 +91,7 @@ class TestSamplingNetwork(unittest.TestCase):
             ctx=ctx)
 
         pipeline_item = NetworksInputSerializerPipelineItem(
-            samples_io=SamplesIO(self.__output_dir, writer, target_extension=".tsv.gz"),
+            samples_io=SamplesIO(self.__output_dir, writer),
             emb_io=NpEmbeddingIO(target_dir=self.__output_dir),
             rows_provider=rows_provider,
             save_labels_func=lambda data_type: data_type != DataType.Test,
@@ -131,6 +131,6 @@ class TestSamplingNetwork(unittest.TestCase):
                      })
 
         reader = PandasCsvReader()
-        source = join(self.__output_dir, "sample-train-0.tsv.gz")
+        source = join(self.__output_dir, "sample-train-0" + writer.extension())
         storage = reader.read(source)
         self.assertEqual(20, len(storage), "Amount of rows is non equal!")

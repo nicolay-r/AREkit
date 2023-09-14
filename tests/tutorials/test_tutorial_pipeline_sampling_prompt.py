@@ -128,6 +128,6 @@ class TestPromptSerialization(unittest.TestCase):
                      })
 
         reader = PandasCsvReader()
-        source = join(self.__output_dir, "prompt-sample-train-0.tsv.gz")
+        source = join(self.__output_dir, "prompt-sample-train-0" + writer.extension())
         storage = reader.read(source)
         self.assertEqual(20, len(storage), "Amount of rows is non equal!")

@@ -13,6 +13,9 @@ class SQliteWriter(BaseWriter):
         self.__need_init_table = True
         self.__column_names = None
 
+    def extension(self):
+        return ".sqlite"
+
     @staticmethod
     def __iter_storage_column_names(storage):
         """ Iter only those columns that existed in storage.
@@ -22,7 +25,7 @@ class SQliteWriter(BaseWriter):
                 yield col_name
 
     def open_target(self, target):
-        self.__conn = sqlite3.connect(target + ".sqlite")
+        self.__conn = sqlite3.connect(target)
         self.__cur = self.__conn.cursor()
 
     def commit_line(self, storage):

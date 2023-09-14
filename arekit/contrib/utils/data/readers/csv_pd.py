@@ -19,6 +19,9 @@ class PandasCsvReader(BaseReader):
         if self.__col_types is None:
             self.__col_types = dict()
 
+    def extension(self):
+        return ".tsv.gz"
+
     def __from_csv(self, filepath):
         pd = importlib.import_module("pandas")
         return pd.read_csv(filepath,

@@ -39,6 +39,9 @@ class OpenNREJsonWriter(BaseWriter):
         self.__encoding = encoding
         self.__target_f = None
 
+    def extension(self):
+        return ".jsonl"
+
     @staticmethod
     def __format_row(row, text_columns):
         """ Formatting that is compatible with the OpenNRE.

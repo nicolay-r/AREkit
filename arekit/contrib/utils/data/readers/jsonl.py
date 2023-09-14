@@ -4,6 +4,9 @@ from arekit.contrib.utils.data.storages.jsonl_based import JsonlBasedRowsStorage
 
 class JsonlReader(BaseReader):
 
+    def extension(self):
+        return ".jsonl"
+
     def read(self, target):
         rows = []
         with open(target, "r") as f:
