@@ -17,23 +17,21 @@ class SamplesIO(BaseSamplesIO):
             Samples required for machine learning training/inferring.
     """
 
-    def __init__(self, target_dir, writer=None, reader=None, prefix="sample", target_extension=None):
+    def __init__(self, target_dir, writer=None, reader=None, prefix="sample"):
         assert(isinstance(target_dir, str))
         assert(isinstance(prefix, str))
         assert(isinstance(writer, BaseWriter) or writer is None)
         assert(isinstance(reader, BaseReader) or reader is None)
-        assert(isinstance(target_extension, str) or target_extension is None)
         self.__target_dir = target_dir
         self.__prefix = prefix
         self.__writer = writer
         self.__reader = reader
-        self.__target_extension = target_extension
 
-        if target_extension is None:
-            if writer is not None:
-                self.__target_extension = writer.extension()
-            elif reader is not None:
-                self.__target_extension = reader.extension()
+        self.__target_extension = None
+        if writer is not None:
+            self.__target_extension = writer.extension()
+        elif reader is not None:
+            self.__target_extension = reader.extension()
 
     # region public methods
 

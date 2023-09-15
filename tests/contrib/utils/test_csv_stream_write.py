@@ -30,8 +30,7 @@ class TestStreamWriters(unittest.TestCase):
 
     __output_dir = join(dirname(__file__), "out")
 
-    def __launch(self, writer, target_extention):
-        assert(isinstance(target_extention, str))
+    def __launch(self, writer):
 
         text_b_template = '{subject} к {object} в контексте : << {context} >>'
 
@@ -49,7 +48,7 @@ class TestStreamWriters(unittest.TestCase):
             label_provider=MultipleLabelProvider(SentimentLabelScaler()),
             text_provider=text_provider)
 
-        samples_io = SamplesIO(self.__output_dir, writer, target_extension=target_extention)
+        samples_io = SamplesIO(self.__output_dir, writer)
 
         pipeline_item = BertExperimentInputSerializerPipelineItem(
             rows_provider=sample_rows_provider,
@@ -90,10 +89,9 @@ class TestStreamWriters(unittest.TestCase):
     def test_csv_native(self):
         """ Testing writing into CSV format
         """
-        return self.__launch(writer=NativeCsvWriter(), target_extention=".csv")
+        return self.__launch(writer=NativeCsvWriter())
 
     def test_json_native(self):
         """ Testing writing into CSV format
         """
-        return self.__launch(writer=OpenNREJsonWriter(text_columns=[BaseSingleTextProvider.TEXT_A]),
-                             target_extention=".jsonl")
+        return self.__launch(writer=OpenNREJsonWriter(text_columns=[BaseSingleTextProvider.TEXT_A]))

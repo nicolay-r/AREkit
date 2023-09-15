@@ -7,13 +7,12 @@ from arekit.contrib.utils.io_utils.utils import filename_template
 
 class OpinionsIO(BaseSamplesIO):
 
-    def __init__(self, target_dir, reader=None, prefix="opinion", target_extension=".tsv.gz"):
+    def __init__(self, target_dir, reader=None, prefix="opinion"):
         assert(isinstance(reader, BaseReader))
         self.__target_dir = target_dir
         self.__prefix = prefix
         self.__reader = reader
-        self.__target_extension = reader.extension() \
-            if target_extension is None else target_extension
+        self.__target_extension = reader.extension()
 
     @property
     def Reader(self):
