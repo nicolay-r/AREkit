@@ -89,7 +89,7 @@ class TestPromptSerialization(unittest.TestCase):
             text_provider=text_provider)
 
         writer = PandasCsvWriter(write_header=True)
-        samples_io = SamplesIO(self.__output_dir, writer, prefix="prompt-sample", target_extension=".tsv.gz")
+        samples_io = SamplesIO(self.__output_dir, writer, prefix="prompt-sample")
 
         pipeline_item = BaseSerializerPipelineItem(
             rows_provider=rows_provider,
