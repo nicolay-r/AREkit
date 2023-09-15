@@ -15,7 +15,8 @@ class RowCacheStorage(BaseRowsStorage):
         assert(isinstance(force_collect_columns, list) or force_collect_columns is None)
         self.__f = None
         self.__row_cache = {}
-        self.__columns = []
+        self.__column_names = []
+        self.__column_types = []
         self.__force_collect_columns = [] if force_collect_columns is None else force_collect_columns
 
     @property
@@ -25,16 +26,20 @@ class RowCacheStorage(BaseRowsStorage):
     def init_empty(self, columns_provider):
         assert (isinstance(columns_provider, BaseColumnsProvider))
 
-        self.__columns.clear()
-        for col_name, _ in columns_provider.get_columns_list_with_types():
-            self.__columns.append(col_name)
+        self.__column_names.clear()
+        for col_name, col_type in columns_provider.get_columns_list_with_types():
+            self.__column_names.append(col_name)
+            self.__column_types.append(col_type)
 
         # Expand with columns that are forced to be provided.
-        existed_set = set(self.__columns)
-        self.__columns += [c for c in self.__force_collect_columns if c not in existed_set]
+        existed_set = set(self.__column_names)
+        self.__column_names += [c for c in self.__force_collect_columns if c not in existed_set]
 
     def iter_column_names(self):
-        return iter(self.__columns)
+        return iter(self.__column_names)
+
+    def iter_column_types(self):
+        return iter(self.__column_types)
 
     def _set_row_value(self, row_ind, column, value):
         self.__row_cache[column] = value

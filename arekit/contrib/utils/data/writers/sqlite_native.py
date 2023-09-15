@@ -1,6 +1,7 @@
 import sqlite3
 
 from arekit.common.data import const
+from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
 from arekit.contrib.utils.data.writers.base import BaseWriter
 
 
@@ -11,7 +12,7 @@ class SQliteWriter(BaseWriter):
         self.__conn = None
         self.__cur = None
         self.__need_init_table = True
-        self.__column_names = None
+        self.__origin_column_names = None
 
     def extension(self):
         return ".sqlite"
@@ -20,26 +21,42 @@ class SQliteWriter(BaseWriter):
     def __iter_storage_column_names(storage):
         """ Iter only those columns that existed in storage.
         """
-        for col_name in storage.iter_column_names():
+        assert(isinstance(storage, RowCacheStorage))
+        for col_name, col_type in zip(storage.iter_column_names(), storage.iter_column_types()):
             if col_name in storage.RowCache:
-                yield col_name
+                yield col_name, col_type
+
+    @staticmethod
+    def type_to_sqlite(col_type):
+        """ This is a simple function that provides conversion from the
+            base numpy types to SQLITE.
+            NOTE: this method represent a quick implementation for supporting
+            types, however it is far away from the generalized implementation.
+        """
+        if isinstance(col_type, str):
+            if 'int' in col_type:
+                return 'INTEGER'
+
+        return "TEXT"
 
     def open_target(self, target):
         self.__conn = sqlite3.connect(target)
         self.__cur = self.__conn.cursor()
 
     def commit_line(self, storage):
+        assert(isinstance(storage, RowCacheStorage))
 
-        column_names = list(self.__iter_storage_column_names(storage))
+        column_data = list(self.__iter_storage_column_names(storage))
 
         if self.__need_init_table:
-            column_types = ",".join(["{} {}".format(item[0], item[1])
-                                     for item in zip(column_names, ["TEXT"] * len(column_names))])
-
+            # Compose column name with the related SQLITE type.
+            column_types = ",".join([" ".join([col_name, self.type_to_sqlite(col_type)])
+                                     for col_name, col_type in column_data])
+            # Create table if not exists.
             self.__cur.execute(f"CREATE TABLE IF NOT EXISTS {self.__table_name}({column_types})")
             self.__cur.execute(f"CREATE INDEX IF NOT EXISTS i_id ON {self.__table_name}({const.ID})")
 
-            self.__column_names = column_names
+            self.__origin_column_names = [col_name for col_name, _ in column_data]
             self.__need_init_table = False
 
         row_id = storage.RowCache[const.ID]
@@ -48,10 +65,10 @@ class SQliteWriter(BaseWriter):
         if is_exists == 1:
             return
 
-        line_data = [storage.RowCache[col_name] for col_name in column_names]
+        line_data = [storage.RowCache[col_name] for col_name, _ in column_data]
         parameters = ",".join(["?"] * len(line_data))
 
-        assert(len(self.__column_names) == len(line_data))
+        assert(len(self.__origin_column_names) == len(line_data))
 
         self.__cur.execute(
             f"INSERT INTO {self.__table_name} VALUES ({parameters})",
@@ -61,7 +78,7 @@ class SQliteWriter(BaseWriter):
 
     def close_target(self):
         self.__cur = None
-        self.__column_names = None
+        self.__origin_column_names = None
         self.__need_init_table = True
         self.__conn.close()
 

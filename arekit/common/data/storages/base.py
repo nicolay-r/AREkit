@@ -54,6 +54,9 @@ class BaseRowsStorage(object):
     def iter_column_names(self):
         raise NotImplemented()
 
+    def iter_column_types(self):
+        raise NotImplemented()
+
     # endregion
 
     def fill(self, iter_rows_func, columns_provider, row_handler=None, rows_count=None, desc=""):

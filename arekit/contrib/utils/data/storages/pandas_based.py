@@ -48,6 +48,9 @@ class PandasBasedRowsStorage(BaseRowsStorage):
     def iter_column_names(self):
         return iter(self._df.columns)
 
+    def iter_column_types(self):
+        return iter(self._df.dtypes)
+
     def _set_row_value(self, row_ind, column, value):
         self._df.at[row_ind, column] = value
 
