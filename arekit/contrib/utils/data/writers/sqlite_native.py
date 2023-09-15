@@ -76,7 +76,7 @@ class SQliteWriter(BaseWriter):
         assert(len(self.__origin_column_names) == len(line_data))
 
         self.__cur.execute(
-            f"INSERT INTO {self.__table_name} VALUES ({parameters})",
+            f"INSERT OR REPLACE INTO {self.__table_name} VALUES ({parameters})",
             tuple(line_data))
 
         self.__conn.commit()
