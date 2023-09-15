@@ -1,4 +1,6 @@
+import os
 import sqlite3
+from os.path import dirname
 
 from arekit.common.data import const
 from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
@@ -7,12 +9,13 @@ from arekit.contrib.utils.data.writers.base import BaseWriter
 
 class SQliteWriter(BaseWriter):
 
-    def __init__(self, table_name="contents"):
+    def __init__(self, table_name="contents", skip_existed=True):
         self.__table_name = table_name
         self.__conn = None
         self.__cur = None
         self.__need_init_table = True
         self.__origin_column_names = None
+        self.__skip_existed = skip_existed
 
     def extension(self):
         return ".sqlite"
@@ -40,6 +43,7 @@ class SQliteWriter(BaseWriter):
         return "TEXT"
 
     def open_target(self, target):
+        os.makedirs(dirname(target), exist_ok=True)
         self.__conn = sqlite3.connect(target)
         self.__cur = self.__conn.cursor()
 
@@ -59,10 +63,11 @@ class SQliteWriter(BaseWriter):
             self.__origin_column_names = [col_name for col_name, _ in column_data]
             self.__need_init_table = False
 
+        # Check whether the related row is already exist in SQLITE database.
         row_id = storage.RowCache[const.ID]
         top_row = self.__cur.execute(f"SELECT EXISTS(SELECT 1 FROM {self.__table_name} WHERE id='{row_id}');")
         is_exists = top_row.fetchone()[0]
-        if is_exists == 1:
+        if is_exists == 1 and self.__skip_existed:
             return
 
         line_data = [storage.RowCache[col_name] for col_name, _ in column_data]
