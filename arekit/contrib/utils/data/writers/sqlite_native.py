@@ -9,7 +9,7 @@ from arekit.contrib.utils.data.writers.base import BaseWriter
 
 class SQliteWriter(BaseWriter):
 
-    def __init__(self, table_name="contents", skip_existed=True):
+    def __init__(self, table_name="contents", skip_existed=False):
         self.__table_name = table_name
         self.__conn = None
         self.__cur = None
