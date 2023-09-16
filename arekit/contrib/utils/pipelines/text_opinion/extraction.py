@@ -1,3 +1,4 @@
+from arekit.common.linkage.meta import MetaEmptyLinkedDataWrapper
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
@@ -50,6 +51,9 @@ def __iter_text_opinion_linkages(parsed_doc, annotators, entity_index_func, text
             text_opinion_linkage = TextOpinionsLinkage([text_opinion])
             text_opinion_linkage.set_tag(service)
             yield text_opinion_linkage
+
+    # This is the case to consider the end of the document.
+    yield MetaEmptyLinkedDataWrapper(doc_id=parsed_doc.RelatedDocID)
 
 
 def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators, entity_index_func,

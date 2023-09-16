@@ -1,5 +1,6 @@
 from arekit.common.data.input.providers.const import IDLE_MODE
 from arekit.common.data.input.providers.contents import ContentsProvider
+from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.text_opinions.base import TextOpinion
@@ -30,6 +31,7 @@ class InputTextOpinionProvider(ContentsProvider):
     def from_doc_ids(self, doc_ids, idle_mode=False):
         self.__current_id = 0
         for linkage in self.__pipeline.run(doc_ids, params_dict={IDLE_MODE: idle_mode}):
-            assert(isinstance(linkage, TextOpinionsLinkage))
-            self.__assign_ids(linkage)
+            assert(isinstance(linkage, LinkedDataWrapper))
+            if isinstance(linkage, TextOpinionsLinkage):
+                self.__assign_ids(linkage)
             yield linkage

@@ -2,6 +2,7 @@ import gc
 import logging
 
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
+from arekit.common.linkage.meta import MetaEmptyLinkedDataWrapper
 from arekit.common.utils import progress_bar
 
 logger = logging.getLogger(__name__)
@@ -70,16 +71,25 @@ class BaseRowsStorage(object):
 
         doc_ids_seen = set()
 
-        for row_index, row in enumerate(pbar_it):
+        row_index = 0
+        for row in pbar_it:
 
             doc_id, row_values = row
 
-            self._begin_filling_row(row_index)
+            if isinstance(row_values, MetaEmptyLinkedDataWrapper):
+                # Do nothing, i.e. do not register the related row.
+                pass
+            else:
+                self._begin_filling_row(row_index)
+                for column, value in row_values.items():
+                    self._set_row_value(row_ind=row_index,
+                                        column=column,
+                                        value=value)
 
-            for column, value in row_values.items():
-                self._set_row_value(row_ind=row_index,
-                                    column=column,
-                                    value=value)
+                if row_handler is not None:
+                    row_handler()
+
+                row_index += 1
 
             # Provide information about amount of processed documents.
             doc_ids_seen.add(doc_id)
@@ -87,9 +97,6 @@ class BaseRowsStorage(object):
                 "docs_seen": len(doc_ids_seen),
                 "doc_now": str(doc_id),
             })
-
-            if row_handler is not None:
-                row_handler()
 
     def free(self):
         gc.collect()
