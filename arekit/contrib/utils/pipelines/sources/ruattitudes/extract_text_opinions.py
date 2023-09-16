@@ -11,9 +11,9 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.entity_based import Ent
 
 def create_text_opinion_extraction_pipeline(text_parser,
                                             label_scaler,
+                                            custom_text_opinion_filters=None,
                                             version=RuAttitudesVersions.V20Large,
                                             terms_per_context=50,
-                                            entity_filter=RuAttitudesEntityFilter(),
                                             limit=None):
     """ Processing pipeline for RuAttitudes.
         This pipeline is based on the in-memory RuAttitudes storage.
@@ -29,13 +29,12 @@ def create_text_opinion_extraction_pipeline(text_parser,
             the actual `Label` instances, required in further for text_opinions instances.
         terms_per_context: int
             Amount of terms that we consider in between the Object and Subject.
-        entity_filter:
-            Entity filter
         limit: int or None
             Limit of documents to consider.
     """
     assert(isinstance(label_scaler, BaseLabelScaler))
     assert(isinstance(version, RuAttitudesVersions))
+    assert(isinstance(custom_text_opinion_filters, list) or custom_text_opinion_filters is None)
     assert(version in [RuAttitudesVersions.V20Large, RuAttitudesVersions.V20Base,
                        RuAttitudesVersions.V20BaseNeut, RuAttitudesVersions.V20LargeNeut])
 
@@ -44,15 +43,21 @@ def create_text_opinion_extraction_pipeline(text_parser,
                                                doc_id_func=lambda doc_id: doc_id,
                                                limit=limit)
 
+    text_opinion_filters = [
+        EntityBasedTextOpinionFilter(entity_filter=RuAttitudesEntityFilter()),
+        DistanceLimitedTextOpinionFilter(terms_per_context)
+    ]
+
+    # Append with the custom filters afterwards.
+    if custom_text_opinion_filters is not None:
+        text_opinion_filters += custom_text_opinion_filters
+
     pipeline = text_opinion_extraction_pipeline(
         annotators=[
             PredefinedTextOpinionAnnotator(doc_provider=doc_provider,
                                            label_formatter=RuAttitudesLabelFormatter(label_scaler))
         ],
-        text_opinion_filters=[
-            EntityBasedTextOpinionFilter(entity_filter=entity_filter),
-            DistanceLimitedTextOpinionFilter(terms_per_context)
-        ],
+        text_opinion_filters=custom_text_opinion_filters,
         get_doc_by_id_func=doc_provider.by_id,
         entity_index_func=lambda brat_entity: brat_entity.ID,
         text_parser=text_parser)

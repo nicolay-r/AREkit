@@ -13,7 +13,6 @@ from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import Algorit
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
-from arekit.contrib.utils.pipelines.text_opinion.filters.entity_based import EntityBasedTextOpinionFilter
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.sources.sentinerel.text_opinion.prof_per_org_filter import \
     ProfessionAsCharacteristicSentimentTextOpinionFilter
@@ -22,13 +21,13 @@ from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymColle
 
 def create_text_opinion_extraction_pipeline(sentinerel_version,
                                             text_parser,
+                                            custom_text_opinion_filters=None,
                                             label_formatter=SentiNERELSentimentLabelFormatter(),
                                             no_label=NoLabel(),
                                             terms_per_context=50,
                                             doc_provider=None,
                                             dist_in_sentences=0,
-                                            docs_limit=None,
-                                            entity_filter=None):
+                                            docs_limit=None):
     """ This is a main pipeline which generates the samples for a SentiNEREL documents.
         SentiNEREL is a collection that becomes a part of the:
             1. Attitude extraction studies (AREkit focused studies):
@@ -53,6 +52,7 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
     """
     assert(isinstance(sentinerel_version, SentiNerelVersions))
     assert(isinstance(doc_provider, DocumentProvider) or doc_provider is None)
+    assert(isinstance(custom_text_opinion_filters, list) or custom_text_opinion_filters is None)
 
     data_folding = None
 
@@ -71,10 +71,13 @@ def create_text_opinion_extraction_pipeline(sentinerel_version,
                                                             no_label=no_label)
 
     text_opinion_filters = [
-        EntityBasedTextOpinionFilter(entity_filter=entity_filter),
         ProfessionAsCharacteristicSentimentTextOpinionFilter(),
         DistanceLimitedTextOpinionFilter(terms_per_context)
     ]
+
+    # Append with the custom filters afterwards.
+    if custom_text_opinion_filters is not None:
+        text_opinion_filters += custom_text_opinion_filters
 
     predefined_annot = PredefinedTextOpinionAnnotator(doc_provider, label_formatter)
 

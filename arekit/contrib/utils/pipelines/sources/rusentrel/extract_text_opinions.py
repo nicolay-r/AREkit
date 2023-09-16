@@ -11,7 +11,6 @@ from arekit.contrib.utils.pipelines.sources.rusentrel.doc_provider import RuSent
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
-from arekit.contrib.utils.pipelines.text_opinion.filters.entity_based import EntityBasedTextOpinionFilter
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
 
@@ -19,7 +18,7 @@ from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymColle
 def create_text_opinion_extraction_pipeline(rusentrel_version,
                                             text_parser,
                                             labels_fmt,
-                                            entity_filter=None,
+                                            custom_text_opinion_filters=None,
                                             no_label=NoLabel(),
                                             terms_per_context=50,
                                             dist_in_sentences=0):
@@ -37,6 +36,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
             considering amount of sentences that could be in between Object and Subject.
     """
     assert(isinstance(labels_fmt, RuSentRelLabelsFormatter))
+    assert(isinstance(custom_text_opinion_filters, list) or custom_text_opinion_filters is None)
 
     synonyms = StemmerBasedSynonymCollection(
         iter_group_values_lists=RuSentRelSynonymsCollectionHelper.iter_groups(rusentrel_version),
@@ -45,16 +45,21 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
 
     doc_provider = RuSentrelDocumentProvider(version=rusentrel_version, synonyms=synonyms)
 
+    text_opinion_filters = [
+        DistanceLimitedTextOpinionFilter(terms_per_context)
+    ]
+
+    # Append with the custom filters afterwards.
+    if custom_text_opinion_filters is not None:
+        text_opinion_filters += custom_text_opinion_filters
+
     pipeline = text_opinion_extraction_pipeline(
         annotators=[
             predefined_annotator(synonyms=synonyms, labels_fmt=labels_fmt),
             nolabel_annotator(synonyms=synonyms, terms_per_context=terms_per_context,
                               dist_in_sentences=dist_in_sentences, no_label=no_label)
         ],
-        text_opinion_filters=[
-            EntityBasedTextOpinionFilter(entity_filter=entity_filter),
-            DistanceLimitedTextOpinionFilter(terms_per_context)
-        ],
+        text_opinion_filters=text_opinion_filters,
         get_doc_by_id_func=doc_provider.by_id,
         entity_index_func=lambda brat_entity: brat_entity.ID,
         text_parser=text_parser)

@@ -7,7 +7,6 @@ from arekit.contrib.utils.pipelines.sources.nerel_bio.labels_fmt import NerelBio
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
-from arekit.contrib.utils.pipelines.text_opinion.filters.entity_based import EntityBasedTextOpinionFilter
 
 
 def create_text_relation_extraction_pipeline(nerel_bio_version,
@@ -16,9 +15,10 @@ def create_text_relation_extraction_pipeline(nerel_bio_version,
                                              terms_per_context=50,
                                              doc_ops=None,
                                              docs_limit=None,
-                                             entity_filter=None):
+                                             custom_text_opinion_filters=None):
     assert(isinstance(nerel_bio_version, NerelBioVersions))
     assert(isinstance(doc_ops, DocumentProvider) or doc_ops is None)
+    assert(isinstance(custom_text_opinion_filters, list) or custom_text_opinion_filters is None)
 
     data_folding = None
 
@@ -29,9 +29,12 @@ def create_text_relation_extraction_pipeline(nerel_bio_version,
         doc_ops = NERELBioDocProvider(filename_by_id=filenames_by_ids, version=nerel_bio_version)
 
     text_opinion_filters = [
-        EntityBasedTextOpinionFilter(entity_filter=entity_filter),
         DistanceLimitedTextOpinionFilter(terms_per_context)
     ]
+
+    # Append with the custom filters afterwards.
+    if custom_text_opinion_filters is not None:
+        text_opinion_filters += custom_text_opinion_filters
 
     predefined_annot = PredefinedTextOpinionAnnotator(doc_ops, label_formatter)
 

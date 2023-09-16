@@ -3,8 +3,9 @@ from arekit.contrib.utils.entities.filter import EntityFilter
 
 
 class RuAttitudesEntityFilter(EntityFilter):
-    """ Among all the entities proposed by the OntonotesV5,
-     we consider only a short list related to sentiment attutde extraction task.
+    """ This is a task-specific filter, which is applicable of entity types proposed
+        by the OntoNotesV5 resource: https://catalog.ldc.upenn.edu/LDC2013T19
+        We consider only a short list related to the sentiment attitude extraction task.
     """
 
     supported = ["GPE", "PERSON", "LOCAL", "GEO", "ORG"]
