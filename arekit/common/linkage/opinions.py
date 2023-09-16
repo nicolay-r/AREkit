@@ -6,4 +6,4 @@ class OpinionsLinkage(LinkedDataWrapper):
 
     def _get_data_label(self, item):
         assert(isinstance(item, Opinion))
-        return item.Sentiment
+        return item.Label

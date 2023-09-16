@@ -61,7 +61,7 @@ class TextOpinion(object):
                            text_opinion_id=other.__text_opinion_id if keep_text_opinion_id else None,
                            source_id=source_id,
                            target_id=target_id,
-                           label=other.Sentiment)
+                           label=other.Label)
 
     def __set_label_core(self, label):
         assert(isinstance(label, Label))
@@ -72,7 +72,7 @@ class TextOpinion(object):
     # region properties
 
     @property
-    def Sentiment(self):
+    def Label(self):
         return self.__modifiable_label
 
     @property

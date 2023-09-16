@@ -28,7 +28,7 @@ class RuAttitudesSentenceOpinionConverter:
 
         opinion = Opinion(source_value=source_value,
                           target_value=target_value,
-                          sentiment=label_scaler.int_to_label(sentence_opinion.Label))
+                          label=label_scaler.int_to_label(sentence_opinion.Label))
 
         # Using this tag allows to perform a revert operation,
         # i.e. to find opinion_ref by opinion.

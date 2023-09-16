@@ -7,13 +7,13 @@ class Opinion(object):
     """ Source opinion description
     """
 
-    def __init__(self, source_value, target_value, sentiment):
+    def __init__(self, source_value, target_value, label):
         assert(isinstance(source_value, str))
         assert(isinstance(target_value, str))
-        assert(isinstance(sentiment, Label))
+        assert(isinstance(label, Label))
         self.__source_value = source_value.lower()
         self.__target_value = target_value.lower()
-        self.__sentiment = sentiment
+        self.__label = label
         self.__tag = None
 
     # region properties
@@ -27,8 +27,8 @@ class Opinion(object):
         return self.__target_value
 
     @property
-    def Sentiment(self):
-        return self.__sentiment
+    def Label(self):
+        return self.__label
 
     @property
     def Tag(self):

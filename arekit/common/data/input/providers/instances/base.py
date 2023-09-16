@@ -11,4 +11,4 @@ class BaseLinkedDataInstancesProvider(object):
         """ Implementation based on the first element of the linkage.
         """
         assert(isinstance(linked_data, LinkedDataWrapper))
-        return linked_data.First.Sentiment
+        return linked_data.First.Label

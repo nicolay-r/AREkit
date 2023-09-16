@@ -22,14 +22,14 @@ class OpinionConverter(object):
 
         return Opinion(source_value=source_value,
                        target_value=target_value,
-                       sentiment=labels_formatter.str_to_label(str_label))
+                       label=labels_formatter.str_to_label(str_label))
 
     @staticmethod
     def try_to_string(opinion, labels_formatter):
         assert(isinstance(opinion, Opinion))
         assert(isinstance(labels_formatter, StringLabelsFormatter))
 
-        label = opinion.Sentiment
+        label = opinion.Label
 
         if not labels_formatter.supports_label(label):
             return None
@@ -37,4 +37,4 @@ class OpinionConverter(object):
         return "{}, {}, {}, current".format(
             opinion.SourceValue,
             opinion.TargetValue,
-            labels_formatter.label_to_str(opinion.Sentiment))
+            labels_formatter.label_to_str(opinion.Label))

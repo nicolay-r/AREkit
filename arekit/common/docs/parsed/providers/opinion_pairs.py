@@ -17,4 +17,4 @@ class OpinionPairsProvider(BasePairProvider):
 
         return Opinion(source_value=source_entity.Value,
                        target_value=target_entity.Value,
-                       sentiment=label)
+                       label=label)

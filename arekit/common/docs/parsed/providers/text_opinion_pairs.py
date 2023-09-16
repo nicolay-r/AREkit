@@ -68,7 +68,7 @@ class TextOpinionPairsProvider(BasePairProvider):
             return
             yield
 
-        label_provider = ConstantLabelProvider(label_instance=opinion.Sentiment)
+        label_provider = ConstantLabelProvider(label_instance=opinion.Label)
 
         pairs_it = self._iter_from_entities(src_entity_doc_ids=list(map(lambda e: e.IdInDocument, source_entities)),
                                             tgt_entity_doc_ids=list(map(lambda e: e.IdInDocument, target_entities)),

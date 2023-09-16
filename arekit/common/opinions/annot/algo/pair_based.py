@@ -71,7 +71,7 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         if existed_opinions is not None:
             o = Opinion(source_value=e1.Value,
                         target_value=e2.Value,
-                        sentiment=self.__label_provider.provide(source=e1, target=e2))
+                        label=self.__label_provider.provide(source=e1, target=e2))
             if existed_opinions.has_synonymous_opinion(opinion=o):
                 return
 

@@ -14,7 +14,7 @@ def __create_labeled_opinion(item, label):
     assert(isinstance(item, Opinion))
     return Opinion(source_value=item.SourceValue,
                    target_value=item.TargetValue,
-                   sentiment=label)
+                   label=label)
 
 
 def __linkages_to_opinions(linkages_iter, labels_helper, label_calc_mode):
@@ -39,7 +39,7 @@ def __fill_opinion_collection(opinions_iter, collection, supported_labels):
         assert(isinstance(opinion, Opinion))
 
         if supported_labels is not None:
-            if opinion.Sentiment not in supported_labels:
+            if opinion.Label not in supported_labels:
                 continue
 
         if collection.has_synonymous_opinion(opinion):

@@ -76,7 +76,7 @@ class OpinionCollection(object):
         f_o = self.__by_synonyms[s_id]
         if label is None:
             return f_o
-        elif f_o.sentiment == label:
+        elif f_o.Label == label:
             return f_o
         else:
             return None

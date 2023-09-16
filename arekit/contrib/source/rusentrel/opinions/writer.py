@@ -34,7 +34,7 @@ class RuSentRelOpinionCollectionWriter(OpinionCollectionWriter):
                 if str_value is None:
                     if error_on_non_supported:
                         raise Exception("Opinion label `{label}` is not supported by formatter".format(
-                            label=o.Sentiment))
+                            label=o.Label))
                     else:
                         continue
 

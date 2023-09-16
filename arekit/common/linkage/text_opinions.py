@@ -15,8 +15,8 @@ class TextOpinionsLinkage(LinkedDataWrapper):
         return self.First.DocID
 
     def get_linked_label(self):
-        return self.First.Sentiment
+        return self.First.Label
 
     def _get_data_label(self, item):
         assert(isinstance(item, TextOpinion))
-        return item.Sentiment
+        return item.Label
