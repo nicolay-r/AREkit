@@ -3,7 +3,7 @@ import logging
 
 from arekit.common.data.input.providers.columns.base import BaseColumnsProvider
 from arekit.common.linkage.meta import MetaEmptyLinkedDataWrapper
-from arekit.common.utils import progress_bar
+from arekit.common.utils import progress_bar_conditional
 
 logger = logging.getLogger(__name__)
 
@@ -65,38 +65,33 @@ class BaseRowsStorage(object):
         assert(isinstance(columns_provider, BaseColumnsProvider))
         assert(callable(row_handler) or row_handler is None)
 
-        pbar_it = progress_bar(iterable=iter_rows_func(False),
-                               desc="{fmt}".format(fmt=desc),
-                               total=rows_count)
-
         doc_ids_seen = set()
 
-        row_index = 0
-        for row in pbar_it:
-
-            doc_id, row_values = row
-
-            if isinstance(row_values, MetaEmptyLinkedDataWrapper):
-                # Do nothing, i.e. do not register the related row.
-                pass
-            else:
-                self._begin_filling_row(row_index)
-                for column, value in row_values.items():
-                    self._set_row_value(row_ind=row_index,
-                                        column=column,
-                                        value=value)
-
-                if row_handler is not None:
-                    row_handler()
-
-                row_index += 1
-
-            # Provide information about amount of processed documents.
+        def postfix_func(item):
+            doc_id, _ = item
             doc_ids_seen.add(doc_id)
-            pbar_it.set_postfix({
+            return {
                 "docs_seen": len(doc_ids_seen),
-                "doc_now": str(doc_id),
-            })
+                "doc_now": str(doc_id)
+            }
+
+        pbar_it = progress_bar_conditional(
+            iterable=iter_rows_func(False),
+            # We skip meta information data.
+            condition_func=lambda item: not isinstance(item[1], MetaEmptyLinkedDataWrapper),
+            postfix_func=postfix_func,
+            desc="{fmt}".format(fmt=desc),
+            total=rows_count)
+
+        for row_index, item in enumerate(pbar_it):
+            _, row_values = item
+            self._begin_filling_row(row_index)
+            for column, value in row_values.items():
+                self._set_row_value(row_ind=row_index,
+                                    column=column,
+                                    value=value)
+            if row_handler is not None:
+                row_handler()
 
     def free(self):
         gc.collect()
