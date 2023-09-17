@@ -9,13 +9,14 @@ from arekit.contrib.utils.data.writers.base import BaseWriter
 
 class SQliteWriter(BaseWriter):
 
-    def __init__(self, table_name="contents", skip_existed=False):
+    def __init__(self, table_name="contents", skip_existed=False, clear_table=True):
         self.__table_name = table_name
         self.__conn = None
         self.__cur = None
         self.__need_init_table = True
         self.__origin_column_names = None
         self.__skip_existed = skip_existed
+        self.__clear_table = clear_table
 
     def extension(self):
         return ".sqlite"
@@ -59,6 +60,9 @@ class SQliteWriter(BaseWriter):
             # Create table if not exists.
             self.__cur.execute(f"CREATE TABLE IF NOT EXISTS {self.__table_name}({column_types})")
             self.__cur.execute(f"CREATE INDEX IF NOT EXISTS i_id ON {self.__table_name}({const.ID})")
+            # Table exists, however we may optionally remove the content from it.
+            if self.__clear_table:
+                self.__cur.execute(f"DELETE FROM {self.__table_name};")
 
             self.__origin_column_names = [col_name for col_name, _ in column_data]
             self.__need_init_table = False
