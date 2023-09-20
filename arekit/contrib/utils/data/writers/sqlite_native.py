@@ -9,7 +9,13 @@ from arekit.contrib.utils.data.writers.base import BaseWriter
 
 class SQliteWriter(BaseWriter):
 
-    def __init__(self, table_name="contents", skip_existed=False, clear_table=True):
+    def __init__(self, table_name="contents", index_column_names=None, skip_existed=False, clear_table=True):
+        """ index_column_names: list or None
+                column names should be considered to build a unique index;
+                if None, the default 'const.ID' will be considered for row indexation.
+        """
+        assert (isinstance(index_column_names, list) or index_column_names is None)
+        self.__index_column_names = index_column_names if index_column_names is not None else [const.ID]
         self.__table_name = table_name
         self.__conn = None
         self.__cur = None
@@ -25,10 +31,29 @@ class SQliteWriter(BaseWriter):
     def __iter_storage_column_names(storage):
         """ Iter only those columns that existed in storage.
         """
-        assert(isinstance(storage, RowCacheStorage))
+        assert (isinstance(storage, RowCacheStorage))
         for col_name, col_type in zip(storage.iter_column_names(), storage.iter_column_types()):
             if col_name in storage.RowCache:
                 yield col_name, col_type
+
+    def __init_table(self, column_data):
+        # Compose column name with the related SQLITE type.
+        column_types = ",".join([" ".join([col_name, self.type_to_sqlite(col_type)])
+                                 for col_name, col_type in column_data])
+        # Create table if not exists.
+        self.__cur.execute(f"CREATE TABLE IF NOT EXISTS {self.__table_name}({column_types})")
+        # Table exists, however we may optionally remove the content from it.
+        if self.__clear_table:
+            self.__cur.execute(f"DELETE FROM {self.__table_name};")
+        # Create index.
+        index_name = f"i_{self.__table_name}_id"
+        self.__cur.execute(f"DROP INDEX IF EXISTS {index_name};")
+        self.__cur.execute("CREATE INDEX IF NOT EXISTS {index} ON {table}({columns})".format(
+            index=index_name,
+            table=self.__table_name,
+            columns=", ".join(self.__index_column_names)
+        ))
+        self.__origin_column_names = [col_name for col_name, _ in column_data]
 
     @staticmethod
     def type_to_sqlite(col_type):
@@ -49,22 +74,12 @@ class SQliteWriter(BaseWriter):
         self.__cur = self.__conn.cursor()
 
     def commit_line(self, storage):
-        assert(isinstance(storage, RowCacheStorage))
+        assert (isinstance(storage, RowCacheStorage))
 
         column_data = list(self.__iter_storage_column_names(storage))
 
         if self.__need_init_table:
-            # Compose column name with the related SQLITE type.
-            column_types = ",".join([" ".join([col_name, self.type_to_sqlite(col_type)])
-                                     for col_name, col_type in column_data])
-            # Create table if not exists.
-            self.__cur.execute(f"CREATE TABLE IF NOT EXISTS {self.__table_name}({column_types})")
-            self.__cur.execute(f"CREATE INDEX IF NOT EXISTS i_id ON {self.__table_name}({const.ID})")
-            # Table exists, however we may optionally remove the content from it.
-            if self.__clear_table:
-                self.__cur.execute(f"DELETE FROM {self.__table_name};")
-
-            self.__origin_column_names = [col_name for col_name, _ in column_data]
+            self.__init_table(column_data)
             self.__need_init_table = False
 
         # Check whether the related row is already exist in SQLITE database.
@@ -77,7 +92,7 @@ class SQliteWriter(BaseWriter):
         line_data = [storage.RowCache[col_name] for col_name, _ in column_data]
         parameters = ",".join(["?"] * len(line_data))
 
-        assert(len(self.__origin_column_names) == len(line_data))
+        assert (len(self.__origin_column_names) == len(line_data))
 
         self.__cur.execute(
             f"INSERT OR REPLACE INTO {self.__table_name} VALUES ({parameters})",
