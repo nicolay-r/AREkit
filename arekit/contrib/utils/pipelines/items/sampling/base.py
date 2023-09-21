@@ -45,8 +45,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
 
         writer_and_targets = {
             "sample": (self._samples_io.Writer,
-                       self._samples_io.create_target(
-                           data_type=data_type, data_folding=data_folding)),
+                       self._samples_io.create_target(data_type=data_type)),
         }
 
         for description, repo in repos.items():

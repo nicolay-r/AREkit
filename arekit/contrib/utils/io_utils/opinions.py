@@ -18,11 +18,11 @@ class OpinionsIO(BaseSamplesIO):
     def Reader(self):
         return self.__reader
 
-    def create_target(self, data_type, data_folding):
-        return self.__get_input_opinions_target(data_type, data_folding=data_folding)
+    def create_target(self, data_type):
+        return self.__get_input_opinions_target(data_type)
 
-    def __get_input_opinions_target(self, data_type, data_folding):
-        template = filename_template(data_type=data_type, data_folding=data_folding)
+    def __get_input_opinions_target(self, data_type):
+        template = filename_template(data_type=data_type)
         return self.__get_filepath(out_dir=self.__target_dir,
                                    template=template,
                                    prefix=self.__prefix,

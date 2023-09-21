@@ -19,7 +19,7 @@ def join_dir_with_subfolder_name(subfolder_name, dir):
     return target_dir
 
 
-def filename_template(data_type, data_folding):
+def filename_template(data_type):
     assert(isinstance(data_type, DataType))
     return "{data_type}-0".format(data_type=data_type.name.lower())
 
