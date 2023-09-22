@@ -29,7 +29,7 @@ class OpenNREJsonWriter(BaseWriter):
 
     EXTRA_KEYS_TEMPLATE = "_{}"
 
-    def __init__(self, text_columns, encoding="utf-8"):
+    def __init__(self, text_columns, encoding="utf-8", na_value="NA", keep_extra_columns=True):
         """ text_columns: list
                 column names that expected to be joined into a single (token) column.
         """
@@ -38,14 +38,17 @@ class OpenNREJsonWriter(BaseWriter):
         self.__text_columns = text_columns
         self.__encoding = encoding
         self.__target_f = None
+        self.__keep_extra_columns = keep_extra_columns
+        self.__na_value = na_value
 
     def extension(self):
         return ".jsonl"
 
     @staticmethod
-    def __format_row(row, text_columns):
+    def __format_row(row, na_value, text_columns, keep_extra_columns):
         """ Formatting that is compatible with the OpenNRE.
         """
+        assert(isinstance(na_value, str))
 
         sample_id = row[const.ID]
         s_ind = int(row[const.S_IND])
@@ -65,13 +68,14 @@ class OpenNREJsonWriter(BaseWriter):
             "token": tokens,
             "h": {"pos": [s_ind, s_ind + 1], "id": str(bag_id + "s")},
             "t": {"pos": [t_ind, t_ind + 1], "id": str(bag_id + "t")},
-            "relation": str(int(row[const.LABEL_UINT])) if const.LABEL_UINT in row else "NA"
+            "relation": str(int(row[const.LABEL_UINT])) if const.LABEL_UINT in row else na_value
         }
 
-        # Register extra fields.
-        for key, value in row.items():
-            if key not in formatted_data and key not in text_columns:
-                formatted_data[OpenNREJsonWriter.EXTRA_KEYS_TEMPLATE.format(key)] = value
+        # Register extra fields (optionally).
+        if keep_extra_columns:
+            for key, value in row.items():
+                if key not in formatted_data and key not in text_columns:
+                    formatted_data[OpenNREJsonWriter.EXTRA_KEYS_TEMPLATE.format(key)] = value
 
         return formatted_data
 
@@ -93,8 +97,11 @@ class OpenNREJsonWriter(BaseWriter):
                 continue
             row_data[col_name] = storage.RowCache[col_name]
 
-        self.__write_bag(bag=self.__format_row(row_data, text_columns=self.__text_columns),
-                         json_file=self.__target_f)
+        bag = self.__format_row(row_data, text_columns=self.__text_columns,
+                                keep_extra_columns=self.__keep_extra_columns,
+                                na_value=self.__na_value)
+
+        self.__write_bag(bag=bag, json_file=self.__target_f)
 
     @staticmethod
     def __write_bag(bag, json_file):
@@ -111,7 +118,9 @@ class OpenNREJsonWriter(BaseWriter):
         os.makedirs(os.path.dirname(target), exist_ok=True)
         with open(target, "w", encoding=self.__encoding) as json_file:
             for row_index, row in storage:
-                self.__write_bag(bag=self.__format_row(row, text_columns=self.__text_columns),
+                self.__write_bag(bag=self.__format_row(row, text_columns=self.__text_columns,
+                                                       keep_extra_columns=self.__keep_extra_columns,
+                                                       na_value=self.__na_value),
                                  json_file=json_file)
 
         logger.info("Saving completed!")
