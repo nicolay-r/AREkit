@@ -11,8 +11,8 @@ class Opinion(object):
         assert(isinstance(source_value, str))
         assert(isinstance(target_value, str))
         assert(isinstance(label, Label))
-        self.__source_value = source_value.lower()
-        self.__target_value = target_value.lower()
+        self.__source_value = source_value
+        self.__target_value = target_value
         self.__label = label
         self.__tag = None
 
