@@ -8,11 +8,13 @@ class PandasCsvReader(BaseReader):
     """ Represents a CSV-based reader, implmented via pandas API.
     """
 
-    def __init__(self, sep='\t', header='infer', compression='infer', encoding='utf-8', col_types=None):
+    def __init__(self, sep='\t', header='infer', compression='infer', encoding='utf-8', col_types=None,
+                 custom_extension=None):
         self.__sep = sep
         self.__compression = compression
         self.__encoding = encoding
         self.__header = header
+        self.__custom_extension = custom_extension
 
         # Special assignation of types for certain columns.
         self.__col_types = col_types
@@ -20,7 +22,7 @@ class PandasCsvReader(BaseReader):
             self.__col_types = dict()
 
     def extension(self):
-        return ".tsv.gz"
+        return ".tsv.gz" if self.__custom_extension is None else self.__custom_extension
 
     def __from_csv(self, filepath):
         pd = importlib.import_module("pandas")
