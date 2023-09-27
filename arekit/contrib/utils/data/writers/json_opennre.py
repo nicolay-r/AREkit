@@ -27,8 +27,6 @@ class OpenNREJsonWriter(BaseWriter):
         During the dataset reading stage via OpenNRE, these linkages automaticaly groups into bags.
     """
 
-    EXTRA_KEYS_TEMPLATE = "_{}"
-
     def __init__(self, text_columns, encoding="utf-8", na_value="NA", keep_extra_columns=True):
         """ text_columns: list
                 column names that expected to be joined into a single (token) column.
@@ -75,7 +73,10 @@ class OpenNREJsonWriter(BaseWriter):
         if keep_extra_columns:
             for key, value in row.items():
                 if key not in formatted_data and key not in text_columns:
-                    formatted_data[OpenNREJsonWriter.EXTRA_KEYS_TEMPLATE.format(key)] = value
+                    formatted_data[key] = value
+                else:
+                    raise Exception(f"key `{key}` is already exist in formatted data "
+                                    f"or a part of the text columns list: f{text_columns}")
 
         return formatted_data
 
