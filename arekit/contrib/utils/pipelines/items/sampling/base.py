@@ -1,3 +1,6 @@
+from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvider
+from arekit.common.data.storages.base import BaseRowsStorage
+from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
@@ -7,8 +10,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class BaseSerializerPipelineItem(BasePipelineItem):
 
-    # but eventually we need to remove them.
-    def __init__(self, rows_provider=None, samples_io=None, save_labels_func=None, storage=None):
+    def __init__(self, rows_provider, samples_io, save_labels_func, storage):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -17,6 +19,11 @@ class BaseSerializerPipelineItem(BasePipelineItem):
             save_labels_func: function
                 data_type -> bool
         """
+        assert(isinstance(rows_provider, BaseSampleRowProvider))
+        assert(isinstance(samples_io, BaseSamplesIO))
+        assert(callable(save_labels_func))
+        assert(isinstance(storage, BaseRowsStorage))
+
         self._rows_provider = rows_provider
         self._samples_io = samples_io
         self._save_labels_func = save_labels_func
@@ -84,11 +91,6 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         """
         assert (isinstance(pipeline_ctx, PipelineContext))
         assert ("data_type_pipelines" in pipeline_ctx)
-
-        self._rows_provider = pipeline_ctx.provide("rows_provider") if self._rows_provider is None else self._rows_provider
-        self._samples_io = pipeline_ctx.provide("samples_io") if self._samples_io is None else self._samples_io
-        self._save_labels_func = pipeline_ctx.provide("save_labels_func") if self._save_labels_func is None else self._save_labels_func
-        self._storage = pipeline_ctx.provide("storage") if self._storage is None else self._storage
 
         data_folding = pipeline_ctx.provide_or_none("data_folding")
 
