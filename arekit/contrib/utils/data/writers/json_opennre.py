@@ -77,11 +77,9 @@ class OpenNREJsonWriter(BaseWriter):
                 if key not in formatted_data and key not in text_columns:
                     formatted_data[key] = value
                 else:
-                    info = f"key `{key}` is already exist in formatted data "\
-                           f"or a part of the text columns list: {text_columns}"
-                    logger.info(info)
                     if not skip_extra_existed:
-                        raise Exception(info)
+                        raise Exception(f"key `{key}` is already exist in formatted data "
+                                        f"or a part of the text columns list: {text_columns}")
 
         return formatted_data
 
