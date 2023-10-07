@@ -66,7 +66,7 @@ def progress_bar_conditional(iterable, condition_func, total, postfix_func=None,
             pbar_it.set_postfix(postfix_func(item))
 
 
-def progress_bar_defined(iterable, total, desc="", unit="it"):
+def progress_bar_defined(iterable, total, miniters=200, desc="", unit="it"):
     return tqdm(iterable=iterable,
                 total=total,
                 desc=desc,
@@ -74,7 +74,7 @@ def progress_bar_defined(iterable, total, desc="", unit="it"):
                 position=0,
                 leave=True,
                 unit=unit,
-                miniters=total / 200)
+                miniters=total / miniters if total is not None else total)
 
 
 def progress_bar_iter(iterable, desc="", unit='it'):
