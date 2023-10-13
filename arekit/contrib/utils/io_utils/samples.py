@@ -36,6 +36,10 @@ class SamplesIO(BaseSamplesIO):
     # region public methods
 
     @property
+    def Prefix(self):
+        return self.__prefix
+
+    @property
     def Reader(self):
         return self.__reader
 
