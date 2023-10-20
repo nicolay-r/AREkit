@@ -81,58 +81,6 @@ class ParsedSampleRow(object):
     def __value_or_none(self, key):
         return self.__params[key] if key in self.__params else no_value()
 
-    @property
-    def SampleID(self):
-        return self.__params[const.ID]
-
-    @property
-    def OpinionID(self):
-        return self.__params[const.OPINION_ID]
-
-    @property
-    def OpinionLinkageID(self):
-        return self.__params[const.OPINION_LINKAGE_ID]
-
-    @property
-    def Terms(self):
-        return self.__params[const.TEXT]
-
-    @property
-    def SubjectIndex(self):
-        return self.__params[const.S_IND]
-
-    @property
-    def ObjectIndex(self):
-        return self.__params[const.T_IND]
-
-    @property
-    def UintLabel(self):
-        return self.__uint_label
-
-    @property
-    def PartOfSpeechTags(self):
-        return self.__value_or_none(network_input_const.PosTags)
-
-    @property
-    def TextFrameVariantIndices(self):
-        return self.__value_or_none(network_input_const.FrameVariantIndices)
-
-    @property
-    def TextFrameConnotations(self):
-        return self.__value_or_none(network_input_const.FrameConnotations)
-
-    @property
-    def EntityInds(self):
-        return self.__value_or_none(const.ENTITIES)
-
-    @property
-    def SynonymObjectInds(self):
-        return self.__value_or_none(network_input_const.SynonymObject)
-
-    @property
-    def SynonymSubjectInds(self):
-        return self.__value_or_none(network_input_const.SynonymSubject)
-
     def __getitem__(self, item):
         assert (isinstance(item, str) or item is None)
         if item not in self.__params:
