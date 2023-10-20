@@ -15,7 +15,7 @@ from arekit.contrib.utils.data.storages.row_cache import RowCacheStorage
 from arekit.contrib.utils.data.writers.csv_native import NativeCsvWriter
 from arekit.contrib.utils.data.writers.json_opennre import OpenNREJsonWriter
 from arekit.contrib.utils.io_utils.samples import SamplesIO
-from arekit.contrib.utils.pipelines.items.sampling.bert import BertExperimentInputSerializerPipelineItem
+from arekit.contrib.utils.pipelines.items.sampling.base import BaseSerializerPipelineItem
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
@@ -50,7 +50,7 @@ class TestStreamWriters(unittest.TestCase):
 
         samples_io = SamplesIO(self.__output_dir, writer)
 
-        pipeline_item = BertExperimentInputSerializerPipelineItem(
+        pipeline_item = BaseSerializerPipelineItem(
             rows_provider=sample_rows_provider,
             samples_io=samples_io,
             save_labels_func=lambda data_type: True,

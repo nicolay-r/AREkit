@@ -19,7 +19,7 @@ from arekit.contrib.utils.connotations.rusentiframes_sentiment import RuSentiFra
 from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 from arekit.contrib.utils.data.writers.csv_pd import PandasCsvWriter
-from arekit.contrib.utils.entities.formatters.str_simple_uppercase_fmt import SimpleUppercasedEntityFormatter
+from arekit.contrib.utils.entities.formatters.str_display import StringEntitiesDisplayValueFormatter
 from arekit.contrib.utils.io_utils.embedding import NpEmbeddingIO
 from arekit.contrib.utils.io_utils.samples import SamplesIO
 from arekit.contrib.utils.nn.rows import create_rows_provider
@@ -87,7 +87,7 @@ class TestSamplingNetwork(unittest.TestCase):
         writer = PandasCsvWriter(write_header=True)
 
         rows_provider = create_rows_provider(
-            str_entity_fmt=SimpleUppercasedEntityFormatter(),
+            str_entity_fmt=StringEntitiesDisplayValueFormatter(),
             ctx=ctx)
 
         pipeline_item = NetworksInputSerializerPipelineItem(

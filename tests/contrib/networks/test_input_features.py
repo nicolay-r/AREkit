@@ -4,7 +4,6 @@ import sys
 import unittest
 
 import numpy as np
-from pymystem3 import Mystem
 
 sys.path.append('../')
 
@@ -25,12 +24,11 @@ from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymColle
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
-from arekit.contrib.utils.entities.formatters.str_rus_cased_fmt import RussianEntitiesCasedFormatter
 from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVariantsSentimentNegation
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
-from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
+from arekit.contrib.utils.entities.formatters.str_display import StringEntitiesDisplayValueFormatter
 from tests.contrib.networks.doc import init_rusentrel_doc
 from tests.contrib.networks.indices_feature import IndicesFeature
 from tests.contrib.networks.labels import TestPositiveLabel, TestNegativeLabel
@@ -54,8 +52,7 @@ class TestTfInputFeatures(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.stemmer = MystemWrapper()
-        cls.entities_formatter = RussianEntitiesCasedFormatter(
-            pos_tagger=POSMystemWrapper(Mystem(entire_input=False)))
+        cls.entities_formatter = StringEntitiesDisplayValueFormatter()
         cls.synonyms = RuSentRelSynonymsCollectionProvider.load_collection(stemmer=cls.stemmer)
         cls.frames_collection = RuSentiFramesCollection.read(
             version=RuSentiFramesVersions.V10,

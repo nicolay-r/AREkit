@@ -21,7 +21,7 @@ from arekit.contrib.utils.data.readers.csv_pd import PandasCsvReader
 from arekit.contrib.utils.data.storages.pandas_based import PandasBasedRowsStorage
 from arekit.contrib.utils.data.writers.csv_pd import PandasCsvWriter
 from arekit.contrib.utils.io_utils.samples import SamplesIO
-from arekit.contrib.utils.pipelines.items.sampling.bert import BertExperimentInputSerializerPipelineItem
+from arekit.contrib.utils.pipelines.items.sampling.base import BaseSerializerPipelineItem
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
@@ -90,7 +90,7 @@ class TestBertSerialization(unittest.TestCase):
         writer = PandasCsvWriter(write_header=True)
         samples_io = SamplesIO(self.__output_dir, writer)
 
-        pipeline_item = BertExperimentInputSerializerPipelineItem(
+        pipeline_item = BaseSerializerPipelineItem(
             rows_provider=rows_provider,
             samples_io=samples_io,
             save_labels_func=lambda data_type: True,
