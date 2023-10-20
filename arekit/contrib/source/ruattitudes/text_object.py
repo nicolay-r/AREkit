@@ -30,7 +30,9 @@ class TextObject(object):
                           e_type=self.__type,
                           index_begin=self.__bound.Position,
                           index_end=self.__bound.Position + self.__bound.Length,
-                          group_index=self.__syn_group_index)
+                          group_index=self.__syn_group_index,
+                          # In the case of RuAttitudes collection we do not support childs.
+                          childs=None)
 
     # region properties
 
