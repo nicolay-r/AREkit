@@ -8,6 +8,7 @@ from arekit.common.data.input.providers.label.binary import BinaryLabelProvider
 from arekit.common.data.input.providers.label.multiple import MultipleLabelProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
+from arekit.common.data.rows_fmt import create_base_column_fmt
 from arekit.common.entities.base import Entity
 from arekit.common.labels.base import Label
 
@@ -34,6 +35,7 @@ class BaseSampleRowProvider(BaseRowProvider):
         self.__text_provider = text_provider
         self.__instances_provider = self.__create_instances_provider(label_provider)
         self.__store_labels = None
+        self._val_fmt = create_base_column_fmt(fmt_type="writer")
 
     # region properties
 
@@ -59,47 +61,55 @@ class BaseSampleRowProvider(BaseRowProvider):
                        parsed_doc, sentence_ind, s_ind, t_ind):
         assert(isinstance(self.__store_labels, bool))
 
-        def __assign_value(column, value):
-            row[column] = value
-
-        row[const.ID] = self._count_row()
-
-        row[const.OPINION_ID] = text_opinion_linkage.First.TextOpinionID
-
-        row[const.OPINION_LINKAGE_ID] = index_in_linked
-
-        row[const.DOC_ID] = text_opinion_linkage.First.DocID
-
-        row[const.SENT_IND] = sentence_ind
-
-        expected_label = text_opinion_linkage.get_linked_label()
-
-        if self.__store_labels:
-            uint_label = self._label_provider.calculate_output_uint_label(
-                expected_uint_label=self._label_provider.LabelScaler.label_to_uint(expected_label),
-                etalon_uint_label=self._label_provider.LabelScaler.label_to_uint(etalon_label))
-            row[const.LABEL_UINT] = uint_label
-            row[const.LABEL_STR] = type(self._label_provider.LabelScaler.uint_to_label(uint_label)).__name__
-
         sentence_terms, actual_s_ind, actual_t_ind = self._provide_sentence_terms(
             parsed_doc=parsed_doc, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
 
+        # Entity indices from the related context.
+        entities = list(filter(lambda term: isinstance(term, Entity), sentence_terms))
+
+        # Values mapping.
+        vm = {
+            const.ID: self._count_row(),
+            const.OPINION_ID: text_opinion_linkage.First.TextOpinionID,
+            const.OPINION_LINKAGE_ID: index_in_linked,
+            const.DOC_ID: text_opinion_linkage.First.DocID,
+            const.SENT_IND: sentence_ind,
+            const.ENTITY_VALUES: entities,
+            const.ENTITY_TYPES: entities,
+            const.ENTITIES: [str(i) for i, t in enumerate(sentence_terms) if isinstance(t, Entity)],
+            const.S_IND: actual_s_ind,
+            const.T_IND: actual_t_ind,
+            const.LABEL_UINT: None,
+            const.LABEL_STR: None
+        }
+
+        # Compose text value.
+        def __assign_value(column, value):
+            vm[column] = value
+
+        expected_label = text_opinion_linkage.get_linked_label()
+
         self.__text_provider.add_text_in_row(
-            set_text_func=lambda column, value: __assign_value(column, value),
-            sentence_terms=sentence_terms,
-            s_ind=actual_s_ind,
-            t_ind=actual_t_ind,
+            set_text_func=__assign_value, sentence_terms=sentence_terms,
+            s_ind=actual_s_ind, t_ind=actual_t_ind,
             expected_label=expected_label)
 
-        # Entity indicies from the related context.
-        entities = list(filter(lambda term: isinstance(term, Entity), sentence_terms))
-        entity_inds = [str(i) for i, t in enumerate(sentence_terms) if isinstance(t, Entity)]
-        row[const.ENTITY_VALUES] = ",".join([e.DisplayValue.replace(',', '') for e in entities])
-        row[const.ENTITY_TYPES] = ",".join([e.Type.replace(',', '') for e in entities])
-        row[const.ENTITIES] = ",".join(entity_inds)
+        if self.__store_labels:
+            l2i = self._label_provider.LabelScaler.label_to_uint
+            ui2l = self._label_provider.LabelScaler.uint_to_label
+            uint_label = self._label_provider.calculate_output_uint_label(
+                expected_uint_label=l2i(expected_label), etalon_uint_label=l2i(etalon_label))
+            vm[const.LABEL_UINT] = uint_label
+            vm[const.LABEL_STR] = type(ui2l(uint_label)).__name__
 
-        row[const.S_IND] = actual_s_ind
-        row[const.T_IND] = actual_t_ind
+        self._apply_row_data(row=row, vm=vm, val_fmt=self._val_fmt)
+
+    @staticmethod
+    def _apply_row_data(row, vm, val_fmt):
+        for k, v in vm.items():
+            if v is None:
+                continue
+            row[k] = v if k not in val_fmt else val_fmt[k](v)
 
     def _provide_rows(self, parsed_doc, entity_service, text_opinion_linkage, idle_mode):
         assert(isinstance(idle_mode, bool))

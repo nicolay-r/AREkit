@@ -1,92 +1,47 @@
-from arekit.common.data import const
-from arekit.common.utils import filter_whitespaces, split_by_whitespaces
-
-import arekit.contrib.networks.input.const as network_input_const
-
-empty_list = []
+import arekit.contrib.networks.input.const as const
+from arekit.common.data.rows_fmt import process_indices_list
 
 
-def no_value():
-    return None
+def create_nn_column_formatters(no_value_func=lambda: None, args_sep=","):
+    assert(callable(no_value_func))
+
+    empty_list = []
+
+    def str_to_list(value):
+        return process_indices_list(value, no_value_func=no_value_func, args_sep=args_sep)
+
+    def list_to_str(inds_iter):
+        return args_sep.join([str(i) for i in inds_iter])
+
+    return {
+        const.FrameVariantIndices: {
+            "writer": lambda value: list_to_str(value),
+            "parser": lambda value: process_indices_list(value, no_value_func=no_value_func, args_sep=args_sep)
+                if isinstance(value, str) else empty_list
+        },
+        const.FrameConnotations: {
+            "writer": lambda value: list_to_str(value),
+            "parser": lambda value: process_indices_list(value, no_value_func=no_value_func, args_sep=args_sep)
+                if isinstance(value, str) else empty_list
+        },
+        const.SynonymObject: {
+            "writer": lambda value: list_to_str(value),
+            "parser": lambda value: process_indices_list(value, no_value_func=no_value_func, args_sep=args_sep)
+        },
+        const.SynonymSubject: {
+            "writer": lambda value: list_to_str(value),
+            "parser": lambda value: process_indices_list(value, no_value_func=no_value_func, args_sep=args_sep)
+        },
+        const.PosTags: {
+            "writer": lambda value: list_to_str(value),
+            "parser": lambda value: str_to_list(value)
+        }
+    }
 
 
-def __process_values_list(value):
-    return value.split(network_input_const.ArgsSep)
-
-
-def __process_indices_list(value):
-    return no_value() if not value else [int(v) for v in str(value).split(network_input_const.ArgsSep)]
-
-
-def __process_int_values_list(value):
-    return __process_indices_list(value)
-
-
-def __handle_text(value):
-    """ The core method of the input text processing.
-    """
-    assert(isinstance(value, str) or isinstance(value, list))
-    return filter_whitespaces([term for term in split_by_whitespaces(value)]
-                              if isinstance(value, str) else value)
-
-
-parse_value = {
-    const.ID: lambda value: value,
-    const.DOC_ID: lambda value: value,
-    const.S_IND: lambda value: int(value),
-    const.T_IND: lambda value: int(value),
-    const.SENT_IND: lambda value: int(value),
-    const.OPINION_ID: lambda value: int(value),
-    const.OPINION_LINKAGE_ID: lambda value: int(value),
-    const.ENTITY_VALUES: lambda value: __process_values_list(value),
-    const.ENTITY_TYPES: lambda value: __process_values_list(value),
-    const.ENTITIES: lambda value: __process_indices_list(value),
-    const.TEXT: lambda value: __handle_text(value),
-    network_input_const.FrameVariantIndices: lambda value:
-        __process_indices_list(value) if isinstance(value, str) else empty_list,
-    network_input_const.FrameConnotations: lambda value:
-        __process_indices_list(value) if isinstance(value, str) else empty_list,
-    network_input_const.SynonymObject: lambda value: __process_indices_list(value),
-    network_input_const.SynonymSubject: lambda value: __process_indices_list(value),
-    network_input_const.PosTags: lambda value: __process_int_values_list(value)
-}
-
-
-class ParsedSampleRow(object):
-    """ Provides a parsed information for a sample row.
-    """
-
-    def __init__(self, row):
-        """ row: dict
-                dict of the pairs ("field_name", value)
-        """
-        assert(isinstance(row, dict))
-
-        self.__uint_label = None
-        self.__params = {}
-
-        for key, value in row.items():
-
-            if key == const.LABEL_UINT:
-                self.__uint_label = int(value)
-                # TODO: To be adopted in future instead of __uint_label
-                self.__params[key] = value
-                continue
-
-            if key not in parse_value:
-                continue
-
-            self.__params[key] = parse_value[key](value)
-
-    def __value_or_none(self, key):
-        return self.__params[key] if key in self.__params else no_value()
-
-    def __getitem__(self, item):
-        assert (isinstance(item, str) or item is None)
-        if item not in self.__params:
-            return no_value()
-        return self.__params[item] if item is not None else no_value()
-
-    @classmethod
-    def parse(cls, row):
-        return cls(row=row)
+def create_nn_val_writer_fmt(fmt_type, args_sep=","):
+    assert(isinstance(fmt_type, str))
+    d = create_nn_column_formatters(args_sep=args_sep)
+    for k, v in d.items():
+        d[k] = v[fmt_type]
+    return d

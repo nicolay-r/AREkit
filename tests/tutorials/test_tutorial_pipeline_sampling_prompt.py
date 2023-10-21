@@ -83,7 +83,7 @@ class TestPromptSerialization(unittest.TestCase):
             label_scaler=SentimentLabelScaler(),
             prompt="Для текста: `{text}` отношении в нём между " +
                    "объектом `{s_val}` (слово `{s_ind}`) " +
-                   "и субъектом `{s_val}` (слово `{s_ind}`) " +
+                   "и субъектом `{t_val}` (слово `{t_ind}`) " +
                    "имеет оценку {label_val}",
             label_fmt=RuSentRelLabelsFormatter(pos_label_type=Positive, neg_label_type=Negative),
             text_provider=text_provider)

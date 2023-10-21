@@ -9,6 +9,7 @@ from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.contrib.networks.input.formatters.pos_mapper import PosTermsMapper
 from arekit.contrib.networks.input import const
 from arekit.contrib.networks.input.providers.term_connotation import extract_uint_frame_variant_connotation
+from arekit.contrib.networks.input.rows_parser import create_nn_val_writer_fmt
 
 
 class NetworkSampleRowProvider(BaseSampleRowProvider):
@@ -36,6 +37,7 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         self.__frame_role_label_scaler = frame_role_label_scaler
         self.__pos_terms_mapper = pos_terms_mapper
         self.__term_embedding_pairs = term_embedding_pairs
+        self.__nn_val_fmt = create_nn_val_writer_fmt(fmt_type="writer")
 
     @property
     def HasEmbeddingPairs(self):
@@ -85,29 +87,17 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
                     three_label_scaler=self.__frame_role_label_scaler),
                 [terms[frame_ind] for frame_ind in uint_frame_inds]))
 
-        # Synonyms for source.
-        uint_syn_s_inds = self.__create_synonyms_set(terms=terms, term_ind=actual_s_ind)
+        vm = {
+            const.FrameVariantIndices: uint_frame_inds,
+            const.FrameConnotations: uint_frame_connotations,
+            const.SynonymSubject: self.__create_synonyms_set(terms=terms, term_ind=actual_s_ind),
+            const.SynonymObject: self.__create_synonyms_set(terms=terms, term_ind=actual_t_ind),
+            const.PosTags: None if self.__pos_terms_mapper is None else [int(pos_tag) for pos_tag in self.__pos_terms_mapper.iter_mapped(terms)]
+        }
 
-        # Synonyms for target.
-        uint_syn_t_inds = self.__create_synonyms_set(terms=terms, term_ind=actual_t_ind)
-
-        # Part of speech tags
-        pos_int_tags = None if self.__pos_terms_mapper is None \
-            else [int(pos_tag) for pos_tag in self.__pos_terms_mapper.iter_mapped(terms)]
-
-        # Saving.
-        row[const.FrameVariantIndices] = self.__to_arg(uint_frame_inds)
-        row[const.FrameConnotations] = self.__to_arg(uint_frame_connotations)
-        row[const.SynonymSubject] = self.__to_arg(uint_syn_s_inds)
-        row[const.SynonymObject] = self.__to_arg(uint_syn_t_inds)
-        if pos_int_tags is not None:
-            row[const.PosTags] = self.__to_arg(pos_int_tags)
+        self._apply_row_data(row=row, vm=vm, val_fmt=self.__nn_val_fmt)
 
     # region private methods
-
-    @staticmethod
-    def __is_entity(t):
-        return isinstance(t, Entity)
 
     def __create_synonyms_set(self, terms, term_ind):
         entity = terms[term_ind]
@@ -135,9 +125,5 @@ class NetworkSampleRowProvider(BaseSampleRowProvider):
         if group_ind is None:
             return False
         return term.GroupIndex == group_ind
-
-    @staticmethod
-    def __to_arg(inds_iter):
-        return const.ArgsSep.join([str(i) for i in inds_iter])
 
     # endregion

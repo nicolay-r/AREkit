@@ -47,13 +47,15 @@ class PromptedSampleRowProvider(CroppedSampleRowProvider):
         label_val = str(label_uint) if label_uint is None or self.__labels_fmt is None else \
             self.__labels_fmt.label_to_str(self._label_provider.LabelScaler.uint_to_label(row[const.LABEL_UINT]))
 
-        row[BaseSingleTextProvider.TEXT_A] = self.__prompt.format(
-            text=original_text,
-            s_ind=row[const.S_IND],
-            t_ind=row[const.T_IND],
-            s_val=sentence_terms[actual_s_ind].DisplayValue,
-            t_val=sentence_terms[actual_t_ind].DisplayValue,
-            label_uint=label_uint,
-            label_val=label_val)
+        vm = {
+           const.TEXT: self.__prompt.format(
+               text=original_text,
+               s_ind=row[const.S_IND],
+               t_ind=row[const.T_IND],
+               s_val=sentence_terms[actual_s_ind].DisplayValue,
+               t_val=sentence_terms[actual_t_ind].DisplayValue,
+               label_uint=label_uint,
+               label_val=label_val)
+        }
 
-        return row
+        self._apply_row_data(row=row, vm=vm, val_fmt=self._val_fmt)
