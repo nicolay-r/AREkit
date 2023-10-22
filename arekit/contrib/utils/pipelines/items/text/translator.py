@@ -47,11 +47,14 @@ class MLTextTranslatorPipelineItem(BasePipelineItem):
         # Compose text parts.
         translated_parts = self.__translate(content)
 
+        if len(translated_parts) == 0:
+            return None
+
         # Take the original text.
         text = translated_parts[0]
         for entity_index in range(len(origin_entities)):
             if entity_placeholder_template.format(entity_index) not in text:
-                return []
+                return None
 
         # Enumerate entities.
         from_ind = 0
@@ -129,4 +132,4 @@ class MLTextTranslatorPipelineItem(BasePipelineItem):
 
         fast_accurate = self.fast_most_accurate_approach(input_data)
         return self.default_pre_part_splitting_approach(input_data) \
-            if len(fast_accurate) == 0 else fast_accurate
+            if fast_accurate is None else fast_accurate
