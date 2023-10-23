@@ -89,11 +89,11 @@ class BaseSerializerPipelineItem(BasePipelineItem):
                 doc_ids: optional
                     this parameter allows to limit amount of documents considered for sampling
         """
-        assert (isinstance(pipeline_ctx, PipelineContext))
-        assert ("data_type_pipelines" in pipeline_ctx)
+        assert(isinstance(input_data, PipelineContext))
+        assert("data_type_pipelines" in input_data)
 
-        data_folding = pipeline_ctx.provide_or_none("data_folding")
+        data_folding = input_data.provide_or_none("data_folding")
 
-        self._handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
-                               doc_ids=pipeline_ctx.provide_or_none("doc_ids"),
+        self._handle_iteration(data_type_pipelines=input_data.provide("data_type_pipelines"),
+                               doc_ids=input_data.provide_or_none("doc_ids"),
                                data_folding=data_folding)

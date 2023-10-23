@@ -4,6 +4,7 @@ from arekit.common.data.doc_provider import DocumentProvider
 from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.provider.constant import ConstantLabelProvider
 from arekit.common.labels.str_fmt import StringLabelsFormatter
+from arekit.common.linkage.meta import MetaEmptyLinkedDataWrapper
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider, EntityEndType
 from arekit.common.docs.parsed.service import ParsedDocumentService
@@ -85,8 +86,11 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             text_parser=text_parser)
 
         # Running the pipeline.
-        for linked in pipeline.run(input_data=[0], params_dict={}):
-            assert(isinstance(linked, TextOpinionsLinkage))
+        for linked in pipeline.run(input_data=[0]):
+            assert(isinstance(linked, TextOpinionsLinkage) or isinstance(linked, MetaEmptyLinkedDataWrapper))
+
+            if isinstance(linked, MetaEmptyLinkedDataWrapper):
+                continue
 
             pns = linked.Tag
             assert(isinstance(pns, ParsedDocumentService))

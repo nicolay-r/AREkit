@@ -8,6 +8,7 @@ from arekit.common.labels.base import Label, NoLabel
 from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.pipeline.base import BasePipeline
+from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.networks.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
@@ -124,11 +125,10 @@ class TestSamplingNetwork(unittest.TestCase):
             text_parser=text_parser)
         #####
 
-        pipeline.run(input_data=None,
-                     params_dict={
-                         "data_type_pipelines": {DataType.Train: train_pipeline},
-                         "data_folding": {DataType.Train: [0, 1]}
-                     })
+        pipeline.run(input_data=PipelineContext(d={
+             "data_type_pipelines": {DataType.Train: train_pipeline},
+             "data_folding": {DataType.Train: [0, 1]}
+        }))
 
         reader = PandasCsvReader()
         source = join(self.__output_dir, "sample-train-0" + writer.extension())

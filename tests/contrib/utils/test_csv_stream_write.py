@@ -7,6 +7,7 @@ from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvide
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.experiment.data_type import DataType
 from arekit.common.pipeline.base import BasePipeline
+from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
@@ -80,11 +81,10 @@ class TestStreamWriters(unittest.TestCase):
             text_parser=text_parser)
         #####
 
-        pipeline.run(input_data=None,
-                     params_dict={
-                         "data_type_pipelines": {DataType.Train: train_pipeline},
-                         "data_folding": {DataType.Train: [0, 1]}
-                     })
+        pipeline.run(input_data=PipelineContext(d={
+            "data_type_pipelines": {DataType.Train: train_pipeline},
+            "data_folding": {DataType.Train: [0, 1]}
+        }))
 
     def test_csv_native(self):
         """ Testing writing into CSV format
