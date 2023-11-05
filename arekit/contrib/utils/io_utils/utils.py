@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 import logging
 from os.path import join, exists
 
@@ -25,7 +25,7 @@ def filename_template(data_type):
 
 
 def check_targets_existence(targets):
-    assert (isinstance(targets, collections.Iterable))
+    assert (isinstance(targets, Iterable))
 
     result = True
     for filepath in targets:

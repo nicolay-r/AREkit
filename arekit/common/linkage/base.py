@@ -1,10 +1,10 @@
-import collections
+from collections.abc import Iterable
 
 
 class LinkedDataWrapper(object):
 
     def __init__(self, linked_data):
-        assert(isinstance(linked_data, collections.Iterable))
+        assert(isinstance(linked_data, Iterable))
         self.__linked_data = list(linked_data)
         self.__tag = None
 

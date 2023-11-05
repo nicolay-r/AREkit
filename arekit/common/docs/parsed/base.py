@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 
 from arekit.common.entities.base import Entity
 from arekit.common.text.enums import TermFormat
@@ -25,7 +25,7 @@ class ParsedDocument(object):
         parsed_sentences: iterable of ParsedSentence type
             NOTE: Considered sentences with labeled Entities in it!
         """
-        assert(isinstance(parsed_sentences, collections.Iterable))
+        assert(isinstance(parsed_sentences, Iterable))
 
         self.__doc_id = doc_id
         self.__parsed_sentences = list(parsed_sentences)

@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 import numpy as np
 
 
@@ -31,7 +31,7 @@ class Embedding(object):
 
     @classmethod
     def from_word_embedding_pairs_iter(cls, word_embedding_pairs):
-        assert(isinstance(word_embedding_pairs, collections.Iterable))
+        assert(isinstance(word_embedding_pairs, Iterable))
 
         matrix = []
         words = []
@@ -51,7 +51,7 @@ class Embedding(object):
 
     @classmethod
     def from_list_with_embedding_func(cls, words_iter, embedding_func):
-        assert(isinstance(words_iter, collections.Iterable))
+        assert(isinstance(words_iter, Iterable))
         assert(callable(embedding_func))
 
         matrix = []

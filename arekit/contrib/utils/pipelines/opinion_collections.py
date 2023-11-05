@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 
 from arekit.common.labels.scaler.base import BaseLabelScaler
 from arekit.common.linkage.base import LinkedDataWrapper
@@ -18,7 +18,7 @@ def __create_labeled_opinion(item, label):
 
 
 def __linkages_to_opinions(linkages_iter, labels_helper, label_calc_mode):
-    assert(isinstance(linkages_iter, collections.Iterable))
+    assert(isinstance(linkages_iter, Iterable))
 
     for linkage in linkages_iter:
         assert(isinstance(linkage, LinkedDataWrapper))
@@ -31,7 +31,7 @@ def __linkages_to_opinions(linkages_iter, labels_helper, label_calc_mode):
 
 
 def __fill_opinion_collection(opinions_iter, collection, supported_labels):
-    assert(isinstance(opinions_iter, collections.Iterable))
+    assert(isinstance(opinions_iter, Iterable))
     assert(isinstance(collection, OpinionCollection))
     assert(isinstance(supported_labels, set) or supported_labels is None)
 

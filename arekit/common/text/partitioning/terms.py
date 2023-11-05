@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 
 from arekit.common.bound import Bound
 from arekit.common.text.partitioning.base import BasePartitioning
@@ -11,7 +11,7 @@ class TermsPartitioning(BasePartitioning):
 
     def provide(self, text, parts_it):
         assert(isinstance(text, list))
-        assert(isinstance(parts_it, collections.Iterable))
+        assert(isinstance(parts_it, Iterable))
 
         start = 0
         parts = []

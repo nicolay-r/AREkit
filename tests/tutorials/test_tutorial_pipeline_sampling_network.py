@@ -134,3 +134,7 @@ class TestSamplingNetwork(unittest.TestCase):
         source = join(self.__output_dir, "sample-train-0" + writer.extension())
         storage = reader.read(source)
         self.assertEqual(20, len(storage), "Amount of rows is non equal!")
+
+
+if __name__ == '__main__':
+    unittest.main()

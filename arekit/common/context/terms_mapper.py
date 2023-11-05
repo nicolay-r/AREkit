@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 
 from arekit.common.context.token import Token
 from arekit.common.entities.base import Entity
@@ -10,7 +10,7 @@ class TextTermsMapper(object):
     def iter_mapped(self, terms):
         """ Performs mapping operation of each terms in a sequence
         """
-        assert(isinstance(terms, collections.Iterable))
+        assert(isinstance(terms, Iterable))
 
         self._before_mapping()
 

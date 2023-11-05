@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 from arekit.common.frames.variants.base import FrameVariant
 
 
@@ -23,7 +23,7 @@ class FrameVariantsCollection(object):
     # region public methods
 
     def fill_from_iterable(self, variants_with_id, overwrite_existed_variant, raise_error_on_existed_variant):
-        assert(isinstance(variants_with_id, collections.Iterable))
+        assert(isinstance(variants_with_id, Iterable))
         assert(isinstance(overwrite_existed_variant, bool))
         assert(isinstance(raise_error_on_existed_variant, bool))
         assert(len(self.__variants) == 0)

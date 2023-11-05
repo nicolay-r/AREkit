@@ -1,5 +1,6 @@
-import collections
 import logging
+
+from collections.abc import Iterable
 
 from arekit.common.data.input.providers.columns.sample import SampleColumnsProvider
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
@@ -28,7 +29,7 @@ class InputDataSerializationHelper(object):
     @staticmethod
     def fill_and_write(pipeline, repo, target, writer, doc_ids_iter, desc=""):
         assert(isinstance(pipeline, BasePipeline))
-        assert(isinstance(doc_ids_iter, collections.Iterable))
+        assert(isinstance(doc_ids_iter, Iterable))
         assert(isinstance(repo, BaseInputRepository))
 
         doc_ids = list(doc_ids_iter)

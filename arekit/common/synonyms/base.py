@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 
 from arekit.common import log_utils
 
@@ -12,7 +12,7 @@ class SynonymsCollection(object):
             debug: bool
                 utilized for logging the salient information during usage.
         """
-        assert(isinstance(iter_group_values_lists, collections.Iterable) or iter_group_values_lists is None)
+        assert(isinstance(iter_group_values_lists, Iterable) or iter_group_values_lists is None)
         assert(isinstance(is_read_only, bool))
         assert(isinstance(debug, bool))
 

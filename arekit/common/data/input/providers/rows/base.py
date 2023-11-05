@@ -1,4 +1,5 @@
-import collections
+from collections import Counter
+from collections.abc import Iterable
 import logging
 
 from arekit.common.data.input.providers.contents import ContentsProvider
@@ -39,9 +40,9 @@ class BaseRowProvider(object):
 
     def iter_by_rows(self, contents_provider, doc_ids_iter, idle_mode):
         assert(isinstance(contents_provider, ContentsProvider))
-        assert(isinstance(doc_ids_iter, collections.Iterable))
+        assert(isinstance(doc_ids_iter, Iterable))
 
-        self.__rows_counter = collections.Counter()
+        self.__rows_counter = Counter()
 
         for linked_data in contents_provider.from_doc_ids(doc_ids=doc_ids_iter, idle_mode=idle_mode):
             assert(isinstance(linked_data, LinkedDataWrapper))

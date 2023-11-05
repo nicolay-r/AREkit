@@ -1,4 +1,4 @@
-import collections
+from collections.abc import Iterable
 
 from arekit.common import log_utils
 from arekit.common.labels.base import Label
@@ -23,7 +23,7 @@ class OpinionCollection(object):
         raise_exception_on_duplicates: bool
             denotes whether there is a need to fire exception for duplicates in opinions list.
         """
-        assert(isinstance(opinions, collections.Iterable) or isinstance(opinions, type(None)))
+        assert(isinstance(opinions, Iterable) or isinstance(opinions, type(None)))
         assert(isinstance(synonyms, SynonymsCollection))
         assert(isinstance(error_on_duplicates, bool))
         assert(isinstance(error_on_synonym_end_missed, bool))
