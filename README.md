@@ -1,6 +1,6 @@
 # AREkit 0.24.0
 
-![](https://img.shields.io/badge/Python-3.6-brightgreen.svg)
+![](https://img.shields.io/badge/Python-3.9+-brightgreen.svg)
 
 <p align="center">
     <img src="logo.png"/>
