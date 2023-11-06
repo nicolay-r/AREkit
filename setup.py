@@ -19,7 +19,7 @@ setup(
                 'for text objects with entity-linking (EL) API support',
     url='https://github.com/nicolay-r/AREkit',
     author='Nicolay Rusnachenko',
-    author_email='???',
+    author_email='rusnicolay@gmail.com',
     license='MIT License',
     classifiers=[
         'Programming Language :: Python',
