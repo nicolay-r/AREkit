@@ -20,7 +20,7 @@ python -m pytest --html=pytest_report.html --self-contained-html --continue-on-c
 
 Navigate to the root folder of this project and execute:
 ```python
-python3 setup sdist bdist_wheel
+python3 setup.py sdist bdist_wheel
 twine check ./dist/*
 twine upload ./dist/*
 ```
