@@ -21,6 +21,7 @@ long_description = (this_directory / "README.md").read_text()
 setup(
     name='arekit',
     version='0.24.0',
+    python_requires=">=3.6",
     description='Document level Attitude and Relation Extraction toolkit (AREkit)'
                 ' for sampling and prompting mass-media news into datasets for ML-model training',
     long_description=long_description,
