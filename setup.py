@@ -15,11 +15,14 @@ def get_requirements(filenames):
 setup(
     name='arekit',
     version='0.22.1',
+    python_requires=">=3.6, <3.10",
     description='Library devoted to Document level Attitude and Relation Extraction '
                 'for text objects with entity-linking (EL) API support',
+    long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     url='https://github.com/nicolay-r/AREkit',
     author='Nicolay Rusnachenko',
-    author_email='???',
+    author_email='rusnicolay@gmail.com',
     license='MIT License',
     classifiers=[
         'Programming Language :: Python',
