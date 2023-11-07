@@ -15,3 +15,12 @@ Using `pytest` to run all the test and gather report into `pytest_report.html` d
 ```bash
 python -m pytest --html=pytest_report.html --self-contained-html --continue-on-collection-errors .
 ```
+
+## Publishing Release
+
+Navigate to the root folder of this project and execute:
+```python
+python3 setup sdist bdist_wheel
+twine check ./dist/*
+twine upload ./dist/*
+```

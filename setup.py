@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from setuptools import (
     setup,
     find_packages,
@@ -15,16 +13,13 @@ def get_requirements(filenames):
     return r_total
 
 
-this_directory = Path(__file__).parent
-long_description = (this_directory / "README.md").read_text()
-
 setup(
     name='arekit',
     version='0.24.0',
     python_requires=">=3.6",
     description='Document level Attitude and Relation Extraction toolkit (AREkit)'
                 ' for sampling and prompting mass-media news into datasets for ML-model training',
-    long_description=long_description,
+    long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/nicolay-r/AREkit',
     author='Nicolay Rusnachenko',
