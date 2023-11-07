@@ -22,7 +22,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/nicolay-r/AREkit',
     author='Nicolay Rusnachenko',
-    author_email='???',
+    author_email='rusnicolay@gmail.com',
     license='MIT License',
     classifiers=[
         'Programming Language :: Python',
