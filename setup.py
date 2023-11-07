@@ -37,4 +37,5 @@ setup(
     install_requires=get_requirements([
         'dependencies.txt',
         'arekit/contrib/utils/dependencies.txt']),
+    data_files=["logo.png"],
 )
