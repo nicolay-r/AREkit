@@ -4,7 +4,7 @@ from os.path import join
 from arekit.contrib.utils.data.readers.base import BaseReader
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.contrib.utils.data.writers.base import BaseWriter
-from arekit.contrib.utils.io_utils.utils import filename_template, check_targets_existence
+from arekit.contrib.utils.io_utils.utils import check_targets_existence
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -64,9 +64,8 @@ class SamplesIO(BaseSamplesIO):
     # endregion
 
     def __get_input_sample_target(self, data_type):
-        template = filename_template(data_type=data_type)
         return self.__get_filepath(out_dir=self.__target_dir,
-                                   template=template,
+                                   template=f"{data_type.name.lower()}",
                                    prefix=self.__prefix,
                                    extension=self.__target_extension)
 
