@@ -33,7 +33,12 @@ class RowCacheStorage(BaseRowsStorage):
 
         # Expand with columns that are forced to be provided.
         existed_set = set(self.__column_names)
-        self.__column_names += [c for c in self.__force_collect_columns if c not in existed_set]
+
+        # Calculate extension: columns that were not mentioned in column names list.
+        extension = [c for c in self.__force_collect_columns if c not in existed_set]
+
+        self.__column_names += extension
+        self.__column_types += [str] * len(extension)
 
     def iter_column_names(self):
         return iter(self.__column_names)
