@@ -30,8 +30,8 @@ class TestNerelBioRead(unittest.TestCase):
             assert(isinstance(brat_relation, BratRelation))
             print(brat_relation.SourceID, brat_relation.TargetID, brat_relation.Type)
 
-    def test_all_documents(self):
+    def test_all_documents(self, docs_limit=5):
         doc_reader = NerelBioDocReader(version=DEFAULT_VERSION)
-        filenames_by_ids, folding = NerelBioIOUtils.read_dataset_split(version=DEFAULT_VERSION)
+        filenames_by_ids, folding = NerelBioIOUtils.read_dataset_split(version=DEFAULT_VERSION, docs_limit=docs_limit)
         for doc_id in tqdm(itertools.chain.from_iterable(folding.values())):
             doc_reader.read_document(filename=filenames_by_ids[doc_id], doc_id=0)
