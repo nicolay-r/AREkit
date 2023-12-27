@@ -10,6 +10,7 @@ from arekit.common.docs.parsed.providers.entity_service import EntityServiceProv
 from arekit.common.docs.parsed.service import ParsedDocumentService
 from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotationAlgorithm
 from arekit.common.opinions.collection import OpinionCollection
+from arekit.common.pipeline.context import PipelineContext
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
 from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
@@ -20,7 +21,7 @@ from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
-from tests.tutorials.test_tutorial_collection_binding import FooDocReader
+from test_tutorial_collection_binding import FooDocReader
 
 
 class PositiveLabel(Label):
@@ -69,7 +70,7 @@ class TestTextOpinionAnnotation(unittest.TestCase):
                 synonyms=synonyms, value=value))
 
         text_parser = BaseTextParser([
-            BratTextEntitiesParser(partitioning="string"),
+            BratTextEntitiesParser(partitioning="string", src_key="input"),
             DefaultTextTokenizer(keep_tokens=True),
         ])
 
@@ -85,8 +86,16 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             entity_index_func=entity_index_func,
             text_parser=text_parser)
 
+        # Defining pipeline context.
+        context = PipelineContext(
+            d={"result": [0]}
+        )
+
+        # launching pipeline.
+        pipeline.run(pipeline_ctx=context)
+
         # Running the pipeline.
-        for linked in pipeline.run(input_data=[0]):
+        for linked in context.provide("result"):
             assert(isinstance(linked, TextOpinionsLinkage) or isinstance(linked, MetaEmptyLinkedDataWrapper))
 
             if isinstance(linked, MetaEmptyLinkedDataWrapper):

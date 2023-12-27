@@ -4,8 +4,8 @@ from arekit.common.pipeline.items.base import BasePipelineItem
 
 class TextEntitiesParser(BasePipelineItem):
 
-    def __init__(self):
-        super(TextEntitiesParser, self).__init__()
+    def __init__(self, **kwargs):
+        super(TextEntitiesParser, self).__init__(**kwargs)
 
     @staticmethod
     def __process_word(word):

@@ -81,7 +81,7 @@ class TestStreamWriters(unittest.TestCase):
             text_parser=text_parser)
         #####
 
-        pipeline.run(input_data=PipelineContext(d={
+        pipeline.run(pipeline_ctx=PipelineContext(d={
             "data_type_pipelines": {DataType.Train: train_pipeline},
             "data_folding": {DataType.Train: [0, 1]}
         }))

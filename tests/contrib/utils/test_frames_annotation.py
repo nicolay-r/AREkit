@@ -8,8 +8,8 @@ from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFo
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 from arekit.contrib.utils.pipelines.items.text.frames_lemmatized import LemmasBasedFrameVariantsParser
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
-from tests.contrib.source.labels import PositiveLabel
-from tests.contrib.utils.labels import NegativeLabel
+from labels import PositiveLabel
+from labels import NegativeLabel
 
 
 class TestFramesAnnotation(unittest.TestCase):

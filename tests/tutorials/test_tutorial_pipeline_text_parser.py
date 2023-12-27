@@ -53,7 +53,7 @@ class TestTestParser(unittest.TestCase):
             raise_error_on_existed_variant=False)
 
         text_parser = BaseTextParser(pipeline=[
-            TextEntitiesParser(),
+            TextEntitiesParser(src_key="input", src_func=lambda s: s.Text),
             DefaultTextTokenizer(keep_tokens=True),
             LemmasBasedFrameVariantsParser(frame_variants=frame_variant_collection,
                                            stemmer=MystemWrapper()),

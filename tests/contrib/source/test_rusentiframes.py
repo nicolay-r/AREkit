@@ -11,7 +11,7 @@ from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFo
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.types import RuSentiFramesVersions
 
-from tests.contrib.source.labels import PositiveLabel, NegativeLabel
+from labels import PositiveLabel, NegativeLabel
 
 
 class TestRuSentiFrames(unittest.TestCase):

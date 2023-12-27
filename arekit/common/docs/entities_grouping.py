@@ -4,8 +4,9 @@ from arekit.common.pipeline.items.base import BasePipelineItem
 
 class EntitiesGroupingPipelineItem(BasePipelineItem):
 
-    def __init__(self, value_to_group_id_func):
+    def __init__(self, value_to_group_id_func, **kwargs):
         assert(callable(value_to_group_id_func))
+        super(EntitiesGroupingPipelineItem, self).__init__(**kwargs)
         self.__value_to_group_id_func = value_to_group_id_func
 
     def apply_core(self, input_data, pipeline_ctx):

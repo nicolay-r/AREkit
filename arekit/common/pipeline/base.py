@@ -8,17 +8,15 @@ class BasePipeline(object):
         assert(isinstance(pipeline, list))
         self.__pipeline = pipeline
 
-    def run(self, input_data, params_dict=None, parent_ctx=None):
-        assert(isinstance(params_dict, dict) or params_dict is None)
-
-        pipeline_ctx = PipelineContext(d=params_dict if params_dict is not None else dict(),
-                                       parent_ctx=parent_ctx)
+    def run(self, pipeline_ctx):
+        assert(isinstance(pipeline_ctx, PipelineContext))
 
         for item in filter(lambda itm: itm is not None, self.__pipeline):
             assert(isinstance(item, BasePipelineItem))
-            input_data = item.apply(input_data=input_data, pipeline_ctx=pipeline_ctx)
+            item_result = item.apply(input_data=item.get_source(pipeline_ctx), pipeline_ctx=pipeline_ctx)
+            pipeline_ctx.update(param=item.ResultKey, value=item_result, is_new_key=False)
 
-        return input_data
+        return pipeline_ctx
 
     def append(self, item):
         assert(isinstance(item, BasePipelineItem))

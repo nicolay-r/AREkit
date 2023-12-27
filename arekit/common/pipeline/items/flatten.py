@@ -5,6 +5,10 @@ class FlattenIterPipelineItem(BasePipelineItem):
     """ Considered to flat iterations of items that represent iterations.
     """
 
+    def __init__(self, **kwargs):
+        super(FlattenIterPipelineItem, self).__init__(**kwargs)
+        pass
+
     def __flat_iter(self, iter_data):
         for iter_item in iter_data:
             for item in iter_item:

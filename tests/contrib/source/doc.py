@@ -7,7 +7,7 @@ from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
 from arekit.contrib.source.rusentrel.labels_fmt import RuSentRelLabelsFormatter
 from arekit.contrib.source.rusentrel.docs_reader import RuSentRelDocumentsReader
 from arekit.contrib.source.rusentrel.opinions.collection import RuSentRelOpinions
-from tests.contrib.source.labels import PositiveLabel, NegativeLabel
+from labels import PositiveLabel, NegativeLabel
 
 
 def init_rusentrel_doc(doc_id, text_parser, synonyms):

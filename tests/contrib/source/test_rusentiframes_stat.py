@@ -11,7 +11,7 @@ from arekit.contrib.source.rusentiframes.polarity import RuSentiFramesFramePolar
 from arekit.contrib.source.rusentiframes.effect import FrameEffect
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
-from tests.contrib.source.labels import PositiveLabel, NegativeLabel
+from labels import PositiveLabel, NegativeLabel
 
 
 def __iter_unique_frame_variants(frames_collection, frame_ids):

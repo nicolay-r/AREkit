@@ -22,9 +22,9 @@ from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVaria
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
-from tests.contrib.utils.labels import NegativeLabel, PositiveLabel
+from labels import NegativeLabel, PositiveLabel
 
-from tests.contrib.utils.text.debug_text import debug_show_doc_terms
+from text.debug_text import debug_show_doc_terms
 
 
 class RuSentRelSynonymsCollectionProvider(object):
@@ -42,7 +42,9 @@ class TestTextParser(unittest.TestCase):
 
     def test_parse_single_string(self):
         text = "А контроль над этими провинциями — это господство над без малого половиной сирийской территории."
-        parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True)])
+        parser = BaseTextParser(pipeline=[
+            DefaultTextTokenizer(keep_tokens=True, src_key="input", src_func=lambda s: s.Text)
+        ])
         doc = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
         parsed_doc = DocumentParser.parse(doc=doc, text_parser=parser)
         debug_show_doc_terms(parsed_doc=parsed_doc)
@@ -66,11 +68,13 @@ class TestTextParser(unittest.TestCase):
                                           overwrite_existed_variant=True,
                                           raise_error_on_existed_variant=False)
 
-        parser = BaseTextParser(pipeline=[DefaultTextTokenizer(keep_tokens=True),
-                                          FrameVariantsParser(frame_variants=frame_variants),
-                                          LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
-                                                                         stemmer=stemmer),
-                                          FrameVariantsSentimentNegation()])
+        parser = BaseTextParser(pipeline=[
+            DefaultTextTokenizer(keep_tokens=True, src_key="input", src_func=lambda s: s.Text),
+            FrameVariantsParser(frame_variants=frame_variants),
+            LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
+                                           stemmer=stemmer),
+            FrameVariantsSentimentNegation()])
+
         doc = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
         parsed_doc = DocumentParser.parse(doc=doc, text_parser=parser)
         debug_show_doc_terms(parsed_doc=parsed_doc)
@@ -98,7 +102,7 @@ class TestTextParser(unittest.TestCase):
                                           overwrite_existed_variant=True,
                                           raise_error_on_existed_variant=False)
 
-        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(),
+        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(src_key="input"),
                                                DefaultTextTokenizer(keep_tokens=True),
                                                LemmasBasedFrameVariantsParser(frame_variants=frame_variants,
                                                                               stemmer=stemmer,

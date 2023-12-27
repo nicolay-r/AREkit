@@ -26,7 +26,7 @@ from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextToken
 from arekit.contrib.utils.pipelines.text_opinion.annot.predefined import PredefinedTextOpinionAnnotator
 from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_extraction_pipeline
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
-from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentProvider
+from test_tutorial_pipeline_text_opinion_annotation import FooDocumentProvider
 
 
 class Positive(Label):
@@ -96,7 +96,8 @@ class TestPromptSerialization(unittest.TestCase):
             rows_provider=rows_provider,
             samples_io=samples_io,
             save_labels_func=lambda data_type: True,
-            storage=PandasBasedRowsStorage())
+            storage=PandasBasedRowsStorage(),
+            src_key=None)
 
         pipeline = BasePipeline([
             pipeline_item
@@ -106,7 +107,10 @@ class TestPromptSerialization(unittest.TestCase):
         # Declaring pipeline related context parameters.
         #####
         doc_provider = FooDocumentProvider()
-        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(), DefaultTextTokenizer(keep_tokens=True)])
+        text_parser = BaseTextParser(pipeline=[
+            BratTextEntitiesParser(src_key="input"),
+            DefaultTextTokenizer(keep_tokens=True)
+        ])
         train_pipeline = text_opinion_extraction_pipeline(
             annotators=[
                 PredefinedTextOpinionAnnotator(doc_provider,
@@ -122,7 +126,7 @@ class TestPromptSerialization(unittest.TestCase):
             text_parser=text_parser)
         #####
 
-        pipeline.run(input_data=PipelineContext(d={
+        pipeline.run(pipeline_ctx=PipelineContext(d={
             "data_type_pipelines": {DataType.Train: train_pipeline},
             "data_folding": {DataType.Train: [0, 1]}
         }))

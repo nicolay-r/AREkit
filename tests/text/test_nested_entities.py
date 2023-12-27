@@ -16,11 +16,9 @@ class TestNestedEntities(unittest.TestCase):
 
         tep = TextEntitiesParser()
 
-        text_parser = BaseTextParser(pipeline=[
-            TextEntitiesParser(),
-        ])
+        text_parser = BaseTextParser(pipeline=[TextEntitiesParser()])
 
-        parsed_text = text_parser.run(s.split())
+        parsed_text = text_parser.run({"result": s.split()})
         assert(isinstance(parsed_text, BaseParsedText))
         print(parsed_text._terms)
 

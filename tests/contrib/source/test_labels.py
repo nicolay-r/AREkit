@@ -4,7 +4,7 @@ import unittest
 sys.path.append('../')
 
 from arekit.common.labels.base import Label, NoLabel
-from tests.contrib.source.labels import NegativeLabel, PositiveLabel
+from labels import NegativeLabel, PositiveLabel
 
 
 class TestLabels(unittest.TestCase):

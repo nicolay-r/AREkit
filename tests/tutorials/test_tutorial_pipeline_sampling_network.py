@@ -32,7 +32,7 @@ from arekit.contrib.utils.pipelines.text_opinion.extraction import text_opinion_
 from arekit.contrib.utils.pipelines.text_opinion.filters.distance_based import DistanceLimitedTextOpinionFilter
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.processing.pos.mystem_wrap import POSMystemWrapper
-from tests.tutorials.test_tutorial_pipeline_text_opinion_annotation import FooDocumentProvider
+from test_tutorial_pipeline_text_opinion_annotation import FooDocumentProvider
 
 
 class Positive(Label):
@@ -96,7 +96,8 @@ class TestSamplingNetwork(unittest.TestCase):
             emb_io=NpEmbeddingIO(target_dir=self.__output_dir),
             rows_provider=rows_provider,
             save_labels_func=lambda data_type: data_type != DataType.Test,
-            storage=PandasBasedRowsStorage())
+            storage=PandasBasedRowsStorage(),
+            src_key=None)
 
         pipeline = BasePipeline([
             pipeline_item
@@ -107,7 +108,7 @@ class TestSamplingNetwork(unittest.TestCase):
         #####
         doc_provider = FooDocumentProvider()
         text_parser = BaseTextParser(pipeline=[
-            BratTextEntitiesParser(),
+            BratTextEntitiesParser(src_key="input"),
             DefaultTextTokenizer(keep_tokens=True),
             LemmasBasedFrameVariantsParser(frame_variants=frame_variant_collection, stemmer=stemmer)
         ])
@@ -125,7 +126,7 @@ class TestSamplingNetwork(unittest.TestCase):
             text_parser=text_parser)
         #####
 
-        pipeline.run(input_data=PipelineContext(d={
+        pipeline.run(pipeline_ctx=PipelineContext(d={
              "data_type_pipelines": {DataType.Train: train_pipeline},
              "data_folding": {DataType.Train: [0, 1]}
         }))

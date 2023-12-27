@@ -1,13 +1,10 @@
 from arekit.common.docs.objects_parser import SentenceObjectsParserPipelineItem
-from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text.partitioning.str import StringPartitioning
 from arekit.common.text.partitioning.terms import TermsPartitioning
 from arekit.contrib.source.brat.sentence import BratSentence
 
 
 class BratTextEntitiesParser(SentenceObjectsParserPipelineItem):
-
-    KEY = "sentence"
 
     ################################
     # NOTE: Supported partitionings.
@@ -22,28 +19,21 @@ class BratTextEntitiesParser(SentenceObjectsParserPipelineItem):
         "terms": TermsPartitioning()
     }
 
-    def __init__(self, partitioning="string"):
+    def __init__(self, partitioning="string", **kwargs):
         assert(isinstance(partitioning, str))
-        super(BratTextEntitiesParser, self).__init__(self.__supported_partitionings[partitioning])
+        super(BratTextEntitiesParser, self).__init__(self.__supported_partitionings[partitioning], **kwargs)
 
     # region protected methods
 
-    def _get_text(self, pipeline_ctx):
-        sentence = self.__get_sentence(pipeline_ctx)
+    def _get_text(self, sentence):
         return sentence.Text
 
-    def _get_parts_provider_func(self, input_data, pipeline_ctx):
-        sentence = self.__get_sentence(pipeline_ctx)
+    def _get_parts_provider_func(self, sentence):
         return self.__iter_subs_values_with_bounds(sentence)
 
     # endregion
 
     # region private methods
-
-    def __get_sentence(self, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
-        assert(self.KEY in pipeline_ctx)
-        return pipeline_ctx.provide(self.KEY)
 
     @staticmethod
     def __iter_subs_values_with_bounds(sentence):

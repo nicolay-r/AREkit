@@ -5,10 +5,9 @@ import unittest
 
 import numpy as np
 
+
 sys.path.append('../')
 
-from tests.text.linked_opinions import iter_same_sentence_linked_text_opinions
-from tests.text.utils import terms_to_str
 from arekit.common.text.stemmer import Stemmer
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.docs.parsed.providers.text_opinion_pairs import TextOpinionPairsProvider
@@ -29,9 +28,10 @@ from arekit.contrib.utils.pipelines.items.text.frames_negation import FrameVaria
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.entities.formatters.str_display import StringEntitiesDisplayValueFormatter
-from tests.contrib.networks.doc import init_rusentrel_doc
-from tests.contrib.networks.indices_feature import IndicesFeature
-from tests.contrib.networks.labels import TestPositiveLabel, TestNegativeLabel
+from doc import init_rusentrel_doc
+from indices_feature import IndicesFeature
+from labels import TestPositiveLabel, TestNegativeLabel
+from utils import iter_same_sentence_linked_text_opinions, terms_to_str
 
 
 class RuSentRelSynonymsCollectionProvider(object):
@@ -72,7 +72,7 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(),
+        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(src_key="input"),
                                                DefaultTextTokenizer(keep_tokens=True),
                                                LemmasBasedFrameVariantsParser(
                                                    frame_variants=self.unique_frame_variants,

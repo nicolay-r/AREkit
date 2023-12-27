@@ -26,8 +26,8 @@ from arekit.contrib.source.ruattitudes.sentence import RuAttitudesSentence
 from arekit.contrib.source.brat.entities.entity import BratEntity
 from arekit.contrib.source.ruattitudes.doc_brat import RuAttitudesDocumentsConverter
 
-from tests.contrib.source.utils import RuAttitudesSentenceOpinionUtils
-from tests.contrib.source.labels import PositiveLabel, NegativeLabel
+from utils import RuAttitudesSentenceOpinionUtils
+from labels import PositiveLabel, NegativeLabel
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -99,15 +99,15 @@ class TestRuAttitudes(unittest.TestCase):
 
     def __test_parsing(self, ra_version):
         # Initialize text parser pipeline.
-        text_parser = BaseTextParser(pipeline=[RuAttitudesTextEntitiesParser(),
+        text_parser = BaseTextParser(pipeline=[RuAttitudesTextEntitiesParser(src_key="input"),
                                                DefaultTextTokenizer(keep_tokens=True)])
 
         # iterating through collection
         doc_read = 0
 
         doc_it = RuAttitudesCollection.iter_docs(version=ra_version,
-                                                  get_doc_index_func=lambda _: doc_read,
-                                                  return_inds_only=False)
+                                                 get_doc_index_func=lambda _: doc_read,
+                                                 return_inds_only=False)
 
         for doc in tqdm(doc_it):
 
@@ -148,8 +148,8 @@ class TestRuAttitudes(unittest.TestCase):
         # iterating through collection
         doc_read = 0
         doc_it = RuAttitudesCollection.iter_docs(version=ra_version,
-                                                  get_doc_index_func=lambda _: doc_read,
-                                                  return_inds_only=False)
+                                                 get_doc_index_func=lambda _: doc_read,
+                                                 return_inds_only=False)
 
         if not do_printing:
             doc_it = tqdm(doc_it)

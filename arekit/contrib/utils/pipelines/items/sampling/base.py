@@ -10,7 +10,7 @@ from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 class BaseSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, rows_provider, samples_io, save_labels_func, storage):
+    def __init__(self, rows_provider, samples_io, save_labels_func, storage, **kwargs):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -23,6 +23,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         assert(isinstance(samples_io, BaseSamplesIO))
         assert(callable(save_labels_func))
         assert(isinstance(storage, BaseRowsStorage))
+        super(BaseSerializerPipelineItem, self).__init__(**kwargs)
 
         self._rows_provider = rows_provider
         self._samples_io = samples_io
@@ -89,11 +90,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
                 doc_ids: optional
                     this parameter allows to limit amount of documents considered for sampling
         """
-        assert(isinstance(input_data, PipelineContext))
-        assert("data_type_pipelines" in input_data)
-
-        data_folding = input_data.provide_or_none("data_folding")
-
-        self._handle_iteration(data_type_pipelines=input_data.provide("data_type_pipelines"),
-                               doc_ids=input_data.provide_or_none("doc_ids"),
-                               data_folding=data_folding)
+        assert("data_type_pipelines" in pipeline_ctx)
+        self._handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
+                               doc_ids=pipeline_ctx.provide_or_none("doc_ids"),
+                               data_folding=pipeline_ctx.provide_or_none("data_folding"))

@@ -14,14 +14,13 @@ class DefaultTextTokenizer(BasePipelineItem):
     """ Default parser implementation.
     """
 
-    def __init__(self, keep_tokens=True):
-        super(DefaultTextTokenizer, self).__init__()
+    def __init__(self, keep_tokens=True, **kwargs):
+        super(DefaultTextTokenizer, self).__init__(**kwargs)
         self.__keep_tokens = keep_tokens
 
     # region protected methods
 
     def apply_core(self, input_data, pipeline_ctx):
-        assert(isinstance(pipeline_ctx, PipelineContext))
         output_data = self.__process_parts(input_data)
         if not self.__keep_tokens:
             output_data = [word for word in output_data if not isinstance(word, Token)]

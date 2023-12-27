@@ -3,8 +3,9 @@ from arekit.common.pipeline.items.base import BasePipelineItem
 
 class HandleIterPipelineItem(BasePipelineItem):
 
-    def __init__(self, handle_func=None):
+    def __init__(self, handle_func=None, **kwargs):
         assert(callable(handle_func))
+        super(HandleIterPipelineItem, self).__init__(**kwargs)
         self.__handle_func = handle_func
 
     def __updated_data(self, items_iter):
