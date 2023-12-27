@@ -10,14 +10,14 @@ from arekit.contrib.utils.processing.lemmatization.mystem import MystemWrapper
 from arekit.contrib.utils.synonyms.stemmer_based import StemmerBasedSynonymCollection
 
 
-class TestCompoundEntites(unittest.TestCase):
+class TestCompoundEntities(unittest.TestCase):
 
     text = "мама мыла раму"
     entities = [
-        BratEntity(id_in_doc="T1", e_type="PERSON", index_begin=0, index_end=4, value="мама"),
-        BratEntity(id_in_doc="T2", e_type="VERB", index_begin=5, index_end=8, value="мыл"),
-        BratEntity(id_in_doc="T3", e_type="OBJECT", index_begin=9, index_end=13, value="раму"),
-        BratEntity(id_in_doc="T3", e_type="ACTION", index_begin=0, index_end=8, value="мама мыл")
+        BratEntity(id_in_doc="T1", e_type="PERSON", index_begin=0, index_end=4, value="мама", childs=None),
+        BratEntity(id_in_doc="T2", e_type="VERB", index_begin=5, index_end=8, value="мыл", childs=None),
+        BratEntity(id_in_doc="T3", e_type="OBJECT", index_begin=9, index_end=13, value="раму", childs=None),
+        BratEntity(id_in_doc="T3", e_type="ACTION", index_begin=0, index_end=8, value="мама мыл", childs=None)
     ]
 
     def test(self):
