@@ -14,7 +14,7 @@ class RelationLexicon(object):
 
     @staticmethod
     def __check(df):
-        for index in df.index:
+        for index in df.__index:
             relation = df.loc[index][0]
             assert(len(relation.split('<->')) == 2)
 

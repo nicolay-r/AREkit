@@ -9,8 +9,7 @@ sys.path.append('../../../../')
 from arekit.common.opinions.base import Opinion
 from arekit.common.entities.base import Entity
 from arekit.common.utils import progress_bar_iter
-from arekit.common.docs.parser import DocumentParser
-from arekit.common.text.parser import BaseTextParser
+from arekit.common.docs.parser import DocumentParsers
 from arekit.common.context.token import Token
 from arekit.common.labels.base import NoLabel
 from arekit.common.labels.scaler.base import BaseLabelScaler
@@ -99,8 +98,8 @@ class TestRuAttitudes(unittest.TestCase):
 
     def __test_parsing(self, ra_version):
         # Initialize text parser pipeline.
-        text_parser = BaseTextParser(pipeline=[RuAttitudesTextEntitiesParser(src_key="input"),
-                                               DefaultTextTokenizer(keep_tokens=True)])
+        pipeline_items = [RuAttitudesTextEntitiesParser(src_key="input"),
+                          DefaultTextTokenizer(keep_tokens=True)]
 
         # iterating through collection
         doc_read = 0
@@ -113,7 +112,7 @@ class TestRuAttitudes(unittest.TestCase):
 
             # parse doc
             brat_doc = RuAttitudesDocumentsConverter.to_brat_doc(doc)
-            parsed_doc = DocumentParser.parse(doc=brat_doc, text_parser=text_parser)
+            parsed_doc = DocumentParsers.parse(doc=brat_doc, pipeline_items=pipeline_items)
             terms = parsed_doc.iter_sentence_terms(sentence_index=0,
                                                     return_id=False)
 

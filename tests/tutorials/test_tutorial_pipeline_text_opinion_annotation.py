@@ -12,7 +12,6 @@ from arekit.common.opinions.annot.algo.pair_based import PairBasedOpinionAnnotat
 from arekit.common.opinions.collection import OpinionCollection
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.synonyms.grouping import SynonymsCollectionValuesGroupingProviders
-from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.utils.pipelines.items.text.tokenizer import DefaultTextTokenizer
 from arekit.contrib.utils.pipelines.text_opinion.annot.algo_based import AlgorithmBasedTextOpinionAnnotator
@@ -69,10 +68,10 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             SynonymsCollectionValuesGroupingProviders.provide_existed_or_register_missed_value(
                 synonyms=synonyms, value=value))
 
-        text_parser = BaseTextParser([
+        text_parser = [
             BratTextEntitiesParser(partitioning="string", src_key="input"),
             DefaultTextTokenizer(keep_tokens=True),
-        ])
+        ]
 
         pipeline = text_opinion_extraction_pipeline(
             annotators=[
@@ -84,7 +83,7 @@ class TestTextOpinionAnnotation(unittest.TestCase):
             ],
             get_doc_by_id_func=doc_provider.by_id,
             entity_index_func=entity_index_func,
-            text_parser=text_parser)
+            pipeline_items=text_parser)
 
         # Defining pipeline context.
         context = PipelineContext(

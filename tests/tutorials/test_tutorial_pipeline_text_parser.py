@@ -7,9 +7,8 @@ from arekit.common.frames.text_variant import TextFrameVariant
 from arekit.common.frames.variants.collection import FrameVariantsCollection
 from arekit.common.labels.base import Label
 from arekit.common.docs.base import Document
-from arekit.common.docs.parser import DocumentParser
+from arekit.common.docs.parser import DocumentParsers
 from arekit.common.docs.sentence import BaseDocumentSentence
-from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
     RuSentiFramesEffectLabelsFormatter
@@ -52,16 +51,16 @@ class TestTestParser(unittest.TestCase):
             overwrite_existed_variant=True,
             raise_error_on_existed_variant=False)
 
-        text_parser = BaseTextParser(pipeline=[
+        pipeline_items = [
             TextEntitiesParser(src_key="input", src_func=lambda s: s.Text),
             DefaultTextTokenizer(keep_tokens=True),
             LemmasBasedFrameVariantsParser(frame_variants=frame_variant_collection,
                                            stemmer=MystemWrapper()),
             FrameVariantsSentimentNegation()
-        ])
+        ]
 
         doc = Document(doc_id=0, sentences=[BaseDocumentSentence(text.split())])
-        parsed_doc = DocumentParser.parse(doc=doc, text_parser=text_parser)
+        parsed_doc = DocumentParsers.parse(doc=doc, pipeline_items=pipeline_items)
         self.debug_show_terms(parsed_doc.iter_terms())
 
     @staticmethod

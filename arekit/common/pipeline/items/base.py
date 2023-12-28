@@ -9,14 +9,20 @@ class BasePipelineItem(object):
         assert(isinstance(src_key, str) or src_key is None)
         assert(callable(src_func) or src_func is None)
         self.__src_key = src_key
-        self.__src_func = src_func
+        self._src_func = src_func
         self.__result_key = result_key
 
     @property
     def ResultKey(self):
         return self.__result_key
 
-    def get_source(self, src_ctx):
+    @property
+    def SupportBatching(self):
+        """ By default pipeline item is not designed for batching.
+        """
+        return False
+
+    def get_source(self, src_ctx, call_func=True):
         """ Extract input element for processing.
         """
         assert(isinstance(src_ctx, PipelineContext))
@@ -27,8 +33,8 @@ class BasePipelineItem(object):
 
         # Extracting actual source.
         src_data = src_ctx.provide(self.__src_key)
-        if self.__src_func is not None:
-            src_data = self.__src_func(src_data)
+        if self._src_func is not None and call_func:
+            src_data = self._src_func(src_data)
 
         return src_data
 

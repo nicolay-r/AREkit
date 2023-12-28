@@ -8,7 +8,6 @@ from arekit.common.data.input.providers.text.single import BaseSingleTextProvide
 from arekit.common.experiment.data_type import DataType
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
 from arekit.contrib.bert.terms.mapper import BertDefaultStringTextTermsMapper
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
@@ -65,7 +64,8 @@ class TestStreamWriters(unittest.TestCase):
         # Declaring pipeline related context parameters.
         #####
         doc_provider = FooDocumentProvider()
-        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(), DefaultTextTokenizer(keep_tokens=True)])
+        pipeline_items = [BratTextEntitiesParser(),
+                          DefaultTextTokenizer(keep_tokens=True)]
         train_pipeline = text_opinion_extraction_pipeline(
             annotators=[
                 PredefinedTextOpinionAnnotator(
@@ -78,7 +78,7 @@ class TestStreamWriters(unittest.TestCase):
             ],
             get_doc_by_id_func=doc_provider.by_id,
             entity_index_func=lambda brat_entity: brat_entity.ID,
-            text_parser=text_parser)
+            pipeline_items=pipeline_items)
         #####
 
         pipeline.run(pipeline_ctx=PipelineContext(d={

@@ -21,7 +21,7 @@ python -m pytest --html=pytest_report.html --self-contained-html --continue-on-c
 ## Publishing Release
 
 Navigate to the root folder of this project and execute:
-```python
+```bash
 python3 setup.py sdist bdist_wheel
 twine check ./dist/*
 twine upload ./dist/*

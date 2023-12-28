@@ -14,7 +14,6 @@ from arekit.common.docs.parsed.providers.text_opinion_pairs import TextOpinionPa
 from arekit.common.entities.base import Entity
 from arekit.common.docs.parsed.term_position import TermPositionTypes
 from arekit.common.frames.variants.collection import FrameVariantsCollection
-from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.source.rusentiframes.labels_fmt import RuSentiFramesLabelsFormatter, \
     RuSentiFramesEffectLabelsFormatter
 from arekit.contrib.source.rusentrel.io_utils import RuSentRelVersions
@@ -72,13 +71,13 @@ class TestTfInputFeatures(unittest.TestCase):
         logger.setLevel(logging.INFO)
         logging.basicConfig(level=logging.DEBUG)
 
-        text_parser = BaseTextParser(pipeline=[BratTextEntitiesParser(src_key="input"),
-                                               DefaultTextTokenizer(keep_tokens=True),
-                                               LemmasBasedFrameVariantsParser(
-                                                   frame_variants=self.unique_frame_variants,
-                                                   stemmer=self.stemmer,
-                                                   save_lemmas=True),
-                                               FrameVariantsSentimentNegation()])
+        pipeline_items = [BratTextEntitiesParser(src_key="input"),
+                          DefaultTextTokenizer(keep_tokens=True),
+                          LemmasBasedFrameVariantsParser(
+                              frame_variants=self.unique_frame_variants,
+                              stemmer=self.stemmer,
+                              save_lemmas=True),
+                          FrameVariantsSentimentNegation()]
 
         random.seed(10)
         for doc_id in [35, 36]: # RuSentRelIOUtils.iter_collection_indices():
@@ -86,7 +85,7 @@ class TestTfInputFeatures(unittest.TestCase):
             logger.info("DocumentID: {}".format(doc_id))
 
             doc, parsed_doc, opinions = init_rusentrel_doc(
-                doc_id=doc_id, text_parser=text_parser, synonyms=self.synonyms)
+                doc_id=doc_id, pipeline_items=pipeline_items, synonyms=self.synonyms)
 
             # Initialize service providers.
             pairs_provider = TextOpinionPairsProvider(value_to_group_id_func=self.synonyms.get_synonym_group_index)

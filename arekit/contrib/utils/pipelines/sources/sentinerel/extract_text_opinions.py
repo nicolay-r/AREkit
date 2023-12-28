@@ -154,7 +154,7 @@ def create_main_pipeline(text_parser, doc_provider, annotators, text_opinion_fil
     """
     return text_opinion_extraction_pipeline(
         get_doc_by_id_func=doc_provider.by_id,
-        text_parser=text_parser,
+        pipeline_items=text_parser,
         annotators=annotators,
         entity_index_func=lambda brat_entity: brat_entity.ID,
         text_opinion_filters=text_opinion_filters)

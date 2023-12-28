@@ -3,7 +3,6 @@ from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
 from arekit.common.pipeline.base import BasePipeline
-from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 

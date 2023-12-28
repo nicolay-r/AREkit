@@ -99,7 +99,7 @@ class RuAttitudesFormatReader(object):
                 assert(title_terms_count == t_len or title_terms_count is None)
                 reset = True
 
-            if RuAttitudesFormatReader.STEXT_KEY in line and line.index(RuAttitudesFormatReader.STEXT_KEY) == 0:
+            if RuAttitudesFormatReader.STEXT_KEY in line and line.__index(RuAttitudesFormatReader.STEXT_KEY) == 0:
                 sentence = RuAttitudesSentence(is_title=False,
                                                text=RuAttitudesFormatReader.__parse_sentence(line, False),
                                                sentence_opins=opinions_list,
@@ -173,19 +173,19 @@ class RuAttitudesFormatReader(object):
     def __parse_sentence_opin(line):
         line = line[len(RuAttitudesFormatReader.OPINION_KEY):]
 
-        s_from = line.index('b:(')
-        s_to = line.index(')', s_from)
+        s_from = line.__index('b:(')
+        s_to = line.__index(')', s_from)
         label = int(line[s_from + 3:s_to])
 
-        o_from = line.index('oi:[')
-        o_to = line.index(']', o_from)
+        o_from = line.__index('oi:[')
+        o_to = line.__index(']', o_from)
         source_object_id_in_sentence, target_object_id_in_sentence = line[o_from + 4:o_to].split(',')
 
         source_object_id_in_sentence = int(source_object_id_in_sentence)
         target_object_id_in_sentence = int(target_object_id_in_sentence)
 
-        s_from = line.index('si:{')
-        s_to = line.index('}', s_from)
+        s_from = line.__index('si:{')
+        s_to = line.__index('}', s_from)
         opninion_key = line[s_from+4:s_to]
 
         sentence_opin = SentenceOpinion(source_id=source_object_id_in_sentence,
@@ -254,15 +254,15 @@ class RuAttitudesFormatReader(object):
         template = 'type:'
         if template in line:
             is_auth = RuAttitudesFormatReader.AUTH_LABEL in line
-            t_from = line.index(template)
-            t_to = line.index(RuAttitudesFormatReader.AUTH_LABEL[0], t_from) if is_auth else len(line)
+            t_from = line.__index(template)
+            t_to = line.__index(RuAttitudesFormatReader.AUTH_LABEL[0], t_from) if is_auth else len(line)
             return line[t_from + len(template):t_to].strip()
 
         # Tag, utilized in RuAttitudes-1.* format.
         template = 't:['
         if template in line:
-            t_from = line.index(template)
-            t_to = line.index(']', t_from)
+            t_from = line.__index(template)
+            t_to = line.__index(']', t_from)
             return line[t_from + len(template):t_to].strip()
 
     # endregion

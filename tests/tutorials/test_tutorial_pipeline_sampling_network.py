@@ -9,7 +9,6 @@ from arekit.common.labels.scaler.sentiment import SentimentLabelScaler
 from arekit.common.labels.str_fmt import StringLabelsFormatter
 from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.text.parser import BaseTextParser
 from arekit.contrib.networks.input.ctx_serialization import NetworkSerializationContext
 from arekit.contrib.source.brat.entities.parser import BratTextEntitiesParser
 from arekit.contrib.source.rusentiframes.collection import RuSentiFramesCollection
@@ -107,11 +106,11 @@ class TestSamplingNetwork(unittest.TestCase):
         # Declaring pipeline related context parameters.
         #####
         doc_provider = FooDocumentProvider()
-        text_parser = BaseTextParser(pipeline=[
+        pipeline_items = [
             BratTextEntitiesParser(src_key="input"),
             DefaultTextTokenizer(keep_tokens=True),
             LemmasBasedFrameVariantsParser(frame_variants=frame_variant_collection, stemmer=stemmer)
-        ])
+        ]
         train_pipeline = text_opinion_extraction_pipeline(
             annotators=[
                 PredefinedTextOpinionAnnotator(
@@ -123,7 +122,7 @@ class TestSamplingNetwork(unittest.TestCase):
             ],
             get_doc_by_id_func=doc_provider.by_id,
             entity_index_func=lambda brat_entity: brat_entity.ID,
-            text_parser=text_parser)
+            pipeline_items=pipeline_items)
         #####
 
         pipeline.run(pipeline_ctx=PipelineContext(d={

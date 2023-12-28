@@ -62,7 +62,7 @@ def create_text_opinion_extraction_pipeline(rusentrel_version,
         text_opinion_filters=text_opinion_filters,
         get_doc_by_id_func=doc_provider.by_id,
         entity_index_func=lambda brat_entity: brat_entity.ID,
-        text_parser=text_parser)
+        pipeline_items=text_parser)
 
     return pipeline
 
