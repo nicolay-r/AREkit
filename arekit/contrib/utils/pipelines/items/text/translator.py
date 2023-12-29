@@ -63,7 +63,7 @@ class MLTextTranslatorPipelineItem(BasePipelineItem):
         for entity_index, translated_value in enumerate(translated_parts[1:]):
             entity_placeholder_instance = entity_placeholder_template.format(entity_index)
             # Cropping text part.
-            to_ind = text.__index(entity_placeholder_instance)
+            to_ind = text.index(entity_placeholder_instance)
 
             if self.__do_translate_entity:
                 origin_entities[entity_index].set_display_value(translated_value.strip())
