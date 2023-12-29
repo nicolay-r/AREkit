@@ -8,12 +8,14 @@ class BasePipeline(object):
         assert(isinstance(pipeline, list))
         self._pipeline = pipeline
 
-    def run(self, pipeline_ctx):
+    def run(self, pipeline_ctx, src_key=None):
         assert(isinstance(pipeline_ctx, PipelineContext))
+        assert(isinstance(src_key, str) or src_key is None)
 
-        for item in filter(lambda itm: itm is not None, self._pipeline):
+        for ind, item in enumerate(filter(lambda itm: itm is not None, self._pipeline)):
             assert(isinstance(item, BasePipelineItem))
-            item_result = item.apply(input_data=item.get_source(pipeline_ctx), pipeline_ctx=pipeline_ctx)
+            input_data = item.get_source(pipeline_ctx, force_key=src_key if src_key is not None and ind == 0 else None)
+            item_result = item.apply(input_data=input_data, pipeline_ctx=pipeline_ctx)
             pipeline_ctx.update(param=item.ResultKey, value=item_result, is_new_key=False)
 
         return pipeline_ctx

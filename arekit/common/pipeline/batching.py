@@ -5,17 +5,20 @@ from arekit.common.pipeline.items.base import BasePipelineItem
 
 class BatchingPipeline(BasePipeline):
 
-    def run(self, pipeline_ctx):
+    def run(self, pipeline_ctx, src_key=None):
         assert(isinstance(pipeline_ctx, PipelineContext))
+        assert(isinstance(src_key, str) or src_key is None)
 
-        for item in filter(lambda itm: itm is not None, self._pipeline):
+        for ind, item in enumerate(filter(lambda itm: itm is not None, self._pipeline)):
             assert (isinstance(item, BasePipelineItem))
 
             # Handle the content of the batch or batch itself.
+            content = item.get_source(pipeline_ctx, call_func=item.SupportBatching,
+                                      force_key=src_key if ind == 0 else None)
+
             if item.SupportBatching:
-                handled_batch = item.get_source(pipeline_ctx)
+                handled_batch = content
             else:
-                content = item.get_source(pipeline_ctx, call_func=False)
                 handled_batch = [item._src_func(i) if item._src_func is not None else i for i in content]
 
             # At present, each batch represent a list of contents.

@@ -22,7 +22,7 @@ class BasePipelineItem(object):
         """
         return False
 
-    def get_source(self, src_ctx, call_func=True):
+    def get_source(self, src_ctx, call_func=True, force_key=None):
         """ Extract input element for processing.
         """
         assert(isinstance(src_ctx, PipelineContext))
@@ -32,7 +32,7 @@ class BasePipelineItem(object):
             return None
 
         # Extracting actual source.
-        src_data = src_ctx.provide(self.__src_key)
+        src_data = src_ctx.provide(self.__src_key if force_key is None else force_key)
         if self._src_func is not None and call_func:
             src_data = self._src_func(src_data)
 
