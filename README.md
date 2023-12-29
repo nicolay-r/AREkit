@@ -41,14 +41,8 @@ for sentence level relations preparation (dubbed as contexts)
 
 ## Installation 
 
-1. Install required dependencies
 ```bash
 pip install git+https://github.com/nicolay-r/AREkit.git@0.25.0-rc
-```
-
-2. Download Resources
-```bash
-python -m arekit.download_data
 ```
 
 ## Usage
