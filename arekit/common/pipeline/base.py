@@ -2,7 +2,7 @@ from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 
 
-class BasePipeline:
+class BasePipelineLauncher:
 
     @staticmethod
     def run(pipeline, pipeline_ctx, src_key=None):

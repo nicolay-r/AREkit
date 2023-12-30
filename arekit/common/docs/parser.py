@@ -1,7 +1,7 @@
 from arekit.common.docs.base import Document
 from arekit.common.docs.parsed.base import ParsedDocument
-from arekit.common.pipeline.base import BasePipeline
-from arekit.common.pipeline.batching import BatchingPipeline
+from arekit.common.pipeline.base import BasePipelineLauncher
+from arekit.common.pipeline.batching import BatchingPipelineLauncher
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.utils import BatchIterator
 from arekit.common.text.parsed import BaseParsedText
@@ -25,7 +25,7 @@ class DocumentParsers(object):
             ctx = PipelineContext({src_key: doc.get_sentence(sent_ind)}, parent_ctx=parent_ppl_ctx)
 
             # Apply all the operations.
-            BasePipeline.run(pipeline=pipeline_items, pipeline_ctx=ctx, src_key=src_key)
+            BasePipelineLauncher.run(pipeline=pipeline_items, pipeline_ctx=ctx, src_key=src_key)
 
             # Collecting the result.
             parsed_sentences.append(BaseParsedText(terms=ctx.provide("result")))
@@ -49,7 +49,7 @@ class DocumentParsers(object):
                                   parent_ctx=parent_ppl_ctx)
 
             # Apply all the operations.
-            BatchingPipeline.run(pipeline=pipeline_items, pipeline_ctx=ctx, src_key=src_key)
+            BatchingPipelineLauncher.run(pipeline=pipeline_items, pipeline_ctx=ctx, src_key=src_key)
 
             # Collecting the result.
             parsed_sentences += [BaseParsedText(terms=result) for result in ctx.provide("result")]

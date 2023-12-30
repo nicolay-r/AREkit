@@ -2,7 +2,6 @@ from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvide
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
-from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
@@ -31,7 +30,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
 
     def _serialize_iteration(self, data_type, pipeline, data_folding, doc_ids):
         assert(isinstance(data_type, DataType))
-        assert(isinstance(pipeline, BasePipeline))
+        assert(isinstance(pipeline, list))
         assert(isinstance(data_folding, dict) or data_folding is None)
         assert(isinstance(doc_ids, list) or doc_ids is None)
         assert(doc_ids is not None or data_folding is not None)

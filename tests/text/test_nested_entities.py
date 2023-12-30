@@ -1,7 +1,7 @@
 import unittest
 
-from arekit.common.pipeline.base import BasePipeline
-from arekit.common.pipeline.batching import BatchingPipeline
+from arekit.common.pipeline.base import BasePipelineLauncher
+from arekit.common.pipeline.batching import BatchingPipelineLauncher
 from arekit.common.pipeline.context import PipelineContext
 from arekit.contrib.utils.pipelines.items.text.entities_default import TextEntitiesParser
 
@@ -16,8 +16,8 @@ class TestNestedEntities(unittest.TestCase):
 
     def test(self):
 
-        ctx = BasePipeline.run(pipeline=[TextEntitiesParser()],
-                               pipeline_ctx=PipelineContext({"result": self.s.split()}))
+        ctx = BasePipelineLauncher.run(pipeline=[TextEntitiesParser()],
+                                       pipeline_ctx=PipelineContext({"result": self.s.split()}))
         parsed_text = ctx.provide("result")
 
         print(parsed_text)
@@ -25,7 +25,7 @@ class TestNestedEntities(unittest.TestCase):
     def test_batched(self):
 
         # Compose a single batch with two sentences.
-        ctx = BatchingPipeline.run(
+        ctx = BatchingPipelineLauncher.run(
             pipeline=[TextEntitiesParser()],
             pipeline_ctx=PipelineContext({"result": [self.s.split(), self.s.split()]}))
         parsed_text = ctx.provide("result")

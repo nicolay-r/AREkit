@@ -2,7 +2,7 @@ from arekit.common.data.input.providers.const import IDLE_MODE
 from arekit.common.data.input.providers.contents import ContentsProvider
 from arekit.common.linkage.base import LinkedDataWrapper
 from arekit.common.linkage.text_opinions import TextOpinionsLinkage
-from arekit.common.pipeline.base import BasePipeline
+from arekit.common.pipeline.base import BasePipelineLauncher
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.text_opinions.base import TextOpinion
 
@@ -14,7 +14,7 @@ class InputTextOpinionProvider(ContentsProvider):
             results in a TextOpinionLinkage instances.
             pipeline: id -> ... -> TextOpinionLinkage[]
         """
-        assert(isinstance(pipeline, BasePipeline))
+        assert(isinstance(pipeline, list))
         self.__pipeline = pipeline
         self.__current_id = None
 
@@ -38,7 +38,7 @@ class InputTextOpinionProvider(ContentsProvider):
         })
 
         # Launching pipeline with the passed context
-        self.__pipeline.run(ctx)
+        BasePipelineLauncher.run(pipeline=self.__pipeline, pipeline_ctx=ctx)
 
         for linkage in ctx.provide("result"):
             assert(isinstance(linkage, LinkedDataWrapper))

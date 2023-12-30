@@ -4,7 +4,6 @@ from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.docs.parsed.service import ParsedDocumentService
 from arekit.common.docs.parser import DocumentParsers
-from arekit.common.pipeline.base import BasePipeline
 from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
 from arekit.common.pipeline.items.map import MapPipelineItem
 from arekit.common.pipeline.items.map_nested import MapNestedPipelineItem
