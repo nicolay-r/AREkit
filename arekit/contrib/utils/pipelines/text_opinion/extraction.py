@@ -73,7 +73,7 @@ def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotat
     extra_filters = [] if text_opinion_filters is None else text_opinion_filters
     actual_text_opinion_filters = [FrameworkLimitationsTextOpinionFilter()] + extra_filters
 
-    return BasePipeline([
+    return [
         # (doc_id) -> (doc)
         MapPipelineItem(map_func=lambda doc_id: get_doc_by_id_func(doc_id)),
 
@@ -88,4 +88,4 @@ def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotat
 
         # linkages[] -> linkages
         FlattenIterPipelineItem()
-    ])
+    ]

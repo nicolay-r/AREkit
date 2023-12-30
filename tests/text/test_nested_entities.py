@@ -16,19 +16,18 @@ class TestNestedEntities(unittest.TestCase):
 
     def test(self):
 
-        ppl = BasePipeline(pipeline=[TextEntitiesParser()])
-
-        ctx = ppl.run(PipelineContext({"result": self.s.split()}))
+        ctx = BasePipeline.run(pipeline=[TextEntitiesParser()],
+                               pipeline_ctx=PipelineContext({"result": self.s.split()}))
         parsed_text = ctx.provide("result")
 
         print(parsed_text)
 
     def test_batched(self):
 
-        ppl = BatchingPipeline(pipeline=[TextEntitiesParser()])
-
         # Compose a single batch with two sentences.
-        ctx = ppl.run(pipeline_ctx=PipelineContext({"result": [self.s.split(), self.s.split()]}))
+        ctx = BatchingPipeline.run(
+            pipeline=[TextEntitiesParser()],
+            pipeline_ctx=PipelineContext({"result": [self.s.split(), self.s.split()]}))
         parsed_text = ctx.provide("result")
 
         print(parsed_text)

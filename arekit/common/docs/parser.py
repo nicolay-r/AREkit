@@ -18,8 +18,6 @@ class DocumentParsers(object):
         assert(isinstance(pipeline_items, list))
         assert(isinstance(parent_ppl_ctx, PipelineContext) or parent_ppl_ctx is None)
 
-        pipeline = BasePipeline(pipeline_items)
-
         parsed_sentences = []
         for sent_ind in range(doc.SentencesCount):
 
@@ -27,7 +25,7 @@ class DocumentParsers(object):
             ctx = PipelineContext({src_key: doc.get_sentence(sent_ind)}, parent_ctx=parent_ppl_ctx)
 
             # Apply all the operations.
-            pipeline.run(ctx, src_key=src_key)
+            BasePipeline.run(pipeline=pipeline_items, pipeline_ctx=ctx, src_key=src_key)
 
             # Collecting the result.
             parsed_sentences.append(BaseParsedText(terms=ctx.provide("result")))
@@ -43,8 +41,6 @@ class DocumentParsers(object):
         assert(isinstance(pipeline_items, list))
         assert(isinstance(parent_ppl_ctx, PipelineContext) or parent_ppl_ctx is None)
 
-        pipeline = BatchingPipeline(pipeline_items)
-
         parsed_sentences = []
         for batch in BatchIterator(lst=list(range(doc.SentencesCount)), batch_size=batch_size):
 
@@ -53,7 +49,7 @@ class DocumentParsers(object):
                                   parent_ctx=parent_ppl_ctx)
 
             # Apply all the operations.
-            pipeline.run(ctx, src_key=src_key)
+            BatchingPipeline.run(pipeline=pipeline_items, pipeline_ctx=ctx, src_key=src_key)
 
             # Collecting the result.
             parsed_sentences += [BaseParsedText(terms=result) for result in ctx.provide("result")]
