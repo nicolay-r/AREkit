@@ -39,7 +39,8 @@ class BasePipelineItem(object):
         return src_data
 
     def apply_core(self, input_data, pipeline_ctx):
-        raise NotImplementedError()
+        """By default we do nothing."""
+        pass
 
     def apply(self, input_data, pipeline_ctx=None):
         """ Performs input processing an update it for a further pipeline items.
