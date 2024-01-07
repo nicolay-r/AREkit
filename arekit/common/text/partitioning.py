@@ -1,10 +1,9 @@
 from collections import Iterable
 
 from arekit.common.bound import Bound
-from arekit.common.text.partitioning.base import BasePartitioning
 
 
-class Partitioning(BasePartitioning):
+class Partitioning(object):
     """ NOTE: considering that provided parts
         has no intersections between each other
     """
