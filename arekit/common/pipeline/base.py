@@ -14,7 +14,7 @@ class BasePipelineLauncher:
             assert(isinstance(item, BasePipelineItem))
             do_force_key = src_key is not None and ind == 0
             input_data = item.get_source(pipeline_ctx, force_key=src_key if do_force_key else None) \
-                if has_input and ind == 0 else None
+                if has_input or ind > 0 else None
             item_result = item.apply(input_data=input_data, pipeline_ctx=pipeline_ctx)
             pipeline_ctx.update(param=item.ResultKey, value=item_result, is_new_key=False)
 
