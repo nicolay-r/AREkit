@@ -13,7 +13,7 @@ class BatchIterator:
     def __next__(self):
         if self.__index < len(self.__lst):
             batch = self.__lst[self.__index:self.__index + self.__batch_size]
-            self.__index += 2
+            self.__index += self.__batch_size
             return batch
         else:
             raise StopIteration
