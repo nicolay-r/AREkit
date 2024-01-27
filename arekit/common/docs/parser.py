@@ -48,7 +48,7 @@ class DocumentParsers(object):
 
         parsed_sentences = []
 
-        data_it = BatchIterator(lst=list(range(doc.SentencesCount)), batch_size=batch_size)
+        data_it = BatchIterator(data_iter=iter(range(doc.SentencesCount)), batch_size=batch_size)
         progress_it = tqdm(data_it, total=round(doc.SentencesCount / batch_size), disable=not show_progress)
 
         for batch in progress_it:
