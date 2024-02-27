@@ -1,4 +1,4 @@
-# AREkit 0.25.0
+# AREkit 0.25.1
 
 ![](https://img.shields.io/badge/Python-3.9+-brightgreen.svg)
 
@@ -38,7 +38,7 @@ for sentence level relations preparation (dubbed as contexts);
 ## Installation 
 
 ```bash
-pip install git+https://github.com/nicolay-r/AREkit.git@0.25.0-rc
+pip install git+https://github.com/nicolay-r/AREkit.git@0.25.1-rc
 ```
 
 ## Usage
