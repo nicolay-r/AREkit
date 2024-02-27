@@ -7,7 +7,6 @@ from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.repositories.base import BaseInputRepository
 from arekit.common.data.input.repositories.sample import BaseInputSamplesRepository
 from arekit.common.data.storages.base import BaseRowsStorage
-from arekit.common.pipeline.base import BasePipeline
 from arekit.contrib.utils.data.contents.opinions import InputTextOpinionProvider
 
 logger = logging.getLogger(__name__)
@@ -28,7 +27,7 @@ class InputDataSerializationHelper(object):
 
     @staticmethod
     def fill_and_write(pipeline, repo, target, writer, doc_ids_iter, desc=""):
-        assert(isinstance(pipeline, BasePipeline))
+        assert(isinstance(pipeline, list))
         assert(isinstance(doc_ids_iter, Iterable))
         assert(isinstance(repo, BaseInputRepository))
 

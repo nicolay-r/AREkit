@@ -9,10 +9,11 @@ class MLTextTranslatorPipelineItem(BasePipelineItem):
     """ Machine learning based translator pipeline item.
     """
 
-    def __init__(self, batch_translate_model, do_translate_entity=True):
+    def __init__(self, batch_translate_model, do_translate_entity=True, **kwargs):
         """ Model, which is based on translation of the text,
             represented as a list of words.
         """
+        super(MLTextTranslatorPipelineItem, self).__init__(**kwargs)
         self.__do_translate_entity = do_translate_entity
         self.__translate = batch_translate_model
 

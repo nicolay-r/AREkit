@@ -15,7 +15,7 @@ def get_requirements(filenames):
 
 setup(
     name='arekit',
-    version='0.24.0',
+    version='0.25.0',
     python_requires=">=3.6",
     description='Document level Attitude and Relation Extraction toolkit (AREkit)'
                 ' for sampling and prompting mass-media news into datasets for ML-model training',

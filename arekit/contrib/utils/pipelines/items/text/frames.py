@@ -6,11 +6,10 @@ from arekit.common.pipeline.items.base import BasePipelineItem
 
 class FrameVariantsParser(BasePipelineItem):
 
-    def __init__(self, frame_variants):
+    def __init__(self, frame_variants, **kwargs):
         assert(isinstance(frame_variants, FrameVariantsCollection))
         assert(len(frame_variants) > 0)
-
-        super(FrameVariantsParser, self).__init__()
+        super(FrameVariantsParser, self).__init__(**kwargs)
 
         self.__frame_variants = frame_variants
         self.__max_variant_len = max([len(variant) for _, variant in frame_variants.iter_variants()])

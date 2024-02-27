@@ -8,6 +8,10 @@ from arekit.contrib.utils.data.writers.base import BaseWriter
 
 
 class SQliteWriter(BaseWriter):
+    """ TODO. This implementation is dedicated for the writing concepts of the data
+        serialization pipeline. However we add the SQLite3 service, it would be
+        right to refactor and utlize some core functionality from the core/service/sqlite.py
+    """
 
     def __init__(self, table_name="contents", index_column_names=None, skip_existed=False, clear_table=True):
         """ index_column_names: list or None

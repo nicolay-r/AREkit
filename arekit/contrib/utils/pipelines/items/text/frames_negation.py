@@ -7,8 +7,9 @@ from arekit.contrib.utils.processing.languages.ru.mods import RussianLanguageMod
 
 class FrameVariantsSentimentNegation(BasePipelineItem):
 
-    def __init__(self, locale_mods=RussianLanguageMods):
+    def __init__(self, locale_mods=RussianLanguageMods, **kwargs):
         assert(issubclass(locale_mods, BaseLanguageMods))
+        super(FrameVariantsSentimentNegation, self).__init__(**kwargs)
         self._locale_mods = locale_mods
 
     @staticmethod

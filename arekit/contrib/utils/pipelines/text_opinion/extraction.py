@@ -3,12 +3,10 @@ from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityServiceProvider
 from arekit.common.docs.parsed.service import ParsedDocumentService
-from arekit.common.docs.parser import DocumentParser
-from arekit.common.pipeline.base import BasePipeline
+from arekit.common.docs.parser import DocumentParsers
 from arekit.common.pipeline.items.flatten import FlattenIterPipelineItem
 from arekit.common.pipeline.items.map import MapPipelineItem
 from arekit.common.pipeline.items.map_nested import MapNestedPipelineItem
-from arekit.common.text.parser import BaseTextParser
 from arekit.common.text_opinions.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinionFilter
 from arekit.contrib.utils.pipelines.text_opinion.filters.limitation import FrameworkLimitationsTextOpinionFilter
@@ -64,9 +62,8 @@ def __iter_text_opinion_linkages(parsed_doc, annotators, entity_index_func,
         yield MetaEmptyLinkedDataWrapper(doc_id=parsed_doc.RelatedDocID)
 
 
-def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators, entity_index_func,
+def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotators, entity_index_func,
                                      text_opinion_filters=None, use_meta_between_docs=True):
-    assert(isinstance(text_parser, BaseTextParser))
     assert(callable(get_doc_by_id_func))
     assert(isinstance(annotators, list))
     assert(isinstance(text_opinion_filters, list) or text_opinion_filters is None)
@@ -75,13 +72,13 @@ def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators
     extra_filters = [] if text_opinion_filters is None else text_opinion_filters
     actual_text_opinion_filters = [FrameworkLimitationsTextOpinionFilter()] + extra_filters
 
-    return BasePipeline([
+    return [
         # (doc_id) -> (doc)
         MapPipelineItem(map_func=lambda doc_id: get_doc_by_id_func(doc_id)),
 
         # (doc, ppl_ctx) -> (parsed_doc)
-        MapNestedPipelineItem(map_func=lambda doc, ppl_ctx: DocumentParser.parse(
-            doc=doc, text_parser=text_parser, parent_ppl_ctx=ppl_ctx)),
+        MapNestedPipelineItem(map_func=lambda doc, ppl_ctx: DocumentParsers.parse(
+            doc=doc, pipeline_items=pipeline_items, parent_ppl_ctx=ppl_ctx)),
 
         # (parsed_doc) -> (text_opinions)
         MapPipelineItem(map_func=lambda parsed_doc: __iter_text_opinion_linkages(
@@ -90,4 +87,4 @@ def text_opinion_extraction_pipeline(text_parser, get_doc_by_id_func, annotators
 
         # linkages[] -> linkages
         FlattenIterPipelineItem()
-    ])
+    ]

@@ -12,6 +12,8 @@ pip install -e ../ --no-deps
 ```
 
 Using `pytest` to run all the test and gather report into `pytest_report.html` document.
+
+**NOTE: Launch from the root project folder**
 ```bash
 python -m pytest --html=pytest_report.html --self-contained-html --continue-on-collection-errors .
 ```
@@ -19,7 +21,7 @@ python -m pytest --html=pytest_report.html --self-contained-html --continue-on-c
 ## Publishing Release
 
 Navigate to the root folder of this project and execute:
-```python
+```bash
 python3 setup.py sdist bdist_wheel
 twine check ./dist/*
 twine upload ./dist/*

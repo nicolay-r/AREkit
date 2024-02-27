@@ -2,15 +2,13 @@ from arekit.common.data.input.providers.rows.samples import BaseSampleRowProvide
 from arekit.common.data.storages.base import BaseRowsStorage
 from arekit.common.experiment.api.base_samples_io import BaseSamplesIO
 from arekit.common.experiment.data_type import DataType
-from arekit.common.pipeline.base import BasePipeline
-from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 from arekit.contrib.utils.serializer import InputDataSerializationHelper
 
 
 class BaseSerializerPipelineItem(BasePipelineItem):
 
-    def __init__(self, rows_provider, samples_io, save_labels_func, storage):
+    def __init__(self, rows_provider, samples_io, save_labels_func, storage, **kwargs):
         """ sample_rows_formatter:
                 how we format input texts for a BERT model, for example:
                     - single text
@@ -23,6 +21,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
         assert(isinstance(samples_io, BaseSamplesIO))
         assert(callable(save_labels_func))
         assert(isinstance(storage, BaseRowsStorage))
+        super(BaseSerializerPipelineItem, self).__init__(**kwargs)
 
         self._rows_provider = rows_provider
         self._samples_io = samples_io
@@ -31,7 +30,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
 
     def _serialize_iteration(self, data_type, pipeline, data_folding, doc_ids):
         assert(isinstance(data_type, DataType))
-        assert(isinstance(pipeline, BasePipeline))
+        assert(isinstance(pipeline, list))
         assert(isinstance(data_folding, dict) or data_folding is None)
         assert(isinstance(doc_ids, list) or doc_ids is None)
         assert(doc_ids is not None or data_folding is not None)
@@ -89,11 +88,7 @@ class BaseSerializerPipelineItem(BasePipelineItem):
                 doc_ids: optional
                     this parameter allows to limit amount of documents considered for sampling
         """
-        assert(isinstance(input_data, PipelineContext))
-        assert("data_type_pipelines" in input_data)
-
-        data_folding = input_data.provide_or_none("data_folding")
-
-        self._handle_iteration(data_type_pipelines=input_data.provide("data_type_pipelines"),
-                               doc_ids=input_data.provide_or_none("doc_ids"),
-                               data_folding=data_folding)
+        assert("data_type_pipelines" in pipeline_ctx)
+        self._handle_iteration(data_type_pipelines=pipeline_ctx.provide("data_type_pipelines"),
+                               doc_ids=pipeline_ctx.provide_or_none("doc_ids"),
+                               data_folding=pipeline_ctx.provide_or_none("data_folding"))

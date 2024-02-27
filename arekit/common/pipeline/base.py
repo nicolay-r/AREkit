@@ -2,24 +2,20 @@ from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.items.base import BasePipelineItem
 
 
-class BasePipeline(object):
+class BasePipelineLauncher:
 
-    def __init__(self, pipeline):
+    @staticmethod
+    def run(pipeline, pipeline_ctx, src_key=None, has_input=True):
         assert(isinstance(pipeline, list))
-        self.__pipeline = pipeline
+        assert(isinstance(pipeline_ctx, PipelineContext))
+        assert(isinstance(src_key, str) or src_key is None)
 
-    def run(self, input_data, params_dict=None, parent_ctx=None):
-        assert(isinstance(params_dict, dict) or params_dict is None)
-
-        pipeline_ctx = PipelineContext(d=params_dict if params_dict is not None else dict(),
-                                       parent_ctx=parent_ctx)
-
-        for item in filter(lambda itm: itm is not None, self.__pipeline):
+        for ind, item in enumerate(filter(lambda itm: itm is not None, pipeline)):
             assert(isinstance(item, BasePipelineItem))
-            input_data = item.apply(input_data=input_data, pipeline_ctx=pipeline_ctx)
+            do_force_key = src_key is not None and ind == 0
+            input_data = item.get_source(pipeline_ctx, force_key=src_key if do_force_key else None) \
+                if has_input or ind > 0 else None
+            item_result = item.apply(input_data=input_data, pipeline_ctx=pipeline_ctx)
+            pipeline_ctx.update(param=item.ResultKey, value=item_result, is_new_key=False)
 
-        return input_data
-
-    def append(self, item):
-        assert(isinstance(item, BasePipelineItem))
-        self.__pipeline.append(item)
+        return pipeline_ctx

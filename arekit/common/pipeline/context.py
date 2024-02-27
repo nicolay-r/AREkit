@@ -13,6 +13,8 @@ class PipelineContext(object):
         self._d[PARENT_CTX] = parent_ctx
 
     def __provide(self, param):
+        if param not in self._d:
+            raise Exception(f"Key `{param}` is not in dictionary.\n{self._d}")
         return self._d[param]
 
     # region public
@@ -23,7 +25,9 @@ class PipelineContext(object):
     def provide_or_none(self, param):
         return self.__provide(param) if param in self._d else None
 
-    def update(self, param, value):
+    def update(self, param, value, is_new_key=False):
+        if is_new_key and param in self._d:
+            raise Exception(f"Key `{param}` is already presented in pipeline context dictionary.")
         self._d[param] = value
 
     # endregion

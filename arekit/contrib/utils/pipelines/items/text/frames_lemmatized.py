@@ -5,10 +5,10 @@ from arekit.contrib.utils.processing.languages.ru.mods import RussianLanguageMod
 
 class LemmasBasedFrameVariantsParser(FrameVariantsParser):
 
-    def __init__(self, frame_variants, stemmer, locale_mods=RussianLanguageMods, save_lemmas=False):
+    def __init__(self, frame_variants, stemmer, locale_mods=RussianLanguageMods, save_lemmas=False, **kwargs):
         assert(isinstance(stemmer, Stemmer))
         assert(isinstance(save_lemmas, bool))
-        super(LemmasBasedFrameVariantsParser, self).__init__(frame_variants=frame_variants)
+        super(LemmasBasedFrameVariantsParser, self).__init__(frame_variants=frame_variants, **kwargs)
 
         self.__frame_variants = frame_variants
         self.__stemmer = stemmer
