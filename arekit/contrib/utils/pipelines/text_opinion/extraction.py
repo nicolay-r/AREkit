@@ -62,12 +62,13 @@ def __iter_text_opinion_linkages(parsed_doc, annotators, entity_index_func,
         yield MetaEmptyLinkedDataWrapper(doc_id=parsed_doc.RelatedDocID)
 
 
-def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotators, entity_index_func,
+def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotators, entity_index_func, batch_size,
                                      text_opinion_filters=None, use_meta_between_docs=True):
     assert(callable(get_doc_by_id_func))
     assert(isinstance(annotators, list))
     assert(isinstance(text_opinion_filters, list) or text_opinion_filters is None)
     assert(isinstance(use_meta_between_docs, bool))
+    assert(isinstance(batch_size, int) and batch_size > 0)
 
     extra_filters = [] if text_opinion_filters is None else text_opinion_filters
     actual_text_opinion_filters = [FrameworkLimitationsTextOpinionFilter()] + extra_filters
@@ -77,8 +78,8 @@ def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotat
         MapPipelineItem(map_func=lambda doc_id: get_doc_by_id_func(doc_id)),
 
         # (doc, ppl_ctx) -> (parsed_doc)
-        MapNestedPipelineItem(map_func=lambda doc, ppl_ctx: DocumentParsers.parse(
-            doc=doc, pipeline_items=pipeline_items, parent_ppl_ctx=ppl_ctx)),
+        MapNestedPipelineItem(map_func=lambda doc, ppl_ctx: DocumentParsers.parse_batch(
+            doc=doc, pipeline_items=pipeline_items, parent_ppl_ctx=ppl_ctx, batch_size=batch_size)),
 
         # (parsed_doc) -> (text_opinions)
         MapPipelineItem(map_func=lambda parsed_doc: __iter_text_opinion_linkages(
