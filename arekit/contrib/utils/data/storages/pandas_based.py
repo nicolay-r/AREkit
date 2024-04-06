@@ -12,7 +12,8 @@ class PandasBasedRowsStorage(BaseRowsStorage):
         based on the pandas DataFrames.
     """
 
-    def __init__(self, df=None):
+    def __init__(self, df=None, **kwargs):
+        super(PandasBasedRowsStorage, self).__init__(**kwargs)
         self._df = df
 
     @property

@@ -5,8 +5,9 @@ from arekit.common.data.storages.base import BaseRowsStorage
 
 class JsonlBasedRowsStorage(BaseRowsStorage):
 
-    def __init__(self, rows):
+    def __init__(self, rows, **kwargs):
         assert(isinstance(rows, list))
+        super(JsonlBasedRowsStorage, self).__init__(**kwargs)
         self.__rows = rows
 
     def _iter_rows(self):

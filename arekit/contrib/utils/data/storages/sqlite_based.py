@@ -4,7 +4,8 @@ from arekit.common.data.storages.base import BaseRowsStorage
 
 class SQliteBasedRowsStorage(BaseRowsStorage):
 
-    def __init__(self, path, table_name):
+    def __init__(self, path, table_name, **kwargs):
+        super(SQliteBasedRowsStorage, self).__init__(**kwargs)
         self.__path = path
         self.__table_name = table_name
         self.__conn = None

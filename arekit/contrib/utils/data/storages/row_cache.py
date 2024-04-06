@@ -6,13 +6,14 @@ class RowCacheStorage(BaseRowsStorage):
     """ Row Caching storage kernel, based on python dictionary.
     """
 
-    def __init__(self, force_collect_columns=None):
+    def __init__(self, force_collect_columns=None, **kwargs):
         """ This is a particular/related solution for the following issue:
             https://github.com/nicolay-r/AREkit/issues/464
             force_collect_columns: list
                 columns that supposed to be additionally considered in output.
         """
         assert(isinstance(force_collect_columns, list) or force_collect_columns is None)
+        super(RowCacheStorage, self).__init__(**kwargs)
         self.__f = None
         self.__row_cache = {}
         self.__column_names = []
