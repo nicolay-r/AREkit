@@ -15,7 +15,7 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.limitation import Frame
 def __iter_text_opinion_linkages(parsed_doc, annotators, entity_index_func,
                                  text_opinion_filters, use_meta):
     """ use_meta: bool
-            this is mainly for tqdm and other console parameters to stay up-to-date
+            this is mainly for the progress-bar and other console parameters to stay up-to-date
             with the state in the case we do not have that much output results
             across multiple amount of documents.
     """

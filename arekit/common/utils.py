@@ -26,11 +26,11 @@ def split_by_whitespaces(text):
     return text.split()
 
 
-def progress_bar(iterable, total, desc="", unit="it", file=None):
+def progress_bar(iterable, total, desc="", unit="it", file=None, disable=False):
     if total is not None:
-        return progress_bar_defined(iterable=iterable, total=total, desc=desc, unit=unit, file=file)
+        return progress_bar_defined(iterable=iterable, total=total, desc=desc, unit=unit, file=file, disable=disable)
     else:
-        return progress_bar_iter(iterable=iterable, desc=desc, unit=unit, file=file)
+        return progress_bar_iter(iterable=iterable, desc=desc, unit=unit, file=file, disable=disable)
 
 
 def progress_bar_conditional(iterable, condition_func, total, postfix_func=None, desc="", unit="it", file=None):
@@ -64,7 +64,7 @@ def progress_bar_conditional(iterable, condition_func, total, postfix_func=None,
             pbar_it.set_postfix(postfix_func(item))
 
 
-def progress_bar_defined(iterable, total, miniters=200, desc="", unit="it", file=None):
+def progress_bar_defined(iterable, total, miniters=200, desc="", unit="it", file=None, disable=False):
     return tqdm(iterable=iterable,
                 total=total,
                 desc=desc,
@@ -73,14 +73,16 @@ def progress_bar_defined(iterable, total, miniters=200, desc="", unit="it", file
                 leave=True,
                 unit=unit,
                 file=file,
+                disable=disable,
                 miniters=total / miniters if total is not None else total)
 
 
-def progress_bar_iter(iterable, desc="", unit='it', file=None):
+def progress_bar_iter(iterable, desc="", unit='it', file=None, disable=False):
     return tqdm(iterable=iterable,
                 desc=desc,
                 position=0,
                 leave=True,
                 ncols=120,
                 file=file,
+                disable=disable,
                 unit=unit)

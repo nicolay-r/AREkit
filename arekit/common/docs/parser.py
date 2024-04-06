@@ -1,10 +1,10 @@
-from tqdm import tqdm
 from arekit.common.docs.base import Document
 from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.pipeline.batching import BatchingPipelineLauncher
 from arekit.common.pipeline.context import PipelineContext
 from arekit.common.pipeline.utils import BatchIterator
 from arekit.common.text.parsed import BaseParsedText
+from arekit.common.utils import progress_bar_defined
 
 
 class DocumentParsers(object):
@@ -21,7 +21,8 @@ class DocumentParsers(object):
         parsed_sentences = []
 
         data_it = BatchIterator(data_iter=iter(range(doc.SentencesCount)), batch_size=batch_size)
-        progress_it = tqdm(data_it, total=round(doc.SentencesCount / batch_size), disable=not show_progress)
+        progress_it = progress_bar_defined(data_it, total=round(doc.SentencesCount / batch_size),
+                                           disable=not show_progress)
 
         for batch in progress_it:
 
