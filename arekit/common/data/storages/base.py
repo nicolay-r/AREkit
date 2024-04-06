@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 
 class BaseRowsStorage(object):
 
+    def __init__(self, log_out=None):
+        self.__log_out = log_out
+
     # region protected methods
 
     def _begin_filling_row(self, row_ind):
@@ -81,6 +84,7 @@ class BaseRowsStorage(object):
             condition_func=lambda item: not isinstance(item[1], MetaEmptyLinkedDataWrapper),
             postfix_func=postfix_func,
             desc="{fmt}".format(fmt=desc),
+            file=self.__log_out,
             total=rows_count)
 
         for row_index, item in enumerate(pbar_it):

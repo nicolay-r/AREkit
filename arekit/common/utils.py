@@ -1,4 +1,3 @@
-import sys
 import os
 from tqdm import tqdm
 
@@ -27,14 +26,14 @@ def split_by_whitespaces(text):
     return text.split()
 
 
-def progress_bar(iterable, total, desc="", unit="it"):
+def progress_bar(iterable, total, desc="", unit="it", file=None):
     if total is not None:
-        return progress_bar_defined(iterable=iterable, total=total, desc=desc, unit=unit)
+        return progress_bar_defined(iterable=iterable, total=total, desc=desc, unit=unit, file=file)
     else:
-        return progress_bar_iter(iterable=iterable, desc=desc, unit=unit)
+        return progress_bar_iter(iterable=iterable, desc=desc, unit=unit, file=file)
 
 
-def progress_bar_conditional(iterable, condition_func, total, postfix_func=None, desc="", unit="it"):
+def progress_bar_conditional(iterable, condition_func, total, postfix_func=None, desc="", unit="it", file=None):
     """ This progress-bar updates only on the
         specific conditions during the iteration process.
     """
@@ -47,7 +46,7 @@ def progress_bar_conditional(iterable, condition_func, total, postfix_func=None,
             yield 0
 
     pbar_it = progress_bar(iterable=__iter_infinite_placeholder(),
-                           desc=desc, unit=unit, total=total)
+                           desc=desc, unit=unit, total=total, file=file)
     element = iter(pbar_it)
 
     # Initialize with 0.
@@ -65,7 +64,7 @@ def progress_bar_conditional(iterable, condition_func, total, postfix_func=None,
             pbar_it.set_postfix(postfix_func(item))
 
 
-def progress_bar_defined(iterable, total, miniters=200, desc="", unit="it"):
+def progress_bar_defined(iterable, total, miniters=200, desc="", unit="it", file=None):
     return tqdm(iterable=iterable,
                 total=total,
                 desc=desc,
@@ -73,13 +72,15 @@ def progress_bar_defined(iterable, total, miniters=200, desc="", unit="it"):
                 position=0,
                 leave=True,
                 unit=unit,
+                file=file,
                 miniters=total / miniters if total is not None else total)
 
 
-def progress_bar_iter(iterable, desc="", unit='it'):
+def progress_bar_iter(iterable, desc="", unit='it', file=None):
     return tqdm(iterable=iterable,
                 desc=desc,
                 position=0,
                 leave=True,
                 ncols=120,
+                file=file,
                 unit=unit)
