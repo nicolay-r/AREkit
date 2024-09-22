@@ -19,7 +19,7 @@ This toolkit aims at memory-effective data processing in Relation Extraction (RE
 </p>
 
 > Figure: AREkit pipelines design. More on 
-> **[ARElight: Context Sampling of Large Texts for Deep Learning Relation Extraction](https://www.ecir2024.org/accepted-paper/)** paper
+> **[ARElight: Context Sampling of Large Texts for Deep Learning Relation Extraction](https://link.springer.com/chapter/10.1007/978-3-031-56069-9_23)** paper
 
 In particular, this framework serves the following features: 
 * ➿ [pipelines](https://github.com/nicolay-r/AREkit/wiki/Pipelines:-Text-Opinion-Annotation) and iterators for handling large-scale collections serialization without out-of-memory issues.
