@@ -12,7 +12,7 @@ is a python toolkit, devoted to document level Attitude and Relation Extraction 
 ## Description
 
 
-This toolkit aims at memory-effective data processing in Relation Extraction (RE) related tasks.
+This toolkit aims at memory-effective data processing in [Relation Extraction (RE)](https://nlpprogress.com/english/relationship_extraction.html) related tasks.
 
 <p align="center">
     <img src="docs/arekit-pipeline-concept.png"/>
