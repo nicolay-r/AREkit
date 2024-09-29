@@ -35,7 +35,6 @@ setup(
     keywords='natural language processing, relation extraction, sentiment analysis',
     packages=find_packages(),
     install_requires=get_requirements([
-        'dependencies.txt',
-        'arekit/contrib/utils/dependencies.txt']),
+        'dependencies.txt']),
     data_files=["logo.png"],
 )
