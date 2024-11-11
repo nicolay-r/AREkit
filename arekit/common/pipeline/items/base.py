@@ -2,7 +2,7 @@ from arekit.common.pipeline.context import PipelineContext
 
 
 class BasePipelineItem(object):
-    """ Single pipeline item that might be instatiated and embedded into pipeline.
+    """ Single pipeline item that might be instantiated and embedded into pipeline.
     """
 
     def __init__(self, src_key="result", result_key="result", src_func=None):
