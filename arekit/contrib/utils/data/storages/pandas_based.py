@@ -97,9 +97,6 @@ class PandasBasedRowsStorage(BaseRowsStorage):
     def get_row(self, row_index):
         return self._df.iloc[row_index]
 
-    def find_by_value(self, column_name, value):
-        return self.__filter(column_name=column_name, value=value)
-
     def init_empty(self, columns_provider):
         cols_with_types = columns_provider.get_columns_list_with_types()
         self._df = self.__create_empty(cols_with_types)
