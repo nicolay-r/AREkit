@@ -97,25 +97,12 @@ class PandasBasedRowsStorage(BaseRowsStorage):
     def get_row(self, row_index):
         return self._df.iloc[row_index]
 
-    def get_cell(self, row_index, column_name):
-        return self._df.iloc[row_index][column_name]
-
-    def iter_column_values(self, column_name, dtype=None):
-        values = self._df[column_name]
-        if dtype is None:
-            return values
-        return values.astype(dtype)
-
     def find_by_value(self, column_name, value):
         return self.__filter(column_name=column_name, value=value)
 
     def init_empty(self, columns_provider):
         cols_with_types = columns_provider.get_columns_list_with_types()
         self._df = self.__create_empty(cols_with_types)
-
-    def iter_shuffled(self):
-        shuffled_df = self._df.sample(frac=1)
-        return self.__iter_rows_core(shuffled_df)
 
     def free(self):
         del self._df

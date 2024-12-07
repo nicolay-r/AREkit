@@ -37,22 +37,10 @@ class BaseRowsStorage(object):
     def find_by_value(self, column_name, value):
         raise NotImplemented()
 
-    def find_first_by_value(self, column_name, value):
-        raise NotImplemented()
-
-    def iter_column_values(self, column_name, dtype=None):
-        raise NotImplemented()
-
     def get_row(self, row_index):
         raise NotImplemented()
 
-    def get_cell(self, row_index, column_name):
-        raise NotImplemented()
-
     def init_empty(self, columns_provider):
-        raise NotImplemented()
-
-    def iter_shuffled(self):
         raise NotImplemented()
 
     def iter_column_names(self):
