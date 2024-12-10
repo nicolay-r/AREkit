@@ -1,6 +1,8 @@
 # AREkit 0.25.1
 
 ![](https://img.shields.io/badge/Python-3.9+-brightgreen.svg)
+[![PyPI downloads](https://img.shields.io/pypi/dm/arekit.svg)](https://pypistats.org/packages/arekit)
+
 
 <p align="center">
     <img src="logo.png"/>
