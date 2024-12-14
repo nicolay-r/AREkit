@@ -34,9 +34,6 @@ class BaseRowsStorage(object):
     def _get_rows_count(self):
         raise NotImplemented()
 
-    def get_row(self, row_index):
-        raise NotImplemented()
-
     def init_empty(self, columns_provider):
         raise NotImplemented()
 
