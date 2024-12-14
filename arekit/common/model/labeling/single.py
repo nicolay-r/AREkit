@@ -1,10 +1,14 @@
-import numpy as np
-
 from arekit.common.model.labeling.base import LabelsHelper
 from arekit.common.model.labeling.modes import LabelCalculationMode
 
 
 class SingleLabelsHelper(LabelsHelper):
+
+    @staticmethod
+    def __sign(x):
+        if x == 0:
+            return 0
+        return -1 if x < 0 else 1
 
     def aggregate_labels(self, labels_list, label_calc_mode):
         assert(isinstance(labels_list, list))
@@ -18,7 +22,7 @@ class SingleLabelsHelper(LabelsHelper):
         if label_calc_mode == LabelCalculationMode.AVERAGE:
             int_labels = [self._label_scaler.label_to_int(label)
                           for label in labels_list]
-            label = self._label_scaler.int_to_label(int(np.sign(sum(int_labels))))
+            label = self._label_scaler.int_to_label(SingleLabelsHelper.__sign(sum(int_labels)))
 
         return label
 
