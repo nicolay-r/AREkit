@@ -1,9 +1,31 @@
 import unittest
 
+from arekit.common.entities.base import Entity
 from arekit.common.pipeline.base import BasePipelineLauncher
 from arekit.common.pipeline.batching import BatchingPipelineLauncher
 from arekit.common.pipeline.context import PipelineContext
-from arekit.contrib.utils.pipelines.items.text.entities_default import TextEntitiesParser
+from arekit.common.pipeline.items.base import BasePipelineItem
+
+
+class TextEntitiesParser(BasePipelineItem):
+
+    def __init__(self, **kwargs):
+        super(TextEntitiesParser, self).__init__(**kwargs)
+
+    @staticmethod
+    def __process_word(word):
+        assert(isinstance(word, str))
+
+        # If this is a special word which is related to the [entity] mention.
+        if word[0] == "[" and word[-1] == "]":
+            entity = Entity(value=word[1:-1], e_type=None)
+            return entity
+
+        return word
+
+    def apply_core(self, input_data, pipeline_ctx):
+        assert(isinstance(input_data, list))
+        return [self.__process_word(w) for w in input_data]
 
 
 class TestNestedEntities(unittest.TestCase):
