@@ -1,6 +1,5 @@
 from arekit.common.context.terms_mapper import TextTermsMapper
 from arekit.common.context.token import Token
-from arekit.common.entities.base import Entity
 from arekit.common.entities.str_fmt import StringEntitiesFormatter
 from arekit.common.entities.types import OpinionEntityType
 from arekit.common.frames.text_variant import TextFrameVariant
@@ -12,9 +11,12 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
     The latter might be utilized with synonyms collection
     """
 
-    def __init__(self, entity_formatter):
+    def __init__(self, entity_formatter, entity_group_ind_func, **kwargs):
         assert(isinstance(entity_formatter, StringEntitiesFormatter))
+        assert(callable(entity_group_ind_func))
+        super(OpinionContainingTextTermsMapper, self).__init__(**kwargs)
         self.__entities_formatter = entity_formatter
+        self.__syn_group = entity_group_ind_func
         self.__s_ind = None
         self.__t_ind = None
         self.__s_group = None
@@ -23,12 +25,6 @@ class OpinionContainingTextTermsMapper(TextTermsMapper):
     @property
     def StringEntitiesFormatter(self):
         return self.__entities_formatter
-
-    def __syn_group(self, entity):
-        """ Note: here we guarantee that entity has GroupIndex.
-        """
-        assert(isinstance(entity, Entity))
-        return entity.GroupIndex if entity is not None else None
 
     def set_s_ind(self, s_ind):
         assert(isinstance(s_ind, int))

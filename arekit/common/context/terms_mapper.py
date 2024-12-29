@@ -1,11 +1,14 @@
 from collections.abc import Iterable
 
 from arekit.common.context.token import Token
-from arekit.common.entities.base import Entity
 from arekit.common.frames.text_variant import TextFrameVariant
 
 
 class TextTermsMapper(object):
+
+    def __init__(self, is_entity_func):
+        assert(callable(is_entity_func))
+        self.__is_entity_func = is_entity_func
 
     def iter_mapped(self, terms):
         """ Performs mapping operation of each terms in a sequence
@@ -22,7 +25,7 @@ class TextTermsMapper(object):
                 m_term = self.map_token(i, term)
             elif isinstance(term, TextFrameVariant):
                 m_term = self.map_text_frame_variant(i, term)
-            elif isinstance(term, Entity):
+            elif self.__is_entity_func(term):
                 m_term = self.map_entity(i, term)
             else:
                 raise Exception("Unsupported type {}".format(term))

@@ -7,11 +7,11 @@ class BertDefaultStringTextTermsMapper(OpinionContainingTextTermsMapper):
         a base class assumes to provide an orginal frame variant value.
     """
     
-    def __init__(self, entity_formatter, word_separator=' '):
+    def __init__(self, word_separator=' ', **kwargs):
         """ See https://github.com/nicolay-r/AREkit/issues/377
             for a greater details.
         """
-        super(BertDefaultStringTextTermsMapper, self).__init__(entity_formatter)
+        super(BertDefaultStringTextTermsMapper, self).__init__(**kwargs)
         self.__word_separator = word_separator
 
     def map_entity(self, e_ind, entity):
