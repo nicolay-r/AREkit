@@ -12,7 +12,8 @@ from arekit.contrib.utils.pipelines.text_opinion.filters.base import TextOpinion
 from arekit.contrib.utils.pipelines.text_opinion.filters.limitation import FrameworkLimitationsTextOpinionFilter
 
 
-def __iter_text_opinion_linkages(parsed_doc, annotators, entity_index_func,
+def __iter_text_opinion_linkages(parsed_doc, annotators,
+                                 is_entity_func, entity_index_func,
                                  text_opinion_filters, use_meta):
     """ use_meta: bool
             this is mainly for the progress-bar and other console parameters to stay up-to-date
@@ -27,7 +28,9 @@ def __iter_text_opinion_linkages(parsed_doc, annotators, entity_index_func,
     def __to_id(text_opinion):
         return "{}_{}".format(text_opinion.SourceId, text_opinion.TargetId)
 
-    service = ParsedDocumentService(parsed_doc=parsed_doc, providers=[EntityServiceProvider(entity_index_func)])
+    service = ParsedDocumentService(parsed_doc=parsed_doc,
+                                    providers=[EntityServiceProvider(entity_index_func)],
+                                    is_entity_func=is_entity_func)
     esp = service.get_provider(EntityServiceProvider.NAME)
 
     predefined = set()
@@ -62,9 +65,12 @@ def __iter_text_opinion_linkages(parsed_doc, annotators, entity_index_func,
         yield MetaEmptyLinkedDataWrapper(doc_id=parsed_doc.RelatedDocID)
 
 
-def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotators, entity_index_func, batch_size,
+def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotators,
+                                     is_entity_func, entity_index_func, batch_size,
                                      text_opinion_filters=None, use_meta_between_docs=True):
     assert(callable(get_doc_by_id_func))
+    assert(callable(is_entity_func))
+    assert(callable(entity_index_func))
     assert(isinstance(annotators, list))
     assert(isinstance(text_opinion_filters, list) or text_opinion_filters is None)
     assert(isinstance(use_meta_between_docs, bool))
@@ -83,7 +89,8 @@ def text_opinion_extraction_pipeline(pipeline_items, get_doc_by_id_func, annotat
 
         # (parsed_doc) -> (text_opinions)
         MapPipelineItem(map_func=lambda parsed_doc: __iter_text_opinion_linkages(
-            annotators=annotators, parsed_doc=parsed_doc, entity_index_func=entity_index_func,
+            annotators=annotators, parsed_doc=parsed_doc,
+            is_entity_func=is_entity_func, entity_index_func=entity_index_func,
             text_opinion_filters=actual_text_opinion_filters, use_meta=use_meta_between_docs)),
 
         # linkages[] -> linkages
