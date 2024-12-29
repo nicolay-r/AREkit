@@ -1,5 +1,4 @@
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.items.base import BasePipelineItem
 
 
 class BatchingPipelineLauncher:
@@ -11,8 +10,6 @@ class BatchingPipelineLauncher:
         assert(isinstance(src_key, str) or src_key is None)
 
         for ind, item in enumerate(filter(lambda itm: itm is not None, pipeline)):
-            assert (isinstance(item, BasePipelineItem))
-
             # Handle the content of the batch or batch itself.
             content = item.get_source(pipeline_ctx, call_func=False, force_key=src_key if ind == 0 else None)
             handled_batch = [item._src_func(i) if item._src_func is not None else i for i in content]

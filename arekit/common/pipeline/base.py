@@ -1,5 +1,4 @@
 from arekit.common.pipeline.context import PipelineContext
-from arekit.common.pipeline.items.base import BasePipelineItem
 
 
 class BasePipelineLauncher:
@@ -11,7 +10,6 @@ class BasePipelineLauncher:
         assert(isinstance(src_key, str) or src_key is None)
 
         for ind, item in enumerate(filter(lambda itm: itm is not None, pipeline)):
-            assert(isinstance(item, BasePipelineItem))
             do_force_key = src_key is not None and ind == 0
             input_data = item.get_source(pipeline_ctx, force_key=src_key if do_force_key else None) \
                 if has_input or ind > 0 else None
