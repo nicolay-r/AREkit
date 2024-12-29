@@ -1,8 +1,6 @@
 from enum import Enum
 
-from arekit.common.entities.base import Entity
 from arekit.common.docs.entity import DocumentEntity
-from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.base import BaseParsedDocumentServiceProvider
 from arekit.common.docs.parsed.term_position import TermPositionTypes, TermPosition
 from arekit.common.text_opinions.base import TextOpinion
@@ -41,9 +39,8 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
 
     NAME = "entity-service-provider"
 
-    def __init__(self, entity_index_func):
-        assert(callable(entity_index_func))
-        super(EntityServiceProvider, self).__init__(entity_index_func=entity_index_func)
+    def __init__(self, **kwargs):
+        super(EntityServiceProvider, self).__init__(**kwargs)
         # Initialize API.
         self.__iter_raw_terms_func = None
         # Initialize entity positions.
@@ -53,23 +50,15 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
     def Name(self):
         return self.NAME
 
-    def init_parsed_doc(self, parsed_doc):
-        super(EntityServiceProvider, self).init_parsed_doc(parsed_doc)
-        assert(isinstance(parsed_doc, ParsedDocument))
+    def init_parsed_doc(self, parsed_doc, is_entity_func):
+        super(EntityServiceProvider, self).init_parsed_doc(parsed_doc=parsed_doc, is_entity_func=is_entity_func)
         self.__iter_raw_terms_func = lambda: parsed_doc.iter_terms(filter_func=None, term_only=False)
-        self.__entity_positions = self.__calculate_entity_positions()
-
-    # region public 'extract' methods
-
-    def extract_entity_value(self, text_opinion, end_type):
-        return self.__extract_entity_value(text_opinion=text_opinion, end_type=end_type)
+        self.__entity_positions = self.__calculate_entity_positions(is_entity_func=is_entity_func)
 
     def extract_entity_position(self, text_opinion, end_type, position_type=None):
         return self.__get_entity_position(text_opinion=text_opinion,
                                           end_type=end_type,
                                           position_type=position_type)
-
-    # endregion
 
     # region public 'calculate' methods
 
@@ -112,19 +101,9 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
 
         return e_pos.get_index(position_type)
 
-    def get_entity_value(self, id_in_document):
-        entity = self._doc_entities[id_in_document]
-        assert(isinstance(entity, Entity))
-        return entity.Value
-
     # endregion
 
     # region private methods
-
-    def __extract_entity_value(self, text_opinion, end_type):
-        assert(isinstance(text_opinion, TextOpinion))
-        end_id = self.__get_end_id(text_opinion=text_opinion, end_type=end_type)
-        return self.get_entity_value(end_id)
 
     def __get_entity_position(self, text_opinion, end_type, position_type=None):
         assert(isinstance(text_opinion, TextOpinion))
@@ -147,7 +126,7 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
         assert(end_type == EntityEndType.Source or end_type == EntityEndType.Target)
         return text_opinion.SourceId if end_type == EntityEndType.Source else text_opinion.TargetId
 
-    def __calculate_entity_positions(self):
+    def __calculate_entity_positions(self, is_entity_func):
         """ Note: here we consider the same order as in self._entities.
         """
         t_ind_in_doc = -1
@@ -157,7 +136,7 @@ class EntityServiceProvider(BaseParsedDocumentServiceProvider):
 
             t_ind_in_doc += 1
 
-            if not isinstance(term, Entity):
+            if not is_entity_func(term):
                 continue
 
             # We consider that entities within a single tree has the same positions.

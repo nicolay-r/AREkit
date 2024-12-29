@@ -16,8 +16,8 @@ class TextOpinionPairsProvider(BasePairProvider):
 
     NAME = "text-opinion-pairs-provider"
 
-    def __init__(self, value_to_group_id_func):
-        super(TextOpinionPairsProvider, self).__init__()
+    def __init__(self, value_to_group_id_func, **kwargs):
+        super(TextOpinionPairsProvider, self).__init__(**kwargs)
         self.__value_to_group_id_func = value_to_group_id_func
         self.__doc_id = None
         self.__entities_collection = None
@@ -36,8 +36,8 @@ class TextOpinionPairsProvider(BasePairProvider):
                            label=label,
                            text_opinion_id=None)
 
-    def init_parsed_doc(self, parsed_doc):
-        super(TextOpinionPairsProvider, self).init_parsed_doc(parsed_doc)
+    def init_parsed_doc(self, parsed_doc, is_entity_func):
+        super(TextOpinionPairsProvider, self).init_parsed_doc(parsed_doc=parsed_doc, is_entity_func=is_entity_func)
         self.__doc_id = parsed_doc.RelatedDocID
         self.__entities_collection = EntityCollection(
             entities=list(self._doc_entities),

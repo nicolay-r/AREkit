@@ -8,10 +8,11 @@ class CroppedSampleRowProvider(BaseSampleRowProvider):
         attitude inside.
     """
 
-    def __init__(self, crop_window_size, label_scaler, text_provider):
+    def __init__(self, crop_window_size, label_scaler, **kwargs):
         assert(isinstance(crop_window_size, int) and crop_window_size > 0)
-        super(CroppedSampleRowProvider, self).__init__(label_provider=MultipleLabelProvider(label_scaler),
-                                                       text_provider=text_provider)
+        super(CroppedSampleRowProvider, self).__init__(
+            label_provider=MultipleLabelProvider(label_scaler),
+            **kwargs)
         self.__crop_window_size = crop_window_size
 
     @staticmethod

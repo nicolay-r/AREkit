@@ -6,7 +6,7 @@ class ParsedDocumentService(object):
     """ Represents a collection of providers, combined with the parsed doc.
     """
 
-    def __init__(self, parsed_doc, providers):
+    def __init__(self, parsed_doc, providers, is_entity_func):
         assert(isinstance(parsed_doc, ParsedDocument))
         assert(isinstance(providers, list))
         self.__parsed_doc = parsed_doc
@@ -20,7 +20,7 @@ class ParsedDocumentService(object):
             self.__providers[provider.Name] = provider
 
             # Post initialize with the related parsed doc.
-            provider.init_parsed_doc(self.__parsed_doc)
+            provider.init_parsed_doc(self.__parsed_doc, is_entity_func=is_entity_func)
 
 
     @property

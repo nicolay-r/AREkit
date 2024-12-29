@@ -1,4 +1,3 @@
-from arekit.common.entities.base import Entity
 from arekit.common.docs.entity import DocumentEntity
 from arekit.common.docs.parsed.base import ParsedDocument
 
@@ -6,7 +5,7 @@ from arekit.common.docs.parsed.base import ParsedDocument
 class BaseParsedDocumentServiceProvider(object):
 
     def __init__(self, entity_index_func=None):
-        """ Outside enity indexing function
+        """ Outside entity indexing function
             entity_index_func: provides id for a given entity, i.e.
                 func(entity) -> int (id)
         """
@@ -19,7 +18,7 @@ class BaseParsedDocumentServiceProvider(object):
     def Name(self):
         raise NotImplementedError()
 
-    def init_parsed_doc(self, parsed_doc):
+    def init_parsed_doc(self, parsed_doc, is_entity_func):
         assert(isinstance(parsed_doc, ParsedDocument))
 
         def __iter_childs_and_root_node(entity):
@@ -37,7 +36,7 @@ class BaseParsedDocumentServiceProvider(object):
         self.__entity_map.clear()
 
         current_id = 0
-        for _, entity in enumerate(parsed_doc.iter_entities()):
+        for _, entity in enumerate(parsed_doc.iter_entities(is_entity_func=is_entity_func)):
 
             child_doc_entities = []
             for tree_entity, is_child in __iter_childs_and_root_node(entity):
@@ -61,7 +60,6 @@ class BaseParsedDocumentServiceProvider(object):
     def get_document_entity(self, entity):
         """ Maps entity to the related one with DocumentEntity type
         """
-        assert(isinstance(entity, Entity))
         return self.__entity_map[self.__entity_index_func(entity)]
 
     def contains_entity(self, entity):

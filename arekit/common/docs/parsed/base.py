@@ -1,6 +1,5 @@
 from collections.abc import Iterable
 
-from arekit.common.entities.base import Entity
 from arekit.common.text.enums import TermFormat
 from arekit.common.text.parsed import BaseParsedText
 
@@ -73,8 +72,9 @@ class ParsedDocument(object):
         assert(isinstance(s_ind, int))
         return self.__parsed_sentences[s_ind]
 
-    def iter_entities(self):
-        for entity in self.__iter_all_raw_terms(term_only=True, filter_func=lambda t: isinstance(t, Entity)):
+    def iter_entities(self, is_entity_func):
+        assert(callable(is_entity_func))
+        for entity in self.__iter_all_raw_terms(term_only=True, filter_func=is_entity_func):
             yield entity
 
     def iter_terms(self, filter_func=None, term_only=True):

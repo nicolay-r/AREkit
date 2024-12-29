@@ -9,13 +9,11 @@ from arekit.common.data.input.providers.label.multiple import MultipleLabelProvi
 from arekit.common.data.input.providers.rows.base import BaseRowProvider
 from arekit.common.data.input.providers.text.single import BaseSingleTextProvider
 from arekit.common.data.rows_fmt import create_base_column_fmt
-from arekit.common.entities.base import Entity
-from arekit.common.labels.base import Label
-
-from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.docs.parsed.base import ParsedDocument
 from arekit.common.docs.parsed.providers.entity_service import EntityEndType, EntityServiceProvider
 from arekit.common.docs.parsed.term_position import TermPositionTypes
+from arekit.common.labels.base import Label
+from arekit.common.linkage.text_opinions import TextOpinionsLinkage
 from arekit.common.text_opinions.base import TextOpinion
 
 
@@ -26,13 +24,15 @@ class BaseSampleRowProvider(BaseRowProvider):
     """ Rows provider for samples storage.
     """
 
-    def __init__(self, label_provider, text_provider):
+    def __init__(self, is_entity_func, label_provider, text_provider):
+        assert(callable(is_entity_func))
         assert(isinstance(label_provider, LabelProvider))
         assert(isinstance(text_provider, BaseSingleTextProvider))
         super(BaseSampleRowProvider, self).__init__()
 
         self._label_provider = label_provider
         self.__text_provider = text_provider
+        self.__is_entity_func = is_entity_func
         self.__instances_provider = self.__create_instances_provider(label_provider)
         self.__store_labels = None
         self._val_fmt = create_base_column_fmt(fmt_type="writer")
@@ -65,7 +65,7 @@ class BaseSampleRowProvider(BaseRowProvider):
             parsed_doc=parsed_doc, sentence_ind=sentence_ind, s_ind=s_ind, t_ind=t_ind)
 
         # Entity indices from the related context.
-        entities = list(filter(lambda term: isinstance(term, Entity), sentence_terms))
+        entities = list(filter(self.__is_entity_func, sentence_terms))
 
         # Values mapping.
         vm = {
@@ -76,7 +76,7 @@ class BaseSampleRowProvider(BaseRowProvider):
             const.SENT_IND: sentence_ind,
             const.ENTITY_VALUES: entities,
             const.ENTITY_TYPES: entities,
-            const.ENTITIES: [str(i) for i, t in enumerate(sentence_terms) if isinstance(t, Entity)],
+            const.ENTITIES: [str(i) for i, t in enumerate(sentence_terms) if self.__is_entity_func(t)],
             const.S_IND: actual_s_ind,
             const.T_IND: actual_t_ind,
             const.LABEL_UINT: None,

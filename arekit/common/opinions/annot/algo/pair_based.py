@@ -16,8 +16,9 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
             [1] Extracting Sentiment Attitudes from Analytical Texts https://arxiv.org/pdf/1808.08932.pdf
     """
 
-    def __init__(self, dist_in_terms_bound, label_provider, entity_index_func, dist_in_sents=0,
-                 is_entity_ignored_func=None):
+    def __init__(self, dist_in_terms_bound, label_provider,
+                 is_entity_func, entity_index_func, entity_value_func,
+                 dist_in_sents=0, is_entity_ignored_func=None):
         """
         dist_in_terms_bound: int
             max allowed distance in term (less than passed value)
@@ -34,7 +35,9 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
         self.__dist_in_terms_bound = dist_in_terms_bound
         self.__dist_in_sents = dist_in_sents
         self.__is_entity_ignored_func = is_entity_ignored_func
+        self.__is_entity_func = is_entity_func
         self.__entity_index_func = entity_index_func
+        self.__entity_value_func = entity_value_func
 
     # region private methods
 
@@ -90,10 +93,11 @@ class PairBasedOpinionAnnotationAlgorithm(BaseOpinionAnnotationAlgorithm):
             return key is not None
 
         # Initialize providers.
-        opinions_provider = OpinionPairsProvider(entity_index_func=self.__entity_index_func)
+        opinions_provider = OpinionPairsProvider(entity_index_func=self.__entity_index_func,
+                                                 entity_value_func=self.__entity_value_func)
         entity_service_provider = EntityServiceProvider(entity_index_func=self.__entity_index_func)
-        opinions_provider.init_parsed_doc(parsed_doc)
-        entity_service_provider.init_parsed_doc(parsed_doc)
+        opinions_provider.init_parsed_doc(parsed_doc=parsed_doc, is_entity_func=self.__is_entity_func)
+        entity_service_provider.init_parsed_doc(parsed_doc=parsed_doc, is_entity_func=self.__is_entity_func)
 
         return opinions_provider.iter_from_all(label_provider=self.__label_provider,
                                                filter_func=__filter_pair_func)

@@ -15,6 +15,6 @@ class BaseSamplesIO(object):
         raise NotImplementedError()
 
     def create_target(self, data_type):
-        """ Path for reaiding/viewing
+        """ Path for reading/viewing
         """
         raise NotImplementedError()

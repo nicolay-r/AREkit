@@ -8,7 +8,7 @@ class PromptedSampleRowProvider(CroppedSampleRowProvider):
     """ Sample, enriched with the prompt technique.
     """
 
-    def __init__(self, crop_window_size, label_scaler, text_provider, prompt, label_fmt=None):
+    def __init__(self, prompt, label_fmt=None, **kwargs):
         """ crop_window_size: int
                 crop window size for the original text.
             prompt: str
@@ -17,12 +17,8 @@ class PromptedSampleRowProvider(CroppedSampleRowProvider):
                     text, s_ind, t_ind, s_val, t_val, label_uint
         """
         assert(isinstance(prompt, str))
-        assert(isinstance(text_provider, BaseSingleTextProvider))
         assert(isinstance(label_fmt, StringLabelsFormatter) or label_fmt is None)
-
-        super(PromptedSampleRowProvider, self).__init__(crop_window_size=crop_window_size,
-                                                        label_scaler=label_scaler,
-                                                        text_provider=text_provider)
+        super(PromptedSampleRowProvider, self).__init__(**kwargs)
 
         self.__prompt = prompt
         self.__labels_fmt = label_fmt
