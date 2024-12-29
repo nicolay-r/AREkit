@@ -5,7 +5,7 @@ from arekit.common.data.input.terms_mapper import OpinionContainingTextTermsMapp
 from arekit.contrib.bert.input.providers.text_pair import PairTextProvider
 
 
-def create_sample_provider(label_scaler, text_terms_mapper, text_b_prompt=None):
+def create_sample_provider(is_entity_func, label_scaler, text_terms_mapper, text_b_prompt=None):
     assert(isinstance(text_terms_mapper, OpinionContainingTextTermsMapper))
 
     text_provider = BaseSingleTextProvider(text_terms_mapper=text_terms_mapper) \
@@ -14,4 +14,6 @@ def create_sample_provider(label_scaler, text_terms_mapper, text_b_prompt=None):
 
     label_provider = MultipleLabelProvider(label_scaler=label_scaler)
 
-    return BaseSampleRowProvider(text_provider=text_provider, label_provider=label_provider)
+    return BaseSampleRowProvider(text_provider=text_provider,
+                                 label_provider=label_provider,
+                                 is_entity_func=is_entity_func)
