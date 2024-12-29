@@ -9,7 +9,7 @@ class AlgorithmBasedTextOpinionAnnotator(AlgorithmBasedOpinionAnnotator):
     """
 
     def __init__(self, value_to_group_id_func, annot_algo, create_empty_collection_func,
-                 get_doc_existed_opinions_func=None):
+                 is_entity_func, get_doc_existed_opinions_func=None):
         """ get_doc_existed_opinions_func: func or None
                 function that provides existed opinions for a document;
                 if None, then we consider an absence of the existed document-level opinions.
@@ -20,14 +20,17 @@ class AlgorithmBasedTextOpinionAnnotator(AlgorithmBasedOpinionAnnotator):
             create_empty_collection_func=create_empty_collection_func,
             get_doc_existed_opinions_func=get_doc_existed_opinions_func)
         self.__value_to_group_id_func = value_to_group_id_func
+        self.__is_entity_func = is_entity_func
 
     def __create_service(self, parsed_doc):
-        return ParsedDocumentService(parsed_doc=parsed_doc, providers=[
-            TextOpinionPairsProvider(self.__value_to_group_id_func)
-        ])
+        return ParsedDocumentService(
+            parsed_doc=parsed_doc,
+            providers=[TextOpinionPairsProvider(self.__value_to_group_id_func, entity_index_func=None)],
+            is_entity_func=self.__is_entity_func
+        )
 
     def annotate_collection(self, parsed_doc):
-        service = self.__create_service(parsed_doc)
+        service = self.__create_service(parsed_doc=parsed_doc)
         topp = service.get_provider(TextOpinionPairsProvider.NAME)
         for opinion in super(AlgorithmBasedTextOpinionAnnotator, self).annotate_collection(parsed_doc):
             for text_opinion in topp.iter_from_opinion(opinion):
