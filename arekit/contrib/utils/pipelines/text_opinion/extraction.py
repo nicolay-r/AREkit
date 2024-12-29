@@ -29,7 +29,7 @@ def __iter_text_opinion_linkages(parsed_doc, annotators,
         return "{}_{}".format(text_opinion.SourceId, text_opinion.TargetId)
 
     service = ParsedDocumentService(parsed_doc=parsed_doc,
-                                    providers=[EntityServiceProvider(entity_index_func)],
+                                    providers=[EntityServiceProvider(entity_index_func=entity_index_func)],
                                     is_entity_func=is_entity_func)
     esp = service.get_provider(EntityServiceProvider.NAME)
 
