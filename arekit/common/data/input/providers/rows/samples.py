@@ -143,9 +143,6 @@ class BaseSampleRowProvider(BaseRowProvider):
 
     def __provide_rows(self, row_dict, parsed_doc, entity_service,
                        text_opinion_linkage, index_in_linked, idle_mode):
-        """
-        Providing Rows depending on row_id_formatter type
-        """
         assert(isinstance(parsed_doc, ParsedDocument))
         assert(isinstance(row_dict, OrderedDict))
         assert(isinstance(text_opinion_linkage, TextOpinionsLinkage))
@@ -153,7 +150,6 @@ class BaseSampleRowProvider(BaseRowProvider):
         etalon_label = self.__instances_provider.provide_label(text_opinion_linkage)
         for instance in self.__instances_provider.iter_instances(text_opinion_linkage):
             yield self.__create_row(row=row_dict,
-                                    row_id=0,
                                     parsed_doc=parsed_doc,
                                     entity_service=entity_service,
                                     text_opinions_linkage=instance,
@@ -162,7 +158,7 @@ class BaseSampleRowProvider(BaseRowProvider):
                                     etalon_label=etalon_label,
                                     idle_mode=idle_mode)
 
-    def __create_row(self, row, row_id, parsed_doc, entity_service, text_opinions_linkage,
+    def __create_row(self, row, parsed_doc, entity_service, text_opinions_linkage,
                      index_in_linked, etalon_label, idle_mode):
         """
         Composing row in following format:
